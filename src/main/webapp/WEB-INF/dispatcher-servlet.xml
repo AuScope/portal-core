@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : springapp-servlet.xml
+    Created on : 2008/11/28
+    Author     : 
+    Description:
+        Purpose of the document follows.
+-->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <!-- the application context definition for the springapp DispatcherServlet -->
+<!--
+  <bean name="/hello.htm" class="springapp.web.HelloController"/>
+-->
+  <bean name="/hello.htm" class="org.auscope.portal.server.web.controllers.HelloController"/>
+</beans>
