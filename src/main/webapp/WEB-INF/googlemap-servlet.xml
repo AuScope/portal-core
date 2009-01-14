@@ -11,18 +11,16 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
 	<!-- Dispatch servlet mapping. Navigation routing path starts here -->
-	<bean id="urlMapping"
-		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+	<bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<props>
-		          <prop key="gmap.html">gMapController</prop>	
-			</props>
+                <prop key="gmap.html">gMapController</prop>	
+           </props>
 		</property>
 	</bean>
 
 	<!-- default settings for navigation routing parameters -->
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass">
 			<value>
 				org.springframework.web.servlet.view.JstlView
@@ -37,15 +35,14 @@
 	</bean>
 
 	<!-- ********** controllers ********** -->
-	<bean id="gMapController" class="org.auscope.portal.server.web.controllers.GMapController">
-	</bean>
-		
-	<!-- resource bundle location -->
+	<bean id="gMapController" class="org.auscope.portal.server.web.controllers.GMapController"></bean>
+	
+    
+    <!-- resource bundle location -->
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename">
 			<value>messages</value>
 		</property>
 	</bean>
-
 </beans>

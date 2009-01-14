@@ -52,26 +52,39 @@
                     text:'Tasks'
                 })
             });*/
+            
+            var myLoader = new Ext.tree.TreeLoader(); 
 
+            myLoader.on('load', function(node, callback){
+                    alert('load for ' + node);
+                     // create and add new nodes to node from any source you want,
+                     // then call the callback to let it know you're done
+                }, this);
+
+            myLoader.on("beforeload", function(treeLoader, node) {
+                alert('load for ' + node);
+            }, this);
+            
             var tree = new Ext.tree.TreePanel({
-                title: 'Data Sources',
+                title : 'Data Sources',
                 region: 'west',
                 split: true,
                 collapsible: true,
                 margins:'100 0 5 5',
                 cmargins:'100 5 5 5',
-                width: 300,
+                width: 200,
                 useArrows:true,
                 autoScroll:true,
                 animate:true,
                 //enableDD:true,
                 containerScroll: true,
-                rootVisible: false,
-
+                rootVisible: true,
 
                 // auto create TreeLoader
                 //dataUrl: 'get-nodes.php',
-                dataUrl: 'tree-data.json',
+                dataUrl: 'dataSources.json',
+                //dataUrl: 'tree-data.jsone',
+                //loader : myLoader,
 
                 root: {
                     nodeType: 'async',
@@ -206,14 +219,15 @@
         #nav {
             float: right;
             
-            padding-top: 10px;
+            padding-top: 0px;
             padding-right: 40px;
         }
 
         #nav ul
         {
             text-align: left;
-            #margin: auto;
+            padding: 0px;
+            margin: 0px;
             #width: 1024px;
         }
 
@@ -234,16 +248,11 @@
             <div id="logo">
                 <a href="index.index.jsp#"></a>
             </div>
-            <div id="login">
-                <a href="index.index.jsp#">login</a>
-            </div>
             <div id="nav">
                 <ul>
-                    <li><a href="index.index.jsp#">home</a></li>
-                    <li><a href="index.index.jsp#">about</a></li>
-                    <li><a href="index.index.jsp#">services</a></li>
-                    <li><a href="index.index.jsp#">products</a></li>
-                    <li><a href="index.index.jsp#">contact</a></li>
+                    <li><a href="index.index.jsp#"><img src="img/mapnav.gif" alt=""/></a></li>
+                    <li><a href="index.index.jsp#"><img src="img/dataservice.gif" alt=""/></a></li>
+                    <li><a href="index.index.jsp#"><img src="img/loginnav.gif" alt=""/></a></li>
                 </ul>
             </div>
         </div>
