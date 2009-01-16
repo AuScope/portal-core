@@ -13,11 +13,15 @@
     <script type="text/javascript" src="js/ext-2.2/ext-all.js"> </script>
     <script type="text/javascript" src="js/ColumnNodeUI.js"> </script>
 
+    <script src="js/wms-gs-1_1_1.js" type="text/javascript"></script>
+    <script src="js/wms_layer.js" type="text/javascript"></script>
+    <script src="js/web_map_service.js" type="text/javascript"></script>
+
     <!-- Page specific javascript -->
     <script type="text/javascript">
         //this runs on DOM load - you can access all the good stuff now.
         Ext.onReady(function() {
-
+             var map;
             /*var tree = new Ext.tree.ColumnTree({
                 region: 'west',
                 split: true,
@@ -53,18 +57,6 @@
                 })
             });*/
             
-            var myLoader = new Ext.tree.TreeLoader(); 
-
-            myLoader.on('load', function(node, callback){
-                    alert('load for ' + node);
-                     // create and add new nodes to node from any source you want,
-                     // then call the callback to let it know you're done
-                }, this);
-
-            myLoader.on("beforeload", function(treeLoader, node) {
-                alert('load for ' + node);
-            }, this);
-            
             var tree = new Ext.tree.TreePanel({
                 title : 'Data Sources',
                 region: 'west',
@@ -78,7 +70,7 @@
                 animate:true,
                 //enableDD:true,
                 containerScroll: true,
-                rootVisible: true,
+                rootVisible: false,
 
                 // auto create TreeLoader
                 //dataUrl: 'get-nodes.php',
@@ -90,18 +82,38 @@
                     nodeType: 'async',
                     text: 'Ext JS',
                     draggable:false,
-                    id:'task'
+                    id:'root'
                 }
             });
 
             tree.on('checkchange', function(node, isChecked) {
                 //var clickedNode = tree.getSelectionModel().getSelectedNode();
-                alert(node + " " + isChecked);                
+                //alert(node + " " + isChecked);
+                if(isChecked) {
+                    //do something
+                    alert('about to check');
+                    if(node.attributes.tileOverlay == null || node.attributes.tileOverlay == '') {
+                        alert('isnull');
+                        var tileLayer= new GWMSTileLayer(map, new GCopyrightCollection(""),1,17);
+                        tileLayer.baseURL = node.attributes.wmsUrl;
+                        tileLayer.layers = node.id;
+
+                        alert('madetilelayer');
+                        node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
+                    }
+                    alert('adding ' + node.attributes.tileOverlay);
+                    map.addOverlay(node.attributes.tileOverlay);
+                    alert('added layer');
+                }
+                else { //not checked
+                    map.removeOverlay(node.attributes.tileOverlay);
+                }
+
             });
 
             tree.on('expandnode', function(node) {
                 //var clickedNode = tree.getSelectionModel().getSelectedNode();
-                alert(node + " expanded");
+                //alert(node + " expanded");
             });
             
             /*var westPanel = {
@@ -124,11 +136,6 @@
                 items:[tree, centerPanel]
             });
 
-
-    
-
-
-
         //<![CDATA[
 
         //function load() {
@@ -138,7 +145,7 @@
           // Is user's browser suppported by Google Maps?
           if (GBrowserIsCompatible()) {
             //var map = new GMap2(document.getElementById("map-div"));
-              var map = new GMap2(centerPanel.body.dom);
+              map = new GMap2(centerPanel.body.dom);
             // Large pan and zoom control
             map.addControl(new GLargeMapControl());
             // Toggle between Map, Satellite, and Hybrid types

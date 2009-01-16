@@ -46,6 +46,19 @@
          </plugin>
       </plugins>
    </build>
+
+    <repositories>
+        <repository>
+         <id>geotools</id>
+         <name>geotools</name>
+         <url>http://maven.geotools.fr/repository/</url>
+         <snapshots>
+          <enabled>false</enabled>
+         </snapshots>
+         <layout>legacy</layout>
+        </repository>
+    </repositories>
+
    <dependencies>
       <dependency>
          <groupId>javax.servlet</groupId>
@@ -78,6 +91,16 @@
             <groupId>net.sf.spring-json</groupId>
             <artifactId>spring-json</artifactId>
             <version>1.1</version>
-        </dependency> 
+        </dependency>
+       <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-wfs</artifactId>
+           <version>2.6-SNAPSHOT</version>
+          </dependency>
+          <dependency>
+           <groupId>org.geotools</groupId>
+           <artifactId>gt-wms</artifactId>
+           <version>2.6-SNAPSHOT</version>
+          </dependency>
    </dependencies>
 </project>
