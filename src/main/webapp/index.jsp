@@ -90,19 +90,19 @@
             //alert(node + " " + isChecked);
             if (isChecked) {
                 //do something
-                alert('about to check');
+                //alert('about to check');
                 if (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '') {
-                    alert('isnull');
+                    //alert('isnull');
                     var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
                     tileLayer.baseURL = node.attributes.wmsUrl;
                     tileLayer.layers = node.id;
 
-                    alert('madetilelayer');
+                    //alert('madetilelayer');
                     node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
                 }
-                alert('adding ' + node.attributes.tileOverlay);
+                //alert('adding ' + node.attributes.tileOverlay);
                 map.addOverlay(node.attributes.tileOverlay);
-                alert('added layer');
+                ///alert('added layer');
             }
             else { //not checked
                 map.removeOverlay(node.attributes.tileOverlay);
@@ -243,7 +243,7 @@
     }
 
     #nav-example {
-        background: url("file:///home/mat/Development/Auscope-Portal/src/main/webapp/img/navigation.gif") no-repeat;
+        background: url("/img/navigation.gif") no-repeat;
         width: 300px;
         height: 38px;
         margin: 0;
@@ -282,15 +282,15 @@
 
 
     #nav-example-01 a:hover {
-        background: url("file:///home/mat/Development/Auscope-Portal/src/main/webapp/img/navigation.gif") 0px -38px no-repeat;
+        background: url("/img/navigation.gif") 0px -38px no-repeat;
     }
 
     #nav-example-02 a:hover {
-        background: url("file:///home/mat/Development/Auscope-Portal/src/main/webapp/img/navigation.gif") -100px -38px no-repeat;
+        background: url("/img/navigation.gif") -100px -38px no-repeat;
     }
 
     #nav-example-03 a:hover {
-        background: url("file:///home/mat/Development/Auscope-Portal/src/main/webapp/img/navigation.gif") -200px -38px no-repeat;
+        background: url("/img/navigation.gif") -200px -38px no-repeat;
     }
 
 

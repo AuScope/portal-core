@@ -139,7 +139,8 @@ public class GetDataSourcesJSONController extends AbstractController {
 
        WebMapServer wms = null;
         try {
-           wms = new WebMapServer(new URL("http://c3dmm2.ivec.org/geoserver/wms?"));
+           //wms = new WebMapServer(new URL("http://c3dmm2.ivec.org/geoserver/gwc/service/wms?"));
+            wms = new WebMapServer(new URL("http://c3dmm2.ivec.org/geoserver/wms?"));
         } catch (IOException e) {
            e.printStackTrace();
         } catch (ServiceException e) {
@@ -157,6 +158,7 @@ public class GetDataSourcesJSONController extends AbstractController {
             layerNode.put("checked", Boolean.FALSE);
             layerNode.put("leaf", Boolean.TRUE);
 
+            //layerNode.put("wmsUrl", "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?");
             layerNode.put("wmsUrl", "http://c3dmm2.ivec.org/geoserver/wms?");
             layerNode.put("tileOverlay", "");
 

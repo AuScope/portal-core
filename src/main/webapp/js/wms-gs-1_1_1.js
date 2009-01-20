@@ -106,7 +106,7 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
 			       this.dd2MercMetersLat(lowerRight.lat());
 		// Change for GeoServer - 41001 is mercator and installed by default.
 		var srs = "EPSG:3395";
-	} else {  */
+	} else {*/
     	var boundBox = upperLeft.lng() + "," +
     	               upperLeft.lat() + "," +
     	               lowerRight.lng() + "," +
