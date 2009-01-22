@@ -34,6 +34,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.net.URL;
 import java.net.URI;
+import java.net.MalformedURLException;
 import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -73,9 +74,13 @@ public class GetDataSourcesJSONController extends AbstractController {
             return getBorholeInstitionalProviders();
         else if(node.equals("waCoe"))
             return getLayers(node);
+        else if(node.equals("nvcl"))
+            return getFeatures();
 
         return new ModelAndView(new Something(), new HashMap());
    }
+
+
 
     //sets up the data theme nodes
    private ModelAndView getThemes() {
@@ -155,11 +160,13 @@ public class GetDataSourcesJSONController extends AbstractController {
    }
 
    private ModelAndView getLayers(String node) {
+       String server  = "http://localhost:8090/geoserver/wms?";
+       //String server  = "http://c3dmm2.ivec.org/geoserver/wms?";
+       //String server  = "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?";
 
        WebMapServer wms = null;
         try {
-           //wms = new WebMapServer(new URL("http://c3dmm2.ivec.org/geoserver/gwc/service/wms?"));
-            wms = new WebMapServer(new URL("http://c3dmm2.ivec.org/geoserver/wms?"));
+            wms = new WebMapServer(new URL(server));
         } catch (IOException e) {
            e.printStackTrace();
         } catch (ServiceException e) {
@@ -176,13 +183,52 @@ public class GetDataSourcesJSONController extends AbstractController {
             layerNode.put("text", layer.getName());
             layerNode.put("checked", Boolean.FALSE);
             layerNode.put("leaf", Boolean.TRUE);
+            layerNode.put("layerType", "wms");
 
-            //layerNode.put("wmsUrl", "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?");
-            layerNode.put("wmsUrl", "http://c3dmm2.ivec.org/geoserver/wms?");
+            layerNode.put("wmsUrl", server);
             layerNode.put("tileOverlay", "");
 
             //layerNode.put("layerURL", layer.get)
             jsonArray.add(layerNode);
+        }
+
+        Map model = new HashMap();
+        model.put("JSON_OBJECT", jsonArray);
+
+        return new ModelAndView(new Something(), model);
+    }
+
+    private ModelAndView getFeatures() {
+        //String url = "http://localhost:8090/geoserver/wfs";
+        String url = "http://auscope-portal.arrc.csiro.au/nvcl/wfs";
+        HashMap params = new HashMap();
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+            params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL(url)));
+            DataStore dataStore = new WFSDataStoreFactory().createDataStore(params);
+
+            for(String name : dataStore.getTypeNames()) {
+
+                Map layerNode = new HashMap();
+                layerNode.put("id", name);
+                layerNode.put("text", name);
+                layerNode.put("checked", Boolean.FALSE);
+                layerNode.put("leaf", Boolean.TRUE);
+                layerNode.put("layerType", "wfs");
+
+                layerNode.put("wfsUrl", "http://localhost:8080/geoserver/wfs");
+                layerNode.put("tileOverlay", "");
+
+                //layerNode.put("layerURL", layer.get)
+                jsonArray.add(layerNode);
+
+            }
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         Map model = new HashMap();
@@ -209,12 +255,17 @@ class Something extends AbstractView {
 
 
 class blah {
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         HashMap params = new HashMap();
-        
+
+        //String url = "http://www.gsv-tb.dpi.vic.gov.au/GeoSciMLv2.0/GeologicUnit/wfs";
+        //String url = "http://auscope-portal.arrc.csiro.au/geodesy/wfs";
+
+        String url = "http://localhost:8080/geoserver/wfs";
+
         try {
-            //params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL("http://www.gsv-tb.dpi.vic.gov.au/GeoSciMLv2.0/GeologicUnit/wfs")));
-            params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL("http://auscope-portal.arrc.csiro.au/geodesy/wfs")));
+            //params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL(url)));
+            params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL(url)));
 
             DataStore dataStore = new WFSDataStoreFactory().createDataStore(params);
 
@@ -222,7 +273,7 @@ class blah {
             //System.out.println(dataStore.getNames().));
 
             for(String name : dataStore.getTypeNames()) {
-                *//*Query query = new DefaultQuery("gsml:GeologicUnit");
+                /*Query query = new DefaultQuery("gsml:GeologicUnit");
                     FeatureReader ft = wfs.getFeatureReader(query,Transaction.AUTO_COMMIT);
                     try {
                          int count = 0;
@@ -240,16 +291,16 @@ class blah {
                         e.printStackTrace();
                     } catch (IllegalAttributeException e) {
                         e.printStackTrace();
-                    }*//*
+                    }*/
 
 
-                *//*FeatureSource featureSource = dataStore.getFeatureSource(name);
+                /*FeatureSource featureSource = dataStore.getFeatureSource(name);
                 FeatureCollection featureCollection= featureSource.getFeatures();
 
                 while (featureCollection.iterator().hasNext()) {
                     Feature o = (Feature)featureCollection.iterator().next();
                     System.out.println(o.getName());                                 
-                }*//*
+                }*/
 
 
                 //System.out.println(featureSource.getFeatures().size());
@@ -262,36 +313,6 @@ class blah {
         } //catch (SchemaException e) {
            // e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         //}
-
-    }*/
-
-    public static void main(String[] args) {
-        // 1. Instantiate a TransformerFactory.
-        javax.xml.transform.TransformerFactory tFactory =
-                          javax.xml.transform.TransformerFactory.newInstance();
-
-        // 2. Use the TransformerFactory to process the stylesheet Source and
-        //    generate a Transformer.
-        javax.xml.transform.Transformer transformer = null;
-        try {
-            transformer = tFactory.newTransformer
-                        (new javax.xml.transform.stream.StreamSource("gml2kml.xsl"));
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        // 3. Use the Transformer to transform an XML Source and send the
-        //    output to a Result object.
-        try {
-            transformer.transform
-            (new javax.xml.transform.stream.StreamSource("somegml.gml"),
-                 new javax.xml.transform.stream.StreamResult( new
-                                              java.io.FileOutputStream("somekml.kml")));
-        } catch (TransformerException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
 
     }
 }

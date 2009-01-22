@@ -98,7 +98,7 @@
             if (isChecked) {
                 //do something
                 //alert('about to check');
-                if (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '') {
+                if (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '' && node.attributes.layerType == 'wms') {
                     /*//alert('isnull');
                     var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
                     tileLayer.baseURL = node.attributes.wmsUrl;
@@ -107,13 +107,19 @@
                     //alert('madetilelayer');
                     node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);*/
 
-                    node.attributes.tileOverlay = new OpenLayers.Layer.WMS( "Some WMS", node.attributes.wmsUrl, {layers: node.id} );
+                    node.attributes.tileOverlay = new OpenLayers.Layer.WMS( "Some WMS", node.attributes.wmsUrl, {layers: node.id, format: "image/png", transparent: "true", projection: "EPSG:900913"});
                     //map.addLayer(layer);
                 }
+                else if (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '' && node.attributes.layerType == 'wfs') {
+                    node.attributes.tileOverlay = new OpenLayers.Layer.WFS( "Somethihg",
+                                        node.attributes.wfsUrl,
+                                        { typename: node.id } );
+                }
+
                 //alert('adding ' + node.attributes.tileOverlay);
                 //map.addOverlay(node.attributes.tileOverlay);
                 map.addLayer(node.attributes.tileOverlay);
-
+                node.attributes.tileOverlay.setVisibility(true);
                 ///alert('added layer');
             }
             else { //not checked
@@ -173,14 +179,30 @@
             map.addControl(new GOverviewMapControl(Tsize));
 
         }*/
+        var options = {
+                        projection: new OpenLayers.Projection("EPSG:900913"),
+                        displayProjection: new OpenLayers.Projection("EPSG:4326"),
+                        units: "m",
+                        numZoomLevels: 18,
+                        maxResolution: 156543.0339,
+                        maxExtent: new OpenLayers.Bounds(-20037508, -20037508,
+                                                         20037508, 20037508.34),
+                        controls: [ new OpenLayers.Control.PanZoom(), new OpenLayers.Control.Permalink(), new OpenLayers.Control.MouseDefaults() ]
+                    };
+                    //map = new OpenLayers.Map(centerPanel.body.dom, options);
 
             map = new OpenLayers.Map(centerPanel.body.dom, {controls: [ new OpenLayers.Control.PanZoom(), new OpenLayers.Control.Permalink(), new OpenLayers.Control.MouseDefaults() ]});
-            //var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS", "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'} );
-            var google = new OpenLayers.Layer.Google( "Google Hybrid" , {type: G_HYBRID_MAP });
+            var google = new OpenLayers.Layer.WMS( "OpenLayers WMS", "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'} );
+            //var google = new OpenLayers.Layer.Google( "Google" , {type: G_SATELLITE_MAP, 'sphericalMercator': true, numZoomLevels: 22});
 
             map.addLayer(google);
 
-            map.setCenter(new OpenLayers.LonLat(138.493652, -18.604601), 5);
+            var center = new OpenLayers.LonLat(138.493652, -18.604601);
+            var proj = new OpenLayers.Projection("EPSG:4326");
+            center.transform(proj, map.getProjectionObject());
+            map.setCenter(center, 5);
+
+//            map.setCenter(new OpenLayers.LonLat(138.493652, -18.604601), 5);
             //map.addControl( new OpenLayers.Control.LayerSwitcher() );
 
 
