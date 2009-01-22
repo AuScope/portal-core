@@ -28,7 +28,12 @@
     <servlet-name>jsonDispatcher</servlet-name>
     <url-pattern>*.json</url-pattern>
   </servlet-mapping>
-  
+  <!--
+    <servlet-mapping>
+    <servlet-name>gmlDispatcher</servlet-name>
+    <url-pattern>*.gml</url-pattern>
+  </servlet-mapping>
+      -->
   <welcome-file-list>
   	<welcome-file>index.jsp</welcome-file>
   </welcome-file-list>

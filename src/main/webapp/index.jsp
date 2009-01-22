@@ -3,7 +3,10 @@
 <html>
 <head>
 <title>Auscope Portal</title>
+<link type="text/css" rel="stylesheet" href="js/geoxml/gmap.css" />
+
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=abcdefg" type="text/javascript"></script>
+<script src="js/geoxml/geoxml2.3DEC2008.js" type="text/javascript"></script>
 
 <!-- Bring in the ExtJs Libraries and CSS -->
 <link rel="stylesheet" type="text/css" href="js/ext-2.2/resources/css/ext-all.css"/>
@@ -11,6 +14,10 @@
 <script type="text/javascript" src="js/ext-2.2/adapter/ext/ext-base.js"></script>
 <script type="text/javascript" src="js/ext-2.2/ext-all.js"></script>
 <script type="text/javascript" src="js/ColumnNodeUI.js"></script>
+
+  <script src="js/OpenLayers-2.7/OpenLayers.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="js/OpenLayers-2.7/theme/default/style.css" type="text/css" />
+
 
 <script src="js/wms-gs-1_1_1.js" type="text/javascript"></script>
 <script src="js/wms_layer.js" type="text/javascript"></script>
@@ -92,20 +99,26 @@
                 //do something
                 //alert('about to check');
                 if (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '') {
-                    //alert('isnull');
+                    /*//alert('isnull');
                     var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
                     tileLayer.baseURL = node.attributes.wmsUrl;
                     tileLayer.layers = node.id;
 
                     //alert('madetilelayer');
-                    node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
+                    node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);*/
+
+                    node.attributes.tileOverlay = new OpenLayers.Layer.WMS( "Some WMS", node.attributes.wmsUrl, {layers: node.id} );
+                    //map.addLayer(layer);
                 }
                 //alert('adding ' + node.attributes.tileOverlay);
-                map.addOverlay(node.attributes.tileOverlay);
+                //map.addOverlay(node.attributes.tileOverlay);
+                map.addLayer(node.attributes.tileOverlay);
+
                 ///alert('added layer');
             }
             else { //not checked
-                map.removeOverlay(node.attributes.tileOverlay);
+                //map.removeOverlay(node.attributes.tileOverlay);
+                map.removeLayer(node.attributes.tileOverlay);
             }
 
         });
@@ -142,7 +155,7 @@
         //alert(${2+2});
 
         // Is user's browser suppported by Google Maps?
-        if (GBrowserIsCompatible()) {
+        /*if (GBrowserIsCompatible()) {
             //var map = new GMap2(document.getElementById("map-div"));
             map = new GMap2(centerPanel.body.dom);
             // Large pan and zoom control
@@ -159,7 +172,19 @@
             var Tsize = new GSize(150, 150);
             map.addControl(new GOverviewMapControl(Tsize));
 
-        }
+        }*/
+
+            map = new OpenLayers.Map(centerPanel.body.dom, {controls: [ new OpenLayers.Control.PanZoom(), new OpenLayers.Control.Permalink(), new OpenLayers.Control.MouseDefaults() ]});
+            //var layer = new OpenLayers.Layer.WMS( "OpenLayers WMS", "http://labs.metacarta.com/wms/vmap0", {layers: 'basic'} );
+            var google = new OpenLayers.Layer.Google( "Google Hybrid" , {type: G_HYBRID_MAP });
+
+            map.addLayer(google);
+
+            map.setCenter(new OpenLayers.LonLat(138.493652, -18.604601), 5);
+            //map.addControl( new OpenLayers.Control.LayerSwitcher() );
+
+
+
     });
 
     // Create a base icon for all of our markers that specifies the
@@ -314,6 +339,11 @@
         <!--</div>-->
     </div>
 </div>
+
+<div style="position:relative;width:250px;height: 550px;left:560px;top:-550px;overflow:auto" >
+		<div id="the_side_bar" ></div></div>
+
+    </div>
 
 
 <!--<div id="west-div">Some stuff here</div>

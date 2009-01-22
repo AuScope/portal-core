@@ -7,17 +7,36 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.ows.WMSCapabilities;
 import org.geotools.data.ows.Layer;
+import org.geotools.data.ows.WFSCapabilities;
 import org.geotools.data.wms.WebMapServer;
+import org.geotools.data.wfs.WFSDataStoreFactory;
+import org.geotools.data.wfs.WFSDataStore;
+import org.geotools.data.*;
 import org.geotools.ows.ServiceException;
+import org.geotools.feature.SchemaException;
+import org.geotools.feature.FeatureComparators;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.factory.Hints;
+import org.opengis.feature.type.Name;
+import org.opengis.feature.Feature;
+import org.opengis.filter.Filter;
+import org.opengis.filter.IncludeFilter;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Enumeration;
 import java.util.List;
 import java.net.URL;
+import java.net.URI;
 import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONSerializer;
@@ -186,4 +205,93 @@ class Something extends AbstractView {
         response.getWriter().write(JSONSerializer.toJSON(model.get("JSON_OBJECT")).toString());
     }
 
+}
+
+
+class blah {
+    /*public static void main(String[] args) {
+        HashMap params = new HashMap();
+        
+        try {
+            //params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL("http://www.gsv-tb.dpi.vic.gov.au/GeoSciMLv2.0/GeologicUnit/wfs")));
+            params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL("http://auscope-portal.arrc.csiro.au/geodesy/wfs")));
+
+            DataStore dataStore = new WFSDataStoreFactory().createDataStore(params);
+
+
+            //System.out.println(dataStore.getNames().));
+
+            for(String name : dataStore.getTypeNames()) {
+                *//*Query query = new DefaultQuery("gsml:GeologicUnit");
+                    FeatureReader ft = wfs.getFeatureReader(query,Transaction.AUTO_COMMIT);
+                    try {
+                         int count = 0;
+                         while(ft.hasNext())
+                            if(ft.next()!=null)
+                                count++;
+                         System.out.println("Found "+count+" features");
+                    }
+                    finally {
+                         ft.close();
+                    }
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    } catch (NoSuchElementException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAttributeException e) {
+                        e.printStackTrace();
+                    }*//*
+
+
+                *//*FeatureSource featureSource = dataStore.getFeatureSource(name);
+                FeatureCollection featureCollection= featureSource.getFeatures();
+
+                while (featureCollection.iterator().hasNext()) {
+                    Feature o = (Feature)featureCollection.iterator().next();
+                    System.out.println(o.getName());                                 
+                }*//*
+
+
+                //System.out.println(featureSource.getFeatures().size());
+                System.out.println(name);
+            }
+
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        } //catch (SchemaException e) {
+           // e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        //}
+
+    }*/
+
+    public static void main(String[] args) {
+        // 1. Instantiate a TransformerFactory.
+        javax.xml.transform.TransformerFactory tFactory =
+                          javax.xml.transform.TransformerFactory.newInstance();
+
+        // 2. Use the TransformerFactory to process the stylesheet Source and
+        //    generate a Transformer.
+        javax.xml.transform.Transformer transformer = null;
+        try {
+            transformer = tFactory.newTransformer
+                        (new javax.xml.transform.stream.StreamSource("gml2kml.xsl"));
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        // 3. Use the Transformer to transform an XML Source and send the
+        //    output to a Result object.
+        try {
+            transformer.transform
+            (new javax.xml.transform.stream.StreamSource("somegml.gml"),
+                 new javax.xml.transform.stream.StreamResult( new
+                                              java.io.FileOutputStream("somekml.kml")));
+        } catch (TransformerException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+    }
 }
