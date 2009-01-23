@@ -18,7 +18,7 @@
           <servlet-class>com.jsos.httpproxy.HttpProxyServlet</servlet-class>
         <init-param>
           <param-name>host</param-name>
-          <param-value>http://auscope-portal.arrc.csiro.au/nvcl/wfs</param-value>
+          <param-value>http://auscope-portal.arrc.csiro.au/gnss/wfs</param-value>
         </init-param>
     </servlet>
 

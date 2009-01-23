@@ -111,9 +111,20 @@
                     //map.addLayer(layer);
                 }
                 else if (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '' && node.attributes.layerType == 'wfs') {
-                    node.attributes.tileOverlay = new OpenLayers.Layer.WFS( "Somethihg",
+                    /*node.attributes.tileOverlay = new OpenLayers.Layer.WFS( "Somethihg",
                                         node.attributes.wfsUrl,
-                                        { typename: node.id } );
+                                        { typename: node.id, projection: 'none' } );
+                      */
+                    var request = OpenLayers.Request.GET({
+                        url: node.attributes.wfsUrl,
+                        params: {typename: node.id, REQUEST: 'GetFeature'},
+                        async: false
+                    });
+
+                    //alert(request.responseXML);
+
+                    node.attributes.tileOverlay = new OpenLayers.Layer.GML("GML", "somegml.xml");
+
                 }
 
                 //alert('adding ' + node.attributes.tileOverlay);
