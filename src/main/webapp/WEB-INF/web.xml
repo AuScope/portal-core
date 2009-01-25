@@ -13,7 +13,7 @@
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-    <servlet>
+    <!--<servlet>
           <servlet-name>HttpProxy</servlet-name>
           <servlet-class>com.jsos.httpproxy.HttpProxyServlet</servlet-class>
         <init-param>
@@ -25,8 +25,17 @@
     <servlet-mapping>
       <servlet-name>HttpProxy</servlet-name>
       <url-pattern>/geoserver/wfs</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
 
+    <servlet>
+      <servlet-name>RestProxy</servlet-name>
+      <servlet-class>com.jsos.restproxy.RestProxyServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+      <servlet-name>RestProxy</servlet-name>
+      <url-pattern>/restproxy</url-pattern>
+    </servlet-mapping>
 
   <servlet-mapping>
     <servlet-name>googlemap</servlet-name>

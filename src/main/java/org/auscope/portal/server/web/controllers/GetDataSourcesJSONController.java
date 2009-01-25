@@ -19,6 +19,7 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.factory.Hints;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.Feature;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.filter.Filter;
 import org.opengis.filter.IncludeFilter;
 import org.opengis.filter.sort.SortBy;
@@ -28,10 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.net.URL;
 import java.net.URI;
 import java.net.MalformedURLException;
@@ -100,25 +98,20 @@ public class GetDataSourcesJSONController extends AbstractController {
         borholes.put("leaf", Boolean.FALSE);
         jsonArray.add(borholes);
 
-        Map mineralOccurrences = new HashMap();
-        mineralOccurrences.put("id", "mineralOccurrences");
-        mineralOccurrences.put("text", "MineralOccurences");
-        mineralOccurrences.put("checked", Boolean.FALSE);
-        mineralOccurrences.put("leaf", Boolean.FALSE);
-        jsonArray.add(mineralOccurrences);
-
-        Map geologicalUnits = new HashMap();
-        geologicalUnits.put("id", "geologicalUnits");
-        geologicalUnits.put("text", "Geological Units");
-        geologicalUnits.put("checked", Boolean.FALSE);
-        geologicalUnits.put("leaf", Boolean.FALSE);
-        jsonArray.add(geologicalUnits);
+        Map gps = new HashMap();
+        gps.put("id", "gps");
+        gps.put("text", "Australian Regional GPS Network");
+        gps.put("checked", Boolean.FALSE);
+        gps.put("leaf", Boolean.TRUE);
+        gps.put("icon", "img/geodesy/gps_stations_on.png");
+        jsonArray.add(gps);
 
         Map gnnsGPS = new HashMap();
-        gnnsGPS.put("id", "gnnsGPS");
-        gnnsGPS.put("text", "GNNS/GPS");
+        gnnsGPS.put("id", "gnns");
+        gnnsGPS.put("text", "Global Navigation Satellite Systems (GNSS)");
         gnnsGPS.put("checked", Boolean.FALSE);
-        gnnsGPS.put("leaf", Boolean.FALSE);
+        gnnsGPS.put("leaf", Boolean.TRUE);
+        gnnsGPS.put("icon", "img/gnss/gps_stations_on.png");
         jsonArray.add(gnnsGPS);
 
         Map model = new HashMap();
@@ -146,12 +139,13 @@ public class GetDataSourcesJSONController extends AbstractController {
     private ModelAndView getBorholeInstitionalProviders() {
         JSONArray jsonArray = new JSONArray();
 
-        Map coe = new HashMap();
-        coe.put("id", "nvcl");
-        coe.put("text", "National Virtual Core Library");
-        coe.put("checked", Boolean.FALSE);
-        coe.put("leaf", Boolean.FALSE);
-        jsonArray.add(coe);
+        Map nvcl = new HashMap();
+        nvcl.put("id", "nvcl");
+        nvcl.put("text", "National Virtual Core Library");
+        nvcl.put("checked", Boolean.FALSE);
+        nvcl.put("leaf", Boolean.TRUE);
+        nvcl.put("icon", "img/nvcl/borehole_on.png");
+        jsonArray.add(nvcl);
 
         Map model = new HashMap();
         model.put("JSON_OBJECT", jsonArray);
@@ -258,10 +252,11 @@ class blah {
     public static void main(String[] args) {
         HashMap params = new HashMap();
 
+        String url = "http://auscope-portal.arrc.csiro.au/nvcl/wfs";
         //String url = "http://www.gsv-tb.dpi.vic.gov.au/GeoSciMLv2.0/GeologicUnit/wfs";
         //String url = "http://auscope-portal.arrc.csiro.au/geodesy/wfs";
 
-        String url = "http://localhost:8080/geoserver/wfs";
+        //String url = "http://localhost:8080/geoserver/wfs";
 
         try {
             //params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL(url)));
@@ -271,27 +266,29 @@ class blah {
 
 
             //System.out.println(dataStore.getNames().));
-
+            System.out.println("1");
             for(String name : dataStore.getTypeNames()) {
-                /*Query query = new DefaultQuery("gsml:GeologicUnit");
-                    FeatureReader ft = wfs.getFeatureReader(query,Transaction.AUTO_COMMIT);
-                    try {
-                         int count = 0;
-                         while(ft.hasNext())
-                            if(ft.next()!=null)
-                                count++;
-                         System.out.println("Found "+count+" features");
-                    }
-                    finally {
-                         ft.close();
-                    }
-                    }catch(IOException e){
-                        e.printStackTrace();
-                    } catch (NoSuchElementException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAttributeException e) {
-                        e.printStackTrace();
-                    }*/
+                //Query query = new DefaultQuery("gsml:Borehole");
+                //FeatureReader ft = dataStore.getFeatureReader(query,Transaction.AUTO_COMMIT);
+                FeatureSource fs = dataStore.getFeatureSource("gsml:Borehole");
+                FeatureCollection coll = fs.getFeatures();
+
+                System.out.println(coll.size());
+                /*try {
+                     int count = 0;
+                     while(ft.hasNext())
+                        if(ft.next()!=null)
+                            count++;
+                     System.out.println("Found "+count+" features");
+                } catch(IOException e){
+                    e.printStackTrace();
+                } catch (NoSuchElementException e) {
+                    e.printStackTrace();
+                } catch (IllegalAttributeException e) {
+                    e.printStackTrace();
+                } finally {
+                     ft.close();
+                }*/
 
 
                 /*FeatureSource featureSource = dataStore.getFeatureSource(name);

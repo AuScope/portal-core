@@ -3,10 +3,8 @@
 <html>
 <head>
 <title>Auscope Portal</title>
-<link type="text/css" rel="stylesheet" href="js/geoxml/gmap.css" />
 
 <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=abcdefg" type="text/javascript"></script>
-<script src="js/geoxml/geoxml2.3DEC2008.js" type="text/javascript"></script>
 
 <!-- Bring in the ExtJs Libraries and CSS -->
 <link rel="stylesheet" type="text/css" href="js/ext-2.2/resources/css/ext-all.css"/>
@@ -15,13 +13,73 @@
 <script type="text/javascript" src="js/ext-2.2/ext-all.js"></script>
 <script type="text/javascript" src="js/ColumnNodeUI.js"></script>
 
+<%--
   <script src="js/OpenLayers-2.7/OpenLayers.js" type="text/javascript"></script>
     <link rel="stylesheet" href="js/OpenLayers-2.7/theme/default/style.css" type="text/css" />
+--%>
 
 
 <script src="js/wms-gs-1_1_1.js" type="text/javascript"></script>
 <script src="js/wms_layer.js" type="text/javascript"></script>
 <script src="js/web_map_service.js" type="text/javascript"></script>
+
+
+
+  <script src="js/geoscimlwfs/utility_functions.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/feature_types/location.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/feature_types/coordinates.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/feature_types/sampling_curve.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/feature_types/borehole.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/feature_types/geodesy_stations.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/feature_types/sampling_point.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/feature_types/bushfire.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/global_variables.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/station_group.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/nvcl/nvcl_marker.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/geodesy/geodesy_calendar.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/geodesy/geodesy_marker.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/gnss/gnss_marker.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/ga_sentinel/ga_sentinel_marker.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/gzoom.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/map.js"
+    type="text/javascript">
+  </script>
+  <script src="js/geoscimlwfs/main.js"
+    type="text/javascript">
+  </script>
+
 
 <!-- Page specific javascript -->
 <script type="text/javascript">
@@ -68,8 +126,8 @@
             region: 'west',
             split: true,
             collapsible: true,
-            margins:'100 0 5 5',
-            cmargins:'100 5 5 5',
+            margins:'100 0 0 0',
+            cmargins:'100 0 0 0',
             width: 200,
             useArrows:true,
             autoScroll:true,
@@ -98,44 +156,48 @@
             if (isChecked) {
                 //do something
                 //alert('about to check');
-                if (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '' && node.attributes.layerType == 'wms') {
-                    /*//alert('isnull');
+                if (node.attributes.id == 'waCoe' && (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '')) {
+                    //alert('isnull');
                     var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
                     tileLayer.baseURL = node.attributes.wmsUrl;
                     tileLayer.layers = node.id;
 
                     //alert('madetilelayer');
-                    node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);*/
-
-                    node.attributes.tileOverlay = new OpenLayers.Layer.WMS( "Some WMS", node.attributes.wmsUrl, {layers: node.id, format: "image/png", transparent: "true", projection: "EPSG:900913"});
+                    node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
+                    map.addOverlay(node.attributes.tileOverlay);
+                    //node.attributes.tileOverlay = new OpenLayers.Layer.WMS( "Some WMS", node.attributes.wmsUrl, {layers: node.id, format: "image/png", transparent: "true", projection: "EPSG:900913"});
                     //map.addLayer(layer);
                 }
-                else if (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '' && node.attributes.layerType == 'wfs') {
+                else if (node.attributes.id == 'nvcl') {
+                    gaGroups["gsml:Borehole"].showMarkers(map);
                     /*node.attributes.tileOverlay = new OpenLayers.Layer.WFS( "Somethihg",
                                         node.attributes.wfsUrl,
-                                        { typename: node.id, projection: 'none' } );
-                      */
-                    var request = OpenLayers.Request.GET({
-                        url: node.attributes.wfsUrl,
-                        params: {typename: node.id, REQUEST: 'GetFeature'},
-                        async: false
-                    });
-
-                    //alert(request.responseXML);
-
-                    node.attributes.tileOverlay = new OpenLayers.Layer.GML("GML", "somegml.xml");
-
+                                        { typename: node.id } );*/
                 }
-
+                else if (node.attributes.id == 'gps') {
+                    gaGroups["geodesy:stations"].showMarkers(map);
+                    /*node.attributes.tileOverlay = new OpenLayers.Layer.WFS( "Somethihg",
+                                        node.attributes.wfsUrl,
+                                        { typename: node.id } );*/
+                }
                 //alert('adding ' + node.attributes.tileOverlay);
-                //map.addOverlay(node.attributes.tileOverlay);
-                map.addLayer(node.attributes.tileOverlay);
-                node.attributes.tileOverlay.setVisibility(true);
+
+                //map.addLayer(node.attributes.tileOverlay);
+                //node.attributes.tileOverlay.setVisibility(true);
                 ///alert('added layer');
             }
             else { //not checked
                 //map.removeOverlay(node.attributes.tileOverlay);
-                map.removeLayer(node.attributes.tileOverlay);
+                if (node.attributes.id == 'nvcl') {
+                    gaGroups["gsml:Borehole"].hideMarkers(map); 
+                    /*node.attributes.tileOverlay = new OpenLayers.Layer.WFS( "Somethihg",
+                                        node.attributes.wfsUrl,
+                                        { typename: node.id } );*/
+                } else if(node.attributes.id == 'gps') {
+                    gaGroups["geodesy:stations"].hideMarkers(map);      
+                }
+                else
+                    map.removeLayer(node.attributes.tileOverlay);
             }
 
         });
@@ -143,6 +205,7 @@
         tree.on('expandnode', function(node) {
             //var clickedNode = tree.getSelectionModel().getSelectedNode();
             //alert(node + " expanded");
+
         });
 
         var westPanel = {
@@ -154,15 +217,16 @@
          //minSize: 175,
          maxSize: 400,
          collapsible: true,
-         margins:'100 0 5 5',
-         cmargins:'100 5 5 5'
+         margins:'100 0 0 0',
+         cmargins:'100 0 0 0'
          };
 
-        var centerPanel = new Ext.Panel({region:"center", margins:'100 5 5 0'});
+        var centerPanel = new Ext.Panel({region:"center", margins:'100 0 0 0', cmargins:'100 0 0 0'});
+        var rightPanel = new Ext.Panel({region:"east", margins:'100 0 0 0', cmargins:'100 0 0 0', title: "More Options", split:true, size: 400, collapsible: true});
 
         var viewport = new Ext.Viewport({
             layout:'border',
-            items:[tree, centerPanel]
+            items:[tree, centerPanel, rightPanel]
         });
 
         //<![CDATA[
@@ -172,7 +236,7 @@
         //alert(${2+2});
 
         // Is user's browser suppported by Google Maps?
-        /*if (GBrowserIsCompatible()) {
+        if (GBrowserIsCompatible()) {
             //var map = new GMap2(document.getElementById("map-div"));
             map = new GMap2(centerPanel.body.dom);
             // Large pan and zoom control
@@ -182,15 +246,15 @@
 
             var startZoom = 4;
             //map.setCenter(new GLatLng(${centerLat},${centerLon}), 4);
-            map.setCenter(new google.maps.LatLng(-18.604601, 138.493652), 5);
+            map.setCenter(new google.maps.LatLng(-26, 133.3), 4);
             map.setMapType(G_SATELLITE_MAP);
 
             //Thumbnail map
             var Tsize = new GSize(150, 150);
             map.addControl(new GOverviewMapControl(Tsize));
 
-        }*/
-        var options = {
+        }
+        /*var options = {
                         projection: new OpenLayers.Projection("EPSG:900913"),
                         displayProjection: new OpenLayers.Projection("EPSG:4326"),
                         units: "m",
@@ -211,14 +275,16 @@
             var center = new OpenLayers.LonLat(138.493652, -18.604601);
             var proj = new OpenLayers.Projection("EPSG:4326");
             center.transform(proj, map.getProjectionObject());
-            map.setCenter(center, 5);
+            map.setCenter(center, 5);*/
 
 //            map.setCenter(new OpenLayers.LonLat(138.493652, -18.604601), 5);
             //map.addControl( new OpenLayers.Control.LayerSwitcher() );
 
-
+        getCapabilities();
 
     });
+
+
 
     // Create a base icon for all of our markers that specifies the
     // shadow, icon dimensions, etc.
