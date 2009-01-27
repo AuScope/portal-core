@@ -155,8 +155,8 @@ public class GetDataSourcesJSONController extends AbstractController {
 
    private ModelAndView getLayers(String node) {
        //String server  = "http://localhost:8090/geoserver/wms?";
-       String server  = "http://c3dmm2.ivec.org/geoserver/wms?";
-       //String server  = "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?";
+       //String server  = "http://c3dmm2.ivec.org/geoserver/wms?";
+       String server  = "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?";
 
        WebMapServer wms = null;
         try {
