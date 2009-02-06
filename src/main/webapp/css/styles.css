@@ -1,53 +1,107 @@
-<style type="text/css">
+<style>
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
 
-  html {
-    height:100%; 
-    max-height:100%; 
-    padding:0;
-    margin:0; 
-    border:0; 
-    background:#fff; 
-    font-size:76%; 
-    font-family:georgia, palatino linotype, times new roman, serif;
-    /* hide overflow:hidden from IE5/Mac */ 
-    /* \*/ 
-      overflow: hidden; 
-    /* */ 
-  }
+    #header-container {
+        width: 100%;
+        height: 100px;
+        background-color: #ffffff;
+    }
 
-  body {
-    height:100%; max-height:100%; overflow:hidden; padding:0; margin:0; border:0;}
+    #header {
+        background-image: url( "/img/img-auscope-banner.gif" );
+        background-repeat: no-repeat;
+        width: 100%;
+        height: 100px;
+    #margin : auto;
+    }
 
-  #content {
-    overflow:auto; position:absolute; z-index:3; top:65px; bottom:50px; left:200px; right:0; background:#eee;}
+    #logo {
+        float: left;
+        padding-top: 40px;
+        padding-left: 0px;
+    }
 
-  * html #content {
-    top:0; left:0; right:0; bottom:0; height:100%; max-height:100%; width:100%; overflow:auto; position:absolute; z-index:3; border-top:100px solid #fff; border-bottom:50px solid #fff; border-left:200px solid #fff;}
+    #login {
+        float: right;
+        padding-right: 30px;
+        padding-top: 10px;
+    }
 
-  #head {
-    position:absolute; margin:0; top:0; left:0; display:block; width:100%; height:65px; background:url("../img/Auscope_header.jpg") #000; background-position:top right; background-repeat:no-repeat; font-size:3em; z-index:5; overflow:hidden; color:#fff;}
+    img {
+        border: none;
+    }
 
-  #foot {
-    position:absolute; margin:0; bottom:0; left:0; display:block; width:100%; height:50px; font-size:1em; z-index:5; overflow:hidden; background:rgb(76,76,76); color:#fff;}
+    #nav {
+        float: right;
 
-  #left {
-    position:absolute; left:0; top:65px; bottom:50px; width:200px; background:rgb(76,76,76); font-size:1.0em; z-index:4; overflow:auto; background-repeat:no-repeat;}
+        padding-top: 0px;
+        padding-right: 40px;
+    }
 
-  * html #left {
-    height:100%; top:0; bottom:0; border-top:100px solid #fff; border-bottom:50px solid #fff; color:#fff;}
+    #nav ul {
+        text-align: left;
+        padding: 0px;
+        margin: 0px;
+    #width : 1024 px;
+    }
 
-  #content p {
-    padding:10px;}
+    #nav ul li {
+        display: inline;
+        padding: 0px;
+        margin: 0px;
+    }
 
-  .bold {
-    font-size:1.2em; font-weight:bold;}
+    #nav-example {
+        background: url( "/img/navigation.gif" ) no-repeat;
+        width: 300px;
+        height: 38px;
+        margin: 0;
+        padding: 0;
+        float: right;
+        padding-right: 40px;
+    }
 
-  dd {
-    display:none;}
+    #nav-example span {
+        display: none;
+    }
 
-  a.nav, a.nav:visited {
-    margin-left:20px; display:block; width:155px; height:25px; background:#aaa; color:#eee; border:1px solid #000; text-decoration:none; text-align:center; line-height:25px;}
+    #nav-example li, #nav-example a {
+        height: 38px;
+        display: block;
+    }
 
-  a.nav:hover {
-    background:#000; color:#fff;}
+    #nav-example li {
+        float: left;
+        list-style: none;
+        display: inline;
+    }
+
+    #nav-example-01 {
+        width: 100px;
+    }
+
+    #nav-example-02 {
+        width: 100px;
+    }
+
+    #nav-example-03 {
+        width: 100px;
+    }
+
+    #nav-example-01 a:hover {
+        background: url( "/img/navigation.gif" ) 0px -38px no-repeat;
+    }
+
+    #nav-example-02 a:hover {
+        background: url( "/img/navigation.gif" ) -100px -38px no-repeat;
+    }
+
+    #nav-example-03 a:hover {
+        background: url( "/img/navigation.gif" ) -200px -38px no-repeat;
+    }
+
+
 </style>

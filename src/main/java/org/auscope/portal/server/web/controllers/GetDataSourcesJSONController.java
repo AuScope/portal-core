@@ -7,35 +7,23 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.geotools.data.ows.WMSCapabilities;
 import org.geotools.data.ows.Layer;
-import org.geotools.data.ows.WFSCapabilities;
 import org.geotools.data.wms.WebMapServer;
 import org.geotools.data.wfs.WFSDataStoreFactory;
-import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.data.*;
 import org.geotools.ows.ServiceException;
-import org.geotools.feature.SchemaException;
-import org.geotools.feature.FeatureComparators;
 import org.geotools.feature.FeatureCollection;
-import org.geotools.factory.Hints;
-import org.opengis.feature.type.Name;
-import org.opengis.feature.Feature;
 import org.opengis.feature.IllegalAttributeException;
-import org.opengis.filter.Filter;
-import org.opengis.filter.IncludeFilter;
-import org.opengis.filter.sort.SortBy;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.simple.SimpleFeature;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.util.*;
 import java.net.URL;
-import java.net.URI;
 import java.net.MalformedURLException;
 import java.io.IOException;
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.Serializable;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONSerializer;
@@ -46,198 +34,216 @@ import net.sf.json.JSONSerializer;
  * Time: 2:01:42 PM
  */
 public class GetDataSourcesJSONController extends AbstractController {
+    //logger
+    protected final Log logger = LogFactory.getLog(getClass());
 
-   protected final Log logger = LogFactory.getLog(getClass());
-    private Enumeration params;
+    //create some static members to identify each of the themes to be displayed in the portal
+    public static final String BORHOLE = "Borhole";
+    public static final String HYPERSPECTRAL = "Hyperspectral";
+    public static final String GEOCEHMISTRY = "Geochemistry";
+    public static final String MINERAL_OCCURENCES = "Mineral Occurences";
+    public static final String GNSS_GPS = "GNSS/GPS";
+    public static final String SEISMIC_IMAGING = "Seismic Imaging";
+
+    //some contants to identify themes and insitutions
+    public static final String THEME = "THEME:";
+    public static final String INSTITUTION = "INSTITUTION:";
 
     @Override
-   protected ModelAndView handleRequestInternal(HttpServletRequest request,
-        HttpServletResponse response) throws Exception {
+    protected ModelAndView handleRequestInternal(HttpServletRequest request,
+                                                 HttpServletResponse response) throws Exception {
 
-        /*logger.info("started!");
-
-        params = request.getParameterNames();
-        while(params.hasMoreElements()) {
-            String element = (String)params.nextElement();
-            System.out.println( element + " " + request.getParameter(element));
-        }*/
-
+        //Ext js sends the tree node id on a request for its children
         String node = request.getParameter("node");
 
-        if(node.equals("root"))
-            return getThemes();
-        else if(node.equals("SurfaceSpectra"))
-            return getSpectraInstitionalProviders();
-        else if(node.equals("borholes"))
-            return getBorholeInstitionalProviders();
-        else if(node.equals("waCoe"))
-            return getLayers(node);
-        else if(node.equals("nvcl"))
-            return getFeatures();
-
-        return new ModelAndView(new Something(), new HashMap());
-   }
-
-
-
-    //sets up the data theme nodes
-   private ModelAndView getThemes() {
+        //a JSON array to handle the structures created
         JSONArray jsonArray = new JSONArray();
 
-        Map spectral = new HashMap();
-        spectral.put("id", "SurfaceSpectra");
-        spectral.put("text", "Surface Spectra");
-        spectral.put("checked", Boolean.FALSE);
-        spectral.put("leaf", Boolean.FALSE);
-        jsonArray.add(spectral);
+        //if we are opening the root node then we want to send back all of the available themes
+        if (node.equals("root"))
+            jsonArray = getThemes();
 
-        Map borholes = new HashMap();
-        borholes.put("id", "borholes");
-        borholes.put("text", "Boreholes");
+        //hyperspectral is a special case because it is MAP data, and has to be categorised futher down into layers
+        //differently to the feature services
+        else if (node.equals(THEME+HYPERSPECTRAL))
+            jsonArray = getSpectraInstitionalProviders();
+
+        //if we have a theme tree node, then go find the institutions providing the data for it
+        else if (node.startsWith(THEME))
+            jsonArray = getInstitionalProviders(node.replace(THEME, ""));
+
+        //this is an institution being expanded, must be for spectral data, so go get the layers
+        else if(node.startsWith(INSTITUTION))
+            jsonArray = getHyperspectralLayers(node.replace(INSTITUTION, ""));
+
+        //send it back...
+        return this.getJsonModelAndView(jsonArray);
+    }
+
+    /**
+     * Builds the theme list which will be sent back and displayed to the ExtJS tree in the portal      
+     * @return
+     */
+    public JSONArray getThemes() {
+        JSONArray jsonArray = new JSONArray();
+
+        Map<String, Serializable> hyperspectral = new HashMap<String, Serializable>();
+        hyperspectral.put("id", THEME+HYPERSPECTRAL);
+        hyperspectral.put("text", HYPERSPECTRAL);
+        hyperspectral.put("checked", Boolean.FALSE);
+        hyperspectral.put("leaf", Boolean.FALSE);
+        jsonArray.add(hyperspectral);
+
+        Map<String, Serializable> borholes = new HashMap<String, Serializable>();
+        borholes.put("id", THEME+BORHOLE);
+        borholes.put("text", BORHOLE);
         borholes.put("checked", Boolean.FALSE);
         borholes.put("leaf", Boolean.FALSE);
         jsonArray.add(borholes);
 
-        Map gps = new HashMap();
-        gps.put("id", "gps");
-        gps.put("text", "Australian Regional GPS Network");
-        gps.put("checked", Boolean.FALSE);
-        gps.put("leaf", Boolean.TRUE);
-        gps.put("icon", "img/geodesy/gps_stations_on.png");
-        jsonArray.add(gps);
-
-        Map gnnsGPS = new HashMap();
-        gnnsGPS.put("id", "gnns");
-        gnnsGPS.put("text", "Global Navigation Satellite Systems (GNSS)");
+        Map<String, Serializable> gnnsGPS = new HashMap<String, Serializable>();
+        gnnsGPS.put("id", THEME+GNSS_GPS);
+        gnnsGPS.put("text", GNSS_GPS);
         gnnsGPS.put("checked", Boolean.FALSE);
-        gnnsGPS.put("leaf", Boolean.TRUE);
-        gnnsGPS.put("icon", "img/gnss/gps_stations_on.png");
+        gnnsGPS.put("leaf", Boolean.FALSE);
+        //gnnsGPS.put("icon", "img/gnss/gps_stations_on.png");
         jsonArray.add(gnnsGPS);
 
-        Map model = new HashMap();
-        model.put("JSON_OBJECT", jsonArray);
+        Map<String, Serializable> geochemistry = new HashMap<String, Serializable>();
+        geochemistry.put("id", THEME+GEOCEHMISTRY);
+        geochemistry.put("text", GEOCEHMISTRY);
+        geochemistry.put("checked", Boolean.FALSE);
+        geochemistry.put("leaf", Boolean.FALSE);
+        jsonArray.add(geochemistry);
 
-        return new ModelAndView(new Something(), model);
-   }
+        Map<String, Serializable> mineralOccurrences = new HashMap<String, Serializable>();
+        mineralOccurrences.put("id", THEME+MINERAL_OCCURENCES);
+        mineralOccurrences.put("text", MINERAL_OCCURENCES);
+        mineralOccurrences.put("checked", Boolean.FALSE);
+        mineralOccurrences.put("leaf", Boolean.FALSE);
+        jsonArray.add(mineralOccurrences);
 
-   private ModelAndView getSpectraInstitionalProviders() {
+        Map<String, Serializable> seismicImaging = new HashMap<String, Serializable>();
+        seismicImaging.put("id", THEME+SEISMIC_IMAGING);
+        seismicImaging.put("text", SEISMIC_IMAGING);
+        seismicImaging.put("checked", Boolean.FALSE);
+        seismicImaging.put("leaf", Boolean.FALSE);
+        jsonArray.add(seismicImaging);
+
+        //create a model and view and return it
+        return jsonArray;
+    }
+
+    /**
+     * Given a theme, provide a list of intitutions and also the WFS query to get the data
+     * from this institution
+     * @param theme
+     * @return
+     */
+    private JSONArray getInstitionalProviders(String theme) {
+        //go off to geo network
+
+        //do some magic
+
+        //return some stuff - temp for now
         JSONArray jsonArray = new JSONArray();
 
-        Map coe = new HashMap();
-        coe.put("id", "waCoe");
-        coe.put("text", "WA Center of Excellence for 3D Mineral Mapping");
-        coe.put("checked", Boolean.FALSE);
-        coe.put("leaf", Boolean.FALSE);
-        jsonArray.add(coe);
-
-        Map model = new HashMap();
-        model.put("JSON_OBJECT", jsonArray);
-
-        return new ModelAndView(new Something(), model);
-   }
-
-    private ModelAndView getBorholeInstitionalProviders() {
-        JSONArray jsonArray = new JSONArray();
-
-        Map nvcl = new HashMap();
+        Map<String, Serializable> nvcl = new HashMap<String, Serializable>();
         nvcl.put("id", "nvcl");
         nvcl.put("text", "National Virtual Core Library");
         nvcl.put("checked", Boolean.FALSE);
         nvcl.put("leaf", Boolean.TRUE);
         nvcl.put("icon", "img/nvcl/borehole_on.png");
+        nvcl.put("layerType", "wfs");
+        nvcl.put("tileOverlay", "");
+        nvcl.put("wfsUrl", "url1");
         jsonArray.add(nvcl);
 
-        Map model = new HashMap();
-        model.put("JSON_OBJECT", jsonArray);
+        return jsonArray;
+    }
 
-        return new ModelAndView(new Something(), model);
-   }
+    /**
+     * Returns a list of Institutions who are proving hyperpectral map data
+     * @return
+     */
+    private JSONArray getSpectraInstitionalProviders() {
+        //TODO: need a geonetowrk query here!
 
-   private ModelAndView getLayers(String node) {
-       //String server  = "http://localhost:8090/geoserver/wms?";
-       //String server  = "http://c3dmm2.ivec.org/geoserver/wms?";
-       String server  = "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?";
+        JSONArray jsonArray = new JSONArray();
 
-       WebMapServer wms = null;
+        Map<String, Serializable> coe = new HashMap<String, Serializable>();
+        coe.put("id", INSTITUTION+"waCoe");
+        coe.put("text", "WA Center of Excellence for 3D Mineral Mapping");
+        coe.put("checked", Boolean.FALSE);
+        coe.put("leaf", Boolean.FALSE);
+        jsonArray.add(coe);
+
+        return jsonArray;
+    }
+
+    /**
+     * Given an institution, grab all of the hyperspectral layers from its WMS's
+     * @param institution
+     * @return
+     */
+    private JSONArray getHyperspectralLayers(String institution) {
+        //TODO: call geonetwork and get the WMS urls based on the institution...
+
+        String server = "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?";
+
+        WebMapServer wms = null;
         try {
             wms = new WebMapServer(new URL(server));
         } catch (IOException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         } catch (ServiceException e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
         WMSCapabilities capabilities = wms.getCapabilities();
 
         JSONArray jsonArray = new JSONArray();
 
         List<Layer> layers = capabilities.getLayerList();
-        for(Layer layer : layers) {
-            Map layerNode = new HashMap();
+        for (Layer layer : layers) {
+            Map<String, Serializable> layerNode = new HashMap<String, Serializable>();
             layerNode.put("id", layer.getName());
             layerNode.put("text", layer.getName());
             layerNode.put("checked", Boolean.FALSE);
             layerNode.put("leaf", Boolean.TRUE);
             layerNode.put("layerType", "wms");
-
             layerNode.put("wmsUrl", server);
             layerNode.put("tileOverlay", "");
 
-            //layerNode.put("layerURL", layer.get)
             jsonArray.add(layerNode);
         }
 
-        Map model = new HashMap();
-        model.put("JSON_OBJECT", jsonArray);
-
-        return new ModelAndView(new Something(), model);
+        return jsonArray;
     }
 
-    private ModelAndView getFeatures() {
-        //String url = "http://localhost:8090/geoserver/wfs";
-        String url = "http://auscope-portal.arrc.csiro.au/gnss/wfs";
-        HashMap params = new HashMap();
-        JSONArray jsonArray = new JSONArray();
-
-        try {
-            params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL(url)));
-            DataStore dataStore = new WFSDataStoreFactory().createDataStore(params);
-
-            for(String name : dataStore.getTypeNames()) {
-
-                Map layerNode = new HashMap();
-                layerNode.put("id", name);
-                layerNode.put("text", name);
-                layerNode.put("checked", Boolean.FALSE);
-                layerNode.put("leaf", Boolean.TRUE);
-                layerNode.put("layerType", "wfs");
-
-                layerNode.put("wfsUrl", "http://localhost:8080/geoserver/wfs");
-                layerNode.put("tileOverlay", "");
-
-                //layerNode.put("layerURL", layer.get)
-                jsonArray.add(layerNode);
-
-            }
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Map model = new HashMap();
+    /**
+     * This method takes a JSONArray and builds a SpringMVC Model and View from it, so it can be returned in the
+     * http response to the client.
+     * 
+     * @param jsonArray
+     * @return
+     */
+    private ModelAndView getJsonModelAndView(JSONArray jsonArray) {
+        Map<String, JSONArray> model = new HashMap<String, JSONArray>();
         model.put("JSON_OBJECT", jsonArray);
 
-        return new ModelAndView(new Something(), model);
+        return new ModelAndView(new JSONView(), model);
     }
 }
 
+/**
+ * This class is a JSON spring MVC View class which takes a JSONArray and sends the actual json structure down the
+ * wire on the httpResponse
+ */
+class JSONView extends AbstractView {
 
-class Something extends AbstractView {
-
-    public Something() {
+    public JSONView() {
         super();
-        setContentType("application/json");    
+        setContentType("application/json");
     }
 
     protected void renderMergedOutputModel(Map model, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -245,71 +251,4 @@ class Something extends AbstractView {
         response.getWriter().write(JSONSerializer.toJSON(model.get("JSON_OBJECT")).toString());
     }
 
-}
-
-
-class blah {
-    public static void main(String[] args) {
-        HashMap params = new HashMap();
-
-        String url = "http://auscope-portal.arrc.csiro.au/nvcl/wfs";
-        //String url = "http://www.gsv-tb.dpi.vic.gov.au/GeoSciMLv2.0/GeologicUnit/wfs";
-        //String url = "http://auscope-portal.arrc.csiro.au/geodesy/wfs";
-
-        //String url = "http://localhost:8080/geoserver/wfs";
-
-        try {
-            //params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL(url)));
-            params.put(WFSDataStoreFactory.URL.key, WFSDataStoreFactory.createGetCapabilitiesRequest(new URL(url)));
-
-            DataStore dataStore = new WFSDataStoreFactory().createDataStore(params);
-
-
-            //System.out.println(dataStore.getNames().));
-            System.out.println("1");
-            for(String name : dataStore.getTypeNames()) {
-                //Query query = new DefaultQuery("gsml:Borehole");
-                //FeatureReader ft = dataStore.getFeatureReader(query,Transaction.AUTO_COMMIT);
-                FeatureSource fs = dataStore.getFeatureSource("gsml:Borehole");
-                FeatureCollection coll = fs.getFeatures();
-
-                System.out.println(coll.size());
-                /*try {
-                     int count = 0;
-                     while(ft.hasNext())
-                        if(ft.next()!=null)
-                            count++;
-                     System.out.println("Found "+count+" features");
-                } catch(IOException e){
-                    e.printStackTrace();
-                } catch (NoSuchElementException e) {
-                    e.printStackTrace();
-                } catch (IllegalAttributeException e) {
-                    e.printStackTrace();
-                } finally {
-                     ft.close();
-                }*/
-
-
-                /*FeatureSource featureSource = dataStore.getFeatureSource(name);
-                FeatureCollection featureCollection= featureSource.getFeatures();
-
-                while (featureCollection.iterator().hasNext()) {
-                    Feature o = (Feature)featureCollection.iterator().next();
-                    System.out.println(o.getName());                                 
-                }*/
-
-
-                //System.out.println(featureSource.getFeatures().size());
-                System.out.println(name);
-            }
-
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        } //catch (SchemaException e) {
-           // e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        //}
-
-    }
 }

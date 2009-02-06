@@ -16,10 +16,5 @@
 
     <bean name="getDataSourcesJSONController" class="org.auscope.portal.server.web.controllers.GetDataSourcesJSONController"/>
 
-    <!--<bean name="jsonView" class="org.springframework.web.servlet.view.json.JsonView">
-        <property name="jsonWriter"><ref bean="jsonlibJsonWriter"/></property>
-    </bean>
 
-    <bean name="jsonlibJsonWriter" class="org.springframework.web.servlet.view.json.writer.jsonlib.JsonlibJsonStringWriter"/>
--->
 </beans>
