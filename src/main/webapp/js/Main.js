@@ -25,13 +25,18 @@ Ext.onReady(function() {
     });
 
     tree.on('checkchange', function(node, isChecked) {
-        if (isChecked) { //the check was checked on
+        //the check was checked on
+        if (isChecked) {
             if (node.attributes.layerType == 'wms' && (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '')) {
-                var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
-                tileLayer.baseURL = node.attributes.wmsUrl;
-                tileLayer.layers = node.id;
-
-                //alert('madetilelayer');
+                //var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
+                var tileLayer =  new GTileLayer(null, null, null, {
+                    tileUrlTemplate: node.attributes.wmsUrl+'layers='+node.id+'_{Z}_{X}_{Y}.png',
+                    isPng:true,
+                    opacity:1.0 }
+                );
+                //tileLayer.baseURL = node.attributes.wmsUrl;
+                //tileLayer.layers = node.id;
+                alert(node.attributes.wmsUrl+'layers='+node.id);
                 node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
                 map.addOverlay(node.attributes.tileOverlay);
                 //node.attributes.tileOverlay = new OpenLayers.Layer.WMS( "Some WMS", node.attributes.wmsUrl, {layers: node.id, format: "image/png", transparent: "true", projection: "EPSG:900913"});
@@ -43,15 +48,10 @@ Ext.onReady(function() {
                 map.addOverlay(node.attributes.tileOverlay);
             }
         }
-        else { //the check was checked off so remove the overlay
+        //the check was checked off so remove the overlay
+        else {
             map.removeOverlay(node.attributes.tileOverlay);
         }
-    });
-
-    tree.on('expandnode', function(node) {
-        //var clickedNode = tree.getSelectionModel().getSelectedNode();
-        //alert(node + " expanded");
-
     });
 
     var westPanel = {
@@ -83,23 +83,23 @@ Ext.onReady(function() {
 
     // Is user's browser suppported by Google Maps?
     if (GBrowserIsCompatible()) {
-        //var map = new GMap2(document.getElementById("map-div"));
         map = new GMap2(centerPanel.body.dom);
+
         // Large pan and zoom control
         map.addControl(new GLargeMapControl());
+
         // Toggle between Map, Satellite, and Hybrid types
         map.addControl(new GMapTypeControl());
 
         var startZoom = 4;
-        //map.setCenter(new GLatLng(${centerLat},${centerLon}), 4);
         map.setCenter(new google.maps.LatLng(-26, 133.3), 4);
         map.setMapType(G_SATELLITE_MAP);
 
         //Thumbnail map
         var Tsize = new GSize(150, 150);
         map.addControl(new GOverviewMapControl(Tsize));
-
     }
+
     /*var options = {
      projection: new OpenLayers.Projection("EPSG:900913"),
      displayProjection: new OpenLayers.Projection("EPSG:4326"),
@@ -123,8 +123,8 @@ Ext.onReady(function() {
      center.transform(proj, map.getProjectionObject());
      map.setCenter(center, 5);*/
 
-    //            map.setCenter(new OpenLayers.LonLat(138.493652, -18.604601), 5);
+    //map.setCenter(new OpenLayers.LonLat(138.493652, -18.604601), 5);
     //map.addControl( new OpenLayers.Control.LayerSwitcher() );
 
-    getCapabilities();
+    //getCapabilities();
 });

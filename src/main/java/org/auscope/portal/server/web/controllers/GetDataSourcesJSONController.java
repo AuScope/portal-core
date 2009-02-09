@@ -8,20 +8,12 @@ import org.apache.commons.logging.LogFactory;
 import org.geotools.data.ows.WMSCapabilities;
 import org.geotools.data.ows.Layer;
 import org.geotools.data.wms.WebMapServer;
-import org.geotools.data.wfs.WFSDataStoreFactory;
-import org.geotools.data.*;
 import org.geotools.ows.ServiceException;
-import org.geotools.feature.FeatureCollection;
-import org.opengis.feature.IllegalAttributeException;
-import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.simple.SimpleFeature;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 import java.net.URL;
-import java.net.MalformedURLException;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -38,7 +30,7 @@ public class GetDataSourcesJSONController extends AbstractController {
     protected final Log logger = LogFactory.getLog(getClass());
 
     //create some static members to identify each of the themes to be displayed in the portal
-    public static final String BORHOLE = "Borhole";
+    public static final String BOREHOLE = "Borehole";
     public static final String HYPERSPECTRAL = "Hyperspectral";
     public static final String GEOCEHMISTRY = "Geochemistry";
     public static final String MINERAL_OCCURENCES = "Mineral Occurences";
@@ -95,8 +87,8 @@ public class GetDataSourcesJSONController extends AbstractController {
         jsonArray.add(hyperspectral);
 
         Map<String, Serializable> borholes = new HashMap<String, Serializable>();
-        borholes.put("id", THEME+BORHOLE);
-        borholes.put("text", BORHOLE);
+        borholes.put("id", THEME+ BOREHOLE);
+        borholes.put("text", BOREHOLE);
         borholes.put("checked", Boolean.FALSE);
         borholes.put("leaf", Boolean.FALSE);
         jsonArray.add(borholes);
@@ -141,6 +133,7 @@ public class GetDataSourcesJSONController extends AbstractController {
      * @return
      */
     private JSONArray getInstitionalProviders(String theme) {
+        //TODO: geonetwork query
         //go off to geo network
 
         //do some magic
@@ -156,7 +149,9 @@ public class GetDataSourcesJSONController extends AbstractController {
         nvcl.put("icon", "img/nvcl/borehole_on.png");
         nvcl.put("layerType", "wfs");
         nvcl.put("tileOverlay", "");
-        nvcl.put("wfsUrl", "url1");
+        nvcl.put("wfsUrl", "http://c3dmm2.ivec.org/geoserver/wms/kml_reflect?layers=topp:HyMap_A_Ferrous_and_MgOH");
+        //nvcl.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
+
         jsonArray.add(nvcl);
 
         return jsonArray;
@@ -190,6 +185,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         //TODO: call geonetwork and get the WMS urls based on the institution...
 
         String server = "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?";
+        String gmapsUrl = "http://c3dmm2.ivec.org/geoserver/gwc/service/gmaps?";
 
         WebMapServer wms = null;
         try {
@@ -211,7 +207,7 @@ public class GetDataSourcesJSONController extends AbstractController {
             layerNode.put("checked", Boolean.FALSE);
             layerNode.put("leaf", Boolean.TRUE);
             layerNode.put("layerType", "wms");
-            layerNode.put("wmsUrl", server);
+            layerNode.put("wmsUrl", gmapsUrl);
             layerNode.put("tileOverlay", "");
 
             jsonArray.add(layerNode);

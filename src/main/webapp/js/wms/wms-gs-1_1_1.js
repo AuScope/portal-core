@@ -99,22 +99,22 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
 	var upperLeft = proj.fromPixelToLatLng(upperLeftPix, zoom);
 	var lowerRight = proj.fromPixelToLatLng(lowerRightPix, zoom);
 
-	/*if (this.mercZoomLevel != 0 && zoom < this.mercZoomLevel) {
+	if (this.mercZoomLevel != 0 && zoom < this.mercZoomLevel) {
 		var boundBox = this.dd2MercMetersLng(upperLeft.lng()) + "," +
 			       this.dd2MercMetersLat(upperLeft.lat()) + "," +
 			       this.dd2MercMetersLng(lowerRight.lng()) + "," +
 			       this.dd2MercMetersLat(lowerRight.lat());
 		// Change for GeoServer - 41001 is mercator and installed by default.
 		var srs = "EPSG:3395";
-	} else {*/
+	} else {
     	var boundBox = upperLeft.lng() + "," +
     	               upperLeft.lat() + "," +
     	               lowerRight.lng() + "," +
     	               lowerRight.lat();
     	var srs = "EPSG:4326";
-	//}
+	}
 	var url = this.baseURL;
-	url += "&REQUEST=GetMap";
+	url += "REQUEST=GetMap";
 	url += "&SERVICE=WMS";
 	url += "&VERSION=1.1.1";
 	if (this.layers)

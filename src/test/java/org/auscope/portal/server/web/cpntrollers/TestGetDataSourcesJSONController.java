@@ -75,7 +75,7 @@ public class TestGetDataSourcesJSONController {
      */
     @Test
     public void testGetSpectralInstitutionalProviders() {
-            
+               
     }
 
     /**
