@@ -9,13 +9,26 @@ import org.geotools.data.ows.WMSCapabilities;
 import org.geotools.data.ows.Layer;
 import org.geotools.data.wms.WebMapServer;
 import org.geotools.ows.ServiceException;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.w3c.dom.NodeList;
+import org.auscope.portal.csw.CSWClient;
+import org.auscope.portal.csw.CSWGetRecordResponse;
+import org.auscope.portal.csw.CSWRecord;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.namespace.NamespaceContext;
 import java.util.*;
 import java.net.URL;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONSerializer;
@@ -37,6 +50,14 @@ public class GetDataSourcesJSONController extends AbstractController {
     public static final String GNSS_GPS = "GNSS/GPS";
     public static final String SEISMIC_IMAGING = "Seismic Imaging";
 
+    //the geonetworks keywords used to search for each theme
+    public static final String BOREHOLE_KEYWORD = "gsml:Borehole";
+    public static final String HYPERSPECTRAL_KEYWORD = "Hyperspectral";
+    public static final String GEOCEHMISTRY_KEYWORD = "Geochemistry";
+    public static final String MINERAL_OCCURENCES_KEYWORD = "Mineral Occurences";
+    public static final String GNSS_GPS_KEYWORD = "GNSS/GPS";
+    public static final String SEISMIC_IMAGING_KEYWORD = "Seismic Imaging";
+
     //some contants to identify themes and insitutions
     public static final String THEME = "THEME:";
     public static final String INSTITUTION = "INSTITUTION:";
@@ -55,17 +76,17 @@ public class GetDataSourcesJSONController extends AbstractController {
         if (node.equals("root"))
             jsonArray = getThemes();
 
-        //hyperspectral is a special case because it is MAP data, and has to be categorised futher down into layers
-        //differently to the feature services
-        else if (node.equals(THEME+HYPERSPECTRAL))
+            //hyperspectral is a special case because it is MAP data, and has to be categorised futher down into layers
+            //differently to the feature services
+        else if (node.equals(THEME + HYPERSPECTRAL))
             jsonArray = getSpectraInstitionalProviders();
 
-        //if we have a theme tree node, then go find the institutions providing the data for it
+            //if we have a theme tree node, then go find the institutions providing the data for it
         else if (node.startsWith(THEME))
             jsonArray = getInstitionalProviders(node.replace(THEME, ""));
 
-        //this is an institution being expanded, must be for spectral data, so go get the layers
-        else if(node.startsWith(INSTITUTION))
+            //this is an institution being expanded, must be for spectral data, so go get the layers
+        else if (node.startsWith(INSTITUTION))
             jsonArray = getHyperspectralLayers(node.replace(INSTITUTION, ""));
 
         //send it back...
@@ -73,28 +94,29 @@ public class GetDataSourcesJSONController extends AbstractController {
     }
 
     /**
-     * Builds the theme list which will be sent back and displayed to the ExtJS tree in the portal      
+     * Builds the theme list which will be sent back and displayed to the ExtJS tree in the portal
+     *
      * @return
      */
     public JSONArray getThemes() {
         JSONArray jsonArray = new JSONArray();
 
         Map<String, Serializable> hyperspectral = new HashMap<String, Serializable>();
-        hyperspectral.put("id", THEME+HYPERSPECTRAL);
+        hyperspectral.put("id", THEME + HYPERSPECTRAL);
         hyperspectral.put("text", HYPERSPECTRAL);
         hyperspectral.put("checked", Boolean.FALSE);
         hyperspectral.put("leaf", Boolean.FALSE);
         jsonArray.add(hyperspectral);
 
         Map<String, Serializable> borholes = new HashMap<String, Serializable>();
-        borholes.put("id", THEME+ BOREHOLE);
+        borholes.put("id", THEME + BOREHOLE);
         borholes.put("text", BOREHOLE);
         borholes.put("checked", Boolean.FALSE);
         borholes.put("leaf", Boolean.FALSE);
         jsonArray.add(borholes);
 
         Map<String, Serializable> gnnsGPS = new HashMap<String, Serializable>();
-        gnnsGPS.put("id", THEME+GNSS_GPS);
+        gnnsGPS.put("id", THEME + GNSS_GPS);
         gnnsGPS.put("text", GNSS_GPS);
         gnnsGPS.put("checked", Boolean.FALSE);
         gnnsGPS.put("leaf", Boolean.FALSE);
@@ -102,21 +124,21 @@ public class GetDataSourcesJSONController extends AbstractController {
         jsonArray.add(gnnsGPS);
 
         Map<String, Serializable> geochemistry = new HashMap<String, Serializable>();
-        geochemistry.put("id", THEME+GEOCEHMISTRY);
+        geochemistry.put("id", THEME + GEOCEHMISTRY);
         geochemistry.put("text", GEOCEHMISTRY);
         geochemistry.put("checked", Boolean.FALSE);
         geochemistry.put("leaf", Boolean.FALSE);
         jsonArray.add(geochemistry);
 
         Map<String, Serializable> mineralOccurrences = new HashMap<String, Serializable>();
-        mineralOccurrences.put("id", THEME+MINERAL_OCCURENCES);
+        mineralOccurrences.put("id", THEME + MINERAL_OCCURENCES);
         mineralOccurrences.put("text", MINERAL_OCCURENCES);
         mineralOccurrences.put("checked", Boolean.FALSE);
         mineralOccurrences.put("leaf", Boolean.FALSE);
         jsonArray.add(mineralOccurrences);
 
         Map<String, Serializable> seismicImaging = new HashMap<String, Serializable>();
-        seismicImaging.put("id", THEME+SEISMIC_IMAGING);
+        seismicImaging.put("id", THEME + SEISMIC_IMAGING);
         seismicImaging.put("text", SEISMIC_IMAGING);
         seismicImaging.put("checked", Boolean.FALSE);
         seismicImaging.put("leaf", Boolean.FALSE);
@@ -129,17 +151,14 @@ public class GetDataSourcesJSONController extends AbstractController {
     /**
      * Given a theme, provide a list of intitutions and also the WFS query to get the data
      * from this institution
+     *
      * @param theme
      * @return
      */
     private JSONArray getInstitionalProviders(String theme) {
-        //TODO: geonetwork query
-        //go off to geo network
-
-        //do some magic
 
         //return some stuff - temp for now
-        JSONArray jsonArray = new JSONArray();
+        /*JSONArray jsonArray = new JSONArray();
 
         Map<String, Serializable> nvcl = new HashMap<String, Serializable>();
         nvcl.put("id", "nvcl");
@@ -154,11 +173,27 @@ public class GetDataSourcesJSONController extends AbstractController {
 
         jsonArray.add(nvcl);
 
-        return jsonArray;
+        return jsonArray;   */
+
+        if(theme.equals(BOREHOLE))
+            try {
+                return this.getBoreholeProviders();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (SAXException e) {
+                e.printStackTrace();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (XPathExpressionException e) {
+                e.printStackTrace();
+            }
+
+        return new JSONArray();
     }
 
     /**
      * Returns a list of Institutions who are proving hyperpectral map data
+     *
      * @return
      */
     private JSONArray getSpectraInstitionalProviders() {
@@ -167,7 +202,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         JSONArray jsonArray = new JSONArray();
 
         Map<String, Serializable> coe = new HashMap<String, Serializable>();
-        coe.put("id", INSTITUTION+"waCoe");
+        coe.put("id", INSTITUTION + "waCoe");
         coe.put("text", "WA Center of Excellence for 3D Mineral Mapping");
         coe.put("checked", Boolean.FALSE);
         coe.put("leaf", Boolean.FALSE);
@@ -178,6 +213,7 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     /**
      * Given an institution, grab all of the hyperspectral layers from its WMS's
+     *
      * @param institution
      * @return
      */
@@ -217,9 +253,43 @@ public class GetDataSourcesJSONController extends AbstractController {
     }
 
     /**
+     * This method queries geonetwork for all of the borehols providers and creates a json array for them
+     *
+     * @return
+     */
+    public JSONArray getBoreholeProviders() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+        CSWRecord[] cswRecords = new CSWClient("http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw", new String[]{BOREHOLE_KEYWORD, "WFS"}).getRecordResponse().getCSWRecords();
+
+        JSONArray jsonArray = new JSONArray();
+        for(CSWRecord record : cswRecords) {
+            String wfsUrl = this.stripUrlAndGetFeatures(record.getServiceUrl());
+            String serviceName = record.getServiceName();
+
+            Map<String, Serializable> node = new HashMap<String, Serializable>();
+            node.put("id", serviceName); //TODO: serviceID
+            node.put("text", serviceName);
+            node.put("checked", Boolean.FALSE);
+            node.put("leaf", Boolean.TRUE);
+            node.put("icon", "img/nvcl/borehole_on.png");
+            node.put("layerType", "wfs");
+            node.put("tileOverlay", "");
+            node.put("wfsUrl", wfsUrl);
+            //nvcl.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
+
+            jsonArray.add(node);
+        }
+
+        return jsonArray;
+    }
+
+    private String stripUrlAndGetFeatures(String url) {
+        return url;
+    }
+
+    /**
      * This method takes a JSONArray and builds a SpringMVC Model and View from it, so it can be returned in the
      * http response to the client.
-     * 
+     *
      * @param jsonArray
      * @return
      */
@@ -228,6 +298,68 @@ public class GetDataSourcesJSONController extends AbstractController {
         model.put("JSON_OBJECT", jsonArray);
 
         return new ModelAndView(new JSONView(), model);
+    }
+
+    public static void main(String[] args) throws IOException, XPathExpressionException, ParserConfigurationException, SAXException {
+
+        //call the geonetwork and query
+        URL cswQuery = new URL("http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw?request=GetRecords&service=CSW&version=2.0.2&resultType=results&namespace=csw:http://www.opengis.net/cat/csw/2.0.2&outputSchema=csw:IsoRecord&constraint=<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:Borehole</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        BufferedReader responseReader = new BufferedReader(new InputStreamReader(cswQuery.openStream()));
+
+        //pull the XMl response into a string
+        String inputLine;
+        StringBuffer xmlResponse = new StringBuffer();
+        while ((inputLine = responseReader.readLine()) != null) {
+            xmlResponse.append(inputLine);
+            System.out.println(inputLine);
+        }
+
+        //build the XML dom
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true); // never forget this!
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource inputSource = new InputSource(new StringReader(xmlResponse.toString()));
+        org.w3c.dom.Document doc = builder.parse(inputSource);
+
+        /*Create an XPath instances and set up the namespaces. If you don't set the namespaces the query will
+        return nothing */
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        xPath.setNamespaceContext(new NamespaceContext() {
+            Map<String, String> map = new HashMap<String, String>() {{
+                put("gmd", "http://www.isotc211.org/2005/gmd");
+                put("srv", "http://www.isotc211.org/2005/srv");
+                put("csw", "http://www.opengis.net/cat/csw/2.0.2");
+                put("gco", "http://www.isotc211.org/2005/gco");
+            }};
+
+            public String getNamespaceURI(String s) {
+                return map.get(s);
+            }
+
+            public String getPrefix(String s) {
+                return null;
+            }
+
+            public Iterator getPrefixes(String s) {
+                return null;
+            }
+        });
+
+        //this expression gets the service titles
+        String serviceTitleExpression = "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata/gmd:identificationInfo/srv:SV_ServiceIdentification/gmd:citation/gmd:CI_Citation/gmd:title";
+        NodeList nodes = (NodeList) xPath.evaluate(serviceTitleExpression, doc, XPathConstants.NODESET);
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            System.out.println(nodes.item(i).getTextContent());
+        }
+
+        //this expression gets the service get capabilities URL
+        String serviceUrleExpression = "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:linkage";
+        nodes = (NodeList) xPath.evaluate(serviceUrleExpression, doc, XPathConstants.NODESET);
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+            System.out.println(nodes.item(i).getTextContent());
+        }
     }
 }
 
