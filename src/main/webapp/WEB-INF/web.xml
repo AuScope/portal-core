@@ -37,6 +37,16 @@
       <url-pattern>/restproxy</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+      <servlet-name>XSLTRestProxy</servlet-name>
+      <servlet-class>org.auscope.portal.server.web.servlet.XSLTRestProxy</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+      <servlet-name>RestProxy</servlet-name>
+      <url-pattern>/xsltRestProxy</url-pattern>
+    </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>googlemap</servlet-name>
     <url-pattern>*.html</url-pattern>

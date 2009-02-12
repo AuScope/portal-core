@@ -30,13 +30,12 @@ Ext.onReady(function() {
             if (node.attributes.layerType == 'wms' && (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '')) {
                 //var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
                 var tileLayer =  new GTileLayer(null, null, null, {
-                    tileUrlTemplate: node.attributes.wmsUrl+'layers='+node.id+'_{Z}_{X}_{Y}.png',
+                    tileUrlTemplate: node.attributes.wmsUrl+'layers='+node.id+'&zoom={Z}&x={X}&y={Y}',
                     isPng:true,
                     opacity:1.0 }
                 );
                 //tileLayer.baseURL = node.attributes.wmsUrl;
                 //tileLayer.layers = node.id;
-                alert(node.attributes.wmsUrl+'layers='+node.id);
                 node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
                 map.addOverlay(node.attributes.tileOverlay);
                 //node.attributes.tileOverlay = new OpenLayers.Layer.WMS( "Some WMS", node.attributes.wmsUrl, {layers: node.id, format: "image/png", transparent: "true", projection: "EPSG:900913"});
@@ -45,12 +44,15 @@ Ext.onReady(function() {
             else if(node.attributes.layerType == 'wfs') {
                 //we are assuming a KML response from the WFS requests
                 node.attributes.tileOverlay = new GGeoXml(node.attributes.wfsUrl);
+                alert('created the geoxml');
                 map.addOverlay(node.attributes.tileOverlay);
+                alert('added the overlay');
             }
         }
         //the check was checked off so remove the overlay
         else {
             map.removeOverlay(node.attributes.tileOverlay);
+            node.attributes.tileOverlay = null;
         }
     });
 

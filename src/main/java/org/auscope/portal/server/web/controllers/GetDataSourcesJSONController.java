@@ -273,8 +273,8 @@ public class GetDataSourcesJSONController extends AbstractController {
             node.put("icon", "img/nvcl/borehole_on.png");
             node.put("layerType", "wfs");
             node.put("tileOverlay", "");
-            node.put("wfsUrl", wfsUrl);
-            //nvcl.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
+            //node.put("wfsUrl", wfsUrl);
+            node.put("wfsUrl", "/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
 
             jsonArray.add(node);
         }
