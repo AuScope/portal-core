@@ -43,7 +43,7 @@
     </servlet>
 
     <servlet-mapping>
-      <servlet-name>RestProxy</servlet-name>
+      <servlet-name>XSLTRestProxy</servlet-name>
       <url-pattern>/xsltRestProxy</url-pattern>
     </servlet-mapping>
 
