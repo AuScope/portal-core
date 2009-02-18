@@ -46,6 +46,9 @@ public class XSLTRestProxy extends HttpServlet {
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         try {
             String result = conn.get(headers).getDataAsString();
+
+            //jarek xslt
+
             response.getWriter().println(result);
         } catch (IOException ex) {
             Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, ex);
