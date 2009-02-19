@@ -141,13 +141,13 @@ public class GetDataSourcesJSONController extends AbstractController {
 
                 Map<String, Serializable> node = new HashMap<String, Serializable>();
                 node.put("id", serviceName); //TODO: serviceID
-                node.put("text", PROXY_URL+"http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetFeature&typeName=gsml:Borehole");
+                node.put("text", serviceName);
                 node.put("checked", Boolean.FALSE);
                 node.put("leaf", Boolean.TRUE);
                 node.put("icon", "img/nvcl/borehole_on.png");
                 node.put("layerType", "wfs");
                 node.put("tileOverlay", "");
-                node.put("wfsUrl", PROXY_URL+"http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetFeature&typeName=gsml:Borehole");
+                node.put("wfsUrl", PROXY_URL+"http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetFeature%26typeName=gsml:Borehole");
                 //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                 //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
 
