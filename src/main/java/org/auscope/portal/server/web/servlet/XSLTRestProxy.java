@@ -47,15 +47,11 @@ public class XSLTRestProxy extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String[][] queryParams = new String[][]{};
 
-        System.out.println("URL: " +request.getParameter("url"));
-
         RestConnection conn = new RestConnection(request.getParameter("url"), queryParams);
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         try {
             String result = conn.get(headers).getDataAsString();
             StringWriter downThePipe = new StringWriter();
-
-            System.out.println(result);
 
             TransformerFactory tFactory = TransformerFactory.newInstance();
 
@@ -63,9 +59,6 @@ public class XSLTRestProxy extends HttpServlet {
 
             transformer.transform (new javax.xml.transform.stream.StreamSource(new StringReader(result)),
                                     new javax.xml.transform.stream.StreamResult(downThePipe));
-
-            System.out.println("-----------------------------++++++++++++++++++++++++++++++++++++++++++++++++");
-            System.out.println(downThePipe.toString());
 
             response.getWriter().println(downThePipe.toString());
         } catch (IOException ex) {
@@ -284,7 +277,6 @@ public class XSLTRestProxy extends HttpServlet {
                     StringBuffer buf = new StringBuffer();
                     while ((line = rd.readLine()) != null) {
                         buf.append(line);
-                        System.out.print(line);
                     }
                     errMsg = buf.toString();
                 } finally {

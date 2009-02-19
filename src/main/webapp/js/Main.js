@@ -44,9 +44,7 @@ Ext.onReady(function() {
             else if(node.attributes.layerType == 'wfs') {
                 //we are assuming a KML response from the WFS requests
                 node.attributes.tileOverlay = new GGeoXml(node.attributes.wfsUrl);
-                alert('created the geoxml');
                 map.addOverlay(node.attributes.tileOverlay);
-                alert('added the overlay');
             }
         }
         //the check was checked off so remove the overlay

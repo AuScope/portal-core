@@ -54,8 +54,6 @@ public class TestXSLTRestProxy {
         request.setParameter("url", "http://mapgadgets.googlepages.com/cta.kml");
 
         restProxy.doGet(request, response);
-
-        System.out.println(response.getContentAsString());
     }
 
     /**
@@ -70,8 +68,6 @@ public class TestXSLTRestProxy {
         request.setParameter("url", "http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetFeature&typeName=gsml:Borehole");
 
         restProxy.doGet(request, response);
-
-        System.out.println(response.getContentAsString());
     }
     
 

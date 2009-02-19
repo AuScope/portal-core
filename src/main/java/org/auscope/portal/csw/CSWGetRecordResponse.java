@@ -30,8 +30,6 @@ public class CSWGetRecordResponse {
         records = new CSWRecord[nodes.getLength()];
         for(int i=0; i<nodes.getLength(); i++ ) {
             records[i] = new CSWRecord(nodes.item(i));
-            System.out.println(nodes.item(i).getTextContent());
-            System.out.println("+++++++++++++++++++++++++" + records[i].getServiceName());
         }
 
         return records;

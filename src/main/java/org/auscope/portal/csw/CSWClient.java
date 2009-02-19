@@ -81,7 +81,6 @@ public class CSWClient {
         StringBuffer xmlResponse = new StringBuffer();
         while ((inputLine = responseReader.readLine()) != null) {
             xmlResponse.append(inputLine);
-            System.out.println(inputLine);
         }
 
         //build the XML dom
@@ -119,16 +118,9 @@ public class CSWClient {
         String serviceTitleExpression = "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata/gmd:identificationInfo/srv:SV_ServiceIdentification/gmd:citation/gmd:CI_Citation/gmd:title";
         NodeList nodes = (NodeList) xPath.evaluate(serviceTitleExpression, doc, XPathConstants.NODESET);
 
-        for (int i = 0; i < nodes.getLength(); i++) {
-            System.out.println(nodes.item(i).getTextContent());
-        }
-
         //this expression gets the service get capabilities URL
         String serviceUrleExpression = "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata/gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:linkage";
         nodes = (NodeList) xPath.evaluate(serviceUrleExpression, doc, XPathConstants.NODESET);
 
-        for (int i = 0; i < nodes.getLength(); i++) {
-            System.out.println(nodes.item(i).getTextContent());
-        }
     }
 }
