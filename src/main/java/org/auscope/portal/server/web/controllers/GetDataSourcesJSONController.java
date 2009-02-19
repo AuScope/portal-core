@@ -44,6 +44,8 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public static final String HYPERSPECTRAL = "Hyperspectral";
 
+    public static final String PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
+
     //create some identifiers for each of the themes to be displayed in the portal
     public static final String[] THEMES = { "Borehole",
                                             "Geochemistry",
@@ -145,8 +147,8 @@ public class GetDataSourcesJSONController extends AbstractController {
                 node.put("icon", "img/nvcl/borehole_on.png");
                 node.put("layerType", "wfs");
                 node.put("tileOverlay", "");
-                //node.put("wfsUrl", wfsUrl);
-                node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
+                node.put("wfsUrl", PROXY_URL+"http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetFeature&typeName=gsml:Borehole");
+                //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                 //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
 
                 jsonArray.add(node);
@@ -228,6 +230,10 @@ public class GetDataSourcesJSONController extends AbstractController {
     }
 
     private String stripUrlAndGetFeatures(String url) {
+        String[] strings =  url.split("\\?");
+
+        String urlString = strings[0] + "?";
+
         return url;
     }
 

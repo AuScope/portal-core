@@ -58,4 +58,21 @@ public class TestXSLTRestProxy {
         System.out.println(response.getContentAsString());
     }
 
+    /**
+     * Test a proxy to a kml file, we just want the binary file sent back through in the httpResponse
+     */
+    @Test
+    public void testRestStyleCallWFSToKML() throws UnsupportedEncodingException {
+        //a get request comes from the extjs tree
+        request.setMethod("GET");
+
+        //We are simulating the click of the root node in the tree
+        request.setParameter("url", "http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetFeature&typeName=gsml:Borehole");
+
+        restProxy.doGet(request, response);
+
+        System.out.println(response.getContentAsString());
+    }
+    
+
 }

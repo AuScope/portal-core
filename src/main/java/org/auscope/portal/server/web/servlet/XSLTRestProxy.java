@@ -2,6 +2,10 @@ package org.auscope.portal.server.web.servlet;
 
 import java.io.*;
 import javax.servlet.http.*;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerConfigurationException;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -47,13 +51,20 @@ public class XSLTRestProxy extends HttpServlet {
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         try {
             String result = conn.get(headers).getDataAsString();
+            StringWriter downThePipe = new StringWriter();
 
-            //System.out.println(result);
-            //jarek xslt
+            TransformerFactory tFactory = TransformerFactory.newInstance();
 
-            response.getWriter().println(result);
+            Transformer transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource("kml.xsl"));
+
+            transformer.transform (new javax.xml.transform.stream.StreamSource(new StringReader(result)),
+                                    new javax.xml.transform.stream.StreamResult(downThePipe));
+
+            response.getWriter().println(downThePipe.toString());
         } catch (IOException ex) {
             Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, ex);
+        }  catch (TransformerException e) {
+            e.printStackTrace();
         }
     }
 
