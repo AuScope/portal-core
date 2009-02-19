@@ -53,12 +53,17 @@ public class XSLTRestProxy extends HttpServlet {
             String result = conn.get(headers).getDataAsString();
             StringWriter downThePipe = new StringWriter();
 
+            System.out.println(result);
+
             TransformerFactory tFactory = TransformerFactory.newInstance();
 
             Transformer transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource("kml.xsl"));
 
             transformer.transform (new javax.xml.transform.stream.StreamSource(new StringReader(result)),
                                     new javax.xml.transform.stream.StreamResult(downThePipe));
+
+            System.out.println("-----------------------------++++++++++++++++++++++++++++++++++++++++++++++++");
+            System.out.println(downThePipe.toString());
 
             response.getWriter().println(downThePipe.toString());
         } catch (IOException ex) {
