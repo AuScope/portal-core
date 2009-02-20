@@ -46,6 +46,8 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public static final String PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
 
+    public static final String CSW_URL = "http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw";
+
     //create some identifiers for each of the themes to be displayed in the portal
     public static final String[] THEMES = { "Borehole",
                                             "Geochemistry",
@@ -62,7 +64,7 @@ public class GetDataSourcesJSONController extends AbstractController {
     //create a map to hold the get features query stuff
     public static final Map<String, String> wfsQueryParams = new HashMap<String, String>() {{
         put("Borehole", "request=GetFeature%26typeName=gsml:Borehole");
-        put("GNSS/GPS", "request=GetFeature&typeName=geodesy:stations");
+        put("GNSS/GPS", "request=GetFeature%26typeName=geodesy:stations");
     }};
 
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions
@@ -138,7 +140,7 @@ public class GetDataSourcesJSONController extends AbstractController {
     private JSONArray getInstitionalProviders(String theme) {
         CSWRecord[] cswRecords;
         try {
-            cswRecords = new CSWClient("http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw", themeContraints.get(theme)).getRecordResponse().getCSWRecords();
+            cswRecords = new CSWClient(CSW_URL, themeContraints.get(theme)).getRecordResponse().getCSWRecords();
 
             JSONArray jsonArray = new JSONArray();
             for(CSWRecord record : cswRecords) {
@@ -153,7 +155,7 @@ public class GetDataSourcesJSONController extends AbstractController {
                 node.put("icon", "img/nvcl/borehole_on.png");
                 node.put("layerType", "wfs");
                 node.put("tileOverlay", "");
-                node.put("wfsUrl", PROXY_URL+wfsUrl+wfsQueryParams);
+                node.put("wfsUrl", PROXY_URL+wfsUrl+wfsQueryParams.get(theme));
                 //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                 //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
 
