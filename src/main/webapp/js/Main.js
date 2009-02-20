@@ -54,6 +54,12 @@ Ext.onReady(function() {
                          exml = new EGeoXml("exml", map, null, null);
                          exml.parseString(pData);
 
+                        // == listen for the parsing to finish, then load the array into the ClusterMarker ==
+                        GEvent.addListener(exml, "parsed", function() {
+                          var cluster = new ClusterMarker(map, {markers:exml.gmarkers});
+                          cluster.refresh();
+                        });
+
                         node.attributes.tileOverlay = exml;
 
                     }
