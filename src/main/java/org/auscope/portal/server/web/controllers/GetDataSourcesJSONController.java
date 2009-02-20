@@ -239,7 +239,7 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public String stripUrlAndGetFeatures(String url) {
         String[] strings =  url.split("\\?");
-        return strings[0] + "?";
+        return strings[0].trim() + "?";
     }
 
     /**
