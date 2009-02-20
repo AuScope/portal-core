@@ -46,25 +46,28 @@ Ext.onReady(function() {
                 //we are assuming a KML response from the WFS requests
                 //node.attributes.tileOverlay = new GGeoXml(node.attributes.wfsUrl);
                 //map.addOverlay(node.attributes.tileOverlay);
-                var exml;
+
                 GDownloadUrl(node.attributes.wfsUrl, function(pData, pResponseCode) {
                     if (pResponseCode == 200) {
                       //var xmlDoc = GXml.parse(pData);
-
-                         exml = new EGeoXml("exml", map, null, {addmarker:function(){}});
+                         var exml;
+                         exml = new EGeoXml("exml", mgr, null,null);
                          exml.parseString(pData);
-                        var clusterIcon = new GIcon(G_DEFAULT_ICON, 'http://maps.google.com/mapfiles/kml/paddle/blu-blank.png');
+
+                        /*var clusterIcon = new GIcon(G_DEFAULT_ICON, 'http://maps.google.com/mapfiles/kml/paddle/blu-blank.png');
+
+                        // == listen for the parsing to finish, then load the array into the ClusterMarker ==
+                        GEvent.addListener(exml, "parsed", function() {
+                          var cluster = new ClusterMarker(map, {markers:exml.gmarkers, clusterMarkerIcon:clusterIcon});
+                          cluster.refresh();
+                        });*/
 
                         node.attributes.tileOverlay = exml;
 
                     }
                   });
 
-                 // == listen for the parsing to finish, then load the array into the ClusterMarker ==
-                GEvent.addListener(exml, "parsed", function() {
-                  var cluster = new ClusterMarker(map, {markers:exml.gmarkers, clusterMarkerIcon:clusterIcon});
-                  cluster.refresh();
-                });
+
                 
                 /*var options = {noshadow: true}; //many options available
                 var csGeoXml = new CsGeoXml('csGeoXml', mgr, node.attributes.wfsUrl, options);
@@ -129,8 +132,8 @@ Ext.onReady(function() {
         var Tsize = new GSize(150, 150);
         map.addControl(new GOverviewMapControl(Tsize));
 
-        //var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
-        //mgr = new MarkerManager(map, mgrOptions);
+        var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
+        mgr = new MarkerManager(map, mgrOptions);
     }
 
     /*var options = {
