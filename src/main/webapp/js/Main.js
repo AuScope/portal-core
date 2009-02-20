@@ -51,7 +51,7 @@ Ext.onReady(function() {
                     if (pResponseCode == 200) {
                       //var xmlDoc = GXml.parse(pData);
                         var exml;
-                         exml = new EGeoXml("exml", map, null, null);
+                         exml = new EGeoXml("exml", map, null, {addmarker:function(){}});
                          exml.parseString(pData);
                         var clusterIcon = new GIcon(G_DEFAULT_ICON, 'http://maps.google.com/mapfiles/kml/paddle/blu-blank.png');
 
