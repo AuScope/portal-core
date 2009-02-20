@@ -18,6 +18,7 @@
 
     <script src="js/egeoxml/csgeoxml.js" type="text/javascript"></script>
     <script src="js/egeoxml/egeoxml.js" type="text/javascript"></script>
+    <script src="js/egeoxml/geoxml.js" type="text/javascript"></script>
     <script src="js/egeoxml/clustermarker.js" type="text/javascript"></script>
 
     <!-- Scripts for the Web Map Service layering -->

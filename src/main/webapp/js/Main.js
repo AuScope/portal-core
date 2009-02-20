@@ -51,7 +51,7 @@ Ext.onReady(function() {
                     if (pResponseCode == 200) {
                       //var xmlDoc = GXml.parse(pData);
                          var exml;
-                         exml = new EGeoXml("exml", mgr, null,null);
+                         exml = new GeoXml("exml", mgr, null,null);
                          exml.parseString(pData);
 
                         /*var clusterIcon = new GIcon(G_DEFAULT_ICON, 'http://maps.google.com/mapfiles/kml/paddle/blu-blank.png');
@@ -81,7 +81,7 @@ Ext.onReady(function() {
         //the check was checked off so remove the overlay
         else {
             //mgr.removeOverlay(node.attributes.tileOverlay);
-            node.attributes.tileOverlay.hide();
+            node.attributes.tileOverlay.clear();
             node.attributes.tileOverlay = null;
         }
     });
