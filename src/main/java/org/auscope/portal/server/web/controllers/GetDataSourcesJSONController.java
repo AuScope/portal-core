@@ -59,6 +59,12 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("GNSS/GPS", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
     }};
 
+    //create a map to hold the get features query stuff
+    public static final Map<String, String> wfsQueryParams = new HashMap<String, String>() {{
+        put("Borehole", "request=GetFeature%26typeName=gsml:Borehole");
+        put("GNSS/GPS", "request=GetFeature&typeName=geodesy:stations");
+    }};
+
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions
     public static final String THEME = "THEME:";
     public static final String INSTITUTION = "INSTITUTION:";
@@ -147,7 +153,7 @@ public class GetDataSourcesJSONController extends AbstractController {
                 node.put("icon", "img/nvcl/borehole_on.png");
                 node.put("layerType", "wfs");
                 node.put("tileOverlay", "");
-                node.put("wfsUrl", PROXY_URL+"http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetFeature%26typeName=gsml:Borehole");
+                node.put("wfsUrl", PROXY_URL+wfsUrl+wfsQueryParams);
                 //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                 //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
 
@@ -229,12 +235,9 @@ public class GetDataSourcesJSONController extends AbstractController {
         return jsonArray;
     }
 
-    private String stripUrlAndGetFeatures(String url) {
+    public String stripUrlAndGetFeatures(String url) {
         String[] strings =  url.split("\\?");
-
-        String urlString = strings[0] + "?";
-
-        return url;
+        return strings[0] + "?";
     }
 
     /**

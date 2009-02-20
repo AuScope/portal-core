@@ -85,4 +85,10 @@ public class TestGetDataSourcesJSONController {
     public void testGetInsitionsForBorhole() {
 
     }
+
+    @Test
+    public void testStripURL() {
+        String url = "http://auscope-portal.arrc.csiro.au/nvcl/wfs?something=something";
+        System.out.println(controller.stripUrlAndGetFeatures(url));
+    }
 }
