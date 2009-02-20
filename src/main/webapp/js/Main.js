@@ -43,13 +43,26 @@ Ext.onReady(function() {
             }
             else if(node.attributes.layerType == 'wfs') {
                 //we are assuming a KML response from the WFS requests
-                node.attributes.tileOverlay = new GGeoXml(node.attributes.wfsUrl);
-                map.addOverlay(node.attributes.tileOverlay);
+                //node.attributes.tileOverlay = new GGeoXml(node.attributes.wfsUrl);
+                //map.addOverlay(node.attributes.tileOverlay);
+
+                GDownloadUrl(node.attributes.wfsUrl, function(pData, pResponseCode) {
+                    if (pResponseCode == 200) {
+                      //var xmlDoc = GXml.parse(pData);
+                        var exml;
+                         exml = new EGeoXml("exml", map, null, null);
+                         exml.parseString(pData);
+
+                        node.attributes.tileOverlay = exml;
+
+                    }
+                  });
             }
         }
         //the check was checked off so remove the overlay
         else {
-            map.removeOverlay(node.attributes.tileOverlay);
+            //map.removeOverlay(node.attributes.tileOverlay);
+            node.attributes.tileOverlay.clear();
             node.attributes.tileOverlay = null;
         }
     });
