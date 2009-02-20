@@ -84,8 +84,7 @@ Ext.onReady(function() {
     // Is user's browser suppported by Google Maps?
     if (GBrowserIsCompatible()) {
         map = new GMap2(centerPanel.body.dom);
-        var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
-        var mgr = new MarkerManager(map, mgrOptions);
+
 
         // Large pan and zoom control
         map.addControl(new GLargeMapControl());
@@ -100,6 +99,9 @@ Ext.onReady(function() {
         //Thumbnail map
         var Tsize = new GSize(150, 150);
         map.addControl(new GOverviewMapControl(Tsize));
+
+        var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
+        var mgr = new MarkerManager(map, mgrOptions);
     }
 
     /*var options = {
