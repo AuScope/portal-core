@@ -84,6 +84,7 @@ Ext.onReady(function() {
     // Is user's browser suppported by Google Maps?
     if (GBrowserIsCompatible()) {
         map = new GMap2(centerPanel.body.dom);
+        var mgr = new MarkerManager(map);
 
         // Large pan and zoom control
         map.addControl(new GLargeMapControl());
