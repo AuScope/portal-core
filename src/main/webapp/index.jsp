@@ -16,6 +16,8 @@
     <script type="text/javascript" src="js/ext-2.2/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="js/ext-2.2/ext-all.js"></script>
 
+    <script src="js/egeoxml/egeoxml.js" type="text/javascript"></script>
+
     <!-- Scripts for the Web Map Service layering -->
     <script src="js/wms/wms-gs-1_1_1.js" type="text/javascript"></script>
     <script src="js/wms/wms_layer.js" type="text/javascript"></script>
