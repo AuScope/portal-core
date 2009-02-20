@@ -46,7 +46,7 @@ Ext.onReady(function() {
                 //node.attributes.tileOverlay = new GGeoXml(node.attributes.wfsUrl);
                 //map.addOverlay(node.attributes.tileOverlay);
 
-                GDownloadUrl(node.attributes.wfsUrl, function(pData, pResponseCode) {
+                /*GDownloadUrl(node.attributes.wfsUrl, function(pData, pResponseCode) {
                     if (pResponseCode == 200) {
                       //var xmlDoc = GXml.parse(pData);
                         var exml;
@@ -56,13 +56,21 @@ Ext.onReady(function() {
                         node.attributes.tileOverlay = exml;
 
                     }
-                  });
+                  });*/
+
+                var options = {noshadow: true}; //many options available
+                var csGeoXml = new CsGeoXml('csGeoXml', map, node.attributes.wfsUrl, options);
+                var handle = GEvent.addListener(csGeoXml, 'parsed', function () {
+                    GEvent.removeListener(handle);
+                    node.attributes.tileOverlay = csGeoXml;
+                    map.addOverlay(node.attributes.tileOverlay);
+                });
             }
         }
         //the check was checked off so remove the overlay
         else {
-            //map.removeOverlay(node.attributes.tileOverlay);
-            node.attributes.tileOverlay.clear();
+            map.removeOverlay(node.attributes.tileOverlay);
+            //node.attributes.tileOverlay.clear();
             node.attributes.tileOverlay = null;
         }
     });
