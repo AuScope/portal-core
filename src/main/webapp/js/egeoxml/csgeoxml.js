@@ -320,6 +320,7 @@ CsGeoXml.prototype.processing = function (doc)
             that.styles["#"+styleID] = new GIcon(that.opts.baseicon,href);
           } else {
             that.styles["#"+styleID] = new GIcon(G_DEFAULT_ICON,href);
+              alert(href);
             that.styles["#"+styleID].iconSize = new GSize(32,32);
             that.styles["#"+styleID].shadowSize = new GSize(59,32);
             that.styles["#"+styleID].dragCrossAnchor = new GPoint(2,8);
