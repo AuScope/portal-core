@@ -1,6 +1,7 @@
 //this runs on DOM load - you can access all the good stuff now.
 Ext.onReady(function() {
     var map;
+    var mgr;
 
     var tree = new Ext.tree.TreePanel({
         title : 'Data Sources',
@@ -59,7 +60,7 @@ Ext.onReady(function() {
                   });*/
 
                 var options = {noshadow: true}; //many options available
-                var csGeoXml = new CsGeoXml('csGeoXml', map, node.attributes.wfsUrl, options);
+                var csGeoXml = new CsGeoXml('csGeoXml', mgr, node.attributes.wfsUrl, options);
                 var handle = GEvent.addListener(csGeoXml, 'parsed', function () {
                     GEvent.removeListener(handle);
                     node.attributes.tileOverlay = csGeoXml;
@@ -69,7 +70,7 @@ Ext.onReady(function() {
         }
         //the check was checked off so remove the overlay
         else {
-            map.removeOverlay(node.attributes.tileOverlay);
+            mgr.removeOverlay(node.attributes.tileOverlay);
             //node.attributes.tileOverlay.clear();
             node.attributes.tileOverlay = null;
         }
@@ -122,7 +123,7 @@ Ext.onReady(function() {
         map.addControl(new GOverviewMapControl(Tsize));
 
         var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
-        var mgr = new MarkerManager(map, mgrOptions);
+        mgr = new MarkerManager(map, mgrOptions);
     }
 
     /*var options = {
