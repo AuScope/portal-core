@@ -44,7 +44,8 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public static final String HYPERSPECTRAL = "Hyperspectral";
 
-    public static final String PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
+    //public static final String PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
+    public static final String PROXY_URL = "http://localhost:8080/xsltRestProxy?url=";
 
     public static final String CSW_URL = "http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw";
 
@@ -52,19 +53,29 @@ public class GetDataSourcesJSONController extends AbstractController {
     public static final String[] THEMES = { "Borehole",
                                             "Geochemistry",
                                             "Mineral Occurences",
-                                            "GNSS/GPS",
+                                            "Global Navigation Satellite Systems",
+                                            "Geodesy",
                                             "Seismic Imaging"};
 
     //create a map to hold the CSW query contraints for each theme
     public static final Map<String, String> themeContraints = new HashMap<String, String>() {{
         put("Borehole", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:Borehole</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
-        put("GNSS/GPS", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put("Global Navigation Satellite Systems", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GNSS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put("Geodesy", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>Geodesy</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
     }};
 
     //create a map to hold the get features query stuff
     public static final Map<String, String> wfsQueryParams = new HashMap<String, String>() {{
         put("Borehole", "request=GetFeature%26typeName=gsml:Borehole");
-        put("GNSS/GPS", "request=GetFeature%26typeName=geodesy:stations");
+        put("Global Navigation Satellite Systems", "request=GetFeature%26typeName=sa:SamplingPoint");
+        put("Geodesy", "request=GetFeature%26typeName=geodesy:stations");
+    }};
+
+    //create a map to hold the get features query stuff
+    public static final Map<String, String> icons = new HashMap<String, String>() {{
+        put("Borehole", "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png");
+        put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
+        put("Geodesy", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png");
     }};
 
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions
@@ -152,7 +163,7 @@ public class GetDataSourcesJSONController extends AbstractController {
                 node.put("text", serviceName);
                 node.put("checked", Boolean.FALSE);
                 node.put("leaf", Boolean.TRUE);
-                node.put("icon", "img/nvcl/borehole_on.png");
+                node.put("icon", icons.get(theme));
                 node.put("layerType", "wfs");
                 node.put("tileOverlay", "");
                 node.put("wfsUrl", PROXY_URL+wfsUrl+wfsQueryParams.get(theme));

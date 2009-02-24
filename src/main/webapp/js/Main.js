@@ -1,8 +1,10 @@
+
+
 //this runs on DOM load - you can access all the good stuff now.
 Ext.onReady(function() {
-    var map;
+   var map;
     var mgr;
-
+    
     var tree = new Ext.tree.TreePanel({
         title : 'Data Sources',
         region: 'west',
@@ -24,6 +26,8 @@ Ext.onReady(function() {
             id:'root'
         }
     });
+
+
 
     tree.on('checkchange', function(node, isChecked) {
         //the check was checked on
@@ -47,11 +51,13 @@ Ext.onReady(function() {
                 //node.attributes.tileOverlay = new GGeoXml(node.attributes.wfsUrl);
                 //map.addOverlay(node.attributes.tileOverlay);
 
+
                 GDownloadUrl(node.attributes.wfsUrl, function(pData, pResponseCode) {
                     if (pResponseCode == 200) {
-                      //var xmlDoc = GXml.parse(pData);
+                        //var xmlDoc = GXml.parse(pData);
                          var exml;
-                         exml = new GeoXml("exml", map, null,null);
+                         var icon = new GIcon(G_DEFAULT_ICON , node.attributes.icon); 
+                         exml = new GeoXml("exml", map, null,{baseicon:icon});
                          exml.parseString(pData);
 
                         /*var clusterIcon = new GIcon(G_DEFAULT_ICON, 'http://maps.google.com/mapfiles/kml/paddle/blu-blank.png');
@@ -67,8 +73,6 @@ Ext.onReady(function() {
                     }
                   });
 
-
-                
                 /*var options = {noshadow: true}; //many options available
                 var csGeoXml = new CsGeoXml('csGeoXml', mgr, node.attributes.wfsUrl, options);
                 var handle = GEvent.addListener(csGeoXml, 'parsed', function () {
@@ -136,6 +140,16 @@ Ext.onReady(function() {
         mgr = new MarkerManager(map, mgrOptions);
     }
 
+    GEvent.addListener(map,"click", function(overlay, latlng) {
+          //if (latlng) {
+            //var myHtml = "The GPoint value is: " + map.fromLatLngToDivPixel(latlng) + " at zoom level " + map.getZoom();
+            //map.openInfoWindow(latlng, "blah");
+        if(overlay instanceof GMarker) {
+            overlay.openInfoWindowHtml(overlay.getTitle(), null);
+        }
+          //}
+        });
+
     /*var options = {
      projection: new OpenLayers.Projection("EPSG:900913"),
      displayProjection: new OpenLayers.Projection("EPSG:4326"),
@@ -164,3 +178,8 @@ Ext.onReady(function() {
 
     //getCapabilities();
 });
+
+
+
+
+
