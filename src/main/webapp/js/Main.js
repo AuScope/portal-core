@@ -7,16 +7,16 @@ Ext.onReady(function() {
     
     var tree = new Ext.tree.TreePanel({
         title : 'Data Sources',
-        region: 'west',
+        region: 'center',
         split: true,
         collapsible: true,
-        margins:'100 0 0 0',
-        cmargins:'100 0 0 0',
-        width: 200,
+        //margins:'100 0 0 0',
+        //cmargins:'100 0 0 0',
+        width: 300,
         useArrows:true,
-        autoScroll:true,
-        animate:true,
-        containerScroll: true,
+        //autoScroll:true,
+        //animate:true,
+        //containerScroll: true,
         rootVisible: false,
         dataUrl: 'dataSources.json',
         root: {
@@ -26,8 +26,6 @@ Ext.onReady(function() {
             id:'root'
         }
     });
-
-
 
     tree.on('checkchange', function(node, isChecked) {
         //the check was checked on
@@ -90,25 +88,41 @@ Ext.onReady(function() {
         }
     });
 
-    var westPanel = {
+    /*var westPanel = new Ext.Panel({
+        layout:'border',
         region:'west',
-        id:'west-div',
-        title:'Data Sources',
+        title: 'fag',
         split:true,
+        //items:[tree],
         //width: 200,
         //minSize: 175,
-        maxSize: 400,
+        size: 400,
         collapsible: true,
         margins:'100 0 0 0',
         cmargins:'100 0 0 0'
-    };
+    });*/
+
+
 
     var centerPanel = new Ext.Panel({region:"center", margins:'100 0 0 0', cmargins:'100 0 0 0'});
     var rightPanel = new Ext.Panel({region:"east", margins:'100 0 0 0', cmargins:'100 0 0 0', title: "More Options", split:true, size: 400, collapsible: true});
+    var detailsPanel = new Ext.Panel({region:"south", title: "Stuff", split:true, width: 300, height: 200, collapsible: true});
+    var westPanel = new Ext.Panel({
+        region:"west",
+        margins:'100 0 0 0',
+        cmargins:'100 0 0 0',
+        title: "ya mum",
+        split:true,
+        width: 300,
+        collapsible: true,
+        layout:'border',
+        items:[tree, detailsPanel]
+    });
+
 
     var viewport = new Ext.Viewport({
         layout:'border',
-        items:[tree, centerPanel, rightPanel]
+        items:[westPanel, centerPanel, rightPanel]
     });
 
     //<![CDATA[
