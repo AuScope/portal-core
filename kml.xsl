@@ -137,7 +137,7 @@
          <xsl:value-of select="./geodesy:location/gml:Point/gml:coordinates"/>
       </xsl:variable>
       <Placemark>
-         <name><xsl:value-of select="./geodesy:name"/></name>
+         <name><xsl:value-of select="@fid"/></name>
          <Point>
                 <Style>
                   <IconStyle>
