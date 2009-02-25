@@ -262,6 +262,10 @@ GeoXml.prototype.createMarker = function(point, name, desc, style, idx, instyle,
     }
     markeroptions.title = name;
     var m = new GMarker(point, markeroptions);
+
+    if(markeroptions.markerHandler != null)
+        markeroptions.markerHandler(m);
+
     m.title = name;
     m.id = kml_id;
     var obj = {"type":"point","title":name,"description":escape(desc),"href":href,"shadow":shadow,"visibility":visible,"x":point.x,"y":point.y,"id":m.id};

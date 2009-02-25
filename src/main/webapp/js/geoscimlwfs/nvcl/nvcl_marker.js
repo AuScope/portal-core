@@ -13,10 +13,12 @@
 * @return A new {@link NVCLMarker}
 */
 
-function NVCLMarker (pBoreholeNode, psIcon) {
+function NVCLMarker (boreholeId, marker) {
   // Create the Borehole object from the XML node
-  this.moBorehole = new Borehole(pBoreholeNode);
-  
+  //this.moBorehole = new Borehole(pBoreholeNode);
+
+    this.moMarker = marker;
+    this.boreholeId = boreholeId;
   this.msSummaryHtml = "";
   this.msMosaicHtml = "";
   this.msPlotScalarsHtml = "";
@@ -33,7 +35,7 @@ function NVCLMarker (pBoreholeNode, psIcon) {
   this.msPlotImageSrc = "";
 		
   // Create a GMarker object for each station using the location information for the same.
-  var longitude = this.moBorehole.moLocation.msLongitude;
+  /*var longitude = this.moBorehole.moLocation.msLongitude;
   var latitude = this.moBorehole.moLocation.msLatitude;
   var oPoint = new GPoint(parseFloat(longitude), parseFloat(latitude));
   var oMarkerIcon = new GIcon(goBaseIcon, psIcon);
@@ -41,14 +43,15 @@ function NVCLMarker (pBoreholeNode, psIcon) {
   this.moMarker = oMarker;
 
   // Add a listener for a click event on this marker
-  GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());
+  GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());*/
 }
 
 /**
 * The borehole object which conforms to the gsml:borehole schema.
 * @type Borehole
 */
-NVCLMarker.prototype.moBorehole = null;
+//NVCLMarker.prototype.moBorehole = null;
+NVCLMarker.prototype.boreholeId = null;
 
 /**
 * The html to be displayed on the Summary tab. 
@@ -214,13 +217,13 @@ function NVCLMarker_getMarkerClickedFn() {
 */ 
 function NVCLMarker_markerClicked()
 {
-    var oNVCLMarker = this;
-  var oBorehole = this.moBorehole;
+  var oNVCLMarker = this;
+  //var oBorehole = this.moBorehole;
   
   // msId is of the format nvcl_core.4
   // We need to strip the nvcl_core: part to get the actual coreid
   // accepted by all nvcl web services
-  var sCoreId = oBorehole.msId.substring(10);
+  var sCoreId = this.boreholeId.substring(10);//oBorehole.msId.substring(10);
 	
   // Web service to get the scalars belonging to a given borehole
   //var scalars_proxy = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/scalars";
@@ -275,7 +278,7 @@ function NVCLMarker_markerClicked()
 */
 function NVCLMarker_createSummaryTabHtml() {
 
-  var oBorehole = this.moBorehole;
+  /*var oBorehole = this.moBorehole;
   var sLatitude = oBorehole.moLocation.msLatitude;
   var sLongitude = oBorehole.moLocation.msLongitude;
 
@@ -345,7 +348,7 @@ function NVCLMarker_createSummaryTabHtml() {
     summaryHtml += '</table></div>'; // End of outermost div 
 	                      
     this.msSummaryHtml = summaryHtml;
-  }
+  }*/
 }
 
 /**
@@ -358,13 +361,13 @@ function NVCLMarker_createSummaryTabHtml() {
 function NVCLMarker_createMosaicTabHtml() {
 
   var oNVCLMarker = this;
-  var oBorehole = this.moBorehole;
+  //var oBorehole = this.moBorehole;
   var mosaicHtml = "";
 	
   // msId is of the format nvcl_core.4
   // We need to strip the nvcl_core: part to get the actual coreid
   // accepted by all nvcl web services
-  var sCoreId = oBorehole.msId.substring(10);
+  var sCoreId = this.boreholeId.substring(10);//oBorehole.msId.substring(10);
   
   // Check if the mosaic image has already been downloaded.
   if (!this.msMosaicHtml) {
@@ -470,7 +473,7 @@ function NVCLMarker_createMosaicTabHtml() {
 function NVCLMarker_createPlotScalarsTabHtml() { 
 	
   var oNVCLMarker = this;
-  var oBorehole = this.moBorehole;
+  //var oBorehole = this.moBorehole;
   var plotScalarHtml = "";
 									
   if (oNVCLMarker.maScalars.length == 0) {
@@ -578,7 +581,7 @@ function NVCLMarker_createPlotScalarsTabHtml() {
     plotScalarHtml += '<div id="div_plot_btn" style="vertical-align:middle"><br/>';
     plotScalarHtml += '<button id="'+oNVCLMarker.msPlotBtnId+'" style="width:80px"> Plot </button><br/>';
     plotScalarHtml += '</div></td></tr>';
-		
+
     // Messages row
     plotScalarHtml += '<tr>';
     plotScalarHtml += '<td colspan=5 align="center" valign="top">';
@@ -599,7 +602,7 @@ function NVCLMarker_createPlotScalarsTabHtml() {
 function NVCLMarker_displayInfoWindow() {
   
   var oNVCLMarker = this;
-  var oBorehole = this.moBorehole;
+  //var oBorehole = this.moBorehole;
   var oMarker = this.moMarker;
 		
   /**
@@ -610,19 +613,21 @@ function NVCLMarker_displayInfoWindow() {
    * and plot them.
    * Plots - The resultant plots from the tab 3 operation.
    */
-  var label1 = "Summary";
+  //var label1 = "Summary";
   var label2 = "Mosaic";
   var label3 = "Plot Scalars";
   var label4 = "Plots";
 	
   // Get the summary tab html
-  var summaryHtml = this.msSummaryHtml;
+  //var summaryHtml = this.msSummaryHtml;
 	
   // Get the mosaic images for the borehole
   var mosaicHtml = this.msMosaicHtml;
 
-  oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, summaryHtml),
-									new GInfoWindowTab(label2, mosaicHtml)]);
+  //oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, summaryHtml),
+//									new GInfoWindowTab(label2, mosaicHtml)]);
+
+    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, mosaicHtml)]);
 	
   // Create the Plot Scalars tab html
   var plotScalarsHtml = this.createPlotScalarsTabHtml();
@@ -630,16 +635,14 @@ function NVCLMarker_displayInfoWindow() {
   if (this.maScalars.length == 0) {	
     // If the borehole does not have any scalars, no need to make the 4th tab
     // Open the popup window for the marker with the tabs Summary, Mosaic and Plot Scalars
-    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, summaryHtml),
-									new GInfoWindowTab(label2, mosaicHtml),  
+    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, mosaicHtml),  
                                     new GInfoWindowTab(label3, plotScalarsHtml)]);
   } else {
     // Create the 3rd tab only if there are any scalars for this borehole 
     var plotsHtml = this.createPlotsTabHtml();
     
     // Open the popup window for the marker with the tabs Summary, Plot Scalars and Plots
-    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, summaryHtml), 
-                                    new GInfoWindowTab(label2, mosaicHtml),  
+    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, mosaicHtml),
                                     new GInfoWindowTab(label3, plotScalarsHtml),
                                     new GInfoWindowTab(label4, plotsHtml)]);
                                     
@@ -682,7 +685,7 @@ function NVCLMarker_updateInfoWindow() {
 function NVCLMarker_createPlotsTabHtml() {
 
   var oNVCLMarker = this;
-  var oBorehole = this.moBorehole;
+  //var oBorehole = this.moBorehole;
   var plotsHtml = "";
 	
   if (this.msPlotImageSrc == "") {
@@ -812,13 +815,13 @@ function NVCLMarker_getPlotSelectedScalars() {
 function NVCLMarker_plotSelectedScalars() {
 
   var oNVCLMarker = this;
-  var oBorehole = this.moBorehole;
+  //var oBorehole = this.moBorehole;
   var mosaicHtml = "";
 	
   // msId is of the format nvcl_core.4
   // We need to strip the nvcl_core: part to get the actual coreid
   // accepted by all nvcl web services
-  var sCoreId = oBorehole.msId.substring(10);
+  var sCoreId = this.boreholeId.substring(10);//oBorehole.msId.substring(10);
 	
   var oSelectedListBox = document.getElementById(this.msSelectedListId);
   var oMessagesDiv = document.getElementById("div_messages");

@@ -78,6 +78,13 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Geodesy", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png");
     }};
 
+    //create a map to hold the get features query stuff
+    public static final Map<String, String> featureTypes = new HashMap<String, String>() {{
+        put("Borehole", "gsml:Borehole");
+        put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
+        put("Geodesy", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png");
+    }};
+
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions
     public static final String THEME = "THEME:";
     public static final String INSTITUTION = "INSTITUTION:";
@@ -167,6 +174,7 @@ public class GetDataSourcesJSONController extends AbstractController {
                 node.put("layerType", "wfs");
                 node.put("tileOverlay", "");
                 node.put("wfsUrl", PROXY_URL+wfsUrl+wfsQueryParams.get(theme));
+                node.put("featureType", featureTypes.get(theme));
                 //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                 //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
 
