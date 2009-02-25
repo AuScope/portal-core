@@ -42,7 +42,11 @@ Ext.onReady(function() {
                     if (pResponseCode == 200) {
                         var exml;
                         var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
-                        exml = new GeoXml("exml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) { marker.featureType = node.attributes.featureType; }}});
+                        icon.iconSize = new GSize(32, 32);
+                        exml = new GeoXml("exml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) {
+                            marker.featureType = node.attributes.featureType;
+                            marker.wfsUrl = node.attributes.wfsUrl;
+                        }}});
                         exml.parseString(pData);
 
                         node.attributes.tileOverlay = exml;
@@ -111,8 +115,12 @@ Ext.onReady(function() {
     //when a person clicks on a marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {
         if (overlay instanceof GMarker) {
-            if(overlay.featureType == "gsml:Borehole")
+            if (overlay.featureType == "gsml:Borehole")
                 new NVCLMarker(overlay.getTitle(), overlay).getMarkerClickedFn()();
+            else if (overlay.featureType == "geodesy:stations") {
+                alert('yes geod');
+                new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.getTitle(), overlay).getMarkerClickedFn()();
+            }
         }
     });
 });

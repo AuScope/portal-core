@@ -82,7 +82,7 @@ public class GetDataSourcesJSONController extends AbstractController {
     public static final Map<String, String> featureTypes = new HashMap<String, String>() {{
         put("Borehole", "gsml:Borehole");
         put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
-        put("Geodesy", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png");
+        put("Geodesy", "geodesy:stations");
     }};
 
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions

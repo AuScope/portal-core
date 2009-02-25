@@ -15,9 +15,11 @@
 * @return A new {@link GeodesyMarker}
 */
 
-function GeodesyMarker (pGeodesyStationNode, psIcon, pWfsUrl, pDataLayerName) {
-  this.moGeodesyStation = new GeodesyStation(pGeodesyStationNode);
-
+function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker) {
+  //this.moGeodesyStation = new GeodesyStation(pGeodesyStationNode);
+    this.stationId = stationId;
+    this.moMarker = marker;
+    
   // Initiaize all the members
   this.msWfsUrl = pWfsUrl;
   this.msDataLayerName = pDataLayerName;
@@ -89,7 +91,7 @@ function GeodesyMarker (pGeodesyStationNode, psIcon, pWfsUrl, pDataLayerName) {
   this.msRenixFilesHtml = "";
        
   // Create a GMarker object for each station using the location information for the same.
-  var longitude = this.moGeodesyStation.moLocation.msLongitude;
+  /*var longitude = this.moGeodesyStation.moLocation.msLongitude;
   var latitude = this.moGeodesyStation.moLocation.msLatitude;
   var oPoint = new GPoint(parseFloat(longitude), parseFloat(latitude));
   var oMarkerIcon = new GIcon(goBaseIcon, psIcon);
@@ -97,14 +99,15 @@ function GeodesyMarker (pGeodesyStationNode, psIcon, pWfsUrl, pDataLayerName) {
   this.moMarker = oMarker;
        
   // Add a listener for a click event on this marker
-  GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());
+  GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());*/
 }
 
 /**
 * The geodesy station object which conforms to the geodesy:stations schema
 * @type GeodesyStation
 */
-GeodesyMarker.prototype.moGeodesyStation = null;
+//GeodesyMarker.prototype.moGeodesyStation = null;
+GeodesyMarker.prototype.stationId = null;
 
 /**
 * The base url to be queried to get the renix file data for the station.<br> 
@@ -312,7 +315,7 @@ GeodesyMarker.prototype.dataUrlChecked = GeodesyMarker_dataUrlChecked;
 */ 
 function GeodesyMarker_getWfsYearUrl(pYear) {
   
-  var station = this.moGeodesyStation.msId;
+  var station = this.stationId;//this.moGeodesyStation.msId;
   var sUrl = this.msWfsUrl + "&request=GetFeature&outputFormat=GML2&typeName=" + encodeURI(this.msDataLayerName);
   sUrl= sUrl + "&PropertyName=geodesy:date,geodesy:url";
   
@@ -332,7 +335,7 @@ function GeodesyMarker_getWfsYearUrl(pYear) {
 */ 
 function GeodesyMarker_getYearMonthWfsUrl(pYear, pMonth) {
 
-  var station = this.moGeodesyStation.msId;
+  var station = this.stationId;//this.moGeodesyStation.msId;
   var sUrl = this.msWfsUrl + "&request=GetFeature&outputFormat=GML2&typeName=" + encodeURI(this.msDataLayerName);
   sUrl= sUrl + "&PropertyName=geodesy:date,geodesy:url";
   
@@ -375,14 +378,14 @@ function GeodesyMarker_getMarkerClickedFn() {
 */ 
 function GeodesyMarker_markerClicked()
 {
-  var oGeodesyMarker = this;
-  var oGeodesyStation = this.moGeodesyStation;
+  //var oGeodesyMarker = this.moMarker;
+  //var oGeodesyStation = this.moGeodesyStation;
   
-  var sId = oGeodesyStation.msId;
-  var sName = oGeodesyStation.msName;
+  var sId = this.stationId;//oGeodesyStation.msId;
+  /*var sName = oGeodesyStation.msName;
   var sLogUrl = oGeodesyStation.msLogUrl;
   var sLatitude = oGeodesyStation.moLocation.msLatitude;
-  var sLongitude = oGeodesyStation.moLocation.msLongitude;
+  var sLongitude = oGeodesyStation.moLocation.msLongitude;*/
   var oMarker = this.moMarker;
     
   /**
@@ -397,7 +400,7 @@ function GeodesyMarker_markerClicked()
     
   // Create the html to be displayed in the "Summary" tab of the popup window.
   // This html is stored in the msSummaryHtml.
-  if (!(this.msSummaryHtml)) {
+ /* if (!(this.msSummaryHtml)) {
     // Outermost div
     summaryHtml += '<div style="overflow:auto; font-size:12px; line-height:12px">';
     summaryHtml += '<table style="height:350px">';
@@ -434,7 +437,7 @@ function GeodesyMarker_markerClicked()
     summaryHtml += '</table></div>'; // End of outermost div 
     
     this.msSummaryHtml = summaryHtml;
-  }
+  }*/
 
   // Create the html to be displayed in the "Renix Files" tab of the popup window.
   // This html is stored in the msRenixFilesHtml member   
@@ -465,8 +468,9 @@ function GeodesyMarker_markerClicked()
   this.moCalendar = new GeodesyCalendar(this, sId, datesDivId);
   
   // Open the popup window for the marker with the tabs Main and Data
-  oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, this.msSummaryHtml), 
-                                  new GInfoWindowTab(label2, this.msRenixFilesHtml)]);
+  /*oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, this.msSummaryHtml),
+                                  new GInfoWindowTab(label2, this.msRenixFilesHtml)]);*/
+    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, this.msRenixFilesHtml)]);
 }
 
 /**
@@ -478,8 +482,8 @@ function GeodesyMarker_markerClicked()
 * before any functions are associated to events on them. 
 */
 function GeodesyMarker_updateInfoWindow() {
-  var oGeodesyStation = this.moGeodesyStation;
-  var sId = oGeodesyStation.msId;
+  //var oGeodesyStation = this.moGeodesyStation;
+  var sId = this.stationId;//oGeodesyStation.msId;
   var monthsDivId = "months_div_" + sId;
   var datesDivId = "dates_div_" + sId;
   
@@ -638,7 +642,7 @@ function GeodesyMarker_getYearCheckedFn (pYear, pYearChkId, pYearHrefId, pMonths
 function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId, pDatesDivId) {
   var oGeodesyMarker = this;
   
-  var station = this.moGeodesyStation.msId;
+  var station = this.stationId;//this.moGeodesyStation.msId;
   var yearChkId = pYearChkId;
   var yearHrefId = pYearHrefId;
   var year = pYear;
@@ -733,7 +737,7 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
 function GeodesyMarker_getMonthCheckedFn (pYear, pMonth, pMonthChkId, pMonthHrefId, pDatesDivId) {
   var oGeodesyMarker = this;
   
-  var station = this.moGeodesyStation.msId;
+  var station = this.stationId;//this.moGeodesyStation.msId;
   var year = pYear;
   var month = pMonth;
   var monthChkId = pMonthChkId;
@@ -862,7 +866,7 @@ function GeodesyMarker_getYearClickedFn (pYear, pYearChkId, pYearHrefId, pMonths
 */
 function GeodesyMarker_yearClicked (pYear, pYearHrefId, pMonthsDivId, pDatesDivId, pCreateAll) {
    alert('year clicked');
-  var station = this.moGeodesyStation.msId;
+  var station = this.stationId;//this.moGeodesyStation.msId;
   var yearHrefId = pYearHrefId;
   var year = pYear;
   var monthsDivId = pMonthsDivId;
@@ -969,7 +973,7 @@ function GeodesyMarker_getMonthClickedFn (pYear, pMonth, pMonthHrefId, pDatesDiv
 * @param {String} pDatesDivId The html id of div where the calendar should be added
 */
 function GeodesyMarker_monthClicked (pYear, pMonth, pMonthHrefId, pDatesDivId) {
-  var station = this.moGeodesyStation.msId;
+  var station = this.stationId;//this.moGeodesyStation.msId;
   var year = pYear;
   var month = pMonth;
   var monthHrefId = pMonthHrefId;
@@ -1009,7 +1013,7 @@ function GeodesyMarker_monthClicked (pYear, pMonth, pMonthHrefId, pDatesDivId) {
 */
 function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
   var oGeodesyMarker = this;
-  var station = this.moGeodesyStation.msId;
+  var station = this.stationId;//this.moGeodesyStation.msId;
   var year = pYear;
   var month = pMonth;
   var datesDivObj = pDatesDivObj;
@@ -1091,7 +1095,7 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
 */
 function GeodesyMarker_makeCalendarForMonth(pYear, pMonth) {
   var oGeodesyMarker = this;
-  var stationId = this.moGeodesyStation.msId;
+  var stationId = this.stationId;//this.moGeodesyStation.msId;
   
   // Create the calendar
   var dateSelected = new Date();
@@ -1154,7 +1158,7 @@ function GeodesyMarker_getDateClickedFn(pYear, pMonth, pDate, pDateHrefId) {
 function GeodesyMarker_dateClicked (pYear, pMonth, pDate, pDateHrefId) {
 
   var oGeodesyMarker = this;
-  var station = this.moGeodesyStation.msId;  
+  var station = this.stationId;//this.moGeodesyStation.msId;
   var year = pYear;
   var month = pMonth;
   var date = pDate;
