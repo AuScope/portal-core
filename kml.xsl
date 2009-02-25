@@ -76,7 +76,10 @@
          <xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
       </xsl:variable>
       <Placemark>
-         <name><xsl:value-of select="./gml:name"/></name>
+      <!--
+         <name id="{@gml:id}"><xsl:value-of select="./gml:name"/></name>
+         -->
+         <name><xsl:value-of select="@gml:id"/></name>
          <Point>
             <Style>
                <IconStyle>
