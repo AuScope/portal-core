@@ -46,8 +46,9 @@ public class XSLTRestProxy extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String[][] queryParams = new String[][]{};
-
+        System.out.println(request.getParameter("url"));
         RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
+        System.out.println(request.getParameter("url").replace("%26", "&"));
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         try {
             String result = conn.get(headers).getDataAsString();
