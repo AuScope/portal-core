@@ -55,13 +55,15 @@ public class GetDataSourcesJSONController extends AbstractController {
                                             "Mineral Occurences",
                                             "Global Navigation Satellite Systems",
                                             "Geodesy",
-                                            "Seismic Imaging"};
+                                            "Seismic Imaging",
+                                            "Geological Units"};
 
     //create a map to hold the CSW query contraints for each theme
     public static final Map<String, String> themeContraints = new HashMap<String, String>() {{
         put("Borehole", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:Borehole</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         put("Global Navigation Satellite Systems", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GNSS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         put("Geodesy", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>Geodesy</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put("Geological Units", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:GeologicUnit</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
     }};
 
     //create a map to hold the get features query stuff
@@ -69,6 +71,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Borehole", "request=GetFeature%26typeName=gsml:Borehole");
         put("Global Navigation Satellite Systems", "request=GetFeature%26typeName=sa:SamplingPoint");
         put("Geodesy", "request=GetFeature%26typeName=geodesy:stations");
+        put("Geological Units", "request=GetFeature%26typeName=gsml:GeologicUnit");
     }};
 
     //create a map to hold the get features query stuff
@@ -76,6 +79,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Borehole", "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png");
         put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
         put("Geodesy", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png");
+        put("Geological Units", "http://maps.google.com/mapfiles/kml/paddle/red-blank.png");
     }};
 
     //create a map to hold the get features query stuff

@@ -20,7 +20,6 @@
                <source>1.5</source>
                <target>1.5</target>
                 <compilerVersion>1.5</compilerVersion>
-
             </configuration>
          </plugin>
          <plugin>

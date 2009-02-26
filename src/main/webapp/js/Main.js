@@ -66,10 +66,36 @@ Ext.onReady(function() {
     var centerPanel = new Ext.Panel({region:"center", margins:'100 0 0 0', cmargins:'100 0 0 0'});
 
     //this panel will be used for extra options
-    var rightPanel = new Ext.Panel({region:"east", margins:'100 0 0 0', cmargins:'100 0 0 0', title: "More Options", split:true, size: 0, collapsible: true});
+    //var rightPanel = new Ext.Panel({region:"east", margins:'100 0 0 0', cmargins:'100 0 0 0', title: "More Options", split:true, size: 0, collapsible: true});
+
+// The action
+    var action = new Ext.Action({
+        text: 'Action 1',
+        width: "100%",
+        handler: function(){
+           alert('you clicked');
+        }
+    });
+
+    var buttonPanel = new Ext.Panel({
+        width: '100%',
+        items: [new Ext.Button(action)]
+    });
+
+    var buttonPanel = new Ext.FormPanel({
+        title: 'Options',
+        bodyStyle:'padding:5px 5px 0',
+
+        region:"south",
+        items: [new Ext.Button(action)],
+        split:true,
+        width: 300,
+        height: 200,
+        collapsible: true
+    });
 
     //used to show extra details
-    var detailsPanel = new Ext.Panel({region:"south", title: "Stuff", split:true, width: 300, height: 200, collapsible: true});
+    //var detailsPanel = new Ext.Panel({region:"south", title: "Stuff", split:true, width: 300, height: 200, collapsible: true, items:[buttonPanel]});
 
     //used as a placeholder for the tree and details panel on the left of screen
     var westPanel = new Ext.Panel({
@@ -81,13 +107,13 @@ Ext.onReady(function() {
         width: 300,
         collapsible: true,
         layout:'border',
-        items:[tree, detailsPanel]
+        items:[tree, buttonPanel]
     });
 
     //add all the panels to the viewport
     var viewport = new Ext.Viewport({
         layout:'border',
-        items:[westPanel, centerPanel, rightPanel]
+        items:[westPanel, centerPanel]
     });
 
     // Is user's browser suppported by Google Maps?
