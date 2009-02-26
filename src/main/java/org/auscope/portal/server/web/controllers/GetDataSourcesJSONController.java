@@ -177,6 +177,7 @@ public class GetDataSourcesJSONController extends AbstractController {
                 node.put("icon", icons.get(theme));
                 node.put("layerType", "wfs");
                 node.put("tileOverlay", "");
+                System.out.println(PROXY_URL+wfsUrl+wfsQueryParams.get(theme));
                 node.put("wfsUrl", PROXY_URL+wfsUrl+wfsQueryParams.get(theme));
                 node.put("featureType", featureTypes.get(theme));
                 //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
