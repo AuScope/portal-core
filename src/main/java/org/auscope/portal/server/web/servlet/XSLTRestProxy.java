@@ -50,9 +50,9 @@ public class XSLTRestProxy extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String[][] queryParams = new String[][]{};
-        logger.info(request.getParameter("url"));
+        Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, request.getParameter("url"), request.getParameter("url"));
         RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
-        logger.info(request.getParameter("url").replace("%26", "&"));
+        Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, request.getParameter("url").replace("%26", "&"), request.getParameter("url").replace("%26", "&"));
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         try {
             String result = conn.get(headers).getDataAsString();
@@ -69,7 +69,7 @@ public class XSLTRestProxy extends HttpServlet {
         } catch (IOException ex) {
             Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, ex);
         }  catch (TransformerException e) {
-            e.printStackTrace();
+            Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
