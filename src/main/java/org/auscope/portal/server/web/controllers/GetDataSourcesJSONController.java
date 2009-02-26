@@ -45,7 +45,7 @@ public class GetDataSourcesJSONController extends AbstractController {
     public static final String HYPERSPECTRAL = "Hyperspectral";
 
     //public static final String PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
-    public static final String PROXY_URL = "http://localhost:8080/xsltRestProxy?url=";
+    public static final String PROXY_URL = "/xsltRestProxy?url=";
 
     public static final String CSW_URL = "http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw";
 
