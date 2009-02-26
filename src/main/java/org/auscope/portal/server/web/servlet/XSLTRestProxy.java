@@ -1,5 +1,8 @@
 package org.auscope.portal.server.web.servlet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.*;
 import javax.servlet.http.*;
 import javax.xml.transform.Transformer;
@@ -19,8 +22,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * RestProxyServlet
@@ -42,13 +45,14 @@ import java.util.logging.Logger;
  * 
  */
 public class XSLTRestProxy extends HttpServlet {
+    protected final Log logger = LogFactory.getLog(getClass());
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String[][] queryParams = new String[][]{};
-        System.out.println(request.getParameter("url"));
+        logger.info(request.getParameter("url"));
         RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
-        System.out.println(request.getParameter("url").replace("%26", "&"));
+        logger.info(request.getParameter("url").replace("%26", "&"));
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         try {
             String result = conn.get(headers).getDataAsString();
