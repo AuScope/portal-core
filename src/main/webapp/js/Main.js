@@ -37,6 +37,7 @@ Ext.onReady(function() {
                 map.addOverlay(node.attributes.tileOverlay);
             }
             else if (node.attributes.layerType == 'wfs') {
+                alert(node.attributes.wfsUrl);
                 //we are assuming a KML response from the WFS requests
                 GDownloadUrl(node.attributes.wfsUrl, function(pData, pResponseCode) {
                     if (pResponseCode == 200) {
