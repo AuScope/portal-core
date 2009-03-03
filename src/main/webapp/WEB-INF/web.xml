@@ -7,12 +7,19 @@
   <display-name>Archetype Created Web Application</display-name>
 
   <servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <!--
+  <servlet>
     <servlet-name>googlemap</servlet-name>
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
-    <!--<servlet>
+    <servlet>
           <servlet-name>HttpProxy</servlet-name>
           <servlet-class>com.jsos.httpproxy.HttpProxyServlet</servlet-class>
         <init-param>
@@ -47,7 +54,7 @@
     </servlet-mapping>
 
   <servlet-mapping>
-    <servlet-name>googlemap</servlet-name>
+    <servlet-name>dispatcher</servlet-name>
     <url-pattern>*.html</url-pattern>
   </servlet-mapping>
 
@@ -68,8 +75,8 @@
   </servlet-mapping>
       -->
   <welcome-file-list>
-  	<welcome-file>index.jsp</welcome-file>
+  	 <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
 
-  
+
 </web-app>
