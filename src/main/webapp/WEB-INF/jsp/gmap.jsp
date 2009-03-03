@@ -1,86 +1,62 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <title>My Google Map</title>
-    <link rel="stylesheet" type="text/css" href="/css/styles.css"/>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Auscope Portal</title>
 
-    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAjNe9lSRMedgGg_SHNzEvuhTwM0brOpm-All5BF6PoaKBxRWWERQRcbtFgCIEBbfjrXQpTiWtdGwZFg"
-      type="text/javascript"></script>
-    
-    <script type="text/javascript">
-
-    //<![CDATA[
-        
-    function load() {
-      //alert(window.location.host);
-      //alert(${2+2});
-      
-      // Is user's browser suppported by Google Maps?
-      if (GBrowserIsCompatible()) {
-        var map = new GMap2(document.getElementById("content"));
-        // Large pan and zoom control
-        map.addControl(new GLargeMapControl());
-        // Toggle between Map, Satellite, and Hybrid types 
-        map.addControl(new GMapTypeControl());
-
-        var startZoom = 4; 
-        map.setCenter(new GLatLng(${centerLat},${centerLon}), 4);
-        //map.setCenter(new GLatLng(-31.9554, 115.85859), 7);
-        map.setMapType(G_SATELLITE_MAP); 
-
-		//Thumbnail map
-		var Tsize = new GSize(150, 150);
-        map.addControl(new GOverviewMapControl(Tsize));
-                
+    <!-- Page Style -->
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <STYLE type="text/css">
+      #nav-example-02 a {
+         background: url( "/img/navigation.gif" ) -100px -38px no-repeat;
       }
-    }
+    </STYLE>
 
-    // Create a base icon for all of our markers that specifies the
-    // shadow, icon dimensions, etc.
-    var baseIcon = new GIcon();
-    baseIcon.shadow = "http://www.google.com/mapfiles/shadow50.png";
-    baseIcon.iconSize = new GSize(20, 34);
-    baseIcon.shadowSize = new GSize(37, 34);
-    baseIcon.iconAnchor = new GPoint(9, 34);
-    baseIcon.infoWindowAnchor = new GPoint(9, 2);
-    baseIcon.infoShadowAnchor = new GPoint(18, 25);
+    <!-- Google Maps import -->
+    <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAZqsP68C-PfYEAobUmwen1xSei4j9m2Mi-rbOVQ0iCZaYodqdCRQbFXNtqGnMwriezq-u4iBCtlh5WQ" type="text/javascript"></script>
+    <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js" type="text/javascript"></script>
 
-    // To Do: Checkboxes
-    var CAT_ICONS = [];
-    CAT_ICONS["DEFAULT_ICON"] = tinyIcon("green");
-    CAT_ICONS["Hyperspectral"] = tinyIcon("red");
-    CAT_ICONS["Mineral Occurences"] = tinyIcon("green");
-    CAT_ICONS["Geological Units"] = tinyIcon("gray");
-    CAT_ICONS["Geochemistry"] = tinyIcon("blue");
-    CAT_ICONS["Bore holes"] = tinyIcon("yellow");
-    CAT_ICONS["GNNS / GPS"] = tinyIcon("purple");
-    CAT_ICONS["Seismic Imaging"] = tinyIcon("purple");
+    <!-- Bring in the ExtJs Libraries and CSS -->
+    <link rel="stylesheet" type="text/css" href="js/ext-2.2/resources/css/ext-all.css">
+    <script type="text/javascript" src="js/ext-2.2/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="js/ext-2.2/ext-all.js"></script>
 
-    //]]>
-    </script>	
-  </head>
-  
-  <body onload="load()" onunload="GUnload()">
-    <div id="head">&nbsp;AuScope Portal</div>
-    <div id="foot">&nbsp;&copy;2008 AuScope</div>
-    <div id="left">
-      <dl>
-        <dt><a class="nav" href="#">Hyperspectral</a></dt>
-        <dd>Hyperspectral data</dd>
-        <dt><a class="nav" href="#">Mineral Occurences</a></dt>
-        <dd>Mineral Occurences data</dd>
-        <dt><a class="nav" href="#">Geological Units</a></dt>
-        <dt><a class="nav" href="#">Geochemistry</a></dt>
-        <dt><a class="nav" href="#">Bore holes</a></dt>
-        <dt><a class="nav" href="#">GNNS / GPS</a></dt>
-        <dt><a class="nav" href="#">Seismic Imaging</a></dt>
-      </dl>
-    </div>
-    <!-- 
-    <div id="map" style="width: 800px; height: 600px"></div>
-    -->
-    <div id="content"></div>
-  </body>
+    <script src="js/egeoxml/csgeoxml.js" type="text/javascript"></script>
+    <script src="js/egeoxml/egeoxml.js" type="text/javascript"></script>
+    <script src="js/egeoxml/geoxml.js" type="text/javascript"></script>
+    <script src="js/egeoxml/clustermarker.js" type="text/javascript"></script>
+
+    <!-- Scripts for the Web Map Service layering -->
+    <script src="js/wms/wms-gs-1_1_1.js" type="text/javascript"></script>
+    <script src="js/wms/wms_layer.js" type="text/javascript"></script>
+    <script src="js/wms/web_map_service.js" type="text/javascript"></script>
+
+    <!-- Scripts for interperating the geosciml -->
+    <script src="js/geoscimlwfs/utility_functions.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/feature_types/location.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/feature_types/coordinates.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/feature_types/sampling_curve.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/feature_types/borehole.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/feature_types/geodesy_stations.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/feature_types/sampling_point.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/feature_types/bushfire.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/global_variables.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/station_group.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/nvcl/nvcl_marker.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/geodesy/geodesy_calendar.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/geodesy/geodesy_marker.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/gnss/gnss_marker.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/ga_sentinel/ga_sentinel_marker.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/gzoom.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/map.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/main.js" type="text/javascript"></script>
+
+    <!-- Page specific javascript -->
+    <script src="js/Main.js" type="text/javascript"></script>
+</head>
+
+<body onunload="GUnload()">
+   <!-- Include Navigation Header -->
+   <%@ include file="page_header.jsp" %>
+</body>
 </html>
