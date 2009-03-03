@@ -1,4 +1,4 @@
-<style>
+
     body {
         margin: 0px;
         padding: 0px;
@@ -15,7 +15,6 @@
         background-repeat: no-repeat;
         width: 100%;
         height: 100px;
-    #margin : auto;
     }
 
     #logo {
@@ -36,7 +35,6 @@
 
     #nav {
         float: right;
-
         padding-top: 0px;
         padding-right: 40px;
     }
@@ -45,7 +43,6 @@
         text-align: left;
         padding: 0px;
         margin: 0px;
-    #width : 1024 px;
     }
 
     #nav ul li {
@@ -102,6 +99,3 @@
     #nav-example-03 a:hover {
         background: url( "/img/navigation.gif" ) -200px -38px no-repeat;
     }
-
-
-</style>
