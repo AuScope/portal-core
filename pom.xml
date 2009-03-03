@@ -70,22 +70,32 @@
          <version>2.4</version>
          <scope>provided</scope>
       </dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.1.2</version>
-         <scope>provided</scope>
-		</dependency>
+      <dependency>
+         <groupId>javax.servlet</groupId>
+         <artifactId>jstl</artifactId>
+         <version>1.1.2</version>
+      </dependency>
+      <dependency>
+         <groupId>taglibs</groupId>
+         <artifactId>standard</artifactId>
+         <version>1.1.2</version>
+      </dependency>
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
          <version>3.8.1</version>
          <scope>test</scope>
-      </dependency>
+      </dependency>      
       <dependency>
          <groupId>org.springframework</groupId>
          <artifactId>spring</artifactId>
          <version>2.5.3</version>
+         <exclusions>
+            <exclusion>
+               <artifactId>javax.servlet</artifactId>
+               <groupId>jstl</groupId>
+            </exclusion>
+         </exclusions>
       </dependency>
       <dependency>
          <groupId>org.springframework</groupId>
@@ -97,43 +107,42 @@
          <artifactId>spring-orm</artifactId>
          <version>2.5.3</version>
       </dependency>
-       <dependency>
-            <groupId>net.sf.json-lib</groupId>
-            <artifactId>json-lib</artifactId>
-            <version>2.2.3</version>
-           <classifier>jdk15</classifier>
-        </dependency>
-       <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-wfs</artifactId>
-           <version>2.6-SNAPSHOT</version>
-          </dependency>
-          <dependency>
-           <groupId>org.geotools</groupId>
-           <artifactId>gt-wms</artifactId>
-           <version>2.6-SNAPSHOT</version>
-          </dependency>
-       <dependency>
-        <groupId>xalan</groupId>
-        <artifactId>xalan</artifactId>
-        <version>2.7.1</version>
-    </dependency>
       <dependency>
-        <groupId>RestProxy</groupId>
-        <artifactId>RestProxy</artifactId>
-        <version>1.1</version>
-    </dependency>
-
-       <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.5</version>
-    </dependency>
-       <dependency>
-    <groupId>org.springframework</groupId>
-    <artifactId>spring-mock</artifactId>
-    <version>2.0-rc3</version>
-</dependency> 
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-mock</artifactId>
+         <version>2.0-rc3</version>
+      </dependency> 
+      <dependency>
+         <groupId>net.sf.json-lib</groupId>
+         <artifactId>json-lib</artifactId>
+         <version>2.2.3</version>
+         <classifier>jdk15</classifier>
+      </dependency>
+      <dependency>
+         <groupId>org.geotools</groupId>
+         <artifactId>gt-wfs</artifactId>
+         <version>2.6-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>org.geotools</groupId>
+         <artifactId>gt-wms</artifactId>
+         <version>2.6-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+         <groupId>xalan</groupId>
+         <artifactId>xalan</artifactId>
+         <version>2.7.1</version>
+      </dependency>
+      <dependency>
+         <groupId>RestProxy</groupId>
+         <artifactId>RestProxy</artifactId>
+         <version>1.1</version>
+      </dependency>
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>4.5</version>
+      </dependency>
 
    </dependencies>
 </project>
