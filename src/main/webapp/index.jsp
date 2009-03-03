@@ -5,14 +5,19 @@
     <title>Auscope Portal</title>
 
     <!-- Page Style -->
-    <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <STYLE type="text/css">
+      #nav-example-02 a {
+         background: url( "/img/navigation.gif" ) -100px -38px no-repeat;
+      }
+    </STYLE>
 
     <!-- Google Maps import -->
     <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAAZqsP68C-PfYEAobUmwen1xSei4j9m2Mi-rbOVQ0iCZaYodqdCRQbFXNtqGnMwriezq-u4iBCtlh5WQ" type="text/javascript"></script>
     <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js" type="text/javascript"></script>
 
     <!-- Bring in the ExtJs Libraries and CSS -->
-    <link rel="stylesheet" type="text/css" href="js/ext-2.2/resources/css/ext-all.css"/>
+    <link rel="stylesheet" type="text/css" href="js/ext-2.2/resources/css/ext-all.css">
     <script type="text/javascript" src="js/ext-2.2/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="js/ext-2.2/ext-all.js"></script>
 
@@ -51,19 +56,7 @@
 </head>
 
 <body onunload="GUnload()">
-
-<div id="header-container">
-    <div id="header">
-        <div id="logo">
-            <a href="index.index.jsp#"></a>
-        </div>
-        <ul id="nav-example">
-            <li id="nav-example-01"><a href="index.index.jsp#"><span>sfd</span></a></li>
-            <li id="nav-example-02"><a href="index.index.jsp#"><span>sfd</span></a></li>
-            <li id="nav-example-03"><a href="index.index.jsp#"><span>sfd</span></a></li>
-        </ul>
-    </div>
-</div>
-
+   <!-- Include Navigation Header -->
+   <%@ include file="WEB-INF/jsp/page_header.jsp" %>
 </body>
 </html>
