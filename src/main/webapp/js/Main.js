@@ -1,7 +1,11 @@
 //this runs on DOM load - you can access all the good stuff now.
+var theglobalexml;
+
 Ext.onReady(function() {
     var map;
     var mgr;
+
+
 
     //this tree holds all of the data sources
     var tree = new Ext.tree.TreePanel({
@@ -37,20 +41,23 @@ Ext.onReady(function() {
                 map.addOverlay(node.attributes.tileOverlay);
             }
             else if (node.attributes.layerType == 'wfs') {
-                alert(node.attributes.wfsUrl);
+                //alert(node.attributes.wfsUrl);
                 //we are assuming a KML response from the WFS requests
-                GDownloadUrl(node.attributes.wfsUrl, function(pData, pResponseCode) {
+                GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
                     if (pResponseCode == 200) {
                         var exml;
                         var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
                         icon.iconSize = new GSize(32, 32);
-                        exml = new GeoXml("exml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) {
+                        exml = new GeoXml("theglobalexml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) {
                             marker.featureType = node.attributes.featureType;
-                            marker.wfsUrl = node.attributes.wfsUrl;
+                            marker.wfsUrl = node.attributes.kmlUrl;
                         }}});
                         exml.parseString(pData);
 
                         node.attributes.tileOverlay = exml;
+
+                        //add a download button
+                        node.attributes.downloadButton = makeButtonAndAdd(node.attributes.wfsUrl, node.text);
                     }
                 });
             }
@@ -58,6 +65,10 @@ Ext.onReady(function() {
 
         //the check was checked off so remove the overlay
         else {
+            //remove the download button
+            buttonPanel.remove(node.attributes.downloadButton);
+            buttonPanel.doLayout();
+            
             node.attributes.tileOverlay.clear();
             node.attributes.tileOverlay = null;
         }
@@ -69,31 +80,71 @@ Ext.onReady(function() {
     //this panel will be used for extra options
     //var rightPanel = new Ext.Panel({region:"east", margins:'100 0 0 0', cmargins:'100 0 0 0', title: "More Options", split:true, size: 0, collapsible: true});
 
-// The action
+
+    // The action
     var action = new Ext.Action({
-        text: 'Action 1',
+        text: 'New Button',
         width: "100%",
         handler: function(){
-           alert('you clicked');
+           buttonPanel.add(new Ext.Button( new Ext.Action({
+                text: 'New Button2',
+                width: "100%",
+                handler: function(){
+
+                }
+            })));
+            buttonPanel.doLayout();
         }
     });
 
-    var buttonPanel = new Ext.Panel({
+    /*var buttonPanel = new Ext.Panel({
         width: '100%',
         items: [new Ext.Button(action)]
-    });
+    });*/
 
     var buttonPanel = new Ext.FormPanel({
         title: 'Options',
         bodyStyle:'padding:5px 5px 0',
 
         region:"south",
-        items: [new Ext.Button(action)],
+        items: [new Ext.Container()],
         split:true,
         width: 300,
         height: 200,
         collapsible: true
     });
+
+    function makeButtonAndAdd(wfsUrl, name) {
+        var button = new Ext.Button( new Ext.Action({
+            text: 'Get ' + name,
+            width: "100%",
+            handler: function(){
+                window.open(wfsUrl+"%26BBOX="+getBoundingBox(), name);
+            }
+        }));
+
+        buttonPanel.add(button);
+        buttonPanel.doLayout();
+
+        return button;
+    }
+
+    function getBoundingBox() {
+        var bounds = map.getBounds();
+        var southWest = bounds.getSouthWest();
+        var northEast = bounds.getNorthEast();
+
+        alert(southWest.lng() + ' - ' + northEast.lng());
+
+        var cords =  southWest.lng() + "," +
+                southWest.lat() + "," +
+    	        (southWest.lng() > northEast.lng() ? northEast.lng() + 360 : northEast.lng()) + "," +
+    	        northEast.lat();
+
+        alert(cords);
+
+        return cords;
+    }
 
     //used to show extra details
     //var detailsPanel = new Ext.Panel({region:"south", title: "Stuff", split:true, width: 300, height: 200, collapsible: true, items:[buttonPanel]});
@@ -138,6 +189,8 @@ Ext.onReady(function() {
         var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
         mgr = new MarkerManager(map, mgrOptions);
     }
+
+    theglobalexml = new GeoXml("theglobalexml", map, null, null);
 
     //when a person clicks on a marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {

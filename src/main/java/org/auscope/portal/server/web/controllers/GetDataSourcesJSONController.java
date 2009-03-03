@@ -9,23 +9,14 @@ import org.geotools.data.ows.WMSCapabilities;
 import org.geotools.data.ows.Layer;
 import org.geotools.data.wms.WebMapServer;
 import org.geotools.ows.ServiceException;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.w3c.dom.NodeList;
 import org.auscope.portal.csw.CSWClient;
-import org.auscope.portal.csw.CSWGetRecordResponse;
 import org.auscope.portal.csw.CSWRecord;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.namespace.NamespaceContext;
 import java.util.*;
 import java.net.URL;
 import java.io.*;
@@ -44,8 +35,9 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public static final String HYPERSPECTRAL = "Hyperspectral";
 
-    //public static final String PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
-    public static final String PROXY_URL = "/xsltRestProxy?url=";
+    //public static final String XSLT_PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
+    public static final String XSLT_PROXY_URL = "/xsltRestProxy?url=";
+    public static final String PROXY_URL = "/restproxy?";
 
     public static final String CSW_URL = "http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw";
 
@@ -177,8 +169,8 @@ public class GetDataSourcesJSONController extends AbstractController {
                 node.put("icon", icons.get(theme));
                 node.put("layerType", "wfs");
                 node.put("tileOverlay", "");
-                System.out.println(PROXY_URL+wfsUrl+wfsQueryParams.get(theme));
-                node.put("wfsUrl", PROXY_URL+wfsUrl+wfsQueryParams.get(theme));
+                node.put("kmlUrl", XSLT_PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
+                node.put("wfsUrl", PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
                 node.put("featureType", featureTypes.get(theme));
                 //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                 //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
