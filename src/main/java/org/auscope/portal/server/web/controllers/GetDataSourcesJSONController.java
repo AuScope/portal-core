@@ -44,11 +44,11 @@ public class GetDataSourcesJSONController extends AbstractController {
     //create some identifiers for each of the themes to be displayed in the portal
     public static final String[] THEMES = { "Borehole",
                                             "Geochemistry",
-                                            "Mineral Occurences",
                                             "Global Navigation Satellite Systems",
                                             "Geodesy",
                                             "Seismic Imaging",
-                                            "Geological Units"};
+                                            "Geological Units",
+                                            "Mineral Occurrences"};
 
     //create a map to hold the CSW query contraints for each theme
     public static final Map<String, String> themeContraints = new HashMap<String, String>() {{
@@ -56,6 +56,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Global Navigation Satellite Systems", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GNSS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         put("Geodesy", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>Geodesy</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         put("Geological Units", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:GeologicUnit</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+     put("Mineral Occurrences", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MiningFeatureOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
     }};
 
     //create a map to hold the get features query stuff
@@ -64,6 +65,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Global Navigation Satellite Systems", "request=GetFeature%26typeName=sa:SamplingPoint");
         put("Geodesy", "request=GetFeature%26typeName=geodesy:stations");
         put("Geological Units", "request=GetFeature%26typeName=gsml:GeologicUnit");
+        put("Mineral Occurrences", "request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
     }};
 
     //create a map to hold the get features query stuff
@@ -72,6 +74,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
         put("Geodesy", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png");
         put("Geological Units", "http://maps.google.com/mapfiles/kml/paddle/red-blank.png");
+        put("Mineral Occurrences", "http://maps.google.com/mapfiles/kml/paddle/red-blank.png");
     }};
 
     //create a map to hold the get features query stuff
@@ -79,6 +82,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Borehole", "gsml:Borehole");
         put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
         put("Geodesy", "geodesy:stations");
+        put("Mineral Occurrences", "mo:MiningFeatureOccurrence");
     }};
 
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions
@@ -158,7 +162,8 @@ public class GetDataSourcesJSONController extends AbstractController {
 
             JSONArray jsonArray = new JSONArray();
             for(CSWRecord record : cswRecords) {
-                String wfsUrl = this.stripUrlAndGetFeatures(record.getServiceUrl());
+                String wfsUrl = record.getServiceUrl().trim();//this.stripUrlAndGetFeatures(record.getServiceUrl());
+                System.out.println(wfsUrl);
                 String serviceName = record.getServiceName();
 
                 Map<String, Serializable> node = new HashMap<String, Serializable>();
@@ -171,7 +176,10 @@ public class GetDataSourcesJSONController extends AbstractController {
                 node.put("tileOverlay", "");
                 node.put("kmlUrl", XSLT_PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
                 node.put("wfsUrl", PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
-                node.put("featureType", featureTypes.get(theme));
+                //node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
+                //node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
+
+                //node.put("featureType", featureTypes.get(theme));
                 //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                 //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
 

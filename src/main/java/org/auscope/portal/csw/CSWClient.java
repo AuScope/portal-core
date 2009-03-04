@@ -52,6 +52,9 @@ public class CSWClient {
             xmlResponse.append(inputLine);
         }
 
+        System.out.println(cswQuery);
+        System.out.println(xmlResponse.toString());
+
         return new CSWGetRecordResponse(buildDom(xmlResponse.toString()));
     }
 
