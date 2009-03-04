@@ -38,7 +38,7 @@ function StationGroup(pIcon, pTitle, pDescription, pWfsUrl, pWfsFeatureType) {
     
   // Create the lbl element for each image    
   this.moHtmlLbl = document.createElement("label");
-  this.moHtmlLbl.for = this.msId;
+  //this.moHtmlLbl.for = this.msId;
   this.moHtmlLbl.id = this.msId + "_lbl";
   this.moHtmlLbl.className = "textoff";
   this.moHtmlLbl.align = "left";
