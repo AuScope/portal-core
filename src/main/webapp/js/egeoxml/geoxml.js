@@ -24,6 +24,9 @@ function GeoXml(myvar, map, url, opts) {
         this.urls = url;
     }
     ;
+
+    Clusterer.defaultIcon = this.opts.baseicon;
+
     this.mb.style = this.opts.messagestyle || {backgroundColor:"silver"};
     this.alwayspop = this.opts.alwaysinfopop || false;
     this.titlestyle = this.opts.titlestyle || 'style = "font-family: arial, sans-serif;font-size: medium;font-weight:bold;font-size: 100%;"';

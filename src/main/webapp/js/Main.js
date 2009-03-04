@@ -134,14 +134,14 @@ Ext.onReady(function() {
         var southWest = bounds.getSouthWest();
         var northEast = bounds.getNorthEast();
 
-        alert(southWest.lng() + ' - ' + northEast.lng());
+        //alert(southWest.lng() + ' - ' + northEast.lng());
 
         var cords =  southWest.lng() + "," +
                 southWest.lat() + "," +
     	        (southWest.lng() > northEast.lng() ? northEast.lng() + 360 : northEast.lng()) + "," +
     	        northEast.lat();
 
-        alert(cords);
+        //alert(cords);
 
         return cords;
     }
@@ -195,10 +195,10 @@ Ext.onReady(function() {
     //when a person clicks on a marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {
         if (overlay instanceof GMarker) {
-            if (overlay.featureType == "gsml:Borehole")
+            if (overlay.featureType == "gsml:Borehole") {
                 new NVCLMarker(overlay.getTitle(), overlay).getMarkerClickedFn()();
+            }
             else if (overlay.featureType == "geodesy:stations") {
-                alert('yes geod');
                 new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.getTitle(), overlay).getMarkerClickedFn()();
             }
         }

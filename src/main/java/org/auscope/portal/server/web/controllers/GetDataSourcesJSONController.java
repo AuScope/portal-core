@@ -156,48 +156,65 @@ public class GetDataSourcesJSONController extends AbstractController {
      * @return
      */
     private JSONArray getInstitionalProviders(String theme) {
-        CSWRecord[] cswRecords;
-        try {
-            cswRecords = new CSWClient(CSW_URL, themeContraints.get(theme)).getRecordResponse().getCSWRecords();
+        if(theme.equals("Mineral Occurrences")) {
 
             JSONArray jsonArray = new JSONArray();
-            for(CSWRecord record : cswRecords) {
-                String wfsUrl = record.getServiceUrl().trim();//this.stripUrlAndGetFeatures(record.getServiceUrl());
-                System.out.println(wfsUrl);
-                String serviceName = record.getServiceName();
+            Map<String, Serializable> node = new HashMap<String, Serializable>();
+            node.put("id", "Mineral Occurrences PIRSA"); //TODO: serviceID
+            node.put("text", "Mineral Occurrences PIRSA");
+            node.put("checked", Boolean.FALSE);
+            node.put("leaf", Boolean.TRUE);
+            node.put("icon", icons.get(theme));
+            node.put("layerType", "wfs");
+            node.put("tileOverlay", "");
+            node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");
+            node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");
+            jsonArray.add(node);
+            return jsonArray;
 
-                Map<String, Serializable> node = new HashMap<String, Serializable>();
-                node.put("id", serviceName); //TODO: serviceID
-                node.put("text", serviceName);
-                node.put("checked", Boolean.FALSE);
-                node.put("leaf", Boolean.TRUE);
-                node.put("icon", icons.get(theme));
-                node.put("layerType", "wfs");
-                node.put("tileOverlay", "");
-                node.put("kmlUrl", XSLT_PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
-                node.put("wfsUrl", PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
-                //node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
-                //node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
+        } else {
+            CSWRecord[] cswRecords;
+            try {
+                cswRecords = new CSWClient(CSW_URL, themeContraints.get(theme)).getRecordResponse().getCSWRecords();
 
-                //node.put("featureType", featureTypes.get(theme));
-                //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
-                //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
+                JSONArray jsonArray = new JSONArray();
+                for(CSWRecord record : cswRecords) {
+                    String wfsUrl = record.getServiceUrl().trim();//this.stripUrlAndGetFeatures(record.getServiceUrl());
+                    String serviceName = record.getServiceName();
 
-                jsonArray.add(node);
+                    Map<String, Serializable> node = new HashMap<String, Serializable>();
+                    node.put("id", serviceName); //TODO: serviceID
+                    node.put("text", serviceName);
+                    node.put("checked", Boolean.FALSE);
+                    node.put("leaf", Boolean.TRUE);
+                    node.put("icon", icons.get(theme));
+                    node.put("layerType", "wfs");
+                    node.put("tileOverlay", "");
+                    node.put("kmlUrl", XSLT_PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
+                    node.put("wfsUrl", PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
+                    //node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
+                    //node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
+
+                    node.put("featureType", featureTypes.get(theme));
+                    //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
+                    //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
+
+                    jsonArray.add(node);
+                }
+
+                return jsonArray;
+            } catch (XPathExpressionException e) {
+                logger.error(e);
+            } catch (IOException e) {
+                logger.error(e);
+            } catch (ParserConfigurationException e) {
+                logger.error(e);
+            } catch (SAXException e) {
+                logger.error(e);
             }
 
-            return jsonArray;
-        } catch (XPathExpressionException e) {
-            logger.error(e);
-        } catch (IOException e) {
-            logger.error(e);
-        } catch (ParserConfigurationException e) {
-            logger.error(e);
-        } catch (SAXException e) {
-            logger.error(e);
+            return new JSONArray();
         }
-
-        return new JSONArray();
     }
 
     /**
