@@ -13,9 +13,9 @@ Ext.onReady(function() {
         collapsible: true,
         width: 300,
         useArrows:true,
-        //autoScroll:true,
+        autoScroll:true,
         //animate:true,
-        //containerScroll: true,
+        containerScroll: true,
         rootVisible: false,
         dataUrl: 'dataSources.json',
         root: {
@@ -67,7 +67,11 @@ Ext.onReady(function() {
             buttonPanel.remove(node.attributes.downloadButton);
             buttonPanel.doLayout();
             
-            node.attributes.tileOverlay.clear();
+            if(node.attributes.tileOverlay instanceof GeoXml)
+                node.attributes.tileOverlay.clear();
+            else
+                map.removeOverlay(node.attributes.tileOverlay);
+
             node.attributes.tileOverlay = null;
         }
     });
@@ -205,9 +209,10 @@ Ext.onReady(function() {
     // Is user's browser suppported by Google Maps?
     if (GBrowserIsCompatible()) {
         map = new GMap2(centerPanel.body.dom);
-
+        map.setUIToDefault(); 
+        
         // Large pan and zoom control
-        map.addControl(new GLargeMapControl());
+        //map.addControl(new GLargeMapControl());
 
         // Toggle between Map, Satellite, and Hybrid types
         map.addControl(new GMapTypeControl());
@@ -220,7 +225,8 @@ Ext.onReady(function() {
         var Tsize = new GSize(150, 150);
         map.addControl(new GOverviewMapControl(Tsize));
 
-        map.setUIToDefault();
+
+
         //var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
         //mgr = new MarkerManager(map, mgrOptions);
     }
