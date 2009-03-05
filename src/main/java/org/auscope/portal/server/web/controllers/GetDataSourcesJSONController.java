@@ -5,6 +5,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.AbstractView;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.xmlbeans.XmlException;
 import org.geotools.data.ows.WMSCapabilities;
 import org.geotools.data.ows.Layer;
 import org.geotools.data.wms.WebMapServer;
@@ -211,7 +212,9 @@ public class GetDataSourcesJSONController extends AbstractController {
                 logger.error(e);
             } catch (SAXException e) {
                 logger.error(e);
-            }
+            } catch (XmlException e) {
+        	logger.error(e);
+        }
 
             return new JSONArray();
         }
