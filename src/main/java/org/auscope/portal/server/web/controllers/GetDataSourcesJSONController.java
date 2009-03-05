@@ -203,6 +203,20 @@ public class GetDataSourcesJSONController extends AbstractController {
                     jsonArray.add(node);
                 }
 
+                if(theme.equals("Mineral Occurrences")) {
+                    Map<String, Serializable> node = new HashMap<String, Serializable>();
+                    node.put("id", "Mineral Occurrences GSV"); //TODO: serviceID
+                    node.put("text", "Mineral Occurrences GSV");
+                    node.put("checked", Boolean.FALSE);
+                    node.put("leaf", Boolean.TRUE);
+                    node.put("icon", icons.get(theme));
+                    node.put("layerType", "wfs");
+                    node.put("tileOverlay", "");
+                    node.put("kmlUrl", XSLT_PROXY_URL +"http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");
+                    node.put("wfsUrl", PROXY_URL +"http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");
+                    jsonArray.add(node);
+                }
+
                 return jsonArray;
             } catch (XPathExpressionException e) {
                 logger.error(e);

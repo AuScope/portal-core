@@ -60,6 +60,11 @@
 
     <!-- Page specific javascript -->
     <script src="js/Main.js" type="text/javascript"></script>
+    <script src="js/dragzoom.js" type="text/javascript"></script>
+
+    <!-- for IE -->
+    <style type="text/css">v\:* {behavior:url(#default#VML);}</style>
+
 </head>
 
 <body onunload="GUnload()">

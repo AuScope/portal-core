@@ -115,7 +115,7 @@ GZoomControl.prototype.initialize = function(oMap) {
 	var oMC=oMap.getContainer();
 	var oMCC=document.getElementById('map');
   //DOM:button
-	var oButton=this.initButton_(oMCC);
+	var oButton=this.initButton_(oMC);
 
 	//DOM:map covers
 	var o = document.createElement("div");
