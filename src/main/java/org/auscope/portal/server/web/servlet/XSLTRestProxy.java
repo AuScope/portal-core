@@ -5,10 +5,13 @@ import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import javax.servlet.http.*;
+
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerConfigurationException;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,14 +19,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.logging.Logger;
 import java.util.logging.Level;
+
 
 /**
  * RestProxyServlet
@@ -45,30 +52,48 @@ import java.util.logging.Level;
  * 
  */
 public class XSLTRestProxy extends HttpServlet {
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass().getName());
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String[][] queryParams = new String[][]{};
-        Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, request.getParameter("url"), request.getParameter("url"));
-        RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
-        Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, request.getParameter("url").replace("%26", "&"), request.getParameter("url").replace("%26", "&"));
         String[][] headers = new String[][]{{"Accept", "application/json"}};
+        
+        logger.debug("URL: " + request.getParameter("url"));
+        
+        RestConnection conn = new RestConnection
+           (request.getParameter("url").replace("%26", "&"), queryParams);
+        
+        //Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, request.getParameter("url").replace("%26", "&"), request.getParameter("url").replace("%26", "&"));
+        logger.debug(request.getParameter("url").replace("%26", "&"));
+       
         try {
             String result = conn.get(headers).getDataAsString();
             StringWriter downThePipe = new StringWriter();
+            InputStream in = getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
 
+            // Use the static TransformerFactory.newInstance() method to instantiate 
+            // a TransformerFactory. The javax.xml.transform.TransformerFactory 
+            // system property setting determines the actual class to instantiate --
+            // org.apache.xalan.transformer.TransformerImpl.
             TransformerFactory tFactory = TransformerFactory.newInstance();
 
-            Transformer transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource("kml.xsl"));
+            // Use the TransformerFactory to instantiate a transformer that will work with  
+            // the style sheet we specify. This method call also processes the style sheet
+            // into a compiled Templates object.
+            //Transformer transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource("kml.xsl"));
+            Transformer transformer = tFactory.newTransformer (new StreamSource(in));
 
-            transformer.transform (new javax.xml.transform.stream.StreamSource(new StringReader(result)),
-                                    new javax.xml.transform.stream.StreamResult(downThePipe));
-
+            // Use the transformer to apply the associated template object to an XML document
+            // and write the output to a stream
+            transformer.transform (new StreamSource (new StringReader(result)),
+                                   new StreamResult (downThePipe));
+            
+            // Send response back to client
             response.getWriter().println(downThePipe.toString());
         } catch (IOException ex) {
             Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, ex);
-        }  catch (TransformerException e) {
+        } catch (TransformerException e) {
             Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, e);
         }
     }
