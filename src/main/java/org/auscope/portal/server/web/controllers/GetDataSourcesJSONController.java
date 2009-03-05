@@ -57,16 +57,16 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Global Navigation Satellite Systems", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GNSS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         put("Geodesy", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>Geodesy</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         put("Geological Units", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:GeologicUnit</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
-     put("Mineral Occurrences", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MiningFeatureOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put("Mineral Occurrences", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MiningFeatureOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
     }};
 
     //create a map to hold the get features query stuff
     public static final Map<String, String> wfsQueryParams = new HashMap<String, String>() {{
-        put("Borehole", "request=GetFeature%26typeName=gsml:Borehole");
-        put("Global Navigation Satellite Systems", "request=GetFeature%26typeName=sa:SamplingPoint");
-        put("Geodesy", "request=GetFeature%26typeName=geodesy:stations");
-        put("Geological Units", "request=GetFeature%26typeName=gsml:GeologicUnit");
-        put("Mineral Occurrences", "request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
+        put("Borehole", "%26request=GetFeature%26typeName=gsml:Borehole");
+        put("Global Navigation Satellite Systems", "%26request=GetFeature%26typeName=sa:SamplingPoint");
+        put("Geodesy", "%26request=GetFeature%26typeName=geodesy:stations");
+        put("Geological Units", "%26request=GetFeature%26typeName=gsml:MappedFeature%26maxFeatures=10");
+        put("Mineral Occurrences", "%26version=1.1.0%26request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");//outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
     }};
 
     //create a map to hold the get features query stuff
@@ -157,7 +157,7 @@ public class GetDataSourcesJSONController extends AbstractController {
      * @return
      */
     private JSONArray getInstitionalProviders(String theme) {
-        if(theme.equals("Mineral Occurrences")) {
+       /* if(theme.equals("Mineral Occurrences")) {
 
             JSONArray jsonArray = new JSONArray();
             Map<String, Serializable> node = new HashMap<String, Serializable>();
@@ -173,14 +173,14 @@ public class GetDataSourcesJSONController extends AbstractController {
             jsonArray.add(node);
             return jsonArray;
 
-        } else {
+        } else {*/
             CSWRecord[] cswRecords;
             try {
                 cswRecords = new CSWClient(CSW_URL, themeContraints.get(theme)).getRecordResponse().getCSWRecords();
 
                 JSONArray jsonArray = new JSONArray();
                 for(CSWRecord record : cswRecords) {
-                    String wfsUrl = record.getServiceUrl().trim();//this.stripUrlAndGetFeatures(record.getServiceUrl());
+                    String wfsUrl = this.stripUrlAndGetFeatures(record.getServiceUrl());
                     String serviceName = record.getServiceName();
 
                     Map<String, Serializable> node = new HashMap<String, Serializable>();
@@ -217,7 +217,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         }
 
             return new JSONArray();
-        }
+        //}
     }
 
     /**
@@ -282,8 +282,8 @@ public class GetDataSourcesJSONController extends AbstractController {
     }
 
     public String stripUrlAndGetFeatures(String url) {
-        String[] strings =  url.split("\\?");
-        return strings[0].trim() + "?";
+
+        return url.replace("&", "%26").trim();
     }
 
     /**

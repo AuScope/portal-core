@@ -3,9 +3,7 @@ var theglobalexml;
 
 Ext.onReady(function() {
     var map;
-    var mgr;
-
-
+    //var mgr;
 
     //this tree holds all of the data sources
     var tree = new Ext.tree.TreePanel({
@@ -119,7 +117,8 @@ Ext.onReady(function() {
             text: 'Get ' + name,
             width: "100%",
             handler: function(){
-                window.open(wfsUrl+"%26BBOX="+getBoundingBox(), name);
+                alert(wfsUrl+getFilter());
+                window.open(wfsUrl+getFilter(), name);
             }
         }));
 
@@ -143,7 +142,42 @@ Ext.onReady(function() {
 
         //alert(cords);
 
-        return cords;
+        return "%26BBOX="+cords;
+    }
+
+    function getFilter() {
+        var bounds = map.getBounds();
+        var southWest = bounds.getSouthWest();
+        var northEast = bounds.getNorthEast();
+
+        var lowerCorner =   southWest.lng() + " " +
+                            southWest.lat();
+
+        var upperCorner =   (southWest.lng() > northEast.lng() ? northEast.lng() + 360 : northEast.lng()) + " " +
+    	                    northEast.lat();
+        
+
+       /*return '%26FILTER=<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">' +
+                '<ogc:BBOX>' +
+                    '<ogc:PropertyName>gsml:shape</ogc:PropertyName>' +
+                    '<gml:Envelope srsName="EPSG:4283">' +
+                        '<gml:lowerCorner>'+lowerCorner+'</gml:lowerCorner>' +
+                        '<gml:upperCorner>'+upperCorner+'</gml:upperCorner>' +
+                    '</gml:Envelope>' +
+                '</ogc:BBOX>' +
+              '</ogc:Filter>';*/
+
+        return  '%26FILTER=(<Filter xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/ogc/filter/1.0.0/filter.xsd http://www.opengis.net/gml/2.1/geometry.xsd">' +
+                    '<Within>' +
+                        '<BBOX>' +
+                            '<PropertyName>gsml:shape</PropertyName>' +
+                            '<gml:Envelope srsName="EPSG:4283">' +
+                                '<gml:lowerCorner>'+lowerCorner+'</gml:lowerCorner>' +
+                                '<gml:upperCorner>'+upperCorner+'</gml:upperCorner>' +
+                            '</gml:Envelope>' +
+                        '</BBOX>' +
+                    '</Within>' +
+                '</Filter>)';
     }
 
     //used to show extra details
@@ -186,8 +220,9 @@ Ext.onReady(function() {
         var Tsize = new GSize(150, 150);
         map.addControl(new GOverviewMapControl(Tsize));
 
-        var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
-        mgr = new MarkerManager(map, mgrOptions);
+        map.setUIToDefault();
+        //var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
+        //mgr = new MarkerManager(map, mgrOptions);
     }
 
     theglobalexml = new GeoXml("theglobalexml", map, null, null);
