@@ -52,29 +52,33 @@ public class DownloadProxy extends HttpServlet {
         String[][] queryParams = new String[][]{};
         String[][] headers = new String[][]{{"Accept", "application/json"}};
 
-        String[] urls = request.getParameter("urls").split("&urls=");
+        String urlsString = request.getParameter("urls");
 
-        ByteArrayOutputStream bout=new ByteArrayOutputStream();
+        if(urlsString != null) {
+            String[] urls = urlsString.split("&urls=");
 
-        response.setContentType("application/zip");
-        response.setHeader("Content-Disposition","inline; filename=output.zip;");
+            ByteArrayOutputStream bout=new ByteArrayOutputStream();
+
+            response.setContentType("application/zip");
+            response.setHeader("Content-Disposition","inline; filename=output.zip;");
 
 
-        ZipOutputStream zout=new ZipOutputStream(response.getOutputStream());
-        ServletOutputStream out = response.getOutputStream();
+            ZipOutputStream zout=new ZipOutputStream(response.getOutputStream());
+            ServletOutputStream out = response.getOutputStream();
 
-        for(int i=0; i<urls.length; i++) {
-            RestConnection conn = new RestConnection(urls[i].replace("/restproxy?", ""), queryParams);
+            for(int i=0; i<urls.length; i++) {
+                RestConnection conn = new RestConnection(urls[i].replace("/restproxy?", ""), queryParams);
 
-            zout.putNextEntry(new ZipEntry(i+".xml"));
-            zout.write(conn.get(headers).getDataAsByteArray());
-            zout.closeEntry();
+                zout.putNextEntry(new ZipEntry(i+".xml"));
+                zout.write(conn.get(headers).getDataAsByteArray());
+                zout.closeEntry();
+            }
+
+
+            zout.finish();
+            zout.flush();
+            zout.close();
         }
-
-
-        zout.finish();
-        zout.flush();
-        zout.close();
         
         //String zip=bout.toString();
 

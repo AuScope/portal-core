@@ -70,13 +70,17 @@ Ext.onReady(function() {
             //buttonPanel.remove(node.attributes.downloadButton);
             //buttonPanel.doLayout();
 
+            if(node.attributes.layerType == 'wfs') {
+                downloadUrls.remove(node.attributes.wfsUrl);
+            }
+            
             if (node.attributes.tileOverlay instanceof GeoXml)
                 node.attributes.tileOverlay.clear();
             else
                 map.removeOverlay(node.attributes.tileOverlay);
 
             node.attributes.tileOverlay = null;
-            downloadUrls.remove(node.attributes.wfsUrl);
+
         }
     });
 
@@ -171,11 +175,14 @@ Ext.onReady(function() {
                 var url = "";
 
                 var theUrls = downloadUrls.values();
-                for(i=0; i<theUrls.length; i++)
-                    url += "urls=" + theUrls[i] + "%26";
 
-                //alert("downloadProxy?" + url);
-                window.open("downloadProxy?" + url, name);
+                if(theUrls.length >= 1) {
+                    for(i=0; i<theUrls.length; i++)
+                        url += "urls=" + theUrls[i] + "%26";
+
+                    //alert("downloadProxy?" + url);
+                    window.open("downloadProxy?" + url, name);
+                }
             }}]
     });
 
