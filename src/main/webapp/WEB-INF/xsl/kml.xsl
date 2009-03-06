@@ -6,7 +6,9 @@
     xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
     xmlns:sa="http://www.opengis.net/sampling/1.0"
     xmlns:geodesy="http://auscope.org.au/geodesy"
-    xmlns:mo="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0">
+    xmlns:mo="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
 
 <!--  
     xmlns="http://earth.google.com/kml/2.0" 
@@ -80,6 +82,19 @@
          <name id="{@gml:id}"><xsl:value-of select="./gml:name"/></name>
          -->
          <name><xsl:value-of select="@gml:id"/></name>
+         <description>
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <tr><td>Borehole Name</td><td>]]><xsl:value-of select="./gml:name"/>
+            <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
+            <![CDATA[</td></tr><tr><td>Project</td><td>]]><xsl:value-of select="./gml:metaDataProperty/@xlink:title"/>
+            <![CDATA[</td></tr><tr><td>Core Custodian</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:href"/>
+            <![CDATA[</td></tr><tr><td>Operator</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:operator/@xlink:href"/>
+            <![CDATA[</td></tr><tr><td>Date of Drilling</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling"/>
+            <![CDATA[</td></tr><tr><td>Drilling Method</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:drillingMethod"/>
+            <![CDATA[</td></tr><tr><td>Inclination Type</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:inclinationType"/>
+            <![CDATA[</td></tr><tr><td>Start Point</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:startPoint"/>
+            <![CDATA[</td></tr></table>]]>
+         </description>
          <Point>
             <Style>
                <IconStyle>
@@ -109,6 +124,12 @@
       </xsl:variable>
       <Placemark>
          <name><xsl:value-of select="./gml:name"/></name>
+         <description>
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
+            <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="./sa:position/gml:Point/gml:pos"/>            
+            <![CDATA[</td></tr></table>]]>
+         </description>
          <Point>
             <Style>
                <IconStyle>
@@ -138,6 +159,14 @@
       </xsl:variable>
       <Placemark>
          <name><xsl:value-of select="@fid"/></name>
+         <description>
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <tr><td>Station Id</td><td>]]><xsl:value-of select="./geodesy:station_id"/>
+            <![CDATA[</td></tr><tr><td>Name</td><td>]]><xsl:value-of select="./geodesy:name"/>
+            <![CDATA[</td></tr><tr><td>Url</td><td>]]><xsl:value-of select="./geodesy:url"/>
+            <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
+            <![CDATA[</td></tr></table>]]>            
+         </description>
          <Point>
                 <Style>
                   <IconStyle>
@@ -163,6 +192,12 @@
       </xsl:variable>
       <Placemark>
          <name><xsl:value-of select="./gml:name"/></name>
+         <description>
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>
+            <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
+            <![CDATA[</td></tr></table>]]>            
+         </description>
          <Point>
             <Style>
                <IconStyle>
@@ -186,34 +221,125 @@
    <!-- ====================================================== -->
    <xsl:template match="gml:featureMember/gsml:MappedFeature">
 
+      <Placemark>
+         <name><xsl:value-of select="@gml:id"/></name>
+         <description>
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
+            <![CDATA[</td></tr><tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>            
+            <![CDATA[</td></tr></table>]]>
+         </description>
+
+         <xsl:apply-templates select="gsml:shape/gml:Point"/>
+         <xsl:apply-templates select="gsml:shape/gml:Polygon"/>
+         <xsl:apply-templates select="gsml:shape/gml:MultiCurve"/>
+         <!--
+         <xsl:apply-templates select="gsml:shape/gml:MultiSurface"/>
+         -->
+      </Placemark>
+
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE Points -->
+   <!-- ====================================================== -->
+   <xsl:template match="gsml:shape/gml:Point">
+   
       <!-- VARIABLE To STORE THE GML COORDINATES -->
       <xsl:variable name="coordinates">
-         <xsl:value-of select="./gsml:shape/gml:Point/gml:pos"/>
+         <xsl:value-of select="./gml:pos"/>
       </xsl:variable>
-      <Placemark>
-         <name><xsl:value-of select="./gml:name"/></name>
-         <Point>
-            <Style>
-               <IconStyle>
-                  <Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png</href></Icon>
-               </IconStyle>
-            </Style>
       
-            <coordinates>
-               <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
-               <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
-               </xsl:call-template>
-            </coordinates>
-         </Point>
-      </Placemark>
+      <Point>
+         <Style>
+            <IconStyle>
+               <Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png</href></Icon>
+            </IconStyle>
+         </Style>
+
+         <coordinates>
+            <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
+            <xsl:call-template name="parseCoord">
+               <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+               <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+            </xsl:call-template>
+         </coordinates>
+      </Point>
    </xsl:template>
-    
-    
+   
+   
+   <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE Polygons -->
    <!-- ====================================================== -->
+   <xsl:template match="gsml:shape/gml:Polygon">
+   
+      <!-- Variable to store exterior coordinates -->
+      <xsl:variable name="ext_coordinates">
+         <xsl:value-of select="./gml:exterior/gml:LinearRing/gml:posList"/>
+      </xsl:variable>
+      
+      <!-- Variable to store interior coordinates -->
+      <xsl:variable name="int_coordinates">
+         <xsl:value-of select="./gml:interior/gml:LinearRing/gml:posList"/>
+      </xsl:variable>
+
+      <Polygon>
+         <outerBoundaryIs> 
+            <LinearRing> 
+               <coordinates>
+                  <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
+                  <xsl:call-template name="parseCoord">
+                     <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+                     <xsl:with-param name="coordinates" select="concat($ext_coordinates,' ')"/>
+                  </xsl:call-template>
+               </coordinates>
+            </LinearRing>
+         </outerBoundaryIs>
+         <innerBoundaryIs>
+            <LinearRing>
+               <coordinates>
+                  <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
+                  <xsl:call-template name="parseCoord">
+                     <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+                     <xsl:with-param name="coordinates" select="concat($int_coordinates,' ')"/>
+                  </xsl:call-template>
+               </coordinates>
+            </LinearRing>
+         </innerBoundaryIs>
+      </Polygon>
+
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE MultiCurve -->
+   <!-- ====================================================== -->
+   <xsl:template match="gsml:shape/gml:MultiCurve">
+   
+      <!-- Variable to store exterior coordinates -->
+      <xsl:variable name="coordinates">
+         <xsl:value-of select="./gml:curveMembers/gml:Curve/gml:segments/gml:LineStringSegment/gml:posList"/>
+      </xsl:variable>
+
+      <Style>
+         <LineStyle>
+			   <color>ff004080</color>
+			</LineStyle>
+		</Style>
+		<LineString>
+         <coordinates>
+            <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
+            <xsl:call-template name="parseCoord">
+               <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+               <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+            </xsl:call-template>
+			</coordinates>
+		</LineString>
+
+   </xsl:template>
+   
+   
+   <!-- ================================================================= -->
    <!-- FUNCTION TO TRANSLATE X Y COORDS TO X,Y,0 -->
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
    <xsl:template name="parseCoord">
       <xsl:param name="coordinates"/>
       <!-- CHECK IF THERE IS CONTENT BEFORE THE FIRST SPACE YOU REACH -->
@@ -252,5 +378,7 @@
         
       </xsl:if>
    </xsl:template>
+   
+   
    <!-- ====================================================== -->
 </xsl:stylesheet>
