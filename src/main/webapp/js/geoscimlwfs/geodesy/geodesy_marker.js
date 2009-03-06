@@ -865,7 +865,7 @@ function GeodesyMarker_getYearClickedFn (pYear, pYearChkId, pYearHrefId, pMonths
 * @param {String} pDatesDivId The html id of div where the calendar should be added
 */
 function GeodesyMarker_yearClicked (pYear, pYearHrefId, pMonthsDivId, pDatesDivId, pCreateAll) {
-   alert('year clicked');
+   //alert('year clicked');
   var station = this.stationId;//this.moGeodesyStation.msId;
   var yearHrefId = pYearHrefId;
   var year = pYear;

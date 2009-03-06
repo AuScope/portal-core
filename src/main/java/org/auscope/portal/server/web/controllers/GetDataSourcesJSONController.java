@@ -132,7 +132,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         Map<String, Serializable> hyperspectral = new HashMap<String, Serializable>();
         hyperspectral.put("id", THEME + HYPERSPECTRAL);
         hyperspectral.put("text", HYPERSPECTRAL);
-        hyperspectral.put("checked", Boolean.FALSE);
+        //hyperspectral.put("checked", Boolean.FALSE);
         hyperspectral.put("leaf", Boolean.FALSE);
         jsonArray.add(hyperspectral);
 
@@ -140,7 +140,7 @@ public class GetDataSourcesJSONController extends AbstractController {
             Map<String, Serializable> theme = new HashMap<String, Serializable>();
             theme.put("id", THEME + themeName);
             theme.put("text", themeName);
-            theme.put("checked", Boolean.FALSE);
+            //theme.put("checked", Boolean.FALSE);
             theme.put("leaf", Boolean.FALSE);
             jsonArray.add(theme);
         }
@@ -247,7 +247,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         Map<String, Serializable> coe = new HashMap<String, Serializable>();
         coe.put("id", INSTITUTION + "waCoe");
         coe.put("text", "WA Center of Excellence for 3D Mineral Mapping");
-        coe.put("checked", Boolean.FALSE);
+        //coe.put("checked", Boolean.FALSE);
         coe.put("leaf", Boolean.FALSE);
         jsonArray.add(coe);
 

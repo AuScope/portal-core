@@ -4,18 +4,20 @@ var theglobalexml;
 Ext.onReady(function() {
     var map;
     //var mgr;
+    var downloadUrls = new Hashtable();
 
     //this tree holds all of the data sources
     var tree = new Ext.tree.TreePanel({
         title : 'Data Sources',
-        region: 'center',
-        split: true,
-        collapsible: true,
+        //region: 'center',
+        //split: true,
+        //collapsible: true,
+        border: false,
         width: 300,
         useArrows:true,
-        autoScroll:true,
+        //autoScroll:true,
         //animate:true,
-        containerScroll: true,
+        //containerScroll: true,
         rootVisible: false,
         dataUrl: 'dataSources.json',
         root: {
@@ -54,8 +56,9 @@ Ext.onReady(function() {
 
                         node.attributes.tileOverlay = exml;
 
+                        downloadUrls.put(node.attributes.wfsUrl, node.attributes.wfsUrl);
                         //add a download button
-                        node.attributes.downloadButton = makeButtonAndAdd(node.attributes.wfsUrl, node.text);
+                        // node.attributes.downloadButton = makeButtonAndAdd(node.attributes.wfsUrl, node.text);
                     }
                 });
             }
@@ -64,15 +67,16 @@ Ext.onReady(function() {
         //the check was checked off so remove the overlay
         else {
             //remove the download button
-            buttonPanel.remove(node.attributes.downloadButton);
-            buttonPanel.doLayout();
-            
-            if(node.attributes.tileOverlay instanceof GeoXml)
+            //buttonPanel.remove(node.attributes.downloadButton);
+            //buttonPanel.doLayout();
+
+            if (node.attributes.tileOverlay instanceof GeoXml)
                 node.attributes.tileOverlay.clear();
             else
                 map.removeOverlay(node.attributes.tileOverlay);
 
             node.attributes.tileOverlay = null;
+            downloadUrls.remove(node.attributes.wfsUrl);
         }
     });
 
@@ -82,33 +86,12 @@ Ext.onReady(function() {
     //this panel will be used for extra options
     //var rightPanel = new Ext.Panel({region:"east", margins:'100 0 0 0', cmargins:'100 0 0 0', title: "More Options", split:true, size: 0, collapsible: true});
 
-    // The action
-    var action = new Ext.Action({
-        text: 'New Button',
-        width: "100%",
-        handler: function(){
-           buttonPanel.add(new Ext.Button( new Ext.Action({
-                text: 'New Button2',
-                width: "100%",
-                handler: function(){
-                    
-                }
-            })));
-            buttonPanel.doLayout();
-        }
-    });
-
-    /*var buttonPanel = new Ext.Panel({
-        width: '100%',
-        items: [new Ext.Button(action)]
-    });*/
-
     var buttonPanel = new Ext.FormPanel({
-        title: 'Options',
+        //title: 'Options',
         bodyStyle:'padding:5px 5px 0',
-
         region:"south",
         items: [new Ext.Container()],
+        buttons: [{text: "Download"}],
         split:true,
         width: 300,
         height: 200,
@@ -116,10 +99,10 @@ Ext.onReady(function() {
     });
 
     function makeButtonAndAdd(wfsUrl, name) {
-        var button = new Ext.Button( new Ext.Action({
+        var button = new Ext.Button(new Ext.Action({
             text: 'Get ' + name,
             width: "100%",
-            handler: function(){
+            handler: function() {
                 window.open(wfsUrl, name);
             }
         }));
@@ -137,14 +120,14 @@ Ext.onReady(function() {
 
         //alert(southWest.lng() + ' - ' + northEast.lng());
 
-        var cords =  southWest.lng() + "," +
-                southWest.lat() + "," +
-    	        (southWest.lng() > northEast.lng() ? northEast.lng() + 360 : northEast.lng()) + "," +
-    	        northEast.lat();
+        var cords = southWest.lng() + "," +
+                    southWest.lat() + "," +
+                    (southWest.lng() > northEast.lng() ? northEast.lng() + 360 : northEast.lng()) + "," +
+                    northEast.lat();
 
         //alert(cords);
 
-        return "%26BBOX="+cords;
+        return "%26BBOX=" + cords;
     }
 
     function getFilter() {
@@ -152,37 +135,48 @@ Ext.onReady(function() {
         var southWest = bounds.getSouthWest();
         var northEast = bounds.getNorthEast();
 
-        var lowerCorner =   southWest.lng() + " " +
-                            southWest.lat();
+        var lowerCorner = southWest.lng() + " " +
+                          southWest.lat();
 
-        var upperCorner =   (southWest.lng() > northEast.lng() ? northEast.lng() + 360 : northEast.lng()) + " " +
-    	                    northEast.lat();
-        
+        var upperCorner = (southWest.lng() > northEast.lng() ? northEast.lng() + 360 : northEast.lng()) + " " +
+                          northEast.lat();
 
-       return '%26FILTER=<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0">' +
-                  '<ogc:BBOX><ogc:PropertyName>gsml:shape</ogc:PropertyName>' +
-                      '<gml:Envelope srsName="EPSG:4326">' +
-                        '<gml:lowerCorner>'+ lowerCorner +'</gml:lowerCorner>' +
-                        '<gml:upperCorner>'+ upperCorner +'</gml:upperCorner>' +
-                      '</gml:Envelope>' +
-                  '</ogc:BBOX>' +
-              '</ogc:Filter>';
+
+        return '%26FILTER=<ogc:Filter xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0">' +
+               '<ogc:BBOX><ogc:PropertyName>gsml:shape</ogc:PropertyName>' +
+               '<gml:Envelope srsName="EPSG:4326">' +
+               '<gml:lowerCorner>' + lowerCorner + '</gml:lowerCorner>' +
+               '<gml:upperCorner>' + upperCorner + '</gml:upperCorner>' +
+               '</gml:Envelope>' +
+               '</ogc:BBOX>' +
+               '</ogc:Filter>';
     }
 
     //used to show extra details
     //var detailsPanel = new Ext.Panel({region:"south", title: "Stuff", split:true, width: 300, height: 200, collapsible: true, items:[buttonPanel]});
 
     //used as a placeholder for the tree and details panel on the left of screen
-    var westPanel = new Ext.Panel({
+    var westPanel = new Ext.FormPanel({
         region:"west",
         margins:'100 0 0 0',
         cmargins:'100 0 0 0',
         title: "",
         split:true,
+        autoScroll:true,
+        containerScroll: true,
         width: 300,
         collapsible: true,
-        layout:'border',
-        items:[tree, buttonPanel]
+        items:[tree],
+        buttons: [{text: "Download Datasets", handler: function() {
+                var url = "";
+
+                var theUrls = downloadUrls.values();
+                for(i=0; i<theUrls.length; i++)
+                    url += "urls=" + theUrls[i] + "%26";
+
+                //alert("downloadProxy?" + url);
+                window.open("downloadProxy?" + url, name);
+            }}]
     });
 
     //add all the panels to the viewport
@@ -194,8 +188,8 @@ Ext.onReady(function() {
     // Is user's browser suppported by Google Maps?
     if (GBrowserIsCompatible()) {
         map = new GMap2(centerPanel.body.dom);
-        map.setUIToDefault(); 
-        
+        map.setUIToDefault();
+
         // Large pan and zoom control
         //map.addControl(new GLargeMapControl());
 
@@ -210,7 +204,7 @@ Ext.onReady(function() {
         var Tsize = new GSize(150, 150);
         map.addControl(new GOverviewMapControl(Tsize));
 
-        map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(10,10)));
+        map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(10, 10)));
 
         //var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
         //mgr = new MarkerManager(map, mgrOptions);

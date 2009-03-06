@@ -57,6 +57,16 @@
       <url-pattern>/xsltRestProxy</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+      <servlet-name>DownloadProxy</servlet-name>
+      <servlet-class>org.auscope.portal.server.web.servlet.DownloadProxy</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+      <servlet-name>DownloadProxy</servlet-name>
+      <url-pattern>/downloadProxy</url-pattern>
+    </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>dispatcher</servlet-name>
     <url-pattern>*.html</url-pattern>
