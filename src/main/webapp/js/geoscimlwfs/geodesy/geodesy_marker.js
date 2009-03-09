@@ -15,7 +15,7 @@
 * @return A new {@link GeodesyMarker}
 */
 
-function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker) {
+function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description) {
   //this.moGeodesyStation = new GeodesyStation(pGeodesyStationNode);
     this.stationId = stationId;
     this.moMarker = marker;
@@ -87,7 +87,7 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker) {
     }
   }
            
-  this.msSummaryHtml = "";
+  this.msSummaryHtml = description;
   this.msRenixFilesHtml = "";
        
   // Create a GMarker object for each station using the location information for the same.
@@ -468,9 +468,9 @@ function GeodesyMarker_markerClicked()
   this.moCalendar = new GeodesyCalendar(this, sId, datesDivId);
   
   // Open the popup window for the marker with the tabs Main and Data
-  /*oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, this.msSummaryHtml),
-                                  new GInfoWindowTab(label2, this.msRenixFilesHtml)]);*/
-    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, this.msRenixFilesHtml)]);
+  oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, this.msSummaryHtml),
+                                  new GInfoWindowTab(label2, this.msRenixFilesHtml)]);
+    //oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, this.msRenixFilesHtml)]);
 }
 
 /**

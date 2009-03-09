@@ -223,10 +223,13 @@ Ext.onReady(function() {
     GEvent.addListener(map, "click", function(overlay, latlng) {
         if (overlay instanceof GMarker) {
             if (overlay.featureType == "gsml:Borehole") {
-                new NVCLMarker(overlay.getTitle(), overlay).getMarkerClickedFn()();
+                new NVCLMarker(overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
             }
             else if (overlay.featureType == "geodesy:stations") {
-                new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.getTitle(), overlay).getMarkerClickedFn()();
+                new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
+            }
+            else if (overlay.description != null){
+                overlay.openInfoWindowHtml(overlay.description);
             }
         }
     });

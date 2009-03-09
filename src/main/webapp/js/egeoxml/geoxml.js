@@ -305,6 +305,7 @@ GeoXml.prototype.createMarker = function(point, name, desc, style, idx, instyle,
         html1 = html;
     }
     if (this.clickablemarkers) {
+        m.description = desc;
         /*GEvent.addListener(m, "click", function() {
             eval(myvar + ".lastmarker = m");
             m.openInfoWindowHtml(html1 + "</div>", iwoptions);

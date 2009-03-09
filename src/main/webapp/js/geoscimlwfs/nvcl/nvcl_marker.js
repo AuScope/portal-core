@@ -13,13 +13,13 @@
 * @return A new {@link NVCLMarker}
 */
 
-function NVCLMarker (boreholeId, marker) {
+function NVCLMarker (boreholeId, marker, description) {
   // Create the Borehole object from the XML node
   //this.moBorehole = new Borehole(pBoreholeNode);
 
     this.moMarker = marker;
     this.boreholeId = boreholeId;
-  this.msSummaryHtml = "";
+  this.msSummaryHtml = description;
   this.msMosaicHtml = "";
   this.msPlotScalarsHtml = "";
   this.msPlotsHtml = "";
@@ -613,7 +613,7 @@ function NVCLMarker_displayInfoWindow() {
    * and plot them.
    * Plots - The resultant plots from the tab 3 operation.
    */
-  //var label1 = "Summary";
+  var label1 = "Summary";
   var label2 = "Mosaic";
   var label3 = "Plot Scalars";
   var label4 = "Plots";
@@ -635,14 +635,16 @@ function NVCLMarker_displayInfoWindow() {
   if (this.maScalars.length == 0) {	
     // If the borehole does not have any scalars, no need to make the 4th tab
     // Open the popup window for the marker with the tabs Summary, Mosaic and Plot Scalars
-    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, mosaicHtml),  
+    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, this.msSummaryHtml),
+                                    new GInfoWindowTab(label2, mosaicHtml),
                                     new GInfoWindowTab(label3, plotScalarsHtml)]);
   } else {
     // Create the 3rd tab only if there are any scalars for this borehole 
     var plotsHtml = this.createPlotsTabHtml();
     
     // Open the popup window for the marker with the tabs Summary, Plot Scalars and Plots
-    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, mosaicHtml),
+    oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, this.msSummaryHtml),
+                                    new GInfoWindowTab(label2, mosaicHtml),
                                     new GInfoWindowTab(label3, plotScalarsHtml),
                                     new GInfoWindowTab(label4, plotsHtml)]);
                                     
