@@ -66,7 +66,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Global Navigation Satellite Systems", "%26request=GetFeature%26typeName=sa:SamplingPoint");
         put("Geodesy", "%26request=GetFeature%26typeName=geodesy:stations");
         put("Geological Units", "%26request=GetFeature%26typeName=gsml:MappedFeature%26maxFeatures=10");
-        put("Mineral Occurrences", "%26version=1.1.0%26request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");//outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
+        put("Mineral Occurrences", "%26request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");//outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
     }};
 
     //create a map to hold the get features query stuff
@@ -200,20 +200,6 @@ public class GetDataSourcesJSONController extends AbstractController {
                     //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                     //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
 
-                    jsonArray.add(node);
-                }
-
-                if(theme.equals("Mineral Occurrences")) {
-                    Map<String, Serializable> node = new HashMap<String, Serializable>();
-                    node.put("id", "Mineral Occurrences GSV"); //TODO: serviceID
-                    node.put("text", "Mineral Occurrences GSV");
-                    node.put("checked", Boolean.FALSE);
-                    node.put("leaf", Boolean.TRUE);
-                    node.put("icon", icons.get(theme));
-                    node.put("layerType", "wfs");
-                    node.put("tileOverlay", "");
-                    node.put("kmlUrl", XSLT_PROXY_URL +"http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");
-                    node.put("wfsUrl", PROXY_URL +"http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");
                     jsonArray.add(node);
                 }
 
