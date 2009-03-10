@@ -51,7 +51,8 @@ public class CSWRecord {
     	// TODO: add check, if it's the correct onLine element
     	if (!digitalTransferOptions.isNil())
     	{
-    		return digitalTransferOptions.getOnLineArray(0).getCIOnlineResource().getLinkage().getURL().toString();
+    		String url = digitalTransferOptions.getOnLineArray(0).getCIOnlineResource().getLinkage().getURL().toString(); 
+    		return url;
     	}
     	else return "";
     }
