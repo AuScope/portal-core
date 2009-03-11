@@ -10,7 +10,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     >
 
-<!--  
+<!--  Examples of available markers - not easy to find on the
     xmlns="http://earth.google.com/kml/2.0" 
     xmlns:set="http://exslt.org/sets" 
     xmlns:gpx="http://www.topografix.com/GPX/1/1" 
@@ -49,7 +49,6 @@
       -->
       <kml>
          <Document>
-               
             <!-- STANDARD NAME AND DESCRIPTION FOR CONVERTED FILE -->
             <name>
                <xsl:text>GML Links to KML</xsl:text>
@@ -70,17 +69,15 @@
 
 
    <!-- TEMPLATE FOR TRANSLATING NVCL -->
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
    <xsl:template match="gml:featureMembers/gsml:Borehole">
 
       <!-- VARIABLE To STORE THE GML COORDINATES -->
       <xsl:variable name="coordinates">
          <xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
       </xsl:variable>
+      
       <Placemark>
-      <!--
-         <name id="{@gml:id}"><xsl:value-of select="./gml:name"/></name>
-         -->
          <name><xsl:value-of select="@gml:id"/></name>
          <description>
             <![CDATA[</br><table border="1" cellspacing="1" width="100%">
@@ -115,7 +112,7 @@
 
 
    <!-- TEMPLATE FOR TRANSLATING GNSS -->
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
    <xsl:template match="gml:featureMembers/sa:SamplingPoint">
     
       <!-- VARIABLE To STORE THE GML COORDINATES -->
@@ -150,7 +147,7 @@
 
 
     <!-- TEMPLATE FOR TRANSLATING GPS -->
-    <!-- ====================================================== -->
+   <!-- ================================================================= -->
     <xsl:template match="gml:featureMember/geodesy:stations">
     
       <!-- VARIABLE To STORE THE GML COORDINATES -->
@@ -168,11 +165,11 @@
             <![CDATA[</td></tr></table>]]>            
          </description>
          <Point>
-                <Style>
-                  <IconStyle>
-                     <Icon><href>http://maps.google.com/mapfiles/kml/paddle/wht-blank.png</href></Icon>
-                  </IconStyle>
-                </Style>
+            <Style>
+               <IconStyle>
+                  <Icon><href>http://maps.google.com/mapfiles/kml/paddle/wht-blank.png</href></Icon>
+               </IconStyle>
+            </Style>
 
             <coordinates>
                <xsl:value-of select="./geodesy:location/gml:Point/gml:coordinates"/>
@@ -183,7 +180,7 @@
    
    
    <!-- TEMPLATE FOR TRANSLATING MINERAL OCCURRENCES -->
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
    <xsl:template match="gml:featureMember/mo:MiningFeatureOccurrence">
 
       <!-- VARIABLE To STORE THE GML COORDINATES -->
@@ -218,7 +215,7 @@
     
     
    <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE -->
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
    <xsl:template match="gml:featureMember/gsml:MappedFeature">
 
       <Placemark>
@@ -233,16 +230,13 @@
          <xsl:apply-templates select="gsml:shape/gml:Point"/>
          <xsl:apply-templates select="gsml:shape/gml:Polygon"/>
          <xsl:apply-templates select="gsml:shape/gml:MultiCurve"/>
-         <!--
-         <xsl:apply-templates select="gsml:shape/gml:MultiSurface"/>
-         -->
+         <!-- <xsl:apply-templates select="gsml:shape/gml:MultiSurface"/> -->
       </Placemark>
-
    </xsl:template>
    
    
    <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE Points -->
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
    <xsl:template match="gsml:shape/gml:Point">
    
       <!-- VARIABLE To STORE THE GML COORDINATES -->
@@ -269,49 +263,63 @@
    
    
    <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE Polygons -->
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
    <xsl:template match="gsml:shape/gml:Polygon">
    
+      <Polygon>
+         <xsl:apply-templates select="gml:exterior"/>
+         <xsl:apply-templates select="gml:interior"/>
+      </Polygon>
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR Polygons : exterior -->
+   <!-- ================================================================= -->
+   <xsl:template match="gml:exterior">
+
       <!-- Variable to store exterior coordinates -->
       <xsl:variable name="ext_coordinates">
-         <xsl:value-of select="./gml:exterior/gml:LinearRing/gml:posList"/>
+         <xsl:value-of select="./gml:LinearRing/gml:posList"/>
       </xsl:variable>
       
+      <outerBoundaryIs> 
+         <LinearRing> 
+            <coordinates>
+               <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
+               <xsl:call-template name="parseCoord">
+                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+                  <xsl:with-param name="coordinates" select="concat($ext_coordinates,' ')"/>
+               </xsl:call-template>
+            </coordinates>
+         </LinearRing>
+      </outerBoundaryIs>
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR Polygons : interior -->
+   <!-- ================================================================= -->
+   <xsl:template match="gml:interior">
       <!-- Variable to store interior coordinates -->
       <xsl:variable name="int_coordinates">
-         <xsl:value-of select="./gml:interior/gml:LinearRing/gml:posList"/>
+         <xsl:value-of select="./gml:LinearRing/gml:posList"/>
       </xsl:variable>
-
-      <Polygon>
-         <outerBoundaryIs> 
-            <LinearRing> 
-               <coordinates>
-                  <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
-                  <xsl:call-template name="parseCoord">
-                     <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                     <xsl:with-param name="coordinates" select="concat($ext_coordinates,' ')"/>
-                  </xsl:call-template>
-               </coordinates>
-            </LinearRing>
-         </outerBoundaryIs>
-         <innerBoundaryIs>
-            <LinearRing>
-               <coordinates>
-                  <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
-                  <xsl:call-template name="parseCoord">
-                     <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                     <xsl:with-param name="coordinates" select="concat($int_coordinates,' ')"/>
-                  </xsl:call-template>
-               </coordinates>
-            </LinearRing>
-         </innerBoundaryIs>
-      </Polygon>
-
+      
+      <innerBoundaryIs>
+         <LinearRing>
+            <coordinates>
+               <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
+               <xsl:call-template name="parseCoord">
+                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+                  <xsl:with-param name="coordinates" select="concat($int_coordinates,' ')"/>
+               </xsl:call-template>
+            </coordinates>
+         </LinearRing>
+      </innerBoundaryIs>
    </xsl:template>
    
    
    <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE MultiCurve -->
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
    <xsl:template match="gsml:shape/gml:MultiCurve">
    
       <!-- Variable to store exterior coordinates -->
@@ -324,6 +332,7 @@
 			   <color>ff004080</color>
 			</LineStyle>
 		</Style>
+      
 		<LineString>
          <coordinates>
             <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
@@ -333,14 +342,14 @@
             </xsl:call-template>
 			</coordinates>
 		</LineString>
-
    </xsl:template>
    
    
    <!-- ================================================================= -->
-   <!-- FUNCTION TO TRANSLATE X Y COORDS TO X,Y,0 -->
+   <!--    FUNCTION TO TRANSLATE X Y COORDS TO X,Y,0                      -->
    <!-- ================================================================= -->
    <xsl:template name="parseCoord">
+   
       <xsl:param name="coordinates"/>
       <!-- CHECK IF THERE IS CONTENT BEFORE THE FIRST SPACE YOU REACH -->
       <xsl:if test="substring-before($coordinates,' ')!=''">
@@ -380,5 +389,5 @@
    </xsl:template>
    
    
-   <!-- ====================================================== -->
+   <!-- ================================================================= -->
 </xsl:stylesheet>
