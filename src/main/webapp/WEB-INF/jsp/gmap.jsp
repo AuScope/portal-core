@@ -27,19 +27,11 @@
     <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js" type="text/javascript"></script>
 
     <!-- Bring in the ExtJs Libraries and CSS -->
-    <link rel="stylesheet" type="text/css" href="js/ext-2.2/resources/css/ext-all.css">
-    <script type="text/javascript" src="js/ext-2.2/adapter/ext/ext-base.js"></script>
-    <script type="text/javascript" src="js/ext-2.2/ext-all.js"></script>
+    <link rel="stylesheet" type="text/css" href="js/external/ext-2.2/resources/css/ext-all.css">
+    <script type="text/javascript" src="js/external/ext-2.2/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="js/external/ext-2.2/ext-all.js"></script>
 
-    <script src="js/egeoxml/csgeoxml.js" type="text/javascript"></script>
-    <script src="js/egeoxml/egeoxml.js" type="text/javascript"></script>
-    <script src="js/egeoxml/geoxml.js" type="text/javascript"></script>
-    <script src="js/egeoxml/clustermarker.js" type="text/javascript"></script>
-
-    <!-- Scripts for the Web Map Service layering -->
-    <script src="js/wms/wms-gs-1_1_1.js" type="text/javascript"></script>
-    <script src="js/wms/wms_layer.js" type="text/javascript"></script>
-    <script src="js/wms/web_map_service.js" type="text/javascript"></script>
+    <script src="js/external/geoxml/geoxml.js" type="text/javascript"></script>
 
     <!-- Scripts for interperating the geosciml -->
     <script src="js/geoscimlwfs/utility_functions.js" type="text/javascript"></script>
@@ -63,7 +55,6 @@
 
     <!-- Page specific javascript -->
     <script src="js/Main.js" type="text/javascript"></script>
-    <script src="js/dragzoom.js" type="text/javascript"></script>
     <script src="js/jshashtable.js" type="text/javascript"></script>
 
     <!-- for IE -->
