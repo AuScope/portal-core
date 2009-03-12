@@ -55,7 +55,7 @@
 
     <!-- Page specific javascript -->
     <script src="js/Main.js" type="text/javascript"></script>
-    <script src="js/external/jshashtable/jshashtable.js" type="text/javascript"></script>
+    <script src="js/external/jhashtable/jshashtable.js" type="text/javascript"></script>
 
     <!-- for IE -->
     <style type="text/css">v\:* {behavior:url(#default#VML);}</style>
