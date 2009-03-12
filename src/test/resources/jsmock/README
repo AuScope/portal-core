@@ -1,0 +1,54 @@
+= JSMock - JavaScript Mock Object Library
+
+== About
+	Author: Justin DeWind <dewindj@gmail.com>
+	Version: 1.2.2
+	License: Copyright 2007 by Justin DeWind
+					 Released under the LGPL license.
+
+== Usage
+	-Example:
+		mock = new mockControl(MyObject);
+
+		mock.expects().doThat("hello");
+		mock.expects().doThis("world").andReturn("foo");
+
+		mock.doThat("hello");
+		mock.doThis("world");
+
+		mockControl.verify();
+	
+	-Mixin Example:
+	  JSMock.extend(this);
+	  mock = createMock(MyObject);
+	  
+	  mock.expects().doThat();
+	  
+	  mock.doThat();
+	  
+	  verifyMocks();
+	  
+  Usage Notes:
+	  -Mocking the document and window object is not consistent from browser to browser
+	  -Verification happens automatically on tearDown, so manually calling verifyMocks should not be         
+     required when JSMock is mixed in.
+        
+== Tests
+	All: test/AllTests.html
+	Unit: test/UnitTests.html
+	Functional: test/FunctionalTests.html
+
+	Running tests:
+		- Open test/jsunit/testRunner.html and open any of the above files
+
+		- If you have ruby 1.8.0 and firefox installed you can simply type rake
+			and the tests will automatically run.
+
+== Compatibility 
+	Supported browsers:
+		- Mozilla Firefox
+		- Safari
+		- Internet Explorer >= 6 ( mocking document and window objects is not possible )	
+
+		Note: These are browsers that have been tested using the functional and unit tests,
+					it may work with other browsers other than what is stated above.

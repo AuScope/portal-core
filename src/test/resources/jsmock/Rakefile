@@ -1,0 +1,99 @@
+require 'rake'
+
+task :default => [ :testall ]
+
+task :setup do
+	require 'webrick'
+	include WEBrick
+
+		$failed = false
+		$fail_count = 0
+		$error_count = 0
+		$port = 2555
+		$root = File.expand_path(File.dirname(__FILE__))
+		$server = HTTPServer.new(:Port => $port, :DocumentRoot => $root + "/jsmock.js")
+		$aborted = false
+
+		class MyFileHandler < HTTPServlet::FileHandler
+			def do_POST(req, res)
+				if req.path_info =~ /testsFinished/
+					$fail_count = req.query_string.split("&")[0].split("=")[1].to_i
+					$error_count = req.query_string.split("&")[1].split("=")[1].to_i
+					$failed = true if $fail_count > 0	|| $error_count > 0
+					$server.shutdown
+				end
+			end
+		end
+		
+		def mount(uri, path)
+			$server.mount(uri, MyFileHandler, $root + path, true)
+		end
+
+		mount("/tests", "/test/")
+		mount("/unit", "/test/unit")
+		mount("/functional", "/test/functional")
+
+		trap("INT") { 
+			$server.shutdown 
+			$aborted = true
+		}
+
+end
+
+task :testall => :setup do
+		url = "http://localhost:#{$port}/tests/testRunner.html?testpage=/tests/AllTests.html&autorun=true"
+		launch_browser(url);
+
+		$server.start 
+
+		puts "\r\n"
+		puts "============= All Tests Results ============="
+		raise "Tests aborted!" if $aborted
+		raise "Tests failed! - Failures: #{$fail_count} Errors: #{$error_count}" if $failed
+		puts "Tests Passed!"
+end
+
+task :unit => :setup do
+		url = "http://localhost:#{$port}/tests/testRunner.html?testpage=/tests/UnitTests.html&autorun=true"
+		launch_browser(url);
+
+		$server.start 
+
+		puts "\r\n"
+		puts "============= Unit Tests Results ============="
+		raise "Tests aborted!" if $aborted
+		raise "Tests failed! - Failures: #{$fail_count} Errors: #{$error_count}" if $failed
+		puts "Tests Passed!"
+end
+
+task :functional => :setup do
+		url = "http://localhost:#{$port}/tests/testRunner.html?testpage=/tests/FunctionalTests.html&autorun=true"
+		launch_browser(url);
+
+		$server.start 
+
+		puts "\r\n"
+		puts "============= Functional Tests Results ============="
+		raise "Tests aborted!" if $aborted
+		raise "Tests failed! - Failures: #{$fail_count} Errors: #{$error_count}" if $failed
+		puts "Tests Passed!"
+end
+
+def launch_browser(url)
+	Thread.new do
+		while $server.status == :Stop
+			sleep 0.5
+		end
+
+		if RUBY_PLATFORM =~ /darwin/i
+			`open -a Firefox '#{url}'`
+		elsif RUBY_PLATFORM =~ /linux/i
+			`firefox '#{url}'`
+		else RUBY_PLATFORM =~ /win/i
+			require 'win32ole'
+			shell = WIN32OLE.new('Shell.Application')
+			shell.open(url)
+		end
+
+	end		
+end

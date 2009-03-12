@@ -1,0 +1,189 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			// HELPERS
+
+			var expMatcher = null;
+			function setUp() {
+				expMatcher = new ExpectationMatcher();
+			}
+
+			function getArgumentsObject() {
+				return arguments;
+			}
+
+			function assertDiscrepancy(message, caller, method, args) {
+				assertNotNull(expMatcher.discrepancy());
+				assertEquals(message, expMatcher.discrepancy().message);
+				assertEquals(caller, expMatcher.discrepancy().behavior.caller);
+				assertEquals(method, expMatcher.discrepancy().behavior.method);
+				assertArrayEquals(args, expMatcher.discrepancy().behavior.methodArguments);
+			}
+
+			//TESTS
+			function testAddExpectedMethodCall() {
+				caller1 = new Object();
+				caller2 = new Object();
+				arguments1 = [1,2,3,4];
+				arguments2 = [2,4,6,8];
+
+				expMatcher.addExpectedMethodCall(caller1, "hello", arguments1);
+				expMatcher.addExpectedMethodCall(caller2, "goodbye", arguments2);
+
+				assertEquals(2, expMatcher.__expectationBehaviorList.length);
+				assertEquals(caller1, expMatcher.__expectationBehaviorList[0].caller);
+				assertEquals("hello", expMatcher.__expectationBehaviorList[0].method);
+				assertEquals(arguments1, expMatcher.__expectationBehaviorList[0].methodArguments);
+
+				assertEquals(caller2, expMatcher.__expectationBehaviorList[1].caller);
+				assertEquals("goodbye", expMatcher.__expectationBehaviorList[1].method);
+				assertEquals(arguments2, expMatcher.__expectationBehaviorList[1].methodArguments);
+
+				
+			}
+
+			function testAddActualMethodCall() {
+				caller1 = new Object();
+				caller2 = new Object();
+				arguments1 = [1,2,3,4];
+				arguments2 = [2,4,6,8];
+
+				expMatcher.addActualMethodCall(caller1, "hello", arguments1);
+				expMatcher.addActualMethodCall(caller2, "goodbye", arguments2);
+
+				assertEquals(2, expMatcher.__actualBehaviorList.length);
+				assertEquals(caller1, expMatcher.__actualBehaviorList[0].caller);
+				assertEquals("hello", expMatcher.__actualBehaviorList[0].method);
+				assertEquals(arguments1, expMatcher.__actualBehaviorList[0].methodArguments);
+
+				assertEquals(caller2, expMatcher.__actualBehaviorList[1].caller);
+				assertEquals("goodbye", expMatcher.__actualBehaviorList[1].method);
+				assertEquals(arguments2, expMatcher.__actualBehaviorList[1].methodArguments);
+
+			}
+
+			function testExpectation_matcher_matches() {
+				obj = new Object();
+
+				expMatcher.addExpectedMethodCall(obj, "foo", [1]);
+				expMatcher.addExpectedMethodCall(obj, "stewie", ["bam", 1]);
+
+				expMatcher.addActualMethodCall(obj, "foo", [1]);
+				expMatcher.addActualMethodCall(obj, "stewie", ["bam", 1]);
+
+				assertTrue(expMatcher.matches());		
+				assertNull(expMatcher.discrepancy());
+			}
+
+			function testMatches_convert_arguments_to_array() {
+				argsObject = getArgumentsObject(1,3,4);
+				argsObject2 = getArgumentsObject(1, 3, 4);
+
+				expMatcher.addExpectedMethodCall(obj, "hello", argsObject);
+				expMatcher.addActualMethodCall(obj, "hello", argsObject2);
+				
+				assertTrue(expMatcher.matches());
+				assertNull(expMatcher.discrepancy());
+			}
+
+			function testMatches_expected_not_called() {
+				obj = new Object();
+				expMatcher.addExpectedMethodCall(obj, "foo", [1]);
+				expMatcher.addExpectedMethodCall(obj, "stewie", ["bam", 1]);
+
+				expMatcher.addActualMethodCall(obj, "foo", [1]);
+
+				assertFalse(expMatcher.matches());		
+				assertDiscrepancy("Expected function not called", obj, "stewie", ["bam", 1]);
+			}
+
+			function testMatches_too_many_real_calls() {
+				obj = new Object();
+				expMatcher.addExpectedMethodCall(obj, "foo", [1]);
+				expMatcher.addExpectedMethodCall(obj, "stewie", ["bam", 1]);
+
+				expMatcher.addActualMethodCall(obj, "foo", [1]);
+				expMatcher.addActualMethodCall(obj, "stewie", ["bam", 1]);
+				expMatcher.addActualMethodCall(obj, "stewie", ["bam2", 2]);
+
+				assertFalse(expMatcher.matches());
+				assertDiscrepancy("Surprise call", obj, "stewie", ["bam2", 2]);
+			}
+
+			function testMatches_argument_mismatches() {
+				obj = new Object();
+
+				expMatcher.addExpectedMethodCall(obj, "foo", [1]);
+				expMatcher.addActualMethodCall(obj, "foo", [99]);
+				
+				assertFalse(expMatcher.matches());
+				assertDiscrepancy("Unexpected Arguments", obj, "foo", [99]);
+			}
+
+			function testMatches_different_caller() {
+				obj = new Object();
+				obj2 = new Object();
+
+				expMatcher.addExpectedMethodCall(obj, "foo", [1]);
+				expMatcher.addActualMethodCall(obj2, "foo", [1]);
+				
+				assertFalse(expMatcher.matches());
+				assertDiscrepancy("Surprise call from unexpected caller", obj2, "foo", [1]);
+			}
+
+			function testMatches_mismatched_methods() {
+				obj = new Object();
+
+				expMatcher.addExpectedMethodCall(obj, "foo", [1]);
+				expMatcher.addActualMethodCall(obj, "bar", [1]);
+				
+				assertFalse(expMatcher.matches());
+				assertDiscrepancy("Surprise call", obj, "bar", [1]);
+
+			}
+			
+			function testShouldFailFastWhenExpectationIsNotMade() {
+				expMatcher.addExpectedMethodCall(obj, "foo", [1]);
+				expMatcher.addExpectedMethodCall(obj, "stewie", ["bam", 1]);
+				
+				expMatcher.addActualMethodCall(obj, "bar", [1, 2]);
+				expMatcher.addActualMethodCall(obj, "stewie", ["boom", 3])
+				
+				expMatcher.matches();
+				
+				assertDiscrepancy("Surprise call", obj, "bar", [1,2])
+			}
+
+			function testReset()
+			{
+				obj = new Object();
+
+				expMatcher.addExpectedMethodCall(obj, "foo", [1]);
+				expMatcher.addExpectedMethodCall(obj, "stewie", ["bam", 1]);
+
+				expMatcher.addActualMethodCall(obj, "foo", [1]);
+
+				assertEquals(2, expMatcher.__expectationBehaviorList.length);
+				assertEquals(1, expMatcher.__actualBehaviorList.length);
+				
+				expMatcher.matches();
+				assertNotNull(expMatcher.discrepancy());
+				expMatcher.reset();
+
+				assertNull(expMatcher.discrepancy());
+				assertEquals(0, expMatcher.__expectationBehaviorList.length);
+				assertEquals(0, expMatcher.__actualBehaviorList.length);
+			}
+
+			function testDiscrepencies() {
+				// tested in other functions
+			}
+		</script>
+	</head>
+	<body>
+		<p>ExpectationMatcherTest</p>
+	</body>
+</html>

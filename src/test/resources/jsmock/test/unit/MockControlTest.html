@@ -1,0 +1,344 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+
+			var control;
+			function setUp() {
+				control = new MockControl();
+			}
+
+			/* HELPERS */
+			function TestObject() {}
+			TestObject.prototype = {
+				helloWorld: function() {},
+				sayHello: function() {},
+				__goodBye:  function() {},
+				billy: "hello"
+			}
+
+			TestObject.classFunction = function() {};
+			TestObject.club = 12;
+
+			function StaticGuy() {}
+			StaticGuy.doThis = function() {};
+			StaticGuy.doThat = function() {};
+			StaticGuy.__private = function() {};
+
+			var Singleton = {
+				foo: function() {},
+				bar: function() {},
+				__hide: function() {}
+			}
+
+			function InstanceObject() {
+				this.epictetus = function() {};
+				this.plato = function() {};
+			}
+
+			/* Tests */
+			function testCreateMock() {
+				var mock = control.createMock(TestObject);			
+
+				try {
+					mock.helloWorld();
+					mock.sayHello();
+					mock.classFunction();
+				} catch(e) {
+					fail("helloWorld(), sayHello(), and classFunction() should exist");
+				}
+
+				assertEquals("Control should be the same", control, mock.expects().helloWorld());
+				assertEquals("Control should be the same", control, mock.expects().sayHello());
+				assertEquals("Control should be the same", control, mock.expects().classFunction());
+
+				assertUndefined(mock.__goodBye);
+				assertUndefined(mock.club);
+				assertUndefined(mock.billy);
+				
+				// Test alias of expects
+				assertTrue(mock.expects === mock.expect);
+			}
+
+			function testCreateMock_mock_has_addMockMethod() {
+				var mock = control.createMock(TestObject);
+
+				assertNotUndefined(mock.addMockMethod);	
+				mock.addMockMethod("abc");
+
+				assertNotUndefined(mock.abc);
+				assertEquals("Control should be the same", control, mock.expects().abc());
+				assertThrows( function() { control.verify() }, "Expected function not called: abc()");
+			}
+
+			function testCreateMock_no_object_passed_in() {
+				var mock = control.createMock();
+				assertNotUndefined(mock);
+				assertNotUndefined(mock.expect);
+
+				mock.addMockMethod("sendEvent");
+
+				assertNotUndefined(mock.sendEvent);
+				assertEquals("Control should be the same", control, mock.expects().sendEvent());
+				assertThrows( function() { control.verify() }, "Expected function not called: sendEvent()");
+
+			}
+
+			function testCreateMock_class_functions_mocked()
+			{
+				var mock = control.createMock(StaticGuy);
+				
+				try {
+					mock.doThis();
+					mock.doThat();
+				}
+				catch(e) {
+					fail("dothis(), and doThat() should exist");
+				}
+
+				assertUndefined(mock.__private);
+
+			}
+
+			function testCreateMock_singleton_passed_in() {
+				var mock = control.createMock(Singleton);	
+				
+				try {
+					mock.foo();
+					mock.bar();
+				} catch(e) {
+					fail("foo() and bar() should exist");
+				}
+
+				assertEquals("Control should be the same", control, mock.expects().foo());
+				assertEquals("Control should be the same", control, mock.expects().bar());
+				assertUndefined(mock.__hide);
+				
+			}
+
+			function testCreateMock_instance_object_passed_in() {
+				var mock = null;
+				try {
+					mock = control.createMock(new InstanceObject());
+				} catch(e) {
+					fail("Should not have thrown exception");
+				}
+
+				assertNotUndefined("Should not be undefined", mock);
+
+				try {
+					mock.epictetus();
+					mock.plato();
+				} catch(e) {
+					fail("epictetus() and plato() should exist");
+				}
+
+				assertEquals("Control should be the same", control, mock.expects().epictetus());
+				assertEquals("Control should be the same", control, mock.expects().plato());
+			}
+
+			function testCreateMock_primitive_passed_in() {
+				try {
+					var mock = control.createMock(1);
+				} catch(e) {
+					assertEquals("Cannot mock out a " + typeof(1), e.message);
+					return;
+				}
+
+				fail("Should have thrown exception");
+			}
+
+			function testAndReturn() {
+				var mock = control.createMock(TestObject);
+
+				mock.expects().helloWorld();		
+				control.andReturn("stewie");
+				mock.expects().sayHello();
+				control.andReturn("billy");
+				mock.expects().helloWorld().andReturn("Foo");
+				mock.expects().sayHello().andReturn("Bar");
+
+				assertEquals("stewie", mock.helloWorld());
+				assertEquals("billy", mock.sayHello());
+				assertEquals("Foo", mock.helloWorld());
+				assertEquals("Bar", mock.sayHello());
+
+				assertUndefined(mock.helloWorld());
+				assertUndefined(mock.sayHello());
+
+				mock.expects().sayHello().andReturn("Bar");
+				assertEquals("Bar", mock.sayHello());
+
+			}
+
+			function testAndReturn_no_expectation_made() {
+				try {
+					control.andReturn(1);
+				} catch(e) {
+					assertEquals("Cannot set return value without an expectation", e.message);
+					return;
+				}
+
+				fail("Should have thrown exception");
+			}
+
+			function testAndThrow() {
+				var mock = control.createMock(TestObject);
+				
+				mock.expects().helloWorld();
+				control.andThrow("Big big problem");
+				mock.expects().sayHello();
+				control.andThrow("What's up doc?");
+
+				assertThrows(function() { mock.helloWorld() }, "Big big problem");
+				assertThrows(function() { mock.sayHello() }, "What's up doc?");
+
+				assertUndefined(mock.sayHello());
+				assertUndefined(mock.helloWorld());
+
+				mock.expects().helloWorld().andThrow("Homer");
+				assertThrows(function() { mock.helloWorld() }, "Homer");
+			}
+
+			function testAndThrow_no_expectation_made() {
+				assertThrows(function() { control.andThrow("boo") }, "Cannot throw error without an expectation");
+			}
+
+			function testAndStub() {
+				var mock = control.createMock(TestObject);
+				var fred = 0;
+				var testObject = new TestObject();
+
+				mock.expects().helloWorld();
+				control.andStub(function() {fred++; });
+
+				mock.expects().sayHello();	
+				control.andStub(function() {fred--;});
+
+				mock.expects().sayHello().andStub(function() { return "returnValue" });
+
+				mock.helloWorld();
+				assertEquals(1, fred);
+				mock.sayHello();
+				assertEquals(0, fred);
+				assertEquals("returnValue", mock.sayHello());
+				assertUndefined(mock.helloWorld());
+				assertUndefined(mock.sayHello());
+
+				mock.expects().helloWorld().andStub( function() {fred = 100; });
+				mock.helloWorld();
+				assertEquals(100, fred);
+			}
+
+			function testAndStub_passing_arguments() {
+				var mock = control.createMock(TestObject);
+				var testObject = new TestObject();
+
+				/* One Arguments */
+				mock.expects().helloWorld().andStub(function() { assertEquals( "Bart", arguments[0]); });
+				mock.helloWorld("Bart");
+
+				/* Multiple Arguments */
+				mock.expects().sayHello().andStub(function() { assertEquals(10, arguments.length);
+																											for(i = 0; i < arguments.length; i++) { 
+																												assertEquals(i, arguments[i]); } });
+				mock.sayHello(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+				/* Complex types, e.g. objects */
+
+				mock.expects().sayHello().andStub(function() { assertEquals(testObject, arguments[0]); });
+				mock.sayHello(testObject);
+			}
+
+			function testAndStub_no_expectation_made() {
+				assertThrows(function() { control.andStub(function() {}) }, "Cannot stub without an expectation");
+			}
+
+			function testAndStub_no_function_passed() {
+				var mock = control.createMock(TestObject);
+				assertThrows(function() { mock.expects().helloWorld().andStub(1) }, "Stub must be a function");
+			}
+
+			function testVerify()
+			{
+				var mock = control.createMock(TestObject);
+
+				mock.expects().helloWorld("hello", 1, 2);
+				mock.expects().sayHello();
+				mock.expects().helloWorld();
+				mock.expects().sayHello("bam");
+
+				mock.helloWorld("hello", 1, 2);
+				mock.sayHello();
+				mock.helloWorld(); 
+				mock.sayHello("bam");
+
+				try {
+					control.verify();
+				}
+				catch(e) {
+					fail("Verify should have passed");
+				}
+
+				mock.expects().helloWorld("hello", 1, 2);
+				mock.expects().sayHello();
+
+				mock.helloWorld("hello", 1, 2);
+				mock.sayHello();
+
+				try {
+					control.verify();
+				} 
+				catch(e) {
+					fail("Verify should have passed");
+				}
+			}
+
+			function testVerify_fails()
+			{
+				var mock = control.createMock(TestObject);
+
+				mock.expects().helloWorld("sam");
+				mock.expects().sayHello();
+
+				mock.helloWorld("adams");
+				mock.sayHello();
+
+				assertThrows(function() { control.verify() }, "Unexpected Arguments: helloWorld(\"adams\")");
+
+				mock.expects().helloWorld(1,2);
+				mock.helloWorld(1, 2, ["hello", "world"]);
+
+				assertThrows(function() { control.verify() }, 
+				            "Unexpected Arguments: helloWorld(1, 2, [\"hello\", \"world\"])");
+
+				mock.expects().helloWorld();
+				mock.sayHello();
+
+				assertThrows( function() { control.verify() }, "Surprise call: sayHello()");
+			}
+			
+			function testReset() {
+			  var mock = control.createMock();
+			  mock.addMockMethod("someAction");
+			  
+			  mock.expects().someAction();
+			  mock.expects().someAction(3, 5);
+			  			  
+			  control.reset();
+			  
+			  try {
+			    control.verify();
+			  }
+			  catch(e) {
+			    fail("Verify should have passed after reset");
+			  }
+			}
+		</script>
+	</head>
+	<body>
+		<p>MockControlTest</p>
+	</body>
+</html>

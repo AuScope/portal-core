@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			function testDiscrepancy_constructor() {
+				var behavior = new InvocationBehavior(new Object(), "foo", [1,2]);
+				var discrepancy = new Discrepancy("hello", behavior);
+				assertEquals("hello", discrepancy.message);
+				assertEquals(behavior, discrepancy.behavior);
+			}
+
+			function testDiscrepancy_constructor_non_behavior_passed() {
+				assertThrows(function() { new Discrepancy("bar", 1) }, "The behavior can only be an InvocationBehavior object");
+			}
+		</script>	
+	</head>
+	<body>
+		<p>DiscrepancyTest</p>
+	</body>
+</html>

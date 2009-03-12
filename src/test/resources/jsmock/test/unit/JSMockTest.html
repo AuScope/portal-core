@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			//
+			// HELPERS
+			//
+      
+      function AnObjectToMock() {
+        this.doSomething = function() {};
+      }
+			//
+			// TESTS
+			//
+			
+			function testExtend() {
+			  var testObject = new Object();
+			  JSMock.extend(testObject);
+			  
+			  assertNotUndefined(testObject['createMock'])
+			  assertTrue(testObject['createMock'].constructor == Function);
+			  
+			  assertNotUndefined(testObject['verifyMocks'])
+			  assertTrue(testObject['verifyMocks'].constructor == Function);
+			  
+			  assertNotUndefined(testObject['resetMocks'])
+			  assertTrue(testObject['resetMocks'].constructor == Function);
+			  
+			  assertNotUndefined(testObject['tearDown'])
+			  assertTrue(testObject['tearDown'].constructor == Function);
+			  
+			  var testMock = testObject.createMock(AnObjectToMock);
+			  
+			  testMock.expects().doSomething(1, 2, 3);
+			  testMock.doSomething(1, 2);
+			  
+			  assertThrows(testObject.tearDown, "Unexpected Arguments: doSomething(1, 2)");
+			}
+			
+			function testExtendAlreadyHasTearDown() {
+			  var testObject = { counter: 0, tearDown: function() { this.counter++; }};
+			  JSMock.extend(testObject);
+			  
+			  var testMock = testObject.createMock();
+			  testMock.addMockMethod('doSomething');
+			  
+			  testMock.expects().doSomething(1, 2, 3);
+			  testMock.doSomething(1, 2);
+			  
+			  assertThrows(testObject.tearDown, "Unexpected Arguments: doSomething(1, 2)");
+			  assertEquals(1, testObject.counter);
+			}
+			
+			function testExtendResettingMocks() {
+			  var testObject = new Object();
+			  JSMock.extend(testObject);
+			  
+			  var testMock = testObject.createMock();
+			  testMock.addMockMethod('doSomething');
+			  
+			  testMock.expects().doSomething();
+			  testObject.resetMocks();
+			  
+			  try {
+			    testObject.verifyMocks();
+			  }
+			  catch(e) {
+			    fail("Verify should have passed");
+			  }
+			  
+			}
+			
+		</script>
+	</head>
+	<body>
+		<p>JSMockTest</p>
+	</body>
+</html>

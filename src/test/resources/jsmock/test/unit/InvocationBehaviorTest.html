@@ -1,0 +1,26 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			function testInvocation_behavior_constructor() {
+				var caller = new Object();
+				var method = "helloWorld";
+				var params = [1,2,new Object(),"hello"];
+
+				var invocationHolder = new InvocationBehavior(caller, method, params);
+
+				assertEquals("Objects should be the same", caller, invocationHolder.caller);
+				assertEquals(method, invocationHolder.method);
+				
+				for(i = 0; i < params.length; i++) {
+					assertEquals(params[i], invocationHolder.methodArguments[i]);
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<p>InvocationBehaviorTest</p>
+	</body>
+</html>

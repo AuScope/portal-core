@@ -260,6 +260,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         } catch (ServiceException e) {
             e.printStackTrace();
         }
+
         WMSCapabilities capabilities = wms.getCapabilities();
 
         JSONArray jsonArray = new JSONArray();

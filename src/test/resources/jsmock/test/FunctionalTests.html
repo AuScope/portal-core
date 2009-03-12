@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+		<script language="JavaScript" type="text/javascript" src="app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			function suite() {
+				var suite = new top.jsUnitTestSuite();
+				suite.addTestPage("functional/direct_jsmock_usage_test.html");
+				suite.addTestPage("functional/mock_window_and_document_test.html");
+        suite.addTestPage("functional/jsmock_verifies_with_proper_messages.html");
+
+				return suite;
+			}
+		</script>
+	</head>
+	<body>
+		<p>JSMock Functional Tests</p>
+	</body>
+</html>

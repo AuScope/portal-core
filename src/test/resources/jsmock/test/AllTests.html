@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+		<title>JSMock All Tests</title>
+		<script language="JavaScript" type="text/javascript" src="app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			function unitTestSuite() {
+				var result = new top.jsUnitTestSuite();
+				result.addTestPage("unit/ArgumentFormatterTest.html");
+				result.addTestPage("unit/ArgumentMatcherTest.html");
+				result.addTestPage("unit/ArrayTest.html");
+				result.addTestPage("unit/DiscrepancyTest.html");
+				result.addTestPage("unit/ExpectationMatcherTest.html");
+				result.addTestPage("unit/InvocationBehaviorTest.html");
+				result.addTestPage("unit/MockControlTest.html");
+				result.addTestPage("unit/TypeOfTest.html");
+				result.addTestPage("unit/JSMockTest.html");
+
+				return result;
+			}
+
+			function functionalTestSuite() {
+				var result = new top.jsUnitTestSuite();
+				result.addTestPage("functional/direct_jsmock_usage_test.html");
+				result.addTestPage("functional/mock_window_and_document_test.html");
+        result.addTestPage("functional/jsmock_verifies_with_proper_messages.html");
+
+				return result;
+			}
+
+			function suite() {
+					var suite = new top.jsUnitTestSuite();
+					suite.addTestSuite(unitTestSuite());
+					suite.addTestSuite(functionalTestSuite());
+
+					return suite;
+			}	
+		</script>
+	</head>
+	<body>
+		<p>JSMock All Tests</p>
+	</body>
+</html>

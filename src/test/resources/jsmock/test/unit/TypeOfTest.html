@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			// HELPERS
+			function expect_typeof(type) {
+				typeOfVar = TypeOf.isA(type);
+				assertEquals(TypeOf, typeOfVar.constructor);
+				assertEquals(type, typeOfVar.type);
+			}
+
+			// TESTS
+			function testTypeof_constructor() {
+				typeOfVar = new TypeOf(String);
+				assertEquals(String, typeOfVar.type);
+
+				typeOfVar = new TypeOf(Number);
+				assertEquals(Number, typeOfVar.type);
+
+				typeOfVar = new TypeOf(Object);
+				assertEquals(Object, typeOfVar.type);
+
+				typeOfVar = new TypeOf(Function);
+				assertEquals(Function, typeOfVar.type);
+			}
+
+			function testTypeof_constructor_bad_value() {
+				assertThrows( function() { new TypeOf(new Object()) }, "Can only take constructors");
+			}
+
+			function testIsA() {
+				expect_typeof(Number);
+				expect_typeof(String);
+				expect_typeof(Object);
+				expect_typeof(Function);
+			}
+		</script>
+	</head>
+	<body>
+		<p>TypeOfTest</p>
+	</body>
+</html>

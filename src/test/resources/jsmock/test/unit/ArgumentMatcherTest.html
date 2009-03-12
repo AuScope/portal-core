@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+			function testArgument_matcher_matches() {
+				var obj = new Object();
+				var func = function() {};
+
+				assertTrue("1 and 1 should match", ArgumentMatcher.matches(1,1));
+				assertFalse("1 and 2 should not match", ArgumentMatcher.matches(1,2));
+
+				assertTrue("hello and hello should match", ArgumentMatcher.matches("hello","hello"));
+				assertFalse("hello and goodbye should not match", ArgumentMatcher.matches("hello","goodbye"));
+
+				assertTrue("The two objects should be equal", ArgumentMatcher.matches(obj, obj));
+				assertFalse("The two objects should not be equal", ArgumentMatcher.matches(new Object(), new Object()));
+
+				assertTrue("null values should match", ArgumentMatcher.matches(null, null));
+				assertFalse("null and 2 should not match", ArgumentMatcher.matches(null, 2));
+				assertFalse("null and 2 should not match", ArgumentMatcher.matches(1, null));
+
+				assertTrue("functions should match", ArgumentMatcher.matches(func, func));
+				assertFalse("functions should not match", ArgumentMatcher.matches(func, function() {}));
+
+			}
+
+			function testMatches_arrays() {
+				assertTrue(ArgumentMatcher.matches([1,2,3], [1,2,3]));
+				assertFalse(ArgumentMatcher.matches([1,2,3], null));
+
+				assertTrue(ArgumentMatcher.matches([[2,4,8], 2, 3], [[2,4,8],2,3]));
+				assertTrue(ArgumentMatcher.matches([1, [2,4,8], 3], [1, [2,4,8], 3]));
+				assertFalse(ArgumentMatcher.matches([["epic", "tdd", "xp"], 2, 3], [[1, 6, 5],2,3]));
+
+				assertTrue(ArgumentMatcher.matches([[["bleh", 1, 4],4,8], 2, 3], [[["bleh", 1, 4],4,8],2,3]));
+
+				assertTrue(ArgumentMatcher.matches([1, TypeOf.isA(Number), 3], [1, 2, 3]));
+				assertFalse(ArgumentMatcher.matches([1, TypeOf.isA(String), 3], [1, 2, 3]));
+			}
+
+			function testMatches_typeof() {
+				assertTrue(ArgumentMatcher.matches(TypeOf.isA(String), "mushu"));
+				assertFalse(ArgumentMatcher.matches(TypeOf.isA(String), new Object()));
+
+				assertTrue(ArgumentMatcher.matches(TypeOf.isA(Number), 1));
+				assertFalse(ArgumentMatcher.matches(TypeOf.isA(Number), "ping"));	
+
+				assertTrue(ArgumentMatcher.matches(TypeOf.isA(Function), function() {}));
+				assertFalse(ArgumentMatcher.matches(TypeOf.isA(Function), 22));
+
+				assertTrue(ArgumentMatcher.matches(TypeOf.isA(Object), new Object()));
+				assertFalse(ArgumentMatcher.matches(TypeOf.isA(Object), function() {}));
+			}
+		</script>
+	</head>
+	<body>
+		<p>ArgumentMatcherTest</p>
+	</body>
+</html>
