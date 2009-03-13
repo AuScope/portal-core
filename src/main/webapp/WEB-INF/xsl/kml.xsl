@@ -230,7 +230,7 @@
          <xsl:apply-templates select="gsml:shape/gml:Point"/>
          <xsl:apply-templates select="gsml:shape/gml:Polygon"/>
          <xsl:apply-templates select="gsml:shape/gml:MultiCurve"/>
-         <!-- <xsl:apply-templates select="gsml:shape/gml:MultiSurface"/> -->
+         <xsl:apply-templates select="gsml:shape/gml:MultiSurface//gml:PolygonPatch"/>
       </Placemark>
    </xsl:template>
    
@@ -273,51 +273,6 @@
    </xsl:template>
    
    
-   <!-- TEMPLATE FOR Polygons : exterior -->
-   <!-- ================================================================= -->
-   <xsl:template match="gml:exterior">
-
-      <!-- Variable to store exterior coordinates -->
-      <xsl:variable name="ext_coordinates">
-         <xsl:value-of select="./gml:LinearRing/gml:posList"/>
-      </xsl:variable>
-      
-      <outerBoundaryIs> 
-         <LinearRing> 
-            <coordinates>
-               <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
-               <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coordinates" select="concat($ext_coordinates,' ')"/>
-               </xsl:call-template>
-            </coordinates>
-         </LinearRing>
-      </outerBoundaryIs>
-   </xsl:template>
-   
-   
-   <!-- TEMPLATE FOR Polygons : interior -->
-   <!-- ================================================================= -->
-   <xsl:template match="gml:interior">
-      <!-- Variable to store interior coordinates -->
-      <xsl:variable name="int_coordinates">
-         <xsl:value-of select="./gml:LinearRing/gml:posList"/>
-      </xsl:variable>
-      
-      <innerBoundaryIs>
-         <LinearRing>
-            <coordinates>
-               <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
-               <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coordinates" select="concat($int_coordinates,' ')"/>
-               </xsl:call-template>
-            </coordinates>
-         </LinearRing>
-      </innerBoundaryIs>
-   </xsl:template>
-   
-   
    <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE MultiCurve -->
    <!-- ================================================================= -->
    <xsl:template match="gsml:shape/gml:MultiCurve">
@@ -342,6 +297,69 @@
             </xsl:call-template>
 			</coordinates>
 		</LineString>
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE MultiSurface -->
+   <!-- ================================================================= -->
+   <xsl:template match="gsml:shape/gml:MultiSurface//gml:PolygonPatch">
+
+      <Style>
+         <LineStyle>
+			   <color>ff0000ff</color>
+			</LineStyle>
+		</Style>
+   
+      <Polygon>
+         <xsl:apply-templates select="gml:exterior"/>
+         <xsl:apply-templates select="gml:interior"/>
+      </Polygon>
+   
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR Polygon : exterior -->
+   <!-- ================================================================= -->
+   <xsl:template match="gml:exterior">
+
+      <!-- Variable to store exterior coordinates -->
+      <xsl:variable name="ext_coordinates">
+         <xsl:value-of select="./gml:LinearRing/gml:posList"/>
+      </xsl:variable>
+      
+      <outerBoundaryIs> 
+         <LinearRing> 
+            <coordinates>
+               <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
+               <xsl:call-template name="parseCoord">
+                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+                  <xsl:with-param name="coordinates" select="concat($ext_coordinates,' ')"/>
+               </xsl:call-template>
+            </coordinates>
+         </LinearRing>
+      </outerBoundaryIs>
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR Polygon : interior -->
+   <!-- ================================================================= -->
+   <xsl:template match="gml:interior">
+      <!-- Variable to store interior coordinates -->
+      <xsl:variable name="int_coordinates">
+         <xsl:value-of select="./gml:LinearRing/gml:posList"/>
+      </xsl:variable>
+      
+      <innerBoundaryIs>
+         <LinearRing>
+            <coordinates>
+               <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
+               <xsl:call-template name="parseCoord">
+                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+                  <xsl:with-param name="coordinates" select="concat($int_coordinates,' ')"/>
+               </xsl:call-template>
+            </coordinates>
+         </LinearRing>
+      </innerBoundaryIs>
    </xsl:template>
    
    
