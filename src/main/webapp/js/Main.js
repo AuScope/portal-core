@@ -53,6 +53,8 @@ Ext.onReady(function() {
                 statusBar.showBusy();
                 node.disable();
 
+                alert(node.attributes.featureType);
+
                 if(node.attributes.featureType == "gsml:GeologicUnit") {
                     alert("yes");
                     var ggeoxml = new GGeoXml(node.attributes.kmlUrl);
