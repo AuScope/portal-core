@@ -54,6 +54,7 @@ Ext.onReady(function() {
                 node.disable();
 
                 if(node.attributes.featureType == "gsml:GeologicUnit") {
+                    alert("yes");
                     var ggeoxml = new GGeoXml(node.attributes.kmlUrl);
                     node.attributes.tileOverlay = ggeoxml;
                     map.addOverlay(ggeoxml);
@@ -64,6 +65,7 @@ Ext.onReady(function() {
                     statusBar.clearStatus();
                 }
                 else {
+                    alert("no");
                     GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
                         if (pResponseCode == 200) {
                             var exml;
