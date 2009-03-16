@@ -52,28 +52,41 @@ Ext.onReady(function() {
                 viewport.doLayout();
                 statusBar.showBusy();
                 node.disable();
-                GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
-                    if (pResponseCode == 200) {
-                        var exml;
-                        var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
-                        icon.iconSize = new GSize(32, 32);
-                        exml = new GeoXml("theglobalexml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) {
-                            marker.featureType = node.attributes.featureType;
-                            marker.wfsUrl = node.attributes.kmlUrl;
-                        }}});
-                        exml.parseString(pData);
-                        node.enable();
-                        statusBar.setVisible(false);
-                        viewport.doLayout();
-                        statusBar.clearStatus();
 
-                        node.attributes.tileOverlay = exml;
+                if(node.attributes.featureType == "gsml:GeologicUnit") {
+                    var ggeoxml = new GGeoXml(node.attributes.kmlUrl);
+                    node.attributes.tileOverlay = ggeoxml;
+                    map.addOverlay(ggeoxml);
 
-                        downloadUrls.put(node.attributes.wfsUrl, node.attributes.wfsUrl);
-                        //add a download button
-                        // node.attributes.downloadButton = makeButtonAndAdd(node.attributes.wfsUrl, node.text);
-                    }
-                });
+                    node.enable();
+                    statusBar.setVisible(false);
+                    viewport.doLayout();
+                    statusBar.clearStatus();
+                }
+                else {
+                    GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
+                        if (pResponseCode == 200) {
+                            var exml;
+                            var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
+                            icon.iconSize = new GSize(32, 32);
+                            exml = new GeoXml("theglobalexml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) {
+                                marker.featureType = node.attributes.featureType;
+                                marker.wfsUrl = node.attributes.kmlUrl;
+                            }}});
+                            exml.parseString(pData);
+                            node.enable();
+                            statusBar.setVisible(false);
+                            viewport.doLayout();
+                            statusBar.clearStatus();
+
+                            node.attributes.tileOverlay = exml;
+
+                            downloadUrls.put(node.attributes.wfsUrl, node.attributes.wfsUrl);
+                            //add a download button
+                            // node.attributes.downloadButton = makeButtonAndAdd(node.attributes.wfsUrl, node.text);
+                        }
+                    });
+                }
             }
         }
 
@@ -248,7 +261,7 @@ Ext.onReady(function() {
         map.setUIToDefault();
 
         // Large pan and zoom control
-        //map.addControl(new GLargeMapControl());
+        //map.addControl(new GLargeMapControl(),  new GControlPosition(G_ANCHOR_TOP_LEFT));
 
         // Toggle between Map, Satellite, and Hybrid types
         map.addControl(new GMapTypeControl());
@@ -261,7 +274,7 @@ Ext.onReady(function() {
         var Tsize = new GSize(150, 150);
         map.addControl(new GOverviewMapControl(Tsize));
 
-        map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(10, 10)));
+        map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(280, 5)));
 
         //var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
         //mgr = new MarkerManager(map, mgrOptions);

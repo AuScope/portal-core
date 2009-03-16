@@ -36,8 +36,8 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public static final String HYPERSPECTRAL = "Hyperspectral";
 
-    //public static final String XSLT_PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
-    public static final String XSLT_PROXY_URL = "/xsltRestProxy?url=";
+    public static final String XSLT_PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
+    //public static final String XSLT_PROXY_URL = "/xsltRestProxy?url=";
     public static final String PROXY_URL = "/restproxy?";
 
     public static final String CSW_URL = "http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw";
@@ -84,6 +84,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
         put("Geodesy", "geodesy:stations");
         put("Mineral Occurrences", "mo:MiningFeatureOccurrence");
+        put("Geological Units", "gsml:GeologicUnit");
     }};
 
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions
