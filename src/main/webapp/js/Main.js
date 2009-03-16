@@ -351,6 +351,7 @@ Ext.onReady(function() {
 
         if (overlay instanceof GMarker) {
             if (overlay.featureType == "gsml:Borehole") {
+            	// FIXME overlay.getTitle() always returns the same value: "nvcl_core.1206"
                 new NVCLMarker(overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
             }
             else if (overlay.featureType == "geodesy:stations") {

@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Auscope Portal</title>
+    <title>Auscope Portal Revision $Revision$</title>
 
     <!-- Page Style -->
     <link rel="stylesheet" type="text/css" href="css/styles.css">

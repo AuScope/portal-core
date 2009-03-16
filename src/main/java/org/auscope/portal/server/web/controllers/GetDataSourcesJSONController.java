@@ -36,8 +36,9 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public static final String HYPERSPECTRAL = "Hyperspectral";
 
-    public static final String XSLT_PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
-    //public static final String XSLT_PROXY_URL = "/xsltRestProxy?url=";
+    // what is the purpose of that line?
+    //public static final String XSLT_PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
+    public static final String XSLT_PROXY_URL = "/xsltRestProxy?url=";
     public static final String PROXY_URL = "/restproxy?";
 
     public static final String CSW_URL = "http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw";
