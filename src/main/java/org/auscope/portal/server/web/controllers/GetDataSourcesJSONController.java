@@ -159,7 +159,7 @@ public class GetDataSourcesJSONController extends AbstractController {
      */
     private JSONArray getInstitionalProviders(String theme) {
        /* if(theme.equals("Mineral Occurrences")) {
-
+            //something
             JSONArray jsonArray = new JSONArray();
             Map<String, Serializable> node = new HashMap<String, Serializable>();
             node.put("id", "Mineral Occurrences PIRSA"); //TODO: serviceID
