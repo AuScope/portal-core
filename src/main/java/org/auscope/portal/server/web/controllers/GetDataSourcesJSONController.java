@@ -47,8 +47,7 @@ public class GetDataSourcesJSONController extends AbstractController {
                                             "Geochemistry",
                                             "Global Navigation Satellite Systems",
                                             "Geodesy",
-                                            "Seismic Imaging",
-                                            "Geological Units",
+                                            "Geologic Unit",
                                             "Mineral Occurrences"};
 
     //create a map to hold the CSW query contraints for each theme
@@ -84,7 +83,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
         put("Geodesy", "geodesy:stations");
         put("Mineral Occurrences", "mo:MiningFeatureOccurrence");
-        put("Geological Units", "gsml:GeologicUnit");
+        put("Geologic Unit", "gsml:GeologicUnit");
     }};
 
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions

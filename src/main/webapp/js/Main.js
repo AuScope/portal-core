@@ -53,10 +53,7 @@ Ext.onReady(function() {
                 statusBar.showBusy();
                 node.disable();
 
-                alert(node.attributes.featureType);
-
                 if(node.attributes.featureType == "gsml:GeologicUnit") {
-                    alert("yes");
                     var ggeoxml = new GGeoXml(node.attributes.kmlUrl);
                     node.attributes.tileOverlay = ggeoxml;
                     map.addOverlay(ggeoxml);
@@ -67,7 +64,6 @@ Ext.onReady(function() {
                     statusBar.clearStatus();
                 }
                 else {
-                    alert("no");
                     GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
                         if (pResponseCode == 200) {
                             var exml;
@@ -214,6 +210,67 @@ Ext.onReady(function() {
                     window.open("downloadProxy?" + url, name);
                 }
             }}]
+    });
+
+    var queryFilterPanel = new Ext.FormPanel({
+        //margins:'100 0 0 0',
+        //cmargins:'100 0 0 0',
+        title: "",
+        //split:true,
+        autoScroll:true,
+        containerScroll: true,
+        width: 300,
+        //collapsible: true,
+        items: [{
+            xtype:'fieldset',
+            checkboxToggle:true,
+            title: 'User Information',
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            collapsed: true,
+            items :[{
+                    fieldLabel: 'First Name',
+                    name: 'first',
+                    allowBlank:false
+                },{
+                    fieldLabel: 'Last Name',
+                    name: 'last'
+                },{
+                    fieldLabel: 'Company',
+                    name: 'company'
+                }, {
+                    fieldLabel: 'Email',
+                    name: 'email',
+                    vtype:'email'
+                }
+            ]
+        },{
+            xtype:'fieldset',
+            title: 'Phone Number',
+            collapsible: true,
+            autoHeight:true,
+            defaults: {width: 210},
+            defaultType: 'textfield',
+            items :[{
+                    fieldLabel: 'Home',
+                    name: 'home',
+                    value: '(888) 555-1212'
+                },{
+                    fieldLabel: 'Business',
+                    name: 'business'
+                },{
+                    fieldLabel: 'Mobile',
+                    name: 'mobile'
+                },{
+                    fieldLabel: 'Fax',
+                    name: 'fax'
+                }
+            ]
+        }],
+        buttons: [{
+            text: 'Filter'
+        }]
     });
 
     /*
