@@ -43,6 +43,15 @@ Ext.onReady(function() {
             else if (node.attributes.layerType == 'wfs') {
                 //alert(node.attributes.wfsUrl);
                 //we are assuming a KML response from the WFS requests
+                statusBar.setStatus({
+                    text: 'Finished loading',
+                    iconCls: 'ok-icon',
+                    clear: true
+                });
+                statusBar.setVisible(true);
+                viewport.doLayout();
+                statusBar.showBusy();
+                node.disable();
                 GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
                     if (pResponseCode == 200) {
                         var exml;
@@ -53,6 +62,10 @@ Ext.onReady(function() {
                             marker.wfsUrl = node.attributes.kmlUrl;
                         }}});
                         exml.parseString(pData);
+                        node.enable();
+                        statusBar.setVisible(false);
+                        viewport.doLayout();
+                        statusBar.clearStatus();
 
                         node.attributes.tileOverlay = exml;
 
@@ -172,7 +185,7 @@ Ext.onReady(function() {
         collapsible: true,
         items:[tree],
         buttons: [{text: "Download Datasets", handler: function() {
-                var url = "";
+            var url = "";
 
                 var theUrls = downloadUrls.values();
 
@@ -186,10 +199,47 @@ Ext.onReady(function() {
             }}]
     });
 
+    /*
+    function StatusBarManager(extjsStatusBar) {
+        this.statusBar = extjsStatusBar;
+        this.hashTable = new Hashtable();
+
+        this.showStatus = function(message) {
+
+            this.statusBar.setStatus({
+                text: 'Finished',
+                iconCls: 'ok-icon',
+                clear: true
+            });
+
+
+
+            Math.random()
+        }
+
+        this.clearStatus = function() {
+
+        }
+    }        */
+
+    var statusBar = new Ext.StatusBar({
+        region: "south",
+        id: 'my-status',
+        hidden: true,
+
+        // defaults to use when the status is cleared:
+        defaultText: 'Default status text',
+        defaultIconCls: 'default-icon',
+
+        // values to set initially:
+        text: 'Ready',
+        iconCls: 'ready-icon'
+    });
+
     //add all the panels to the viewport
     var viewport = new Ext.Viewport({
         layout:'border',
-        items:[westPanel, centerPanel]
+        items:[westPanel, centerPanel, statusBar]
     });
 
     // Is user's browser suppported by Google Maps?
@@ -221,6 +271,10 @@ Ext.onReady(function() {
 
     //when a person clicks on a marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {
+        statusBar.showBusy();
+        statusBar.setVisible(true);
+        viewport.doLayout();
+
         if (overlay instanceof GMarker) {
             if (overlay.featureType == "gsml:Borehole") {
                 new NVCLMarker(overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
@@ -231,8 +285,15 @@ Ext.onReady(function() {
             else if (overlay.description != null){
                 overlay.openInfoWindowHtml(overlay.description);
             }
+
         }
+
+        statusBar.clearStatus();
+        statusBar.setVisible(false);
+        viewport.doLayout();
+
     });
+    
 });
 
 
