@@ -160,10 +160,6 @@ Ext.onReady(function() {
     //a dud gloabal for geoxml class
     theglobalexml = new GeoXml("theglobalexml", map, null, null);
 
-
-
-
-
     //event handlers and listeners
     tree.on('checkchange', function(node, isChecked) {
         //the check was checked on
@@ -266,9 +262,9 @@ Ext.onReady(function() {
         viewport.doLayout();
 
         if (overlay instanceof GMarker) {
+
             if (overlay.featureType == "gsml:Borehole") {
-                // FIXME overlay.getTitle() always returns the same value: "nvcl_core.1206"
-                new NVCLMarker(overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
+                new NVCLMarker(overlay.title, overlay, overlay.description).getMarkerClickedFn()();
             }
             else if (overlay.featureType == "geodesy:stations") {
                 new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
