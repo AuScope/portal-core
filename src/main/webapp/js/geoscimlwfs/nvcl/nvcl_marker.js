@@ -28,6 +28,7 @@ function NVCLMarker (boreholeId, marker, description) {
   this.maMosaicTrays = new Array();
   this.maScalars = new Array();
   this.maScalarNames = new Array();
+  this.maScalarNotes = new Array();
   this.maScalarSelected = new Array();
   this.mnStartDepth = 0;
   this.mnEndDepth = 0;
@@ -100,6 +101,14 @@ NVCLMarker.prototype.maScalars = null;
 * @type Array
 */
 NVCLMarker.prototype.maScalarNames = null;
+
+/**
+* Associative array 
+* for storing an explanation of the scalar names associated with an NVCL station.<br> 
+* Array index - ScalarIds
+* @type Array
+*/
+NVCLMarker.prototype.maScalarNotes = null;
 
 /**
 * Associative array 
@@ -230,7 +239,10 @@ function NVCLMarker_markerClicked()
   var scalars_proxy = ProxyURL + "http://150.229.98.207/scalars.asmx/get";
 
   scalars_proxy += "?coreid=" + sCoreId;
-	
+  
+  var downloadProxy ="/downloadProxy?rest=true&url=";
+  var vocabs_proxy = downloadProxy + "http://apacsrv2.arrc.csiro.au/vocab-service/query?repository=nvcl-scalars%26label=";
+  
   if (this.maScalars.length == 0) {
 	GDownloadUrl(scalars_proxy, function(pData, pResponseCode) {    
       if(pResponseCode == 200) {
@@ -262,8 +274,40 @@ function NVCLMarker_markerClicked()
         }
         oNVCLMarker.createSummaryTabHtml();
         oNVCLMarker.createMosaicTabHtml();
-      } 
+      }
     });
+	
+    // get vocab
+	for(var i=0; i < oNVCLMarker.maScalars.length; i++) {
+	  
+	  // TODO why doesn't that work? copied that line from below, oNVCLMarker.maScalars is correct in debugger!
+      var scalarId = oNVCLMarker.maScalars[i];
+
+      var vocabs_query = vocabs_proxy + oNVCLMarker.maScalarNames[oNVCLMarker.maScalars[i]];
+      GDownloadUrl(vocabs_query, function(pData, pResponseCode) {
+        if(pResponseCode == 200) {
+          var vocabXmlDoc = GXml.parse(pData);
+          var vocabRootNode = vocabXmlDoc.documentElement;
+          if (!vocabRootNode) {
+            return;
+          }
+          if (g_IsIE)
+            vocabRootNode.setProperty("SelectionLanguage", "XPath");
+          
+          var aConcepts = vocabRootNode.getElementsByTagName("skos:Concept");
+          
+          // TODO also doesn't seem to work. why?
+          if (aConcepts.length == 0) {
+            return;
+          }
+          var sScopeNote = GXml.value(aConcepts[0].selectSingleNode("*[local-name() = 'scopeNote']"));
+
+          oNVCLMarker.maScalarNotes[oNVCLMarker.maScalars[i]] = sScopeNote;
+        }
+      });
+    }
+    // end get vocab
+
   } else {
     oNVCLMarker.createSummaryTabHtml();
     oNVCLMarker.createMosaicTabHtml();
@@ -497,7 +541,8 @@ function NVCLMarker_createPlotScalarsTabHtml() {
     for (var i=0; i<oNVCLMarker.maScalars.length; i++) {
       var scalarId = oNVCLMarker.maScalars[i];
       if (oNVCLMarker.maScalarSelected[scalarId] == false) {
-        plotScalarHtml += '<option value="'+scalarId+'">'
+        plotScalarHtml += '<option value="'+scalarId;
+        plotScalarHtml += '" title="'+oNVCLMarker.maScalarNotes[scalarId]+'">';
         plotScalarHtml += oNVCLMarker.maScalarNames[scalarId];
       }
     }
