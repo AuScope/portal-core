@@ -52,73 +52,47 @@ public class DownloadProxy extends HttpServlet {
         String[][] queryParams = new String[][]{};
         String[][] headers = new String[][]{{"Accept", "application/json"}};
 
-        String urlsString = request.getParameter("urls");
+        String rest = request.getParameter("rest");
 
-        if(urlsString != null) {
-            String[] urls = urlsString.split("&urls=");
+        if(rest.equals("true")) {
+            RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
 
-            ByteArrayOutputStream bout=new ByteArrayOutputStream();
-
-            response.setContentType("application/zip");
-            response.setHeader("Content-Disposition","inline; filename=output.zip;");
-
-
-            ZipOutputStream zout=new ZipOutputStream(response.getOutputStream());
-            ServletOutputStream out = response.getOutputStream();
-
-            for(int i=0; i<urls.length; i++) {
-                RestConnection conn = new RestConnection(urls[i].replace("/restproxy?", ""), queryParams);
-
-                zout.putNextEntry(new ZipEntry(i+".xml"));
-                zout.write(conn.get(headers).getDataAsByteArray());
-                zout.closeEntry();
+            try {
+                String result = conn.get(headers).getDataAsString();
+                // Send response back to client
+                response.getWriter().println(result);
+            } catch (IOException ex) {
+                Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, ex);
             }
+        } else {
+            String urlsString = request.getParameter("urls");
+
+            if(urlsString != null) {
+                String[] urls = urlsString.split("&urls=");
+
+                ByteArrayOutputStream bout=new ByteArrayOutputStream();
+
+                response.setContentType("application/zip");
+                response.setHeader("Content-Disposition","inline; filename=output.zip;");
 
 
-            zout.finish();
-            zout.flush();
-            zout.close();
+                ZipOutputStream zout=new ZipOutputStream(response.getOutputStream());
+                ServletOutputStream out = response.getOutputStream();
+
+                for(int i=0; i<urls.length; i++) {
+                    RestConnection conn = new RestConnection(urls[i].replace("/restproxy?", ""), queryParams);
+
+                    zout.putNextEntry(new ZipEntry(i+".xml"));
+                    zout.write(conn.get(headers).getDataAsByteArray());
+                    zout.closeEntry();
+                }
+
+
+                zout.finish();
+                zout.flush();
+                zout.close();
+            }
         }
-        
-        //String zip=bout.toString();
-
-
-
-
-        //out.write(zip.getBytes());
-        //out.flush();
-        
-
-
-    /*    try {
-            String result = conn.get(headers).getDataAsString();
-            StringWriter downThePipe = new StringWriter();
-            InputStream in = getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
-
-            // Use the static TransformerFactory.newInstance() method to instantiate
-            // a TransformerFactory. The javax.xml.transform.TransformerFactory
-            // system property setting determines the actual class to instantiate --
-            // org.apache.xalan.transformer.TransformerImpl.
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-
-            // Use the TransformerFactory to instantiate a transformer that will work with
-            // the style sheet we specify. This method call also processes the style sheet
-            // into a compiled Templates object.
-            //Transformer transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource("kml.xsl"));
-            Transformer transformer = tFactory.newTransformer (new StreamSource(in));
-
-            // Use the transformer to apply the associated template object to an XML document
-            // and write the output to a stream
-            transformer.transform (new StreamSource (new StringReader(result)),
-                                   new StreamResult(downThePipe));
-
-            // Send response back to client
-            response.getWriter().println(downThePipe.toString());
-        } catch (IOException ex) {
-            Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (TransformerException e) {
-            Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, e);
-        }*/
     }
 
     @Override

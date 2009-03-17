@@ -61,8 +61,7 @@ public class XSLTRestProxy extends HttpServlet {
         
         logger.debug("URL: " + request.getParameter("url"));
         
-        RestConnection conn = new RestConnection
-           (request.getParameter("url").replace("%26", "&"), queryParams);
+        RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
         
         //Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, request.getParameter("url").replace("%26", "&"), request.getParameter("url").replace("%26", "&"));
         logger.debug(request.getParameter("url").replace("%26", "&"));
