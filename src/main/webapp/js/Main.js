@@ -3,21 +3,16 @@ var theglobalexml;
 
 Ext.onReady(function() {
     var map;
-    //var mgr;
     var downloadUrls = new Hashtable();
 
     //this tree holds all of the data sources
     var tree = new Ext.tree.TreePanel({
-        title : 'Data Sources',
-        //region: 'center',
-        //split: true,
-        //collapsible: true,
-        border: false,
-        width: 300,
-        useArrows:true,
-        //autoScroll:true,
-        //animate:true,
-        //containerScroll: true,
+        title: 'Themes',
+        region:'north',
+        split: true,
+        height: 300,
+        autoScroll: true,
+
         rootVisible: false,
         dataUrl: 'dataSources.json',
         root: {
@@ -28,6 +23,148 @@ Ext.onReady(function() {
         }
     });
 
+    var mineralOccurencesFilterPanel = new Ext.FormPanel({
+        //region: "center",
+        //collapsible: true,
+        //title: "Filter Properties",
+        border: false,
+        autoScroll:true,
+        width: '100%',
+        buttonAlign: 'right',
+        items: [{
+            xtype:'fieldset',
+            title: 'Mine Filters',
+            autoHeight:true,
+            //defaults: {width: '100%'},
+            defaultType: 'textfield',
+            items :[{
+                fieldLabel: 'Mine Name',
+                name: 'mine'
+                //allowBlank:false
+            }
+            ]
+        },{
+            xtype:'fieldset',
+            title: 'Mining Activity Filters',
+            //collapsible: true,
+            autoHeight:true,
+            //defaults: {width: '100%'},
+            defaultType: 'datefield',
+
+            items :[{
+                fieldLabel: 'Start Date',
+                name: 'startdate',
+                value: ''
+            }, {
+                fieldLabel: 'End Date',
+                name: 'enddate',
+                value: ''
+            }
+
+            ]
+        },{
+            xtype:'fieldset',
+            title: 'Commodity Filters',
+            autoHeight:true,
+            defaultType: 'textfield',
+            items :[{}]
+        }],
+        buttons: [{
+            text: 'Show Me >>',
+            handler: function() {handleFilter();}
+        }]
+    });
+
+    //used to show extra details for querying services
+    var filterPanel = new Ext.Panel({
+        title: "Filter Properties",
+        region: 'center',
+        width: '100%',
+        layout: 'card',
+        activeItem: 0,
+        items: [mineralOccurencesFilterPanel]
+    });
+
+
+    var buttonsPanel = new Ext.FormPanel({
+        region: 'south',
+        autoScroll:true,
+        width: '100%',
+        items: [{border: false}],
+        buttons: [{text: "Download Datasets", handler: function() {handleDownload();} }]
+    });
+
+    //used as a placeholder for the tree and details panel on the left of screen
+    var westPanel = {
+        layout: 'border',
+        region:'west',
+        border: false,
+        split:true,
+        margins: '100 0 0 0',
+        width: 300,
+
+        items:[tree, filterPanel, buttonsPanel]
+    }
+
+    //this center panel will hold the google maps
+    var centerPanel = new Ext.Panel({region:"center", margins:'100 0 0 0', cmargins:'100 0 0 0'});
+
+    var statusBar = new Ext.StatusBar({
+        region: "south",
+        id: 'my-status',
+        hidden: true,
+
+        // defaults to use when the status is cleared:
+        defaultText: 'Default status text',
+        defaultIconCls: 'default-icon',
+
+        // values to set initially:
+        text: 'Ready',
+        iconCls: 'ready-icon'
+    });
+
+    //add all the panels to the viewport
+    var viewport = new Ext.Viewport({
+        layout:'border',
+        items:[westPanel, centerPanel, statusBar]
+    });
+
+
+
+
+    // Is user's browser suppported by Google Maps?
+    if (GBrowserIsCompatible()) {
+        map = new GMap2(centerPanel.body.dom);
+        map.setUIToDefault();
+
+        // Large pan and zoom control
+        //map.addControl(new GLargeMapControl(),  new GControlPosition(G_ANCHOR_TOP_LEFT));
+
+        // Toggle between Map, Satellite, and Hybrid types
+        map.addControl(new GMapTypeControl());
+
+        var startZoom = 4;
+        map.setCenter(new google.maps.LatLng(-26, 133.3), 4);
+        map.setMapType(G_SATELLITE_MAP);
+
+        //Thumbnail map
+        var Tsize = new GSize(150, 150);
+        map.addControl(new GOverviewMapControl(Tsize));
+
+        map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(280, 5)));
+
+        //var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
+        //mgr = new MarkerManager(map, mgrOptions);
+    }
+
+    //a dud gloabal for geoxml class
+    theglobalexml = new GeoXml("theglobalexml", map, null, null);
+
+
+
+
+
+    //event handlers and listeners
     tree.on('checkchange', function(node, isChecked) {
         //the check was checked on
         if (isChecked) {
@@ -53,7 +190,7 @@ Ext.onReady(function() {
                 statusBar.showBusy();
                 node.disable();
 
-                if(node.attributes.featureType == "gsml:GeologicUnit") {
+                if (node.attributes.featureType == "gsml:GeologicUnit") {
                     var ggeoxml = new GGeoXml(node.attributes.kmlUrl);
                     node.attributes.tileOverlay = ggeoxml;
                     map.addOverlay(ggeoxml);
@@ -89,17 +226,12 @@ Ext.onReady(function() {
                 }
             }
         }
-
         //the check was checked off so remove the overlay
         else {
-            //remove the download button
-            //buttonPanel.remove(node.attributes.downloadButton);
-            //buttonPanel.doLayout();
-
-            if(node.attributes.layerType == 'wfs') {
+            if (node.attributes.layerType == 'wfs') {
                 downloadUrls.remove(node.attributes.wfsUrl);
             }
-            
+
             if (node.attributes.tileOverlay instanceof GeoXml)
                 node.attributes.tileOverlay.clear();
             else
@@ -110,39 +242,55 @@ Ext.onReady(function() {
         }
     });
 
-    //this center panel will hold the google maps
-    var centerPanel = new Ext.Panel({region:"center", margins:'100 0 0 0', cmargins:'100 0 0 0'});
+    var handleDownload = function() {
+        var url = "";
+        var theUrls = downloadUrls.values();
 
-    //this panel will be used for extra options
-    //var rightPanel = new Ext.Panel({region:"east", margins:'100 0 0 0', cmargins:'100 0 0 0', title: "More Options", split:true, size: 0, collapsible: true});
+        if (theUrls.length >= 1) {
+            for (i = 0; i < theUrls.length; i++)
+                url += "urls=" + theUrls[i] + "%26";
 
-    var buttonPanel = new Ext.FormPanel({
-        //title: 'Options',
-        bodyStyle:'padding:5px 5px 0',
-        region:"south",
-        items: [new Ext.Container()],
-        buttons: [{text: "Download"}],
-        split:true,
-        width: 300,
-        height: 200,
-        collapsible: true
+            //alert("downloadProxy?" + url);
+            window.open("downloadProxy?" + url, name);
+        }
+    };
+
+    var handleFilter = function() {
+        alert('filter goes here');     
+    };
+
+    //when a person clicks on a marker then do something
+    GEvent.addListener(map, "click", function(overlay, latlng) {
+        statusBar.showBusy();
+        statusBar.setVisible(true);
+        viewport.doLayout();
+
+        if (overlay instanceof GMarker) {
+            if (overlay.featureType == "gsml:Borehole") {
+                // FIXME overlay.getTitle() always returns the same value: "nvcl_core.1206"
+                new NVCLMarker(overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
+            }
+            else if (overlay.featureType == "geodesy:stations") {
+                new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
+            }
+            else if (overlay.description != null) {
+                    overlay.openInfoWindowHtml(overlay.description);
+                }
+
+        }
+
+        statusBar.clearStatus();
+        statusBar.setVisible(false);
+        viewport.doLayout();
+
     });
 
-    function makeButtonAndAdd(wfsUrl, name) {
-        var button = new Ext.Button(new Ext.Action({
-            text: 'Get ' + name,
-            width: "100%",
-            handler: function() {
-                window.open(wfsUrl, name);
-            }
-        }));
-
-        buttonPanel.add(button);
-        buttonPanel.doLayout();
-
-        return button;
+    //if this feature type needs to be filtered or not
+    function hasFilters(node) {
     }
 
+
+    //utility functions
     function getBoundingBox() {
         var bounds = map.getBounds();
         var southWest = bounds.getSouthWest();
@@ -182,193 +330,6 @@ Ext.onReady(function() {
                '</ogc:Filter>';
     }
 
-    //used to show extra details
-    //var detailsPanel = new Ext.Panel({region:"south", title: "Stuff", split:true, width: 300, height: 200, collapsible: true, items:[buttonPanel]});
-
-    //used as a placeholder for the tree and details panel on the left of screen
-    var westPanel = new Ext.FormPanel({
-        region:"west",
-        margins:'100 0 0 0',
-        cmargins:'100 0 0 0',
-        title: "",
-        split:true,
-        autoScroll:true,
-        containerScroll: true,
-        width: 300,
-        collapsible: true,
-        items:[tree],
-        buttons: [{text: "Download Datasets", handler: function() {
-            var url = "";
-
-                var theUrls = downloadUrls.values();
-
-                if(theUrls.length >= 1) {
-                    for(i=0; i<theUrls.length; i++)
-                        url += "urls=" + theUrls[i] + "%26";
-
-                    //alert("downloadProxy?" + url);
-                    window.open("downloadProxy?" + url, name);
-                }
-            }}]
-    });
-
-    var queryFilterPanel = new Ext.FormPanel({
-        //margins:'100 0 0 0',
-        //cmargins:'100 0 0 0',
-        title: "",
-        //split:true,
-        autoScroll:true,
-        containerScroll: true,
-        width: 300,
-        //collapsible: true,
-        items: [{
-            xtype:'fieldset',
-            checkboxToggle:true,
-            title: 'User Information',
-            autoHeight:true,
-            defaults: {width: 210},
-            defaultType: 'textfield',
-            collapsed: true,
-            items :[{
-                    fieldLabel: 'First Name',
-                    name: 'first',
-                    allowBlank:false
-                },{
-                    fieldLabel: 'Last Name',
-                    name: 'last'
-                },{
-                    fieldLabel: 'Company',
-                    name: 'company'
-                }, {
-                    fieldLabel: 'Email',
-                    name: 'email',
-                    vtype:'email'
-                }
-            ]
-        },{
-            xtype:'fieldset',
-            title: 'Phone Number',
-            collapsible: true,
-            autoHeight:true,
-            defaults: {width: 210},
-            defaultType: 'textfield',
-            items :[{
-                    fieldLabel: 'Home',
-                    name: 'home',
-                    value: '(888) 555-1212'
-                },{
-                    fieldLabel: 'Business',
-                    name: 'business'
-                },{
-                    fieldLabel: 'Mobile',
-                    name: 'mobile'
-                },{
-                    fieldLabel: 'Fax',
-                    name: 'fax'
-                }
-            ]
-        }],
-        buttons: [{
-            text: 'Filter'
-        }]
-    });
-
-    /*
-    function StatusBarManager(extjsStatusBar) {
-        this.statusBar = extjsStatusBar;
-        this.hashTable = new Hashtable();
-
-        this.showStatus = function(message) {
-
-            this.statusBar.setStatus({
-                text: 'Finished',
-                iconCls: 'ok-icon',
-                clear: true
-            });
-
-
-
-            Math.random()
-        }
-
-        this.clearStatus = function() {
-
-        }
-    }        */
-
-    var statusBar = new Ext.StatusBar({
-        region: "south",
-        id: 'my-status',
-        hidden: true,
-
-        // defaults to use when the status is cleared:
-        defaultText: 'Default status text',
-        defaultIconCls: 'default-icon',
-
-        // values to set initially:
-        text: 'Ready',
-        iconCls: 'ready-icon'
-    });
-
-    //add all the panels to the viewport
-    var viewport = new Ext.Viewport({
-        layout:'border',
-        items:[westPanel, centerPanel, statusBar]
-    });
-
-    // Is user's browser suppported by Google Maps?
-    if (GBrowserIsCompatible()) {
-        map = new GMap2(centerPanel.body.dom);
-        map.setUIToDefault();
-
-        // Large pan and zoom control
-        //map.addControl(new GLargeMapControl(),  new GControlPosition(G_ANCHOR_TOP_LEFT));
-
-        // Toggle between Map, Satellite, and Hybrid types
-        map.addControl(new GMapTypeControl());
-
-        var startZoom = 4;
-        map.setCenter(new google.maps.LatLng(-26, 133.3), 4);
-        map.setMapType(G_SATELLITE_MAP);
-
-        //Thumbnail map
-        var Tsize = new GSize(150, 150);
-        map.addControl(new GOverviewMapControl(Tsize));
-
-        map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(280, 5)));
-
-        //var mgrOptions = { borderPadding: 50, maxZoom: 15, trackMarkers: true };
-        //mgr = new MarkerManager(map, mgrOptions);
-    }
-
-    theglobalexml = new GeoXml("theglobalexml", map, null, null);
-
-    //when a person clicks on a marker then do something
-    GEvent.addListener(map, "click", function(overlay, latlng) {
-        statusBar.showBusy();
-        statusBar.setVisible(true);
-        viewport.doLayout();
-
-        if (overlay instanceof GMarker) {
-            if (overlay.featureType == "gsml:Borehole") {
-            	// FIXME overlay.getTitle() always returns the same value: "nvcl_core.1206"
-                new NVCLMarker(overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
-            }
-            else if (overlay.featureType == "geodesy:stations") {
-                new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
-            }
-            else if (overlay.description != null){
-                overlay.openInfoWindowHtml(overlay.description);
-            }
-
-        }
-
-        statusBar.clearStatus();
-        statusBar.setVisible(false);
-        viewport.doLayout();
-
-    });
-    
 });
 
 
