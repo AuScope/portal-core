@@ -18,8 +18,8 @@
    <!-- Include Navigation Header -->
    <%@ include file="page_header.jsp" %>
    <div>
-	   </br> 
-	   </br>
+	   <br> 
+	   <br>
 	   <H2>The Login page is not yet implemented.</H2>
    </div>
 </body>
