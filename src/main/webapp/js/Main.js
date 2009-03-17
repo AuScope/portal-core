@@ -82,7 +82,7 @@ Ext.onReady(function() {
         width: '100%',
         layout: 'card',
         activeItem: 0,
-        items: [mineralOccurencesFilterPanel]
+        items: [{}, mineralOccurencesFilterPanel]
     });
 
 
@@ -161,6 +161,10 @@ Ext.onReady(function() {
     theglobalexml = new GeoXml("theglobalexml", map, null, null);
 
     //event handlers and listeners
+    tree.on('click', function(node, event) {
+        checkAndShowFilterPanel(node);
+    });
+    
     tree.on('checkchange', function(node, isChecked) {
         //the check was checked on
         if (isChecked) {
@@ -174,51 +178,52 @@ Ext.onReady(function() {
                 map.addOverlay(node.attributes.tileOverlay);
             }
             else if (node.attributes.layerType == 'wfs') {
-                //alert(node.attributes.wfsUrl);
-                //we are assuming a KML response from the WFS requests
-                statusBar.setStatus({
-                    text: 'Finished loading',
-                    iconCls: 'ok-icon',
-                    clear: true
-                });
-                statusBar.setVisible(true);
-                viewport.doLayout();
-                statusBar.showBusy();
-                node.disable();
-
-                if (node.attributes.featureType == "gsml:GeologicUnit") {
-                    var ggeoxml = new GGeoXml(node.attributes.kmlUrl);
-                    node.attributes.tileOverlay = ggeoxml;
-                    map.addOverlay(ggeoxml);
-
-                    node.enable();
-                    statusBar.setVisible(false);
-                    viewport.doLayout();
-                    statusBar.clearStatus();
-                }
-                else {
-                    GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
-                        if (pResponseCode == 200) {
-                            var exml;
-                            var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
-                            icon.iconSize = new GSize(32, 32);
-                            exml = new GeoXml("theglobalexml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) {
-                                marker.featureType = node.attributes.featureType;
-                                marker.wfsUrl = node.attributes.kmlUrl;
-                            }}});
-                            exml.parseString(pData);
-                            node.enable();
-                            statusBar.setVisible(false);
-                            viewport.doLayout();
-                            statusBar.clearStatus();
-
-                            node.attributes.tileOverlay = exml;
-
-                            downloadUrls.put(node.attributes.wfsUrl, node.attributes.wfsUrl);
-                            //add a download button
-                            // node.attributes.downloadButton = makeButtonAndAdd(node.attributes.wfsUrl, node.text);
-                        }
+                if(!checkAndShowFilterPanel(node)) {
+                    //we are assuming a KML response from the WFS requests
+                    statusBar.setStatus({
+                        text: 'Finished loading',
+                        iconCls: 'ok-icon',
+                        clear: true
                     });
+                    statusBar.setVisible(true);
+                    viewport.doLayout();
+                    statusBar.showBusy();
+                    node.disable();
+
+                    if (node.attributes.featureType == "gsml:GeologicUnit") {
+                        var ggeoxml = new GGeoXml(node.attributes.kmlUrl);
+                        node.attributes.tileOverlay = ggeoxml;
+                        map.addOverlay(ggeoxml);
+
+                        node.enable();
+                        statusBar.setVisible(false);
+                        viewport.doLayout();
+                        statusBar.clearStatus();
+                    }
+                    else {
+                        GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
+                            if (pResponseCode == 200) {
+                                var exml;
+                                var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
+                                icon.iconSize = new GSize(32, 32);
+                                exml = new GeoXml("theglobalexml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) {
+                                    marker.featureType = node.attributes.featureType;
+                                    marker.wfsUrl = node.attributes.kmlUrl;
+                                }}});
+                                exml.parseString(pData);
+                                node.enable();
+                                statusBar.setVisible(false);
+                                viewport.doLayout();
+                                statusBar.clearStatus();
+
+                                node.attributes.tileOverlay = exml;
+
+                                downloadUrls.put(node.attributes.wfsUrl, node.attributes.wfsUrl);
+                                //add a download button
+                                // node.attributes.downloadButton = makeButtonAndAdd(node.attributes.wfsUrl, node.text);
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -230,11 +235,12 @@ Ext.onReady(function() {
 
             if (node.attributes.tileOverlay instanceof GeoXml)
                 node.attributes.tileOverlay.clear();
-            else
+            else if(node.attributes.tileOverlay != null)
                 map.removeOverlay(node.attributes.tileOverlay);
 
             node.attributes.tileOverlay = null;
 
+            checkAndShowFilterPanel(node);
         }
     });
 
@@ -275,6 +281,7 @@ Ext.onReady(function() {
 
         }
 
+
         statusBar.clearStatus();
         statusBar.setVisible(false);
         viewport.doLayout();
@@ -282,7 +289,16 @@ Ext.onReady(function() {
     });
 
     //if this feature type needs to be filtered or not
-    function hasFilters(node) {
+    function checkAndShowFilterPanel(node) {
+        if(node.attributes.featureType == "mo:MiningFeatureOccurrence" && node.getUI().isChecked()) {
+
+            filterPanel.getLayout().setActiveItem(1);
+
+            return true;
+        }
+
+        filterPanel.getLayout().setActiveItem(0);
+        return false;
     }
 
 
