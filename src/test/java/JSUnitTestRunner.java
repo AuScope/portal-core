@@ -24,20 +24,21 @@ public class JSUnitTestRunner extends StandaloneTest {
     private String getUrl() throws URISyntaxException {
         String basePath = new File("").getAbsolutePath();
         String testRunner = "file:///" + basePath + "/src/test/resources/jsmock/test/testRunner.html";
-        String testSuite  = new File(new URI("file:///" + basePath + "/src/test/resources/jsmock/test/AllTests.html")).getAbsolutePath();
+        String testSuite  = new File(new URI("file:///" + basePath.replace("\\", "/") + "/src/test/js/jsunitTestSuite.html")).getAbsolutePath();
         return testRunner+"?testPage="+testSuite+"&autoRun=true&submitresults=true";
     }
 
     private String getBrowserPaths() {
         //if on linux look for firefox
-        return getLinuxBrowsers();
-
-        //TODO: if on windows look for ie
+        if(System.getProperty("os.name").equals("Linux"))
+            return getLinuxBrowsers();
+        //if on windows look for ie
+        else
+            return getWindowsBrowsers();
     }
 
-    //TODO: implement
     private String getWindowsBrowsers() {
-        return null;
+        return "C:\\Program Files\\Mozilla Firefox\\firefox.exe,C:\\Program Files\\Internet Explorer\\iexplore.exe";
     }
 
     private String getLinuxBrowsers() {
