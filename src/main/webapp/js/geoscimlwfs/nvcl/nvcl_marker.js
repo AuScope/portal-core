@@ -248,12 +248,13 @@ function NVCLMarker_markerClicked()
       if(pResponseCode == 200) {
         // Call the parse function to read the XML data from the file.
         var xmlDoc = GXml.parse(pData);
+        if (g_IsIE)
+          xmlDoc.setProperty("SelectionLanguage", "XPath");
+
         var rootNode = xmlDoc.documentElement;
         if (!rootNode) {
           return;
         } 	
-        if (g_IsIE)
-          rootNode.setProperty("SelectionLanguage", "XPath");
         	
         var aScalars = rootNode.getElementsByTagName("Scalars");
         	
@@ -276,11 +277,11 @@ function NVCLMarker_markerClicked()
         oNVCLMarker.createMosaicTabHtml();
       }
     });
-	
+    
     // get vocab
-	for(var i=0; i < oNVCLMarker.maScalars.length; i++) {
-	  
-	  // TODO why doesn't that work? copied that line from below, oNVCLMarker.maScalars is correct in debugger!
+    for(var i=0; i < oNVCLMarker.maScalars.length; i++) {
+      
+      // TODO why doesn't that work? copied that line from below, oNVCLMarker.maScalars is correct in debugger!
       var scalarId = oNVCLMarker.maScalars[i];
 
       var vocabs_query = vocabs_proxy + oNVCLMarker.maScalarNames[oNVCLMarker.maScalars[i]];
@@ -422,13 +423,13 @@ function NVCLMarker_createMosaicTabHtml() {
     GDownloadUrl(sMosaicUrl, function(pData, pResponseCode) {    
       if(pResponseCode == 200) {
         var xmlDoc = GXml.parse(pData);
+        if (g_IsIE)
+          xmlDoc.setProperty("SelectionLanguage", "XPath");
+
         var rootNode = xmlDoc.documentElement;
-        
         if (!rootNode) {
           return;
         }
-        if (g_IsIE)
-          rootNode.setProperty("SelectionLanguage", "XPath");
 				
         aTrays = rootNode.getElementsByTagName("trayids");
         var nTrayIndex = 0;
