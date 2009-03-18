@@ -43,48 +43,55 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public static final String CSW_URL = "http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw";
 
+    public static final String BOREHOLE           = "Borehole";
+    public static final String GEOCHEMISTRY       = "Geochemistry";
+    public static final String GNSS               = "Global Navigation Satellite Systems";
+    public static final String GEODESY            = "Geodesy";
+    public static final String GEOLOGIC_UNIT      = "Geologic Unit";
+    public static final String MINERAL_OCCURENCES = "Mineral Occurrences";
+    
     //create some identifiers for each of the themes to be displayed in the portal
-    public static final String[] THEMES = { "Borehole",
-                                            "Geochemistry",
-                                            "Global Navigation Satellite Systems",
-                                            "Geodesy",
-                                            "Geologic Unit",
-                                            "Mineral Occurrences"};
+    public static final String[] THEMES = { BOREHOLE,
+                                            GEOCHEMISTRY,
+                                            GNSS,
+                                            GEODESY,
+                                            GEOLOGIC_UNIT,
+                                            MINERAL_OCCURENCES };
 
     //create a map to hold the CSW query contraints for each theme
     public static final Map<String, String> themeContraints = new HashMap<String, String>() {{
-        put("Borehole", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:Borehole</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
-        put("Global Navigation Satellite Systems", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GNSS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
-        put("Geodesy", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>Geodesy</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
-        put("Geological Units", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:GeologicUnit</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
-        put("Mineral Occurrences", "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MiningFeatureOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(BOREHOLE, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:Borehole</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(GNSS, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GNSS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(GEODESY, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>Geodesy</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(GEOLOGIC_UNIT, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:GeologicUnit</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(MINERAL_OCCURENCES, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MiningFeatureOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
     }};
 
     //create a map to hold the get features query stuff
     public static final Map<String, String> wfsQueryParams = new HashMap<String, String>() {{
-        put("Borehole", "%26request=GetFeature%26typeName=gsml:Borehole");
-        put("Global Navigation Satellite Systems", "%26request=GetFeature%26typeName=sa:SamplingPoint");
-        put("Geodesy", "%26request=GetFeature%26typeName=geodesy:stations");
-        put("Geological Units", "%26request=GetFeature%26typeName=gsml:MappedFeature%26maxFeatures=10");
-        put("Mineral Occurrences", "%26request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");//outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
+        put(BOREHOLE, "%26request=GetFeature%26typeName=gsml:Borehole");
+        put(GNSS, "%26request=GetFeature%26typeName=sa:SamplingPoint");
+        put(GEODESY, "%26request=GetFeature%26typeName=geodesy:stations");
+        put(GEOLOGIC_UNIT, "%26request=GetFeature%26typeName=gsml:MappedFeature%26maxFeatures=10");
+        put(MINERAL_OCCURENCES, "%26request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");//outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
     }};
 
     //create a map to hold the get features query stuff
     public static final Map<String, String> icons = new HashMap<String, String>() {{
-        put("Borehole", "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png");
-        put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
-        put("Geodesy", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png");
-        put("Geological Units", "http://maps.google.com/mapfiles/kml/paddle/red-blank.png");
-        put("Mineral Occurrences", "http://maps.google.com/mapfiles/kml/paddle/red-blank.png");
+        put(BOREHOLE, "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png");
+        put(GNSS, "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
+        put(GEODESY, "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png");
+        put(GEOLOGIC_UNIT, "http://maps.google.com/mapfiles/kml/paddle/red-blank.png");
+        put(MINERAL_OCCURENCES, "http://maps.google.com/mapfiles/kml/paddle/red-blank.png");
     }};
 
     //create a map to hold the get features query stuff
     public static final Map<String, String> featureTypes = new HashMap<String, String>() {{
-        put("Borehole", "gsml:Borehole");
-        put("Global Navigation Satellite Systems", "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
-        put("Geodesy", "geodesy:stations");
-        put("Mineral Occurrences", "mo:MiningFeatureOccurrence");
-        put("Geologic Unit", "gsml:GeologicUnit");
+        put(BOREHOLE, "gsml:Borehole");
+        put(GNSS, "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
+        put(GEODESY, "geodesy:stations");
+        put(MINERAL_OCCURENCES, "mo:MiningFeatureOccurrence");
+        put(GEOLOGIC_UNIT, "gsml:GeologicUnit");
     }};
 
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions
