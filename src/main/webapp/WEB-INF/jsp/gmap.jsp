@@ -52,6 +52,9 @@
     <script src="js/geoscimlwfs/gzoom.js" type="text/javascript"></script>
     <script src="js/geoscimlwfs/map.js" type="text/javascript"></script>
     <script src="js/geoscimlwfs/main.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/mineral_occurrences_ml/MineralOccurrencesML.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/mineral_occurrences_ml/Mine.js" type="text/javascript"></script>
+    <script src="js/geoscimlwfs/WebFeatureService.js" type="text/javascript"></script>
 
     <!-- Page specific javascript -->
     <script src="js/Main.js" type="text/javascript"></script>
