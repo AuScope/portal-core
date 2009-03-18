@@ -273,41 +273,40 @@ function NVCLMarker_markerClicked()
             scalar_index++;	
           }	
         }
+    	
+        // get vocab
+        for(var i=0; i < oNVCLMarker.maScalars.length; i++) {
+          var scalarId = oNVCLMarker.maScalars[i];
+
+          var vocabs_query = vocabs_proxy + oNVCLMarker.maScalarNames[scalarId];
+          GDownloadUrl(vocabs_query, function(pData, pResponseCode) {
+            if(pResponseCode == 200) {
+              var vocabXmlDoc = GXml.parse(pData);
+              if (g_IsIE)
+                vocabXmlDoc.setProperty("SelectionLanguage", "XPath");
+
+              var vocabRootNode = vocabXmlDoc.documentElement;
+              if (!vocabRootNode) {
+                return;
+              }
+              
+              var sScopeNote = "No additional info available.";
+
+              var aConcepts = vocabRootNode.getElementsByTagName("skos:Concept");
+              if (aConcepts.length != 0) {
+                sScopeNote = GXml.value(aConcepts[0].selectSingleNode("*[local-name() = 'scopeNote']"));
+              }
+
+              oNVCLMarker.maScalarNotes[scalarId] = sScopeNote;
+            }
+          });
+        }
+        // end get vocab
+    	
         oNVCLMarker.createSummaryTabHtml();
         oNVCLMarker.createMosaicTabHtml();
       }
     });
-    
-    // get vocab
-    for(var i=0; i < oNVCLMarker.maScalars.length; i++) {
-      
-      // TODO why doesn't that work? copied that line from below, oNVCLMarker.maScalars is correct in debugger!
-      var scalarId = oNVCLMarker.maScalars[i];
-
-      var vocabs_query = vocabs_proxy + oNVCLMarker.maScalarNames[oNVCLMarker.maScalars[i]];
-      GDownloadUrl(vocabs_query, function(pData, pResponseCode) {
-        if(pResponseCode == 200) {
-          var vocabXmlDoc = GXml.parse(pData);
-          var vocabRootNode = vocabXmlDoc.documentElement;
-          if (!vocabRootNode) {
-            return;
-          }
-          if (g_IsIE)
-            vocabRootNode.setProperty("SelectionLanguage", "XPath");
-          
-          var aConcepts = vocabRootNode.getElementsByTagName("skos:Concept");
-          
-          // TODO also doesn't seem to work. why?
-          if (aConcepts.length == 0) {
-            return;
-          }
-          var sScopeNote = GXml.value(aConcepts[0].selectSingleNode("*[local-name() = 'scopeNote']"));
-
-          oNVCLMarker.maScalarNotes[oNVCLMarker.maScalars[i]] = sScopeNote;
-        }
-      });
-    }
-    // end get vocab
 
   } else {
     oNVCLMarker.createSummaryTabHtml();
