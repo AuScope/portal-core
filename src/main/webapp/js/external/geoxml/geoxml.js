@@ -162,7 +162,10 @@ GeoXml.prototype.clear = function(idx) {
     this.bounds = new GLatLngBounds();
     this.overlayman = new Clusterer(this.map, this);
     this.overlayman.rowHeight = 20;
-    $(this.basesidebar).innerHTML = "";
+    
+    if( this.basesidebar != null ) {
+      $(this.basesidebar).innerHTML = "";
+    }
     this.overlayman.folders.push([]);
     this.overlayman.subfolders.push([]);
     this.overlayman.folderhtml.push([]);
