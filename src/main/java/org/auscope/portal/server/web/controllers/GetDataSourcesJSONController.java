@@ -13,6 +13,7 @@ import org.geotools.ows.ServiceException;
 import org.xml.sax.SAXException;
 import org.auscope.portal.csw.CSWClient;
 import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.server.web.view.JSONView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -311,19 +312,6 @@ public class GetDataSourcesJSONController extends AbstractController {
 }
 
 /**
- * This class is a JSON spring MVC View class which takes a JSONArray and sends the actual json structure down the
- * wire on the httpResponse
+ 
  */
-class JSONView extends AbstractView {
 
-    public JSONView() {
-        super();
-        setContentType("application/json");
-    }
-
-    protected void renderMergedOutputModel(Map model, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        response.setContentType(getContentType());
-        response.getWriter().write(JSONSerializer.toJSON(model.get("JSON_OBJECT")).toString());
-    }
-
-}

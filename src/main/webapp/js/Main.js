@@ -39,7 +39,7 @@ Ext.onReady(function() {
             defaultType: 'textfield',
             items :[{
                 fieldLabel: 'Mine Name',
-                name: 'mine'
+                name: 'mineName'
                 //allowBlank:false
             }
             ]
@@ -266,8 +266,21 @@ Ext.onReady(function() {
         }
     };
 
+    var serviceUrl;
+
+    var handleFormResponse = function(form, action) {
+
+    };
+
     var handleFilter = function() {
-        alert('filter goes here');     
+        mineralOccurencesFilterPanel.getForm().submit({
+            url:'/doMineralOccurrenceFilter.do',
+            waitMsg:'Running query...',
+            params: {serviceUrl: serviceUrl},
+            success: function(form, action) {
+                alert(action.result.success);   
+            }
+        });
     };
 
     //when a person clicks on a marker then do something
@@ -300,6 +313,7 @@ Ext.onReady(function() {
     function isFilterPanelNeeded(node) {
         if(node.attributes.featureType == "mo:MiningFeatureOccurrence" && node.getUI().isChecked()) {
 
+            serviceUrl = node.attributes.wfsUrl;
             filterPanel.getLayout().setActiveItem(1);
 
             return true;
