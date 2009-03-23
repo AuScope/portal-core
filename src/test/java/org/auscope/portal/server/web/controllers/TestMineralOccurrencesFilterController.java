@@ -3,6 +3,8 @@ package org.auscope.portal.server.web.controllers;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 /**
  * User: Mathew Wyatt
  * Date: 23/03/2009
@@ -15,13 +17,10 @@ public class TestMineralOccurrencesFilterController {
 
     }
 
-
-
     @Test
-    public void testGetAllForMine() {
-
+    public void testGetAllForMine() throws IOException {
+        MineralOccurrencesFilterController minOccController = new MineralOccurrencesFilterController();
+        minOccController.doMineralOccurrenceFilter("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?", "Dominion Copper Mine");
     }
-
-
 
 }
