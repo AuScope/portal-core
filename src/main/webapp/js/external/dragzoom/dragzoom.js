@@ -128,9 +128,10 @@ function DragZoomControl(opts_boxStyle, opts_other, opts_callbacks) {
 
   // Other options
   this.globals.options={
-    buttonHTML: 'zoom',
+    buttonHTML: 'Zoom',
     buttonStartingStyle:
-      {width: '52px', border: '1px solid black', padding: '2px'},
+      {width: '52px', border: '1px solid black', padding: '1px', borderWidth: '1px',
+       fontFamily: 'Arial,sans-serif', fontSize: '12px', textAlign: 'center'},
     buttonStyle: {background: '#FFF'},
     backButtonHTML: 'zoom back',
     backButtonStyle: {background: '#FFF', display: 'none'},
