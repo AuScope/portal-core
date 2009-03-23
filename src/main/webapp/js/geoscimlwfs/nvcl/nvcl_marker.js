@@ -205,6 +205,7 @@ NVCLMarker.prototype.plotSelectedScalars = NVCLMarker_plotSelectedScalars;
 
 NVCLMarker.prototype.getPlotSelectedScalars = NVCLMarker_getPlotSelectedScalars;
 
+NVCLMarker.prototype.getScalarNote = NVCLMarker_getScalarNote;
 
 /**
 * This function returns the function
@@ -216,6 +217,42 @@ function NVCLMarker_getMarkerClickedFn() {
   return function() {
     nvclMarker.markerClicked();
   }
+}
+
+/**
+* This function gets additional information associated with the scalar names
+* from the vocabulary service and loads it into the marker.
+* @param marker {NVCLMarker} nvcl marker on the map
+* @param scalarId identifier of the scalar
+* @param scalarName {String} name of the scalar
+*/
+function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
+  var downloadProxy = "/downloadProxy?rest=true&url=";
+  var vocabsService = "http://apacsrv2.arrc.csiro.au/vocab-service/query?repository=nvcl-scalars%26label=";
+  var vocabsQuery = downloadProxy + vocabsService + scalarName;
+  
+  GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
+    if(pResponseCode == 200) {
+      var XmlDoc = GXml.parse(pData);
+      if (g_IsIE)
+        XmlDoc.setProperty("SelectionLanguage", "XPath");
+
+      var rootNode = XmlDoc.documentElement;
+      if (!rootNode) {
+        return;
+      }
+      
+      // get the concept tag (inside is the additional info)
+      var aConcepts = rootNode.getElementsByTagName("skos:Concept");
+      if (aConcepts.length == 0) {
+        return;
+      }
+      // there is only one concept, so we'll use the 0th item in the array!
+      // the full name of the info tag is "skos:scopeNote"
+      scopeNote = GXml.value(aConcepts[0].selectSingleNode("*[local-name() = 'scopeNote']"));
+      marker.maScalarNotes[scalarId] = scopeNote;
+    }
+  });
 }
 
 /**
@@ -239,10 +276,7 @@ function NVCLMarker_markerClicked()
   var scalars_proxy = ProxyURL + "http://150.229.98.207/scalars.asmx/get";
 
   scalars_proxy += "?coreid=" + sCoreId;
-  
-  var downloadProxy ="/downloadProxy?rest=true&url=";
-  var vocabs_proxy = downloadProxy + "http://apacsrv2.arrc.csiro.au/vocab-service/query?repository=nvcl-scalars%26label=";
-  
+   
   if (this.maScalars.length == 0) {
 	GDownloadUrl(scalars_proxy, function(pData, pResponseCode) {    
       if(pResponseCode == 200) {
@@ -275,34 +309,12 @@ function NVCLMarker_markerClicked()
         }
     	
         // get vocab
-        for(var i=0; i < oNVCLMarker.maScalars.length; i++) {
+        for (var i=0; i < oNVCLMarker.maScalars.length; i++) {
           var scalarId = oNVCLMarker.maScalars[i];
-
-          var vocabs_query = vocabs_proxy + oNVCLMarker.maScalarNames[scalarId];
-          GDownloadUrl(vocabs_query, function(pData, pResponseCode) {
-            if(pResponseCode == 200) {
-              var vocabXmlDoc = GXml.parse(pData);
-              if (g_IsIE)
-                vocabXmlDoc.setProperty("SelectionLanguage", "XPath");
-
-              var vocabRootNode = vocabXmlDoc.documentElement;
-              if (!vocabRootNode) {
-                return;
-              }
-              
-              var sScopeNote = "No additional info available.";
-
-              var aConcepts = vocabRootNode.getElementsByTagName("skos:Concept");
-              if (aConcepts.length != 0) {
-                sScopeNote = GXml.value(aConcepts[0].selectSingleNode("*[local-name() = 'scopeNote']"));
-              }
-
-              oNVCLMarker.maScalarNotes[scalarId] = sScopeNote;
-            }
-          });
+          var scalarName = oNVCLMarker.maScalarNames[scalarId];
+          NVCLMarker_getScalarNote(oNVCLMarker, scalarId, scalarName);
         }
-        // end get vocab
-    	
+
         oNVCLMarker.createSummaryTabHtml();
         oNVCLMarker.createMosaicTabHtml();
       }
@@ -566,6 +578,7 @@ function NVCLMarker_createPlotScalarsTabHtml() {
       var scalarId = oNVCLMarker.maScalars[i];
       if (oNVCLMarker.maScalarSelected[scalarId] == true) {
         plotScalarHtml += '<option value="'+scalarId+'">'
+        plotScalarHtml += '" title="'+oNVCLMarker.maScalarNotes[scalarId]+'">';
         plotScalarHtml += oNVCLMarker.maScalarNames[scalarId];
       }
     }
@@ -806,8 +819,9 @@ function NVCLMarker_moveScalarsInLists(pFromListBox, pToListBox, pIsSelecting) {
       // Create a new instance of ListItem 
       var oListItem = new Option();  
       
-      oListItem.text = oFromList.options[oFromList.options.selectedIndex].text; 
+      oListItem.text  = oFromList.options[oFromList.options.selectedIndex].text; 
       oListItem.value = oFromList.options[oFromList.options.selectedIndex].value;
+      oListItem.title = oFromList.options[oFromList.options.selectedIndex].title;
    			
       //Append the item in Target Listbox 
       oToList.options[oToList.length] = oListItem;

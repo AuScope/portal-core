@@ -1,0 +1,267 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+
+			var mockControl = null;
+
+			function setUp()
+			{
+				mockControl = new MockControl();
+			}
+
+			function Fixture(composedThing) {
+				this.composedThing = composedThing;
+			}
+			Fixture.prototype = {
+				doNugget: function(nugget, number) {
+					if(this.composedThing.add(nugget, number) == true)
+					{
+						this.composedThing.remove(1);
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			}
+
+			function Jimmy(composedThing) {
+				this.composedThing = composedThing;
+			}
+			Jimmy.prototype = {
+				calcPowah: function() {
+					try {
+						this.composedThing.doThat();
+					}
+					catch(e) {
+						this.composedThing.doThis("Big " + e.message);
+					}
+				}
+			}
+
+			function ComposedThing(){}
+			ComposedThing.prototype = {
+				doThis: function() {},
+				doThat: function() {},
+				remove: function(something) {
+				},
+				add: function(something) {
+				},
+				setCallBack: function() {}
+
+			}
+
+			function Model() {
+				this.setValue = function() {};
+			}
+
+			function View() {
+				this.subscribeButtonClick = function(delegate) {};
+				this.getValue = function() {};
+			}
+
+			function Presenter(model, view) {
+				this.__buttonClicked = function() {
+					model.setValue(view.getValue());
+				}
+
+				var buttonClicked = this.__buttonClicked;
+				view.subscribeButtonClick(function() {  buttonClicked() });
+			}
+
+			//
+			// TESTS
+			//
+
+			function testUsage_passes() {
+				mock = mockControl.createMock(ComposedThing);
+
+				mock.expects().doThis(1,2);
+				mock.expects().doThat(1);
+				mock.expects().doThat(2);
+
+				mock.doThis(1,2);
+				mock.doThat(1);
+				mock.doThat(2);
+
+				try {
+					mockControl.verify();
+				}
+				catch(e)
+				{
+					fail("Verify should have passed");
+				}
+
+			}
+
+			function testUsage_with_typeof() { 
+				mock = mockControl.createMock(ComposedThing);
+
+				mock.expects().doThis(TypeOf.isA(Array), TypeOf.isA(Date));	
+				mock.doThis([1,2], new Date());
+
+				try {
+					mockControl.verify();
+				}
+				catch(e)
+				{
+					fail("Verify should have passed");
+				}
+
+			}
+
+			function testUsage_with_typeof_failing() {
+				mock = mockControl.createMock(ComposedThing);
+
+				mock.expects().doThis(TypeOf.isA(Date), TypeOf.isA(Number));	
+				mock.doThis(1, 1);
+
+				assertThrows(function() { mockControl.verify() });
+			}
+
+			function testMultiple_mocks_passing()
+			{
+				mock1 = mockControl.createMock(ComposedThing);
+				mock2 = mockControl.createMock(ComposedThing);
+
+				mock1.expects().doThis("peanut", [1,2]);
+				mock2.expects().add(1);
+				mock2.expects().doThat("snap!");
+				mock1.expects().remove("power");
+				
+				mock1.doThis("peanut", [1,2]);
+				mock2.add(1);
+				mock2.doThat("snap!");
+				mock1.remove("power");
+				
+				try {
+					mockControl.verify();	
+				}
+				catch(e) {
+					fail("Verify should have passed");
+				}
+			}
+
+
+			function testMultiple_mocks_failing()
+			{
+				mock1 = mockControl.createMock(ComposedThing);
+				mock2 = mockControl.createMock(ComposedThing);
+
+				mock1.expects().doThis("h", [1,2]);
+				mock2.expects().add(1);
+				
+				mock1.doThis("h", [1,2]);
+				mock1.add(1);
+
+				assertThrows(function() { mockControl.verify() } );
+				
+			}
+
+			function testUsage_with_too_many_calls() {
+				mock = mockControl.createMock(ComposedThing);
+				
+				mock.expects().add(0);	
+				mock.expects().add(1);	
+
+				mock.add(0);
+				mock.add(1);
+				mock.add(2);
+
+				assertThrows( function() { mockControl.verify(); } );
+			}
+
+			function testUsage_with_not_enough_calls() {
+				mock = mockControl.createMock(ComposedThing);
+				
+				mock.expects().add(0);	
+				mock.expects().add(1);	
+
+				mock.add(0);
+
+				assertThrows( function() { mockControl.verify(); });
+			}
+
+			function testMultiple_mocks_fails_on_ordering() {
+				mock1 = mockControl.createMock(ComposedThing);
+				mock2 = mockControl.createMock(ComposedThing);
+
+				mock2.expects().add("bah");
+				mock1.expects().remove(66.7);
+
+				mock1.remove(66.7);
+				mock2.add("bah");
+
+				assertThrows(function() { mockControl.verify() } );
+			}
+
+			function testUsage_with_andReturn() {
+				mock = mockControl.createMock(ComposedThing);
+				fixture = new Fixture(mock);
+
+				mock.expects().add("lacrosse", 2).andReturn(true);
+				mock.expects().remove(1);
+
+				assertTrue(fixture.doNugget("lacrosse", 2));
+				mockControl.verify();
+
+				mock.expects().add("tinytim", 1).andReturn(false);
+				assertFalse(fixture.doNugget("tinytim", 1));
+				mockControl.verify();
+
+				mock.expects().remove("darn", 44).andReturn(false);
+				fixture.doNugget("darn", 44);
+				assertThrows( function() { mockControl.verify() } );
+				
+			}
+
+			function testUsage_with_andThrow() {
+				mock = mockControl.createMock(ComposedThing);
+				jimmy = new Jimmy(mock);
+
+				mock.expects().doThat().andThrow("BillyClub");
+				mock.expects().doThis("Big BillyClub")
+
+				jimmy.calcPowah();
+				mockControl.verify();
+			}
+
+			function testMvp_usage_with_andStub() {
+				var modelMock = mockControl.createMock(Model);
+				var viewMock = mockControl.createMock(View);
+				var delegate = null;
+
+				viewMock.expects().subscribeButtonClick(TypeOf.isA(Function)).andStub( function() { 	delegate = arguments[0]; });
+				viewMock.expects().getValue().andReturn(22);	
+				modelMock.expects().setValue(22);
+
+				new Presenter(modelMock, viewMock);	
+				delegate();
+
+				mockControl.verify();
+			}
+
+			function testDelegate_usage() {
+				var fakeWindow = {
+					onmouseclick: null
+				}
+				var mock = mockControl.createMock();
+				mock.addMockMethod("handleMouseClick");
+				fakeWindow.onmouseclick = mock.handleMouseClick;
+
+				mock.expects().handleMouseClick("fake event");
+
+				fakeWindow.onmouseclick("fake event");
+
+				mockControl.verify();
+			}
+		</script>
+	</head>
+	<body>
+		<p>Direct Mock Usage Test</p>
+	</body>
+</html>

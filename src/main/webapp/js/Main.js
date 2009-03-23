@@ -67,7 +67,19 @@ Ext.onReady(function() {
             title: 'Commodity Filters',
             autoHeight:true,
             defaultType: 'textfield',
-            items :[{}]
+            items :[{
+                fieldLabel: 'Commodity Group',
+                name: 'commoditygroup'
+            },{
+                fieldLabel: 'Ore Amount',
+                name: 'oreamount'
+            },{
+                fieldLabel: 'Commodity Amount',
+                name: 'commodityamount'
+            },{
+                fieldLabel: 'Cut Off Grade',
+                name: 'cutoffgrade'
+            }]
         }],
         buttons: [{
             text: 'Show Me >>',
@@ -82,7 +94,7 @@ Ext.onReady(function() {
         width: '100%',
         layout: 'card',
         activeItem: 0,
-        items: [{}, mineralOccurencesFilterPanel]
+        items: [{html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'}, mineralOccurencesFilterPanel]
     });
 
 
@@ -129,9 +141,6 @@ Ext.onReady(function() {
         items:[westPanel, centerPanel, statusBar]
     });
 
-
-
-
     // Is user's browser suppported by Google Maps?
     if (GBrowserIsCompatible()) {
         map = new GMap2(centerPanel.body.dom);
@@ -162,7 +171,7 @@ Ext.onReady(function() {
 
     //event handlers and listeners
     tree.on('click', function(node, event) {
-        checkAndShowFilterPanel(node);
+        isFilterPanelNeeded(node);
     });
     
     tree.on('checkchange', function(node, isChecked) {
@@ -178,7 +187,7 @@ Ext.onReady(function() {
                 map.addOverlay(node.attributes.tileOverlay);
             }
             else if (node.attributes.layerType == 'wfs') {
-                if(!checkAndShowFilterPanel(node)) {
+                if(!isFilterPanelNeeded(node)) {
                     //we are assuming a KML response from the WFS requests
                     statusBar.setStatus({
                         text: 'Finished loading',
@@ -240,7 +249,7 @@ Ext.onReady(function() {
 
             node.attributes.tileOverlay = null;
 
-            checkAndShowFilterPanel(node);
+            isFilterPanelNeeded(node);
         }
     });
 
@@ -281,7 +290,6 @@ Ext.onReady(function() {
 
         }
 
-
         statusBar.clearStatus();
         statusBar.setVisible(false);
         viewport.doLayout();
@@ -289,7 +297,7 @@ Ext.onReady(function() {
     });
 
     //if this feature type needs to be filtered or not
-    function checkAndShowFilterPanel(node) {
+    function isFilterPanelNeeded(node) {
         if(node.attributes.featureType == "mo:MiningFeatureOccurrence" && node.getUI().isChecked()) {
 
             filterPanel.getLayout().setActiveItem(1);

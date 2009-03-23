@@ -23,8 +23,10 @@ public class JSUnitTestRunner extends StandaloneTest {
 
     private String getUrl() throws URISyntaxException {
         String basePath = new File("").getAbsolutePath();
-        String testRunner = "file:///" + basePath + "/src/test/resources/jsmock/test/testRunner.html";
-        String testSuite  = new File(new URI("file:///" + basePath.replace("\\", "/") + "/src/test/js/jsunitTestSuite.html")).getAbsolutePath();
+        //String testRunner = "file:///" + basePath + "/src/test/resources/jsmock/test/testRunner.html";
+        String testRunner = "file:///" + basePath + "/src/test/js/testRunner.html";
+        String testSuite  = new File(new URI("file:///" + basePath.replace("\\", "/") + "/src/test/js/portalTestSuiteJSUnit.html")).getAbsolutePath();
+        //String testSuite  = new File(new URI("file:///" + basePath.replace("\\", "/") + "/src/test/resources/jsmock/test/portalTestSuiteJSUnit.html")).getAbsolutePath();
         return testRunner+"?testPage="+testSuite+"&autoRun=true&submitresults=true";
     }
 

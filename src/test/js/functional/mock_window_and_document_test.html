@@ -1,0 +1,36 @@
+<html>
+	<head>
+		<script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+		<script language="JavaScript" type="text/javascript" src="../helpers.js"></script>
+		<script language="JavaScript" type="text/javascript">
+				// The amount of functions vary from browser to browser, so
+				// it seems a lazy check is the best solution for now.
+				var mockControl = null;
+
+				function setUp()
+				{
+					mockControl = new MockControl();
+				}
+
+				function testMock_document() {
+					try {
+						var mock = mockControl.createMock(document);		
+					} catch(e) {
+						fail("Should have create the document mock");
+					}
+				}
+
+				function testMock_window() {
+					try {
+						var mock = mockControl.createMock(window);		
+					} catch(e) {
+						fail("Should have create the document mock");
+					}
+				}
+		</script>
+	</head>
+	<body>
+		<p>Mock Document/Window Test</p>
+	</body>
+</html>

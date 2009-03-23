@@ -1,0 +1,64 @@
+<html>
+   <head>
+       <script language="JavaScript" type="text/javascript" src="../app/jsUnitCore.js"></script>
+       <script language="JavaScript" type="text/javascript" src="../../jsmock.js"></script>
+       
+       <script type="text/javascript">
+      
+           toBeMocked = function () {
+               return {
+                   foo : function() {
+                       throw "I should be mocked";
+                     },
+                   bar : function() {
+                       throw "I should be mocked, too";          
+                     },
+                   baz : function() {
+                       throw "I should be mocked, too";          
+                     },
+                   qux : function() {
+                       throw "I should be mocked, too";          
+                     }           
+                 }
+             }
+      
+           function testShouldReportCorrectFailedExpectationOnVerify() {
+               mockControl = new MockControl();
+               mocked = mockControl.createMock( toBeMocked() );
+               mocked.expects().foo();
+               mocked.expects().bar();
+               mocked.expects().baz();
+               mocked.bar();
+               mocked.baz();
+               try {
+                   mockControl.verify();
+                   fail("Should have thrown an expectation error");
+                 } catch (e) {
+                   assertEquals("Surprise call: bar()", e.message );
+                 }
+             }
+           
+           function testShouldReportCorrectWhenTooManySupriseCalls() {     
+               mockControl = new MockControl();
+               mocked = mockControl.createMock( toBeMocked() );
+               mocked.expects().foo();
+               mocked.expects().bar();
+               mocked.expects().baz();
+               mocked.bar();
+               mocked.foo();       
+               mocked.baz();
+               mocked.qux();
+               try {
+                   mockControl.verify();
+                   fail("Should have thrown an expectation error");
+                 } catch (e) {
+                   assertEquals("Surprise call: bar()", e.message );
+                 }     
+             }
+       
+         </script>
+     </head>
+   <body>
+    
+     </body>
+  </html>
