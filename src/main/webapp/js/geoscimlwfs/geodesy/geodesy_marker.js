@@ -669,14 +669,14 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
   GDownloadUrl(sStationDataUrl, function(xmlData, pResponseCode) {
     var xmlDoc = GXml.parse(xmlData);
 
+    if (g_IsIE)
+      xmlDoc.setProperty("SelectionLanguage", "XPath");
+      
     var rootNode = xmlDoc.documentElement;
     if (!rootNode) {
       return;
     }
     
-    if (g_IsIE)
-      rootNode.setProperty("SelectionLanguage", "XPath");
-      
     var geodesyMarker = oGeodesyMarker;
     
     // The checked state of the year should be propogated to all the dates belonging to the month
@@ -1034,13 +1034,13 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
   GDownloadUrl(sStationDataUrl, function(xmlData, pResponseCode) {
     
     var xmlDoc = GXml.parse(xmlData);
+    if (g_IsIE)
+      xmlDoc.setProperty("SelectionLanguage", "XPath");
+    
     var rootNode = xmlDoc.documentElement;
     if (!rootNode) {
       return;
     }
-    
-    if (g_IsIE)
-      rootNode.setProperty("SelectionLanguage", "XPath");
     
     var geodesyMarker = oGeodesyMarker; 
     var monthChkId = "month_chk_" + station + "_" + year + "_" + month;
