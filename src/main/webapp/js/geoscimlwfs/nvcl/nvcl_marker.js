@@ -229,7 +229,7 @@ function NVCLMarker_getMarkerClickedFn() {
 function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
   var downloadProxy = "/downloadProxy?rest=true&url=";
   var vocabsService = "http://apacsrv2.arrc.csiro.au/vocab-service/query?repository=nvcl-scalars%26label=";
-  var vocabsQuery = downloadProxy + vocabsService + scalarName;
+  var vocabsQuery = downloadProxy + vocabsService + scalarName.replace(/%/, "%25");
   
   GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
     if(pResponseCode == 200) {
