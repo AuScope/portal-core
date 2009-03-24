@@ -22,6 +22,7 @@
         id: id,
         border: false,
         autoScroll:true,
+            hideMode:'offsets',
         width: '100%',
         buttonAlign: 'right',
         items: [{
