@@ -2,7 +2,10 @@ package org.auscope.portal.server.web.controllers;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 
 /**
@@ -18,7 +21,7 @@ public class TestMineralOccurrencesFilterController {
     }
 
     @Test
-    public void testGetAllForMine() throws IOException {
+    public void testGetAllForMine() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         MineralOccurrencesFilterController minOccController = new MineralOccurrencesFilterController();
         minOccController.doMineralOccurrenceFilter("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?", "Dominion Copper Mine");
     }

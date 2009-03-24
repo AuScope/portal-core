@@ -204,7 +204,7 @@ public class GetDataSourcesJSONController extends AbstractController {
                     node.put("wfsUrl", PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
                     //node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
                     //node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
-
+                    node.put("filterPanel", "");
                     node.put("featureType", featureTypes.get(theme));
                     //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
                     //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");

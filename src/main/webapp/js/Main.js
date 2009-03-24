@@ -23,70 +23,6 @@ Ext.onReady(function() {
         }
     });
 
-    var mineralOccurencesFilterPanel = new Ext.FormPanel({
-        //region: "center",
-        //collapsible: true,
-        //title: "Filter Properties",
-        border: false,
-        autoScroll:true,
-        width: '100%',
-        buttonAlign: 'right',
-        items: [{
-            xtype:'fieldset',
-            title: 'Mine Filters',
-            autoHeight:true,
-            //defaults: {width: '100%'},
-            defaultType: 'textfield',
-            items :[{
-                fieldLabel: 'Mine Name',
-                name: 'mineName'
-                //allowBlank:false
-            }
-            ]
-        },{
-            xtype:'fieldset',
-            title: 'Mining Activity Filters',
-            //collapsible: true,
-            autoHeight:true,
-            //defaults: {width: '100%'},
-            defaultType: 'datefield',
-
-            items :[{
-                fieldLabel: 'Start Date',
-                name: 'startdate',
-                value: ''
-            }, {
-                fieldLabel: 'End Date',
-                name: 'enddate',
-                value: ''
-            }
-
-            ]
-        },{
-            xtype:'fieldset',
-            title: 'Commodity Filters',
-            autoHeight:true,
-            defaultType: 'textfield',
-            items :[{
-                fieldLabel: 'Commodity Group',
-                name: 'commoditygroup'
-            },{
-                fieldLabel: 'Ore Amount',
-                name: 'oreamount'
-            },{
-                fieldLabel: 'Commodity Amount',
-                name: 'commodityamount'
-            },{
-                fieldLabel: 'Cut Off Grade',
-                name: 'cutoffgrade'
-            }]
-        }],
-        buttons: [{
-            text: 'Show Me >>',
-            handler: function() {handleFilter();}
-        }]
-    });
-
     //used to show extra details for querying services
     var filterPanel = new Ext.Panel({
         title: "Filter Properties",
@@ -94,7 +30,7 @@ Ext.onReady(function() {
         width: '100%',
         layout: 'card',
         activeItem: 0,
-        items: [{html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'}, mineralOccurencesFilterPanel]
+        items: [{html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'}]
     });
 
 
@@ -268,21 +204,6 @@ Ext.onReady(function() {
 
     var serviceUrl;
 
-    var handleFormResponse = function(form, action) {
-
-    };
-
-    var handleFilter = function() {
-        mineralOccurencesFilterPanel.getForm().submit({
-            url:'/doMineralOccurrenceFilter.do',
-            waitMsg:'Running query...',
-            params: {serviceUrl: serviceUrl},
-            success: function(form, action) {
-                alert(action.result.success);   
-            }
-        });
-    };
-
     //when a person clicks on a marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {
         statusBar.showBusy();
@@ -310,17 +231,45 @@ Ext.onReady(function() {
     });
 
     //if this feature type needs to be filtered or not
-    function isFilterPanelNeeded(node) {
+    var isFilterPanelNeeded = function(node) {
         if(node.attributes.featureType == "mo:MiningFeatureOccurrence" && node.getUI().isChecked()) {
 
-            serviceUrl = node.attributes.wfsUrl;
-            filterPanel.getLayout().setActiveItem(1);
+            if(node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
+                alert("in here");
+                node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(result, request){
+                    addQueryLayer(node, result.data.kml);
+                });
+            }
+
+
+            filterPanel.add(node.attributes.filterPanel);
+            filterPanel.doLayout();
+            filterPanel.getLayout().setActiveItem(node.id);
+
+            //node.attributes.filterPanel.load();
 
             return true;
         }
 
         filterPanel.getLayout().setActiveItem(0);
         return false;
+    };
+
+    var addQueryLayer = function(node, kml) {
+        var exml;
+        var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
+        icon.iconSize = new GSize(32, 32);
+        exml = new GeoXml("theglobalexml", map, null, {baseicon:icon, markeroptions:{markerHandler:function(marker) {
+            marker.featureType = node.attributes.featureType;
+            marker.wfsUrl = node.attributes.kmlUrl;
+        }}});
+        exml.parseString(kml);
+        node.enable();
+        statusBar.setVisible(false);
+        viewport.doLayout();
+        statusBar.clearStatus();
+
+        node.attributes.tileOverlay = exml;
     }
 
 

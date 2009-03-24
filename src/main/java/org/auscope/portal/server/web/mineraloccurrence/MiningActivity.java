@@ -6,4 +6,10 @@ package org.auscope.portal.server.web.mineraloccurrence;
  * Time: 4:54:24 PM
  */
 public class MiningActivity {
+
+    public MiningActivity(String miningActivityNode) {
+        
+    }
+
+
 }

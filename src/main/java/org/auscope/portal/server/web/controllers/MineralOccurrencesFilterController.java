@@ -7,9 +7,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.auscope.portal.server.web.view.JSONView;
 import org.auscope.portal.server.web.mineraloccurrence.MineFilter;
+import org.auscope.portal.server.web.mineraloccurrence.Mine;
+import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrencesResponseHandler;
+import org.auscope.portal.server.web.mineraloccurrence.MiningActivityFilter;
+import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,20 +35,44 @@ import net.sf.json.JSONArray;
 @Controller
 public class MineralOccurrencesFilterController {
 
-    @RequestMapping("/populateFilterPanel.do")
-    public void populateFilterPanel(ModelMap model) {
-        System.out.println("made it");
+    @RequestMapping("/getMineNames.do")
+    public ModelAndView populateFilterPanel(@RequestParam("serviceUrl") String serviceUrl,
+                                            ModelMap model) {
+        /*
+        The following code will make json look like this
+        {"success":true,"data":[{"mineDisplayName":"Blah"},{"mineDisplayName":"Blah2"}]}
+         */
+        //make mine names list
+        Map mineName0 = new HashMap();
+        mineName0.put("mineDisplayName", "Good Hope");
+
+        Map mineName1 = new HashMap();
+        mineName1.put("mineDisplayName", "Sons of Freedom Reef");
+
+        JSONArray recordsArray = new JSONArray();
+        recordsArray.add(mineName0);
+        recordsArray.add(mineName1);
+
+        model.put("success", true);
+        model.put("data", recordsArray);
+
+        Map<String, HashMap<String, Comparable>> jsonViewModel = new HashMap<String, HashMap<String, Comparable>>();
+        jsonViewModel.put("JSON_OBJECT", model);
+
+        //TODO: query the given service url for all of the mines and get their names, then send that back as json
+
+        return new ModelAndView(new JSONView(), jsonViewModel);
     }
 
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
             @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("mineName") String mineName) throws IOException {
+            @RequestParam("mineName") String mineName) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
 
         String mineResponse = doMineQuery(serviceUrl, mineName);
-        String miningActivityResponse = doMiningActivityQuery();
+        Mine mine = (Mine)MineralOccurrencesResponseHandler.getMines(mineResponse).toArray()[0];
 
-        System.out.println(mineResponse);
+        String miningActivityResponse = doMiningActivityQuery(serviceUrl, mine.getMineNameURI());
 
         return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));
     }
@@ -77,9 +107,33 @@ public class MineralOccurrencesFilterController {
         return stringBuffer.toString();
     }
 
-    private String doMiningActivityQuery() {
+    private String doMiningActivityQuery(String serviceUrl, String mineNameURI) throws IOException {
         
-        return null;
+        MiningActivityFilter mineFilter = new MiningActivityFilter(mineNameURI);
+
+        //to make HTTP Post request with HttpURLConnection
+        URL url = new URL(serviceUrl);
+        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+
+        conn.setRequestMethod("POST");
+        conn.setAllowUserInteraction(false); // no user interact [like pop up]
+        conn.setDoOutput(true); // want to send
+        conn.setRequestProperty( "Content-type", "text/xml" );
+        conn.setRequestProperty( "Content-length", Integer.toString(mineFilter.getFilterString().length()));
+        OutputStream ost = conn.getOutputStream();
+        PrintWriter pw = new PrintWriter(ost);
+        pw.print(mineFilter.getFilterString()); // here we "send" our body!
+        pw.flush();
+        pw.close();
+
+        StringBuffer stringBuffer = new StringBuffer();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String line;
+        while((line = reader.readLine()) != null) {
+            stringBuffer.append(line);
+        }
+
+        return stringBuffer.toString();
     }
 
     public String convertToKML(String mineResponse, String miningActivityResponse) {
