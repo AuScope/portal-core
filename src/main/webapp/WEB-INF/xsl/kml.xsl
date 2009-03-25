@@ -466,9 +466,8 @@
    
       <Polygon>
          <xsl:apply-templates select="gml:exterior"/>
-<!--
          <xsl:apply-templates select="gml:interior"/>
--->
+
       </Polygon>
    </xsl:template>
    
@@ -484,9 +483,9 @@
       <outerBoundaryIs> 
          <LinearRing> 
             <coordinates>
-               <xsl:call-template name="parseCoordinates">
+               <xsl:call-template name="parseCoord">
                   <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coords" select="$ext_coordinates" />
+                  <xsl:with-param name="coordinates" select="$ext_coordinates" />
                </xsl:call-template>
             </coordinates>
          </LinearRing>
@@ -561,20 +560,6 @@
    </xsl:template>
    
    
-   <!-- ================================================================= -->
-   <xsl:template name="parseCoordinates">
-      <xsl:param name="coords"/>
-      
-      <xsl:variable name="tokens" select="tokenize($coords, ' ')"/>
-      
-      <xsl:for-each select="$tokens">
-         <xsl:variable name="pos" select="position()"/>
-         <xsl:if test="$pos mod 2 != 0">
-            <xsl:value-of select="concat(., ',', $tokens[$pos + 1], ',0 ')" />
-         </xsl:if>
-      </xsl:for-each>
-      
-   </xsl:template>
 
    
    <!-- ================================================================= -->

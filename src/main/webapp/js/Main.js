@@ -237,9 +237,14 @@ Ext.onReady(function() {
             if(node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
                 node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action){
                     addQueryLayer(node, action.result.data.kml);
+                }, function() {
+
+                    if (node.attributes.tileOverlay instanceof GeoXml) {
+                        node.attributes.tileOverlay.clear();
+                        node.attributes.tileOverlay = null;
+                    }
                 });
             }
-
 
             filterPanel.add(node.attributes.filterPanel);
             filterPanel.doLayout();

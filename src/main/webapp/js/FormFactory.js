@@ -5,7 +5,7 @@
      * @param id to specify the id of this formpanel instance
      * @param serviceUrl the service url for submit
      */
-    function buildMineFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction) {
+    function buildMineFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction, preSubmitFunction) {
         var mineNamesStore = new Ext.data.Store({
               baseParams: {serviceUrl: serviceUrl},
               proxy: new Ext.data.HttpProxy({url: '/getMineNames.do'}),
@@ -56,11 +56,13 @@
 
             items :[{
                 fieldLabel: 'Start Date',
-                name: 'startdate',
+                name: 'startDate',
+                format: "d-m-Y",
                 value: ''
             }, {
                 fieldLabel: 'End Date',
-                name: 'enddate',
+                name: 'endDate',
+                format: "d-m-Y",
                 value: ''
             }
 
@@ -87,6 +89,7 @@
         buttons: [{
             text: 'Show Me >>',
             handler: function() {
+                preSubmitFunction();
                 thePanel.getForm().submit({
                     url:submitUrl,
                     waitMsg:'Running query...',

@@ -15,14 +15,18 @@ import org.auscope.portal.server.web.mineraloccurrence.MiningActivityFilter;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.xml.sax.SAXException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Collection;
+import java.util.Iterator;
 import java.net.URL;
+import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.net.HttpURLConnection;
 
 import net.sf.json.JSONArray;
@@ -48,7 +52,7 @@ public class MineralOccurrencesFilterController {
 
     @RequestMapping("/getMineNames.do")
     public ModelAndView populateFilterPanel(@RequestParam("serviceUrl") String serviceUrl,
-                                            ModelMap model) throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
+                                            ModelMap model) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         /*
         The following code will make json look like this
         {"success":true,
@@ -60,11 +64,14 @@ public class MineralOccurrencesFilterController {
          */
 
         //make mine names list
+        Map mineNameAll = new HashMap();
+        mineNameAll.put("mineDisplayName", "All Mines..");
 
-        String mineResponse = doMineQuery(serviceUrl, ""); // empty mine name to get all mines 
+        String mineResponse = doMineQuery(serviceUrl, ""); // empty mine name to get all mines
         Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
-        
+
         JSONArray recordsArray = new JSONArray();
+        recordsArray.add(mineNameAll);
 
         Iterator<Mine> it = mines.iterator();
         while( it.hasNext() )
@@ -74,7 +81,7 @@ public class MineralOccurrencesFilterController {
             mineName.put("mineDisplayName", mine.getMineNamePreffered());
             recordsArray.add(mineName);
         }
-        
+
         model.put("success", true);
         model.put("data", recordsArray);
 
@@ -90,17 +97,37 @@ public class MineralOccurrencesFilterController {
     public ModelAndView doMineralOccurrenceFilter(
             @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("mineName") String mineName,
-            HttpServletRequest request
-       ) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-       
-        /*String mineResponse = doMineQuery(serviceUrl, mineName);
-        Mine mine = (Mine)MineralOccurrencesResponseHandler.getMines(mineResponse).toArray()[0];
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate,
+            @RequestParam("oreProcessed") String oreProcessed,
+            @RequestParam("producedMaterial") String producedMaterial,
+            @RequestParam("cutOffGrade") String cutOffGrade,
+            @RequestParam("production") String production,
+            HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
 
-        String miningActivityResponse = doMiningActivityQuery(serviceUrl, mine.getMineNameURI());
+        String mineResponse = doMineQuery(serviceUrl, mineName);
+        String miningActivityResponse = "";
 
-        return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));*/
+        Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
 
-        return makeModelAndViewSuccess(convertToKML("", "", request));
+        if( mines.size() >=1 ) {
+            Mine mine = (Mine)mines.toArray()[0];
+            miningActivityResponse = doMiningActivityQuery(serviceUrl,
+                                                                    mine.getMineNameURI(),
+                                                                    startDate,
+                                                                    endDate,
+                                                                    oreProcessed,
+                                                                    producedMaterial,
+                                                                    cutOffGrade,
+                                                                    production);
+            System.out.println(miningActivityResponse);
+        } else {
+            makeModelAndViewFailure("No results matched your query.");
+        }
+
+        //return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));
+
+        return makeModelAndViewSuccess(convertToKML(serviceCaller.stringToStream(mineResponse), serviceCaller.stringToStream(miningActivityResponse), request));
     }
 
     private String doMineQuery(String serviceUrl, String mineName) throws IOException {
@@ -111,9 +138,9 @@ public class MineralOccurrencesFilterController {
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineFilter.getFilterString()));
     }
 
-    private String doMiningActivityQuery(String serviceUrl, String mineNameURI) throws IOException {
-        
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURI, "", "", "", "", "", "");
+    private String doMiningActivityQuery(String serviceUrl, String mineNameURI, String startDate, String endDate, String oreProcessed, String producedMaterial, String cutOffGrade, String production) throws IOException {
+
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURI, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
     }
@@ -124,29 +151,12 @@ public class MineralOccurrencesFilterController {
        try {
           System.out.println("...convertToKML...");
           out = GmlToKml.convert(XmlMerge.merge(is1, is2), inXSLT);
-          
+
        } catch (Exception e ) {
           System.out.println ("convertToKML error: ");
           e.printStackTrace();
        }
-        return out;       
-       
-       /* left for testing - remove later
-        //TODO: JAREK OVERWRITE THIS ON YOUR MERGE
-        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:geodesy=\"http://auscope.org.au/geodesy\" xmlns:sa=\"http://www.opengis.net/sampling/1.0\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:wfs=\"http://www.opengis.net/wfs\"><Document><name>GML Links to KML</name><description>GML data converted to KML</description><Placemark><name>urn:cgi:feature:GSV:MiningFeatureOccurrence:362737</name><description>\n" +
-                "            &lt;/br&gt;&lt;table border=\"1\" cellspacing=\"1\" width=\"100%\"&gt;\n" +
-                "            &lt;tr&gt;&lt;td&gt;Description&lt;/td&gt;&lt;td&gt;\n" +
-                "            &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lat Lng (deg)&lt;/td&gt;&lt;td&gt;143.85227 -36.55083            \n" +
-                "            &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;            \n" +
-                "         </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon></IconStyle></Style><coordinates>143.85227,-36.55083,0</coordinates></Point></Placemark><Placemark><name>urn:cgi:feature:GSV:MiningFeatureOccurrence:362738</name><description>\n" +
-                "\n" +
-                "            &lt;/br&gt;&lt;table border=\"1\" cellspacing=\"1\" width=\"100%\"&gt;\n" +
-                "            &lt;tr&gt;&lt;td&gt;Description&lt;/td&gt;&lt;td&gt;\n" +
-                "            &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lat Lng (deg)&lt;/td&gt;&lt;td&gt;143.71847 -36.80512            \n" +
-                "            &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;            \n" +
-                "         </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon></IconStyle></Style><coordinates>143.71847,-36.80512,0</coordinates></Point></Placemark></Document></kml>\n" +
-                "";
-                */
+        return out;
     }
 
     private ModelAndView makeModelAndViewSuccess(String kmlBlob) {
@@ -166,7 +176,14 @@ public class MineralOccurrencesFilterController {
         return new ModelAndView(new JSONView(), jsonViewModel);
     }
 
-    private ModelAndView makeModelAndViewFail() {
-        return null;
+    private ModelAndView makeModelAndViewFailure(String message) {
+        HashMap<String, Object> model = new HashMap<String, Object>();
+        model.put("success", true);
+        model.put("msg", message);
+
+        Map<String, HashMap<String, Object>> jsonViewModel = new HashMap<String, HashMap<String, Object>>();
+        jsonViewModel.put("JSON_OBJECT", model);
+
+        return new ModelAndView(new JSONView(), jsonViewModel);
     }
 }

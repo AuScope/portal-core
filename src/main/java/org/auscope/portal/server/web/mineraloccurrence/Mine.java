@@ -48,7 +48,7 @@ public class Mine {
     }
 
     public String getMineNameURI() throws XPathExpressionException {
-        XPathExpression expr = xPath.compile("/mo:Mine/mo:occurrence/mo:MiningFeatureOccurrence/mo:specification");
+        XPathExpression expr = xPath.compile("mo:occurrence/mo:MiningFeatureOccurrence/mo:specification");
         Node result = (Node)expr.evaluate(mineNode, XPathConstants.NODE);
         return result.getAttributes().getNamedItem("xlink:href").getTextContent();
     }
