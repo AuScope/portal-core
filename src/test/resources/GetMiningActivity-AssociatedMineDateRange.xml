@@ -4,18 +4,20 @@
         xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
     <wfs:Query typeName="mo:MiningActivity">
         <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
+            <ogc:And>
                 <ogc:PropertyIsEqualTo>
                     <ogc:PropertyName>mo:associatedMine/@xlink:href</ogc:PropertyName>
                     <ogc:Literal>urn:cgi:feature:GSV:Mine:361255</ogc:Literal>
                 </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                <ogc:PropertyIsGreaterThan>
                     <ogc:PropertyName>mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition</ogc:PropertyName>
                     <ogc:Literal>01-01-1989</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
-                <ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsGreaterThan>
+                <ogc:PropertyIsLessThan>
                     <ogc:PropertyName>mo:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition</ogc:PropertyName>
                     <ogc:Literal>01-01-1989</ogc:Literal>
-                </ogc:PropertyIsEqualTo>
+                </ogc:PropertyIsLessThan>
+            </ogc:And>
         </ogc:Filter>
     </wfs:Query>
 </wfs:GetFeature>

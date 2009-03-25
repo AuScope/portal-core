@@ -10,6 +10,7 @@ import org.auscope.portal.server.web.mineraloccurrence.MineFilter;
 import org.auscope.portal.server.web.mineraloccurrence.Mine;
 import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.web.mineraloccurrence.MiningActivityFilter;
+import org.auscope.portal.server.web.HttpServiceCaller;
 import org.xml.sax.SAXException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,16 @@ import net.sf.json.JSONArray;
 
 @Controller
 public class MineralOccurrencesFilterController {
+
+    private HttpServiceCaller serviceCaller;
+
+    public MineralOccurrencesFilterController() {
+        this.serviceCaller = new HttpServiceCaller();
+    }
+
+    public MineralOccurrencesFilterController(HttpServiceCaller serviceCaller) {
+        this.serviceCaller = serviceCaller;
+    }
 
     @RequestMapping("/getMineNames.do")
     public ModelAndView populateFilterPanel(@RequestParam("serviceUrl") String serviceUrl,
@@ -94,58 +105,14 @@ public class MineralOccurrencesFilterController {
 
         MineFilter mineFilter = new MineFilter(mineName);
 
-        //to make HTTP Post request with HttpURLConnection
-        URL url = new URL(serviceUrl);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-
-        conn.setRequestMethod("POST");
-        conn.setAllowUserInteraction(false); // no user interact [like pop up]
-        conn.setDoOutput(true); // want to send
-        conn.setRequestProperty( "Content-type", "text/xml" );
-        conn.setRequestProperty( "Content-length", Integer.toString(mineFilter.getFilterString().length()));
-        OutputStream ost = conn.getOutputStream();
-        PrintWriter pw = new PrintWriter(ost);
-        pw.print(mineFilter.getFilterString()); // here we "send" our body!
-        pw.flush();
-        pw.close();
-
-        StringBuffer stringBuffer = new StringBuffer();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String line;
-        while((line = reader.readLine()) != null) {
-            stringBuffer.append(line);
-        }
-
-        return stringBuffer.toString();
+        return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineFilter.getFilterString()));
     }
 
     private String doMiningActivityQuery(String serviceUrl, String mineNameURI) throws IOException {
         
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURI, "", "", "", "", "", "");
 
-        //to make HTTP Post request with HttpURLConnection
-        URL url = new URL(serviceUrl);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-
-        conn.setRequestMethod("POST");
-        conn.setAllowUserInteraction(false); // no user interact [like pop up]
-        conn.setDoOutput(true); // want to send
-        conn.setRequestProperty( "Content-type", "text/xml" );
-        conn.setRequestProperty( "Content-length", Integer.toString(miningActivityFilter.getFilterString().length()));
-        OutputStream ost = conn.getOutputStream();
-        PrintWriter pw = new PrintWriter(ost);
-        pw.print(miningActivityFilter.getFilterString()); // here we "send" our body!
-        pw.flush();
-        pw.close();
-
-        StringBuffer stringBuffer = new StringBuffer();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        String line;
-        while((line = reader.readLine()) != null) {
-            stringBuffer.append(line);
-        }
-
-        return stringBuffer.toString();
+        return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
     public String convertToKML(String mineResponse, String miningActivityResponse) {
