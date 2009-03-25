@@ -23,7 +23,6 @@
     
     http://maps.google.com/mapfiles/kml/paddle/pink-blank.png
     http://maps.google.com/mapfiles/kml/paddle/ltblu-blank.png
-
     http://maps.google.com/mapfiles/kml/paddle/ylw-blank-lv.png
     http://maps.google.com/mapfiles/kml/paddle/pink-blank-lv.png
     http://maps.google.com/mapfiles/kml/paddle/grn-blank-lv.png
@@ -83,22 +82,25 @@
       <xsl:variable name="coordinates">
          <xsl:value-of select="./mo:occurrence/mo:MiningFeatureOccurrence/mo:location/gml:Point/gml:pos"/>
       </xsl:variable>
+      <xsl:variable name="mineName">
+         <xsl:value-of select="./mo:mineName/mo:MineName[./mo:isPreferred = true()]/mo:mineName/text()"/>
+      </xsl:variable>
       
       <xsl:if test="$coordinates">  
          <Placemark>
-            <name><xsl:value-of select="@gml:id"/></name>
+            <name><xsl:value-of select="$mineName"/></name>
             <description>
                <![CDATA[</br><table border="1" cellspacing="1" width="100%">
                <tr><td>Name</td><td>]]><xsl:value-of select="./gml:id"/>
+               <![CDATA[</td></tr><tr><td>ID</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
+               <![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]><xsl:value-of select="$mineName"/>
                <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
-               <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./mo:startDate/gml:TimeInstant/gml:timePosition"/>
-               <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./mo:endDate/gml:TimeInstant/gml:timePosition"/>
                <![CDATA[</td></tr></table>]]>
             </description>
             <Point>
                <Style>
                   <IconStyle>
-                     <Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon>
+                     <Icon><href>http://maps.google.com/mapfiles/kml/paddle/ltblu-blank.png</href></Icon>
                   </IconStyle>
                </Style>
               
@@ -467,7 +469,6 @@
       <Polygon>
          <xsl:apply-templates select="gml:exterior"/>
          <xsl:apply-templates select="gml:interior"/>
-
       </Polygon>
    </xsl:template>
    
@@ -559,8 +560,6 @@
       </xsl:if>
    </xsl:template>
    
-   
-
    
    <!-- ================================================================= -->
 </xsl:stylesheet>
