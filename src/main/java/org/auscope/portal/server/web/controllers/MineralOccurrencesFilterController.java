@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.auscope.portal.server.util.GmlToKml;
+import org.auscope.portal.server.util.XmlMerge;
 import org.auscope.portal.server.web.view.JSONView;
 import org.auscope.portal.server.web.mineraloccurrence.MineFilter;
 import org.auscope.portal.server.web.mineraloccurrence.Mine;
@@ -88,8 +90,10 @@ public class MineralOccurrencesFilterController {
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
             @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("mineName") String mineName) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-
+            @RequestParam("mineName") String mineName,
+            HttpServletRequest request
+       ) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+       
         /*String mineResponse = doMineQuery(serviceUrl, mineName);
         Mine mine = (Mine)MineralOccurrencesResponseHandler.getMines(mineResponse).toArray()[0];
 
@@ -97,7 +101,7 @@ public class MineralOccurrencesFilterController {
 
         return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));*/
 
-        return makeModelAndViewSuccess(convertToKML("", ""));
+        return makeModelAndViewSuccess(convertToKML("", "", request));
     }
 
     private String doMineQuery(String serviceUrl, String mineName) throws IOException {
@@ -115,7 +119,20 @@ public class MineralOccurrencesFilterController {
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
-    public String convertToKML(String mineResponse, String miningActivityResponse) {
+    public String convertToKML(InputStream is1, InputStream is2, HttpServletRequest request) {
+       String out = "";
+       InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
+       try {
+          System.out.println("...convertToKML...");
+          out = GmlToKml.convert(XmlMerge.merge(is1, is2), inXSLT);
+          
+       } catch (Exception e ) {
+          System.out.println ("convertToKML error: ");
+          e.printStackTrace();
+       }
+        return out;       
+       
+       /* left for testing - remove later
         //TODO: JAREK OVERWRITE THIS ON YOUR MERGE
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:geodesy=\"http://auscope.org.au/geodesy\" xmlns:sa=\"http://www.opengis.net/sampling/1.0\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:wfs=\"http://www.opengis.net/wfs\"><Document><name>GML Links to KML</name><description>GML data converted to KML</description><Placemark><name>urn:cgi:feature:GSV:MiningFeatureOccurrence:362737</name><description>\n" +
                 "            &lt;/br&gt;&lt;table border=\"1\" cellspacing=\"1\" width=\"100%\"&gt;\n" +
@@ -130,6 +147,7 @@ public class MineralOccurrencesFilterController {
                 "            &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;            \n" +
                 "         </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon></IconStyle></Style><coordinates>143.71847,-36.80512,0</coordinates></Point></Placemark></Document></kml>\n" +
                 "";
+                */
     }
 
     private ModelAndView makeModelAndViewSuccess(String kmlBlob) {
