@@ -15,16 +15,14 @@ import org.auscope.portal.server.web.mineraloccurrence.MiningActivityFilter;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.xml.sax.SAXException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.net.URL;
-import java.net.MalformedURLException;
-import java.net.URLEncoder;
 import java.net.HttpURLConnection;
 
 import net.sf.json.JSONArray;
@@ -50,7 +48,7 @@ public class MineralOccurrencesFilterController {
 
     @RequestMapping("/getMineNames.do")
     public ModelAndView populateFilterPanel(@RequestParam("serviceUrl") String serviceUrl,
-                                            ModelMap model) {
+                                            ModelMap model) throws IOException, XPathExpressionException, SAXException, ParserConfigurationException {
         /*
         The following code will make json look like this
         {"success":true,
@@ -62,20 +60,21 @@ public class MineralOccurrencesFilterController {
          */
 
         //make mine names list
-        Map mineNameAll = new HashMap();
-        mineNameAll.put("mineDisplayName", "All Mines..");
 
-        Map mineName0 = new HashMap();
-        mineName0.put("mineDisplayName", "Good Hope");
-
-        Map mineName1 = new HashMap();
-        mineName1.put("mineDisplayName", "Sons of Freedom Reef");
-
+        String mineResponse = doMineQuery(serviceUrl, ""); // empty mine name to get all mines 
+        Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
+        
         JSONArray recordsArray = new JSONArray();
-        recordsArray.add(mineNameAll);        
-        recordsArray.add(mineName0);
-        recordsArray.add(mineName1);
 
+        Iterator<Mine> it = mines.iterator();
+        while( it.hasNext() )
+        {
+            Mine mine = it.next();
+            Map<String, String> mineName = new HashMap<String, String>();
+            mineName.put("mineDisplayName", mine.getMineNamePreffered());
+            recordsArray.add(mineName);
+        }
+        
         model.put("success", true);
         model.put("data", recordsArray);
 
