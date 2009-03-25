@@ -71,17 +71,17 @@
             autoHeight:true,
             defaultType: 'textfield',
             items :[{
-                fieldLabel: 'Commodity Group',
-                name: 'commoditygroup'
+                fieldLabel: 'Ore Processed',
+                name: 'oreProcessed'
             },{
-                fieldLabel: 'Ore Amount',
-                name: 'oreamount'
-            },{
-                fieldLabel: 'Commodity Amount',
-                name: 'commodityamount'
+                fieldLabel: 'Produced Material',
+                name: 'producedMaterial'
             },{
                 fieldLabel: 'Cut Off Grade',
-                name: 'cutoffgrade'
+                name: 'cutOffGrade'
+            },{
+                fieldLabel: 'Production',
+                name: 'production'
             }]
         }],
         buttons: [{

@@ -40,9 +40,18 @@ public class MineralOccurrencesFilterController {
                                             ModelMap model) {
         /*
         The following code will make json look like this
-        {"success":true,"data":[{"mineDisplayName":"Blah"},{"mineDisplayName":"Blah2"}]}
+        {"success":true,
+            "data":[
+                {"mineDisplayName":"Balh1"},
+                {"mineDisplayName":"Blah2"}
+                ]
+         }
          */
+
         //make mine names list
+        Map mineNameAll = new HashMap();
+        mineNameAll.put("mineDisplayName", "All Mines..");
+
         Map mineName0 = new HashMap();
         mineName0.put("mineDisplayName", "Good Hope");
 
@@ -50,6 +59,7 @@ public class MineralOccurrencesFilterController {
         mineName1.put("mineDisplayName", "Sons of Freedom Reef");
 
         JSONArray recordsArray = new JSONArray();
+        recordsArray.add(mineNameAll);        
         recordsArray.add(mineName0);
         recordsArray.add(mineName1);
 
@@ -69,12 +79,14 @@ public class MineralOccurrencesFilterController {
             @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("mineName") String mineName) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
 
-        String mineResponse = doMineQuery(serviceUrl, mineName);
+        /*String mineResponse = doMineQuery(serviceUrl, mineName);
         Mine mine = (Mine)MineralOccurrencesResponseHandler.getMines(mineResponse).toArray()[0];
 
         String miningActivityResponse = doMiningActivityQuery(serviceUrl, mine.getMineNameURI());
 
-        return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));
+        return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));*/
+
+        return makeModelAndViewSuccess(convertToKML("", ""));
     }
 
     private String doMineQuery(String serviceUrl, String mineName) throws IOException {
@@ -109,7 +121,7 @@ public class MineralOccurrencesFilterController {
 
     private String doMiningActivityQuery(String serviceUrl, String mineNameURI) throws IOException {
         
-        MiningActivityFilter mineFilter = new MiningActivityFilter(mineNameURI);
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURI, "", "", "", "", "", "");
 
         //to make HTTP Post request with HttpURLConnection
         URL url = new URL(serviceUrl);
@@ -119,10 +131,10 @@ public class MineralOccurrencesFilterController {
         conn.setAllowUserInteraction(false); // no user interact [like pop up]
         conn.setDoOutput(true); // want to send
         conn.setRequestProperty( "Content-type", "text/xml" );
-        conn.setRequestProperty( "Content-length", Integer.toString(mineFilter.getFilterString().length()));
+        conn.setRequestProperty( "Content-length", Integer.toString(miningActivityFilter.getFilterString().length()));
         OutputStream ost = conn.getOutputStream();
         PrintWriter pw = new PrintWriter(ost);
-        pw.print(mineFilter.getFilterString()); // here we "send" our body!
+        pw.print(miningActivityFilter.getFilterString()); // here we "send" our body!
         pw.flush();
         pw.close();
 
@@ -137,21 +149,34 @@ public class MineralOccurrencesFilterController {
     }
 
     public String convertToKML(String mineResponse, String miningActivityResponse) {
-        return "";
+        //TODO: JAREK OVERWRITE THIS ON YOUR MERGE
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:geodesy=\"http://auscope.org.au/geodesy\" xmlns:sa=\"http://www.opengis.net/sampling/1.0\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:wfs=\"http://www.opengis.net/wfs\"><Document><name>GML Links to KML</name><description>GML data converted to KML</description><Placemark><name>urn:cgi:feature:GSV:MiningFeatureOccurrence:362737</name><description>\n" +
+                "            &lt;/br&gt;&lt;table border=\"1\" cellspacing=\"1\" width=\"100%\"&gt;\n" +
+                "            &lt;tr&gt;&lt;td&gt;Description&lt;/td&gt;&lt;td&gt;\n" +
+                "            &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lat Lng (deg)&lt;/td&gt;&lt;td&gt;143.85227 -36.55083            \n" +
+                "            &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;            \n" +
+                "         </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon></IconStyle></Style><coordinates>143.85227,-36.55083,0</coordinates></Point></Placemark><Placemark><name>urn:cgi:feature:GSV:MiningFeatureOccurrence:362738</name><description>\n" +
+                "\n" +
+                "            &lt;/br&gt;&lt;table border=\"1\" cellspacing=\"1\" width=\"100%\"&gt;\n" +
+                "            &lt;tr&gt;&lt;td&gt;Description&lt;/td&gt;&lt;td&gt;\n" +
+                "            &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lat Lng (deg)&lt;/td&gt;&lt;td&gt;143.71847 -36.80512            \n" +
+                "            &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;            \n" +
+                "         </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon></IconStyle></Style><coordinates>143.71847,-36.80512,0</coordinates></Point></Placemark></Document></kml>\n" +
+                "";
     }
 
     private ModelAndView makeModelAndViewSuccess(String kmlBlob) {
-        HashMap<String, Comparable> model = new HashMap<String, Comparable>();
+        HashMap<String, Object> model = new HashMap<String, Object>();
         model.put("success", true);
 
-        JSONArray dataArray = new JSONArray();
+        //JSONArray dataArray = new JSONArray();
         Map<String, Serializable> data = new HashMap<String, Serializable>();
         data.put("kml", kmlBlob);
-        dataArray.add(data);
+        //dataArray.add(data);
 
-        model.put("data", dataArray);
+        model.put("data", data);
 
-        Map<String, HashMap<String, Comparable>> jsonViewModel = new HashMap<String, HashMap<String, Comparable>>();
+        Map<String, HashMap<String, Object>> jsonViewModel = new HashMap<String, HashMap<String, Object>>();
         jsonViewModel.put("JSON_OBJECT", model);
 
         return new ModelAndView(new JSONView(), jsonViewModel);

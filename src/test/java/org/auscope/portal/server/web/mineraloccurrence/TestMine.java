@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.auscope.portal.Util;
 
 import javax.xml.xpath.*;
 import javax.xml.parsers.ParserConfigurationException;
@@ -28,21 +29,10 @@ public class TestMine {
 
     @BeforeClass
     public static void setup() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-
-        File mineContents = new File("src/test/resources/mineNode.xml");
-        BufferedReader reader = new BufferedReader( new FileReader(mineContents) );
-        StringBuffer mineXML = new StringBuffer();
-
-        String str;
-        while ((str = reader.readLine()) != null) {
-            mineXML.append(str);
-        }
-        reader.close();
-
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
         DocumentBuilder builder = domFactory.newDocumentBuilder();
-        Document mineDocument = builder.parse(new ByteArrayInputStream(mineXML.toString().getBytes("UTF-8")));
+        Document mineDocument = builder.parse(new ByteArrayInputStream(Util.loadXML("src/test/resources/mineNode.xml").getBytes("UTF-8")));
 
         XPathFactory factory = XPathFactory.newInstance();
         xPath = factory.newXPath();

@@ -74,7 +74,8 @@ public class GetDataSourcesJSONController extends AbstractController {
         put(GNSS, "%26request=GetFeature%26typeName=sa:SamplingPoint");
         put(GEODESY, "%26request=GetFeature%26typeName=geodesy:stations");
         put(GEOLOGIC_UNIT, "%26request=GetFeature%26typeName=gsml:MappedFeature%26maxFeatures=10");
-        put(MINERAL_OCCURENCES, "%26request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");//outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
+        //put(MINERAL_OCCURENCES, "%26request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");//outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
+        put(MINERAL_OCCURENCES, "");
     }};
 
     //create a map to hold the get features query stuff
@@ -200,8 +201,8 @@ public class GetDataSourcesJSONController extends AbstractController {
                     node.put("icon", icons.get(theme));
                     node.put("layerType", "wfs");
                     node.put("tileOverlay", "");
-                    node.put("kmlUrl", XSLT_PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
-                    node.put("wfsUrl", PROXY_URL +wfsUrl+wfsQueryParams.get(theme));
+                    node.put("kmlUrl", wfsUrl+wfsQueryParams.get(theme));
+                    node.put("wfsUrl", wfsUrl+wfsQueryParams.get(theme));
                     //node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
                     //node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
                     node.put("filterPanel", "");

@@ -49,7 +49,7 @@ Ext.onReady(function() {
         border: false,
         split:true,
         margins: '100 0 0 0',
-        width: 300,
+        width: 350,
 
         items:[tree, filterPanel, buttonsPanel]
     }
@@ -146,7 +146,7 @@ Ext.onReady(function() {
                         statusBar.clearStatus();
                     }
                     else {
-                        GDownloadUrl(node.attributes.kmlUrl, function(pData, pResponseCode) {
+                        GDownloadUrl(kmlProxyUrl+node.attributes.kmlUrl, function(pData, pResponseCode) {
                             if (pResponseCode == 200) {
                                 var exml;
                                 var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
@@ -235,9 +235,8 @@ Ext.onReady(function() {
         if(node.attributes.featureType == "mo:MiningFeatureOccurrence" && node.getUI().isChecked()) {
 
             if(node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
-                alert("in here");
-                node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(result, request){
-                    addQueryLayer(node, result.data.kml);
+                node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action){
+                    addQueryLayer(node, action.result.data.kml);
                 });
             }
 
