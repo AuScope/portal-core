@@ -90,7 +90,7 @@ Ext.onReady(function() {
 
         var startZoom = 4;
         map.setCenter(new google.maps.LatLng(-26, 133.3), 4);
-        map.setMapType(G_SATELLITE_MAP);
+        map.setMapType(G_HYBRID_MAP);
 
         //Thumbnail map
         var Tsize = new GSize(150, 150);
