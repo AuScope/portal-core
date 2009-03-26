@@ -111,7 +111,7 @@ public class MineralOccurrencesFilterController {
             return makeModelAndViewSuccess(convertToKML(mineResponse, request));
         } catch (IOException e) {
             logger.error(e);
-            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different query.");
+            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different filter request.");
         }
     }
 
@@ -125,7 +125,7 @@ public class MineralOccurrencesFilterController {
 
         System.out.println(minCommodityAmount + " " + minCutOffGrade + " " + minOreAmount + " " + production + " " +serviceUrl);
         
-        return makeModelAndViewFailure("No results matched your query.");
+        return makeModelAndViewFailure("No results matched your filter request.");
     }
 
     @RequestMapping("/doMiningActivityFilter.do")
@@ -177,7 +177,7 @@ public class MineralOccurrencesFilterController {
 
         } catch(Exception e) {
             logger.error(e);
-            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different query.");
+            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different filter request.");
         }
     }
 
