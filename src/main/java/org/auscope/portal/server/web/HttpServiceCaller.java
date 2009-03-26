@@ -44,15 +44,4 @@ public class HttpServiceCaller {
     public BufferedInputStream stringToStream(String string) throws IOException {
         return new BufferedInputStream(new ByteArrayInputStream(string.getBytes()));
     }
-
-    public static void main(String[] args) throws IOException {
-        HttpServiceCaller htps = new HttpServiceCaller();
-        System.out.println(htps.responseToString(htps.callHttpUrl("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?",
-                                                                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                                                                        "<wfs:GetFeature version=\"1.1.0\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\"\n" +
-                                                                        "        xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                                                                        "        xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" maxFeatures=\"20\">\n" +
-                                                                        "    <wfs:Query typeName=\"mo:Mine\"/>\n" +
-                                                                        "</wfs:GetFeature>")));
-    }
 }

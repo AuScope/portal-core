@@ -71,6 +71,7 @@ public class MineralOccurrencesFilterController {
         Map mineNameAll = new HashMap();
         mineNameAll.put("mineDisplayName", ALL_MINES);
 
+
         String mineResponse = doMineQuery(serviceUrl, ""); // empty mine name to get all mines
         Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
 
