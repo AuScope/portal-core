@@ -15,13 +15,13 @@ public class TestMiningActivityFilter {
 
     @Test
     public void testAssociatedMine() throws IOException {
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361255", "", "", "", "", "", "");
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "", "", "", "", "", "");
         Assert.assertEquals(Util.loadXML("src/test/resources/GetMiningActivity-AsscociatedMine.xml").replace("\n", "").replace(" ", ""), miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
     public void testAssociatedMineDateRange() throws IOException {
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361255", "01-01-1989", "01-01-1989", "", "", "", "");
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "", "");
         Assert.assertEquals(Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRange.xml").replace("\n", "").replace(" ", ""), miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 

@@ -11,7 +11,7 @@
                 </ogc:PropertyIsEqualTo>
                 <ogc:PropertyIsGreaterThan>
                     <ogc:PropertyName>mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition</ogc:PropertyName>
-                    <ogc:Literal>01/JAN/1883</ogc:Literal>
+                    <ogc:Literal>01/JAN/1870</ogc:Literal>
                 </ogc:PropertyIsGreaterThan>
                 <ogc:PropertyIsLessThan>
                     <ogc:PropertyName>mo:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition</ogc:PropertyName>
