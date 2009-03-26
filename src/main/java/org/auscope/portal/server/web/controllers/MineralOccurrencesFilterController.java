@@ -227,7 +227,7 @@ public class MineralOccurrencesFilterController {
 
     private ModelAndView makeModelAndViewFailure(String message) {
         HashMap<String, Object> model = new HashMap<String, Object>();
-        model.put("success", true);
+        model.put("success", false);
         model.put("msg", message);
 
         Map<String, HashMap<String, Object>> jsonViewModel = new HashMap<String, HashMap<String, Object>>();
