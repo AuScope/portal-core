@@ -16,7 +16,7 @@ public class TestMiningActivityFilter {
     @Test
     public void testAssociatedMine() throws IOException {
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "", "", "", "", "", "");
-        Assert.assertEquals(Util.loadXML("src/test/resources/GetMiningActivity-AsscociatedMine.xml").replace("\n", "").replace(" ", ""), miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
+        Assert.assertEquals(Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMine.xml").replace("\n", "").replace(" ", ""), miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
