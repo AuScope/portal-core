@@ -46,13 +46,23 @@ public class TestMiningActivityFilter {
     }
 
     @Test
-    public void testAssociatedMineDateRangeCutOffGrade() {
-
+    public void testAssociatedMineDateRangeCutOffGrade() throws IOException {
+        MiningActivityFilter miningActivityFilter =
+            new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "10.14", "");
+        
+        Assert.assertEquals(
+                Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRangeCutOffGrade.xml").replace("\n", "").replace(" ", ""),
+                miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
-    public void testAssociatedMineDateRangeProduction() {
-
+    public void testAssociatedMineDateRangeProduction() throws IOException {
+        MiningActivityFilter miningActivityFilter =
+            new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "", "1");
+        
+        Assert.assertEquals(
+                Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRangeProduction.xml").replace("\n", "").replace(" ", ""),
+                miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
