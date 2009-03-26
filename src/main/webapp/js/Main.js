@@ -235,7 +235,7 @@ Ext.onReady(function() {
         if(node.attributes.featureType == "mo:MiningActivity" && node.getUI().isChecked()) {
 
             if(node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
-                node.attributes.filterPanel = new buildMiningActivityFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action){
+                node.attributes.filterPanel = new buildMiningActivityFilterForm(node.id, "/getMineNames.do", "/doMiningActivityFilter.do", node.attributes.wfsUrl, function(form, action){
                     addQueryLayer(node, action.result.data.kml);
                 }, function() {
 
@@ -256,7 +256,7 @@ Ext.onReady(function() {
         } else if(node.attributes.featureType == "mo:Mine" && node.getUI().isChecked()) {
 
             if(node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
-                node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action){
+                node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineFilter.do", node.attributes.wfsUrl, function(form, action){
                     addQueryLayer(node, action.result.data.kml);
                 }, function() {
 

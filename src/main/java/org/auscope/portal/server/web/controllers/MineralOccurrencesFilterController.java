@@ -93,7 +93,30 @@ public class MineralOccurrencesFilterController {
         return new ModelAndView(new JSONView(), jsonViewModel);
     }
 
+    @RequestMapping("/doMineFilter.do")
+    public ModelAndView doMineFilter(
+            @RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("mineName") String mineName) {
+
+        System.out.println(serviceUrl + " " + mineName);
+
+        return makeModelAndViewFailure("No results matched your query.");
+    }
+
     @RequestMapping("/doMineralOccurrenceFilter.do")
+    public ModelAndView doMineralOccurrenceFilter(
+            @RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("minOreAmount") String minOreAmount,
+            @RequestParam("minCommodityAmount") String minCommodityAmount,
+            @RequestParam("minCutOffGrade") String minCutOffGrade,
+            @RequestParam("production") String production) {
+
+        System.out.println(minCommodityAmount + " " + minCutOffGrade + " " + minOreAmount + " " + production + " " +serviceUrl);
+        
+        return makeModelAndViewFailure("No results matched your query.");
+    }
+
+    @RequestMapping("/doMiningActivityFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
             @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("mineName") String mineName,
@@ -130,7 +153,7 @@ public class MineralOccurrencesFilterController {
 
         //return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));
 
-        return makeModelAndViewSuccess(convertToKML(serviceCaller.stringToStream(mineResponse), serviceCaller.stringToStream(miningActivityResponse), request));
+        return makeModelAndViewSuccess(convertToKML(miningActivityResponse, request));
     }
 
     private String doMineQuery(String serviceUrl, String mineName) throws IOException {
@@ -146,6 +169,20 @@ public class MineralOccurrencesFilterController {
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURI, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
+    }
+
+    public String convertToKML(String gmlString, HttpServletRequest request) {
+        String out = "";
+       InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
+       try {
+          System.out.println("...convertToKML...");
+          out = GmlToKml.convert(gmlString, inXSLT);
+
+       } catch (Exception e ) {
+          System.out.println ("convertToKML error: ");
+          e.printStackTrace();
+       }
+        return out;
     }
 
     public String convertToKML(InputStream is1, InputStream is2, HttpServletRequest request) {
