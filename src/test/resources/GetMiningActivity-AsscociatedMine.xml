@@ -6,7 +6,7 @@
         <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
                 <ogc:PropertyIsEqualTo>
                     <ogc:PropertyName>mo:associatedMine/@xlink:href</ogc:PropertyName>
-                    <ogc:Literal>urn:cgi:feature:GSV:Mine:361255</ogc:Literal>
+                    <ogc:Literal>urn:cgi:feature:GSV:Mine:361068</ogc:Literal>
                 </ogc:PropertyIsEqualTo>
         </ogc:Filter>
     </wfs:Query>
