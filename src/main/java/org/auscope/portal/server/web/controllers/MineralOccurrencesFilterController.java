@@ -14,6 +14,7 @@ import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrencesRespons
 import org.auscope.portal.server.web.mineraloccurrence.MiningActivityFilter;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.xml.sax.SAXException;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +41,7 @@ import net.sf.json.JSONArray;
 @Controller
 public class MineralOccurrencesFilterController {
 
+    private Logger logger = Logger.getLogger(getClass());
     private static String ALL_MINES = "All Mines..";
 
     private HttpServiceCaller serviceCaller;
@@ -98,11 +100,19 @@ public class MineralOccurrencesFilterController {
     @RequestMapping("/doMineFilter.do")
     public ModelAndView doMineFilter(
             @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("mineName") String mineName) {
+            @RequestParam("mineName") String mineName,
+            HttpServletRequest request) {
 
-        System.out.println(serviceUrl + " " + mineName);
+        //TODO: find a better place for this pre processing of strings!
+        if(mineName.equals(ALL_MINES)) mineName = "";
 
-        return makeModelAndViewFailure("No results matched your query.");
+        try {
+            String mineResponse = doMineQuery(serviceUrl, mineName);
+            return makeModelAndViewSuccess(convertToKML(mineResponse, request));
+        } catch (IOException e) {
+            logger.error(e);
+            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different query.");
+        }
     }
 
     @RequestMapping("/doMineralOccurrenceFilter.do")
@@ -130,39 +140,45 @@ public class MineralOccurrencesFilterController {
             @RequestParam("production") String production,
             HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
 
-        //TODO: find a better place for this pre processing of strings!
-        startDate = startDate.toUpperCase();
-        endDate = endDate.toUpperCase();
-        if(mineName.equals(ALL_MINES)) mineName = "";
+        try {
+            //TODO: find a better place for this pre processing of strings!
+            startDate = startDate.toUpperCase();
+            endDate = endDate.toUpperCase();
+            if(mineName.equals(ALL_MINES)) mineName = "";
 
-        String mineResponse = doMineQuery(serviceUrl, mineName);
-        String miningActivityResponse = "";
+            String mineResponse = doMineQuery(serviceUrl, mineName);
+            String miningActivityResponse = "";
 
-        Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
+            Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
 
-        if( mines.size() >=1 ) {
-            //iterate through and build up a string arrray of mine uris
-            String[] mineURIs = new String[mines.size()];
-            Mine[] minesArr = mines.toArray(new Mine[mines.size()]);
-            for(int i=0; i<minesArr.length; i++)
-                mineURIs[i] = minesArr[i].getMineNameURI();
+            if( mines.size() >=1 ) {
+                //iterate through and build up a string arrray of mine uris
+                String[] mineURIs = new String[mines.size()];
+                Mine[] minesArr = mines.toArray(new Mine[mines.size()]);
+                for(int i=0; i<minesArr.length; i++)
+                    mineURIs[i] = minesArr[i].getMineNameURI();
 
 
-            miningActivityResponse = doMiningActivityQuery( serviceUrl,
-                                                            mineURIs,
-                                                            startDate,
-                                                            endDate,
-                                                            oreProcessed,
-                                                            producedMaterial,
-                                                            cutOffGrade,
-                                                            production);
-        } else {
-            makeModelAndViewFailure("No results matched your query.");
+                miningActivityResponse = doMiningActivityQuery( serviceUrl,
+                                                                mineURIs,
+                                                                startDate,
+                                                                endDate,
+                                                                oreProcessed,
+                                                                producedMaterial,
+                                                                cutOffGrade,
+                                                                production);
+            } else {
+                return makeModelAndViewFailure("No results matched your query.");
+            }
+
+            //return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));
+
+            return makeModelAndViewSuccess(convertToKML(miningActivityResponse, request));
+
+        } catch(Exception e) {
+            logger.error(e);
+            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different query.");
         }
-
-        //return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));
-
-        return makeModelAndViewSuccess(convertToKML(miningActivityResponse, request));
     }
 
     private String doMineQuery(String serviceUrl, String mineName) throws IOException {
@@ -182,30 +198,16 @@ public class MineralOccurrencesFilterController {
 
     public String convertToKML(String gmlString, HttpServletRequest request) {
         String out = "";
-       InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
-       try {
-          System.out.println("...convertToKML...");
-          out = GmlToKml.convert(gmlString, inXSLT);
-
-       } catch (Exception e ) {
-          System.out.println ("convertToKML error: ");
-          e.printStackTrace();
-       }
+        InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
+        out = GmlToKml.convert(gmlString, inXSLT);
         return out;
     }
 
-    public String convertToKML(InputStream is1, InputStream is2, HttpServletRequest request) {
+    public String convertToKML(InputStream is1, InputStream is2, HttpServletRequest request) throws IOException, SAXException, ParserConfigurationException {
        String out = "";
        InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
-       try {
-          System.out.println("...convertToKML...");
-          out = GmlToKml.convert(XmlMerge.merge(is1, is2), inXSLT);
-
-       } catch (Exception e ) {
-          System.out.println ("convertToKML error: ");
-          e.printStackTrace();
-       }
-        return out;
+       out = GmlToKml.convert(XmlMerge.merge(is1, is2), inXSLT);
+       return out;
     }
 
     private ModelAndView makeModelAndViewSuccess(String kmlBlob) {

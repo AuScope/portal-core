@@ -54,7 +54,15 @@
                     url:submitUrl,
                     waitMsg:'Running query...',
                     params: {serviceUrl: serviceUrl},
-                    success: successFunction
+                    success: successFunction,
+                    failure: function(form,action) {Ext.MessageBox.show({
+                               title: 'Filter Failed',
+                               msg: action.result.msg,
+                               buttons: Ext.MessageBox.OK,
+                               animEl: 'mb9',
+                               icon: Ext.MessageBox.ERROR
+                           });
+                    }
                 });
             }
         }]
@@ -144,7 +152,14 @@
                     url:submitUrl,
                     waitMsg:'Running query...',
                     params: {serviceUrl: serviceUrl},
-                    success: successFunction
+                    success: successFunction,
+                    failure: function(form,action) {Ext.MessageBox.show({
+                               title: 'Filter Failed',
+                               msg: action.result.msg,
+                               buttons: Ext.MessageBox.OK,
+                               animEl: 'mb9',
+                               icon: Ext.MessageBox.ERROR
+                           });}
                 });
             }
         }]
@@ -203,7 +218,14 @@
                     url:submitUrl,
                     waitMsg:'Running query...',
                     params: {serviceUrl: serviceUrl},
-                    success: successFunction
+                    success: successFunction,
+                    failure: function(form,action) {Ext.MessageBox.show({
+                               title: 'Filter Failed',
+                               msg: action.result.msg,
+                               buttons: Ext.MessageBox.OK,
+                               animEl: 'mb9',
+                               icon: Ext.MessageBox.ERROR
+                           });}
                 });
             }
         }]
