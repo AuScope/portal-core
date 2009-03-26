@@ -12,6 +12,8 @@
     xmlns:str="http://exslt.org/strings" exclude-result-prefixes="str">
     
     
+    
+    
 <!--  Examples of available markers - not easy to find on the net
     xmlns:str="http://exslt.org/strings" exclude-result-prefixes="str"
     xmlns="http://earth.google.com/kml/2.0" 
@@ -23,6 +25,7 @@
     
     http://maps.google.com/mapfiles/kml/paddle/pink-blank.png
     http://maps.google.com/mapfiles/kml/paddle/ltblu-blank.png
+
     http://maps.google.com/mapfiles/kml/paddle/ylw-blank-lv.png
     http://maps.google.com/mapfiles/kml/paddle/pink-blank-lv.png
     http://maps.google.com/mapfiles/kml/paddle/grn-blank-lv.png
@@ -63,6 +66,7 @@
             <xsl:apply-templates select="gml:featureMember/mo:Mine"/>
             <xsl:apply-templates select="gml:featureMember/mo:MiningActivity"/>
             <xsl:apply-templates select="gml:featureMember/mo:MiningFeatureOccurrence"/>
+            <xsl:apply-templates select="gml:featureMember/mo:MineralOccurrence"/>
             <xsl:apply-templates select="gml:featureMember/geodesy:stations"/>
             <xsl:apply-templates select="gml:featureMember/gsml:GeologicUnit"/>
             <xsl:apply-templates select="gml:featureMember/gsml:MappedFeature"/>
@@ -100,7 +104,7 @@
             <Point>
                <Style>
                   <IconStyle>
-                     <Icon><href>http://maps.google.com/mapfiles/kml/paddle/ltblu-blank.png</href></Icon>
+                     <Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon>
                   </IconStyle>
                </Style>
               
@@ -160,7 +164,7 @@
    </xsl:template>
    
    
-   <!-- TEMPLATE FOR TRANSLATING MINERAL OCCURRENCES -->
+   <!-- TEMPLATE FOR TRANSLATING Mining Feature Occurence -->
    <!-- ================================================================= -->
    <xsl:template match="gml:featureMember/mo:MiningFeatureOccurrence">
    
@@ -173,6 +177,41 @@
             <![CDATA[</br><table border="1" cellspacing="1" width="100%">
             <tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>
             <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
+            <![CDATA[</td></tr></table>]]>            
+         </description>
+         <Point>
+            <Style>
+               <IconStyle>
+                  <Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon>
+               </IconStyle>
+            </Style>
+      
+            <coordinates>
+               <xsl:call-template name="parseCoord">
+                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
+                  <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+               </xsl:call-template>
+            </coordinates>
+         </Point>
+      </Placemark>
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR TRANSLATING Mineral Occurence -->
+   <!-- ================================================================= -->
+   <xsl:template match="gml:featureMember/mo:MineralOccurrence">
+   
+      <xsl:variable name="coordinates">
+         <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
+      </xsl:variable>
+      <Placemark>
+         <name><xsl:value-of select="./gml:name"/></name>
+         <description>
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <tr><td>Type</td><td>]]><xsl:value-of select="./mo:type"/>
+            <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./mo:classification/mo:MineralDepositModel/mo:mineralDepositGroup"/>
+            <![CDATA[</td></tr><tr><td>Ore Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>
+            <![CDATA[</td></tr><tr><td>Ore Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>           
             <![CDATA[</td></tr></table>]]>            
          </description>
          <Point>
@@ -560,6 +599,22 @@
       </xsl:if>
    </xsl:template>
    
+   
+   <!-- ================================================================= 
+   <xsl:template name="parseCoordinates">
+      <xsl:param name="coords"/>
+      
+      <xsl:variable name="tokens" select="tokenize($coords, ' ')"/>
+      
+      <xsl:for-each select="$tokens">
+         <xsl:variable name="pos" select="position()"/>
+         <xsl:if test="$pos mod 2 != 0">
+            <xsl:value-of select="concat(., ',', $tokens[$pos + 1], ',0 ')" />
+         </xsl:if>
+      </xsl:for-each>
+      
+   </xsl:template>
+   -->
    
    <!-- ================================================================= -->
 </xsl:stylesheet>
