@@ -47,10 +47,15 @@ public class Mine {
         return nameNodes.item(0).getTextContent();
     }
 
-    public String getMineNameURI() throws XPathExpressionException {
-        XPathExpression expr = xPath.compile("mo:occurrence/mo:MiningFeatureOccurrence/mo:specification");
-        Node result = (Node)expr.evaluate(mineNode, XPathConstants.NODE);
-        return result.getAttributes().getNamedItem("xlink:href").getTextContent();
+    public String getMineNameURI() {
+
+        try {
+            XPathExpression expr = xPath.compile("mo:occurrence/mo:MiningFeatureOccurrence/mo:specification");
+            Node result = (Node)expr.evaluate(mineNode, XPathConstants.NODE);
+            return result.getAttributes().getNamedItem("xlink:href").getTextContent();
+        } catch (Exception e) {
+            return "";
+        }
     }
         
 }

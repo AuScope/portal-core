@@ -40,6 +40,8 @@ import net.sf.json.JSONArray;
 @Controller
 public class MineralOccurrencesFilterController {
 
+    private static String ALL_MINES = "All Mines..";
+
     private HttpServiceCaller serviceCaller;
 
     public MineralOccurrencesFilterController() {
@@ -65,7 +67,7 @@ public class MineralOccurrencesFilterController {
 
         //make mine names list
         Map mineNameAll = new HashMap();
-        mineNameAll.put("mineDisplayName", "All Mines..");
+        mineNameAll.put("mineDisplayName", ALL_MINES);
 
         String mineResponse = doMineQuery(serviceUrl, ""); // empty mine name to get all mines
         Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
@@ -131,6 +133,7 @@ public class MineralOccurrencesFilterController {
         //TODO: find a better place for this pre processing of strings!
         startDate = startDate.toUpperCase();
         endDate = endDate.toUpperCase();
+        if(mineName.equals(ALL_MINES)) mineName = "";
 
         String mineResponse = doMineQuery(serviceUrl, mineName);
         String miningActivityResponse = "";
@@ -138,15 +141,21 @@ public class MineralOccurrencesFilterController {
         Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
 
         if( mines.size() >=1 ) {
-            Mine mine = (Mine)mines.toArray()[0];
-            miningActivityResponse = doMiningActivityQuery(serviceUrl,
-                                                                    mine.getMineNameURI(),
-                                                                    startDate,
-                                                                    endDate,
-                                                                    oreProcessed,
-                                                                    producedMaterial,
-                                                                    cutOffGrade,
-                                                                    production);
+            //iterate through and build up a string arrray of mine uris
+            String[] mineURIs = new String[mines.size()];
+            Mine[] minesArr = mines.toArray(new Mine[mines.size()]);
+            for(int i=0; i<minesArr.length; i++)
+                mineURIs[i] = minesArr[i].getMineNameURI();
+
+
+            miningActivityResponse = doMiningActivityQuery( serviceUrl,
+                                                            mineURIs,
+                                                            startDate,
+                                                            endDate,
+                                                            oreProcessed,
+                                                            producedMaterial,
+                                                            cutOffGrade,
+                                                            production);
         } else {
             makeModelAndViewFailure("No results matched your query.");
         }
@@ -164,9 +173,9 @@ public class MineralOccurrencesFilterController {
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineFilter.getFilterString()));
     }
 
-    private String doMiningActivityQuery(String serviceUrl, String mineNameURI, String startDate, String endDate, String oreProcessed, String producedMaterial, String cutOffGrade, String production) throws IOException {
+    private String doMiningActivityQuery(String serviceUrl, String[] mineNameURIs, String startDate, String endDate, String oreProcessed, String producedMaterial, String cutOffGrade, String production) throws IOException {
 
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURI, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURIs, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
     }

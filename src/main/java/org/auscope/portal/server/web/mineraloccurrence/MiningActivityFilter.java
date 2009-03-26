@@ -6,7 +6,7 @@ package org.auscope.portal.server.web.mineraloccurrence;
  * Time: 9:54:28 AM
  */
 public class MiningActivityFilter implements IFilter {
-    private String associatedMine;
+    private String[] associatedMines;
     private String startDate;
     private String endDate;
     private String oreProcessed;
@@ -14,14 +14,14 @@ public class MiningActivityFilter implements IFilter {
     private String cutOffGrade;
     private String production;
 
-    public MiningActivityFilter(String associatedMine,
+    public MiningActivityFilter(String[] associatedMines,
                                 String startDate,
                                 String endDate,
                                 String oreProcessed,
                                 String producedMaterial,
                                 String cutOffGrade,
                                 String production) {
-        this.associatedMine = associatedMine;
+        this.associatedMines = associatedMines;
         this.startDate = startDate;
         this.endDate = endDate;
         this.oreProcessed = oreProcessed;
@@ -47,11 +47,20 @@ public class MiningActivityFilter implements IFilter {
         if(checkMany())
             queryString.append("<ogc:And>");
 
-        if(!this.associatedMine.equals(""))
+        if(this.associatedMines.length ==1 ) {//if there is one mine, then only put it in with no ogc:Or's
             queryString.append("<ogc:PropertyIsEqualTo>\n" +
                     "                    <ogc:PropertyName>mo:associatedMine/@xlink:href</ogc:PropertyName>\n" +
-                    "                    <ogc:Literal>" + this.associatedMine + "</ogc:Literal>\n" +
+                    "                    <ogc:Literal>" + this.associatedMines[0] + "</ogc:Literal>\n" +
                     "                </ogc:PropertyIsEqualTo>");
+        } else if(this.associatedMines.length > 1) {
+            queryString.append("<ogc:Or>");
+            for(String mineUri : this.associatedMines)
+                queryString.append("<ogc:PropertyIsEqualTo>\n" +
+                        "                    <ogc:PropertyName>mo:associatedMine/@xlink:href</ogc:PropertyName>\n" +
+                        "                    <ogc:Literal>" + mineUri + "</ogc:Literal>\n" +
+                        "                </ogc:PropertyIsEqualTo>");
+            queryString.append("</ogc:Or>");
+        }
 
         if(!this.startDate.equals(""))
             queryString.append("<ogc:PropertyIsGreaterThan>\n" +
@@ -107,7 +116,7 @@ public class MiningActivityFilter implements IFilter {
     private boolean checkMany() {
         int howManyHaveaValue = 0;
 
-        if(!this.associatedMine.equals(""))
+        if(this.associatedMines.length >= 1)
             howManyHaveaValue++;
         if(!this.startDate.equals(""))
             howManyHaveaValue++;
