@@ -232,10 +232,52 @@ Ext.onReady(function() {
 
     //if this feature type needs to be filtered or not
     var isFilterPanelNeeded = function(node) {
-        if(node.attributes.featureType == "mo:MiningFeatureOccurrence" && node.getUI().isChecked()) {
+        if(node.attributes.featureType == "mo:MiningActivity" && node.getUI().isChecked()) {
+
+            if(node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
+                node.attributes.filterPanel = new buildMiningActivityFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action){
+                    addQueryLayer(node, action.result.data.kml);
+                }, function() {
+
+                    if (node.attributes.tileOverlay instanceof GeoXml) {
+                        node.attributes.tileOverlay.clear();
+                        node.attributes.tileOverlay = null;
+                    }
+                });
+            }
+
+            filterPanel.add(node.attributes.filterPanel);
+            filterPanel.doLayout();
+            filterPanel.getLayout().setActiveItem(node.id);
+
+            //node.attributes.filterPanel.load();
+
+            return true;
+        } else if(node.attributes.featureType == "mo:Mine" && node.getUI().isChecked()) {
 
             if(node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
                 node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action){
+                    addQueryLayer(node, action.result.data.kml);
+                }, function() {
+
+                    if (node.attributes.tileOverlay instanceof GeoXml) {
+                        node.attributes.tileOverlay.clear();
+                        node.attributes.tileOverlay = null;
+                    }
+                });
+            }
+
+            filterPanel.add(node.attributes.filterPanel);
+            filterPanel.doLayout();
+            filterPanel.getLayout().setActiveItem(node.id);
+
+            //node.attributes.filterPanel.load();
+
+            return true;
+        } else if(node.attributes.featureType == "mo:MineralOccurrence" && node.getUI().isChecked()) {
+
+            if(node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
+                node.attributes.filterPanel = new buildMineralOccurrenceFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action){
                     addQueryLayer(node, action.result.data.kml);
                 }, function() {
 

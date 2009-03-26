@@ -28,7 +28,8 @@ public class TestMineralOccurrencesFilterController {
     @Test
     public void testGetAllForMine() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         MineralOccurrencesFilterController minOccController = new MineralOccurrencesFilterController();
-        minOccController.doMineralOccurrenceFilter("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?", "Dominion Copper Mine", "", "", "", "", "", "", null);
+        minOccController.doMineralOccurrenceFilter("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?", "Good Hope", "18/Mar/2009", "26/Mar/2009", "", "", "", "", null);
+
     }
     @Test 
     public void testConvertToKML() {
@@ -71,5 +72,9 @@ public class TestMineralOccurrencesFilterController {
           System.out.println("File not found...");
        }
        
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new String("09/Mar/9008").toUpperCase());
     }
 }

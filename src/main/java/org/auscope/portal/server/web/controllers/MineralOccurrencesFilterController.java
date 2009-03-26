@@ -105,6 +105,10 @@ public class MineralOccurrencesFilterController {
             @RequestParam("production") String production,
             HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
 
+        //TODO: find a better place for this pre processing of strings!
+        startDate = startDate.toUpperCase();
+        endDate = endDate.toUpperCase();
+
         String mineResponse = doMineQuery(serviceUrl, mineName);
         String miningActivityResponse = "";
 
@@ -120,7 +124,6 @@ public class MineralOccurrencesFilterController {
                                                                     producedMaterial,
                                                                     cutOffGrade,
                                                                     production);
-            System.out.println(miningActivityResponse);
         } else {
             makeModelAndViewFailure("No results matched your query.");
         }
