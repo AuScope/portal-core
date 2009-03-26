@@ -26,8 +26,13 @@ public class TestMiningActivityFilter {
     }
 
     @Test
-    public void testAssociatedMineDateRangeOre() {
-
+    public void testAssociatedMineDateRangeOre() throws IOException {
+        MiningActivityFilter miningActivityFilter =
+            new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "28", "", "", "");
+        
+        Assert.assertEquals(
+                Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRangeOre.xml").replace("\n", "").replace(" ", ""),
+                miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
