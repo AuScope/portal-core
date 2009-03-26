@@ -14,7 +14,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 
 /**
- * User: Mathew Wyatt
+ * User: Mathew Wyyatt
  * Date: 23/03/2009
  * Time: 12:50:56 PM
  */
