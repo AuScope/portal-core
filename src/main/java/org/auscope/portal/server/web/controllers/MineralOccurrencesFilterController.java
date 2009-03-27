@@ -8,6 +8,8 @@ import org.springframework.ui.ModelMap;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.util.XmlMerge;
 import org.auscope.portal.server.web.view.JSONView;
+import org.auscope.portal.server.web.mineraloccurrence.Commodity;
+import org.auscope.portal.server.web.mineraloccurrence.CommodityFilter;
 import org.auscope.portal.server.web.mineraloccurrence.MineFilter;
 import org.auscope.portal.server.web.mineraloccurrence.Mine;
 import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrencesResponseHandler;
@@ -113,7 +115,7 @@ public class MineralOccurrencesFilterController {
             return makeModelAndViewSuccess(convertToKML(mineResponse, request));
         } catch (IOException e) {
             logger.error(e);
-            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different filter request.");
+            return makeModelAndViewFailure("An error occurred when performing this operation. Please try a different filter request.");
         }
     }
 
@@ -127,11 +129,31 @@ public class MineralOccurrencesFilterController {
             HttpServletRequest request) {
 
         try {
-            String mineralOccurrenceResponse = doMineralOccurrenceQuery(serviceUrl, minOreAmount, commodityName, minCutOffGrade, "");
+            String commodityResponse = doCommodityQuery(serviceUrl, "");
+            String mineralOccurrenceResponse = "";
+            Collection<Commodity> commodities = MineralOccurrencesResponseHandler.getCommodities(commodityResponse);
+            
+            if( commodities.size() >=1 ) {
+                String[] commodityURIs = new String[commodities.size()];
+                Commodity[] commoditiesArr = commodities.toArray(new Commodity[commodities.size()]);
+                for(int i=0; i<commoditiesArr.length; i++)
+                    commodityURIs[i] = commoditiesArr[i].getMineralOccurrenceURI();
+
+
+                mineralOccurrenceResponse = doMineralOccurrenceQuery( serviceUrl,
+                                                                minOreAmount,
+                                                                commodityName,
+                                                                minCutOffGrade,
+                                                                "");
+            } else {
+                return makeModelAndViewFailure("No results matched your query.");
+            }
+
             return makeModelAndViewSuccess(convertToKML(mineralOccurrenceResponse, request));
-        } catch (IOException e) {
+
+        } catch(Exception e) {
             logger.error(e);
-            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different filter request.");
+            return makeModelAndViewFailure("An error occurred when performing this operation. Please try a different filter request.");
         }
     }
 
@@ -194,6 +216,12 @@ public class MineralOccurrencesFilterController {
         MineFilter mineFilter = new MineFilter(mineName);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineFilter.getFilterString()));
+    }
+
+    private String doCommodityQuery(String serviceUrl, String commodityName) throws IOException {
+        CommodityFilter commodityFilter = new CommodityFilter(commodityName);
+
+        return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, commodityFilter.getFilterString()));
     }
 
     private String doMiningActivityQuery(String serviceUrl, String[] mineNameURIs, String startDate, String endDate, String oreProcessed, String producedMaterial, String cutOffGrade, String production) throws IOException {
