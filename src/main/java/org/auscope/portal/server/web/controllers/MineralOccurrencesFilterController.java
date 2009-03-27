@@ -12,6 +12,7 @@ import org.auscope.portal.server.web.mineraloccurrence.MineFilter;
 import org.auscope.portal.server.web.mineraloccurrence.Mine;
 import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.web.mineraloccurrence.MiningActivityFilter;
+import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrenceFilter;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
@@ -119,14 +120,19 @@ public class MineralOccurrencesFilterController {
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
             @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("minOreAmount") String minOreAmount,
-            @RequestParam("minCommodityAmount") String minCommodityAmount,
+            @RequestParam("minOreAmount") String minOreAmount,             //TODO: change to minCommodityAmount
+            @RequestParam("minCommodityAmount") String minCommodityAmount, //TODO: change to commodityName
             @RequestParam("minCutOffGrade") String minCutOffGrade,
-            @RequestParam("production") String production) {
+            @RequestParam("production") String production,
+            HttpServletRequest request) {
 
-        System.out.println(minCommodityAmount + " " + minCutOffGrade + " " + minOreAmount + " " + production + " " +serviceUrl);
-        
-        return makeModelAndViewFailure("No results matched your filter request.");
+        try {
+            String mineralOccurrenceResponse = doMineralOccurrenceQuery(serviceUrl, minOreAmount, "", minCutOffGrade, production);
+            return makeModelAndViewSuccess(convertToKML(mineralOccurrenceResponse, request));
+        } catch (IOException e) {
+            logger.error(e);
+            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different filter request.");
+        }
     }
 
     @RequestMapping("/doMiningActivityFilter.do")
@@ -195,6 +201,13 @@ public class MineralOccurrencesFilterController {
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURIs, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
+    }
+
+    private String doMineralOccurrenceQuery(String serviceUrl, String commodityAmount, String commodityName, String cutOffGrade, String production) throws IOException {
+
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(commodityAmount, commodityName, cutOffGrade, production);
+
+        return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineralOccurrenceFilter.getFilterString()));
     }
 
     public String convertToKML(String gmlString, HttpServletRequest request) {
