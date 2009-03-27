@@ -35,6 +35,8 @@ public class TestMineralOccurrencesFilterController {
     public void testConvertToKML() {
        MineralOccurrencesFilterController minOccController = new MineralOccurrencesFilterController();
        
+       // TODO write test case
+    /*   
        //C:\Projects\AuScope-Portal
        String basePath = new File("").getAbsolutePath();
        //C:\Projects\AuScope-Portal\src\main\webapp\WEB-INF\xsl\ma.xml    mine.xml
@@ -71,7 +73,7 @@ public class TestMineralOccurrencesFilterController {
        } catch (FileNotFoundException e) {
           System.out.println("File not found...");
        }
-       
+    */   
     }
 
     public static void main(String[] args) {
