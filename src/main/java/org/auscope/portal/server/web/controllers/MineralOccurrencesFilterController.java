@@ -136,7 +136,7 @@ public class MineralOccurrencesFilterController {
     }
 
     @RequestMapping("/doMiningActivityFilter.do")
-    public ModelAndView doMineralOccurrenceFilter(
+    public ModelAndView doMiningActivityFilter(
             @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("mineName") String mineName,
             @RequestParam("startDate") String startDate,

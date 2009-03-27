@@ -28,7 +28,7 @@ public class TestMineralOccurrencesFilterController {
     @Test
     public void testGetAllForMine() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         MineralOccurrencesFilterController minOccController = new MineralOccurrencesFilterController();
-        minOccController.doMineralOccurrenceFilter("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?", "Good Hope", "18/Mar/2009", "26/Mar/2009", "", "", "", "", null);
+        minOccController.doMiningActivityFilter("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?", "Good Hope", "18/Mar/2009", "26/Mar/2009", "", "", "", "", null);
 
     }
     @Test 
