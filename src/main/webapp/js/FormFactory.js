@@ -117,12 +117,16 @@
                 displayField:'mineDisplayName',
                 valueField:'mineDisplayName'
             }),{
-                fieldLabel: 'Start Date',
+                xtype: 'textfield',
+                fieldLabel: 'Produced Material Name',
+                name: 'producedMaterial'
+            },{
+                fieldLabel: 'Mining Activity Start Date',
                 name: 'startDate',
                 format: "d/M/Y",
                 value: ''
             }, {
-                fieldLabel: 'End Date',
+                fieldLabel: 'Mining Activity End Date',
                 name: 'endDate',
                 format: "d/M/Y",
                 value: ''
@@ -130,10 +134,6 @@
                 xtype: 'textfield',
                 fieldLabel: 'Min. Ore Processed',
                 name: 'oreProcessed'
-            },{
-                xtype: 'textfield',
-                fieldLabel: 'Produced Material Name',
-                name: 'producedMaterial'
             },{
                 xtype: 'textfield',
                 fieldLabel: 'Grade',
@@ -194,6 +194,10 @@
 
             items :[{
                 xtype: 'textfield',
+                fieldLabel: 'Commodity Name',
+                name: 'commodityName'
+            },{
+                xtype: 'textfield',
                 fieldLabel: 'Min. Ore Amount',
                 name: 'minOreAmount'
             },{
@@ -204,10 +208,6 @@
                 xtype: 'textfield',
                 fieldLabel: 'Cut Off Grade',
                 name: 'minCutOffGrade'
-            },{
-                xtype: 'textfield',
-                fieldLabel: 'Min. Production Amount',
-                name: 'production'
             }]
         }],
         buttons: [{

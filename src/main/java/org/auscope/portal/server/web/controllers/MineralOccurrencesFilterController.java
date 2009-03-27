@@ -123,11 +123,11 @@ public class MineralOccurrencesFilterController {
             @RequestParam("minOreAmount") String minOreAmount,             //TODO: change to minCommodityAmount
             @RequestParam("minCommodityAmount") String minCommodityAmount, //TODO: change to commodityName
             @RequestParam("minCutOffGrade") String minCutOffGrade,
-            @RequestParam("production") String production,
+            @RequestParam("commodityName") String commodityName,
             HttpServletRequest request) {
 
         try {
-            String mineralOccurrenceResponse = doMineralOccurrenceQuery(serviceUrl, minOreAmount, "", minCutOffGrade, production);
+            String mineralOccurrenceResponse = doMineralOccurrenceQuery(serviceUrl, minOreAmount, commodityName, minCutOffGrade, "");
             return makeModelAndViewSuccess(convertToKML(mineralOccurrenceResponse, request));
         } catch (IOException e) {
             logger.error(e);
