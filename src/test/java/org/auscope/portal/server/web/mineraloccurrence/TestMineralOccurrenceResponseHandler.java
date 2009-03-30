@@ -36,4 +36,23 @@ public class TestMineralOccurrenceResponseHandler {
         Assert.assertEquals("The second one is Sons of Freedom Reef", "Sons of Freedom Reef", ((Mine)mines.toArray()[1]).getMineNamePreffered());
     }
 
+    @Test
+    public void testHandleCommodityResponse() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+        File commodityGetFeatureResponse = new File("src/test/resources/commodityGetFeatureResponse.xml");
+        BufferedReader reader = new BufferedReader( new FileReader(commodityGetFeatureResponse) );
+        StringBuffer commodityGetFeatureResponseXML = new StringBuffer();
+
+        String str;
+        while ((str = reader.readLine()) != null) {
+            commodityGetFeatureResponseXML.append(str);
+        }
+        reader.close();
+
+        Collection<Commodity> commodities = 
+            MineralOccurrencesResponseHandler.getCommodities(commodityGetFeatureResponseXML.toString());
+
+        Assert.assertEquals("There are 2 commodities", 2, commodities.size());
+        Assert.assertEquals("The first one's name is Gold", "Gold", ((Commodity)commodities.toArray()[0]).getCommodityName());
+        Assert.assertEquals("The second one's MineralOccurrence source is urn:cgi:feature:GSV:MineralOccurrence:361170", "urn:cgi:feature:GSV:MineralOccurrence:361170", ((Commodity)commodities.toArray()[1]).getMineralOccurrenceURI());
+    }
 }
