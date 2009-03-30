@@ -144,8 +144,17 @@ Ext.onReady(function() {
                         statusBar.setVisible(false);
                         viewport.doLayout();
                         statusBar.clearStatus();
-                    }
-                    else {
+                    } else if (node.attributes.featureType == "gsml:ShearDisplacementStructure"){
+                    	   var ggeoxml = new GGeoXml(kmlProxyUrl+node.attributes.kmlUrl);
+                        //var ggeoxml = new GGeoXml(node.attributes.kmlUrl);
+                        node.attributes.tileOverlay = ggeoxml;
+                        map.addOverlay(ggeoxml);
+
+                        node.enable();
+                        statusBar.setVisible(false);
+                        viewport.doLayout();
+                        statusBar.clearStatus();                    	
+                    } else {
                         GDownloadUrl(kmlProxyUrl+node.attributes.kmlUrl, function(pData, pResponseCode) {
                             if (pResponseCode == 200) {
                                 var exml;
