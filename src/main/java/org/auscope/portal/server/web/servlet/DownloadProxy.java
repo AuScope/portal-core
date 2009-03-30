@@ -6,23 +6,19 @@ import org.apache.commons.logging.LogFactory;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletOutputStream;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.stream.StreamResult;
+
 import java.io.*;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import java.net.HttpURLConnection;
-import java.net.URL;
+
 import java.net.Authenticator;
+import java.net.URL;
 import java.net.URLEncoder;
+
 import java.text.SimpleDateFormat;
 
 /**
@@ -53,8 +49,10 @@ public class DownloadProxy extends HttpServlet {
         String[][] headers = new String[][]{{"Accept", "application/json"}};
 
         String rest = request.getParameter("rest");
-
-        if(rest.equals("true")) {
+        logger.debug("Query string: " + request.getQueryString());
+        
+        //if(rest.equals("true")) {
+        if  ( rest != null && !rest.trim().equals("") && !rest.equals("null") ) {
             RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
 
             try {
@@ -62,7 +60,7 @@ public class DownloadProxy extends HttpServlet {
                 // Send response back to client
                 response.getWriter().println(result);
             } catch (IOException ex) {
-                Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex);
             }
         } else {
             String urlsString = request.getParameter("urls");
@@ -70,14 +68,14 @@ public class DownloadProxy extends HttpServlet {
             if(urlsString != null) {
                 String[] urls = urlsString.split("&urls=");
 
-                ByteArrayOutputStream bout=new ByteArrayOutputStream();
+                //ByteArrayOutputStream bout=new ByteArrayOutputStream();
 
                 response.setContentType("application/zip");
                 response.setHeader("Content-Disposition","inline; filename=output.zip;");
 
 
                 ZipOutputStream zout=new ZipOutputStream(response.getOutputStream());
-                ServletOutputStream out = response.getOutputStream();
+                //ServletOutputStream out = response.getOutputStream();
 
                 for(int i=0; i<urls.length; i++) {
                     RestConnection conn = new RestConnection(urls[i].replace("/restproxy?", ""), queryParams);
@@ -86,7 +84,6 @@ public class DownloadProxy extends HttpServlet {
                     zout.write(conn.get(headers).getDataAsByteArray());
                     zout.closeEntry();
                 }
-
 
                 zout.finish();
                 zout.flush();
@@ -126,7 +123,7 @@ public class DownloadProxy extends HttpServlet {
                 throw new IOException("Undefined method parameter in the request: "+method);
             }
         } catch (Exception e) {
-            Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, e);
+            logger.error("doPost",e);
         }
     }
 
@@ -163,7 +160,7 @@ public class DownloadProxy extends HttpServlet {
                 date = format.format(new Date());
                 conn.setRequestProperty("Date", date);
             } catch (Exception ex) {
-                Logger.getLogger(RestConnection.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("RestConnection",ex);
             }
         }
 
@@ -343,7 +340,7 @@ public class DownloadProxy extends HttpServlet {
                         try {
                             p += key + "=" + URLEncoder.encode(value, "UTF-8") + "&";
                         } catch (UnsupportedEncodingException ex) {
-                            Logger.getLogger(RestConnection.class.getName()).log(Level.SEVERE, null, ex);
+                            logger.error("encodeParams",ex);
                         }
                     }
                 }
@@ -436,7 +433,7 @@ public class DownloadProxy extends HttpServlet {
             try {
                 return os.toString("UTF-8");
             } catch (Exception ex) {
-                Logger.getLogger(RestConnection.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("getDataAsString",ex);
             }
 
             return null;
