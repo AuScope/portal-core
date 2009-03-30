@@ -77,7 +77,8 @@ public class GetDataSourcesJSONController extends AbstractController {
         put(BOREHOLE, "%26request=GetFeature%26typeName=gsml:Borehole");
         put(GNSS, "%26request=GetFeature%26typeName=sa:SamplingPoint");
         put(GEODESY, "%26request=GetFeature%26typeName=geodesy:stations");
-        put(GEOLOGIC_UNIT, "%26request=GetFeature%26typeName=gsml:MappedFeature%26maxFeatures=10");
+        //put(GEOLOGIC_UNIT, "%26request=GetFeature%26typeName=gsml:MappedFeature%26maxFeatures=10");
+        put(GEOLOGIC_UNIT, "%26request=GetFeature%26typeName=gsml:ShearDisplacementStructure%26maxFeatures=2");
         //put(MINERAL_OCCURENCES, "%26request=GetFeature%26typeName=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");//outputformat=text%2Fxml%3B+subtype%3Dgml%2F3.1.1%26maxFeatures=200");
         put(MINERAL_OCCURENCES, "");
         put(MINING_ACTIVITY, "");
@@ -100,7 +101,8 @@ public class GetDataSourcesJSONController extends AbstractController {
         put(BOREHOLE, "gsml:Borehole");
         put(GNSS, "http://maps.google.com/mapfiles/kml/paddle/grn-blank.png");
         put(GEODESY, "geodesy:stations");
-        put(GEOLOGIC_UNIT, "gsml:GeologicUnit");
+        //put(GEOLOGIC_UNIT, "gsml:GeologicUnit");
+        put(GEOLOGIC_UNIT, "gsml:ShearDisplacementStructure");
         put(MINERAL_OCCURENCES, "mo:MineralOccurrence");
         put(MINING_ACTIVITY, "mo:MiningActivity");
         put(MINES, "mo:Mine");
