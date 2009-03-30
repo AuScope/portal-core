@@ -23,7 +23,13 @@
     <!-- for auscope-portal-test
     <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAZqsP68C-PfYEAobUmwen1xQACWFotHIO8WvEtjV21SpXfQmX3xQtfg9sygne-SV-6ZapBiD3sx-QEg" type="text/javascript"></script>
     -->
-
+    <!--  Map key for http://auscope-portal.arrc.csiro.au/
+    <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAL8cDk1rYcykpyZKQpA6yZBSwRLY6bdISx9C2Tuxzg2ZWWoxkmxTUcmb_hCQhxL5BLrbSFbg_yWqlvg" type="text/javascript"></script>
+    -->
+    <!-- Map key For Production: http://portal.auscope.org/
+    <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAjNe9lSRMedgGg_SHNzEvuhSBxvg3VkDH5pPvpEJEFQT7M94H8RSeylhM_lLyqpd3-4gfGtarcxkFpA" type="text/javascript"></script>
+    -->
+    
     <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js" type="text/javascript"></script>
 
     <!-- Bring in the ExtJs Libraries and CSS -->
