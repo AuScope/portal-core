@@ -10,7 +10,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -19,7 +18,6 @@ import org.xml.sax.SAXException;
  * Time: 5:13:06 PM
  */
 public class Commodity {
-    //private Document mineDocument;
     private Node commodityNode;
     private XPath xPath;
 
@@ -36,7 +34,7 @@ public class Commodity {
         try {
             XPathExpression expr = xPath.compile("mo:commodityName");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
-            return result.getAttributes().getNamedItem("xlink:href").getTextContent();
+            return result.getTextContent();
         } catch (Exception e) {
             return "";
         }
