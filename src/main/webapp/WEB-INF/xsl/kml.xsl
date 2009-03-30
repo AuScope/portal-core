@@ -12,8 +12,6 @@
     xmlns:str="http://exslt.org/strings" exclude-result-prefixes="str">
     
     
-    
-    
 <!--  Examples of available markers - not easy to find on the net
     xmlns:str="http://exslt.org/strings" exclude-result-prefixes="str"
     xmlns="http://earth.google.com/kml/2.0" 
@@ -95,10 +93,10 @@
             <name><xsl:value-of select="$mineName"/></name>
             <description>
                <![CDATA[</br><table border="1" cellspacing="1" width="100%">
-               <tr><td>Name</td><td>]]><xsl:value-of select="./gml:id"/>
-               <![CDATA[</td></tr><tr><td>ID</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
+               <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
                <![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]><xsl:value-of select="$mineName"/>
-               <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
+               <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
+               <![CDATA[</td></tr><tr><td>Status</td><td>]]><xsl:value-of select="./mo:status"/>
                <![CDATA[</td></tr></table>]]>
             </description>
             <Point>
@@ -136,7 +134,7 @@
             <description>
                <![CDATA[</br><table border="1" cellspacing="1" width="100%">
                <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
-               <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
+               <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
                <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/>
                <![CDATA[</td></tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./mo:activityType"/>            
@@ -176,7 +174,7 @@
          <description>
             <![CDATA[</br><table border="1" cellspacing="1" width="100%">
             <tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>
-            <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
+            <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
             <![CDATA[</td></tr></table>]]>            
          </description>
          <Point>
@@ -246,7 +244,7 @@
             <tr><td>Station Id</td><td>]]><xsl:value-of select="./geodesy:station_id"/>
             <![CDATA[</td></tr><tr><td>Name</td><td>]]><xsl:value-of select="./geodesy:name"/>
             <![CDATA[</td></tr><tr><td>Url</td><td>]]><xsl:value-of select="./geodesy:url"/>
-            <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
+            <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
             <![CDATA[</td></tr></table>]]>            
          </description>
          <Point>
@@ -329,7 +327,7 @@
             <description>
                <![CDATA[</br><table border="1" cellspacing="1" width="100%">
                <tr><td>Id</td><td>]]><xsl:value-of select="./gml:name[2]"/>
-               <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
+               <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
                <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/>
                <![CDATA[</td></tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./mo:activityType"/>            
@@ -368,7 +366,7 @@
          <description>
             <![CDATA[</br><table border="1" cellspacing="1" width="100%">
             <tr><td>Borehole Name</td><td>]]><xsl:value-of select="./gml:name"/>
-            <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
+            <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
             <![CDATA[</td></tr><tr><td>Project</td><td>]]><xsl:value-of select="./gml:metaDataProperty/@xlink:title"/>
             <![CDATA[</td></tr><tr><td>Core Custodian</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:href"/>
             <![CDATA[</td></tr><tr><td>Operator</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:operator/@xlink:href"/>
@@ -408,7 +406,7 @@
          <description>
             <![CDATA[</br><table border="1" cellspacing="1" width="100%">
             <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
-            <![CDATA[</td></tr><tr><td>Lat Lng (deg)</td><td>]]><xsl:value-of select="./sa:position/gml:Point/gml:pos"/>            
+            <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="./sa:position/gml:Point/gml:pos"/>            
             <![CDATA[</td></tr></table>]]>
          </description>
          <Point>
