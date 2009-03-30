@@ -93,7 +93,7 @@
             <name><xsl:value-of select="$mineName"/></name>
             <description>
                <![CDATA[</br><table border="1" cellspacing="1" width="100%">
-               <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
+               <tr><td>ID</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
                <![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]><xsl:value-of select="$mineName"/>
                <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Status</td><td>]]><xsl:value-of select="./mo:status"/>
