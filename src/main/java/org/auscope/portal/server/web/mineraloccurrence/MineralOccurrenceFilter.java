@@ -9,16 +9,13 @@ public class MineralOccurrenceFilter implements IFilter {
     private String commodityAmount;
     private String commodityName;
     private String cutOffGrade;
-    private String production;
 
     public MineralOccurrenceFilter(String commodityAmount,
                                    String commodityName,
-                                   String cutOffGrade,
-                                   String production) {
+                                   String cutOffGrade) {
         this.commodityAmount = commodityAmount;
         this.commodityName   = commodityName;
         this.cutOffGrade     = cutOffGrade;
-        this.production      = production;
     }
 
     /**
@@ -56,12 +53,6 @@ public class MineralOccurrenceFilter implements IFilter {
                     "                    <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
                     "                </ogc:PropertyIsGreaterThan>");
 
-        if(!this.production.equals(""))      //TODO: correct query
-            queryString.append("<ogc:PropertyIsGreaterThan>\n" +
-                    "                    <ogc:PropertyName>mo:producedMaterial/mo:Product/mo:production/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                    "                    <ogc:Literal>"+this.production+"</ogc:Literal>\n" +
-                    "                </ogc:PropertyIsGreaterThan>");
-
         if(checkMany())
             queryString.append("</ogc:And>");
 
@@ -85,8 +76,6 @@ public class MineralOccurrenceFilter implements IFilter {
         if(!this.commodityName.equals(""))
             howManyHaveaValue++;
         if(!this.cutOffGrade.equals(""))
-            howManyHaveaValue++;
-        if(!this.production.equals(""))
             howManyHaveaValue++;
 
         if(howManyHaveaValue >= 2)

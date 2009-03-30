@@ -143,8 +143,7 @@ public class MineralOccurrencesFilterController {
                 mineralOccurrenceResponse = doMineralOccurrenceQuery( serviceUrl,
                                                                 minOreAmount,
                                                                 commodityName,
-                                                                minCutOffGrade,
-                                                                "");
+                                                                minCutOffGrade);
             } else {
                 return makeModelAndViewFailure("No results matched your query.");
             }
@@ -231,9 +230,9 @@ public class MineralOccurrencesFilterController {
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
-    private String doMineralOccurrenceQuery(String serviceUrl, String commodityAmount, String commodityName, String cutOffGrade, String production) throws IOException {
+    private String doMineralOccurrenceQuery(String serviceUrl, String commodityAmount, String commodityName, String cutOffGrade) throws IOException {
 
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(commodityAmount, commodityName, cutOffGrade, production);
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(commodityAmount, commodityName, cutOffGrade);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineralOccurrenceFilter.getFilterString()));
     }
