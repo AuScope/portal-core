@@ -12,13 +12,13 @@ public class MineralOccurrenceFilter implements IFilter {
     private String production;
 
     public MineralOccurrenceFilter(String commodityAmount,
-                                String commodityName,
-                                String cutOffGrade,
-                                String production) {
+                                   String commodityName,
+                                   String cutOffGrade,
+                                   String production) {
         this.commodityAmount = commodityAmount;
-        this.commodityName = commodityName;
-        this.cutOffGrade = cutOffGrade;
-        this.production = production;
+        this.commodityName   = commodityName;
+        this.cutOffGrade     = cutOffGrade;
+        this.production      = production;
     }
 
     /**
