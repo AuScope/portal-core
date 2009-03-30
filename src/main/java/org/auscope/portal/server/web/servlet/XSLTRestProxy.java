@@ -3,7 +3,17 @@ package org.auscope.portal.server.web.servlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.*;
 
 import javax.xml.transform.stream.StreamResult;
@@ -11,14 +21,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerException;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -28,8 +30,6 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 
 import java.util.Date;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
 
 /**
@@ -60,12 +60,10 @@ public class XSLTRestProxy extends HttpServlet {
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         
         logger.debug("URL: " + request.getParameter("url"));
+        logger.debug("URL replaced: " + request.getParameter("url").replace("%26", "&"));
         
         RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
         
-        //Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, request.getParameter("url").replace("%26", "&"), request.getParameter("url").replace("%26", "&"));
-        logger.debug(request.getParameter("url").replace("%26", "&"));
-       
         try {
             String result = conn.get(headers).getDataAsString();
             StringWriter downThePipe = new StringWriter();
@@ -91,9 +89,10 @@ public class XSLTRestProxy extends HttpServlet {
             // Send response back to client
             response.getWriter().println(downThePipe.toString());
         } catch (IOException ex) {
-            Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error("doGet: ", ex);
+
         } catch (TransformerException e) {
-            Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, e);
+            logger.error("doGet: ", e);
         }
     }
 
@@ -128,7 +127,7 @@ public class XSLTRestProxy extends HttpServlet {
                 throw new IOException("Undefined method parameter in the request: "+method);
             }
         } catch (Exception e) {
-            Logger.getLogger(XSLTRestProxy.class.getName()).log(Level.SEVERE, null, e);
+            logger.error("doPost: " + e);
         }
     }
 
@@ -165,7 +164,7 @@ public class XSLTRestProxy extends HttpServlet {
                 date = format.format(new Date());
                 conn.setRequestProperty("Date", date);
             } catch (Exception ex) {
-                Logger.getLogger(RestConnection.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("RestConnection: " + ex);
             }
         }
 
@@ -345,7 +344,7 @@ public class XSLTRestProxy extends HttpServlet {
                         try {
                             p += key + "=" + URLEncoder.encode(value, "UTF-8") + "&";
                         } catch (UnsupportedEncodingException ex) {
-                            Logger.getLogger(RestConnection.class.getName()).log(Level.SEVERE, null, ex);
+                            logger.error("encodeUrl: " + ex);
                         }
                     }
                 }
@@ -438,7 +437,7 @@ public class XSLTRestProxy extends HttpServlet {
             try {
                 return os.toString("UTF-8");
             } catch (Exception ex) {
-                Logger.getLogger(RestConnection.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("getDataAsString: " + ex);
             }
 
             return null;
