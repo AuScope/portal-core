@@ -22,7 +22,7 @@ public class CommodityFilter implements IFilter {
                     "    <wfs:Query typeName=\"mo:Commodity\"/>\n" +
                     "</wfs:GetFeature>";
         }
-        //if we have a name, then build a query to find the mines with that name
+        //if we have a name, then build a query to find the commodities with that name
         else {
             return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                     "<wfs:GetFeature version=\"1.1.0\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\"\n" +

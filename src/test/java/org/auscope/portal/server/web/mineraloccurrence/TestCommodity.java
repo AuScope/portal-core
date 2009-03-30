@@ -21,7 +21,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-
+/**
+ * User: Michael Stegherr
+ * Date: 30/03/2009
+ * Time: 3:14:31 PM
+ */
 public class TestCommodity {
 
     private static Commodity commodity;
