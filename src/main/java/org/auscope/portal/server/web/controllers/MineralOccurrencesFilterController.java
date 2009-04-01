@@ -129,9 +129,10 @@ public class MineralOccurrencesFilterController {
             HttpServletRequest request) {
 
         try {
-            String commodityResponse = doCommodityQuery(serviceUrl, "");
+            String commodityResponse = doCommodityQuery(serviceUrl, "", commodityName);
             String mineralOccurrenceResponse = "";
-            Collection<Commodity> commodities = MineralOccurrencesResponseHandler.getCommodities(commodityResponse);
+            Collection<Commodity> commodities =
+                MineralOccurrencesResponseHandler.getCommodities(commodityResponse);
             
             if( commodities.size() >=1 ) {
                 String[] commodityURIs = new String[commodities.size()];
@@ -139,11 +140,10 @@ public class MineralOccurrencesFilterController {
                 for(int i=0; i<commoditiesArr.length; i++)
                     commodityURIs[i] = commoditiesArr[i].getMineralOccurrenceURI();
 
-
                 mineralOccurrenceResponse = doMineralOccurrenceQuery( serviceUrl,
-                                                                minOreAmount,
-                                                                commodityName,
-                                                                minCutOffGrade);
+                                                                      minOreAmount,
+                                                                      minCommodityAmount,
+                                                                      minCutOffGrade);
             } else {
                 return makeModelAndViewFailure("No results matched your query.");
             }
@@ -217,8 +217,8 @@ public class MineralOccurrencesFilterController {
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineFilter.getFilterString()));
     }
 
-    private String doCommodityQuery(String serviceUrl, String commodityName) throws IOException {
-        CommodityFilter commodityFilter = new CommodityFilter(commodityName);
+    private String doCommodityQuery(String serviceUrl, String commodityGroup, String commodityName) throws IOException {
+        CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, commodityFilter.getFilterString()));
     }
@@ -230,9 +230,9 @@ public class MineralOccurrencesFilterController {
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
-    private String doMineralOccurrenceQuery(String serviceUrl, String commodityAmount, String commodityName, String cutOffGrade) throws IOException {
+    private String doMineralOccurrenceQuery(String serviceUrl, String minOreAmount, String minCommodityAmount, String cutOffGrade) throws IOException {
 
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(commodityAmount, commodityName, cutOffGrade);
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(minOreAmount, minCommodityAmount, cutOffGrade);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineralOccurrenceFilter.getFilterString()));
     }

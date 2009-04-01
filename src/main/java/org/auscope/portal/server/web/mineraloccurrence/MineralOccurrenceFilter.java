@@ -6,16 +6,16 @@ package org.auscope.portal.server.web.mineraloccurrence;
  * Time: 5:18:28 PM
  */
 public class MineralOccurrenceFilter implements IFilter {
-    private String commodityAmount;
-    private String commodityName;
+    private String minOreAmount;
+    private String minCommodityAmount;
     private String cutOffGrade;
 
-    public MineralOccurrenceFilter(String commodityAmount,
-                                   String commodityName,
+    public MineralOccurrenceFilter(String minOreAmount,
+                                   String minCommodityAmount,
                                    String cutOffGrade) {
-        this.commodityAmount = commodityAmount;
-        this.commodityName   = commodityName;
-        this.cutOffGrade     = cutOffGrade;
+        this.minOreAmount       = minOreAmount;
+        this.minCommodityAmount = minCommodityAmount;
+        this.cutOffGrade        = cutOffGrade;
     }
 
     /**
@@ -35,23 +35,23 @@ public class MineralOccurrenceFilter implements IFilter {
         if(checkMany())
             queryString.append("<ogc:And>");
 
-        if(!this.commodityAmount.equals(""))
+        if(!this.minOreAmount.equals("")) // TODO use case states property: mo:OreMeasure:ore
             queryString.append("<ogc:PropertyIsGreaterThan>\n" +
-                    "                    <ogc:PropertyName>mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                    "                    <ogc:Literal>"+this.commodityAmount+"</ogc:Literal>\n" +
-                    "                </ogc:PropertyIsGreaterThan>");
+                    "                   <ogc:PropertyName>mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+                    "                   <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
+                    "           </ogc:PropertyIsGreaterThan>");
 
-        if(!this.commodityName.equals(""))      //TODO: correct query
-            queryString.append("<ogc:PropertyIsEqualTo>\n" +
-                    "                    <ogc:PropertyName>mo:producedMaterial/mo:Product/mo:productName/gsml:CGI_TermValue/gsml:value</ogc:PropertyName>\n" +
-                    "                    <ogc:Literal>"+this.commodityName+"</ogc:Literal>\n" +
-                    "                </ogc:PropertyIsEqualTo>");
-
-        if(!this.cutOffGrade.equals(""))      //TODO: correct query
+       if(!this.minCommodityAmount.equals("")) // TODO use case states property: mo:OreMeasure:measureDetails:CommodityMeasure:commodityAmount
             queryString.append("<ogc:PropertyIsGreaterThan>\n" +
-                    "                    <ogc:PropertyName>mo:producedMaterial/mo:Product/mo:grade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                    "                    <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
-                    "                </ogc:PropertyIsGreaterThan>");
+                    "                   <ogc:PropertyName>mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+                    "                   <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
+                    "           </ogc:PropertyIsGreaterThan>");
+
+        if(!this.cutOffGrade.equals("")) //TODO use case states property: mo:OreMeasure:measureDetails:CommodityMeasure:cutOffGrade
+            queryString.append("<ogc:PropertyIsGreaterThan>\n" +
+                    "                   <ogc:PropertyName>mo:producedMaterial/mo:Product/mo:grade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+                    "                   <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
+                    "           </ogc:PropertyIsGreaterThan>");
 
         if(checkMany())
             queryString.append("</ogc:And>");
@@ -71,9 +71,9 @@ public class MineralOccurrenceFilter implements IFilter {
     private boolean checkMany() {
         int howManyHaveaValue = 0;
 
-        if(!this.commodityAmount.equals(""))
+        if(!this.minOreAmount.equals(""))
             howManyHaveaValue++;
-        if(!this.commodityName.equals(""))
+        if(!this.minCommodityAmount.equals(""))
             howManyHaveaValue++;
         if(!this.cutOffGrade.equals(""))
             howManyHaveaValue++;
