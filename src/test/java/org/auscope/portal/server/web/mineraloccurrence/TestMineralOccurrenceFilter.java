@@ -16,6 +16,17 @@ import org.junit.Test;
 public class TestMineralOccurrenceFilter {
 
     @Test
+    public void testWithTwoNames() throws IOException {
+        String[] names = new String[2];
+        names[0] = "urn:cgi:feature:GSV:MineralOccurrence:361169";
+        names[1] = "urn:cgi:feature:GSV:MineralOccurrence:361179";
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(names, "", "", "");
+        Assert.assertEquals(
+                Util.loadXML("src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replace("\n", "").replace(" ", ""),
+                mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+    }
+    
+    @Test
     public void testMinimumOreAmount() throws IOException {
         // TODO implementation
     }

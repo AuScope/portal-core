@@ -6,13 +6,16 @@ package org.auscope.portal.server.web.mineraloccurrence;
  * Time: 5:18:28 PM
  */
 public class MineralOccurrenceFilter implements IFilter {
+    private String[] names;
     private String minOreAmount;
     private String minCommodityAmount;
     private String cutOffGrade;
 
-    public MineralOccurrenceFilter(String minOreAmount,
+    public MineralOccurrenceFilter(String[] names,
+                                   String minOreAmount,
                                    String minCommodityAmount,
                                    String cutOffGrade) {
+        this.names              = names;
         this.minOreAmount       = minOreAmount;
         this.minCommodityAmount = minCommodityAmount;
         this.cutOffGrade        = cutOffGrade;
@@ -33,8 +36,25 @@ public class MineralOccurrenceFilter implements IFilter {
                 "        <ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\">\n");
 
         if(checkMany())
-            queryString.append("<ogc:And>");
+            queryString.append("<ogc:And>\n");
 
+        // if names, filter that
+        if( this.names.length!=0 )
+        {
+            if( this.names.length>1 )
+                queryString.append("            <ogc:Or>\n");
+            
+            for( int i=0; i<this.names.length; i++ ) {
+                queryString.append("                <ogc:PropertyIsEqualTo>\n" +
+                                   "                    <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
+                                   "                    <ogc:Literal>"+this.names[i]+"</ogc:Literal>\n" +
+                                   "                </ogc:PropertyIsEqualTo>\n");
+            }
+            
+            if( this.names.length>1 )
+                queryString.append("            </ogc:Or>");
+        }
+        
         if(!this.minOreAmount.equals("")) // TODO use case states property: mo:OreMeasure:ore
             queryString.append("<ogc:PropertyIsGreaterThan>\n" +
                     "                   <ogc:PropertyName>mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
@@ -54,7 +74,7 @@ public class MineralOccurrenceFilter implements IFilter {
                     "           </ogc:PropertyIsGreaterThan>");
 
         if(checkMany())
-            queryString.append("</ogc:And>");
+            queryString.append("</ogc:And>\n");
 
         queryString.append("</ogc:Filter>\n" +
                 "    </wfs:Query>\n" +
@@ -71,6 +91,8 @@ public class MineralOccurrenceFilter implements IFilter {
     private boolean checkMany() {
         int howManyHaveaValue = 0;
 
+        if(this.names.length>0)
+            howManyHaveaValue++;
         if(!this.minOreAmount.equals(""))
             howManyHaveaValue++;
         if(!this.minCommodityAmount.equals(""))
