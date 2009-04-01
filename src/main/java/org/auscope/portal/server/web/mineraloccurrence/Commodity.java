@@ -51,4 +51,14 @@ public class Commodity {
         }
     }
         
+    public String getCommodityImportance() throws XPathExpressionException {
+        
+        try {
+            XPathExpression expr = xPath.compile("mo:commodityImportance");
+            Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
+            return result.getTextContent();
+        } catch (Exception e) {
+            return "";
+        }
+    }
 }

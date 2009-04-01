@@ -50,12 +50,16 @@ public class TestCommodity {
 
     @Test
     public void testGetCommodityName() throws XPathExpressionException {
-        Assert.assertEquals("Commodity name is Gold", "Gold", commodity.getCommodityName());
+        Assert.assertEquals("Commodity name is: Gold", "Gold", commodity.getCommodityName());
     }
 
     @Test
     public void testGetMineralOccurrenceURI() throws XPathExpressionException {
-        Assert.assertEquals("URI is urn:cgi:feature:GSV:MineralOccurrence:361169", "urn:cgi:feature:GSV:MineralOccurrence:361169", commodity.getMineralOccurrenceURI());
+        Assert.assertEquals("URI is: urn:cgi:feature:GSV:MineralOccurrence:361169", "urn:cgi:feature:GSV:MineralOccurrence:361169", commodity.getMineralOccurrenceURI());
     }
 
+    @Test
+    public void testGetCommodityImportance() throws XPathExpressionException {
+        Assert.assertEquals("Commodity importance is: major", "major", commodity.getCommodityImportance());
+    }
 }
