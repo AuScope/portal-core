@@ -31,18 +31,20 @@
 
             autoHeight:true,
             items :[new Ext.form.ComboBox({
-                fieldLabel: 'Mine Name',
+            	autoWidth: true,
                 name: 'mineName',
-                typeAhead: true,
-                forceSelection: true,
-                mode: 'remote',
-                triggerAction: 'all',
-                selectOnFocus: true,
-                editable: true,
-                xtype: 'combo',
-                store: mineNamesStore,
                 displayField:'mineDisplayName',
-                valueField:'mineDisplayName'
+                editable: true,
+                fieldLabel: 'Mine Name',
+                forceSelection: true,
+                listWidth: 'auto',
+                mode: 'remote',
+                selectOnFocus: true,
+                store: mineNamesStore,
+                triggerAction: 'all',
+                typeAhead: true,
+                valueField:'mineDisplayName',
+                xtype: 'combo'
             })
             ]
         }],
