@@ -37,7 +37,7 @@
                 editable: true,
                 fieldLabel: 'Mine Name',
                 forceSelection: true,
-                listWidth: 'auto',
+                listWidth: 300,			// 'auto' does not work in IE6
                 mode: 'remote',
                 selectOnFocus: true,
                 store: mineNamesStore,
