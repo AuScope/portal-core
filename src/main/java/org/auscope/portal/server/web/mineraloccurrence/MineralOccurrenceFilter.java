@@ -1,17 +1,19 @@
 package org.auscope.portal.server.web.mineraloccurrence;
 
+import java.util.Collection;
+
 /**
  * User: Michael Stegherr
  * Date: 26/03/2009
  * Time: 5:18:28 PM
  */
 public class MineralOccurrenceFilter implements IFilter {
-    private String[] names;
+    private Collection<String> names;
     private String minOreAmount;
     private String minCommodityAmount;
     private String cutOffGrade;
 
-    public MineralOccurrenceFilter(String[] names,
+    public MineralOccurrenceFilter(Collection<String> names,
                                    String minOreAmount,
                                    String minCommodityAmount,
                                    String cutOffGrade) {
@@ -37,21 +39,23 @@ public class MineralOccurrenceFilter implements IFilter {
 
         if(checkMany())
             queryString.append("<ogc:And>\n");
+        
+        String[] namesArray = this.names.toArray(new String[names.size()]);
 
         // if names, filter that
-        if( this.names.length!=0 )
+        if( namesArray.length!=0 )
         {
-            if( this.names.length>1 )
+            if( namesArray.length>1 )
                 queryString.append("            <ogc:Or>\n");
             
-            for( int i=0; i<this.names.length; i++ ) {
+            for( int i=0; i<namesArray.length; i++ ) {
                 queryString.append("                <ogc:PropertyIsEqualTo>\n" +
                                    "                    <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
-                                   "                    <ogc:Literal>"+this.names[i]+"</ogc:Literal>\n" +
+                                   "                    <ogc:Literal>"+namesArray[i]+"</ogc:Literal>\n" +
                                    "                </ogc:PropertyIsEqualTo>\n");
             }
             
-            if( this.names.length>1 )
+            if( namesArray.length>1 )
                 queryString.append("            </ogc:Or>");
         }
         
@@ -91,7 +95,7 @@ public class MineralOccurrenceFilter implements IFilter {
     private boolean checkMany() {
         int howManyHaveaValue = 0;
 
-        if(this.names.length>0)
+        if(!this.names.isEmpty())
             howManyHaveaValue++;
         if(!this.minOreAmount.equals(""))
             howManyHaveaValue++;

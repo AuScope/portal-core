@@ -1,6 +1,8 @@
 package org.auscope.portal.server.web.mineraloccurrence;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import junit.framework.Assert;
 
@@ -17,9 +19,9 @@ public class TestMineralOccurrenceFilter {
 
     @Test
     public void testWithTwoNames() throws IOException {
-        String[] names = new String[2];
-        names[0] = "urn:cgi:feature:GSV:MineralOccurrence:361169";
-        names[1] = "urn:cgi:feature:GSV:MineralOccurrence:361179";
+        Collection<String> names = new ArrayList<String>();
+        names.add("urn:cgi:feature:GSV:MineralOccurrence:361169");
+        names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
         MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(names, "", "", "");
         Assert.assertEquals(
                 Util.loadXML("src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replace("\n", "").replace(" ", ""),

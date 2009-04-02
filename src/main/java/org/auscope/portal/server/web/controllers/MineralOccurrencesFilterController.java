@@ -20,19 +20,14 @@ import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Iterator;
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.net.URLEncoder;
-import java.net.HttpURLConnection;
-
 import net.sf.json.JSONArray;
 
 /**
@@ -135,13 +130,13 @@ public class MineralOccurrencesFilterController {
                 MineralOccurrencesResponseHandler.getCommodities(commodityResponse);
             
             if( commodities.size() >=1 ) {
-                String[] commodityURIs = new String[commodities.size()];
+                Collection<String> commodityURIs = new ArrayList<String>();
                 Commodity[] commoditiesArr = commodities.toArray(new Commodity[commodities.size()]);
                 for(int i=0; i<commoditiesArr.length; i++)
-                    commodityURIs[i] = commoditiesArr[i].getMineralOccurrenceURI();
+                    commodityURIs.add(commoditiesArr[i].getMineralOccurrenceURI());
 
                 mineralOccurrenceResponse = doMineralOccurrenceQuery( serviceUrl,
-                                                                      null,
+                                                                      commodityURIs,
                                                                       minOreAmount,
                                                                       minCommodityAmount,
                                                                       minCutOffGrade);
@@ -231,9 +226,9 @@ public class MineralOccurrencesFilterController {
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
-    private String doMineralOccurrenceQuery(String serviceUrl, String[] URNs, String minOreAmount, String minCommodityAmount, String cutOffGrade) throws IOException {
+    private String doMineralOccurrenceQuery(String serviceUrl, Collection<String> commodityURIs, String minOreAmount, String minCommodityAmount, String cutOffGrade) throws IOException {
 
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(URNs, minOreAmount, minCommodityAmount, cutOffGrade);
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(commodityURIs, minOreAmount, minCommodityAmount, cutOffGrade);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineralOccurrenceFilter.getFilterString()));
     }
