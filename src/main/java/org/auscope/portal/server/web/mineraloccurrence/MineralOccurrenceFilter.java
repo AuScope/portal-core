@@ -17,15 +17,25 @@ public class MineralOccurrenceFilter implements IFilter {
     private String cutOffGrade;
 
     public MineralOccurrenceFilter(Collection<String> names,
-                                   MeasureType measureType,
+                                   String measureType,
                                    String minOreAmount,
                                    String minCommodityAmount,
                                    String cutOffGrade) {
         this.names              = names;
-        this.measureType        = measureType;
         this.minOreAmount       = minOreAmount;
         this.minCommodityAmount = minCommodityAmount;
         this.cutOffGrade        = cutOffGrade;
+        
+        if(measureType.compareTo("Endowment") == 0)
+            this.measureType = MeasureType.ENDOWMENT;
+        else if(measureType.compareTo("Resource") == 0)
+            this.measureType = MeasureType.RESOURCE;
+        else if(measureType.compareTo("Reserve") == 0)
+            this.measureType = MeasureType.RESERVE;
+        else
+        {
+            // TODO query any?
+        }
     }
 
     /**

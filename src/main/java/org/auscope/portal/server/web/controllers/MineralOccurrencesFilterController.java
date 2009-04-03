@@ -116,28 +116,39 @@ public class MineralOccurrencesFilterController {
 
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
-            @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("commodityName") String commodityName,
-            @RequestParam("commodityGroup") String commodityGroup,
-            @RequestParam("minOreAmount") String minOreAmount,
+            
+            @RequestParam("serviceUrl")         String serviceUrl,
+            @RequestParam("commodityName")      String commodityName,
+            @RequestParam("commodityGroup")     String commodityGroup,
+            @RequestParam("measureType")        String measureType,
+            @RequestParam("minOreAmount")       String minOreAmount,
             @RequestParam("minCommodityAmount") String minCommodityAmount,
-            @RequestParam("minCutOffGrade") String minCutOffGrade,
-            HttpServletRequest request) {
-
-        try {
-            String commodityResponse = doCommodityQuery(serviceUrl, commodityGroup, commodityName);
+            @RequestParam("minCutOffGrade")     String minCutOffGrade,
+            
+            HttpServletRequest request)
+    {
+        try
+        {
+            String commodityResponse = doCommodityQuery(serviceUrl,
+                                                        commodityGroup,
+                                                        commodityName);
+            
             String mineralOccurrenceResponse = "";
+            
             Collection<Commodity> commodities =
                 MineralOccurrencesResponseHandler.getCommodities(commodityResponse);
             
-            if( commodities.size() >=1 ) {
+            if( commodities.size() >=1 )
+            {
                 Collection<String> commodityURIs = new ArrayList<String>();
                 Commodity[] commoditiesArr = commodities.toArray(new Commodity[commodities.size()]);
+                
                 for(int i=0; i<commoditiesArr.length; i++)
                     commodityURIs.add(commoditiesArr[i].getMineralOccurrenceURI());
 
                 mineralOccurrenceResponse = doMineralOccurrenceQuery( serviceUrl,
                                                                       commodityURIs,
+                                                                      measureType,
                                                                       minOreAmount,
                                                                       minCommodityAmount,
                                                                       minCutOffGrade);
@@ -227,12 +238,24 @@ public class MineralOccurrencesFilterController {
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
-    private String doMineralOccurrenceQuery(String serviceUrl, Collection<String> commodityURIs, String minOreAmount, String minCommodityAmount, String cutOffGrade) throws IOException {
+    private String doMineralOccurrenceQuery(String serviceUrl,
+                                            Collection<String> commodityURIs,
+                                            String measureType,
+                                            String minOreAmount,
+                                            String minCommodityAmount,
+                                            String cutOffGrade) throws IOException {
 
-        // TODO add measure type
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(commodityURIs, null, minOreAmount, minCommodityAmount, cutOffGrade);
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(commodityURIs,
+                                        measureType,
+                                        minOreAmount,
+                                        minCommodityAmount,
+                                        cutOffGrade);
 
-        return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineralOccurrenceFilter.getFilterString()));
+        return serviceCaller.responseToString(
+                   serviceCaller.callHttpUrl(
+                       serviceUrl,
+                       mineralOccurrenceFilter.getFilterString()));
     }
 
     public String convertToKML(String gmlString, HttpServletRequest request) {

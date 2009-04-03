@@ -23,28 +23,33 @@ public class TestMineralOccurrenceFilter {
         Collection<String> names = new ArrayList<String>();
         names.add("urn:cgi:feature:GSV:MineralOccurrence:361169");
         names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(names, null, "", "", "");
-        Assert.assertEquals(
-                Util.loadXML("src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replace("\n", "").replace(" ", ""),
-                mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+        
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(names, null, "", "", "");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replace("\n", "").replace(" ", ""),
+            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
     
     @Test
     public void testReserveMinimumOreAmount() throws IOException {
-        MeasureType measureType = MeasureType.RESERVE;
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(null, measureType, "2000000", "", "");
-        Assert.assertEquals(
-                Util.loadXML("src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
-                mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(null, "Reserve", "2000000", "", "");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
+            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
     public void testResourceMinimumCommodityAmount() throws IOException {
-        MeasureType measureType = MeasureType.RESOURCE;
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(null, measureType, "", "6000000", "");
-        Assert.assertEquals(
-                Util.loadXML("src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replace("\n", "").replace(" ", ""),
-                mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(null, "Resource", "", "6000000", "");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replace("\n", "").replace(" ", ""),
+            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
