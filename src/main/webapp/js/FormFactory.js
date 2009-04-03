@@ -200,6 +200,10 @@
                 name: 'commodityName'
             },{
                 xtype: 'textfield',
+                fieldLabel: 'Commodity Group',
+                name: 'commodityGroup'
+            },{
+                xtype: 'textfield',
                 fieldLabel: 'Min. Ore Amount',
                 name: 'minOreAmount'
             },{

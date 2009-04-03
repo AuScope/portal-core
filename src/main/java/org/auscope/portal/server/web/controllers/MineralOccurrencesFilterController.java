@@ -117,14 +117,15 @@ public class MineralOccurrencesFilterController {
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
             @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("minOreAmount") String minOreAmount,             //TODO: change to minCommodityAmount
-            @RequestParam("minCommodityAmount") String minCommodityAmount, //TODO: change to commodityName
-            @RequestParam("minCutOffGrade") String minCutOffGrade,
             @RequestParam("commodityName") String commodityName,
+            @RequestParam("commodityGroup") String commodityGroup,
+            @RequestParam("minOreAmount") String minOreAmount,
+            @RequestParam("minCommodityAmount") String minCommodityAmount,
+            @RequestParam("minCutOffGrade") String minCutOffGrade,
             HttpServletRequest request) {
 
         try {
-            String commodityResponse = doCommodityQuery(serviceUrl, "", commodityName);
+            String commodityResponse = doCommodityQuery(serviceUrl, commodityGroup, commodityName);
             String mineralOccurrenceResponse = "";
             Collection<Commodity> commodities =
                 MineralOccurrencesResponseHandler.getCommodities(commodityResponse);
