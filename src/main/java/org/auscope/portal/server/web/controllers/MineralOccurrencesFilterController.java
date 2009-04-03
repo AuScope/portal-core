@@ -229,7 +229,8 @@ public class MineralOccurrencesFilterController {
 
     private String doMineralOccurrenceQuery(String serviceUrl, Collection<String> commodityURIs, String minOreAmount, String minCommodityAmount, String cutOffGrade) throws IOException {
 
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(commodityURIs, minOreAmount, minCommodityAmount, cutOffGrade);
+        // TODO add measure type
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(commodityURIs, null, minOreAmount, minCommodityAmount, cutOffGrade);
 
         return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineralOccurrenceFilter.getFilterString()));
     }

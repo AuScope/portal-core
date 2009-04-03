@@ -7,6 +7,7 @@ import java.util.Collection;
 import junit.framework.Assert;
 
 import org.auscope.portal.Util;
+import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrenceFilter.MeasureType;
 import org.junit.Test;
 
 
@@ -22,20 +23,28 @@ public class TestMineralOccurrenceFilter {
         Collection<String> names = new ArrayList<String>();
         names.add("urn:cgi:feature:GSV:MineralOccurrence:361169");
         names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
-        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(names, "", "", "");
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(names, null, "", "", "");
         Assert.assertEquals(
                 Util.loadXML("src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replace("\n", "").replace(" ", ""),
                 mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
     
     @Test
-    public void testMinimumOreAmount() throws IOException {
-        // TODO implementation
+    public void testReserveMinimumOreAmount() throws IOException {
+        MeasureType measureType = MeasureType.RESERVE;
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(null, measureType, "2000000", "", "");
+        Assert.assertEquals(
+                Util.loadXML("src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
+                mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
-    public void testMinimumCommodityAmount() throws IOException {
-        // TODO implementation
+    public void testResourceMinimumCommodityAmount() throws IOException {
+        MeasureType measureType = MeasureType.RESOURCE;
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(null, measureType, "", "6000000", "");
+        Assert.assertEquals(
+                Util.loadXML("src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replace("\n", "").replace(" ", ""),
+                mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test

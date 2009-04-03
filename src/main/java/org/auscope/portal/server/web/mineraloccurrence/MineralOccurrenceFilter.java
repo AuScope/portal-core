@@ -8,16 +8,21 @@ import java.util.Collection;
  * Time: 5:18:28 PM
  */
 public class MineralOccurrenceFilter implements IFilter {
+    public enum MeasureType { ENDOWMENT, RESOURCE, RESERVE }
+    
     private Collection<String> names;
+    private MeasureType measureType;
     private String minOreAmount;
     private String minCommodityAmount;
     private String cutOffGrade;
 
     public MineralOccurrenceFilter(Collection<String> names,
+                                   MeasureType measureType,
                                    String minOreAmount,
                                    String minCommodityAmount,
                                    String cutOffGrade) {
         this.names              = names;
+        this.measureType        = measureType;
         this.minOreAmount       = minOreAmount;
         this.minCommodityAmount = minCommodityAmount;
         this.cutOffGrade        = cutOffGrade;
@@ -40,42 +45,57 @@ public class MineralOccurrenceFilter implements IFilter {
         if(checkMany())
             queryString.append("<ogc:And>\n");
         
-        String[] namesArray = this.names.toArray(new String[names.size()]);
-
-        // if names, filter that
-        if( namesArray.length!=0 )
+        if(this.names != null)
         {
-            if( namesArray.length>1 )
-                queryString.append("            <ogc:Or>\n");
-            
-            for( int i=0; i<namesArray.length; i++ ) {
-                queryString.append("                <ogc:PropertyIsEqualTo>\n" +
-                                   "                    <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
-                                   "                    <ogc:Literal>"+namesArray[i]+"</ogc:Literal>\n" +
-                                   "                </ogc:PropertyIsEqualTo>\n");
+            String[] namesArray = this.names.toArray(new String[names.size()]);
+
+            // if names, filter that
+            if( namesArray.length!=0 )
+            {
+                if( namesArray.length>1 )
+                    queryString.append("            <ogc:Or>\n");
+                
+                for( int i=0; i<namesArray.length; i++ ) {
+                    queryString.append("                <ogc:PropertyIsEqualTo>\n" +
+                                       "                    <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
+                                       "                    <ogc:Literal>"+namesArray[i]+"</ogc:Literal>\n" +
+                                       "                </ogc:PropertyIsEqualTo>\n");
+                }
+                
+                if( namesArray.length>1 )
+                    queryString.append("            </ogc:Or>");
             }
-            
-            if( namesArray.length>1 )
-                queryString.append("            </ogc:Or>");
         }
         
-        if(!this.minOreAmount.equals("")) // TODO use case states property: mo:OreMeasure:ore
-            queryString.append("<ogc:PropertyIsGreaterThan>\n" +
-                    "                   <ogc:PropertyName>mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                    "                   <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
-                    "           </ogc:PropertyIsGreaterThan>");
+        // TODO implement querying ANY measure type! (use <ogc:Or>)
+        if(!this.minOreAmount.equals(""))
+        {
+            queryString.append("                <ogc:PropertyIsGreaterThan>\n" +
+                               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag() +
+                               "/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+                               "                   <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
+                               "           </ogc:PropertyIsGreaterThan>");
+        }
 
-       if(!this.minCommodityAmount.equals("")) // TODO use case states property: mo:OreMeasure:measureDetails:CommodityMeasure:commodityAmount
-            queryString.append("<ogc:PropertyIsGreaterThan>\n" +
-                    "                   <ogc:PropertyName>mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                    "                   <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
-                    "           </ogc:PropertyIsGreaterThan>");
+        // TODO implement querying ANY measure type! (use <ogc:Or>)
+        if(!this.minCommodityAmount.equals(""))
+        {
+            queryString.append("                <ogc:PropertyIsGreaterThan>\n" +
+                               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag() +            
+                               "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+                               "                   <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
+                               "           </ogc:PropertyIsGreaterThan>");
+        }
 
-        if(!this.cutOffGrade.equals("")) //TODO use case states property: mo:OreMeasure:measureDetails:CommodityMeasure:cutOffGrade
-            queryString.append("<ogc:PropertyIsGreaterThan>\n" +
-                    "                   <ogc:PropertyName>mo:producedMaterial/mo:Product/mo:grade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                    "                   <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
-                    "           </ogc:PropertyIsGreaterThan>");
+        // TODO implement querying ANY measure type! (use <ogc:Or>)
+        if(!this.cutOffGrade.equals(""))
+        {
+            queryString.append("                <ogc:PropertyIsGreaterThan>\n" +
+                               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag() +            
+                               "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+                               "                   <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
+                               "           </ogc:PropertyIsGreaterThan>");
+        }
 
         if(checkMany())
             queryString.append("</ogc:And>\n");
@@ -89,14 +109,37 @@ public class MineralOccurrenceFilter implements IFilter {
     }
 
     /**
+     * Return the measure type tag for building up the filter property name
+     * @return measure type tag as String
+     */
+    private String getMeasureTypeTag() {
+        switch (this.measureType) {
+            case ENDOWMENT:
+                return "mo:Endowment";
+                
+            case RESOURCE:
+                return "mo:Resource";
+                
+            case RESERVE:
+                return "mo:Reserve";
+    
+            default:
+                // TODO shouldn't go there, error handling?
+                return "";
+        }
+    }
+
+    /**
      * Do more than one query parameter have a value
      * @return
      */
     private boolean checkMany() {
         int howManyHaveaValue = 0;
 
-        if(!this.names.isEmpty())
-            howManyHaveaValue++;
+        if(this.names != null) {
+            if(!this.names.isEmpty())
+                howManyHaveaValue++;
+        }
         if(!this.minOreAmount.equals(""))
             howManyHaveaValue++;
         if(!this.minCommodityAmount.equals(""))
