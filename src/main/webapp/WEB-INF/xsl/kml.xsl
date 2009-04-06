@@ -202,11 +202,16 @@
       <xsl:variable name="coordinates">
          <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
       </xsl:variable>
+      <xsl:variable name="resource_id">
+         <xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
+      </xsl:variable>
+      
       <Placemark>
-         <name><xsl:value-of select="./gml:name"/></name>
+         <name><xsl:value-of select="$resource_id"/></name>
          <description>
             <![CDATA[</br><table border="1" cellspacing="1" width="100%">
-            <tr><td>Type</td><td>]]><xsl:value-of select="./mo:type"/>
+            <tr><td>Type</td><td>]]><xsl:value-of select="$resource_id"/>
+            <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./mo:type"/>
             <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./mo:classification/mo:MineralDepositModel/mo:mineralDepositGroup"/>
             <![CDATA[</td></tr><tr><td>Ore Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>
             <![CDATA[</td></tr><tr><td>Ore Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>           
