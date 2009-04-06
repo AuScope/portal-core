@@ -7,7 +7,6 @@ import java.util.Collection;
 import junit.framework.Assert;
 
 import org.auscope.portal.Util;
-import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrenceFilter.MeasureType;
 import org.junit.Test;
 
 
@@ -25,10 +24,23 @@ public class TestMineralOccurrenceFilter {
         names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(names, null, "", "", "");
+            new MineralOccurrenceFilter(names, "", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replace("\n", "").replace(" ", ""),
+            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+    }
+    
+    @Test
+    public void testWithNameAndMinimumOreAmount() throws IOException {
+        Collection<String> names = new ArrayList<String>();
+        names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
+        
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(names, "Any", "1234567", "", "");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
             mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
     
@@ -43,6 +55,16 @@ public class TestMineralOccurrenceFilter {
     }
 
     @Test
+    public void testAnyMinimumOreAmount() throws IOException {
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(null, "Any", "1000000", "", "");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
+            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+    }
+
+    @Test
     public void testResourceMinimumCommodityAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
             new MineralOccurrenceFilter(null, "Resource", "", "6000000", "");
@@ -53,7 +75,22 @@ public class TestMineralOccurrenceFilter {
     }
 
     @Test
-    public void testCutOffGrade() throws IOException {
+    public void testAnyMinimumCommodityAmount() throws IOException {
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(null, "ANY-Stuff", "", "7000000", "");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumCommodityAmount.xml").replace("\n", "").replace(" ", ""),
+            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+    }
+
+    @Test
+    public void testEndowmentCutOffGrade() throws IOException {
+        // TODO implementation
+    }
+
+    @Test
+    public void testAnyCutOffGrade() throws IOException {
         // TODO implementation
     }
 }

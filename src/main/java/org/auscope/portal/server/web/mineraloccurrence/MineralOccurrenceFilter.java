@@ -8,7 +8,7 @@ import java.util.Collection;
  * Time: 5:18:28 PM
  */
 public class MineralOccurrenceFilter implements IFilter {
-    public enum MeasureType { ENDOWMENT, RESOURCE, RESERVE }
+    public enum MeasureType { ENDOWMENT, RESOURCE, RESERVE, ANY }
     
     private Collection<String> names;
     private MeasureType measureType;
@@ -26,21 +26,20 @@ public class MineralOccurrenceFilter implements IFilter {
         this.minCommodityAmount = minCommodityAmount;
         this.cutOffGrade        = cutOffGrade;
         
+        // parse strings from combobox into enum values
         if(measureType.compareTo("Endowment") == 0)
             this.measureType = MeasureType.ENDOWMENT;
         else if(measureType.compareTo("Resource") == 0)
             this.measureType = MeasureType.RESOURCE;
         else if(measureType.compareTo("Reserve") == 0)
             this.measureType = MeasureType.RESERVE;
-        else
-        {
-            // TODO query any?
-        }
+        else // anything else will query for every measure type
+            this.measureType = MeasureType.ANY;
     }
 
     /**
      * Build the query string based on given properties
-     * @return
+     * @return String for sending as a POST request
      */
     public String getFilterString() {                  //TODO: this sucks! use geotools api to build queries...
         StringBuffer queryString = new StringBuffer();
@@ -73,38 +72,56 @@ public class MineralOccurrenceFilter implements IFilter {
                 }
                 
                 if( namesArray.length>1 )
-                    queryString.append("            </ogc:Or>");
+                    queryString.append("            </ogc:Or>\n");
             }
         }
         
-        // TODO implement querying ANY measure type! (use <ogc:Or>)
         if(!this.minOreAmount.equals(""))
         {
-            queryString.append("                <ogc:PropertyIsGreaterThan>\n" +
-                               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag() +
-                               "/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                               "                   <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
-                               "           </ogc:PropertyIsGreaterThan>");
+            if(this.measureType == MeasureType.ANY)
+            {
+                queryString.append("                 <ogc:Or>\n");
+                
+                for(MeasureType t : MeasureType.values())
+                    if(t!=MeasureType.ANY)
+                        queryString.append(createOreAmountQuery(t));
+                
+                queryString.append("                 </ogc:Or>\n");
+            }
+            else
+                queryString.append(createOreAmountQuery(this.measureType));
         }
 
-        // TODO implement querying ANY measure type! (use <ogc:Or>)
         if(!this.minCommodityAmount.equals(""))
         {
-            queryString.append("                <ogc:PropertyIsGreaterThan>\n" +
-                               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag() +            
-                               "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                               "                   <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
-                               "           </ogc:PropertyIsGreaterThan>");
+            if(this.measureType == MeasureType.ANY)
+            {
+                queryString.append("                 <ogc:Or>\n");
+                
+                for(MeasureType t : MeasureType.values())
+                    if(t!=MeasureType.ANY)
+                        queryString.append(createCommodityAmountQuery(t));
+                
+                queryString.append("                 </ogc:Or>\n");
+            }
+            else
+                queryString.append(createCommodityAmountQuery(this.measureType));            
         }
 
-        // TODO implement querying ANY measure type! (use <ogc:Or>)
         if(!this.cutOffGrade.equals(""))
         {
-            queryString.append("                <ogc:PropertyIsGreaterThan>\n" +
-                               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag() +            
-                               "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                               "                   <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
-                               "           </ogc:PropertyIsGreaterThan>");
+            if(this.measureType == MeasureType.ANY)
+            {
+                queryString.append("                 <ogc:Or>\n");
+                
+                for(MeasureType t : MeasureType.values())
+                    if(t!=MeasureType.ANY)
+                        queryString.append(createCutOffGradeQuery(t));
+                
+                queryString.append("                 </ogc:Or>\n");
+            }
+            else
+                queryString.append(createCutOffGradeQuery(this.measureType));            
         }
 
         if(checkMany())
@@ -119,11 +136,54 @@ public class MineralOccurrenceFilter implements IFilter {
     }
 
     /**
-     * Return the measure type tag for building up the filter property name
-     * @return measure type tag as String
+     * Returns a PropertyIsGreaterThan query for ore amount
+     * @param type the desired measure type
+     * @return the string for using in a filter query
      */
-    private String getMeasureTypeTag() {
-        switch (this.measureType) {
+    private String createOreAmountQuery(MeasureType type)
+    {
+        return "                <ogc:PropertyIsGreaterThan>\n" +
+               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
+               "/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+               "                   <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
+               "           </ogc:PropertyIsGreaterThan>";
+    }
+    
+    /**
+     * Returns a PropertyIsGreaterThan query for commodity amount
+     * @param type the desired measure type
+     * @return the string for using in a filter query
+     */
+    private String createCommodityAmountQuery(MeasureType type)
+    {
+        return "                <ogc:PropertyIsGreaterThan>\n" +
+               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
+               "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+               "                   <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
+               "           </ogc:PropertyIsGreaterThan>";
+    }
+    
+    /**
+     * Returns a PropertyIsGreaterThan query for cut off grade
+     * @param type the desired measure type
+     * @return the string for using in a filter query
+     */
+    private String createCutOffGradeQuery(MeasureType type)
+    {
+        return "                <ogc:PropertyIsGreaterThan>\n" +
+               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
+               "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+               "                   <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
+               "           </ogc:PropertyIsGreaterThan>";
+    }
+
+    /**
+     * Returns the measure type tag for building up the filter property name
+     * @param type the measure type
+     * @return measure type tag as a String
+     */
+    public String getMeasureTypeTag(MeasureType type) {
+        switch (type) {
             case ENDOWMENT:
                 return "mo:Endowment";
                 
@@ -140,8 +200,8 @@ public class MineralOccurrenceFilter implements IFilter {
     }
 
     /**
-     * Do more than one query parameter have a value
-     * @return
+     * Checks if more than one query parameters have a value.
+     * @return true, if more than one parameter is found
      */
     private boolean checkMany() {
         int howManyHaveaValue = 0;
