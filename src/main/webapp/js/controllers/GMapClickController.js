@@ -1,3 +1,10 @@
+/**
+ * When someone clicks on the google maps we show popups specific to each feature type/marker that is clicked on
+ * @param overlay
+ * @param latlng
+ * @param statusBar
+ * @param viewport
+ */
 var gMapClickController = function(overlay, latlng, statusBar, viewport) {
     statusBar.showBusy();
     statusBar.setVisible(true);
