@@ -2,6 +2,7 @@ package org.auscope.portal.server.web.mineraloccurrence;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -66,5 +67,16 @@ public class TestMineralOccurrence {
                 "Hydrothermal: precipitation of ore and gangue from watery fluids of diverse origin, " +
                 "temperature range 50-7000C, generally below 4000C, pressure 1-3 kbar",
                 mineralOccurrence.getMineralDepositGroup());
+    }
+    
+    @Test
+    public void testGetCommodityDescriptionURNs() {
+        ArrayList<String> URNs = new ArrayList<String>();
+        URNs.add("urn:cgi:feature:PIRSA:MineralCommodity:394deposit:Au");
+        
+        Assert.assertEquals(
+                "Commodity Description URN is: urn:cgi:feature:PIRSA:MineralCommodity:394deposit:Au",
+                URNs,
+                mineralOccurrence.getCommodityDescriptionURNs());
     }
 }

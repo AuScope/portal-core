@@ -1,6 +1,8 @@
 package org.auscope.portal.server.web.mineraloccurrence;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
@@ -30,18 +32,21 @@ public class MineralOccurrence {
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
     }
 
-    public String getURN() throws XPathExpressionException {
-        XPathExpression expr = xPath.compile("gml:name");
-        NodeList nameNodes = (NodeList)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
+    public String getURN() {
+        try {
+            XPathExpression expr = xPath.compile("gml:name");
+            NodeList nameNodes = (NodeList)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
 
-        // TODO room for refactoring: is there a better way to get the URN than a string compare?
-        for (int i = 0; i < nameNodes.getLength(); i++) {
-            if(nameNodes.item(i).getTextContent().startsWith("urn"))
-                return nameNodes.item(i).getTextContent();
+            // TODO is there a better way to get the URN than a string compare?
+            for (int i = 0; i < nameNodes.getLength(); i++)
+                if(nameNodes.item(i).getTextContent().startsWith("urn"))
+                    return nameNodes.item(i).getTextContent();
+        } catch (XPathExpressionException e) {
+            return "";
         }
 
-        // TODO what to do if there is no URN?
-        return nameNodes.item(0).getTextContent();
+        // no URN found
+        return "";
     }
 
     public String getType() {
@@ -64,6 +69,27 @@ public class MineralOccurrence {
             return result.getTextContent();
         } catch (Exception e) {
             return "";
+        }
+    }
+    
+    public Collection<String> getCommodityDescriptionURNs() {
+        
+        try {
+            XPathExpression expr = xPath.compile("mo:commodityDescription");
+            NodeList commodityNodes = (NodeList)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
+            
+            ArrayList<String> commodityDescriptionURNs = new ArrayList<String>();
+
+            for(int i=0; i < commodityNodes.getLength(); i++) {
+                String URN =
+                    commodityNodes.item(i).getAttributes().getNamedItem("xlink:href").getTextContent();
+                
+                commodityDescriptionURNs.add(URN);
+            }
+            return commodityDescriptionURNs;
+        } catch (Exception e) {
+            // TODO better handling
+            return null;
         }
     }
 }
