@@ -106,22 +106,38 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     };
 
     /**
-     * Handles the adding of wms layers to the map
+     * Handles the adding of layers on a google map coming from a google map service, ie. geowebcache's gmap service
      */
-    var wmsHandler = function() {
+    var googleMapServiceHandler = function() {
         var tileLayer = new GTileLayer(null, null, null, {
             tileUrlTemplate: node.attributes.wmsUrl + 'layers=' + node.id + '&zoom={Z}&x={X}&y={Y}',
             isPng:true,
             opacity:1.0 }
                 );
         node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
+        map.addOverlay(node.attributes.tileOverlay);    
+    };
+
+    /**
+     * Handles the adding of wms layers to the map
+     */
+    var wmsHandler = function() {
+        var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
+        tileLayer.baseURL=node.attributes.wmsUrl;
+        tileLayer.layers=node.id;
+        if(node.id == 'gsmlGeologicUnit')
+            tileLayer.styles='ColorByLithology';
+        node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
         map.addOverlay(node.attributes.tileOverlay);
     };
 
     //the check was checked on
     if (isChecked) {
+        if(node.attributes.layerType == 'gmap' && (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '')) {
+            googleMapServiceHandler();    
+        }
         if (node.attributes.layerType == 'wms' && (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '')) {
-            new wmsHandler();
+            wmsHandler();
         }
         else if (node.attributes.layerType == 'wfs') {
             statusBar.setStatus({

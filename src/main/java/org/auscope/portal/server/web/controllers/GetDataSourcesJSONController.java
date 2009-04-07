@@ -126,8 +126,8 @@ public class GetDataSourcesJSONController extends AbstractController {
         if (node.equals("root"))
             jsonArray = getThemes();
 
-            //hyperspectral is a special case because it is MAP data, and has to be categorised futher down into layers
-            //differently to the feature services
+        //hyperspectral is a special case because it is MAP data, and has to be categorised futher down into layers
+        //differently to the feature services
         else if (node.equals(THEME + HYPERSPECTRAL))
             jsonArray = getSpectraInstitionalProviders();
 
@@ -135,7 +135,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         else if (node.startsWith(THEME))
             jsonArray = getInstitionalProviders(node.replace(THEME, ""));
 
-            //this is an institution being expanded, must be for spectral data, so go get the layers
+        //this is an institution being expanded, must be for spectral data, so go get the layers
         else if (node.startsWith(INSTITUTION))
             jsonArray = getHyperspectralLayers(node.replace(INSTITUTION, ""));
 
@@ -259,6 +259,13 @@ public class GetDataSourcesJSONController extends AbstractController {
         coe.put("leaf", Boolean.FALSE);
         jsonArray.add(coe);
 
+        Map<String, Serializable> gsv = new HashMap<String, Serializable>();
+        gsv.put("id", INSTITUTION + "gsv");
+        gsv.put("text", "GSV");
+        //coe.put("checked", Boolean.FALSE);
+        gsv.put("leaf", Boolean.FALSE);
+        jsonArray.add(gsv);
+
         return jsonArray;
     }
 
@@ -271,8 +278,47 @@ public class GetDataSourcesJSONController extends AbstractController {
     private JSONArray getHyperspectralLayers(String institution) {
         //TODO: call geonetwork and get the WMS urls based on the institution...
 
-        String server = "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?";
-        String gmapsUrl = "http://c3dmm2.ivec.org/geoserver/gwc/service/gmaps?";
+
+        if(institution.equals("waCoe")) {
+            String server = "http://c3dmm2.ivec.org/geoserver/gwc/service/wms?";
+            String gmapsUrl = "http://c3dmm2.ivec.org/geoserver/gwc/service/gmaps?";
+
+            WebMapServer wms = null;
+            try {
+                wms = new WebMapServer(new URL(server));
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+
+            WMSCapabilities capabilities = wms.getCapabilities();
+
+            JSONArray jsonArray = new JSONArray();
+
+            List<Layer> layers = capabilities.getLayerList();
+            for (Layer layer : layers) {
+                Map<String, Serializable> layerNode = new HashMap<String, Serializable>();
+                layerNode.put("id", layer.getName());
+                layerNode.put("text", layer.getName());
+                layerNode.put("checked", Boolean.FALSE);
+                layerNode.put("leaf", Boolean.TRUE);
+                layerNode.put("layerType", "gmap");
+                layerNode.put("wmsUrl", gmapsUrl);
+                layerNode.put("tileOverlay", "");
+
+                jsonArray.add(layerNode);
+            }
+
+            return jsonArray;
+        } else {
+            return getGeoUnit(); 
+        }
+    }
+
+    private JSONArray getGeoUnit() {
+        String server = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-TestWMS/services?";
+        //String gmapsUrl = "http://c3dmm2.ivec.org/geoserver/gwc/service/gmaps?";
 
         WebMapServer wms = null;
         try {
@@ -295,7 +341,7 @@ public class GetDataSourcesJSONController extends AbstractController {
             layerNode.put("checked", Boolean.FALSE);
             layerNode.put("leaf", Boolean.TRUE);
             layerNode.put("layerType", "wms");
-            layerNode.put("wmsUrl", gmapsUrl);
+            layerNode.put("wmsUrl", server);
             layerNode.put("tileOverlay", "");
 
             jsonArray.add(layerNode);

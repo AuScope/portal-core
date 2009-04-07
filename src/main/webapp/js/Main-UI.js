@@ -92,7 +92,7 @@ Ext.onReady(function() {
 
         var startZoom = 4;
         map.setCenter(new google.maps.LatLng(-26, 133.3), 4);
-        map.setMapType(G_HYBRID_MAP);
+        map.setMapType(G_SATELLITE_MAP);
 
         //Thumbnail map
         var Tsize = new GSize(150, 150);
@@ -110,7 +110,7 @@ Ext.onReady(function() {
     tree.on('checkchange', function(node, isChecked) { treeCheckChangeController(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel); });
 
     //when a person clicks on a marker then do something
-    GEvent.addListener(map, "click", function(overlay, latlng) { gMapClickController(overlay, latlng, viewport); });
+    GEvent.addListener(map, "click", function(overlay, latlng) { gMapClickController(overlay, latlng, statusBar, viewport); });
 
 });
 
