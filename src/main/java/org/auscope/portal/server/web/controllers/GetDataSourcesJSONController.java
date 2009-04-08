@@ -317,7 +317,8 @@ public class GetDataSourcesJSONController extends AbstractController {
     }
 
     private JSONArray getGeoUnit() {
-        String server = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-TestWMS/services?";
+        String server = "http://gissdi.doir.wa.gov.au/SDIPrd/services/Mineral/MapServer/WMSServer?"; 
+        //String server = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-TestWMS/services?";
         //String gmapsUrl = "http://c3dmm2.ivec.org/geoserver/gwc/service/gmaps?";
 
         WebMapServer wms = null;
