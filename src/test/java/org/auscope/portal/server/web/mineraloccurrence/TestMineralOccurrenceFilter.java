@@ -86,11 +86,21 @@ public class TestMineralOccurrenceFilter {
 
     @Test
     public void testEndowmentCutOffGrade() throws IOException {
-        // TODO implementation
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(null, "Endowment", "", "", "1500");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedEndowmentCutOffGrade.xml").replace("\n", "").replace(" ", ""),
+            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
     @Test
     public void testAnyCutOffGrade() throws IOException {
-        // TODO implementation
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(null, "Any", "", "", "1000");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedCutOffGrade.xml").replace("\n", "").replace(" ", ""),
+            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 }
