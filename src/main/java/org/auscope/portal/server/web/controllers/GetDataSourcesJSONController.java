@@ -354,7 +354,7 @@ public class GetDataSourcesJSONController extends AbstractController {
 
        JSONArray jsonArray = new JSONArray();
 
-       List<Layer> layers = capabilities.getLayerList();
+       List<Layer> layers = capabilities.getLayerList().subList(1, capabilities.getLayerList().size());
        for (Layer layer : layers) {
            Map<String, Serializable> layerNode = new HashMap<String, Serializable>();
            layerNode.put("id", layer.getName());
