@@ -127,6 +127,8 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
         tileLayer.layers=node.id;
         if(node.id == 'gsmlGeologicUnit')
             tileLayer.styles='ColorByLithology';
+        if(node.id == '7')
+            tileLayer.styles='7';
         node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
         map.addOverlay(node.attributes.tileOverlay);
     };
