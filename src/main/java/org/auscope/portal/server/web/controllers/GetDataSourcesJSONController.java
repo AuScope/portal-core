@@ -322,49 +322,14 @@ public class GetDataSourcesJSONController extends AbstractController {
 
             return jsonArray;
         } else if(institution.equals("gsv")) {
-            return getGeoUnit(); 
-        } else { //if(institution.equals("gswa")) {
-            return getGSWA();
+            return getWmsLayers("http://www.gsv-tb.dpi.vic.gov.au/AuScope-TestWMS/services?"); 
+        } else {  //if(institution.equals("gswa")) {
+            return getWmsLayers("http://gissdi.doir.wa.gov.au/SDIPrd/services/Mineral/MapServer/WMSServer?");
         }
         
     }
 
-    private JSONArray getGeoUnit() { 
-        String server = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-TestWMS/services?";
-        //String gmapsUrl = "http://c3dmm2.ivec.org/geoserver/gwc/service/gmaps?";
-
-        WebMapServer wms = null;
-        try {
-            wms = new WebMapServer(new URL(server));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-
-        WMSCapabilities capabilities = wms.getCapabilities();
-
-        JSONArray jsonArray = new JSONArray();
-
-        List<Layer> layers = capabilities.getLayerList();
-        for (Layer layer : layers) {
-            Map<String, Serializable> layerNode = new HashMap<String, Serializable>();
-            layerNode.put("id", layer.getName());
-            layerNode.put("text", layer.getName());
-            layerNode.put("checked", Boolean.FALSE);
-            layerNode.put("leaf", Boolean.TRUE);
-            layerNode.put("layerType", "wms");
-            layerNode.put("wmsUrl", server);
-            layerNode.put("tileOverlay", "");
-
-            jsonArray.add(layerNode);
-        }
-
-        return jsonArray;
-    }
-
-    private JSONArray getGSWA() {
-       String server = "http://gissdi.doir.wa.gov.au/SDIPrd/services/Mineral/MapServer/WMSServer?"; 
+    private JSONArray getWmsLayers(String server) { 
 
        WebMapServer wms = null;
        try {
@@ -394,8 +359,8 @@ public class GetDataSourcesJSONController extends AbstractController {
        }
 
        return jsonArray;
-   }    
-    
+   }
+
     public String stripUrlAndGetFeatures(String url) {
 
         return url.replace("&", "%26").trim();
