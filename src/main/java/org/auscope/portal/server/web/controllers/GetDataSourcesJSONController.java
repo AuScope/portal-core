@@ -1,30 +1,33 @@
 package org.auscope.portal.server.web.controllers;
 
-import org.springframework.web.servlet.mvc.AbstractController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.AbstractView;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlException;
-import org.geotools.data.ows.WMSCapabilities;
-import org.geotools.data.ows.Layer;
-import org.geotools.data.wms.WebMapServer;
-import org.geotools.ows.ServiceException;
-import org.xml.sax.SAXException;
+
 import org.auscope.portal.csw.CSWClient;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.server.web.view.JSONView;
+
+import org.geotools.data.ows.Layer;
+import org.geotools.data.ows.WMSCapabilities;
+import org.geotools.data.wms.WebMapServer;
+import org.geotools.ows.ServiceException;
+
+import org.xml.sax.SAXException;
+
+import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
-import java.util.*;
+
 import java.net.URL;
 import java.io.*;
+import java.util.*;
 
 import net.sf.json.JSONArray;
-import net.sf.json.JSONSerializer;
 
 /**
  * User: Mathew Wyatt
@@ -237,8 +240,8 @@ public class GetDataSourcesJSONController extends AbstractController {
             } catch (SAXException e) {
                 logger.error(e);
             } catch (XmlException e) {
-        	logger.error(e);
-        }
+                logger.error(e);
+            }
 
             return new JSONArray();
         //}
@@ -329,6 +332,13 @@ public class GetDataSourcesJSONController extends AbstractController {
         
     }
 
+    /**
+     * Given WMS URL, connect to the server and retrieve 
+     * metadata info about the server
+     * 
+     * @param server URL string
+     * @return jsonArray 
+     */
     private JSONArray getWmsLayers(String server) { 
 
        WebMapServer wms = null;
@@ -348,7 +358,7 @@ public class GetDataSourcesJSONController extends AbstractController {
        for (Layer layer : layers) {
            Map<String, Serializable> layerNode = new HashMap<String, Serializable>();
            layerNode.put("id", layer.getName());
-           layerNode.put("text", layer.getName());
+           layerNode.put("text", layer.getTitle());
            layerNode.put("checked", Boolean.FALSE);
            layerNode.put("leaf", Boolean.TRUE);
            layerNode.put("layerType", "wms");
