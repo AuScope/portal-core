@@ -31,7 +31,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     var miningActivityHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
             node.attributes.filterPanel = new buildMiningActivityFilterForm(node.id, "/getMineNames.do", "/doMiningActivityFilter.do", node.attributes.wfsUrl, function(form, action) {
-                addKmlLayer(node, action.result.data.kml, viewport);
+                addKmlLayer(node, action.result.data.kml, viewport, map, statusBar);
             }, function() {
                 if (node.attributes.tileOverlay instanceof GeoXml) {
                     node.attributes.tileOverlay.clear();
@@ -49,7 +49,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     var mineHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
             node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineFilter.do", node.attributes.wfsUrl, function(form, action) {
-                addKmlLayer(node, action.result.data.kml, viewport);
+                addKmlLayer(node, action.result.data.kml, viewport, map, statusBar);
             }, function() {
                 if (node.attributes.tileOverlay instanceof GeoXml) {
                     node.attributes.tileOverlay.clear();
@@ -67,7 +67,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     var mineralOccurrenceHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
             node.attributes.filterPanel = new buildMineralOccurrenceFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action) {
-                addKmlLayer(node, action.result.data.kml, viewport);
+                addKmlLayer(node, action.result.data.kml, viewport, map, statusBar);
             }, function() {
                 if (node.attributes.tileOverlay instanceof GeoXml) {
                     node.attributes.tileOverlay.clear();
@@ -210,7 +210,7 @@ var showNodesFilterPanel = function(node, filterPanel) {
  * @param kml
  * @param viewport
  */
-var addKmlLayer = function(node, kml, viewport) {
+var addKmlLayer = function(node, kml, viewport, map, statusBar) {
     var exml;
     var icon = new GIcon(G_DEFAULT_ICON, node.attributes.icon);
     icon.iconSize = new GSize(32, 32);

@@ -204,14 +204,16 @@ public class MineralOccurrencesFilterController {
                                                                 cutOffGrade,
                                                                 production);
             } else {
+                System.out.println("failed");
                 return makeModelAndViewFailure("No results matched your query.");
             }
 
             //return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));
-
+            System.out.println("OK");
             return makeModelAndViewSuccess(convertToKML(miningActivityResponse, request));
 
         } catch(Exception e) {
+            System.out.println("failed");
             logger.error(e);
             return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different filter request.");
         }
@@ -262,6 +264,11 @@ public class MineralOccurrencesFilterController {
         String out = "";
         InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
         out = GmlToKml.convert(gmlString, inXSLT);
+
+        /*System.out.println("KMLSTART-----");
+        System.out.println(out);
+        System.out.println("KMLEND-----");*/
+
         return out;
     }
 
@@ -269,6 +276,11 @@ public class MineralOccurrencesFilterController {
        String out = "";
        InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
        out = GmlToKml.convert(XmlMerge.merge(is1, is2), inXSLT);
+
+        /*System.out.println("KMLSTART-----");
+        System.out.println(out);
+        System.out.println("KMLEND-----");*/
+
        return out;
     }
 

@@ -26,7 +26,7 @@ public class GmlToKml {
     */   
    public static String convert(String geoXML, InputStream inXSLT) {
       log.debug("....Convert");
-      log.debug(geoXML);
+      //log.debug(geoXML);
       
       StringWriter sw = new StringWriter();
       try {
