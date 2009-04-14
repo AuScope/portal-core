@@ -8,7 +8,8 @@ import java.util.Collection;
  * Time: 5:18:28 PM
  */
 public class MineralOccurrenceFilter implements IFilter {
-    public enum MeasureType { ENDOWMENT, RESOURCE, RESERVE, ANY }
+    // endowment commented out for now, because it isn't implemented yet
+    public enum MeasureType { /*ENDOWMENT,*/ RESOURCE, RESERVE, ANY }
     
     private Collection<String> names;
     private MeasureType measureType;
@@ -27,9 +28,9 @@ public class MineralOccurrenceFilter implements IFilter {
         this.cutOffGrade        = cutOffGrade;
         
         // parse strings from combobox into enum values
-        if(measureType.compareTo("Endowment") == 0)
+/*        if(measureType.compareTo("Endowment") == 0)
             this.measureType = MeasureType.ENDOWMENT;
-        else if(measureType.compareTo("Resource") == 0)
+        else */if(measureType.compareTo("Resource") == 0)
             this.measureType = MeasureType.RESOURCE;
         else if(measureType.compareTo("Reserve") == 0)
             this.measureType = MeasureType.RESERVE;
@@ -184,8 +185,8 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     public String getMeasureTypeTag(MeasureType type) {
         switch (type) {
-            case ENDOWMENT:
-                return "mo:Endowment";
+//            case ENDOWMENT:
+//                return "mo:Endowment";
                 
             case RESOURCE:
                 return "mo:Resource";
