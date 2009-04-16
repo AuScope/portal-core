@@ -119,81 +119,85 @@
   
   <body onload="load()">
     <div id="container">
-	 <table id="mytable" cellspacing="0" summary="The technical build specification">
-	  <caption>${specificationTitle}</caption>
-	  <tr>
-	    <th scope="col" class="nobg">Build Information</th>
-	    <th scope="col">Specification</th>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="spec">Version</th>
-	    <td>${implementationVersion}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="specalt">Build</th>
-	    <td class="alt">${implementationBuild}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="spec">Build Date</th>
-	    <td>${buildDate}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="specalt">Build Jdk</th>
-	    <td class="alt">${buildJdk}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="spec">Java Vendor</th>
-	    <td>${javaVendor}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="specalt">Build By</th>
-	    <td class="alt">${builtBy}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="spec">OS Name</th>
-	    <td>${osName}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="specalt">OS Version</th>
-	    <td class="alt">${osVersion}</td>
-	  </tr>
-	  <tr>
-	    <td scope="row" class="nobg">&nbsp;</td>
-	    <td scope="row" class="nobg">&nbsp;</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="nobg">Runtime Information</th>
-	    <th scope="row">Specification</th>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="spec">Server Name</th>
-	    <td>${serverName}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="specalt">Server Info</th>
-	    <td class="alt">${serverInfo}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="spec">Server Java Version</th>
-	    <td>${serverJavaVersion}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="specalt">Server Java Vendor</th>
-	    <td class="alt">${serverJavaVendor}</td>
-	  </tr>
-     <tr>
-	    <th scope="row" class="spec">Server OS Architecture</th>
-	    <td>${serverOsArch}</td>
-	  </tr>
-     <tr>
-	    <th scope="row" class="specalt">Server OS Name</th>
-	    <td class="alt">${serverOsName}</td>
-	  </tr>
-	 <tr>
-	    <th scope="row" class="spec">Server OS Version</th>
-	    <td>${serverOsVersion}</td>
-	 </tr> 
-	</table>
-   </div>
+      <table id="mytable" cellspacing="0" summary="The technical build specification">
+        <caption>${specificationTitle}</caption>
+        <tr>
+          <th scope="col" class="nobg">Build Information</th>
+          <th scope="col">Specification</th>
+        </tr>
+        <tr>
+          <th scope="row" class="spec">Version</th>
+          <td>${implementationVersion}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="specalt">Build</th>
+	       <td class="alt">${implementationBuild}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="spec">Build Date</th>
+	       <td>${buildDate}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="specalt">Build Jdk</th>
+	       <td class="alt">${buildJdk}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="spec">Java Vendor</th>
+	       <td>${javaVendor}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="specalt">Build By</th>
+	       <td class="alt">${builtBy}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="spec">OS Name</th>
+	       <td>${osName}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="specalt">OS Version</th>
+	       <td class="alt">${osVersion}</td>
+        </tr>
+        <tr>
+	       <td scope="row" class="nobg">&nbsp;</td>
+	       <td scope="row" class="nobg">&nbsp;</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="nobg">Runtime Information</th>
+	       <th scope="row">Specification</th>
+        </tr>
+        <tr>
+	       <th scope="row" class="spec">Server Name</th>
+	       <td>${serverName}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="specalt">Server Info</th>
+	       <td class="alt">${serverInfo}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="spec">Server Java Version</th>
+	       <td>${serverJavaVersion}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="specalt">Server Java Vendor</th>
+	       <td class="alt">${serverJavaVendor}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="spec">Java Home</th>
+	       <td>${javaHome}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="specalt">Server OS Architecture</th>
+	       <td class="alt">${serverOsArch}</td>
+        </tr>
+        <tr>
+	       <th scope="row" class="spec">Server OS Name</th>
+	       <td>${serverOsName}</td>
+        </tr>
+        <tr>
+          <th scope="row" class="specalt">Server OS Version</th>
+          <td class="alt">${serverOsVersion}</td>
+        </tr>
+      </table>
+    </div>
   </body>
 </html>
