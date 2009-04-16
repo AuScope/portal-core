@@ -142,16 +142,16 @@
 	    <td class="alt">${buildJdk}</td>
 	  </tr>
 	  <tr>
+	    <th scope="row" class="spec">Java Vendor</th>
+	    <td>${javaVendor}</td>
+	  </tr>
+	  <tr>
+	    <th scope="row" class="specalt">Build By</th>
+	    <td class="alt">${builtBy}</td>
+	  </tr>
+	  <tr>
 	    <th scope="row" class="spec">OS Name</th>
 	    <td>${osName}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="specalt">OS version</th>
-	    <td class="alt">${osVersion}</td>
-	  </tr>
-	  <tr>
-	    <th scope="row" class="spec">Build By</th>
-	    <td>${builtBy}</td>
 	  </tr>
 	  <tr>
 	    <th scope="row" class="specalt">OS Version</th>
