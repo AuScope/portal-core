@@ -31,8 +31,7 @@ public class TestCommodityFilter {
      */
     @Test
     public void testWithACommodityGroup() throws IOException {
-        // TODO finish test (couldn't find commodity group yet)
-        CommodityFilter commodityFilter = new CommodityFilter("TODO Enter correct test value here", "");
+        CommodityFilter commodityFilter = new CommodityFilter("Industrial Minerals", "");
         Assert.assertEquals(
                 Util.loadXML("src/test/resources/GetCommoditiesWithSpecifiedGroup.xml").replace("\n", "").replace(" ", ""),
                 commodityFilter.getFilterString().replace("\n", "").replace(" ", ""));
