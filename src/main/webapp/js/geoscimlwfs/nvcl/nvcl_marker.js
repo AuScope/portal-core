@@ -312,6 +312,8 @@ function NVCLMarker_markerClicked()
         for (var i=0; i < oNVCLMarker.maScalars.length; i++) {
           var scalarId = oNVCLMarker.maScalars[i];
           var scalarName = oNVCLMarker.maScalarNames[scalarId];
+          // NOTE oNVCLMarker has to be passed as a parameter to this function
+          // if it is called as "oNVCLMarker.getScalarNote" it will produce errors!
           NVCLMarker_getScalarNote(oNVCLMarker, scalarId, scalarName);
         }
 
