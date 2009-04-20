@@ -38,7 +38,7 @@ public class GetDataSourcesJSONController extends AbstractController {
     //logger
     protected final Log logger = LogFactory.getLog(getClass());
 
-    public static final String HYPERSPECTRAL = "Hyperspectral";
+    public static final String WEPMAPSERVICE = "Web Map Service Layers";
 
     // what is the purpose of that line?
     //public static final String XSLT_PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
@@ -131,7 +131,7 @@ public class GetDataSourcesJSONController extends AbstractController {
 
         //hyperspectral is a special case because it is MAP data, and has to be categorised futher down into layers
         //differently to the feature services
-        else if (node.equals(THEME + HYPERSPECTRAL))
+        else if (node.equals(THEME + WEPMAPSERVICE))
             jsonArray = getSpectraInstitionalProviders();
 
             //if we have a theme tree node, then go find the institutions providing the data for it
@@ -157,8 +157,8 @@ public class GetDataSourcesJSONController extends AbstractController {
         JSONArray jsonArray = new JSONArray();
 
         Map<String, Serializable> hyperspectral = new HashMap<String, Serializable>();
-        hyperspectral.put("id", THEME + HYPERSPECTRAL);
-        hyperspectral.put("text", HYPERSPECTRAL);
+        hyperspectral.put("id", THEME + WEPMAPSERVICE);
+        hyperspectral.put("text", WEPMAPSERVICE);
         //hyperspectral.put("checked", Boolean.FALSE);
         hyperspectral.put("leaf", Boolean.FALSE);
         jsonArray.add(hyperspectral);

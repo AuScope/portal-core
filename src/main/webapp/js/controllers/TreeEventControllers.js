@@ -16,7 +16,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
      *
      * @param featureTypeString
      */
-    var getFeatureTypeHandler = function(featureTypeString) {
+    this.getFeatureTypeHandler = function(featureTypeString) {
         switch (featureTypeString) {
             case 'mo:MiningActivity': return miningActivityHandler; break;
             case 'mo:Mine': return mineHandler; break;
@@ -28,7 +28,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     /**
      * Handles feature types of type mo:MiningActivity
      */
-    var miningActivityHandler = function() {
+    this.miningActivityHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
             node.attributes.filterPanel = new buildMiningActivityFilterForm(node.id, "/getMineNames.do", "/doMiningActivityFilter.do", node.attributes.wfsUrl, function(form, action) {
                 addKmlLayer(node, action.result.data.kml, viewport, map, statusBar);
@@ -46,7 +46,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     /**
      *  Handles feature types of type mo:Mine
      */
-    var mineHandler = function() {
+    this.mineHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
             node.attributes.filterPanel = new buildMineFilterForm(node.id, "/getMineNames.do", "/doMineFilter.do", node.attributes.wfsUrl, function(form, action) {
                 addKmlLayer(node, action.result.data.kml, viewport, map, statusBar);
@@ -64,7 +64,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     /**
      * Handles feature types of type mo:MineralOccurrence
      */
-    var mineralOccurrenceHandler = function() {
+    this.mineralOccurrenceHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
             node.attributes.filterPanel = new buildMineralOccurrenceFilterForm(node.id, "/getMineNames.do", "/doMineralOccurrenceFilter.do", node.attributes.wfsUrl, function(form, action) {
                 addKmlLayer(node, action.result.data.kml, viewport, map, statusBar);
@@ -82,7 +82,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     /**
      * A default handler which handles the feature types which don't have a filter panel
      */
-    var simpleKmlHandler = function() {
+    this.simpleKmlHandler = function() {
         GDownloadUrl(kmlProxyUrl + node.attributes.kmlUrl, function(pData, pResponseCode) {
             if (pResponseCode == 200) {
                 var exml;
@@ -108,7 +108,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     /**
      * Handles the adding of layers on a google map coming from a google map service, ie. geowebcache's gmap service
      */
-    var googleMapServiceHandler = function() {
+    this.googleMapServiceHandler = function() {
         var tileLayer = new GTileLayer(null, null, null, {
             tileUrlTemplate: node.attributes.wmsUrl + 'layers=' + node.id + '&zoom={Z}&x={X}&y={Y}',
             isPng:true,
@@ -121,7 +121,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     /**
      * Handles the adding of wms layers to the map
      */
-    var wmsHandler = function() {
+    this.wmsHandler = function() {
         var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
         tileLayer.baseURL=node.attributes.wmsUrl;
         tileLayer.layers=node.id;
