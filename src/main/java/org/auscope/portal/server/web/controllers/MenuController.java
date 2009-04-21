@@ -12,6 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -21,12 +25,15 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author Jarek Sanders
  */
-
 @Controller
 public class MenuController {
    
    protected final Log logger = LogFactory.getLog(getClass());
-   
+
+   @Autowired
+   @Qualifier(value = "propertyConfigurer")
+   private PortalPropertyPlaceholderConfigurer hostConfigurer;
+
    /* Commented out, for the time being we are redirecting Home link to AuScope site
    @RequestMapping("/home.html")
    public ModelAndView menu() {
@@ -37,7 +44,13 @@ public class MenuController {
    
    @RequestMapping("/gmap.html")
    public ModelAndView gmap() {
-      return new ModelAndView("gmap");
+      String googleKey 
+         = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
+      logger.debug(googleKey);
+
+      ModelAndView mav = new ModelAndView("gmap");
+      mav.addObject("googleKey",googleKey);      
+      return mav;
    }
    
    @RequestMapping("/login.html")
