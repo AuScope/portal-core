@@ -21,7 +21,7 @@
     <!-- for auscope-portal-dev
     <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAjNe9lSRMedgGg_SHNzEvuhSei4j9m2Mi-rbOVQ0iCZaYodqdCRQ_SvOVaQGcob4C8YKWj6B3LSvFpw" type="text/javascript"></script>
     -->
-    <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key="${googleKey}" type="text/javascript"></script>     
+    <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=${googleKey}" type="text/javascript"></script>     
     <!-- for auscope-portal-test
     <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAZqsP68C-PfYEAobUmwen1xQACWFotHIO8WvEtjV21SpXfQmX3xQtfg9sygne-SV-6ZapBiD3sx-QEg" type="text/javascript"></script>
     -->
