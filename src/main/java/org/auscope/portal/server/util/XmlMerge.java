@@ -1,9 +1,6 @@
 package org.auscope.portal.server.util;
 
-import org.apache.xml.serialize.XMLSerializer;
-
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -20,15 +17,17 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * <p> This class merges xml files </p>
  * @author jsanders
  */
 public class XmlMerge {
-   private static final Logger log = Logger.getLogger(XmlMerge.class);
-
+   private static final Log log = LogFactory.getLog(XmlMerge.class);
+   
    /**
     * Utility method to merge xml files.
     * <p>
@@ -74,34 +73,34 @@ public class XmlMerge {
          throws ParserConfigurationException, SAXException, IOException {
       
       DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-      log.debug("Using DocumentBuilderFactory " + dfactory.getClass());
+      //log.debug("Using DocumentBuilderFactory " + dfactory.getClass());
       
       dfactory.setNamespaceAware(true);
       
       DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
-      log.debug("Using DocumentBuilder " + docBuilder.getClass());
+      //log.debug("Using DocumentBuilder " + docBuilder.getClass());
             
       Document doc = docBuilder.parse(is1);
       Document docImport = docBuilder.parse(is2);
-      log.debug("doc: " + doc.getNodeName());
-      log.debug("docImport: " + docImport.getNodeName());
+      //log.debug("doc: " + doc.getNodeName());
+      //log.debug("docImport: " + docImport.getNodeName());
 
       // This is the root wfs:FeatureCollection element
       Element root = doc.getDocumentElement();
       Element rootImport = docImport.getDocumentElement();
-      log.debug("root: " + root.getNodeName());
-      log.debug("rootImport: " + rootImport.getNodeName());      
+      //log.debug("root: " + root.getNodeName());
+      //log.debug("rootImport: " + rootImport.getNodeName());      
       
       Node child;
       NodeList children = root.getChildNodes();
       for (int i=0; i < children.getLength(); i++) {
          child = children.item(i);
-         log.debug(i + "child before: " + child.getNodeName());
+         //log.debug(i + "child before: " + child.getNodeName());
       }
       
       //Get Node to move
       NodeList kids = rootImport.getElementsByTagName("gml:featureMember");
-      log.debug("kids: " + kids.getLength());
+      //log.debug("kids: " + kids.getLength());
       Element oneToMove;
       for (int i=0; i < kids.getLength(); i++) {
          oneToMove = (Element)kids.item(i);
@@ -112,7 +111,7 @@ public class XmlMerge {
       children = root.getChildNodes();
       for (int i=0; i < children.getLength(); i++) {
          child = children.item(i);
-         log.debug(i + "child: " + child.getNodeName());
+         //log.debug(i + "child: " + child.getNodeName());
       }
                   
       StringWriter sw = new StringWriter();
@@ -129,7 +128,7 @@ public class XmlMerge {
          
          // do the transformation
          output.transform( new DOMSource(doc), result);
-         log.debug(sw.toString());
+         //log.debug(sw.toString());
       
       } catch (TransformerException e) {
          e.printStackTrace();
