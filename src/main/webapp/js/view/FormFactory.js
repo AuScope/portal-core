@@ -272,7 +272,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
             },  new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitDescription}</div></tpl>',
                 anchor: '100%',
-                name: 'oreAmountUOM',
+                name: 'minOreAmountUOM',
                 fieldLabel: 'Min. Ore Amount Unit',
                 emptyText:'Select a Unit Of Measure...',
                 forceSelection: true,

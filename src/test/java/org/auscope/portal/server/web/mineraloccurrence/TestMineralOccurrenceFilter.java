@@ -24,7 +24,7 @@ public class TestMineralOccurrenceFilter {
         names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(names, "", "", "", "");
+            new MineralOccurrenceFilter(names, "", "", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replace("\n", "").replace(" ", ""),
@@ -37,7 +37,7 @@ public class TestMineralOccurrenceFilter {
         names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(names, "Any", "1234567", "", "");
+            new MineralOccurrenceFilter(names, "Any", "1234567", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
@@ -47,7 +47,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testReserveMinimumOreAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Reserve", "2000000", "", "");
+            new MineralOccurrenceFilter(null, "Reserve", "2000000", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
@@ -57,7 +57,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testAnyMinimumOreAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Any", "1000000", "", "");
+            new MineralOccurrenceFilter(null, "Any", "1000000", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
@@ -67,7 +67,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testResourceMinimumCommodityAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Resource", "", "6000000", "");
+            new MineralOccurrenceFilter(null, "Resource", "", "", "6000000", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replace("\n", "").replace(" ", ""),
@@ -77,7 +77,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testAnyMinimumCommodityAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "ANY-Stuff", "", "7000000", "");
+            new MineralOccurrenceFilter(null, "ANY-Stuff", "", "", "7000000", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumCommodityAmount.xml").replace("\n", "").replace(" ", ""),
@@ -87,7 +87,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testEndowmentCutOffGrade() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Endowment", "", "", "1500");
+            new MineralOccurrenceFilter(null, "Endowment", "", "", "", "1500");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedEndowmentCutOffGrade.xml").replace("\n", "").replace(" ", ""),
@@ -97,7 +97,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testAnyCutOffGrade() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Any", "", "", "1000");
+            new MineralOccurrenceFilter(null, "Any", "", "", "", "1000");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedCutOffGrade.xml").replace("\n", "").replace(" ", ""),

@@ -16,16 +16,19 @@ public class MineralOccurrenceFilter implements IFilter {
     private String minOreAmount;
     private String minCommodityAmount;
     private String cutOffGrade;
+    private String minOreAmountUOM;
 
     public MineralOccurrenceFilter(Collection<String> names,
                                    String measureType,
                                    String minOreAmount,
+                                   String minOreAmountUOM,
                                    String minCommodityAmount,
                                    String cutOffGrade) {
         this.names              = names;
         this.minOreAmount       = minOreAmount;
         this.minCommodityAmount = minCommodityAmount;
         this.cutOffGrade        = cutOffGrade;
+        this.minOreAmountUOM    = minOreAmountUOM;
         
         // parse strings from combobox into enum values
 /*        if(measureType.compareTo("Endowment") == 0)

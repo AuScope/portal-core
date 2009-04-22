@@ -122,6 +122,7 @@ public class MineralOccurrencesFilterController {
             @RequestParam("commodityGroup")     String commodityGroup,
             @RequestParam("measureType")        String measureType,
             @RequestParam("minOreAmount")       String minOreAmount,
+            @RequestParam("minOreAmountUOM")    String minOreAmountUOM,
             @RequestParam("minCommodityAmount") String minCommodityAmount,
             @RequestParam("minCutOffGrade")     String minCutOffGrade,
             
@@ -150,6 +151,7 @@ public class MineralOccurrencesFilterController {
                                                                       commodityURIs,
                                                                       measureType,
                                                                       minOreAmount,
+                                                                      minOreAmountUOM,
                                                                       minCommodityAmount,
                                                                       minCutOffGrade);
             } else {
@@ -244,6 +246,7 @@ public class MineralOccurrencesFilterController {
                                             Collection<String> commodityURIs,
                                             String measureType,
                                             String minOreAmount,
+                                            String minOreAmountUOM,
                                             String minCommodityAmount,
                                             String cutOffGrade) throws IOException {
 
@@ -251,6 +254,7 @@ public class MineralOccurrencesFilterController {
             new MineralOccurrenceFilter(commodityURIs,
                                         measureType,
                                         minOreAmount,
+                                        minOreAmountUOM,
                                         minCommodityAmount,
                                         cutOffGrade);
 
