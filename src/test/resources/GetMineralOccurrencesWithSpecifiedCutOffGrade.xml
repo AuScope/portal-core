@@ -6,10 +6,6 @@
         <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
             <ogc:Or>
             <ogc:PropertyIsGreaterThan>
-                <ogc:PropertyName>mo:oreAmount/mo:Endowment/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
-                <ogc:Literal>1000</ogc:Literal>
-            </ogc:PropertyIsGreaterThan>
-            <ogc:PropertyIsGreaterThan>
                 <ogc:PropertyName>mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
                 <ogc:Literal>1000</ogc:Literal>
             </ogc:PropertyIsGreaterThan>

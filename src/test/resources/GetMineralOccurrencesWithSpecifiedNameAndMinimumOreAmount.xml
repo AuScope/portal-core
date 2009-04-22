@@ -11,10 +11,6 @@
                 </ogc:PropertyIsEqualTo>
             <ogc:Or>
             <ogc:PropertyIsGreaterThan>
-                <ogc:PropertyName>mo:oreAmount/mo:Endowment/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
-                <ogc:Literal>1234567</ogc:Literal>
-            </ogc:PropertyIsGreaterThan>
-            <ogc:PropertyIsGreaterThan>
                 <ogc:PropertyName>mo:oreAmount/mo:Resource/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
                 <ogc:Literal>1234567</ogc:Literal>
             </ogc:PropertyIsGreaterThan>
