@@ -195,34 +195,12 @@ function buildMiningActivityFilterForm(id, loadUrl, submitUrl, serviceUrl, succe
  */
 function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction, preSubmitFunction) {
     var unitOfMeasureStore = new Ext.data.SimpleStore({
-        fields: ['unitCode', 'unitDescription'],
+        fields: ['unitCode', 'unitLabel', 'unitDescription', 'urn'],
         data: [
-            ['CRT', 'Carats'],
-            ['CUB M/HA', 'Cubic Metres/Hectare'],
-            ['CUB M', 'Cubic Metres'],
-            ['TONNE', 'Tonnes'],
-            ['TONNE/M', 'Tonnes/M'],
-            ['TONNE/100M', 'Tonne/100 metres'],
-            ['GM/TONNE', 'Grams/Tonne'],
-            ['KG/TONNE', 'Kilograms/Tonne'],
-            ['MILL TONNE', 'Million Tonnes'],
-            ['GM', 'Grams'],
-            ['KG', 'Kilograms'],
-            ['M', 'Metres'],
-            ['%', 'Percentage'],
-            ['UKN', 'Unknown'],
-            ['SQ M', 'Square Metres'],
-            ['MA', 'Million Years'],
-            ['NOUNIT', 'Dimensionless Numeric Value'],
-            ['PPM', 'Parts Per Million'],
-            ['PPB', 'Parts Per Billion'],
-            ['MM', 'Millimetres'],
-            ['UM', 'Microns'],
-            ['GCOUNT', 'Grain Count'],
-            ['HA', 'Hectare'],
-            ['MESH', 'Generic screen mesh designator'],
-            ['SI', 'SI units magnetic susceptibility'],
-            ['GM/CC', 'Grams per cubic centimetre'],
+            ['m', 'meter', 'length', 'urn:ogc:def:uom:UCUM:m'],
+            ['ha', 'hectare', 'a unit of surface area equal to 10,000 square meters', 'urn:ogc:def:uom:UCUM:ha'],
+            ['deg', 'degree', 'plane angle', 'urn:ogc:def:uom:UCUM:deg'],
+            ['t', 'tonne', 'mass', 'urn:ogc:def:uom:UCUM:t']
         ]        
     });
 
@@ -270,7 +248,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 fieldLabel: 'Min. Ore Amount',
                 name: 'minOreAmount'
             },  new Ext.form.ComboBox({
-                tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitDescription}</div></tpl>',
+                tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitLabel}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitLabel}. {unitDescription}</div></tpl>',
                 anchor: '100%',
                 name: 'minOreAmountUOM',
                 fieldLabel: 'Min. Ore Amount Unit',
@@ -282,7 +260,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 triggerAction: 'all',
                 typeAhead: true,
                 displayField:'unitCode',
-                valueField:'unitCode'
+                valueField:'urn'
             })
                 ,{
                     anchor: '100%',

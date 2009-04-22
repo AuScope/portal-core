@@ -44,4 +44,8 @@ public class HttpServiceCaller {
     public BufferedInputStream stringToStream(String string) throws IOException {
         return new BufferedInputStream(new ByteArrayInputStream(string.getBytes()));
     }
+
+    public static void main(String[] args) {
+        
+    }
 }
