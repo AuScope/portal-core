@@ -51,7 +51,7 @@ public class MineralOccurrenceFilter implements IFilter {
         queryString.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<wfs:GetFeature version=\"1.1.0\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
                 "        xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "        xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\">\n" + // maxFeatures=\"200\">\n" +
+                "        xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" maxFeatures=\"200\">\n" +
                 "    <wfs:Query typeName=\"mo:MineralOccurrence\">\n" +
                 "        <ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\">\n");
 
