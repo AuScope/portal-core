@@ -27,8 +27,8 @@ public class TestMineralOccurrenceFilter {
             new MineralOccurrenceFilter(names, "", "", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replace("\n", "").replace(" ", ""),
-            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+            "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replaceAll("\n", "").replaceAll("\\W", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
     
     @Test
@@ -40,8 +40,8 @@ public class TestMineralOccurrenceFilter {
             new MineralOccurrenceFilter(names, "Any", "1234567", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
-            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
     
     @Test
@@ -50,8 +50,8 @@ public class TestMineralOccurrenceFilter {
             new MineralOccurrenceFilter(null, "Reserve", "2000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
-            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
     @Test
@@ -60,8 +60,8 @@ public class TestMineralOccurrenceFilter {
             new MineralOccurrenceFilter(null, "Any", "1000000", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
-            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
     @Test
@@ -70,8 +70,8 @@ public class TestMineralOccurrenceFilter {
             new MineralOccurrenceFilter(null, "Resource", "", "", "6000000", "");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replace("\n", "").replace(" ", ""),
-            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
     @Test
@@ -80,8 +80,8 @@ public class TestMineralOccurrenceFilter {
             new MineralOccurrenceFilter(null, "ANY-Stuff", "", "", "7000000", "");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumCommodityAmount.xml").replace("\n", "").replace(" ", ""),
-            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumCommodityAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
     @Test
@@ -90,8 +90,8 @@ public class TestMineralOccurrenceFilter {
             new MineralOccurrenceFilter(null, "Endowment", "", "", "", "1500");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedEndowmentCutOffGrade.xml").replace("\n", "").replace(" ", ""),
-            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedEndowmentCutOffGrade.xml").replaceAll("\n", "").replaceAll("\\W", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class TestMineralOccurrenceFilter {
             new MineralOccurrenceFilter(null, "Any", "", "", "", "1000");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedCutOffGrade.xml").replace("\n", "").replace(" ", ""),
-            mineralOccurrenceFilter.getFilterString().replace("\n", "").replace(" ", ""));
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedCutOffGrade.xml").replaceAll("\n", "").replaceAll("\\W", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 }
