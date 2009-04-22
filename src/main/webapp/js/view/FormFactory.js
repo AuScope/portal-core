@@ -194,14 +194,16 @@ function buildMiningActivityFilterForm(id, loadUrl, submitUrl, serviceUrl, succe
  * @param serviceUrl the service url for submit
  */
 function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction, preSubmitFunction) {
-    var unitOfMeasureStore = new Ext.data.SimpleStore({
-        fields: ['unitCode', 'unitLabel', 'unitDescription', 'urn'],
-        data: [
+    unitsOfMeasure = [
             ['m', 'meter', 'length', 'urn:ogc:def:uom:UCUM:m'],
             ['ha', 'hectare', 'a unit of surface area equal to 10,000 square meters', 'urn:ogc:def:uom:UCUM:ha'],
             ['deg', 'degree', 'plane angle', 'urn:ogc:def:uom:UCUM:deg'],
             ['t', 'tonne', 'mass', 'urn:ogc:def:uom:UCUM:t']
-        ]        
+        ];
+
+    var unitOfMeasureStore = new Ext.data.SimpleStore({
+        fields: ['unitCode', 'unitLabel', 'unitDescription', 'urn'],
+        data: unitsOfMeasure
     });
 
     var thePanel = new Ext.FormPanel({
