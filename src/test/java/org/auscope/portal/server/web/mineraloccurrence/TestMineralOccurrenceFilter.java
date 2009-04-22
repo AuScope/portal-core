@@ -57,7 +57,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testAnyMinimumOreAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Any", "1000000", "", "", "");
+            new MineralOccurrenceFilter(null, "Any", "1000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),

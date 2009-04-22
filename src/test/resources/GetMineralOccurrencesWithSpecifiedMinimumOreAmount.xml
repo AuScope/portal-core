@@ -17,7 +17,7 @@
                 </ogc:And>
                 <ogc:And>
                     <ogc:PropertyIsEqualTo>
-                        <ogc:PropertyName>mo:oreAmount/mo:Resource/mo:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>
+                        <ogc:PropertyName>mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>
                         <ogc:Literal>urn:ogc:def:uom:UCUM:t</ogc:Literal>
                     </ogc:PropertyIsEqualTo>
 		            <ogc:PropertyIsGreaterThan>
