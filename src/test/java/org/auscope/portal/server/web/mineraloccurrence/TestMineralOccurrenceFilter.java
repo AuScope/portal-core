@@ -37,7 +37,7 @@ public class TestMineralOccurrenceFilter {
         names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(names, "Any", "1234567", "", "", "");
+            new MineralOccurrenceFilter(names, "Any", "1234567", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),
@@ -47,7 +47,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testReserveMinimumOreAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Reserve", "2000000", "", "", "");
+            new MineralOccurrenceFilter(null, "Reserve", "2000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replace("\n", "").replace(" ", ""),

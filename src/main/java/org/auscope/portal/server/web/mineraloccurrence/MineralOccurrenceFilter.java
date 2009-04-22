@@ -14,9 +14,9 @@ public class MineralOccurrenceFilter implements IFilter {
     private Collection<String> names;
     private MeasureType measureType;
     private String minOreAmount;
+    private String minOreAmountUOM;
     private String minCommodityAmount;
     private String cutOffGrade;
-    private String minOreAmountUOM;
 
     public MineralOccurrenceFilter(Collection<String> names,
                                    String measureType,
@@ -24,11 +24,11 @@ public class MineralOccurrenceFilter implements IFilter {
                                    String minOreAmountUOM,
                                    String minCommodityAmount,
                                    String cutOffGrade) {
-        this.names              = names;
-        this.minOreAmount       = minOreAmount;
-        this.minCommodityAmount = minCommodityAmount;
-        this.cutOffGrade        = cutOffGrade;
-        this.minOreAmountUOM    = minOreAmountUOM;
+        this.names                 = names;
+        this.minOreAmount          = minOreAmount;
+        this.minOreAmountUOM       = minOreAmountUOM;
+        this.minCommodityAmount    = minCommodityAmount;
+        this.cutOffGrade           = cutOffGrade;
         
         // parse strings from combobox into enum values
 /*        if(measureType.compareTo("Endowment") == 0)
@@ -51,7 +51,7 @@ public class MineralOccurrenceFilter implements IFilter {
         queryString.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<wfs:GetFeature version=\"1.1.0\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
                 "        xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "        xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" maxFeatures=\"200\">\n" +
+                "        xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\">\n" + // maxFeatures=\"200\">\n" +
                 "    <wfs:Query typeName=\"mo:MineralOccurrence\">\n" +
                 "        <ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\">\n");
 
@@ -131,7 +131,7 @@ public class MineralOccurrenceFilter implements IFilter {
         if(checkMany())
             queryString.append("</ogc:And>\n");
 
-        queryString.append("</ogc:Filter>\n" +
+        queryString.append("        </ogc:Filter>\n" +
                 "    </wfs:Query>\n" +
                 "</wfs:GetFeature>");
 
@@ -146,11 +146,18 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private String createOreAmountQuery(MeasureType type)
     {
-        return "                <ogc:PropertyIsGreaterThan>\n" +
-               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
+        return "            <ogc:And>\n" +
+               "                <ogc:PropertyIsEqualTo>\n" +
+               "                    <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
+               "/mo:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
+               "                    <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n" +
+               "                </ogc:PropertyIsEqualTo>\n" +
+               "                <ogc:PropertyIsGreaterThan>\n" +
+               "                    <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
                "/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-               "                   <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
-               "           </ogc:PropertyIsGreaterThan>";
+               "                    <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
+               "                </ogc:PropertyIsGreaterThan>\n" +
+               "            </ogc:And>\n";
     }
     
     /**
@@ -160,11 +167,18 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private String createCommodityAmountQuery(MeasureType type)
     {
-        return "                <ogc:PropertyIsGreaterThan>\n" +
-               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
+        return /*"                <ogc:And>" +
+               "                   <ogc:PropertyIsEqualTo>\n" +
+               "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
+               "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
+               "                      <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n" +
+               "                   </ogc:PropertyIsEqualTo>" +*/
+               "                   <ogc:PropertyIsGreaterThan>\n" +
+               "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
                "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-               "                   <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
-               "           </ogc:PropertyIsGreaterThan>";
+               "                      <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
+               "                   </ogc:PropertyIsGreaterThan>";/* +
+               "                </ogc:And>";*/
     }
     
     /**
@@ -174,11 +188,18 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private String createCutOffGradeQuery(MeasureType type)
     {
-        return "                <ogc:PropertyIsGreaterThan>\n" +
-               "                   <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
+        return /*"                <ogc:And>" +
+               "                   <ogc:PropertyIsEqualTo>\n" +
+               "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
+               "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
+               "                      <ogc:Literal>"+this.cutOffGradeUOM+"</ogc:Literal>\n" +
+               "                   </ogc:PropertyIsEqualTo>" +*/
+               "                   <ogc:PropertyIsGreaterThan>\n" +
+               "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
                "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-               "                   <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
-               "           </ogc:PropertyIsGreaterThan>";
+               "                      <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
+               "                   </ogc:PropertyIsGreaterThan>";/* +
+               "                </ogc:And>";*/
     }
 
     /**
