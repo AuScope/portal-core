@@ -84,6 +84,9 @@ Ext.onReady(function() {
         map = new GMap2(centerPanel.body.dom);
         map.setUIToDefault();
 
+        //add google earth
+        map.addMapType(G_SATELLITE_3D_MAP);
+
         // Large pan and zoom control
         //map.addControl(new GLargeMapControl(),  new GControlPosition(G_ANCHOR_TOP_LEFT));
 
