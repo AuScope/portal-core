@@ -206,6 +206,17 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
         data: unitsOfMeasure
     });
 
+    measureTypes =  [
+            ['Resource'],
+            ['Reserve'],
+            ['Any']
+        ];
+
+    var measureTypeStore = new Ext.data.SimpleStore({
+        fields: ['type'],
+        data: measureTypes
+    });
+    
     var thePanel = new Ext.FormPanel({
         //region: "center",
         //collapsible: true,
@@ -239,12 +250,21 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 xtype: 'textfield',
                 fieldLabel: 'Commodity Group',
                 name: 'commodityGroup'
-            },{
+            },  new Ext.form.ComboBox({
+                tpl: '<tpl for="."><div ext:qtip="{type}" class="x-combo-list-item">{type}</div></tpl>',
                 anchor: '100%',
-                xtype: 'textfield',
+                name: 'measureType',
                 fieldLabel: 'Measure Type',
-                name: 'measureType'
-            },{
+                emptyText:'Select a Measure Type...',
+                forceSelection: true,
+                mode: 'local',
+                //selectOnFocus: true,
+                store: measureTypeStore,
+                triggerAction: 'all',
+                typeAhead: true,
+                displayField:'type',
+                valueField:'type'
+            }),{
                 anchor: '100%',
                 xtype: 'textfield',
                 fieldLabel: 'Min. Ore Amount',
