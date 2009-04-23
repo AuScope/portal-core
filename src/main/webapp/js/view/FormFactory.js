@@ -252,7 +252,8 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
             },  new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitLabel}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitLabel}. {unitDescription}</div></tpl>',
                 anchor: '100%',
-                name: 'minOreAmountUOM',
+                name: 'minOreAmountUOMName',
+                hiddenName: 'minOreAmountUOM',
                 fieldLabel: 'Min. Ore Amount Unit',
                 emptyText:'Select a Unit Of Measure...',
                 forceSelection: true,
@@ -263,18 +264,47 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 typeAhead: true,
                 displayField:'unitCode',
                 valueField:'urn'
-            })
-                ,{
-                    anchor: '100%',
-                    xtype: 'textfield',
-                    fieldLabel: 'Min. Commodity Amount',
-                    name: 'minCommodityAmount'
-                },{
-                    anchor: '100%',
-                    xtype: 'textfield',
-                    fieldLabel: 'Cut Off Grade',
-                    name: 'minCutOffGrade'
-                }]
+            }),{
+                anchor: '100%',
+                xtype: 'textfield',
+                fieldLabel: 'Min. Commodity Amount',
+                name: 'minCommodityAmount'
+            },  new Ext.form.ComboBox({
+                tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitLabel}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitLabel}. {unitDescription}</div></tpl>',
+                anchor: '100%',
+                name: 'minCommodityAmountUOMName',
+                hiddenName: 'minCommodityAmountUOM',
+                fieldLabel: 'Min. Commodity Amount Unit',
+                emptyText:'Select a Unit Of Measure...',
+                forceSelection: true,
+                mode: 'local',
+                //selectOnFocus: true,
+                store: unitOfMeasureStore,
+                triggerAction: 'all',
+                typeAhead: true,
+                displayField:'unitCode',
+                valueField:'urn'
+            }),{
+                anchor: '100%',
+                xtype: 'textfield',
+                fieldLabel: 'Cut Off Grade',
+                name: 'cutOffGrade'
+            },  new Ext.form.ComboBox({
+                tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitLabel}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitLabel}. {unitDescription}</div></tpl>',
+                anchor: '100%',
+                name: 'cutOffGradeUOMName',
+                hiddenName: 'cutOffGradeUOM',
+                fieldLabel: 'Cut Off Grade Unit',
+                emptyText:'Select a Unit Of Measure...',
+                forceSelection: true,
+                mode: 'local',
+                //selectOnFocus: true,
+                store: unitOfMeasureStore,
+                triggerAction: 'all',
+                typeAhead: true,
+                displayField:'unitCode',
+                valueField:'urn'
+            })]
         }]
         ,buttons: [{
             text: 'Show Me >>',

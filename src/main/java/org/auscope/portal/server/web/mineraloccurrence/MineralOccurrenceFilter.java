@@ -16,19 +16,25 @@ public class MineralOccurrenceFilter implements IFilter {
     private String minOreAmount;
     private String minOreAmountUOM;
     private String minCommodityAmount;
+    private String minCommodityAmountUOM;
     private String cutOffGrade;
+    private String cutOffGradeUOM;
 
     public MineralOccurrenceFilter(Collection<String> names,
                                    String measureType,
                                    String minOreAmount,
                                    String minOreAmountUOM,
                                    String minCommodityAmount,
-                                   String cutOffGrade) {
+                                   String minCommodityAmountUOM,
+                                   String cutOffGrade,
+                                   String cutOffGradeUOM) {
         this.names                 = names;
         this.minOreAmount          = minOreAmount;
         this.minOreAmountUOM       = minOreAmountUOM;
         this.minCommodityAmount    = minCommodityAmount;
+        this.minCommodityAmountUOM = minCommodityAmountUOM;
         this.cutOffGrade           = cutOffGrade;
+        this.cutOffGradeUOM        = cutOffGradeUOM;
         
         // parse strings from combobox into enum values
 /*        if(measureType.compareTo("Endowment") == 0)
@@ -167,18 +173,18 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private String createCommodityAmountQuery(MeasureType type)
     {
-        return /*"                <ogc:And>" +
+        return "                <ogc:And>" +
                "                   <ogc:PropertyIsEqualTo>\n" +
                "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
                "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
                "                      <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n" +
-               "                   </ogc:PropertyIsEqualTo>" +*/
+               "                   </ogc:PropertyIsEqualTo>" +
                "                   <ogc:PropertyIsGreaterThan>\n" +
                "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
                "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
                "                      <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
-               "                   </ogc:PropertyIsGreaterThan>";/* +
-               "                </ogc:And>";*/
+               "                   </ogc:PropertyIsGreaterThan>" +
+               "                </ogc:And>";
     }
     
     /**

@@ -117,14 +117,16 @@ public class MineralOccurrencesFilterController {
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
             
-            @RequestParam("serviceUrl")         String serviceUrl,
-            @RequestParam("commodityName")      String commodityName,
-            @RequestParam("commodityGroup")     String commodityGroup,
-            @RequestParam("measureType")        String measureType,
-            @RequestParam("minOreAmount")       String minOreAmount,
-            @RequestParam("minOreAmountUOM")    String minOreAmountUOM,
-            @RequestParam("minCommodityAmount") String minCommodityAmount,
-            @RequestParam("minCutOffGrade")     String minCutOffGrade,
+            @RequestParam("serviceUrl")            String serviceUrl,
+            @RequestParam("commodityName")         String commodityName,
+            @RequestParam("commodityGroup")        String commodityGroup,
+            @RequestParam("measureType")           String measureType,
+            @RequestParam("minOreAmount")          String minOreAmount,
+            @RequestParam("minOreAmountUOM")       String minOreAmountUOM,
+            @RequestParam("minCommodityAmount")    String minCommodityAmount,
+            @RequestParam("minCommodityAmountUOM") String minCommodityAmountUOM,
+            @RequestParam("cutOffGrade")           String cutOffGrade,
+            @RequestParam("cutOffGradeUOM")        String cutOffGradeUOM,
             
             HttpServletRequest request)
     {
@@ -153,7 +155,9 @@ public class MineralOccurrencesFilterController {
                                                                       minOreAmount,
                                                                       minOreAmountUOM,
                                                                       minCommodityAmount,
-                                                                      minCutOffGrade);
+                                                                      minCommodityAmountUOM,
+                                                                      cutOffGrade,
+                                                                      cutOffGradeUOM);
             } else {
                 return makeModelAndViewFailure("No results matched your query.");
             }
@@ -248,7 +252,9 @@ public class MineralOccurrencesFilterController {
                                             String minOreAmount,
                                             String minOreAmountUOM,
                                             String minCommodityAmount,
-                                            String cutOffGrade) throws IOException {
+                                            String minCommodityAmountUOM,
+                                            String cutOffGrade,
+                                            String cutOffGradeUOM) throws IOException {
 
         MineralOccurrenceFilter mineralOccurrenceFilter =
             new MineralOccurrenceFilter(commodityURIs,
@@ -256,7 +262,9 @@ public class MineralOccurrencesFilterController {
                                         minOreAmount,
                                         minOreAmountUOM,
                                         minCommodityAmount,
-                                        cutOffGrade);
+                                        minCommodityAmountUOM,
+                                        cutOffGrade,
+                                        cutOffGradeUOM);
 
         return serviceCaller.responseToString(
                    serviceCaller.callHttpUrl(
