@@ -207,15 +207,33 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
     });
 
     measureTypes =  [
+            ['Any'],
             ['Resource'],
-            ['Reserve'],
-            ['Any']
+            ['Reserve']
         ];
 
     var measureTypeStore = new Ext.data.SimpleStore({
         fields: ['type'],
         data: measureTypes
     });
+
+    var measureTypeCombo = new Ext.form.ComboBox({
+        tpl: '<tpl for="."><div ext:qtip="{type}" class="x-combo-list-item">{type}</div></tpl>',
+        anchor: '100%',
+        name: 'measureType',
+        fieldLabel: 'Measure Type',
+        //emptyText:'Select a Measure Type...',
+        forceSelection: true,
+        mode: 'local',
+        //selectOnFocus: true,
+        store: measureTypeStore,
+        triggerAction: 'all',
+        typeAhead: true,
+        displayField:'type',
+        valueField:'type'
+    });
+    
+    measureTypeCombo.setValue('Any');
     
     var thePanel = new Ext.FormPanel({
         //region: "center",
@@ -250,21 +268,9 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 xtype: 'textfield',
                 fieldLabel: 'Commodity Group',
                 name: 'commodityGroup'
-            },  new Ext.form.ComboBox({
-                tpl: '<tpl for="."><div ext:qtip="{type}" class="x-combo-list-item">{type}</div></tpl>',
-                anchor: '100%',
-                name: 'measureType',
-                fieldLabel: 'Measure Type',
-                emptyText:'Select a Measure Type...',
-                forceSelection: true,
-                mode: 'local',
-                //selectOnFocus: true,
-                store: measureTypeStore,
-                triggerAction: 'all',
-                typeAhead: true,
-                displayField:'type',
-                valueField:'type'
-            }),{
+            },
+                measureTypeCombo
+            ,{
                 anchor: '100%',
                 xtype: 'textfield',
                 fieldLabel: 'Min. Ore Amount',
