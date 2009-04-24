@@ -195,10 +195,10 @@ function buildMiningActivityFilterForm(id, loadUrl, submitUrl, serviceUrl, succe
  */
 function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction, preSubmitFunction) {
     unitsOfMeasure = [
-            ['m', 'meter', 'length', 'urn:ogc:def:uom:UCUM:m'],
-            ['ha', 'hectare', 'a unit of surface area equal to 10,000 square meters', 'urn:ogc:def:uom:UCUM:ha'],
-            ['deg', 'degree', 'plane angle', 'urn:ogc:def:uom:UCUM:deg'],
-            ['t', 'tonne', 'mass', 'urn:ogc:def:uom:UCUM:t']
+            ['m', 'meter', 'length', 'urn:ogc:def:uom:UCUM::m'],
+            ['ha', 'hectare', 'a unit of surface area equal to 10,000 square meters', 'urn:ogc:def:uom:UCUM::ha'],
+            ['deg', 'degree', 'plane angle', 'urn:ogc:def:uom:UCUM::deg'],
+            ['t', 'tonne', 'mass', 'urn:ogc:def:uom:UCUM::t']
         ];
 
     var unitOfMeasureStore = new Ext.data.SimpleStore({
