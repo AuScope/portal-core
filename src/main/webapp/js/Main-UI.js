@@ -101,7 +101,7 @@ Ext.onReady(function() {
         var Tsize = new GSize(150, 150);
         map.addControl(new GOverviewMapControl(Tsize));
 
-        map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(280, 7)));
+        map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(345, 7)));
 
     }
 
