@@ -230,20 +230,20 @@ public class MineralOccurrencesFilterController {
 
         MineFilter mineFilter = new MineFilter(mineName);
 
-        return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, mineFilter.getFilterString()));
+        return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, mineFilter.getFilterString()));
     }
 
     private String doCommodityQuery(String serviceUrl, String commodityGroup, String commodityName) throws IOException {
         CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
 
-        return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, commodityFilter.getFilterString()));
+        return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, commodityFilter.getFilterString()));
     }
 
     private String doMiningActivityQuery(String serviceUrl, String[] mineNameURIs, String startDate, String endDate, String oreProcessed, String producedMaterial, String cutOffGrade, String production) throws IOException {
 
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURIs, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
-        return serviceCaller.responseToString(serviceCaller.callHttpUrl(serviceUrl, miningActivityFilter.getFilterString()));
+        return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
     private String doMineralOccurrenceQuery(String serviceUrl,
@@ -267,7 +267,7 @@ public class MineralOccurrencesFilterController {
                                         cutOffGradeUOM);
 
         return serviceCaller.responseToString(
-                   serviceCaller.callHttpUrl(
+                   serviceCaller.callHttpUrlPost(
                        serviceUrl,
                        mineralOccurrenceFilter.getFilterString()));
     }
