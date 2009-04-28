@@ -44,7 +44,6 @@
     http://maps.google.com/mapfiles/kml/shapes/target.png
 -->
 
-
    <!-- MATCH ROOT FEATURECOLLECTION -->
    <!-- ================================================================= -->
    <xsl:template match="wfs:FeatureCollection">
@@ -132,7 +131,7 @@
          <Placemark>
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
-               <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+               <![CDATA[</br><table border="1" cellspacing="1" cellpadding="2" width="100%">
                <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
                <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
@@ -140,6 +139,7 @@
                <![CDATA[</td></tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./mo:activityType"/>            
                <![CDATA[</td></tr><tr><td>Associated Mine</td><td>]]><xsl:value-of select="./mo:associatedMine"/>
                <![CDATA[</td></tr><tr><td>Product</td><td>]]><xsl:value-of select="./mo:producedMaterial/mo:Product/mo:productName/gsml:CGI_TermValue/gsml:value"/>
+               <xsl:apply-templates select=".//mo:sourceCommodity"/>
                <![CDATA[</td></tr></table>]]>
             </description>
             <Point>
@@ -209,7 +209,7 @@
       <Placemark>
          <name><xsl:value-of select="$resource_id"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <![CDATA[</br><table border="1" cellspacing="1" cellpadding="2" width="100%">
             <tr><td>Id</td><td>]]><xsl:value-of select="$resource_id"/>
             <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./mo:type"/>
             <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./mo:classification/mo:MineralDepositModel/mo:mineralDepositGroup"/>
@@ -217,8 +217,9 @@
             <![CDATA[</td></tr><tr><td>Commodity Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>
             <![CDATA[</td></tr><tr><td>Commodity Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>           
             <![CDATA[</td></tr><tr><td>Ore Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/>
-            <![CDATA[</td></tr><tr><td>Ore Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/> -->           
-            <![CDATA[</td></tr></table>]]>            
+            <![CDATA[</td></tr><tr><td>Ore Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/> -->
+            <xsl:apply-templates select="./mo:commodityDescription"/>
+            <![CDATA[</td></tr></table>]]>
          </description>
          <Point>
             <Style>
@@ -235,6 +236,18 @@
             </coordinates>
          </Point>
       </Placemark>
+   </xsl:template>
+   
+   
+   <!-- TEMPLATE FOR Commodity Description | Source Commodity -->
+   <!-- ================================================================= -->
+   <xsl:template match="mo:commodityDescription | mo:sourceCommodity">
+      <!--  
+      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="http://apacsrv1.arrc.csiro.au/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="@xlink:href"/><![CDATA[" target="_blank" rel="popup console 800 600">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
+      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="javascript:void()" onclick="window.open('http://apacsrv1.arrc.csiro.au/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="@xlink:href"/><![CDATA[','WindowName'); return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
+      -->
+      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="#" onclick="var w=window.open('http://apacsrv1.arrc.csiro.au/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="@xlink:href"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
+
    </xsl:template>
    
    
