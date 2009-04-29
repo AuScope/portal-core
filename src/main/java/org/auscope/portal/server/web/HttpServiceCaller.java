@@ -16,9 +16,9 @@ public class HttpServiceCaller {
     public BufferedInputStream callHttpUrlGet(String serviceUrl) throws IOException {
 
         URL url = new URL(serviceUrl);
-        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+//       HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+//       conn.setRequestMethod("GET");
 
-        conn.setRequestMethod("GET");
         //conn.setAllowUserInteraction(false); // no user interact [like pop up]
         //conn.setDoOutput(true); // want to send
         //conn.setRequestProperty( "Content-type", "text/xml" );
@@ -29,7 +29,7 @@ public class HttpServiceCaller {
         //pw.flush();
         //pw.close();
 
-        return new BufferedInputStream(conn.getInputStream());
+        return new BufferedInputStream(url.openStream());
     }
 
     public BufferedInputStream callHttpUrlPost(String serviceUrl, String postData) throws IOException {

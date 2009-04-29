@@ -125,6 +125,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
         var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
         tileLayer.baseURL=node.attributes.wmsUrl;
         tileLayer.layers=node.id;
+        //TODO: remove code specific to feature types and styles specific to GSV
         if(node.id == 'gsmlGeologicUnit')
             tileLayer.styles='ColorByLithology';
         if(node.id == '7')
