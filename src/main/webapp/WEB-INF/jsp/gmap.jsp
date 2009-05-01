@@ -3,7 +3,7 @@
 
 <html>
   <head>
-    <title>Auscope Portal</title>
+    <title>AuScope Portal</title>
 
     <!-- Page Style -->
     <link rel="stylesheet" type="text/css" href="css/styles.css">
