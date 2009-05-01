@@ -461,7 +461,7 @@ function NVCLMarker_createMosaicTabHtml() {
         if (nTrayIndex != 0) {
           // Link to open the moscaic image in a new window
           //var newMosaicHtmlUrl = top.location.protocol + "//" + top.location.host + "/GoogleMap/html/mosaic_image.html?coreid=" + sCoreId;
-            var newMosaicHtmlUrl = "html/mosaic_image.htm?coreid=" + sCoreId;
+            var newMosaicHtmlUrl = "/mosaic_image.html?coreid=" + sCoreId;
           mosaicHtml += '<div id="div_new_mosaic_window" style="height:20px; width:100%; text-align:center">'
           mosaicHtml += '<a id="a_new_mosaic_window" target="_blank" href="'+newMosaicHtmlUrl+'"> Open in a new window </a><br/>';
           mosaicHtml += '</div>';
@@ -973,7 +973,7 @@ function NVCLMarker_plotSelectedScalars() {
           var plotImageHref = document.getElementById("a_new_window");      				
           if (plotImageHref != null) {
             gPlottedImageSrc = sScalarsPlotUrl;
-            plotImageHref.href = "../html/plotted_images.htm?" + sParamsList;
+            plotImageHref.href = "/plotted_images.html?" + sParamsList;
             plotImageHref.target = "_blank";
             plotImageHref.style.display = "";
           }

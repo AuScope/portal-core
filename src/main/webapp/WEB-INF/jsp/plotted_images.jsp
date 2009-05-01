@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=ABQIAAAAL8cDk1rYcykpyZKQpA6yZBRn36dTCX2w3Qjfdnxxv2FF_gzkORQxKijsjmZ633zval7Vz_PutsDixQ" type="text/javascript"></script>
+        <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=${googleKey}" type="text/javascript"></script>    
 	    <script src="../js/geoscimlwfs/global_variables.js" type="text/javascript"></script>
 		<script type="text/javascript">
    		function downloadImage() {

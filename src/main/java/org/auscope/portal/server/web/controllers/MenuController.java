@@ -52,7 +52,29 @@ public class MenuController {
       mav.addObject("googleKey",googleKey);      
       return mav;
    }
-   
+
+   @RequestMapping("/mosaic_image.html")
+   public ModelAndView mosaic_image() {
+      String googleKey 
+         = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
+      logger.debug(googleKey);
+
+      ModelAndView mav = new ModelAndView("mosaic_image");
+      mav.addObject("googleKey",googleKey);      
+      return mav;
+   }
+      
+   @RequestMapping("/plotted_images.html")
+   public ModelAndView plotted_images() {
+      String googleKey 
+         = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
+      logger.debug(googleKey);
+
+      ModelAndView mav = new ModelAndView("plotted_images");
+      mav.addObject("googleKey",googleKey);      
+      return mav;
+   }
+      
    @RequestMapping("/login.html")
    public ModelAndView login() {
       return new ModelAndView("login");
