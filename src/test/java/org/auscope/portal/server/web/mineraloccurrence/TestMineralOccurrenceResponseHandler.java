@@ -55,4 +55,40 @@ public class TestMineralOccurrenceResponseHandler {
         Assert.assertEquals("The first one's name is Gold", "Gold", ((Commodity)commodities.toArray()[0]).getCommodityName());
         Assert.assertEquals("The second one's MineralOccurrence source is urn:cgi:feature:GSV:MineralOccurrence:361170", "urn:cgi:feature:GSV:MineralOccurrence:361170", ((Commodity)commodities.toArray()[1]).getMineralOccurrenceURI());
     }
+    
+    @Test
+    public void testGetNumberOfFeaturesTwo() throws IOException, ParserConfigurationException, SAXException {
+        File commodityGetFeatureResponse = new File("src/test/resources/commodityGetFeatureResponse.xml");
+        BufferedReader reader = new BufferedReader( new FileReader(commodityGetFeatureResponse) );
+        StringBuffer commodityGetFeatureResponseXML = new StringBuffer();
+
+        String str;
+        while ((str = reader.readLine()) != null) {
+            commodityGetFeatureResponseXML.append(str);
+        }
+        reader.close();
+
+        String numberOfFeatures = 
+            MineralOccurrencesResponseHandler.getNumberOfFeatures(commodityGetFeatureResponseXML.toString());
+        
+        Assert.assertEquals("There are 2 features", "2", numberOfFeatures);
+    }
+
+    @Test
+    public void testGetNumberOfFeaturesZero() throws IOException, ParserConfigurationException, SAXException {
+        File getFeatureResponse = new File("src/test/resources/mineralOccurrenceNoFeaturesResponse.xml");
+        BufferedReader reader = new BufferedReader( new FileReader(getFeatureResponse) );
+        StringBuffer getFeatureResponseXML = new StringBuffer();
+
+        String str;
+        while ((str = reader.readLine()) != null) {
+            getFeatureResponseXML.append(str);
+        }
+        reader.close();
+
+        String numberOfFeatures = 
+            MineralOccurrencesResponseHandler.getNumberOfFeatures(getFeatureResponseXML.toString());
+        
+        Assert.assertEquals("There are 0 features", "0", numberOfFeatures);
+    }
 }

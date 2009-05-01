@@ -1,6 +1,7 @@
 package org.auscope.portal.server.web.mineraloccurrence;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -8,10 +9,12 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
+
 import java.util.Collection;
 import java.util.ArrayList;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 /**
  * User: Mathew Wyatt
@@ -65,5 +68,25 @@ public class MineralOccurrencesResponseHandler {
     public static Collection<MiningActivity> getMiningActivities(String miningActivityResponse) {
 
         return null;
+    }
+
+    public static String getNumberOfFeatures(String mineralOccurrenceResponse) throws ParserConfigurationException, UnsupportedEncodingException, SAXException, IOException {
+
+        DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+        domFactory.setNamespaceAware(true); // never forget this!
+        DocumentBuilder builder = domFactory.newDocumentBuilder();
+        Document mineralOccurrenceDocument = builder.parse(new ByteArrayInputStream(mineralOccurrenceResponse.getBytes("UTF-8")));
+
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xPath = factory.newXPath();
+        xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+        
+        try {
+            XPathExpression expr = xPath.compile("/wfs:FeatureCollection");
+            Node result = (Node)expr.evaluate(mineralOccurrenceDocument, XPathConstants.NODE);
+            return result.getAttributes().getNamedItem("numberOfFeatures").getTextContent();
+        } catch (Exception e) {
+            return "0";
+        }
     }
 }

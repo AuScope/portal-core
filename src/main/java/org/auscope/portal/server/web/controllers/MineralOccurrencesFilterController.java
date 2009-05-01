@@ -158,6 +158,9 @@ public class MineralOccurrencesFilterController {
                                                                       minCommodityAmountUOM,
                                                                       cutOffGrade,
                                                                       cutOffGradeUOM);
+                
+                if( MineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse).compareTo("0")==0 )
+                    return makeModelAndViewFailure("No results matched your query.");
             } else {
                 return makeModelAndViewFailure("No results matched your query.");
             }
