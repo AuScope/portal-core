@@ -195,14 +195,36 @@ function buildMiningActivityFilterForm(id, loadUrl, submitUrl, serviceUrl, succe
  */
 function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction, preSubmitFunction) {
     unitsOfMeasure = [
-            ['m', 'meter', 'length', 'urn:ogc:def:uom:UCUM::m'],
-            ['ha', 'hectare', 'a unit of surface area equal to 10,000 square meters', 'urn:ogc:def:uom:UCUM::ha'],
-            ['deg', 'degree', 'plane angle', 'urn:ogc:def:uom:UCUM::deg'],
-            ['t', 'tonne', 'mass', 'urn:ogc:def:uom:UCUM::t']
+            ['CRT', 'urn:ogc:def:uom:UCUM::%5Bcar_m%5D'],
+            ['CUB M/HA', 'urn:ogc:def:uom:UCUM::m3.har-1'],
+            ['CUB M', 'urn:ogc:def:uom:UCUM::m3'],
+            ['TONNE', 'urn:ogc:def:uom:UCUM::t'],
+            ['TONNE/M', 'urn:ogc:def:uom:UCUM::t.m-1'],
+            ['TONNE/100M', 'urn:ogc:def:uom:UCUM::t.hm-1'],
+            ['GM/TONNE', 'urn:ogc:def:uom:UCUM::g.t-1'],
+            ['KG/TONNE', 'urn:ogc:def:uom:UCUM::kg.t-1'],
+            ['MILL TONNE', 'urn:ogc:def:uom:UCUM::Mt'],
+            ['GM', 'urn:ogc:def:uom:UCUM::g'],
+            ['KG', 'urn:ogc:def:uom:UCUM::kg'],
+            ['M', 'urn:ogc:def:uom:UCUM::m'],
+            ['%', 'urn:ogc:def:uom:UCUM::%25'],
+            ['UKN', 'urn:ogc:def:nil:OGC::missing'],
+            ['SQ M', 'urn:ogc:def:uom:UCUM::m2'],
+            ['MA', 'urn:ogc:def:uom:UCUM::Ma'],
+            ['NOUNIT', 'urn:ogc:def:nil:OGC::inapplicable'],
+            ['PPM', 'urn:ogc:def:uom:UCUM::%5Bppm%5D'],
+            ['PPB', 'urn:ogc:def:uom:UCUM::%5Bppb%5D'],
+            ['MM', 'urn:ogc:def:uom:UCUM::mm'],
+            ['UM', 'urn:ogc:def:uom:UCUM::um'],
+            ['GCOUNT', 'urn:ogc:def:uom:UCUM::%7BGCOUNT%7D'],
+            ['HA', 'urn:ogc:def:uom:UCUM::har'],
+            ['MESH', 'urn:ogc:def:uom:UCUM::%5Bmesh_i%5D'],
+            ['SI', 'urn:ogc:def:uom:UCUM::%7BSI%7D'],
+            ['GM/CC', 'urn:ogc:def:uom:UCUM::g.cm-3']
         ];
 
     var unitOfMeasureStore = new Ext.data.SimpleStore({
-        fields: ['unitCode', 'unitLabel', 'unitDescription', 'urn'],
+        fields: ['unitLabel', 'urn'],
         data: unitsOfMeasure
     });
 
@@ -276,7 +298,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 fieldLabel: 'Min. Ore Amount',
                 name: 'minOreAmount'
             },  new Ext.form.ComboBox({
-                tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitLabel}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitLabel}. {unitDescription}</div></tpl>',
+                tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
                 name: 'minOreAmountUOMName',
                 hiddenName: 'minOreAmountUOM',
@@ -288,7 +310,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
-                displayField:'unitCode',
+                displayField:'unitLabel',
                 valueField:'urn'
             }),{
                 anchor: '100%',
@@ -296,7 +318,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 fieldLabel: 'Min. Commodity Amount',
                 name: 'minCommodityAmount'
             },  new Ext.form.ComboBox({
-                tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitLabel}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitLabel}. {unitDescription}</div></tpl>',
+                tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
                 name: 'minCommodityAmountUOMName',
                 hiddenName: 'minCommodityAmountUOM',
@@ -308,7 +330,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
-                displayField:'unitCode',
+                displayField:'unitLabel',
                 valueField:'urn'
             }),{
                 anchor: '100%',
@@ -316,7 +338,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 fieldLabel: 'Cut Off Grade',
                 name: 'cutOffGrade'
             },  new Ext.form.ComboBox({
-                tpl: '<tpl for="."><div ext:qtip="{unitCode}. {unitLabel}. {unitDescription}" class="x-combo-list-item">{unitCode}. {unitLabel}. {unitDescription}</div></tpl>',
+                tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
                 name: 'cutOffGradeUOMName',
                 hiddenName: 'cutOffGradeUOM',
@@ -328,7 +350,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
-                displayField:'unitCode',
+                displayField:'unitLabel',
                 valueField:'urn'
             })]
         }]
