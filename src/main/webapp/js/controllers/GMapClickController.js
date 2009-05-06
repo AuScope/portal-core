@@ -18,7 +18,7 @@ var gMapClickController = function(map, overlay, latlng, statusBar, viewport) {
             new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.getTitle(), overlay, overlay.description).getMarkerClickedFn()();
         }
         else if (overlay.description != null) {
-            overlay.openInfoWindowHtml(overlay.description, {autoScroll:true});
+            overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
         }
     }
     else if(latlng != null) { //geologic unit layer
