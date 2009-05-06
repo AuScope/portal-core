@@ -91,7 +91,7 @@
          <Placemark>
             <name><xsl:value-of select="$mineName"/></name>
             <description>
-               <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+               <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
                <tr><td>ID</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
                <![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]><xsl:value-of select="$mineName"/>
                <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
@@ -131,7 +131,7 @@
          <Placemark>
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
-               <![CDATA[</br><table border="1" cellspacing="1" cellpadding="2" width="100%">
+               <![CDATA[</br><table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
                <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
                <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
@@ -172,7 +172,7 @@
       <Placemark>
          <name><xsl:value-of select="./gml:name"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>
             <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
             <![CDATA[</td></tr></table>]]>            
@@ -209,7 +209,7 @@
       <Placemark>
          <name><xsl:value-of select="$resource_id"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" cellpadding="2" width="100%">
+            <![CDATA[</br><table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
             <tr><td>Id</td><td>]]><xsl:value-of select="$resource_id"/>
             <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./mo:type"/>
             <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./mo:classification/mo:MineralDepositModel/mo:mineralDepositGroup"/>
@@ -261,7 +261,7 @@
       <Placemark>
          <name><xsl:value-of select="@fid"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Station Id</td><td>]]><xsl:value-of select="./geodesy:station_id"/>
             <![CDATA[</td></tr><tr><td>Name</td><td>]]><xsl:value-of select="./geodesy:name"/>
             <![CDATA[</td></tr><tr><td>Url</td><td>]]><xsl:value-of select="./geodesy:url"/>
@@ -323,7 +323,7 @@
       <Placemark>
          <name><xsl:value-of select="@gml:id"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
             <![CDATA[</td></tr><tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>            
             <![CDATA[</td></tr></table>]]>
@@ -346,7 +346,7 @@
          <Placemark>
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
-               <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+               <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
                <tr><td>Id</td><td>]]><xsl:value-of select="./gml:name[2]"/>
                <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
@@ -385,7 +385,7 @@
       <Placemark>
          <name><xsl:value-of select="@gml:id"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Borehole Name</td><td>]]><xsl:value-of select="./gml:name"/>
             <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
             <![CDATA[</td></tr><tr><td>Project</td><td>]]><xsl:value-of select="./gml:metaDataProperty/@xlink:title"/>
@@ -425,7 +425,7 @@
       <Placemark>
          <name><xsl:value-of select="./gml:name"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
             <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="./sa:position/gml:Point/gml:pos"/>            
             <![CDATA[</td></tr></table>]]>
