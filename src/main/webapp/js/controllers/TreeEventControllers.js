@@ -197,9 +197,13 @@ var treeNodeOnClickController = function(node, event, viewport, filterPanel) {
  */
 var showNodesFilterPanel = function(node, filterPanel) {
     try {
-        filterPanel.add(node.attributes.filterPanel);
-        filterPanel.doLayout();
-        filterPanel.getLayout().setActiveItem(node.id);
+        if(node.getUI().isChecked()) {
+            filterPanel.add(node.attributes.filterPanel);
+            filterPanel.doLayout();
+            filterPanel.getLayout().setActiveItem(node.id);
+        } else {
+            filterPanel.getLayout().setActiveItem(0);
+        }
     } catch(err) {
         filterPanel.getLayout().setActiveItem(0);  
     }

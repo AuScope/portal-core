@@ -19,6 +19,7 @@ var gMapClickController = function(map, overlay, latlng, statusBar, viewport) {
         }
         else if (overlay.description != null) {
             overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
+               // overlay.openInfoWindowHtml(overlay.description);
         }
     }
     else if(latlng != null) { //geologic unit layer
@@ -28,6 +29,7 @@ var gMapClickController = function(map, overlay, latlng, statusBar, viewport) {
         GDownloadUrl(url, function(response, pResponseCode) {
             if(pResponseCode == 200) {
                 map.openInfoWindowHtml(latlng, response, {autoScroll:true});
+                //map.openInfoWindowHtml(latlng, response);
             }
 
         });
