@@ -35,6 +35,7 @@ var gMapClickController = function(map, overlay, latlng, statusBar, viewport) {
         });
     }
 
+
     statusBar.clearStatus();
     statusBar.setVisible(false);
     viewport.doLayout();
