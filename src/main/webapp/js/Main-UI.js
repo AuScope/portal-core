@@ -6,8 +6,39 @@ Ext.onReady(function() {
     var map;
     var downloadUrls = new Hashtable();
 
-    //this tree holds all of the data sources
-    var tree = new Ext.tree.TreePanel({
+    var dataSourcesStore = new Ext.data.Store({
+        //baseParams: {serviceUrl: serviceUrl},
+        proxy: new Ext.data.HttpProxy({url: '/getDataSources.do'}),
+        reader: new Ext.data.ArrayReader({}, [
+            {name:'title'},
+            {name:'description'}
+        ])
+    });
+
+    var tree = new Ext.grid.GridPanel({
+        store: dataSourcesStore,
+        columns: [
+            {id:'title',header: "Title", width: 160, sortable: true, dataIndex: 'title'}
+            //{header: "Price", width: 75, sortable: true, dataIndex: 'price'},
+            //{header: "Change", width: 75, sortable: true, dataIndex: 'change'},
+            //{header: "% Change", width: 75, sortable: true, dataIndex: 'pctChange'},
+            //{header: "Last Updated", width: 85, sortable: true, dataIndex: 'lastChange'}
+        ],
+        stripeRows: true,
+        autoExpandColumn: 'title',
+
+        title: 'Themes',
+        region:'north',
+        split: true,
+        height: 300,
+        autoScroll: true
+    });
+
+
+    /**
+     * This tree holds all of the data sources
+     */
+    /*var tree = new Ext.tree.TreePanel({
         title: 'Themes',
         region:'north',
         split: true,
@@ -22,9 +53,11 @@ Ext.onReady(function() {
             draggable:false,
             id:'root'
         }
-    });
+    });*/
 
-    //used to show extra details for querying services
+    /**
+     * Used to show extra details for querying services
+     */
     var filterPanel = new Ext.Panel({
         title: "Filter Properties",
         region: 'center',
@@ -34,7 +67,9 @@ Ext.onReady(function() {
         items: [{html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'}]
     });
 
-    //buttons for things like downloading datasets
+    /**
+     * Buttons for things like downloading datasets
+     */
     var buttonsPanel = new Ext.FormPanel({
         region: 'south',
         autoScroll:true,
@@ -43,7 +78,9 @@ Ext.onReady(function() {
         buttons: [{text: "Download Datasets", handler: function() {downloadController(downloadUrls);} }]
     });
 
-    //used as a placeholder for the tree and details panel on the left of screen
+    /**
+     * Used as a placeholder for the tree and details panel on the left of screen
+     */
     var westPanel = {
         layout: 'border',
         region:'west',
@@ -55,10 +92,15 @@ Ext.onReady(function() {
         items:[tree, filterPanel, buttonsPanel]
     }
 
-    //this center panel will hold the google maps
+    /**
+     * This center panel will hold the google maps
+     */
+
     var centerPanel = new Ext.Panel({region:"center", margins:'100 0 0 0', cmargins:'100 0 0 0'});
 
-    //used for notifications of activity
+    /**
+     * Used for notifications of activity
+     */
     var statusBar = new Ext.StatusBar({
         region: "south",
         id: 'my-status',
@@ -73,7 +115,9 @@ Ext.onReady(function() {
         iconCls: 'ready-icon'
     });
 
-    //add all the panels to the viewport
+    /**
+     * Add all the panels to the viewport
+     */
     var viewport = new Ext.Viewport({
         layout:'border',
         items:[westPanel, centerPanel, statusBar]
@@ -109,8 +153,8 @@ Ext.onReady(function() {
     theglobalexml = new GeoXml("theglobalexml", map, null, null);
 
     //event handlers and listeners
-    tree.on('click', function(node, event) { treeNodeOnClickController(node, event, viewport, filterPanel); });
-    tree.on('checkchange', function(node, isChecked) { treeCheckChangeController(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel); });
+    //tree.on('click', function(node, event) { treeNodeOnClickController(node, event, viewport, filterPanel); });
+    //tree.on('checkchange', function(node, isChecked) { treeCheckChangeController(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel); });
 
     //when a person clicks on a marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) { gMapClickController(map, overlay, latlng, statusBar, viewport); });

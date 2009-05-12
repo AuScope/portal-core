@@ -56,5 +56,8 @@ public class CSWRecord {
     	}
     	else return "";
     }
-    
+
+    public MDMetadataDocument getMDDocument() {
+        return this.metadataDoc;
+    }
 }
