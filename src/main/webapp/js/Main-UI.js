@@ -15,17 +15,36 @@ Ext.onReady(function() {
         ])
     });
 
+    dataSourcesStore.load();
+
+    var expander = new Ext.grid.RowExpander({
+        tpl : new Ext.Template(
+            '<p><b>Description:</b> {description}</p><br>'
+        )
+    });
+    
     var tree = new Ext.grid.GridPanel({
         store: dataSourcesStore,
         columns: [
+            expander,
             {id:'title',header: "Title", width: 160, sortable: true, dataIndex: 'title'}
             //{header: "Price", width: 75, sortable: true, dataIndex: 'price'},
             //{header: "Change", width: 75, sortable: true, dataIndex: 'change'},
             //{header: "% Change", width: 75, sortable: true, dataIndex: 'pctChange'},
             //{header: "Last Updated", width: 85, sortable: true, dataIndex: 'lastChange'}
         ],
+        bbar: [{
+            text:'Add Layer to Map',
+            tooltip:'Add Layer to Map',
+            iconCls:'add',
+            handler: function() {
+                alert(tree.getSelectionModel().getSelected().get('title'));
+            }
+        }],
+
         stripeRows: true,
         autoExpandColumn: 'title',
+        plugins: expander,
 
         title: 'Themes',
         region:'north',
@@ -58,13 +77,43 @@ Ext.onReady(function() {
     /**
      * Used to show extra details for querying services
      */
-    var filterPanel = new Ext.Panel({
+    /*var filterPanel = new Ext.Panel({
         title: "Filter Properties",
         region: 'center',
         width: '100%',
         layout: 'card',
         activeItem: 0,
         items: [{html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'}]
+    });*/
+    
+    var filterPanel = new Ext.grid.GridPanel({
+        store: dataSourcesStore,
+        columns: [
+            expander,
+            {id:'title',header: "Title", width: 160, sortable: true, dataIndex: 'title'}
+            //{header: "Price", width: 75, sortable: true, dataIndex: 'price'},
+            //{header: "Change", width: 75, sortable: true, dataIndex: 'change'},
+            //{header: "% Change", width: 75, sortable: true, dataIndex: 'pctChange'},
+            //{header: "Last Updated", width: 85, sortable: true, dataIndex: 'lastChange'}
+        ],
+        bbar: [{
+            text:'Add Layer to Map',
+            tooltip:'Add Layer to Map',
+            iconCls:'add',
+            handler: function() {
+                alert(tree.getSelectionModel().getSelected().get('title'));
+            }
+        }],
+
+        stripeRows: true,
+        autoExpandColumn: 'title',
+        plugins: expander,
+
+        title: 'Themes',
+        region:'north',
+        split: true,
+        height: 300,
+        autoScroll: true
     });
 
     /**
