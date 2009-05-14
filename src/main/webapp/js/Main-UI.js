@@ -38,13 +38,20 @@ Ext.onReady(function() {
             tooltip:'Add Layer to Map',
             iconCls:'add',
             handler: function() {
-                alert(tree.getSelectionModel().getSelected().get('title'));
+                //alert(tree.getSelectionModel().getSelected().get('title'));
+                layersStore.add(tree.getSelectionModel().getSelected());
+                /*layersStore.add(new Layer({
+                    title: tree.getSelectionModel().getSelected().get('title'),
+                    description: tree.getSelectionModel().getSelected().get('description'),
+                    layerVisible: false
+                }));*/
             }
         }],
 
         stripeRows: true,
         autoExpandColumn: 'title',
-        plugins: expander,
+        plugins: [expander],
+        viewConfig: {scrollOffset: 0},
 
         title: 'Themes',
         region:'north',
@@ -85,32 +92,76 @@ Ext.onReady(function() {
         activeItem: 0,
         items: [{html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'}]
     });*/
-    
+
+    /*var Layer = Ext.data.Record.create([
+        {name: 'title'},
+        {name: 'description'},
+        {name: 'layerVisible', type:'bool'}
+    ]);*/
+
+    var layersStore = new Ext.data.Store({
+        //baseParams: {serviceUrl: serviceUrl},
+        //proxy: new Ext.data.HttpProxy({url: '/getDataSources.do'}),
+        reader: new Ext.data.ArrayReader({}, [
+            {name:'title'},
+            {name:'description'},
+            {name:'layerVisible'}
+        ])
+    });
+
+    // custom column plugin example
+    var checkColumn = new Ext.grid.CheckColumn({
+       header: "Visible",
+       dataIndex: 'layerVisible',
+       width: 55,
+       handler: function() {
+            var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
+            tileLayer.baseURL=node.attributes.wmsUrl;
+            tileLayer.layers=node.id;
+            //TODO: remove code specific to feature types and styles specific to GSV
+            if(node.id == 'gsmlGeologicUnit')
+                tileLayer.styles='ColorByLithology';
+            if(node.id == '7')
+                tileLayer.styles='7';
+            node.attributes.tileOverlay = new GTileLayerOverlay(tileLayer);
+            map.addOverlay(node.attributes.tileOverlay);
+       }
+    });
+
+    var expander2 = new Ext.grid.RowExpander({
+        tpl : new Ext.Template(
+            '<p><b>Description:</b> {description}</p><br>'
+        )
+    });
+
     var filterPanel = new Ext.grid.GridPanel({
-        store: dataSourcesStore,
+        store: layersStore,
         columns: [
-            expander,
-            {id:'title',header: "Title", width: 160, sortable: true, dataIndex: 'title'}
+            expander2,
+            {id:'title',header: "Title", width: 160, sortable: true, dataIndex: 'title'},
+            checkColumn
             //{header: "Price", width: 75, sortable: true, dataIndex: 'price'},
             //{header: "Change", width: 75, sortable: true, dataIndex: 'change'},
             //{header: "% Change", width: 75, sortable: true, dataIndex: 'pctChange'},
             //{header: "Last Updated", width: 85, sortable: true, dataIndex: 'lastChange'}
         ],
         bbar: [{
-            text:'Add Layer to Map',
-            tooltip:'Add Layer to Map',
-            iconCls:'add',
+            text:'Remove Layer',
+            tooltip:'Remove Layer',
+            iconCls:'remove',
             handler: function() {
-                alert(tree.getSelectionModel().getSelected().get('title'));
+                layersStore.remove(filterPanel.getSelectionModel().getSelected());
             }
         }],
 
+        plugins: [checkColumn, expander2],
+
         stripeRows: true,
         autoExpandColumn: 'title',
-        plugins: expander,
-
-        title: 'Themes',
-        region:'north',
+        viewConfig: {scrollOffset: 0},
+        
+        title: 'Layers',
+        region:'center',
         split: true,
         height: 300,
         autoScroll: true
@@ -209,6 +260,41 @@ Ext.onReady(function() {
     GEvent.addListener(map, "click", function(overlay, latlng) { gMapClickController(map, overlay, latlng, statusBar, viewport); });
 
 });
+
+Ext.grid.CheckColumn = function(config){
+    Ext.apply(this, config);
+    if(!this.id){
+        this.id = Ext.id();
+    }
+    this.renderer = this.renderer.createDelegate(this);
+};
+
+Ext.grid.CheckColumn.prototype ={
+    init : function(grid){
+        this.grid = grid;
+        this.grid.on('render', function(){
+            var view = this.grid.getView();
+            view.mainBody.on('mousedown', this.onMouseDown, this);
+        }, this);
+    },
+
+    onMouseDown : function(e, t){
+        if(t.className && t.className.indexOf('x-grid3-cc-'+this.id) != -1){
+            e.stopEvent();
+            var index = this.grid.getView().findRowIndex(t);
+            var record = this.grid.store.getAt(index);
+            record.set(this.dataIndex, !record.data[this.dataIndex]);
+
+            //call the user defined check handler
+            this.handler();
+        }
+    },
+
+    renderer : function(v, p, record){
+        p.css += ' x-grid3-check-col-td';
+        return '<div class="x-grid3-check-col'+(v?'-on':'')+' x-grid3-cc-'+this.id+'">&#160;</div>';
+    }
+};
 
 
 
