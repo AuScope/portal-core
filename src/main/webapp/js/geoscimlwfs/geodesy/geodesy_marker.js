@@ -110,7 +110,7 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description)
 GeodesyMarker.prototype.stationId = null;
 
 /**
-* The base url to be queried to get the renix file data for the station.<br> 
+* The base url to be queried to get the renix file data for the station.<br>
 * Need to add the <b>request</b> and <b>typeName</b> parameters to this url.
 * @type String
 */
@@ -394,7 +394,8 @@ function GeodesyMarker_markerClicked()
   * Renix Files contains a scrollable list of Renix file Urls for the station.
   */
   var label1 = 'Main';
-  var label2 = 'Renix Files';
+  //note: this is the correct spelling, 'renix' used throughout the code is the incorrect spelling  
+  var label2 = 'Rinex Files';
   var summaryHtml = "";
   var renixFilesHtml = "";
     

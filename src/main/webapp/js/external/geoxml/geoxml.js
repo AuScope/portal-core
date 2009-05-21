@@ -647,13 +647,13 @@ GeoXml.prototype.finishPolygonJSON = function(op, idx, updatebound, lastpoly) {
     GEvent.addListener(p, "click", function(point, overlay) {
         if (!point && this.geoxml.alwayspop) {
             bounds = this.geoxml.multibounds[this.geomindex];
-            this.map.setCenter(bounds.getCenter(), this.map.getBoundsZoomLevel(bounds)-3);
+            this.map.setCenter(bounds.getCenter(), (this.map.getBoundsZoomLevel(bounds) >= 18 ? this.map.getBoundsZoomLevel(bounds)-3 : this.map.getBoundsZoomLevel(bounds)));
             point = bounds.getCenter();
         }
         if (!point) {
             this.geoxml.mb.showMess("Zooming to " + p.title, 3000);
             bounds = this.geoxml.multibounds[this.geomindex];
-            this.map.setZoom(this.map.getBoundsZoomLevel(bounds)-3);
+            this.map.setZoom((this.map.getBoundsZoomLevel(bounds) >= 18 ? this.map.getBoundsZoomLevel(bounds)-3 : this.map.getBoundsZoomLevel(bounds)));
             this.map.panTo(bounds.getCenter());
         } else {
             if (this.geoxml.clickablepolys) {
@@ -810,7 +810,8 @@ GeoXml.prototype.handlePlaceObj = function(num, max, idx, lastlinename, depth) {
             that.progress--;
             if (that.progress <= 0) {
                 if (!that.opts.nozoom) {
-                    that.map.setZoom(that.map.getBoundsZoomLevel(that.bounds)-3);
+                    that.map.setZoom((that.map.getBoundsZoomLevel(that.bounds) >= 18 ? that.map.getBoundsZoomLevel(that.bounds)-3 : that.map.getBoundsZoomLevel(that.bounds)));
+                    //that.map.setZoom(that.map.getBoundsZoomLevel(that.bounds)-3);
                     that.map.setCenter(that.bounds.getCenter());
                 }
                 GEvent.trigger(that, "parsed");
@@ -2014,7 +2015,8 @@ GeoXml.prototype.processKML = function(node, marks, title, sbid, depth, paren) {
             var html = ol.desc;
             var thismap = this.map;
             GEvent.addListener(ol, "zoomto", function() {
-                thismap.setZoom(thismap.getBoundsZoomLevel(this.getBounds())-3);
+                thismap.setZoom((thismap.getBoundsZoomLevel(this.getBounds()) >= 18 ? thismap.getBoundsZoomLevel(this.getBounds())-3 : thismap.getBoundsZoomLevel(this.getBounds())));
+                //thismap.setZoom(thismap.getBoundsZoomLevel(this.getBounds())-3);
                 thismap.panTo(this.getBounds().getCenter());
             });
             this.overlayman.AddMarker(ol, title, idx, parm, true, true);
@@ -2028,7 +2030,8 @@ GeoXml.prototype.processKML = function(node, marks, title, sbid, depth, paren) {
             var html = desc;
             var thismap = this.map;
             GEvent.addListener(ground, "zoomto", function() {
-                thismap.setZoom(thismap.getBoundsZoomLevel(ground.getBounds())-3);
+                thismap.setZoom((thismap.getBoundsZoomLevel(ground.getBounds()) >= 18 ? thismap.getBoundsZoomLevel(ground.getBounds())-3 : thismap.getBoundsZoomLevel(ground.getBounds())));
+                //thismap.setZoom(thismap.getBoundsZoomLevel(ground.getBounds())-3);
                 thismap.panTo(ground.getBounds().getCenter());
             });
             this.overlayman.folderBounds[idx].extend(ground.getBounds().getSouthWest());
@@ -2386,7 +2389,8 @@ GeoXml.prototype.processing = function(xmlDoc, title, latlon, desc, sbid) {
             that.mb.showMess("Finished Parsing", 1000);
         }
         if (!that.opts.nozoom && !that.basesidebar) {
-            that.map.setZoom(that.map.getBoundsZoomLevel(that.bounds)-3);
+            that.map.setZoom((that.map.getBoundsZoomLevel(that.bounds) >= 18 ? that.map.getBoundsZoomLevel(that.bounds)-3 : that.map.getBoundsZoomLevel(that.bounds)));
+            //that.map.setZoom(that.map.getBoundsZoomLevel(that.bounds)-3);
             that.map.setCenter(that.bounds.getCenter());
         }
     }
@@ -2869,7 +2873,8 @@ Clusterer.prototype.AddMarker = function(marker, title, idx, sidebar, visible, f
 };
 Clusterer.prototype.zoomToFolder = function(idx) {
     var bounds = this.folderBounds[idx];
-    this.map.setZoom(this.map.getBoundsZoomLevel(bounds)-3);
+    this.map.setZoom((this.map.getBoundsZoomLevel(bounds) >= 18 ? this.map.getBoundsZoomLevel(bounds)-3 : this.map.getBoundsZoomLevel(bounds)));
+    //this.map.setZoom(this.map.getBoundsZoomLevel(bounds)-3);
     this.map.panTo(bounds.getCenter());
 };
 Clusterer.prototype.RemoveMarker = function(marker) {
@@ -2966,7 +2971,8 @@ Clusterer.Display = function(clusterer) {
             clusterer.paren.mb.showMess("Loaded " + count + "  GeoXML elements in " + sec, 5000);
             clusterer.paren.ParseURL();
             if (!clusterer.paren.opts.nozoom) {
-                clusterer.paren.map.setZoom(clusterer.paren.map.getBoundsZoomLevel(clusterer.paren.bounds)-3);
+                clusterer.paren.map.setZoom(clusterer.paren.map.getBoundsZoomLevel(clusterer.paren.bounds) >= 18 ? clusterer.paren.map.getBoundsZoomLevel(clusterer.paren.bounds)-3 : clusterer.paren.map.getBoundsZoomLevel(clusterer.paren.bounds));
+                //clusterer.paren.map.setZoom(clusterer.paren.map.getBoundsZoomLevel(clusterer.paren.bounds)-3);
                 clusterer.paren.map.setCenter(clusterer.paren.bounds.getCenter());
             }
         }
