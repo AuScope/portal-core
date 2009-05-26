@@ -54,7 +54,7 @@ public class MineralOccurrencesResponseHandler {
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
-        XPathExpression expr = xPath.compile("/wfs:FeatureCollection/gml:featureMember/mo:Commodity");
+        XPathExpression expr = xPath.compile("//mo:Commodity");
         NodeList commodityNodes = (NodeList)expr.evaluate(commodityDocument, XPathConstants.NODESET);
         ArrayList<Commodity> commodities = new ArrayList<Commodity>();
 
