@@ -7,6 +7,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.Transformer;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,7 +25,7 @@ public class GmlToKml {
     * @param inXSLT XSLT stylesheet
     * @return 
     */   
-   public static String convert(String geoXML, InputStream inXSLT) {
+   public String convert(String geoXML, InputStream inXSLT) {
       //log.debug(geoXML);
       
       StringWriter sw = new StringWriter();
@@ -39,5 +40,15 @@ public class GmlToKml {
 
       return sw.toString();
       
+   }
+
+    /**
+     * Utility method specific to Auscope Portal
+      * @param geoXML
+     * @param httpRequest
+     */
+   public String convert(String geoXML, HttpServletRequest httpRequest) {
+        InputStream inXSLT = httpRequest.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
+        return this.convert(geoXML, inXSLT);
    }
 }

@@ -65,13 +65,4 @@ public class TestMiningActivityFilter {
                 miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
     }
 
-    @Test
-    public void testAll() {
-
-    }
-
-    @Test
-    public void testAllWithNoDate() {
-
-    }
 }

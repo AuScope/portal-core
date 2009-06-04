@@ -16,6 +16,7 @@ import junit.framework.Assert;
  * Time: 10:24:29 AM
  */
 public class TestMineralOccurrenceResponseHandler {
+    MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
 
     @Test
     public void testHandleMineResponse() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
@@ -29,7 +30,7 @@ public class TestMineralOccurrenceResponseHandler {
         }
         reader.close();
 
-        Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineGetFeatureResponseXML.toString());
+        Collection<Mine> mines = mineralOccurrencesResponseHandler.getMines(mineGetFeatureResponseXML.toString());
 
         Assert.assertEquals("There are 2 mines", 2, mines.size());
         Assert.assertEquals("The first one is Good Hope", "Good Hope", ((Mine)mines.toArray()[0]).getMineNamePreffered());
@@ -49,7 +50,7 @@ public class TestMineralOccurrenceResponseHandler {
         reader.close();
 
         Collection<Commodity> commodities = 
-            MineralOccurrencesResponseHandler.getCommodities(commodityGetFeatureResponseXML.toString());
+            mineralOccurrencesResponseHandler.getCommodities(commodityGetFeatureResponseXML.toString());
 
         Assert.assertEquals("There are 2 commodities", 2, commodities.size());
         Assert.assertEquals("The first one's name is Gold", "Gold", ((Commodity)commodities.toArray()[0]).getCommodityName());
@@ -69,7 +70,7 @@ public class TestMineralOccurrenceResponseHandler {
         reader.close();
 
         String numberOfFeatures = 
-            MineralOccurrencesResponseHandler.getNumberOfFeatures(commodityGetFeatureResponseXML.toString());
+            mineralOccurrencesResponseHandler.getNumberOfFeatures(commodityGetFeatureResponseXML.toString());
         
         Assert.assertEquals("There are 2 features", "2", numberOfFeatures);
     }
@@ -87,7 +88,7 @@ public class TestMineralOccurrenceResponseHandler {
         reader.close();
 
         String numberOfFeatures = 
-            MineralOccurrencesResponseHandler.getNumberOfFeatures(getFeatureResponseXML.toString());
+            mineralOccurrencesResponseHandler.getNumberOfFeatures(getFeatureResponseXML.toString());
         
         Assert.assertEquals("There are 0 features", "0", numberOfFeatures);
     }

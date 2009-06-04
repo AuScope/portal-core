@@ -88,8 +88,8 @@ public class MineralOccurrence {
             }
             return commodityDescriptionURNs;
         } catch (Exception e) {
-            // TODO better handling
-            return null;
+            //return an empty list
+            return new ArrayList<String>();
         }
     }
 }

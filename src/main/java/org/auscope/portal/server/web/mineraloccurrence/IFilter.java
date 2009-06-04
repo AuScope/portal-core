@@ -6,5 +6,12 @@ package org.auscope.portal.server.web.mineraloccurrence;
  * Time: 1:58:36 PM
  */
 public interface IFilter {
+
+    /**
+     * The implementation of this method should return a valid
+     * ogc:Filter xml blob - http://www.opengeospatial.org/standards/filter
+     *
+     * @return String
+     */
     public String getFilterString();
 }

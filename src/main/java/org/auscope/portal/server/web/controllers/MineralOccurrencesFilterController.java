@@ -6,18 +6,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.util.XmlMerge;
-import org.auscope.portal.server.web.view.JSONView;
-import org.auscope.portal.server.web.mineraloccurrence.Commodity;
-import org.auscope.portal.server.web.mineraloccurrence.CommodityFilter;
-import org.auscope.portal.server.web.mineraloccurrence.MineFilter;
-import org.auscope.portal.server.web.mineraloccurrence.Mine;
-import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrencesResponseHandler;
-import org.auscope.portal.server.web.mineraloccurrence.MiningActivityFilter;
-import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrenceFilter;
+import org.auscope.portal.server.web.view.JSONModelAndView;
+import org.auscope.portal.server.web.mineraloccurrence.*;
 import org.auscope.portal.server.web.HttpServiceCaller;
+import org.auscope.portal.server.web.ErrorMessages;
 import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
+import org.apache.commons.httpclient.HttpClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpressionException;
@@ -43,74 +38,119 @@ public class MineralOccurrencesFilterController {
     private static String ALL_MINES = "All Mines..";
 
     private HttpServiceCaller serviceCaller;
+    private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
+    private MineralOccurrenceServiceClient mineralOccurrenceServiceClient;
+    private GmlToKml gmlToKml;
 
+    /**
+     * Initialise fields
+     */
     public MineralOccurrencesFilterController() {
-        this.serviceCaller = new HttpServiceCaller();
+        this.serviceCaller = new HttpServiceCaller(new HttpClient());
+        this.mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
+        this.mineralOccurrenceServiceClient = new MineralOccurrenceServiceClient(new HttpServiceCaller(new HttpClient()), new MineralOccurrencesResponseHandler() );
+        this.gmlToKml = new GmlToKml();
     }
 
-    public MineralOccurrencesFilterController(HttpServiceCaller serviceCaller) {
+    /**
+     * Initialise fields
+     * 
+     * @param serviceCaller used to invoke a http service
+     * @param mineralOccurrencesResponseHandler needed to interperate a MineralOccurrence GML response
+     */
+    public MineralOccurrencesFilterController(HttpServiceCaller serviceCaller,
+                                              MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler,
+                                              MineralOccurrenceServiceClient mineralOccurrenceServiceClient,
+                                              GmlToKml gmlToKml) {
         this.serviceCaller = serviceCaller;
+        this.mineralOccurrencesResponseHandler = mineralOccurrencesResponseHandler;
+        this.mineralOccurrenceServiceClient = mineralOccurrenceServiceClient;
+        this.gmlToKml = gmlToKml;
     }
 
-    @RequestMapping("/getMineNames.do")
-    public ModelAndView populateFilterPanel(@RequestParam("serviceUrl") String serviceUrl,
-                                            ModelMap model) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-        /*
-        The following code will make json look like this
-        {"success":true,
-            "data":[
-                {"mineDisplayName":"Balh1"},
-                {"mineDisplayName":"Blah2"}
-                ]
-         }
-         */
-
-        //make mine names list
-        Map mineNameAll = new HashMap();
-        mineNameAll.put("mineDisplayName", ALL_MINES);
-
-
-        String mineResponse = doMineQuery(serviceUrl, ""); // empty mine name to get all mines
-        Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
-
-        JSONArray recordsArray = new JSONArray();
-        recordsArray.add(mineNameAll);
-
-        Iterator<Mine> it = mines.iterator();
-        while( it.hasNext() )
-        {
-            Mine mine = it.next();
-            Map<String, String> mineName = new HashMap<String, String>();
-            mineName.put("mineDisplayName", mine.getMineNamePreffered());
-            recordsArray.add(mineName);
+    /**
+     * Gets all of the mine names from a given service. It then builds a JSON response as follows:
+     *
+     *  {"success":true,
+         "data":[
+            {"mineDisplayName":"Balh1"},
+            {"mineDisplayName":"Blah2"}
+            ]
         }
+     *
+     * @param serviceUrl
+     * @param model
+     * @return
+     * @throws IOException
+     * @throws SAXException
+     * @throws XPathExpressionException
+     * @throws ParserConfigurationException
+     */
+    @RequestMapping("/getMineNames.do")
+    public ModelAndView getMineNames(@RequestParam("serviceUrl") String serviceUrl,
+                                                                 ModelMap model) {
+        try {
+            //get all of the mines
+            Collection<Mine> mines = this.mineralOccurrenceServiceClient.getAllMines(serviceUrl);
 
-        model.put("success", true);
-        model.put("data", recordsArray);
+            //create a single all mines element to add to the top of the list
+            Map mineNameAll = new HashMap() {{
+                put("mineDisplayName", ALL_MINES);
+            }};
 
-        Map<String, HashMap<String, Comparable>> jsonViewModel = new HashMap<String, HashMap<String, Comparable>>();
-        jsonViewModel.put("JSON_OBJECT", model);
+            //create an array to hold the list of mines
+            JSONArray recordsArray = new JSONArray();
+            recordsArray.add(mineNameAll);
 
-        //TODO: query the given service url for all of the mines and get their names, then send that back as json
+            //iterate through the mine names and add them to the JSON response
+            Iterator<Mine> it = mines.iterator();
+            while( it.hasNext() )
+            {
+                Mine mine = it.next();
+                Map<String, String> mineName = new HashMap<String, String>();
+                mineName.put("mineDisplayName", mine.getMineNamePreffered());
+                recordsArray.add(mineName);
+            }
 
-        return new ModelAndView(new JSONView(), jsonViewModel);
+            model.put("data", recordsArray);
+            model.put("success", true);
+
+            return new JSONModelAndView(model);
+        } catch (Exception e) {
+            logger.error(e);
+
+            //if there is an error then report a nice message to the user
+            return this.makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED);
+        }
     }
 
+    /**
+     * Performs a filter query on a given service, then converts the GML response into KML and returns
+     * 
+     * @param serviceUrl
+     * @param mineName
+     * @param request
+     * @return
+     */
     @RequestMapping("/doMineFilter.do")
     public ModelAndView doMineFilter(
             @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("mineName") String mineName,
             HttpServletRequest request) {
-
-        //TODO: find a better place for this pre processing of strings!
-        if(mineName.equals(ALL_MINES)) mineName = "";
-
         try {
-            String mineResponse = doMineQuery(serviceUrl, mineName);
-            return makeModelAndViewSuccess(convertToKML(mineResponse, request));
-        } catch (IOException e) {
+            String kmlBlob;
+
+            if(mineName.equals(ALL_MINES))//get all mines
+                kmlBlob = gmlToKml.convert(this.mineralOccurrenceServiceClient.getAllMinesGML(serviceUrl), request);
+            else
+                kmlBlob = gmlToKml.convert(this.mineralOccurrenceServiceClient.getMineWithSpecifiedNameGML(serviceUrl, mineName), request);
+
+            return makeModelAndViewKML(kmlBlob);
+        } catch(Exception e) {
             logger.error(e);
-            return makeModelAndViewFailure("An error occurred when performing this operation. Please try a different filter request.");
+            
+            //send a nice message
+            return this.makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
         }
     }
 
@@ -139,7 +179,7 @@ public class MineralOccurrencesFilterController {
             String mineralOccurrenceResponse = "";
             
             Collection<Commodity> commodities =
-                MineralOccurrencesResponseHandler.getCommodities(commodityResponse);
+                mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
             
             if( commodities.size() >=1 )
             {
@@ -159,13 +199,13 @@ public class MineralOccurrencesFilterController {
                                                                       cutOffGrade,
                                                                       cutOffGradeUOM);
                 
-                if( MineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse).compareTo("0")==0 )
+                if( mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse).compareTo("0")==0 )
                     return makeModelAndViewFailure("No results matched your query.");
             } else {
                 return makeModelAndViewFailure("No results matched your query.");
             }
 
-            return makeModelAndViewSuccess(convertToKML(mineralOccurrenceResponse, request));
+            return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request));
 
         } catch(Exception e) {
             logger.error(e);
@@ -194,7 +234,7 @@ public class MineralOccurrencesFilterController {
             String mineResponse = doMineQuery(serviceUrl, mineName);
             String miningActivityResponse = "";
 
-            Collection<Mine> mines = MineralOccurrencesResponseHandler.getMines(mineResponse);
+            Collection<Mine> mines = mineralOccurrencesResponseHandler.getMines(mineResponse);
 
             if( mines.size() >=1 ) {
                 //iterate through and build up a string arrray of mine uris
@@ -217,9 +257,9 @@ public class MineralOccurrencesFilterController {
                 return makeModelAndViewFailure("No results matched your query.");
             }
 
-            //return makeModelAndViewSuccess(convertToKML(mineResponse, miningActivityResponse));
+            //return makeModelAndViewKML(convertToKML(mineResponse, miningActivityResponse));
             System.out.println("OK");
-            return makeModelAndViewSuccess(convertToKML(miningActivityResponse, request));
+            return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request));
 
         } catch(Exception e) {
             System.out.println("failed");
@@ -228,25 +268,31 @@ public class MineralOccurrencesFilterController {
         }
     }
 
-    private String doMineQuery(String serviceUrl, String mineName) throws IOException {
-        //URL service = new URL(URLEncoder.encode(serviceUrl + new MineFilter(mineName).getFilterString(), "UTF-8"));
+    private String doMineQuery(String serviceUrl, String mineName) throws Exception {
+        //ogc filter builder for mo:Mine
+        MineFilter mineFilter = null;
 
-        MineFilter mineFilter = new MineFilter(mineName);
+        //If there is no specified mine name, then that mean Get All Mines, thus we don't need a filter
+        if(mineName != null || !mineName.equals(""))
+            mineFilter = new MineFilter(mineName);
 
-        return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, mineFilter.getFilterString()));
+        //call the service. if the mineFilter is null then we just send an empty filter string 
+        return serviceCaller.callGetMethod(serviceCaller.constructWFSGetFeatureMethod(serviceUrl, "mo:Mine", (mineFilter == null ? "" : mineFilter.getFilterString())));
     }
 
     private String doCommodityQuery(String serviceUrl, String commodityGroup, String commodityName) throws IOException {
         CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
 
-        return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, commodityFilter.getFilterString()));
+        return null; //TODO: fix
+        //return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, commodityFilter.getFilterString()));
     }
 
     private String doMiningActivityQuery(String serviceUrl, String[] mineNameURIs, String startDate, String endDate, String oreProcessed, String producedMaterial, String cutOffGrade, String production) throws IOException {
 
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURIs, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
-        return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, miningActivityFilter.getFilterString()));
+        return null; //TODO: fix
+        //return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
     private String doMineralOccurrenceQuery(String serviceUrl,
@@ -268,62 +314,37 @@ public class MineralOccurrencesFilterController {
                                         minCommodityAmountUOM,
                                         cutOffGrade,
                                         cutOffGradeUOM);
-
-        return serviceCaller.responseToString(
+        return null; //TODO: fix
+        /*return serviceCaller.responseToString(
                    serviceCaller.callHttpUrlPost(
                        serviceUrl,
-                       mineralOccurrenceFilter.getFilterString()));
+                       mineralOccurrenceFilter.getFilterString()));*/
     }
 
-    public String convertToKML(String gmlString, HttpServletRequest request) {
-        String out = "";
-        InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
-        out = GmlToKml.convert(gmlString, inXSLT);
+    private ModelAndView makeModelAndViewKML(final String kmlBlob) {
+        final Map data = new HashMap() {{
+            put("kml", kmlBlob);
+        }};
 
-        /*System.out.println("KMLSTART-----");
-        System.out.println(out);
-        System.out.println("KMLEND-----");*/
+        ModelMap model = new ModelMap() {{
+            put("success", true);
+            put("data", data);
+        }};
 
-        return out;
+        return new JSONModelAndView(model);
     }
 
-    public String convertToKML(InputStream is1, InputStream is2, HttpServletRequest request) throws IOException, SAXException, ParserConfigurationException {
-       String out = "";
-       InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
-       out = GmlToKml.convert(XmlMerge.merge(is1, is2), inXSLT);
-
-        /*System.out.println("KMLSTART-----");
-        System.out.println(out);
-        System.out.println("KMLEND-----");*/
-
-       return out;
-    }
-
-    private ModelAndView makeModelAndViewSuccess(String kmlBlob) {
-        HashMap<String, Object> model = new HashMap<String, Object>();
-        model.put("success", true);
-
-        //JSONArray dataArray = new JSONArray();
-        Map<String, Serializable> data = new HashMap<String, Serializable>();
-        data.put("kml", kmlBlob);
-        //dataArray.add(data);
-
-        model.put("data", data);
-
-        Map<String, HashMap<String, Object>> jsonViewModel = new HashMap<String, HashMap<String, Object>>();
-        jsonViewModel.put("JSON_OBJECT", model);
-
-        return new ModelAndView(new JSONView(), jsonViewModel);
-    }
-
-    private ModelAndView makeModelAndViewFailure(String message) {
-        HashMap<String, Object> model = new HashMap<String, Object>();
-        model.put("success", false);
-        model.put("msg", message);
-
-        Map<String, HashMap<String, Object>> jsonViewModel = new HashMap<String, HashMap<String, Object>>();
-        jsonViewModel.put("JSON_OBJECT", model);
-
-        return new ModelAndView(new JSONView(), jsonViewModel);
+    /**
+     * Create a failure response
+     * @param message
+     * @return
+     */
+    private ModelAndView makeModelAndViewFailure(final String message) {
+        ModelMap model = new ModelMap() {{
+            put("success", false);
+            put("msg", message);
+        }};
+        
+        return new JSONModelAndView(model);
     }
 }

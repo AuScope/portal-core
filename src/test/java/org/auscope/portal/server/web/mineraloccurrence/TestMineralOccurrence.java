@@ -29,54 +29,92 @@ import org.xml.sax.SAXException;
  */
 public class TestMineralOccurrence {
 
-    private static MineralOccurrence mineralOccurrence;
-    private static XPath xPath;
+    private static MineralOccurrence validMineralOccurrence;
+    private static MineralOccurrence invalidMineralOccurrence;
 
     @BeforeClass
     public static void setup() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+        //create a valid mineral occurrence
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
         DocumentBuilder builder = domFactory.newDocumentBuilder();
-        Document mineralOccurrenceDocument = builder.parse(new ByteArrayInputStream(Util.loadXML("src/test/resources/mineralOccurrenceNode.xml").getBytes("UTF-8")));
+        Document mineralOccurrenceDocument = builder.parse(new ByteArrayInputStream(Util.loadXML("src/test/resources/mineralOccurrenceNodeValid.xml").getBytes("UTF-8")));
 
         XPathFactory factory = XPathFactory.newInstance();
-        xPath = factory.newXPath();
+        XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
         XPathExpression expr = xPath.compile("/mo:MineralOccurrence");
         Node mineralOccurrenceNode = (Node)expr.evaluate(mineralOccurrenceDocument, XPathConstants.NODE);
-        mineralOccurrence = new MineralOccurrence(mineralOccurrenceNode);
+        validMineralOccurrence = new MineralOccurrence(mineralOccurrenceNode);
 
+        //create an invalid mineral occurrence
+        DocumentBuilderFactory domFactory2 = DocumentBuilderFactory.newInstance();
+        domFactory2.setNamespaceAware(true); // never forget this!
+        DocumentBuilder builder2 = domFactory2.newDocumentBuilder();
+        Document mineralOccurrenceDocument2 = builder2.parse(new ByteArrayInputStream(Util.loadXML("src/test/resources/mineralOccurrenceNodeInvalid.xml").getBytes("UTF-8")));
+
+        XPathFactory factory2 = XPathFactory.newInstance();
+        XPath xPath2 = factory2.newXPath();
+        xPath2.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
+        XPathExpression expr2 = xPath2.compile("/mo:MineralOccurrence");
+        Node mineralOccurrenceNode2 = (Node)expr2.evaluate(mineralOccurrenceDocument2, XPathConstants.NODE);
+        invalidMineralOccurrence = new MineralOccurrence(mineralOccurrenceNode2);
     }
 
     @Test
-    public void testGetURN() throws XPathExpressionException {
-        Assert.assertEquals("URN is: urn:cgi:feature:PIRSA:MineralOccurrence:394deposit", "urn:cgi:feature:PIRSA:MineralOccurrence:394deposit", mineralOccurrence.getURN());
+    public void testGetURNValid() throws XPathExpressionException {
+        Assert.assertEquals("URN is: urn:cgi:feature:PIRSA:MineralOccurrence:394deposit", "urn:cgi:feature:PIRSA:MineralOccurrence:394deposit", validMineralOccurrence.getURN());
     }
 
     @Test
-    public void testGetType() throws XPathExpressionException {
-        Assert.assertEquals("Type is: ore deposit", "ore deposit", mineralOccurrence.getType());
+    public void testGetTypeValid() throws XPathExpressionException {
+        Assert.assertEquals("Type is: ore deposit", "ore deposit", validMineralOccurrence.getType());
     }
 
     @Test
-    public void testGetMineralDepositGroup() throws XPathExpressionException {
+    public void testGetMineralDepositGroupValid() throws XPathExpressionException {
         Assert.assertEquals("Mineral deposit group is: Hydrothermal: precipitation of ore and gangue from " +
                 "watery fluids of diverse origin, temperature range 50-7000C, generally below 4000C, " +
                 "pressure 1-3 kbar",
                 "Hydrothermal: precipitation of ore and gangue from watery fluids of diverse origin, " +
                 "temperature range 50-7000C, generally below 4000C, pressure 1-3 kbar",
-                mineralOccurrence.getMineralDepositGroup());
+                validMineralOccurrence.getMineralDepositGroup());
     }
     
     @Test
-    public void testGetCommodityDescriptionURNs() {
+    public void testGetCommodityDescriptionURNsValid() {
         ArrayList<String> URNs = new ArrayList<String>();
         URNs.add("urn:cgi:feature:PIRSA:MineralCommodity:394deposit:Au");
         
         Assert.assertEquals(
                 "Commodity Description URN is: urn:cgi:feature:PIRSA:MineralCommodity:394deposit:Au",
                 URNs,
-                mineralOccurrence.getCommodityDescriptionURNs());
+                validMineralOccurrence.getCommodityDescriptionURNs());
+    }
+
+    @Test
+    public void testGetURNInvalid() throws XPathExpressionException {
+        Assert.assertEquals("URN is: empty string", "", invalidMineralOccurrence.getURN());
+    }
+
+    @Test
+    public void testGetTypeInvalid() throws XPathExpressionException {
+        Assert.assertEquals("Type is: empty string", "", invalidMineralOccurrence.getType());
+    }
+
+    @Test
+    public void testGetMineralDepositGroupInvalid() throws XPathExpressionException {
+        Assert.assertEquals("",
+                invalidMineralOccurrence.getMineralDepositGroup());
+    }
+
+    @Test
+    public void testGetCommodityDescriptionURNsInvalid() {
+        Assert.assertEquals(
+                "Commodity Description URN is: an empty list",
+                new ArrayList<String>(),
+                invalidMineralOccurrence.getCommodityDescriptionURNs());
     }
 }

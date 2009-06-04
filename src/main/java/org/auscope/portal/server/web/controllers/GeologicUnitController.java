@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.apache.log4j.Logger;
+import org.apache.commons.httpclient.HttpClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +15,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.net.URL;
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,12 +40,12 @@ public class GeologicUnitController {
         url = url.replace(" ", "%20");
         //String url = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS&version=1.1.0&request=GetFeature&outputFormat=text/xml;%20subtype=geoscimlhtml&featureid=gsml.geologicunit.16777549126932018";
 
-        HttpServiceCaller serviceCaller = new HttpServiceCaller();
-        BufferedInputStream responseFromCall = serviceCaller.callHttpUrlGet(url);
+        HttpServiceCaller serviceCaller = new HttpServiceCaller(new HttpClient());
+        String responseFromCall = serviceCaller.callHttpUrlGET(new URL(url));
         //response.getWriter().write(serviceCaller.responseToString(responseFromCall));
 
         try {
-            String result = serviceCaller.responseToString(responseFromCall);
+            //String result = serviceCaller.responseToString(responseFromCall);
             StringWriter downThePipe = new StringWriter();
             InputStream in = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/GeoSciMLtoHTML.xsl");
 
@@ -61,7 +63,7 @@ public class GeologicUnitController {
 
             // Use the transformer to apply the associated template object to an XML document
             // and write the output to a stream
-            transformer.transform (new StreamSource (new StringReader(result)),
+            transformer.transform (new StreamSource (new StringReader(responseFromCall)),
                                    new StreamResult(downThePipe));
 
             // Send response back to client

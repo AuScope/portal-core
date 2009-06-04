@@ -5,6 +5,7 @@ import org.springframework.web.servlet.view.AbstractView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.io.PrintWriter;
 
 import net.sf.json.JSONSerializer;
 
@@ -26,7 +27,9 @@ public class JSONView extends AbstractView {
 
     protected void renderMergedOutputModel(Map model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(getContentType());
-        response.getWriter().write(JSONSerializer.toJSON(model.get("JSON_OBJECT")).toString());
+
+        //send it off
+        response.getWriter().write(JSONSerializer.toJSON(model).toString());
     }
 
 }

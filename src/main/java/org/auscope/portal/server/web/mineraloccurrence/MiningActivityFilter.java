@@ -37,12 +37,17 @@ public class MiningActivityFilter implements IFilter {
     public String getFilterString() {                  //TODO: this sucks! use geotools api to build queries...
         StringBuffer queryString = new StringBuffer();
 
-        queryString.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+        /*queryString.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<wfs:GetFeature version=\"1.1.0\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
                 "        xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
                 "        xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\">\n" +
-                "    <wfs:Query typeName=\"mo:MiningActivity\">\n" +
-                "        <ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\">\n");
+                "    <wfs:Query typeName=\"mo:MiningActivity\">\n" +*/
+        queryString.append("<ogc:Filter xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\"\n" +
+                "        xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
+                "        xmlns:ogc=\"http://www.opengis.net/ogc\"\n" +
+                "        xmlns:gml=\"http://www.opengis.net/gml\"\n" +
+                "        xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n" +
+                "        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
 
         if(checkMany())
             queryString.append("<ogc:And>");
@@ -101,9 +106,10 @@ public class MiningActivityFilter implements IFilter {
         if(checkMany())
             queryString.append("</ogc:And>");
 
-        queryString.append("</ogc:Filter>\n" +
-                "    </wfs:Query>\n" +
-                "</wfs:GetFeature>");
+        queryString.append("</ogc:Filter>");
+//                +
+//                "    </wfs:Query>\n" +
+//                "</wfs:GetFeature>");
 
         return queryString.toString();
 

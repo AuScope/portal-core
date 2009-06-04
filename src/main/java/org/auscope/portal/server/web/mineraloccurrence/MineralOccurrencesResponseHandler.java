@@ -23,7 +23,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class MineralOccurrencesResponseHandler {
 
-    public static Collection<Mine> getMines(String mineResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public Collection<Mine> getMines(String mineResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
         DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -44,7 +44,7 @@ public class MineralOccurrencesResponseHandler {
         return mines;
     }
 
-    public static Collection<Commodity> getCommodities(String commodityResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public Collection<Commodity> getCommodities(String commodityResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
         DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -65,12 +65,7 @@ public class MineralOccurrencesResponseHandler {
         return commodities;
     }
 
-    public static Collection<MiningActivity> getMiningActivities(String miningActivityResponse) {
-
-        return null;
-    }
-
-    public static String getNumberOfFeatures(String mineralOccurrenceResponse) throws ParserConfigurationException, UnsupportedEncodingException, SAXException, IOException {
+    public String getNumberOfFeatures(String mineralOccurrenceResponse) throws ParserConfigurationException, UnsupportedEncodingException, SAXException, IOException {
 
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!

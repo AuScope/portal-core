@@ -16,11 +16,11 @@ public class TestMineFilter {
     /**
      * Test without mine name. If there is no name specified then all of the mines should be queried.
      */
-    @Test
+    /*@Test
     public void testWithNoMineName() throws IOException {
         MineFilter mineFilter = new MineFilter("");
         Assert.assertEquals(Util.loadXML("src/test/resources/GetAllMines.xml").replace("\n", "").replace(" ", ""), mineFilter.getFilterString().replace("\n", "").replace(" ", ""));
-    }
+    }*/
 
     /**
      *  Test with a mine name. A filter query should be generated searching for mines with the given name.
