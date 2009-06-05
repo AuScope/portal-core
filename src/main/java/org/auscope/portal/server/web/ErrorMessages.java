@@ -9,4 +9,5 @@ package org.auscope.portal.server.web;
 public class ErrorMessages {
     public static final String OPERATION_FAILED = "The operation performed did not complete successfully. Please try again later or contact the administrator for more information.";
     public static final String FILTER_FAILED = "An error occurred when performing this operation. Please try a different filter request.";
+    public static final String NO_RESULTS = "No results matched your query.";
 }

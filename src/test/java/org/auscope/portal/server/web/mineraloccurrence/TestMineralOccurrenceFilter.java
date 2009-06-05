@@ -3,11 +3,15 @@ package org.auscope.portal.server.web.mineraloccurrence;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Arrays;
 
 import junit.framework.Assert;
 
 import org.auscope.portal.Util;
 import org.junit.Test;
+import org.jmock.Mockery;
+import org.jmock.Expectations;
+import org.jmock.lib.legacy.ClassImposteriser;
 
 
 /**
@@ -16,32 +20,44 @@ import org.junit.Test;
  * Time: 3:27:26 PM
  */
 public class TestMineralOccurrenceFilter {
+    private Mockery context = new Mockery(){{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
 
     @Test
     public void testWithTwoNames() throws IOException {
-        Collection<String> names = new ArrayList<String>();
-        names.add("urn:cgi:feature:GSV:MineralOccurrence:361169");
-        names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
+        final Commodity commodity1 = context.mock(Commodity.class);
+        final Commodity commodity2 = context.mock(Commodity.class, "commodity2");
+        final Collection<Commodity> commodities = Arrays.asList(commodity1, commodity2);
+        
+        context.checking(new Expectations() {{
+            oneOf (commodity1).getMineralOccurrenceURI(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361169"));
+            oneOf (commodity2).getMineralOccurrenceURI(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361179"));
+        }});
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(names, "", "", "", "", "", "", "");
+            new MineralOccurrenceFilter(commodities, "", "", "", "", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replaceAll("\n", "").replaceAll("\\W", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
+            "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replaceAll("\n", "").replaceAll("\\s+", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\s+", ""));
     }
     
     @Test
     public void testWithNameAndMinimumOreAmount() throws IOException {
-        Collection<String> names = new ArrayList<String>();
-        names.add("urn:cgi:feature:GSV:MineralOccurrence:361179");
+        final Commodity commodity1 = context.mock(Commodity.class);
+        final Collection<Commodity> commodities = Arrays.asList(commodity1);
+
+        context.checking(new Expectations() {{
+            oneOf (commodity1).getMineralOccurrenceURI(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361179"));
+        }});
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(names, "Any", "1234567", "urn:ogc:def:uom:UCUM:t", "", "", "", "");
-        
+            new MineralOccurrenceFilter(commodities, "Any", "1234567", "urn:ogc:def:uom:UCUM:t", "", "", "", "");
+
         Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\s+", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\s+", ""));
     }
     
     @Test

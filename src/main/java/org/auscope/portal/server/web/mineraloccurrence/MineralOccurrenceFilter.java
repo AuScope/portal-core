@@ -11,7 +11,7 @@ public class MineralOccurrenceFilter implements IFilter {
     // endowment commented out for now, because it isn't implemented yet
     public enum MeasureType { /*ENDOWMENT,*/ RESOURCE, RESERVE, ANY }
     
-    private Collection<String> names;
+    private Collection<Commodity> commodities;
     private MeasureType measureType;
     private String minOreAmount;
     private String minOreAmountUOM;
@@ -20,7 +20,7 @@ public class MineralOccurrenceFilter implements IFilter {
     private String cutOffGrade;
     private String cutOffGradeUOM;
 
-    public MineralOccurrenceFilter(Collection<String> names,
+    public MineralOccurrenceFilter(Collection<Commodity> commodities,
                                    String measureType,
                                    String minOreAmount,
                                    String minOreAmountUOM,
@@ -28,7 +28,8 @@ public class MineralOccurrenceFilter implements IFilter {
                                    String minCommodityAmountUOM,
                                    String cutOffGrade,
                                    String cutOffGradeUOM) {
-        this.names                 = names;
+
+        this.commodities = commodities;
         this.minOreAmount          = minOreAmount;
         this.minOreAmountUOM       = minOreAmountUOM;
         this.minCommodityAmount    = minCommodityAmount;
@@ -69,24 +70,24 @@ public class MineralOccurrenceFilter implements IFilter {
         if(checkMany())
             queryString.append("<ogc:And>\n");
         
-        if(this.names != null)
+        if(this.commodities != null)
         {
-            String[] namesArray = this.names.toArray(new String[names.size()]);
+            //String[] namesArray = this.commodities.toArray(new String[commodities.size()]);
 
-            // if names, filter that
-            if( namesArray.length!=0 )
+            // if commodities, filter that
+            if( commodities.size()!=0 )
             {
-                if( namesArray.length>1 )
+                if( commodities.size()>1 )
                     queryString.append("            <ogc:Or>\n");
                 
-                for( int i=0; i<namesArray.length; i++ ) {
+                for( Commodity commodity : commodities ) {
                     queryString.append("                <ogc:PropertyIsEqualTo>\n" +
                                        "                    <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
-                                       "                    <ogc:Literal>"+namesArray[i]+"</ogc:Literal>\n" +
+                                       "                    <ogc:Literal>"+commodity.getMineralOccurrenceURI()+"</ogc:Literal>\n" +
                                        "                </ogc:PropertyIsEqualTo>\n");
                 }
                 
-                if( namesArray.length>1 )
+                if( commodities.size()>1 )
                     queryString.append("            </ogc:Or>\n");
             }
         }
@@ -243,8 +244,8 @@ public class MineralOccurrenceFilter implements IFilter {
     private boolean checkMany() {
         int howManyHaveaValue = 0;
 
-        if(this.names != null) {
-            if(!this.names.isEmpty())
+        if(this.commodities != null) {
+            if(!this.commodities.isEmpty())
                 howManyHaveaValue++;
         }
         if(!this.minOreAmount.equals(""))

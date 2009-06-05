@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Collection;
 import java.util.Iterator;
+
 import net.sf.json.JSONArray;
 
 /**
@@ -48,15 +49,16 @@ public class MineralOccurrencesFilterController {
     public MineralOccurrencesFilterController() {
         this.serviceCaller = new HttpServiceCaller(new HttpClient());
         this.mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
-        this.mineralOccurrenceServiceClient = new MineralOccurrenceServiceClient(new HttpServiceCaller(new HttpClient()), new MineralOccurrencesResponseHandler() );
+        this.mineralOccurrenceServiceClient = new MineralOccurrenceServiceClient(new HttpServiceCaller(new HttpClient()), new MineralOccurrencesResponseHandler());
         this.gmlToKml = new GmlToKml();
     }
 
     /**
      * Initialise fields
-     * 
+     *
      * @param serviceCaller used to invoke a http service
-     * @param mineralOccurrencesResponseHandler needed to interperate a MineralOccurrence GML response
+     * @param mineralOccurrencesResponseHandler
+     *                      needed to interperate a MineralOccurrence GML response
      */
     public MineralOccurrencesFilterController(HttpServiceCaller serviceCaller,
                                               MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler,
@@ -70,13 +72,13 @@ public class MineralOccurrencesFilterController {
 
     /**
      * Gets all of the mine names from a given service. It then builds a JSON response as follows:
-     *
-     *  {"success":true,
-         "data":[
-            {"mineDisplayName":"Balh1"},
-            {"mineDisplayName":"Blah2"}
-            ]
-        }
+     * <p/>
+     * {"success":true,
+     * "data":[
+     * {"mineDisplayName":"Balh1"},
+     * {"mineDisplayName":"Blah2"}
+     * ]
+     * }
      *
      * @param serviceUrl
      * @param model
@@ -88,7 +90,7 @@ public class MineralOccurrencesFilterController {
      */
     @RequestMapping("/getMineNames.do")
     public ModelAndView getMineNames(@RequestParam("serviceUrl") String serviceUrl,
-                                                                 ModelMap model) {
+                                     ModelMap model) {
         try {
             //get all of the mines
             Collection<Mine> mines = this.mineralOccurrenceServiceClient.getAllMines(serviceUrl);
@@ -104,8 +106,7 @@ public class MineralOccurrencesFilterController {
 
             //iterate through the mine names and add them to the JSON response
             Iterator<Mine> it = mines.iterator();
-            while( it.hasNext() )
-            {
+            while (it.hasNext()) {
                 Mine mine = it.next();
                 Map<String, String> mineName = new HashMap<String, String>();
                 mineName.put("mineDisplayName", mine.getMineNamePreffered());
@@ -126,7 +127,7 @@ public class MineralOccurrencesFilterController {
 
     /**
      * Performs a filter query on a given service, then converts the GML response into KML and returns
-     * 
+     *
      * @param serviceUrl
      * @param mineName
      * @param request
@@ -140,15 +141,15 @@ public class MineralOccurrencesFilterController {
         try {
             String kmlBlob;
 
-            if(mineName.equals(ALL_MINES))//get all mines
+            if (mineName.equals(ALL_MINES))//get all mines
                 kmlBlob = gmlToKml.convert(this.mineralOccurrenceServiceClient.getAllMinesGML(serviceUrl), request);
             else
                 kmlBlob = gmlToKml.convert(this.mineralOccurrenceServiceClient.getMineWithSpecifiedNameGML(serviceUrl, mineName), request);
 
             return makeModelAndViewKML(kmlBlob);
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e);
-            
+
             //send a nice message
             return this.makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
         }
@@ -156,60 +157,43 @@ public class MineralOccurrencesFilterController {
 
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
-            
-            @RequestParam("serviceUrl")            String serviceUrl,
-            @RequestParam("commodityName")         String commodityName,
-            @RequestParam("commodityGroup")        String commodityGroup,
-            @RequestParam("measureType")           String measureType,
-            @RequestParam("minOreAmount")          String minOreAmount,
-            @RequestParam("minOreAmountUOM")       String minOreAmountUOM,
-            @RequestParam("minCommodityAmount")    String minCommodityAmount,
+            @RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("commodityName") String commodityName,
+            @RequestParam("commodityGroup") String commodityGroup,
+            @RequestParam("measureType") String measureType,
+            @RequestParam("minOreAmount") String minOreAmount,
+            @RequestParam("minOreAmountUOM") String minOreAmountUOM,
+            @RequestParam("minCommodityAmount") String minCommodityAmount,
             @RequestParam("minCommodityAmountUOM") String minCommodityAmountUOM,
-            @RequestParam("cutOffGrade")           String cutOffGrade,
-            @RequestParam("cutOffGradeUOM")        String cutOffGradeUOM,
-            
-            HttpServletRequest request)
-    {
-        try
-        {
-            String commodityResponse = doCommodityQuery(serviceUrl,
-                                                        commodityGroup,
-                                                        commodityName);
-            
-            String mineralOccurrenceResponse = "";
-            
-            Collection<Commodity> commodities =
-                mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
-            
-            if( commodities.size() >=1 )
-            {
-                Collection<String> commodityURIs = new ArrayList<String>();
-                Commodity[] commoditiesArr = commodities.toArray(new Commodity[commodities.size()]);
-                
-                for(int i=0; i<commoditiesArr.length; i++)
-                    commodityURIs.add(commoditiesArr[i].getMineralOccurrenceURI());
+            @RequestParam("cutOffGrade") String cutOffGrade,
+            @RequestParam("cutOffGradeUOM") String cutOffGradeUOM,
+            HttpServletRequest request) {
+        try {
 
-                mineralOccurrenceResponse = doMineralOccurrenceQuery( serviceUrl,
-                                                                      commodityURIs,
-                                                                      measureType,
-                                                                      minOreAmount,
-                                                                      minOreAmountUOM,
-                                                                      minCommodityAmount,
-                                                                      minCommodityAmountUOM,
-                                                                      cutOffGrade,
-                                                                      cutOffGradeUOM);
-                
-                if( mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse).compareTo("0")==0 )
-                    return makeModelAndViewFailure("No results matched your query.");
-            } else {
-                return makeModelAndViewFailure("No results matched your query.");
-            }
+            //get the mineral occurrences
+            String mineralOccurrenceResponse = this.mineralOccurrenceServiceClient.getMineralOccurrenceGML(serviceUrl,
+                                                                                        commodityName,
+                                                                                        commodityGroup,
+                                                                                        measureType,
+                                                                                        minOreAmount,
+                                                                                        minOreAmountUOM,
+                                                                                        minCommodityAmount,
+                                                                                        minCommodityAmountUOM,
+                                                                                        cutOffGrade,
+                                                                                        cutOffGradeUOM);
 
+            //if there are 0 features then send a nice message to the user
+            if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
+                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
+
+            //if everything is good then return the KML
             return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request));
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error(e);
-            return makeModelAndViewFailure("An error occurred when performing this operation. Please try a different filter request.");
+
+            //if it failed then send a message to the user
+            return makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
         }
     }
 
@@ -229,29 +213,32 @@ public class MineralOccurrencesFilterController {
             //TODO: find a better place for this pre processing of strings!
             startDate = startDate.toUpperCase();
             endDate = endDate.toUpperCase();
-            if(mineName.equals(ALL_MINES)) mineName = "";
 
-            String mineResponse = doMineQuery(serviceUrl, mineName);
+            Collection<Mine> mines = null;
+
+            if (mineName.equals(ALL_MINES))
+                mines = this.mineralOccurrenceServiceClient.getAllMines(serviceUrl);
+            else
+                mines = this.mineralOccurrenceServiceClient.getMineWithSpecifiedName(serviceUrl, mineName);
+
             String miningActivityResponse = "";
 
-            Collection<Mine> mines = mineralOccurrencesResponseHandler.getMines(mineResponse);
-
-            if( mines.size() >=1 ) {
+            if (mines.size() >= 1) {
                 //iterate through and build up a string arrray of mine uris
                 String[] mineURIs = new String[mines.size()];
                 Mine[] minesArr = mines.toArray(new Mine[mines.size()]);
-                for(int i=0; i<minesArr.length; i++)
+                for (int i = 0; i < minesArr.length; i++)
                     mineURIs[i] = minesArr[i].getMineNameURI();
 
 
-                miningActivityResponse = doMiningActivityQuery( serviceUrl,
-                                                                mineURIs,
-                                                                startDate,
-                                                                endDate,
-                                                                oreProcessed,
-                                                                producedMaterial,
-                                                                cutOffGrade,
-                                                                production);
+                miningActivityResponse = doMiningActivityQuery(serviceUrl,
+                        mineURIs,
+                        startDate,
+                        endDate,
+                        oreProcessed,
+                        producedMaterial,
+                        cutOffGrade,
+                        production);
             } else {
                 System.out.println("failed");
                 return makeModelAndViewFailure("No results matched your query.");
@@ -261,66 +248,25 @@ public class MineralOccurrencesFilterController {
             System.out.println("OK");
             return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request));
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             System.out.println("failed");
             logger.error(e);
             return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different filter request.");
         }
     }
 
-    private String doMineQuery(String serviceUrl, String mineName) throws Exception {
-        //ogc filter builder for mo:Mine
-        MineFilter mineFilter = null;
-
-        //If there is no specified mine name, then that mean Get All Mines, thus we don't need a filter
-        if(mineName != null || !mineName.equals(""))
-            mineFilter = new MineFilter(mineName);
-
-        //call the service. if the mineFilter is null then we just send an empty filter string 
-        return serviceCaller.callGetMethod(serviceCaller.constructWFSGetFeatureMethod(serviceUrl, "mo:Mine", (mineFilter == null ? "" : mineFilter.getFilterString())));
-    }
-
-    private String doCommodityQuery(String serviceUrl, String commodityGroup, String commodityName) throws IOException {
-        CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
-
-        return null; //TODO: fix
-        //return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, commodityFilter.getFilterString()));
-    }
-
     private String doMiningActivityQuery(String serviceUrl, String[] mineNameURIs, String startDate, String endDate, String oreProcessed, String producedMaterial, String cutOffGrade, String production) throws IOException {
-
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURIs, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         return null; //TODO: fix
         //return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
-    private String doMineralOccurrenceQuery(String serviceUrl,
-                                            Collection<String> commodityURIs,
-                                            String measureType,
-                                            String minOreAmount,
-                                            String minOreAmountUOM,
-                                            String minCommodityAmount,
-                                            String minCommodityAmountUOM,
-                                            String cutOffGrade,
-                                            String cutOffGradeUOM) throws IOException {
-
-        MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(commodityURIs,
-                                        measureType,
-                                        minOreAmount,
-                                        minOreAmountUOM,
-                                        minCommodityAmount,
-                                        minCommodityAmountUOM,
-                                        cutOffGrade,
-                                        cutOffGradeUOM);
-        return null; //TODO: fix
-        /*return serviceCaller.responseToString(
-                   serviceCaller.callHttpUrlPost(
-                       serviceUrl,
-                       mineralOccurrenceFilter.getFilterString()));*/
-    }
-
+    /**
+     * Insert a kml block into a successful JSON response
+     * @param kmlBlob
+     * @return
+     */
     private ModelAndView makeModelAndViewKML(final String kmlBlob) {
         final Map data = new HashMap() {{
             put("kml", kmlBlob);
@@ -336,6 +282,7 @@ public class MineralOccurrencesFilterController {
 
     /**
      * Create a failure response
+     *
      * @param message
      * @return
      */
@@ -344,7 +291,7 @@ public class MineralOccurrencesFilterController {
             put("success", false);
             put("msg", message);
         }};
-        
+
         return new JSONModelAndView(model);
     }
 }

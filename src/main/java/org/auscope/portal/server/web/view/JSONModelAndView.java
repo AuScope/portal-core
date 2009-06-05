@@ -20,7 +20,7 @@ public class JSONModelAndView extends ModelAndView {
     }
 
     public JSONModelAndView(JSONArray jsonArray) {
-        super(new JSONView(jsonArray), null);   
+        super(new JSONView(jsonArray), new ModelMap());   
     }
 
 }

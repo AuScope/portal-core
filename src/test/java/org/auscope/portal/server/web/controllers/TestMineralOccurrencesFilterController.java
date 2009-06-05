@@ -211,8 +211,53 @@ public class TestMineralOccurrencesFilterController {
     }
 
     @Test
+    public void testDoMineralOccurrenceFilter() throws Exception {
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceServiceClient).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");
+            oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(1));
+            oneOf (mockGmlToKml).convert(with(any(String.class)), with(mockHttpRequest));
+        }});
+
+        this.minerOccurrenceFilterController.doMineralOccurrenceFilter("", "", "", "", "", "", "", "", "", "", mockHttpRequest);
+    }
+
+    @Test
+    public void testDoMineralOccurrenceFilterNoResults() throws Exception {
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceServiceClient).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");
+            oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(0));
+            oneOf (mockGmlToKml).convert(with(any(String.class)), with(mockHttpRequest));
+        }});
+
+        this.minerOccurrenceFilterController.doMineralOccurrenceFilter("", "", "", "", "", "", "", "", "", "", mockHttpRequest);
+    }
+
+    @Test
+    public void testDoMineralOccurrenceFilterException() throws Exception {
+        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.FILTER_FAILED+"\",\"success\":false}";
+        final StringWriter actualJSONResponse = new StringWriter();
+
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceServiceClient).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");will(throwException(new Exception()));
+
+            //check that the correct response is getting output
+            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+        }});
+
+        //call with parameters
+        ModelAndView modelAndView = this.minerOccurrenceFilterController.doMineralOccurrenceFilter("", "", "", "", "", "", "", "", "", "", mockHttpRequest);
+
+        //calling the renderer will write the JSON to our mocks
+        modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
+
+        //check that the actual is the expected
+        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
+    }
+
+    @Test
     public void testDoMiningActivityFilter() {
-        
+           
     }
 
 }

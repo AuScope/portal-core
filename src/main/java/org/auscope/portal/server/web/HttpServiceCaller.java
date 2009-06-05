@@ -2,6 +2,7 @@ package org.auscope.portal.server.web;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.io.*;
@@ -42,11 +43,11 @@ public class HttpServiceCaller {
      * Creates a http GetMethod given the following parameters
      * @param serviceURL - required, exception thrown if not provided
      * @param featureType - required, exception thrown if not provided
-     * @param filter - optional
+     * @param filterString - optional
      * @return
      * @throws Exception
      */
-    public GetMethod constructWFSGetFeatureMethod(String serviceURL, String featureType, String filter) throws Exception {
+    public GetMethod constructWFSGetFeatureMethod(String serviceURL, String featureType, String filterString) throws Exception {
 
         //pretty hard to do a GetFeature query with a featureType, so we had better check that we have one
         if(featureType == null || featureType.equals(""))
@@ -60,12 +61,16 @@ public class HttpServiceCaller {
         GetMethod method = new GetMethod(serviceURL);
 
         //set all of the parameters
-        method.getParams().setParameter("service", "WFS");
-        method.getParams().setParameter("version", "1.1.0");
-        method.getParams().setParameter("request", "GetFeature");
-        method.getParams().setParameter("typeName", featureType);
-        method.getParams().setParameter("filter", filter);
+        NameValuePair service = new NameValuePair("service", "WFS");
+        NameValuePair version = new NameValuePair("version", "1.1.0");
+        NameValuePair request = new NameValuePair("request", "GetFeature");
+        NameValuePair typeName = new NameValuePair("typeName", featureType);
+        NameValuePair filter = new NameValuePair("filter", filterString);
+        NameValuePair maxFeatures = new NameValuePair("maxFeatures", "10");
 
+        //attach them to the method
+        method.setQueryString(new NameValuePair[]{service, version, request, typeName, filter, maxFeatures});
+        
         //return the GetMethod
         return method;
     }

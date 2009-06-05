@@ -65,7 +65,7 @@ public class MineralOccurrencesResponseHandler {
         return commodities;
     }
 
-    public String getNumberOfFeatures(String mineralOccurrenceResponse) throws ParserConfigurationException, UnsupportedEncodingException, SAXException, IOException {
+    public int getNumberOfFeatures(String mineralOccurrenceResponse) throws ParserConfigurationException, UnsupportedEncodingException, SAXException, IOException {
 
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
@@ -79,9 +79,9 @@ public class MineralOccurrencesResponseHandler {
         try {
             XPathExpression expr = xPath.compile("/wfs:FeatureCollection");
             Node result = (Node)expr.evaluate(mineralOccurrenceDocument, XPathConstants.NODE);
-            return result.getAttributes().getNamedItem("numberOfFeatures").getTextContent();
+            return Integer.parseInt(result.getAttributes().getNamedItem("numberOfFeatures").getTextContent());
         } catch (Exception e) {
-            return "0";
+            return 0;
         }
     }
 }

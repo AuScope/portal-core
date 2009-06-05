@@ -69,10 +69,10 @@ public class TestMineralOccurrenceResponseHandler {
         }
         reader.close();
 
-        String numberOfFeatures = 
+        int numberOfFeatures =
             mineralOccurrencesResponseHandler.getNumberOfFeatures(commodityGetFeatureResponseXML.toString());
         
-        Assert.assertEquals("There are 2 features", "2", numberOfFeatures);
+        Assert.assertEquals("There are 2 features", 2, numberOfFeatures);
     }
 
     @Test
@@ -87,9 +87,9 @@ public class TestMineralOccurrenceResponseHandler {
         }
         reader.close();
 
-        String numberOfFeatures = 
+        int numberOfFeatures =
             mineralOccurrencesResponseHandler.getNumberOfFeatures(getFeatureResponseXML.toString());
         
-        Assert.assertEquals("There are 0 features", "0", numberOfFeatures);
+        Assert.assertEquals("There are 0 features", 0, numberOfFeatures);
     }
 }

@@ -1,10 +1,12 @@
 package org.auscope.portal.server.web.mineraloccurrence;
 
 import org.auscope.portal.server.web.HttpServiceCaller;
+import org.auscope.portal.exception.NoResultsException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * A utility class which provides methods for querying a mineral occurence service
@@ -82,6 +84,7 @@ public class MineralOccurrenceServiceClient {
 
     /**
      * Given a specifies service, and mineName, we want to get that mine from the service
+     *
      * @param serviceURL
      * @param mineName
      * @return
@@ -95,6 +98,86 @@ public class MineralOccurrenceServiceClient {
         GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", mineFilter.getFilterString());
 
         //call the service, and get all the mines
+        return httpServiceCaller.callGetMethod(method);
+    }
+
+    /**
+     * Returns commodities based on a given service, the commodityGroup, and  acommodityName
+     *
+     * If both commodityGroup and commodityName are empty strings a GetALL query will be run
+     *
+     * @param commodityGroup
+     * @param commodityName
+     * @return
+     */
+    public Collection<Commodity> getCommodity(String serviceURL, String commodityGroup, String commodityName) throws Exception {
+        //httpclient method
+        GetMethod method = null;
+
+        //if we don't have a name or a group, then just get all of them
+        if(commodityGroup.equals("") && commodityName.equals("")) {
+            method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Commodity", "");
+        } else {
+            //create the filter to append to the url
+            CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
+
+            //create a GetFeature request with an empty filter - get all
+            method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Commodity", commodityFilter.getFilterString());
+        }
+
+        //call the service, and get all the commodities
+        String commodityResponse = httpServiceCaller.callGetMethod(method);
+
+        //parse the commodites and return them
+        return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
+    }
+
+    /**
+     * Given a list of parameters, call a service and get the Mineral Occurrence GML
+     * @param serviceURL
+     * @param commodityName
+     * @param commodityGroup
+     * @param measureType
+     * @param minOreAmount
+     * @param minOreAmountUOM
+     * @param minCommodityAmount
+     * @param minCommodityAmountUOM
+     * @param cutOffGrade
+     * @param cutOffGradeUOM
+     * @return
+     */
+    public String getMineralOccurrenceGML( String serviceURL,
+            String commodityName,
+            String commodityGroup,
+            String measureType,
+            String minOreAmount,
+            String minOreAmountUOM,
+            String minCommodityAmount,
+            String minCommodityAmountUOM,
+            String cutOffGrade,
+            String cutOffGradeUOM) throws Exception {
+
+        //get the commodities, we need their URI's to do a min occ query
+        Collection<Commodity> commodities = this.getCommodity(serviceURL, commodityGroup, commodityName);
+
+        //if there ar no commodities we cant continue
+        if(commodities.size() == 0)
+                return "";
+
+        //create the mineral occurrence filter
+        MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(  commodities,
+                                                                                        measureType,
+                                                                                        minOreAmount,
+                                                                                        minOreAmountUOM,
+                                                                                        minCommodityAmount,
+                                                                                        minCommodityAmountUOM,
+                                                                                        cutOffGrade,
+                                                                                        cutOffGradeUOM);
+
+        //create the method
+        GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
+
+        //run the dam query
         return httpServiceCaller.callGetMethod(method);
     }
 }
