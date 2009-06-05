@@ -3,6 +3,7 @@ package org.auscope.portal.server.web.view;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import net.sf.json.JSONArray;
 
 /**
  * A spring ModelAndView for json objects
@@ -13,7 +14,13 @@ import org.springframework.ui.ModelMap;
  * Time: 12:06:14 PM
  */
 public class JSONModelAndView extends ModelAndView {
+
     public JSONModelAndView(ModelMap model) {
         super(new JSONView(), model);   
     }
+
+    public JSONModelAndView(JSONArray jsonArray) {
+        super(new JSONView(jsonArray), null);   
+    }
+
 }

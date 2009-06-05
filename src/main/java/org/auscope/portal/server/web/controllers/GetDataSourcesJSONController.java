@@ -7,6 +7,7 @@ import org.apache.xmlbeans.XmlException;
 import org.auscope.portal.csw.CSWClient;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.server.web.view.JSONView;
+import org.auscope.portal.server.web.view.JSONModelAndView;
 
 import org.geotools.data.ows.Layer;
 import org.geotools.data.ows.WMSCapabilities;
@@ -145,7 +146,7 @@ public class GetDataSourcesJSONController extends AbstractController {
         logger.debug(jsonArray.toString());
         
         //send it back...
-        return this.getJsonModelAndView(jsonArray);
+        return new JSONModelAndView(jsonArray);
     }
 
     /**
@@ -372,26 +373,6 @@ public class GetDataSourcesJSONController extends AbstractController {
    }
 
     public String stripUrlAndGetFeatures(String url) {
-
         return url.replace("&", "%26").trim();
     }
-
-    /**
-     * This method takes a JSONArray and builds a SpringMVC Model and View from it, so it can be returned in the
-     * http response to the client.
-     *
-     * @param jsonArray
-     * @return
-     */
-    private ModelAndView getJsonModelAndView(JSONArray jsonArray) {
-        Map<String, JSONArray> model = new HashMap<String, JSONArray>();
-        model.put("JSON_OBJECT", jsonArray);
-
-        return new ModelAndView(new JSONView(), model);
-    }
 }
-
-/**
- 
- */
-
