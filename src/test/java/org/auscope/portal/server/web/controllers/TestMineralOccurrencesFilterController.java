@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.xml.sax.SAXException;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.auscope.portal.server.web.ErrorMessages;
+import org.auscope.portal.server.web.view.JSONModelAndView;
 import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrenceServiceClient;
 import org.auscope.portal.server.web.mineraloccurrence.Mine;
@@ -65,6 +66,8 @@ public class TestMineralOccurrencesFilterController {
     public void testGetMineNames() throws Exception {
         final String serviceURL = "http://localhost?";
         final String expectedJSONResponse = "{\"data\":[{\"mineDisplayName\":\"All Mines..\"},{\"mineDisplayName\":\"Balh1\"},{\"mineDisplayName\":\"Balh2\"}],\"success\":true}";
+        final String expectedJSONResponse2= "{\"success\":true,\"data\":[{\"mineDisplayName\":\"All Mines..\"},{\"mineDisplayName\":\"Balh1\"},{\"mineDisplayName\":\"Balh2\"}]}";
+
         final Mine mockMine1 = context.mock(Mine.class);
         final Mine mockMine2 = context.mock(Mine.class, "mockMine2");
         final StringWriter actualJSONResponse = new StringWriter();
@@ -89,8 +92,12 @@ public class TestMineralOccurrencesFilterController {
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
-        //check that the actual is the expected
-        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
     }
 
     /**
@@ -99,7 +106,8 @@ public class TestMineralOccurrencesFilterController {
     @Test
     public void testGetMinesError() throws Exception {
         final String serviceURL = "http://localhost?";
-        final String expectedJSONResponse = "{\"msg\":\""+ ErrorMessages.OPERATION_FAILED +"\",\"success\":false}".replaceAll("\n", "").replaceAll("\\s+", "");
+        final String expectedJSONResponse = "{\"msg\":\""+ ErrorMessages.OPERATION_FAILED +"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ ErrorMessages.OPERATION_FAILED +"\"}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
@@ -117,8 +125,12 @@ public class TestMineralOccurrencesFilterController {
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
-        //check that the actual is the expected
-        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
     }
 
     /**
@@ -131,6 +143,7 @@ public class TestMineralOccurrencesFilterController {
         final String mineName = "All Mines.."; //to get all mines
         final String expectedKML = "<kml/>";
         final String expectedJSONResponse = "{\"data\":{\"kml\":\""+expectedKML+"\"},\"success\":true}";
+        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"kml\":\""+expectedKML+"\"}}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
@@ -148,8 +161,12 @@ public class TestMineralOccurrencesFilterController {
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
-        //check that the actual is the expected
-        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
     }
 
     /**
@@ -161,6 +178,7 @@ public class TestMineralOccurrencesFilterController {
         final String mineName = "SomeName"; //random name
         final String expectedKML = "<kml/>";
         final String expectedJSONResponse = "{\"data\":{\"kml\":\""+expectedKML+"\"},\"success\":true}";
+        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"kml\":\""+expectedKML+"\"}}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
@@ -178,8 +196,12 @@ public class TestMineralOccurrencesFilterController {
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
-        //check that the actual is the expected
-        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
     }
 
     /**
@@ -190,6 +212,7 @@ public class TestMineralOccurrencesFilterController {
         final String serviceURL = "http://localhost?";
         final String mineName = "SomeName"; //random name
         final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.FILTER_FAILED+"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.FILTER_FAILED+"\"}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
@@ -206,8 +229,12 @@ public class TestMineralOccurrencesFilterController {
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
-        //check that the actual is the expected
-        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
     }
 
     @Test
@@ -235,6 +262,7 @@ public class TestMineralOccurrencesFilterController {
     @Test
     public void testDoMineralOccurrenceFilterException() throws Exception {
         final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.FILTER_FAILED+"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.FILTER_FAILED+"\"}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
@@ -251,8 +279,12 @@ public class TestMineralOccurrencesFilterController {
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
-        //check that the actual is the expected
-        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
     }
 
     @Test

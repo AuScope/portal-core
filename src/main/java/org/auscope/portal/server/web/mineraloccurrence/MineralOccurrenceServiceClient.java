@@ -1,7 +1,6 @@
 package org.auscope.portal.server.web.mineraloccurrence;
 
 import org.auscope.portal.server.web.HttpServiceCaller;
-import org.auscope.portal.exception.NoResultsException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 
