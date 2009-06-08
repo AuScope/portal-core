@@ -80,44 +80,49 @@ public class TestMineralOccurrenceFilter {
             mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
-    //TODO: urgent! these tests need to be implemented 
-    /*@Test
+    @Test
     public void testResourceMinimumCommodityAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Resource", "", "", "6000000", "", "", "");
+            new MineralOccurrenceFilter(null, "Resource", "", "", "6000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
             mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
+
     @Test
     public void testAnyMinimumCommodityAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "ANY-Stuff", "", "", "7000000", "", "", "");
+            new MineralOccurrenceFilter(null, "ANY-Stuff", "", "", "7000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumCommodityAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
             mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
+    //TODO: to be reimplemented when the data model (mineraloccurrence ml) complies to this feature
+
+    /*
+    @Test
+    public void testAnyCutOffGrade() throws IOException {
+        MineralOccurrenceFilter mineralOccurrenceFilter =
+            new MineralOccurrenceFilter(null, "Any", "", "", "", "", "1000", "urn:ogc:def:uom:UCUM:t");
+        
+        Assert.assertEquals(Util.loadXML(
+            "src/test/resources/GetMineralOccurrencesWithSpecifiedCutOffGrade.xml").replaceAll("\n", "").replaceAll("\\s+", ""),
+            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\s+", ""));
+    }
+
+
+
     @Test
     public void testEndowmentCutOffGrade() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
             new MineralOccurrenceFilter(null, "Endowment", "", "", "", "1500", "", "");
-        
+
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedEndowmentCutOffGrade.xml").replaceAll("\n", "").replaceAll("\\W", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
-    }
-
-    @Test
-    public void testAnyCutOffGrade() throws IOException {
-        MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Any", "", "", "", "1000", "", "");
-        
-        Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedCutOffGrade.xml").replaceAll("\n", "").replaceAll("\\W", ""),
             mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }*/
 }
