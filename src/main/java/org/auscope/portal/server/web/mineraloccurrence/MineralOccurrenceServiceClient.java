@@ -3,9 +3,11 @@ package org.auscope.portal.server.web.mineraloccurrence;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A utility class which provides methods for querying a mineral occurence service
@@ -39,12 +41,12 @@ public class MineralOccurrenceServiceClient {
      * @return
      * @throws Exception
      */
-    public Collection<Mine> getAllMines(String serviceURL) throws Exception {
+    public List<Mine> getAllMines(String serviceURL) throws Exception {
         //get the mines
         String mineResponse = this.getAllMinesGML(serviceURL);
 
         //convert the response into a nice collection of Mine Nodes
-        Collection<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
+        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
 
         //send it back!
         return mines;
@@ -70,12 +72,12 @@ public class MineralOccurrenceServiceClient {
      * @param mineName - the name of the mine to get
      * @return
      */
-    public Collection<Mine> getMineWithSpecifiedName(String serviceURL, String mineName) throws Exception {
+    public List<Mine> getMineWithSpecifiedName(String serviceURL, String mineName) throws Exception {
         //get the mine
         String mineResponse = this.getMineWithSpecifiedNameGML(serviceURL, mineName);
 
         //convert the response into a nice collection of Mine Nodes
-        Collection<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
+        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
 
         //send it back!
         return mines;
@@ -178,5 +180,27 @@ public class MineralOccurrenceServiceClient {
 
         //run the dam query
         return httpServiceCaller.callGetMethod(method);
+    }
+
+    public String getMiningActivityGML( String serviceURL,
+                                        List<Mine> mines,
+                                        String startDate,
+                                        String endDate,
+                                        String oreProcessed,
+                                        String producedMaterial,
+                                        String cutOffGrade,
+                                        String production) throws Exception {
+
+        if(mines.size() == 0)
+                return "";
+        
+        //create the filter
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
+
+        //create the method
+        GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MiningActivity", miningActivityFilter.getFilterString());
+
+        //run dat query
+        return this.httpServiceCaller.callGetMethod(method);
     }
 }

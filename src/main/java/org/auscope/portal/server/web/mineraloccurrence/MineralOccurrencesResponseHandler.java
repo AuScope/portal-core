@@ -12,6 +12,7 @@ import javax.xml.xpath.*;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.List;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -23,7 +24,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class MineralOccurrencesResponseHandler {
 
-    public Collection<Mine> getMines(String mineResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public List<Mine> getMines(String mineResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
         DocumentBuilder builder = domFactory.newDocumentBuilder();

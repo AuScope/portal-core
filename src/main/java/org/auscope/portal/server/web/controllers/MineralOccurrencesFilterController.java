@@ -18,11 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 import net.sf.json.JSONArray;
 
@@ -210,56 +206,31 @@ public class MineralOccurrencesFilterController {
             HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
 
         try {
-            //TODO: find a better place for this pre processing of strings!
-            startDate = startDate.toUpperCase();
-            endDate = endDate.toUpperCase();
-
-            Collection<Mine> mines = null;
+            List<Mine> mines;
 
             if (mineName.equals(ALL_MINES))
                 mines = this.mineralOccurrenceServiceClient.getAllMines(serviceUrl);
             else
                 mines = this.mineralOccurrenceServiceClient.getMineWithSpecifiedName(serviceUrl, mineName);
 
-            String miningActivityResponse = "";
+            //if there are 0 features then send a nice message to the user
+            if (mines.size() == 0)
+                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
-            if (mines.size() >= 1) {
-                //iterate through and build up a string arrray of mine uris
-                String[] mineURIs = new String[mines.size()];
-                Mine[] minesArr = mines.toArray(new Mine[mines.size()]);
-                for (int i = 0; i < minesArr.length; i++)
-                    mineURIs[i] = minesArr[i].getMineNameURI();
+            //get the mining activities
+            String miningActivityResponse = this.mineralOccurrenceServiceClient.getMiningActivityGML(serviceUrl, mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
-
-                miningActivityResponse = doMiningActivityQuery(serviceUrl,
-                        mineURIs,
-                        startDate,
-                        endDate,
-                        oreProcessed,
-                        producedMaterial,
-                        cutOffGrade,
-                        production);
-            } else {
-                System.out.println("failed");
-                return makeModelAndViewFailure("No results matched your query.");
-            }
+            //if there are 0 features then send a nice message to the user
+            if (mineralOccurrencesResponseHandler.getNumberOfFeatures(miningActivityResponse) == 0)
+                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
             //return makeModelAndViewKML(convertToKML(mineResponse, miningActivityResponse));
-            System.out.println("OK");
             return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request));
 
         } catch (Exception e) {
-            System.out.println("failed");
             logger.error(e);
-            return makeModelAndViewFailure("An error occurred when prforming this operation. Please try a different filter request.");
+            return makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
         }
-    }
-
-    private String doMiningActivityQuery(String serviceUrl, String[] mineNameURIs, String startDate, String endDate, String oreProcessed, String producedMaterial, String cutOffGrade, String production) throws IOException {
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineNameURIs, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
-
-        return null; //TODO: fix
-        //return serviceCaller.responseToString(serviceCaller.callHttpUrlPost(serviceUrl, miningActivityFilter.getFilterString()));
     }
 
     /**
