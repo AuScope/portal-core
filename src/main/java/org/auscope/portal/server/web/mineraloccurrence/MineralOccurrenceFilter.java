@@ -8,7 +8,7 @@ import java.util.Collection;
  * Time: 5:18:28 PM
  */
 public class MineralOccurrenceFilter implements IFilter {
-    // endowment commented out for now, because it isn't implemented yet
+    // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this
     public enum MeasureType { /*ENDOWMENT,*/ RESOURCE, RESERVE, ANY }
     
     private Collection<Commodity> commodities;
@@ -38,6 +38,7 @@ public class MineralOccurrenceFilter implements IFilter {
         this.cutOffGradeUOM        = cutOffGradeUOM;
         
         // parse strings from combobox into enum values
+        // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this
 /*        if(measureType.compareTo("Endowment") == 0)
             this.measureType = MeasureType.ENDOWMENT;
         else */if(measureType.compareTo("Resource") == 0)
@@ -55,11 +56,6 @@ public class MineralOccurrenceFilter implements IFilter {
     public String getFilterString() {                  //TODO: this sucks! use geotools api to build queries...
         StringBuffer queryString = new StringBuffer();
 
-        /*queryString.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<wfs:GetFeature version=\"1.1.0\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
-                "        xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "        xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" maxFeatures=\"200\">\n" +
-                "    <wfs:Query typeName=\"mo:MineralOccurrence\">\n" +*/
         queryString.append("<ogc:Filter xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\"\n" +
                 "        xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
                 "        xmlns:ogc=\"http://www.opengis.net/ogc\"\n" +
@@ -72,8 +68,6 @@ public class MineralOccurrenceFilter implements IFilter {
         
         if(this.commodities != null)
         {
-            //String[] namesArray = this.commodities.toArray(new String[commodities.size()]);
-
             // if commodities, filter that
             if( commodities.size()!=0 )
             {
@@ -144,10 +138,9 @@ public class MineralOccurrenceFilter implements IFilter {
             queryString.append("</ogc:And>\n");
 
         queryString.append("        </ogc:Filter>\n");
-//        +
-//                "    </wfs:Query>\n" +
-//                "</wfs:GetFeature>");
 
+        System.out.print(queryString.toString());
+        
         return queryString.toString();
 
     }
@@ -201,18 +194,18 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private String createCutOffGradeQuery(MeasureType type)
     {
-        return /*"                <ogc:And>" +
+        return "                <ogc:And>" +
                "                   <ogc:PropertyIsEqualTo>\n" +
                "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
                "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
                "                      <ogc:Literal>"+this.cutOffGradeUOM+"</ogc:Literal>\n" +
-               "                   </ogc:PropertyIsEqualTo>" +*/
+               "                   </ogc:PropertyIsEqualTo>" +
                "                   <ogc:PropertyIsGreaterThan>\n" +
                "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
                "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
                "                      <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
-               "                   </ogc:PropertyIsGreaterThan>";/* +
-               "                </ogc:And>";*/
+               "                   </ogc:PropertyIsGreaterThan>" +
+               "                </ogc:And>";
     }
 
     /**
@@ -222,6 +215,7 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     public String getMeasureTypeTag(MeasureType type) {
         switch (type) {
+        // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this
 //            case ENDOWMENT:
 //                return "mo:Endowment";
                 

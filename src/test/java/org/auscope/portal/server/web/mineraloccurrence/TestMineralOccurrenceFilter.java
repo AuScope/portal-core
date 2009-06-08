@@ -1,7 +1,6 @@
 package org.auscope.portal.server.web.mineraloccurrence;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Arrays;
 
@@ -101,9 +100,7 @@ public class TestMineralOccurrenceFilter {
             mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
-    //TODO: to be reimplemented when the data model (mineraloccurrence ml) complies to this feature
-
-    /*
+    
     @Test
     public void testAnyCutOffGrade() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
@@ -114,8 +111,9 @@ public class TestMineralOccurrenceFilter {
             mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\s+", ""));
     }
 
+    //TODO: to be reimplemented when the data model (mineraloccurrence ml) complies to this feature
 
-
+/*
     @Test
     public void testEndowmentCutOffGrade() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
