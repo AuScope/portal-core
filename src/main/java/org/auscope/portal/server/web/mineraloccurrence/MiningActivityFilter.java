@@ -1,6 +1,5 @@
 package org.auscope.portal.server.web.mineraloccurrence;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

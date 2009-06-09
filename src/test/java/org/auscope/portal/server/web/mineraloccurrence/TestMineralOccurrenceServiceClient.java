@@ -11,6 +11,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import java.util.Collection;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -49,7 +50,7 @@ public class TestMineralOccurrenceServiceClient {
 
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockMineResponse = new String();
-        final Collection<Mine> mockMines = (Collection<Mine>)context.mock(Collection.class);
+        final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:Mine", ""); will(returnValue(mockMethod));
@@ -57,7 +58,7 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
         }});
 
-        Collection<Mine> mines = this.mineralOccurrenceServiceClient.getAllMines(serviceURL);
+        List<Mine> mines = this.mineralOccurrenceServiceClient.getAllMines(serviceURL);
         Assert.assertEquals(mockMines, mines);
     }
 
@@ -75,7 +76,7 @@ public class TestMineralOccurrenceServiceClient {
         final MineFilter mineFilter = new MineFilter(mineName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockMineResponse = new String();
-        final Collection<Mine> mockMines = (Collection<Mine>)context.mock(Collection.class);
+        final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:Mine", mineFilter.getFilterString()); will(returnValue(mockMethod));
@@ -83,7 +84,7 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
         }});
 
-        Collection<Mine> mines = this.mineralOccurrenceServiceClient.getMineWithSpecifiedName(serviceURL, mineName);
+        List<Mine> mines = this.mineralOccurrenceServiceClient.getMineWithSpecifiedName(serviceURL, mineName);
         Assert.assertEquals(mockMines, mines);
     }
 
@@ -241,5 +242,29 @@ public class TestMineralOccurrenceServiceClient {
         Assert.assertEquals("", returnValue);
     }
 
+    @Test
+    public void testGetMiningActivity() throws Exception {
+        final Mine mockMine = context.mock(Mine.class);
+        final List<Mine> mockMineList = Arrays.asList(mockMine);
+        final GetMethod mockMethod = context.mock(GetMethod.class);
 
+        context.checking(new Expectations() {{
+            ignoring(mockMine);
+            oneOf(httpServiceCaller).constructWFSGetFeatureMethod(with(""), with("mo:MiningActivity"), with(any(String.class)));will(returnValue(mockMethod));
+            oneOf(httpServiceCaller).callGetMethod(mockMethod);
+        }});
+
+        this.mineralOccurrenceServiceClient.getMiningActivityGML("", mockMineList, "", "", "", "", "", "");
+
+    }
+
+    @Test
+    public void testGetMiningActivityNoMines() throws Exception {
+        final List<Mine> mockMineList = Arrays.asList();
+
+        String response = this.mineralOccurrenceServiceClient.getMiningActivityGML("", mockMineList, "", "", "", "", "", "");
+
+        //should get a blank string back
+        Assert.assertEquals("", response);
+    }
 }

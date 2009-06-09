@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -288,8 +289,137 @@ public class TestMineralOccurrencesFilterController {
     }
 
     @Test
-    public void testDoMiningActivityFilter() {
-           
+    public void testDoMiningActivityFilterAllMines() throws Exception {
+        final String mineName = "All Mines.."; //to get all mines
+        final List<Mine> mines = Arrays.asList(context.mock(Mine.class));
+
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceServiceClient).getAllMines("");will(returnValue(mines));
+
+            oneOf (mineralOccurrenceServiceClient).getMiningActivityGML("", mines, "", "", "", "", "", "");
+            oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(1));
+
+            oneOf (mockGmlToKml).convert(with(any(String.class)), with(mockHttpRequest));
+        }});
+
+        this.minerOccurrenceFilterController.doMiningActivityFilter("", mineName, "", "", "", "", "", "", mockHttpRequest);
+    }
+
+    /**
+     * Test when we query for all mines, but got no mines in the response
+     * @throws Exception
+     */
+    @Test
+    public void testDoMiningActivityFilterAllMinesZeroMines() throws Exception {
+        final String mineName = "All Mines.."; //to get all mines
+        final List<Mine> mines = Arrays.asList();
+        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.NO_RESULTS+"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.NO_RESULTS+"\"}";
+        final StringWriter actualJSONResponse = new StringWriter();
+
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceServiceClient).getAllMines("");will(returnValue(mines));
+
+            //check that the correct response is getting output
+            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+        }});
+
+        //call with parameters
+        ModelAndView modelAndView = this.minerOccurrenceFilterController.doMiningActivityFilter("", mineName, "", "", "", "", "", "", mockHttpRequest);
+
+        //calling the renderer will write the JSON to our mocks
+        modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
+
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
+    }
+    /**
+     * Test when we query for MiningActivity, but got no MiningActivity in the response
+     * @throws Exception
+     */
+    @Test
+    public void testDoMiningActivityFilterMiningActivityZeroMiningActivities() throws Exception {
+        final String mineName = "All Mines.."; //to get all mines
+        final List<Mine> mines = Arrays.asList(context.mock(Mine.class));
+        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.NO_RESULTS+"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.NO_RESULTS+"\"}";
+        final StringWriter actualJSONResponse = new StringWriter();
+
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceServiceClient).getAllMines("");will(returnValue(mines));
+
+            oneOf (mineralOccurrenceServiceClient).getMiningActivityGML("", mines, "", "", "", "", "", "");
+            oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(0));
+
+            //check that the correct response is getting output
+            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+        }});
+
+        //call with parameters
+        ModelAndView modelAndView = this.minerOccurrenceFilterController.doMiningActivityFilter("", mineName, "", "", "", "", "", "", mockHttpRequest);
+
+        //calling the renderer will write the JSON to our mocks
+        modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
+
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
+    }
+
+
+    @Test
+    public void testDoMiningActivityFilterSelectedMine() throws Exception {
+        final String mineName = ""; //to get all mines
+        final List<Mine> mines = Arrays.asList(context.mock(Mine.class));
+
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedName("", "");will(returnValue(mines));
+            oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(1));
+
+            oneOf (mineralOccurrenceServiceClient).getMiningActivityGML("", mines, "", "", "", "", "", "");
+            oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(1));
+
+            oneOf (mockGmlToKml).convert(with(any(String.class)), with(mockHttpRequest));
+        }});
+
+        this.minerOccurrenceFilterController.doMiningActivityFilter("", mineName, "", "", "", "", "", "", mockHttpRequest);
+    }
+
+    @Test
+    public void testDoMiningActivityFilterWithException() throws Exception {
+        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.FILTER_FAILED+"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.FILTER_FAILED+"\"}";
+        final StringWriter actualJSONResponse = new StringWriter();
+
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedName("", "");will(throwException(new Exception()));
+
+            //check that the correct response is getting output
+            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+        }});
+
+        //call with parameters
+        ModelAndView modelAndView = this.minerOccurrenceFilterController.doMiningActivityFilter("", "", "", "", "", "", "", "", mockHttpRequest);
+
+        //calling the renderer will write the JSON to our mocks
+        modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
+
+        //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
+        if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()) ||
+                expectedJSONResponse2.equals(actualJSONResponse.getBuffer().toString()))
+            Assert.assertTrue(true);
+        else
+            Assert.assertFalse(true);
     }
 
 }
