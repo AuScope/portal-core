@@ -1,5 +1,24 @@
 //function FormFactory() {
 
+//greys out labels when a form field is disabled
+Ext.form.Field.prototype.afterRender = Ext.form.Field.prototype.afterRender.createInterceptor(function(){
+    if(this.disabled) {
+        this.container.parent().addClass('x-item-disabled');
+    }
+});
+
+Ext.form.Field.prototype.disable = Ext.form.Field.prototype.disable.createInterceptor(function(){
+    if(this.container) {
+        this.container.parent().addClass('x-item-disabled');
+    }
+});
+
+Ext.form.Field.prototype.enable = Ext.form.Field.prototype.enable.createInterceptor(function(){
+    if(this.container) {
+        this.container.parent().removeClass('x-item-disabled');
+    }
+});
+
 /**
  * Builds a form panel for Mine filters
  * @param id to specify the id of this formpanel instance
@@ -154,7 +173,8 @@ function buildMiningActivityFilterForm(id, loadUrl, submitUrl, serviceUrl, succe
                 anchor: '100%',
                 xtype: 'textfield',
                 fieldLabel: 'Grade',
-                name: 'cutOffGrade'
+                name: 'cutOffGrade',
+                disabled: true
             },{
                 anchor: '100%',
                 xtype: 'textfield',
@@ -336,11 +356,12 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 anchor: '100%',
                 xtype: 'textfield',
                 fieldLabel: 'Cut Off Grade',
-                name: 'cutOffGrade'
+                name: 'cutOffGrade',
+                disabled: true
             },  new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
-                name: 'cutOffGradeUOMName',
+                name: 'cutOffGradeUOMName',                                                                                                 
                 hiddenName: 'cutOffGradeUOM',
                 fieldLabel: 'Cut Off Grade Unit',
                 emptyText:'Select a Unit Of Measure...',
@@ -351,7 +372,8 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 triggerAction: 'all',
                 typeAhead: true,
                 displayField:'unitLabel',
-                valueField:'urn'
+                valueField:'urn',
+                disabled: true
             })]
         }]
         ,buttons: [{
