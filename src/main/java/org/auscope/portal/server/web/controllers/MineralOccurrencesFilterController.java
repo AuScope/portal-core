@@ -5,20 +5,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.view.JSONModelAndView;
 import org.auscope.portal.server.web.mineraloccurrence.*;
-import org.auscope.portal.server.web.HttpServiceCaller;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.xml.sax.SAXException;
 import org.apache.log4j.Logger;
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.ConnectTimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.util.*;
+import java.net.UnknownHostException;
+import java.net.ConnectException;
 
 import net.sf.json.JSONArray;
 
@@ -34,33 +36,21 @@ public class MineralOccurrencesFilterController {
     private Logger logger = Logger.getLogger(getClass());
     private static String ALL_MINES = "All Mines..";
 
-    private HttpServiceCaller serviceCaller;
+
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
     private MineralOccurrenceServiceClient mineralOccurrenceServiceClient;
     private GmlToKml gmlToKml;
 
     /**
      * Initialise fields
-     */
-    public MineralOccurrencesFilterController() {
-        this.serviceCaller = new HttpServiceCaller(new HttpClient());
-        this.mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
-        this.mineralOccurrenceServiceClient = new MineralOccurrenceServiceClient(new HttpServiceCaller(new HttpClient()), new MineralOccurrencesResponseHandler());
-        this.gmlToKml = new GmlToKml();
-    }
-
-    /**
-     * Initialise fields
      *
-     * @param serviceCaller used to invoke a http service
      * @param mineralOccurrencesResponseHandler
      *                      needed to interperate a MineralOccurrence GML response
      */
-    public MineralOccurrencesFilterController(HttpServiceCaller serviceCaller,
-                                              MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler,
+    @Autowired
+    public MineralOccurrencesFilterController(MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler,
                                               MineralOccurrenceServiceClient mineralOccurrenceServiceClient,
                                               GmlToKml gmlToKml) {
-        this.serviceCaller = serviceCaller;
         this.mineralOccurrencesResponseHandler = mineralOccurrencesResponseHandler;
         this.mineralOccurrenceServiceClient = mineralOccurrenceServiceClient;
         this.gmlToKml = gmlToKml;
@@ -114,10 +104,7 @@ public class MineralOccurrencesFilterController {
 
             return new JSONModelAndView(model);
         } catch (Exception e) {
-            logger.error(e);
-
-            //if there is an error then report a nice message to the user
-            return this.makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED);
+            return this.handleExceptionResponse(e);
         }
     }
 
@@ -144,10 +131,7 @@ public class MineralOccurrencesFilterController {
 
             return makeModelAndViewKML(kmlBlob);
         } catch (Exception e) {
-            logger.error(e);
-
-            //send a nice message
-            return this.makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
+            return this.handleExceptionResponse(e);
         }
     }
 
@@ -186,10 +170,7 @@ public class MineralOccurrencesFilterController {
             return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request));
 
         } catch (Exception e) {
-            logger.error(e);
-
-            //if it failed then send a message to the user
-            return makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
+            return this.handleExceptionResponse(e);
         }
     }
 
@@ -228,9 +209,31 @@ public class MineralOccurrencesFilterController {
             return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request));
 
         } catch (Exception e) {
-            logger.error(e);
-            return makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
+            return this.handleExceptionResponse(e);
         }
+    }
+
+    /**
+     * Depending on the type of exception we get, present the user with a nice meaningful message
+     * @param e
+     * @return
+     */
+    public ModelAndView handleExceptionResponse(Exception e) {
+        //log the error
+        logger.error(e);
+
+        //service down or host down
+        if(e instanceof ConnectException || e instanceof UnknownHostException) {
+            return this.makeModelAndViewFailure(ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION);
+        }
+
+        //timouts
+        if(e instanceof ConnectTimeoutException) {
+            return this.makeModelAndViewFailure(ErrorMessages.OPERATION_TIMOUT);
+        }
+
+        //an error we don't specifically handle of expect
+        return makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
     }
 
     /**

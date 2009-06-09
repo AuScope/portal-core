@@ -1,22 +1,18 @@
 //function FormFactory() {
 
-//greys out labels when a form field is disabled
-Ext.form.Field.prototype.afterRender = Ext.form.Field.prototype.afterRender.createInterceptor(function(){
-    if(this.disabled) {
-        this.container.parent().addClass('x-item-disabled');
-    }
-});
+Ext.override(Ext.form.Field, {
+    hideItem :function(){
+        this.formItem.addClass('x-hide-' + this.hideMode);
+    },
 
-Ext.form.Field.prototype.disable = Ext.form.Field.prototype.disable.createInterceptor(function(){
-    if(this.container) {
-        this.container.parent().addClass('x-item-disabled');
-    }
-});
-
-Ext.form.Field.prototype.enable = Ext.form.Field.prototype.enable.createInterceptor(function(){
-    if(this.container) {
-        this.container.parent().removeClass('x-item-disabled');
-    }
+    showItem: function(){
+        this.formItem.removeClass('x-hide-' + this.hideMode);
+    },
+    setFieldLabel: function(text) {
+    var ct = this.el.findParent('div.x-form-item', 3, true);
+    var label = ct.first('label.x-form-item-label');
+    label.update(text);
+  }
 });
 
 /**
@@ -174,7 +170,8 @@ function buildMiningActivityFilterForm(id, loadUrl, submitUrl, serviceUrl, succe
                 xtype: 'textfield',
                 fieldLabel: 'Grade',
                 name: 'cutOffGrade',
-                disabled: true
+                hidden: true,
+                hideLabel: true
             },{
                 anchor: '100%',
                 xtype: 'textfield',
@@ -357,7 +354,8 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 xtype: 'textfield',
                 fieldLabel: 'Cut Off Grade',
                 name: 'cutOffGrade',
-                disabled: true
+                hidden: true,
+                hideLabel: true
             },  new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
@@ -373,7 +371,8 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
                 typeAhead: true,
                 displayField:'unitLabel',
                 valueField:'urn',
-                disabled: true
+                hidden: true,
+                hideLabel: true
             })]
         }]
         ,buttons: [{

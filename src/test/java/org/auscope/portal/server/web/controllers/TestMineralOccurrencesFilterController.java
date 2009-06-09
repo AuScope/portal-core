@@ -16,12 +16,15 @@ import org.jmock.Expectations;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
+import org.apache.commons.httpclient.ConnectTimeoutException;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
+import java.net.UnknownHostException;
+import java.net.ConnectException;
 
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -53,7 +56,7 @@ public class TestMineralOccurrencesFilterController {
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.mineralOccurrenceServiceClient = context.mock(MineralOccurrenceServiceClient.class);
         this.mockGmlToKml = context.mock(GmlToKml.class);
-        this.minerOccurrenceFilterController = new MineralOccurrencesFilterController(this.httpServiceCaller, this.mineralOccurrencesResponseHandler, this.mineralOccurrenceServiceClient, this.mockGmlToKml);
+        this.minerOccurrenceFilterController = new MineralOccurrencesFilterController(this.mineralOccurrencesResponseHandler, this.mineralOccurrenceServiceClient, this.mockGmlToKml);
         this.mockHttpRequest = context.mock(HttpServletRequest.class);
         this.mockHttpResponse = context.mock(HttpServletResponse.class);
     }
@@ -107,8 +110,8 @@ public class TestMineralOccurrencesFilterController {
     @Test
     public void testGetMinesError() throws Exception {
         final String serviceURL = "http://localhost?";
-        final String expectedJSONResponse = "{\"msg\":\""+ ErrorMessages.OPERATION_FAILED +"\",\"success\":false}";
-        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ ErrorMessages.OPERATION_FAILED +"\"}";
+        final String expectedJSONResponse = "{\"msg\":\""+ ErrorMessages.FILTER_FAILED +"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ ErrorMessages.FILTER_FAILED +"\"}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
@@ -209,15 +212,15 @@ public class TestMineralOccurrencesFilterController {
      * Test doing a minefilter, and there being an error
      */
     @Test
-    public void testDoMineFilterError() throws Exception {
+    public void testDoMineFilterUnknownHost() throws Exception {
         final String serviceURL = "http://localhost?";
         final String mineName = "SomeName"; //random name
-        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.FILTER_FAILED+"\",\"success\":false}";
-        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.FILTER_FAILED+"\"}";
+        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION+"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION+"\"}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedNameGML(serviceURL, mineName);will(throwException(new Exception()));
+            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedNameGML(serviceURL, mineName);will(throwException(new UnknownHostException()));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
@@ -261,13 +264,13 @@ public class TestMineralOccurrencesFilterController {
     }
 
     @Test
-    public void testDoMineralOccurrenceFilterException() throws Exception {
-        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.FILTER_FAILED+"\",\"success\":false}";
-        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.FILTER_FAILED+"\"}";
+    public void testDoMineralOccurrenceFilterTimout() throws Exception {
+        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.OPERATION_TIMOUT+"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.OPERATION_TIMOUT+"\"}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");will(throwException(new Exception()));
+            oneOf (mineralOccurrenceServiceClient).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");will(throwException(new ConnectTimeoutException()));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
@@ -395,13 +398,13 @@ public class TestMineralOccurrencesFilterController {
     }
 
     @Test
-    public void testDoMiningActivityFilterWithException() throws Exception {
-        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.FILTER_FAILED+"\",\"success\":false}";
-        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.FILTER_FAILED+"\"}";
+    public void testDoMiningActivityFilterWithConnectException() throws Exception {
+        final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION+"\",\"success\":false}";
+        final String expectedJSONResponse2= "{\"success\":false,\"msg\":\""+ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION+"\"}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedName("", "");will(throwException(new Exception()));
+            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedName("", "");will(throwException(new ConnectException()));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));

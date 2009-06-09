@@ -3,10 +3,9 @@ package org.auscope.portal.server.web.mineraloccurrence;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +16,7 @@ import java.util.List;
  * Date: Jun 4, 2009
  * Time: 11:30:47 AM
  */
+@Repository
 public class MineralOccurrenceServiceClient {
     private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
@@ -63,7 +63,7 @@ public class MineralOccurrenceServiceClient {
         GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", "");
 
         //call the service, and get all the mines
-        return httpServiceCaller.callGetMethod(method);
+        return httpServiceCaller.callMethod(method);
     }
 
     /**
@@ -99,7 +99,7 @@ public class MineralOccurrenceServiceClient {
         GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", mineFilter.getFilterString());
 
         //call the service, and get all the mines
-        return httpServiceCaller.callGetMethod(method);
+        return httpServiceCaller.callMethod(method);
     }
 
     /**
@@ -127,7 +127,7 @@ public class MineralOccurrenceServiceClient {
         }
 
         //call the service, and get all the commodities
-        String commodityResponse = httpServiceCaller.callGetMethod(method);
+        String commodityResponse = httpServiceCaller.callMethod(method);
 
         //parse the commodites and return them
         return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
@@ -179,7 +179,7 @@ public class MineralOccurrenceServiceClient {
         GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
 
         //run the dam query
-        return httpServiceCaller.callGetMethod(method);
+        return httpServiceCaller.callMethod(method);
     }
 
     public String getMiningActivityGML( String serviceURL,
@@ -201,6 +201,6 @@ public class MineralOccurrenceServiceClient {
         GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MiningActivity", miningActivityFilter.getFilterString());
 
         //run dat query
-        return this.httpServiceCaller.callGetMethod(method);
+        return this.httpServiceCaller.callMethod(method);
     }
 }

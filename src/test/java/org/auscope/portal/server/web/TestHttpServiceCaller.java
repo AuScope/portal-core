@@ -4,18 +4,11 @@ import org.junit.Test;
 import org.junit.Before;
 import org.jmock.Mockery;
 import org.jmock.Expectations;
-import org.jmock.api.Action;
-import org.jmock.internal.ExpectationBuilder;
-import org.jmock.internal.ExpectationCollector;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.io.IOException;
 
 import junit.framework.Assert;
 
@@ -100,7 +93,7 @@ public class TestHttpServiceCaller {
             oneOf (method).getResponseBody(); will(returnValue(returnString.getBytes()));
         }});
 
-        String response = httpServiceCaller.callGetMethod(method);
+        String response = httpServiceCaller.callMethod(method);
 
         Assert.assertEquals(returnString, response);
     }
@@ -118,6 +111,6 @@ public class TestHttpServiceCaller {
             oneOf (method).getStatusLine();
         }});
 
-        httpServiceCaller.callGetMethod(method);
+        httpServiceCaller.callMethod(method);
     }
 }

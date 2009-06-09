@@ -54,7 +54,7 @@ public class TestMineralOccurrenceServiceClient {
 
         context.checking(new Expectations() {{
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:Mine", ""); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).callGetMethod(mockMethod); will(returnValue(mockMineResponse));
+            oneOf (httpServiceCaller).callMethod(mockMethod); will(returnValue(mockMineResponse));
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
         }});
 
@@ -80,7 +80,7 @@ public class TestMineralOccurrenceServiceClient {
 
         context.checking(new Expectations() {{
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:Mine", mineFilter.getFilterString()); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).callGetMethod(mockMethod); will(returnValue(mockMineResponse));
+            oneOf (httpServiceCaller).callMethod(mockMethod); will(returnValue(mockMineResponse));
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
         }});
 
@@ -105,7 +105,7 @@ public class TestMineralOccurrenceServiceClient {
 
         context.checking(new Expectations() {{
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:Commodity", ""); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).callGetMethod(mockMethod); will(returnValue(mockCommodityResponse));
+            oneOf (httpServiceCaller).callMethod(mockMethod); will(returnValue(mockCommodityResponse));
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(mockCommodities));
         }});
 
@@ -130,7 +130,7 @@ public class TestMineralOccurrenceServiceClient {
 
         context.checking(new Expectations() {{
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:Commodity", commodityFilter.getFilterString()); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).callGetMethod(mockMethod); will(returnValue(mockCommodityResponse));
+            oneOf (httpServiceCaller).callMethod(mockMethod); will(returnValue(mockCommodityResponse));
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(mockCommodities));
         }});
 
@@ -178,14 +178,14 @@ public class TestMineralOccurrenceServiceClient {
         context.checking(new Expectations() {{
             //this the get commodities part
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:Commodity", commodityFilter.getFilterString()); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).callGetMethod(mockMethod); will(returnValue(mockCommodityResponse));
+            oneOf (httpServiceCaller).callMethod(mockMethod); will(returnValue(mockCommodityResponse));
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(commodities));
 
             oneOf (mockCommodity).getMineralOccurrenceURI(); will(returnValue("dudURI"));
 
             //the mineral occurrence query part
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:MineralOccurrence", mineralOccurrenceFilter.getFilterString()); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).callGetMethod(mockMethod); will(returnValue(mockCommodityResponse));
+            oneOf (httpServiceCaller).callMethod(mockMethod); will(returnValue(mockCommodityResponse));
         }});
 
         this.mineralOccurrenceServiceClient.getMineralOccurrenceGML(serviceURL,
@@ -224,7 +224,7 @@ public class TestMineralOccurrenceServiceClient {
         context.checking(new Expectations() {{
             //this the get commodities part
             oneOf (httpServiceCaller).constructWFSGetFeatureMethod(serviceURL, "mo:Commodity", commodityFilter.getFilterString()); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).callGetMethod(mockMethod); will(returnValue(mockCommodityResponse));
+            oneOf (httpServiceCaller).callMethod(mockMethod); will(returnValue(mockCommodityResponse));
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(commodities));
         }});
 
@@ -251,7 +251,7 @@ public class TestMineralOccurrenceServiceClient {
         context.checking(new Expectations() {{
             ignoring(mockMine);
             oneOf(httpServiceCaller).constructWFSGetFeatureMethod(with(""), with("mo:MiningActivity"), with(any(String.class)));will(returnValue(mockMethod));
-            oneOf(httpServiceCaller).callGetMethod(mockMethod);
+            oneOf(httpServiceCaller).callMethod(mockMethod);
         }});
 
         this.mineralOccurrenceServiceClient.getMiningActivityGML("", mockMineList, "", "", "", "", "", "");

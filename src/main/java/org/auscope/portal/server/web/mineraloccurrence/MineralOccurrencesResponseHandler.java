@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.springframework.stereotype.Repository;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -22,6 +23,7 @@ import java.io.UnsupportedEncodingException;
  * Date: 23/03/2009
  * Time: 4:53:18 PM
  */
+@Repository
 public class MineralOccurrencesResponseHandler {
 
     public List<Mine> getMines(String mineResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {

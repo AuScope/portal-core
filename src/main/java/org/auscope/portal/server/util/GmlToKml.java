@@ -11,11 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.stereotype.Repository;
 
 /**
  * <p> This class converts geoSciMl into KML format </p>
  * @author jsanders
  */
+@Repository
 public class GmlToKml {
    private static final Log log = LogFactory.getLog(GmlToKml.class);
    

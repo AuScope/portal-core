@@ -10,4 +10,6 @@ public class ErrorMessages {
     public static final String OPERATION_FAILED = "The operation performed did not complete successfully. Please try again later or contact the administrator for more information.";
     public static final String FILTER_FAILED = "An error occurred when performing this operation. Please try a different filter request.";
     public static final String NO_RESULTS = "No results matched your query.";
+    public static final String UNKNOWN_HOST_OR_FAILED_CONNECTION = "The service you wish to query can not be reached. The service is either temporarily down, or does not exist.";
+    public static final String OPERATION_TIMOUT = "The service is taking too long to respond. Please refine you query or try again later.";
 }
