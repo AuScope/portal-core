@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+       xmlns:beans="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                             http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+                             http://www.springframework.org/schema/security 
+                             http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+
+   <beans:bean id="entryPoint" 
+            class="org.springframework.security.ui.preauth.PreAuthenticatedProcessingFilterEntryPoint" >
+   </beans:bean>
+                                    
+   <http auto-config="false" entry-point-ref="entryPoint" session-fixation-protection="none" access-denied-page="/access_error.html">
+      <intercept-url pattern="/admin.html" access="ROLE_ADMINISTRATOR" />
+      <intercept-url pattern="/downloadProxy**" access="ROLE_DOWNLOAD" />
+      <intercept-url pattern="/**" filters="none" />
+   </http>
+      
+   <authentication-manager alias="authenticationManager" />
+   
+   <beans:bean id="preAuthenticatedProcessingFilter" 
+            class="org.auscope.portal.server.web.security.PreAuthenticatedProcessingFilter">
+      <custom-filter position="PRE_AUTH_FILTER"/>
+      <beans:property name="authenticationManager" ref="authenticationManager" />
+   </beans:bean>
+
+   <beans:bean id="preAuthenticatedAuthenticationProvider" 
+            class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+      <custom-authentication-provider />
+      <beans:property name="preAuthenticatedUserDetailsService">
+         <beans:bean id="userDetailsServiceWrapper"   
+                  class="org.springframework.security.userdetails.UserDetailsByNameServiceWrapper">
+            <beans:property name="userDetailsService" ref="myUserDetailsService"/>
+         </beans:bean>
+      </beans:property>
+   </beans:bean>   
+
+   <authentication-provider user-service-ref='myUserDetailsService'/>
+
+   <beans:bean id="myUserDetailsService" class="org.springframework.security.userdetails.jdbc.JdbcDaoImpl">
+      <beans:property name="dataSource" ref="dataSource"/>
+   </beans:bean>
+
+   <!-- This userDetailsService implementation is handy for quick testing   
+   <authentication-provider>
+      <user-service id="userDetailsService">
+         <user password="password" name="Jarek.Sanders@csiro.au" authorities="ROLE_JOB_SUBMISSION" />
+      </user-service>
+   </authentication-provider>
+   -->
+
+</beans:beans>

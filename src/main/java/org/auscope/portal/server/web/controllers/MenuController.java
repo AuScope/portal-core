@@ -76,8 +76,11 @@ public class MenuController {
    }
       
    @RequestMapping("/login.html")
-   public ModelAndView login() {
-      return new ModelAndView("login");
+   public ModelAndView login(HttpServletRequest request) {
+      logger.debug("Shib-Identity-Provider : " + request.getHeader("Shib-Identity-Provider"));
+
+      //return new ModelAndView("login");
+      return "redirect:gmap";
    }
    
    @RequestMapping("/about.html")
@@ -117,5 +120,16 @@ public class MenuController {
          e.printStackTrace();
       }
       return mav;
+   }
+   
+   @RequestMapping("/admin.html")
+   public ModelAndView admin() {
+      return new ModelAndView("admin");
+   }
+   
+   
+   @RequestMapping("/access_error.html")
+   public ModelAndView access_error() {
+      return new ModelAndView("access_error");
    }
 }
