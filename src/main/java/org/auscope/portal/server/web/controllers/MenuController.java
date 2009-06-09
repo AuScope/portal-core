@@ -80,7 +80,7 @@ public class MenuController {
       logger.debug("Shib-Identity-Provider : " + request.getHeader("Shib-Identity-Provider"));
 
       //return new ModelAndView("login");
-      return "redirect:gmap";
+      return new ModelAndView("redirect:/gmap.html");
    }
    
    @RequestMapping("/about.html")
