@@ -11,8 +11,4 @@
       <property name="password" value="${env.jdbc.password}"/>
    </bean>
 
-   <bean id="userDAO" class="org.auscope.portal.server.dao.JdbcUserDao">     
-      <property name="dataSource" ref="dataSource" />
-   </bean>
-
 </beans>

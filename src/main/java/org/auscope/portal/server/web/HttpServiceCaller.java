@@ -2,6 +2,8 @@ package org.auscope.portal.server.web;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,14 +27,14 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Creates a http GetMethod given the following parameters
+     * Creates a HttpMethodBase given the following parameters
      * @param serviceURL - required, exception thrown if not provided
      * @param featureType - required, exception thrown if not provided
      * @param filterString - optional
      * @return
      * @throws Exception
      */
-    public GetMethod constructWFSGetFeatureMethod(String serviceURL, String featureType, String filterString) throws Exception {
+    public HttpMethodBase constructWFSGetFeatureMethod(String serviceURL, String featureType, String filterString) throws Exception {
 
         //pretty hard to do a GetFeature query with a featureType, so we had better check that we have one
         if(featureType == null || featureType.equals(""))
@@ -41,7 +43,7 @@ public class HttpServiceCaller {
         //pretty hard to do a GetFeature query with a serviceURL, so we had better check that we have one
         if(serviceURL == null || serviceURL.equals(""))
             throw new Exception("serviceURL parameter can not be null or empty.");
-
+/*
         // Create a method instance.
         GetMethod method = new GetMethod(serviceURL);
 
@@ -55,7 +57,21 @@ public class HttpServiceCaller {
 
         //attach them to the method
         method.setQueryString(new NameValuePair[]{service, version, request, typeName, filter, maxFeatures});
-        
+        */
+
+        //create a method
+        PostMethod method = new PostMethod(serviceURL);
+
+        String postString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\">\n" +
+                "    <wfs:Query typeName=\""+featureType+"\"" +
+                        filterString +
+                "    </wfs:Query>" +
+                
+                "</wfs:GetFeature>";
+
+        method.setRequestEntity(new StringRequestEntity(postString));
+
         //return the GetMethod
         return method;
     }

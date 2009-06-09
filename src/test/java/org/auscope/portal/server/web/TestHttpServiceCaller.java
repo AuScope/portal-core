@@ -8,6 +8,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import junit.framework.Assert;
@@ -41,7 +42,7 @@ public class TestHttpServiceCaller {
      */
     @Test
     public void testConstructWFSGetFeatureMethodAllParameters() throws Exception {
-        GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING);
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING);
 
         // Create a method instance.
         GetMethod method2 = new GetMethod(SERVICE_URL);

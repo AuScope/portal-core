@@ -2,6 +2,7 @@ package org.auscope.portal.server.web.mineraloccurrence;
 
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.springframework.stereotype.Repository;
 
@@ -60,7 +61,7 @@ public class MineralOccurrenceServiceClient {
      */
     public String getAllMinesGML(String serviceURL) throws Exception {
         //create a GetFeature request with an empty filter - get all
-        GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", "");
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", "");
 
         //call the service, and get all the mines
         return httpServiceCaller.callMethod(method);
@@ -96,7 +97,7 @@ public class MineralOccurrenceServiceClient {
         MineFilter mineFilter = new MineFilter(mineName);
 
         //create a GetFeature request with an empty filter - get all
-        GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", mineFilter.getFilterString());
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", mineFilter.getFilterString());
 
         //call the service, and get all the mines
         return httpServiceCaller.callMethod(method);
@@ -113,7 +114,7 @@ public class MineralOccurrenceServiceClient {
      */
     public Collection<Commodity> getCommodity(String serviceURL, String commodityGroup, String commodityName) throws Exception {
         //httpclient method
-        GetMethod method = null;
+        HttpMethodBase method = null;
 
         //if we don't have a name or a group, then just get all of them
         if(commodityGroup.equals("") && commodityName.equals("")) {
@@ -176,7 +177,7 @@ public class MineralOccurrenceServiceClient {
                                                                                         cutOffGradeUOM);
 
         //create the method
-        GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
 
         //run the dam query
         return httpServiceCaller.callMethod(method);
@@ -198,7 +199,7 @@ public class MineralOccurrenceServiceClient {
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         //create the method
-        GetMethod method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MiningActivity", miningActivityFilter.getFilterString());
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MiningActivity", miningActivityFilter.getFilterString());
 
         //run dat query
         return this.httpServiceCaller.callMethod(method);
