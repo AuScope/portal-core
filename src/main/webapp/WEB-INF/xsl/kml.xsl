@@ -203,14 +203,14 @@
          <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
       </xsl:variable>
       <xsl:variable name="resource_id">
-         <xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
+         <xsl:value-of select="./gml:name[starts-with(.,'urn')][starts-with(@codeSpace,'http://')] "/>
       </xsl:variable>
       
       <Placemark>
          <name><xsl:value-of select="$resource_id"/></name>
          <description>
             <![CDATA[</br><table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
-            <tr><td>Id</td><td>]]><xsl:value-of select="$resource_id"/>
+            <tr><td>Id</td><td><a href="#" onclick="var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="$resource_id"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a>]]>
             <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./mo:type"/>
             <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./mo:classification/mo:MineralDepositModel/mo:mineralDepositGroup"/>
             <!-- commodity and ore amount is currently not required
