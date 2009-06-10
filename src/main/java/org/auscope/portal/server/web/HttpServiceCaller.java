@@ -4,6 +4,7 @@ import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +20,7 @@ import java.net.*;
  */
 
 public class HttpServiceCaller {
-
+    private Logger logger = Logger.getLogger(getClass());
     private HttpClient httpClient;
 
     public HttpServiceCaller(HttpClient httpClient) {
@@ -69,6 +70,8 @@ public class HttpServiceCaller {
                 "    </wfs:Query>" +
                 "</wfs:GetFeature>";
 
+        System.out.println(postString);
+
         method.setRequestEntity(new StringRequestEntity(postString));
 
         //return the GetMethod
@@ -86,6 +89,12 @@ public class HttpServiceCaller {
         int statusCode = httpClient.executeMethod(method);
 
         if (statusCode != HttpStatus.SC_OK) {
+            logger.error(method.getStatusLine());
+
+            //if its unavailable then throw a connection exception
+            if(statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
+                    throw new ConnectException();
+
             //if the response is not OK then throw an error
             throw new Exception("Returned status line: " + method.getStatusLine());
         }

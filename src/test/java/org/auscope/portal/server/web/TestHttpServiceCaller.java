@@ -125,7 +125,8 @@ public class TestHttpServiceCaller {
 
         context.checking(new Expectations() {{
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));
-            oneOf (method).getStatusLine();
+            oneOf (method).getStatusLine();//logger
+            oneOf (method).getStatusLine();//exception
         }});
 
         httpServiceCaller.callMethod(method);
