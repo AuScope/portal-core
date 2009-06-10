@@ -279,6 +279,20 @@ public class GetDataSourcesJSONController extends AbstractController {
         gswa.put("leaf", Boolean.FALSE);
         jsonArray.add(gswa);
 
+        Map<String, Serializable> ga = new HashMap<String, Serializable>();
+        ga.put("id", INSTITUTION + "ga");
+        ga.put("text", "Geoscience Australia");
+        //coe.put("checked", Boolean.FALSE);
+        ga.put("leaf", Boolean.FALSE);
+        jsonArray.add(ga);
+
+        Map<String, Serializable> gaOutcrop = new HashMap<String, Serializable>();
+        gaOutcrop.put("id", INSTITUTION + "gaOutcrop");
+        gaOutcrop.put("text", "Geoscience Australia Outcrop");
+        //coe.put("checked", Boolean.FALSE);
+        gaOutcrop.put("leaf", Boolean.FALSE);
+        jsonArray.add(gaOutcrop);
+
         logger.debug(jsonArray.toString());
         
         return jsonArray;
@@ -327,8 +341,12 @@ public class GetDataSourcesJSONController extends AbstractController {
             return jsonArray;
         } else if(institution.equals("gsv")) {
             return getWmsLayers("http://www.gsv-tb.dpi.vic.gov.au/AuScope-TestWMS/services?"); 
-        } else {  //if(institution.equals("gswa")) {
+        } else if(institution.equals("gswa")) {
             return getWmsLayers("http://gissdi.doir.wa.gov.au/SDIPrd/services/Mineral/MapServer/WMSServer?");
+        } else if(institution.equals("ga")) {
+            return getWmsLayers("http://www.ga.gov.au/wms/getmap?dataset=geows");
+        } else {
+            return getWmsLayers("http://www.ga.gov.au/wms/getmap?dataset=geows_outcrops");
         }
         
     }
