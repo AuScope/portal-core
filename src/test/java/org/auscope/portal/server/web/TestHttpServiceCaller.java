@@ -49,7 +49,7 @@ public class TestHttpServiceCaller {
         PostMethod method = (PostMethod)httpServiceCaller.constructWFSGetFeatureMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING);
 
         String expectedPost = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                              "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" maxFeatures=\"10\">\n" +
+                              "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" maxFeatures=\"10\">\n" +
                               "    <wfs:Query typeName=\""+FEATURE_TYPE+"\">" +
                                 FILTER_STRING +
                               "    </wfs:Query>" +

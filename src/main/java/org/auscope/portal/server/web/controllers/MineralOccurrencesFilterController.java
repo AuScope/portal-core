@@ -161,7 +161,6 @@ public class MineralOccurrencesFilterController {
                                                                                         minCommodityAmountUOM,
                                                                                         cutOffGrade,
                                                                                         cutOffGradeUOM);
-
             //if there are 0 features then send a nice message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
