@@ -10,8 +10,12 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 import junit.framework.Assert;
+
+import java.io.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,9 +46,21 @@ public class TestHttpServiceCaller {
      */
     @Test
     public void testConstructWFSGetFeatureMethodAllParameters() throws Exception {
-        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING);
+        PostMethod method = (PostMethod)httpServiceCaller.constructWFSGetFeatureMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING);
 
-        // Create a method instance.
+        String expectedPost = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                              "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" maxFeatures=\"10\">\n" +
+                              "    <wfs:Query typeName=\""+FEATURE_TYPE+"\">" +
+                                FILTER_STRING +
+                              "    </wfs:Query>" +
+                              "</wfs:GetFeature>";
+
+        ByteArrayOutputStream thePost = new ByteArrayOutputStream();
+        method.getRequestEntity().writeRequest(new BufferedOutputStream(thePost));
+
+        Assert.assertEquals(expectedPost, thePost.toString());
+
+        /*// Create a method instance.
         GetMethod method2 = new GetMethod(SERVICE_URL);
 
         //set all of the parameters
@@ -59,7 +75,7 @@ public class TestHttpServiceCaller {
         method2.setQueryString(new NameValuePair[]{service, version, request, typeName, filter, maxFeatures});
 
 
-        Assert.assertEquals(method2.getURI(), method.getURI());
+        Assert.assertEquals(method2.getURI(), method.getURI());*/
     }
 
     /**
@@ -86,7 +102,7 @@ public class TestHttpServiceCaller {
      */
     @Test
     public void testCallGetMethod() throws Exception {
-        final GetMethod method = context.mock(GetMethod.class);
+        final HttpMethodBase method = context.mock(HttpMethodBase.class);
         final String returnString = "Allo";
 
         context.checking(new Expectations() {{
@@ -104,8 +120,8 @@ public class TestHttpServiceCaller {
      * @throws Exception
      */
     @Test (expected = Exception.class)
-    public void testCallGetMethodError() throws Exception {
-        final GetMethod method = context.mock(GetMethod.class);
+    public void testCallMethodError() throws Exception {
+        final HttpMethodBase method = context.mock(HttpMethodBase.class);
 
         context.checking(new Expectations() {{
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));
