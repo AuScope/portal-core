@@ -7,11 +7,8 @@ import org.jmock.Expectations;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 import junit.framework.Assert;
 
@@ -37,7 +34,7 @@ public class TestHttpServiceCaller {
     @Before
     public void setup() {
         mockHttpClient = context.mock(HttpClient.class);
-        httpServiceCaller = new HttpServiceCaller(mockHttpClient);
+        httpServiceCaller = new HttpServiceCaller();
     }
 
     /**
@@ -49,7 +46,7 @@ public class TestHttpServiceCaller {
         PostMethod method = (PostMethod)httpServiceCaller.constructWFSGetFeatureMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING);
 
         String expectedPost = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                              "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" maxFeatures=\"10\">\n" +
+                              "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" maxFeatures=\"200\">\n" +
                               "    <wfs:Query typeName=\""+FEATURE_TYPE+"\">" +
                                 FILTER_STRING +
                               "    </wfs:Query>" +
@@ -107,10 +104,11 @@ public class TestHttpServiceCaller {
 
         context.checking(new Expectations() {{
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_OK));
-            oneOf (method).getResponseBody(); will(returnValue(returnString.getBytes()));
+            oneOf (method).getResponseBodyAsString(); will(returnValue(returnString));
+            oneOf (method).releaseConnection();
         }});
 
-        String response = httpServiceCaller.callMethod(method);
+        String response = httpServiceCaller.callMethod(method, mockHttpClient);
 
         Assert.assertEquals(returnString, response);
     }
@@ -129,6 +127,6 @@ public class TestHttpServiceCaller {
             oneOf (method).getStatusLine();//exception
         }});
 
-        httpServiceCaller.callMethod(method);
+        httpServiceCaller.callMethod(method, mockHttpClient);
     }
 }

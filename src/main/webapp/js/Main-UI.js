@@ -111,10 +111,10 @@ Ext.onReady(function() {
 
     //event handlers and listeners
     tree.on('click', function(node, event) { treeNodeOnClickController(node, event, viewport, filterPanel); });
-    tree.on('checkchange', function(node, isChecked) { treeCheckChangeController(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel); });
+    tree.on('checkchange', function(node, isChecked) { treeCheckChangeController(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel, tree); });
 
     //when a person clicks on a marker then do something
-    GEvent.addListener(map, "click", function(overlay, latlng) { gMapClickController(map, overlay, latlng, statusBar, viewport); });
+    GEvent.addListener(map, "click", function(overlay, latlng) { gMapClickController(map, overlay, latlng, statusBar, viewport, tree); });
 
 });
 

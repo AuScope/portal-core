@@ -169,6 +169,7 @@ public class MineralOccurrencesFilterController {
             return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request));
 
         } catch (Exception e) {
+            e.printStackTrace();
             return this.handleExceptionResponse(e);
         }
     }

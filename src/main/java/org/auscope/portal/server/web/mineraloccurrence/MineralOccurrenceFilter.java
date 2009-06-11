@@ -139,8 +139,6 @@ public class MineralOccurrenceFilter implements IFilter {
 
         queryString.append("        </ogc:Filter>\n");
 
-        System.out.print(queryString.toString());
-        
         return queryString.toString();
 
     }

@@ -9,7 +9,7 @@
  * @param downloadUrls
  * @param filterPanel
  */
-var treeCheckChangeController = function(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel) {
+var treeCheckChangeController = function(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel, treePanel) {
 
     /**
      * Given a feature type string, determine which handler to use for that feature type
@@ -136,6 +136,8 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
 
     //the check was checked on
     if (isChecked) {
+        treePanel.getSelectionModel().select(node, true);
+
         if(node.attributes.layerType == 'gmap' && (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '')) {
             googleMapServiceHandler();    
         }

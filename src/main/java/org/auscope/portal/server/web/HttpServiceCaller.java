@@ -21,11 +21,8 @@ import java.net.*;
 
 public class HttpServiceCaller {
     private Logger logger = Logger.getLogger(getClass());
-    private HttpClient httpClient;
 
-    public HttpServiceCaller(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
+    public HttpServiceCaller() {}
 
     /**
      * Creates a HttpMethodBase given the following parameters
@@ -65,11 +62,13 @@ public class HttpServiceCaller {
 
         //TODO: remove the mo namespace and have it passed in as a parameter
         String postString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" maxFeatures=\"10\">\n" +
+                "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" maxFeatures=\"200\">\n" +
                 "    <wfs:Query typeName=\""+featureType+"\">" +
                         filterString +
                 "    </wfs:Query>" +
                 "</wfs:GetFeature>";
+
+        System.out.println(postString);
 
         method.setRequestEntity(new StringRequestEntity(postString));
 
@@ -80,10 +79,11 @@ public class HttpServiceCaller {
     /**
      * Makes a call to a http GetMethod
      * @param method
+     * @param httpClient
      * @return
      * @throws Exception
      */
-    public String callMethod(HttpMethodBase method) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+    public String callMethod(HttpMethodBase method, HttpClient httpClient) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
         //make the call
         int statusCode = httpClient.executeMethod(method);
 
@@ -98,11 +98,22 @@ public class HttpServiceCaller {
             throw new Exception("Returned status line: " + method.getStatusLine());
         }
 
-        // Read the response body.
-        byte[] responseBody = method.getResponseBody();
+        //get the reponse before we close the connection
+        String response = method.getResponseBodyAsString();
+
+        //release the connection
+        method.releaseConnection();
 
         //return it
-        return new String(responseBody);
+        return response;
+    }
+
+    /**
+     * Generate a new httpClient
+     * @return
+     */
+    public HttpClient getHttpClient() {
+        return new HttpClient();        
     }
 
     /**

@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.apache.log4j.Logger;
-import org.apache.commons.httpclient.HttpClient;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +39,7 @@ public class GeologicUnitController {
         url = url.replace(" ", "%20");
         //String url = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS&version=1.1.0&request=GetFeature&outputFormat=text/xml;%20subtype=geoscimlhtml&featureid=gsml.geologicunit.16777549126932018";
 
-        HttpServiceCaller serviceCaller = new HttpServiceCaller(new HttpClient());
+        HttpServiceCaller serviceCaller = new HttpServiceCaller();
         String responseFromCall = serviceCaller.callHttpUrlGET(new URL(url));
         //response.getWriter().write(serviceCaller.responseToString(responseFromCall));
 
