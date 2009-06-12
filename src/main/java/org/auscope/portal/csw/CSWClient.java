@@ -56,7 +56,15 @@ public class CSWClient {
     }
 
     private URL buildQueryUrl() throws MalformedURLException {
-        return new URL(serviceUrl+"?request=GetRecords&service=CSW&version=2.0.2&resultType=results&namespace=csw:http://www.opengis.net/cat/csw/2.0.2&outputSchema=csw:IsoRecord&constraint=" + constraint);
+        return new URL(serviceUrl +
+                "?request=GetRecords" +
+                "&service=CSW" +
+                "&version=2.0.2" +
+                "&resultType=results" +
+                "&namespace=csw:http://www.opengis.net/cat/csw/2.0.2" +
+                "&outputSchema=csw:IsoRecord" +
+                "&typeNames=csw:Record" +
+                "&constraint=" + constraint);
     }
 
     private Document buildDom(String xmlString) throws ParserConfigurationException, IOException, SAXException {
