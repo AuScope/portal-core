@@ -44,17 +44,17 @@ public class GetDataSourcesJSONController extends AbstractController {
     // what is the purpose of that line?
     //public static final String XSLT_PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
     public static final String XSLT_PROXY_URL = "/xsltRestProxy?url=";
-    public static final String PROXY_URL = "/restproxy?";
+    public static final String PROXY_URL      = "/restproxy?";
 
-    public static final String CSW_URL = "http://auscope-portal.arrc.csiro.au/geonetwork/srv/en/csw";
+    public static final String CSW_URL = "http://auscope-portal-test.arrc.csiro.au/geonetwork/srv/en/csw";
 
     public static final String BOREHOLE           = "Borehole";
     public static final String GNSS               = "Global Navigation Satellite Systems";
     public static final String GEODESY            = "Geodesy";
     public static final String GEOLOGIC_UNIT      = "Geologic Unit";
     public static final String MINERAL_OCCURENCES = "Mineral Occurrences";
-    public static final String MINING_ACTIVITY = "Mining Activity";
-    public static final String MINES = "Mines";
+    public static final String MINING_ACTIVITY    = "Mining Activity";
+    public static final String MINES              = "Mines";
     
     //create some identifiers for each of the themes to be displayed in the portal
     public static final String[] THEMES = { BOREHOLE,
