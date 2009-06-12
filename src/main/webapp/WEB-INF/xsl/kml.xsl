@@ -69,6 +69,7 @@
             <xsl:apply-templates select="gml:featureMember/gsml:MappedFeature"/>
             <xsl:apply-templates select="gml:featureMember/gsml:ShearDisplacementStructure"/>
             
+            <xsl:apply-templates select="gml:featureMembers/mo:MineralOccurrence"/>
             <xsl:apply-templates select="gml:featureMembers/gsml:Borehole"/>
             <xsl:apply-templates select="gml:featureMembers/sa:SamplingPoint"/>
          </Document>
@@ -197,7 +198,7 @@
    
    <!-- TEMPLATE FOR TRANSLATING Mineral Occurence -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/mo:MineralOccurrence">
+   <xsl:template match="gml:featureMember/mo:MineralOccurrence | gml:featureMembers/mo:MineralOccurrence">
    
       <xsl:variable name="coordinates">
          <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
