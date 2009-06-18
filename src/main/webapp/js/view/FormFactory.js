@@ -23,7 +23,7 @@ Ext.override(Ext.form.Field, {
 function buildMineFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction, preSubmitFunction) {
     var mineNamesStore = new Ext.data.Store({
         baseParams: {serviceUrl: serviceUrl},
-        proxy: new Ext.data.HttpProxy({url: '/getMineNames.do'}),
+        proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: '/getMineNames.do', timeout:180000})),
         reader: new Ext.data.JsonReader({
             root:'data'
         }, [{name:'mineDisplayName', mapping:'mineDisplayName'}])
@@ -101,7 +101,7 @@ function buildMineFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction
 function buildMiningActivityFilterForm(id, loadUrl, submitUrl, serviceUrl, successFunction, preSubmitFunction) {
     var mineNamesStore = new Ext.data.Store({
         baseParams: {serviceUrl: serviceUrl},
-        proxy: new Ext.data.HttpProxy({url: '/getMineNames.do'}),
+        proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: '/getMineNames.do', timeout:180000})),
         reader: new Ext.data.JsonReader({
             root:'data'
         }, [{name:'mineDisplayName', mapping:'mineDisplayName'}])
@@ -120,6 +120,7 @@ function buildMiningActivityFilterForm(id, loadUrl, submitUrl, serviceUrl, succe
         buttonAlign: 'right',
         labelAlign: 'right',
         labelWidth: 140,
+        timeout: 180, //should not timeout before the server does
 
         items: [{
             xtype:'fieldset',
@@ -287,6 +288,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
         buttonAlign: 'right',
         labelAlign: 'right',
         labelWidth: 140,
+        timeout: 180, //should not time out before the server does
 
         items: [{
             xtype:'fieldset',

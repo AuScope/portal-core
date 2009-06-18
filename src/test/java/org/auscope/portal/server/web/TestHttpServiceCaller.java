@@ -8,6 +8,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import junit.framework.Assert;
@@ -103,6 +104,7 @@ public class TestHttpServiceCaller {
         final String returnString = "Allo";
 
         context.checking(new Expectations() {{
+            oneOf (mockHttpClient).setHttpConnectionManager(with(any(HttpConnectionManager.class)));
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_OK));
             oneOf (method).getResponseBodyAsString(); will(returnValue(returnString));
             oneOf (method).releaseConnection();
@@ -122,6 +124,7 @@ public class TestHttpServiceCaller {
         final HttpMethodBase method = context.mock(HttpMethodBase.class);
 
         context.checking(new Expectations() {{
+            oneOf (mockHttpClient).setHttpConnectionManager(with(any(HttpConnectionManager.class)));
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));
             oneOf (method).getStatusLine();//logger
             oneOf (method).getStatusLine();//exception

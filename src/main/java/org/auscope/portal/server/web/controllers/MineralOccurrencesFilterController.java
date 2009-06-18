@@ -149,7 +149,6 @@ public class MineralOccurrencesFilterController {
             @RequestParam("cutOffGradeUOM") String cutOffGradeUOM,
             HttpServletRequest request) {
         try {
-
             //get the mineral occurrences
             String mineralOccurrenceResponse = this.mineralOccurrenceServiceClient.getMineralOccurrenceGML(serviceUrl,
                                                                                         commodityName,
@@ -169,7 +168,6 @@ public class MineralOccurrencesFilterController {
             return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request));
 
         } catch (Exception e) {
-            e.printStackTrace();
             return this.handleExceptionResponse(e);
         }
     }

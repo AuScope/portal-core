@@ -1,6 +1,9 @@
 package org.auscope.portal.server.web;
 
 import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
@@ -68,8 +71,6 @@ public class HttpServiceCaller {
                 "    </wfs:Query>" +
                 "</wfs:GetFeature>";
 
-        System.out.println(postString);
-
         method.setRequestEntity(new StringRequestEntity(postString));
 
         //return the GetMethod
@@ -84,6 +85,17 @@ public class HttpServiceCaller {
      * @throws Exception
      */
     public String callMethod(HttpMethodBase method, HttpClient httpClient) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+        //set the timeout, to 1 minute
+        HttpConnectionManagerParams clientParams = new HttpConnectionManagerParams();
+        clientParams.setParameter(HttpMethodParams.HEAD_BODY_CHECK_TIMEOUT, 60000);
+        clientParams.setSoTimeout(60000);
+        clientParams.setConnectionTimeout(60000);
+
+        //create the connection manager and add it to the client
+        HttpConnectionManager man = new SimpleHttpConnectionManager();
+        man.setParams(clientParams);
+        httpClient.setHttpConnectionManager(man);
+        
         //make the call
         int statusCode = httpClient.executeMethod(method);
 
@@ -106,6 +118,12 @@ public class HttpServiceCaller {
 
         //return it
         return response;
+    }
+
+    public static void main(String[] args) throws Exception {
+        HttpServiceCaller caller = new HttpServiceCaller();
+        HttpMethodBase method = caller.constructWFSGetFeatureMethod("http://apacsrv1.arrc.csiro.au/deegree-wfs/services?", "mo:Mine", "");
+        caller.callMethod(method, new HttpClient());
     }
 
     /**

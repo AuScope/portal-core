@@ -1,6 +1,18 @@
 //this runs on DOM load - you can access all the good stuff now.
 var theglobalexml;
 //Ext.Ajax.timeout = 180000; //3 minute timeout for ajax calls
+Ext.lib.Ajax.on("timeout",
+                function() {
+                    Ext.MessageBox.show({
+                        title: 'Operation Timout',
+                        msg: "The service is taking too long to respond. Please refine you query or try again later.",
+                        buttons: Ext.MessageBox.OK,
+                        animEl: 'mb9',
+                        icon: Ext.MessageBox.ERROR
+                    });
+                    //return true;  //tried true and false to let current request to wait longer but it doesn't
+                });
+
 
 Ext.onReady(function() {
     var map;
