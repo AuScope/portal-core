@@ -2,10 +2,14 @@ package org.auscope.portal.server.web.controllers;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.xmlbeans.XmlException;
 
 import org.auscope.portal.csw.CSWClient;
 import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.csw.CSWNamespaceContext;
 import org.auscope.portal.server.web.view.JSONView;
 import org.auscope.portal.server.web.view.JSONModelAndView;
 
@@ -15,14 +19,26 @@ import org.geotools.data.wms.WebMapServer;
 import org.geotools.ows.ServiceException;
 
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import org.springframework.web.servlet.mvc.AbstractController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Controller;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPath;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.net.URL;
 import java.io.*;
@@ -35,7 +51,9 @@ import net.sf.json.JSONArray;
  * Date: 12/01/2009
  * Time: 2:01:42 PM
  */
-public class GetDataSourcesJSONController extends AbstractController {
+
+@Controller
+public class GetDataSourcesJSONController {
     //logger
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -116,12 +134,8 @@ public class GetDataSourcesJSONController extends AbstractController {
     public static final String THEME = "THEME:";
     public static final String INSTITUTION = "INSTITUTION:";
 
-    @Override
-    protected ModelAndView handleRequestInternal(HttpServletRequest request,
-                                                 HttpServletResponse response) throws Exception {
-
-        //Ext js sends the tree node id on a request for its children
-        String node = request.getParameter("node");
+    @RequestMapping("/dataSources.json")
+    public ModelAndView getDataSources(@RequestParam String node) throws Exception {
 
         //a JSON array to handle the structures created
         JSONArray jsonArray = new JSONArray();
@@ -392,5 +406,91 @@ public class GetDataSourcesJSONController extends AbstractController {
 
     public String stripUrlAndGetFeatures(String url) {
         return url.replace("&", "%26").trim();
+    }
+
+    public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException, XmlException, XPathExpressionException {
+        /*URL cswQuery = new URL("http://auscope-portal-test.arrc.csiro.au/geonetwork/srv/en/csw?request=GetRecords&service=CSW&resultType=results&namespace=csw:http://www.opengis.net/cat/csw&outputSchema=csw:IsoRecord&constraintLanguage=FILTER&constraint_language_version=1.1.0&maxRecords=100&typeNames=csw:Record");
+        BufferedReader responseReader = new BufferedReader(new InputStreamReader(cswQuery.openStream()));
+
+        String inputLine;
+        StringBuffer xmlResponse = new StringBuffer();
+        while ((inputLine = responseReader.readLine()) != null) {
+            xmlResponse.append(inputLine);
+        }*/                 
+
+        GetMethod method = new GetMethod("http://auscope-portal-test.arrc.csiro.au/geonetwork/srv/en/csw?");
+
+        //set all of the parameters
+        NameValuePair service = new NameValuePair("service", "CSW");
+        NameValuePair request = new NameValuePair("request", "GetRecords");
+        NameValuePair resultType = new NameValuePair("resultType", "results");
+        NameValuePair namespace = new NameValuePair("namespace", "csw:http://www.opengis.net/cat/csw");
+        NameValuePair outputSchema = new NameValuePair("outputSchema", "csw:IsoRecord");
+        NameValuePair constraintLanguage = new NameValuePair("constraintLanguage", "FILTER");
+        NameValuePair version = new NameValuePair("constraint_language_version", "1.1.0");
+        NameValuePair maxRecords = new NameValuePair("maxRecords", "100");
+        NameValuePair typeNames = new NameValuePair("typeNames", "csw:Record");
+
+        //attach them to the method
+        method.setQueryString(new NameValuePair[]{service, version, request, outputSchema, constraintLanguage, maxRecords, typeNames, resultType, namespace});
+
+        new HttpClient().executeMethod(method);
+
+        String xmlResponse = method.getResponseBodyAsString();
+
+        System.out.println(xmlResponse);
+        //CSWRecord[] cswRecords = new CSWGetRecordResponse(buildDom(xmlResponse.toString())).getCSWRecords();
+
+        Document records = buildDom(xmlResponse.toString());
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        xPath.setNamespaceContext(new CSWNamespaceContext());
+        String serviceTitleExpression = "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata";
+        NodeList nodes = (NodeList) xPath.evaluate(serviceTitleExpression, records, XPathConstants.NODESET);
+
+        System.out.println(nodes.getLength());
+
+        for(int i=0; i<nodes.getLength(); i++ ) {
+            XPath nodexPath = XPathFactory.newInstance().newXPath();
+            nodexPath.setNamespaceContext(new CSWNamespaceContext());
+
+            String dataIdentification = "gmd:identificationInfo/gmd:MD_DataIdentification";
+            Node identificationNode = (Node) nodexPath.evaluate(dataIdentification, nodes.item(i), XPathConstants.NODE);
+
+            System.out.println(identificationNode);
+
+            String linkXPath = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:linkage/gmd:URL";
+            String link = (String) nodexPath.evaluate(linkXPath, nodes.item(i), XPathConstants.STRING);
+
+            String protocolXPath= "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString";
+            String protocol = (String) nodexPath.evaluate(protocolXPath, nodes.item(i), XPathConstants.STRING);
+
+            String nameXPath= "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
+            String name = (String) nodexPath.evaluate(nameXPath, nodes.item(i), XPathConstants.STRING);
+
+            String descriptionXPath= "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:description/gco:CharacterString";
+            String description = (String) nodexPath.evaluate(descriptionXPath, nodes.item(i), XPathConstants.STRING);
+
+            if(identificationNode != null ) { // these nodes are data nodes from a WFS i.e. features
+
+                System.out.println("--");
+                System.out.println(link);
+                System.out.println(protocol);
+                System.out.println(name);
+                System.out.println(description);
+                System.out.println("");
+
+            }
+        }
+    }
+
+    public static Document buildDom(String xmlString) throws ParserConfigurationException, IOException, SAXException {
+        //build the XML dom
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true); // never forget this!
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource inputSource = new InputSource(new StringReader(xmlString.toString()));
+        Document doc = builder.parse(inputSource);
+
+        return doc;
     }
 }
