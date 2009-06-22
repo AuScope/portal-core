@@ -18,10 +18,9 @@ import java.net.URL;
 
 /**
  * Created by IntelliJ IDEA.
- * User: mat
+ * User: Mathew Wyatt
  * Date: 28/04/2009
  * Time: 8:56:08 PM
- * To change this template use File | Settings | File Templates.
  */
 
 @Controller

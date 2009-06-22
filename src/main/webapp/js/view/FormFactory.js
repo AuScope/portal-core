@@ -272,9 +272,9 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
         displayField:'type',
         valueField:'type'
     });
-    
+
     measureTypeCombo.setValue('Any');
-    
+
     var thePanel = new Ext.FormPanel({
         //region: "center",
         //collapsible: true,
@@ -361,7 +361,7 @@ function buildMineralOccurrenceFilterForm(id, loadUrl, submitUrl, serviceUrl, su
             },  new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
-                name: 'cutOffGradeUOMName',                                                                                                 
+                name: 'cutOffGradeUOMName',
                 hiddenName: 'cutOffGradeUOM',
                 fieldLabel: 'Cut Off Grade Unit',
                 emptyText:'Select a Unit Of Measure...',

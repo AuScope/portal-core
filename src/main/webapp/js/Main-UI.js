@@ -1,8 +1,9 @@
 //this runs on DOM load - you can access all the good stuff now.
 var theglobalexml;
-//Ext.Ajax.timeout = 180000; //3 minute timeout for ajax calls
+
 
 Ext.onReady(function() {
+
     var map;
     var downloadUrls = new Hashtable();
 
