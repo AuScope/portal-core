@@ -5,8 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.xmlbeans.XmlException;
-
 import org.auscope.portal.csw.CSWClient;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.csw.CSWNamespaceContext;
@@ -254,8 +252,6 @@ public class GetDataSourcesJSONController {
                 logger.error(e);
             } catch (SAXException e) {
                 logger.error(e);
-            } catch (XmlException e) {
-                logger.error(e);
             }
 
             return new JSONArray();
@@ -408,7 +404,7 @@ public class GetDataSourcesJSONController {
         return url.replace("&", "%26").trim();
     }
 
-    public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException, XmlException, XPathExpressionException {
+    public static void main(String[] args) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         /*URL cswQuery = new URL("http://auscope-portal-test.arrc.csiro.au/geonetwork/srv/en/csw?request=GetRecords&service=CSW&resultType=results&namespace=csw:http://www.opengis.net/cat/csw&outputSchema=csw:IsoRecord&constraintLanguage=FILTER&constraint_language_version=1.1.0&maxRecords=100&typeNames=csw:Record");
         BufferedReader responseReader = new BufferedReader(new InputStreamReader(cswQuery.openStream()));
 

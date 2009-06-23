@@ -1,7 +1,5 @@
 package org.auscope.portal.csw;
 
-import org.apache.xmlbeans.*;
-import org.isotc211.x2005.gmd.MDMetadataDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -23,7 +21,7 @@ public class CSWGetRecordResponse {
         this.recordResponse = getRecordResponseText;
     }
 
-    public CSWRecord[] getCSWRecords() throws XPathExpressionException, XmlException {
+    public CSWRecord[] getCSWRecords() throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());
         String serviceTitleExpression = "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata";
@@ -31,9 +29,7 @@ public class CSWGetRecordResponse {
 
         records = new CSWRecord[nodes.getLength()];
         for(int i=0; i<nodes.getLength(); i++ ) {
-        	MDMetadataDocument doc =
-        		MDMetadataDocument.Factory.parse(nodes.item(i));
-            records[i] = new CSWRecord(doc);
+            records[i] = new CSWRecord(nodes.item(i));
         }
 
         return records;

@@ -3,25 +3,15 @@ package org.auscope.portal.csw;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.namespace.NamespaceContext;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * User: Mathew Wyatt
