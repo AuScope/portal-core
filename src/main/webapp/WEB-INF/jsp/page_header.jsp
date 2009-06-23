@@ -1,3 +1,4 @@
+<%@ taglib prefix='security' uri='http://www.springframework.org/security/tags' %>
    <div id="header-container">
       <div id="logo">
          <h1>
