@@ -57,12 +57,8 @@ public class GetDataSourcesJSONController {
 
     public static final String WEPMAPSERVICE = "Web Map Service Layers";
 
-    // what is the purpose of that line?
-    //public static final String XSLT_PROXY_URL = "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=";
     public static final String XSLT_PROXY_URL = "/xsltRestProxy?url=";
     public static final String PROXY_URL      = "/restproxy?";
-
-    public static final String CSW_URL = "http://auscope-portal-test.arrc.csiro.au/geonetwork/srv/en/csw";
 
     public static final String BOREHOLE           = "Borehole";
     public static final String GNSS               = "Global Navigation Satellite Systems";
@@ -216,7 +212,12 @@ public class GetDataSourcesJSONController {
         } else {*/
             CSWRecord[] cswRecords;
             try {
-                cswRecords = new CSWClient(CSW_URL, themeContraints.get(theme)).getRecordResponse().getCSWRecords();
+                ResourceBundle bundle = ResourceBundle.getBundle("config");
+                String cswUrl = bundle.getString("csw-service-url");
+                
+                cswRecords =
+                    new CSWClient(cswUrl, themeContraints.get(theme))
+                        .getRecordResponse().getCSWRecords();
 
                 JSONArray jsonArray = new JSONArray();
                 for(CSWRecord record : cswRecords) {
@@ -244,6 +245,8 @@ public class GetDataSourcesJSONController {
                 }
 
                 return jsonArray;
+            } catch (MissingResourceException e) {
+                logger.error(e);
             } catch (XPathExpressionException e) {
                 logger.error(e);
             } catch (IOException e) {
