@@ -2,6 +2,7 @@ package org.auscope.portal.csw;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -19,6 +20,8 @@ import java.io.StringReader;
  * Time: 10:41:30 AM
  */
 public class CSWClient {
+    private Logger logger = Logger.getLogger(getClass());
+
     private String serviceUrl = "";
     private String constraint;
 
@@ -31,9 +34,9 @@ public class CSWClient {
         this.constraint = constraint;
     }
 
-
     public CSWGetRecordResponse getRecordResponse() throws IOException, ParserConfigurationException, SAXException {
         URL cswQuery = buildQueryUrl();
+        logger.debug("querying " + cswQuery);
         BufferedReader responseReader = new BufferedReader(new InputStreamReader(cswQuery.openStream()));
 
         String inputLine;
