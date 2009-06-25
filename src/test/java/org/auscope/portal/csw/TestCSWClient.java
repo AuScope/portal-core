@@ -23,7 +23,7 @@ public class TestCSWClient {
             "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?>" +
                 "<Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\">" +
                 "<PropertyIsEqualTo>" +
-                    "<PropertyName>any</PropertyName>" +
+                    "<PropertyName>keyword</PropertyName>" +
                     "<Literal>WFS</Literal>" +
                 "</PropertyIsEqualTo>" +
             "</Filter>" +
