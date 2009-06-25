@@ -8,7 +8,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.auscope.portal.csw.CSWClient;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.csw.CSWNamespaceContext;
-import org.auscope.portal.server.web.view.JSONView;
+import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.view.JSONModelAndView;
 
 import org.geotools.data.ows.Layer;
@@ -19,7 +19,7 @@ import org.geotools.ows.ServiceException;
 import org.xml.sax.SAXException;
 import org.xml.sax.InputSource;
 
-import org.springframework.web.servlet.mvc.AbstractController;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,8 +28,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -54,6 +52,9 @@ import net.sf.json.JSONArray;
 public class GetDataSourcesJSONController {
     //logger
     protected final Log logger = LogFactory.getLog(getClass());
+    
+    @Autowired
+    private PortalPropertyPlaceholderConfigurer hostConfigurer;
 
     public static final String WEPMAPSERVICE = "Web Map Service Layers";
 
@@ -78,13 +79,52 @@ public class GetDataSourcesJSONController {
                                             MINES};
 
     //create a map to hold the CSW query contraints for each theme
+    // TODO can filterAPI be used for CSW as well? 
     public static final Map<String, String> themeContraints = new HashMap<String, String>() {{
-        put(BOREHOLE, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:Borehole</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
-        put(GNSS, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GNSS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(BOREHOLE,
+            "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?>" +
+            "<Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\">" +
+                "<And>" +
+                    "<PropertyIsEqualTo>" +
+                        "<PropertyName>keyword</PropertyName>" +
+                        "<Literal>WFS</Literal>" +
+                    "</PropertyIsEqualTo>" +
+                    "<PropertyIsEqualTo>" +
+                        "<PropertyName>keyword</PropertyName>" +
+                        "<Literal>gsml:Borehole</Literal>" +
+                    "</PropertyIsEqualTo>" +
+                "</And>" +
+            "</Filter>" +
+            "&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        
+        put(GNSS,
+            "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?>" +
+            "<Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\">" +
+                "<And>" +
+                    "<PropertyIsEqualTo>" +
+                        "<PropertyName>keyword</PropertyName>" +
+                        "<Literal>WFS</Literal>" +
+                    "</PropertyIsEqualTo>" +
+                    "<PropertyIsEqualTo>" +
+                        "<PropertyName>keyword</PropertyName>" +
+                        "<Literal>GPS</Literal>" +
+                    "</PropertyIsEqualTo>" +
+                    "<PropertyIsEqualTo>" +
+                        "<PropertyName>keyword</PropertyName>" +
+                        "<Literal>GNSS</Literal>" +
+                    "</PropertyIsEqualTo>" +
+                "</And>" +
+            "</Filter>" +
+            "&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        
         put(GEODESY, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>Geodesy</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        
         put(GEOLOGIC_UNIT, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:GeologicUnit</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        
         put(MINERAL_OCCURENCES, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MineralOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        
         put(MINING_ACTIVITY, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MiningActivity</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        
         put(MINES, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:Mine</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
     }};
 
@@ -145,7 +185,7 @@ public class GetDataSourcesJSONController {
 
             //if we have a theme tree node, then go find the institutions providing the data for it
         else if (node.startsWith(THEME))
-            jsonArray = getInstitionalProviders(node.replace(THEME, ""));
+            jsonArray = getInstitutionalProviders(node.replace(THEME, ""));
 
         //this is an institution being expanded, must be for spectral data, so go get the layers
         else if (node.startsWith(INSTITUTION))
@@ -186,79 +226,58 @@ public class GetDataSourcesJSONController {
     }
 
     /**
-     * Given a theme, provide a list of intitutions and also the WFS query to get the data
+     * Given a theme, provide a list of institutions and also the WFS query to get the data
      * from this institution
      *
      * @param theme
      * @return
      */
-    private JSONArray getInstitionalProviders(String theme) {
-       /* if(theme.equals("Mineral Occurrences")) {
-            //something
+    private JSONArray getInstitutionalProviders(String theme) {
+        CSWRecord[] cswRecords;
+        try {
+            String cswUrl = hostConfigurer.resolvePlaceholder("HOST.cswservice.url");
+            
+            cswRecords =
+                new CSWClient(cswUrl, themeContraints.get(theme))
+                    .getRecordResponse().getCSWRecords();
+
             JSONArray jsonArray = new JSONArray();
-            Map<String, Serializable> node = new HashMap<String, Serializable>();
-            node.put("id", "Mineral Occurrences PIRSA"); //TODO: serviceID
-            node.put("text", "Mineral Occurrences PIRSA");
-            node.put("checked", Boolean.FALSE);
-            node.put("leaf", Boolean.TRUE);
-            node.put("icon", icons.get(theme));
-            node.put("layerType", "wfs");
-            node.put("tileOverlay", "");
-            node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");
-            node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=1000");
-            jsonArray.add(node);
-            return jsonArray;
+            for(CSWRecord record : cswRecords) {
+                String wfsUrl = this.stripUrlAndGetFeatures(record.getServiceUrl());
+                String serviceName = record.getServiceName();
 
-        } else {*/
-            CSWRecord[] cswRecords;
-            try {
-                ResourceBundle bundle = ResourceBundle.getBundle("config");
-                String cswUrl = bundle.getString("csw-service-url");
-                
-                cswRecords =
-                    new CSWClient(cswUrl, themeContraints.get(theme))
-                        .getRecordResponse().getCSWRecords();
+                Map<String, Serializable> node = new HashMap<String, Serializable>();
+                node.put("id", serviceName+featureTypes.get(theme)); //TODO: serviceID
+                node.put("text", serviceName);
+                node.put("checked", Boolean.FALSE);
+                node.put("leaf", Boolean.TRUE);
+                node.put("icon", icons.get(theme));
+                node.put("layerType", "wfs");
+                node.put("tileOverlay", "");
+                node.put("kmlUrl", wfsUrl+wfsQueryParams.get(theme));
+                node.put("wfsUrl", wfsUrl+wfsQueryParams.get(theme));
+                //node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
+                //node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
+                node.put("filterPanel", "");
+                node.put("featureType", featureTypes.get(theme));
 
-                JSONArray jsonArray = new JSONArray();
-                for(CSWRecord record : cswRecords) {
-                    String wfsUrl = this.stripUrlAndGetFeatures(record.getServiceUrl());
-                    String serviceName = record.getServiceName();
-
-                    Map<String, Serializable> node = new HashMap<String, Serializable>();
-                    node.put("id", serviceName+featureTypes.get(theme)); //TODO: serviceID
-                    node.put("text", serviceName);
-                    node.put("checked", Boolean.FALSE);
-                    node.put("leaf", Boolean.TRUE);
-                    node.put("icon", icons.get(theme));
-                    node.put("layerType", "wfs");
-                    node.put("tileOverlay", "");
-                    node.put("kmlUrl", wfsUrl+wfsQueryParams.get(theme));
-                    node.put("wfsUrl", wfsUrl+wfsQueryParams.get(theme));
-                    //node.put("kmlUrl", XSLT_PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
-                    //node.put("wfsUrl", PROXY_URL +"http://apacsrv1.arrc.csiro.au/deegree-wfs/services?service=WFS%26version=1.1.0%26request=GetFeature%26typename=mo:MiningFeatureOccurrence%26namespace=xmlns(mo=urn:cgi:xmlns:GGIC:MineralOccurrence:1.0)%26maxFeatures=7000");
-                    node.put("filterPanel", "");
-                    node.put("featureType", featureTypes.get(theme));
-                    //node.put("wfsUrl", "http://auscope-portal-dev.arrc.csiro.au/xsltRestProxy?url=http://mapgadgets.googlepages.com/cta.kml");
-                    //node.put("wfsUrl", "http://mapgadgets.googlepages.com/cta.kml");
-
-                    jsonArray.add(node);
-                }
-
-                return jsonArray;
-            } catch (MissingResourceException e) {
-                logger.error(e);
-            } catch (XPathExpressionException e) {
-                logger.error(e);
-            } catch (IOException e) {
-                logger.error(e);
-            } catch (ParserConfigurationException e) {
-                logger.error(e);
-            } catch (SAXException e) {
-                logger.error(e);
+                jsonArray.add(node);
             }
 
-            return new JSONArray();
-        //}
+            return jsonArray;
+        } catch (MissingResourceException e) {
+            logger.error(e);
+        } catch (XPathExpressionException e) {
+            logger.error(e);
+        } catch (IOException e) {
+            logger.error(e);
+        } catch (ParserConfigurationException e) {
+            logger.error(e);
+        } catch (SAXException e) {
+            logger.error(e);
+        }
+
+        return new JSONArray();
     }
 
     /**
