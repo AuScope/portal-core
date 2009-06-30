@@ -215,7 +215,7 @@
          <name><xsl:value-of select="$resource_id"/></name>
          <description>
             <![CDATA[</br><table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
-            <tr><td>Id</td><td><a href="#" onclick="var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="$resource_id"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a>]]>
+            <tr><td>Id</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="$resource_id"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a>]]>
             <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./mo:type"/>
             <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./mo:classification/mo:MineralDepositModel/mo:mineralDepositGroup"/>
             <!-- commodity and ore amount is currently not required
@@ -251,7 +251,7 @@
       <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="http://apacsrv1.arrc.csiro.au/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="@xlink:href"/><![CDATA[" target="_blank" rel="popup console 800 600">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
       <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="javascript:void()" onclick="window.open('http://apacsrv1.arrc.csiro.au/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="@xlink:href"/><![CDATA[','WindowName'); return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
       -->
-      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="#" onclick="var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="@xlink:href"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
+      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="@xlink:href"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
 
    </xsl:template>
    
