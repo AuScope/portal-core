@@ -44,6 +44,10 @@
     http://maps.google.com/mapfiles/kml/shapes/target.png
 -->
 
+   <!-- External parameter -->
+   <xsl:param name="uriResolverURL"/>
+
+
    <!-- MATCH ROOT FEATURECOLLECTION -->
    <!-- ================================================================= -->
    <xsl:template match="wfs:FeatureCollection">

@@ -3,6 +3,8 @@ package org.auscope.portal.server.web.servlet;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.auscope.portal.server.util.GmlToKml;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -10,17 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.*;
-
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerException;
 
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -53,7 +47,7 @@ import java.util.Date;
  */
 public class XSLTRestProxy extends HttpServlet {
     protected final Log logger = LogFactory.getLog(getClass().getName());
-
+    
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String[][] queryParams = new String[][]{};
@@ -62,37 +56,16 @@ public class XSLTRestProxy extends HttpServlet {
         logger.debug("URL: " + request.getParameter("url"));
         logger.debug("URL replaced: " + request.getParameter("url").replace("%26", "&"));
         
-        RestConnection conn = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
+        RestConnection conn 
+            = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
         
         try {
             String result = conn.get(headers).getDataAsString();
-            StringWriter downThePipe = new StringWriter();
-            InputStream in = getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
 
-            // Use the static TransformerFactory.newInstance() method to instantiate 
-            // a TransformerFactory. The javax.xml.transform.TransformerFactory 
-            // system property setting determines the actual class to instantiate --
-            // org.apache.xalan.transformer.TransformerImpl.
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-
-            // Use the TransformerFactory to instantiate a transformer that will work with  
-            // the style sheet we specify. This method call also processes the style sheet
-            // into a compiled Templates object.
-            //Transformer transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource("kml.xsl"));
-            Transformer transformer = tFactory.newTransformer (new StreamSource(in));
-
-            // Use the transformer to apply the associated template object to an XML document
-            // and write the output to a stream
-            transformer.transform (new StreamSource (new StringReader(result)),
-                                   new StreamResult (downThePipe));
-            
             // Send response back to client
-            response.getWriter().println(downThePipe.toString());
+            response.getWriter().println(new GmlToKml().convert( result, request));
         } catch (IOException ex) {
             logger.error("doGet: ", ex);
-
-        } catch (TransformerException e) {
-            logger.error("doGet: ", e);
         }
     }
 

@@ -5,7 +5,7 @@
     <groupId>org.auscope.portal</groupId>
     <artifactId>AuScope-Portal</artifactId>
     <packaging>war</packaging>
-    <version>2.0.3</version>
+    <version>2.1.1</version>
     <name>AuScope-Portal Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <scm>
@@ -226,6 +226,11 @@
             <artifactId>xalan</artifactId>
             <version>2.7.1</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-xom</artifactId>
+            <version>8.7</version>
+        </dependency> 
         <dependency>
             <groupId>RestProxy</groupId>
             <artifactId>RestProxy</artifactId>

@@ -4,6 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.auscope.portal.server.web.HttpServiceCaller;
+import org.auscope.portal.server.util.PortalURIResolver;
+
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,12 +55,23 @@ public class GeologicUnitController {
             // org.apache.xalan.transformer.TransformerImpl.
             TransformerFactory tFactory = TransformerFactory.newInstance();
 
+            // Set an object that is used by default during the transformation 
+            // to resolve URIs used in document(), xsl:import, or xsl:include.
+            tFactory.setURIResolver(new PortalURIResolver(request.getSession().getServletContext()));
+
+            StreamSource xslStream = new StreamSource(in);
+
             // Use the TransformerFactory to instantiate a transformer that will work with
             // the style sheet we specify. This method call also processes the style sheet
             // into a compiled Templates object.
             //Transformer transformer = tFactory.newTransformer(new javax.xml.transform.stream.StreamSource("kml.xsl"));
-            Transformer transformer = tFactory.newTransformer (new StreamSource(in));
+            Transformer transformer = tFactory.newTransformer (xslStream);
 
+            // Setup a resolver handler to process each 'document()', 'xsl:include'
+            // and 'xsl:import' instruction to pre-append a root dir.
+            transformer.setURIResolver(tFactory.getURIResolver());
+            
+            
             // Use the transformer to apply the associated template object to an XML document
             // and write the output to a stream
             transformer.transform (new StreamSource (new StringReader(responseFromCall)),
