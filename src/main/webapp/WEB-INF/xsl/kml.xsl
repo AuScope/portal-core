@@ -47,7 +47,10 @@
    <!-- External parameter -->
    <xsl:param name="uriResolverURL"/>
 
-
+   <!-- Replace the above parameter with this one for stand-alone testing
+   <xsl:variable name="uriResolverURL" select="'http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri='" </xsl:variable>
+   -->
+   
    <!-- MATCH ROOT FEATURECOLLECTION -->
    <!-- ================================================================= -->
    <xsl:template match="wfs:FeatureCollection">
@@ -113,8 +116,7 @@
                <coordinates>
                   <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
                   <xsl:call-template name="parseCoord">
-                     <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                     <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+                     <xsl:with-param name="coordinates" select="$coordinates"/>
                   </xsl:call-template>
                </coordinates>
             </Point>
@@ -157,8 +159,7 @@
                <coordinates>
                   <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
                   <xsl:call-template name="parseCoord">
-                     <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                     <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+                     <xsl:with-param name="coordinates" select="$coordinates"/>
                   </xsl:call-template>
                </coordinates>
             </Point>
@@ -191,8 +192,7 @@
       
             <coordinates>
                <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+                  <xsl:with-param name="coordinates" select="$coordinates"/>
                </xsl:call-template>
             </coordinates>
          </Point>
@@ -210,7 +210,7 @@
       <xsl:variable name="resource_id">
          <xsl:value-of select="./gml:name[starts-with(.,'urn')][starts-with(@codeSpace,'http://')] "/>
       </xsl:variable>
-      
+
       <Placemark>
          <name><xsl:value-of select="$resource_id"/></name>
          <description>
@@ -223,8 +223,7 @@
             <![CDATA[</td></tr><tr><td>Commodity Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>           
             <![CDATA[</td></tr><tr><td>Ore Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/>
             <![CDATA[</td></tr><tr><td>Ore Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/> -->
-            <xsl:apply-templates select="./mo:commodityDescription"/>
-            <![CDATA[</td></tr></table>]]>
+            <xsl:apply-templates select="./mo:commodityDescription"/><![CDATA[</td></tr></table>]]>
          </description>
          <Point>
             <Style>
@@ -235,8 +234,7 @@
       
             <coordinates>
                <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+                  <xsl:with-param name="coordinates" select="$coordinates"/>
                </xsl:call-template>
             </coordinates>
          </Point>
@@ -247,12 +245,7 @@
    <!-- TEMPLATE FOR Commodity Description | Source Commodity -->
    <!-- ================================================================= -->
    <xsl:template match="mo:commodityDescription | mo:sourceCommodity">
-      <!--  
-      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="http://apacsrv1.arrc.csiro.au/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="@xlink:href"/><![CDATA[" target="_blank" rel="popup console 800 600">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
-      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="javascript:void()" onclick="window.open('http://apacsrv1.arrc.csiro.au/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=]]><xsl:value-of select="@xlink:href"/><![CDATA[','WindowName'); return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
-      -->
-      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="@xlink:href"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
-
+     <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="@xlink:href"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
    </xsl:template>
    
    
@@ -345,37 +338,21 @@
    <xsl:template match="gml:featureMember/gsml:ShearDisplacementStructure">
    
       <xsl:variable name="coordinates">
-         <xsl:value-of select="./mo:occurrence/mo:MiningFeatureOccurrence/mo:location/gml:Point/gml:pos"/>
+         <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:MultiCurve/gml:curveMember/gml:LineString/gml:posList"/>
       </xsl:variable>
 
+      <xsl:if test="gsml:occurrence" >
          <Placemark>
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
                <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
                <tr><td>Id</td><td>]]><xsl:value-of select="./gml:name[2]"/>
-               <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
-               <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
-               <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/>
-               <![CDATA[</td></tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./mo:activityType"/>            
-               <![CDATA[</td></tr><tr><td>Associated Mine</td><td>]]><xsl:value-of select="./mo:associatedMine"/>
-               <![CDATA[</td></tr><tr><td>Product</td><td>]]><xsl:value-of select="./mo:producedMaterial/mo:Product/mo:productName/gsml:CGI_TermValue/gsml:value"/>
                <![CDATA[</td></tr></table>]]>
             </description>
-            <Point>
-               <Style>
-                  <IconStyle>
-                     <Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon>
-                  </IconStyle>
-               </Style>
               
-               <coordinates>
-                  <xsl:call-template name="parseCoord">
-                     <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                     <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
-                  </xsl:call-template>
-               </coordinates>
-            </Point>
+            <xsl:apply-templates select="./gsml:occurrence//gsml:shape"/>
          </Placemark>
+      </xsl:if>
    </xsl:template>
    
    
@@ -411,8 +388,7 @@
       
             <coordinates>
                <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+                  <xsl:with-param name="coordinates" select="$coordinates"/>
                </xsl:call-template>
             </coordinates>
          </Point>
@@ -444,8 +420,7 @@
 
             <coordinates>
                <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+                  <xsl:with-param name="coordinates" select="$coordinates"/>
                </xsl:call-template>
             </coordinates>
          </Point>
@@ -479,8 +454,7 @@
 
          <coordinates>
             <xsl:call-template name="parseCoord">
-               <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-               <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+               <xsl:with-param name="coordinates" select="$coordinates"/>
             </xsl:call-template>
          </coordinates>
       </Point>
@@ -500,7 +474,7 @@
    <xsl:template match="gml:MultiCurve">
    
       <xsl:variable name="coordinates">
-         <xsl:value-of select="./gml:curveMembers/gml:Curve/gml:segments/gml:LineStringSegment/gml:posList"/>
+         <xsl:value-of select="./gml:curveMembers/gml:Curve/gml:segments/gml:LineStringSegment/gml:posList | ./gml:curveMember/gml:LineString/gml:posList"/>
       </xsl:variable>
       
       <Style>
@@ -512,8 +486,7 @@
 		<LineString>
          <coordinates>
             <xsl:call-template name="parseCoord">
-               <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-               <xsl:with-param name="coordinates" select="concat($coordinates,' ')"/>
+               <xsl:with-param name="coordinates" select="$coordinates"/>
             </xsl:call-template>
 			</coordinates>
 		</LineString>
@@ -548,7 +521,6 @@
          <LinearRing> 
             <coordinates>
                <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
                   <xsl:with-param name="coordinates" select="$ext_coordinates" />
                </xsl:call-template>
             </coordinates>
@@ -570,27 +542,58 @@
          <LinearRing>
             <coordinates>
                <xsl:call-template name="parseCoord">
-                  <!-- ATTACH AN EXTRA SPACE TO THE END OF THE COORDINATES -->
-                  <xsl:with-param name="coordinates" select="concat($int_coordinates,' ')"/>
+                  <xsl:with-param name="coordinates" select="$int_coordinates"/>
                </xsl:call-template>
             </coordinates>
          </LinearRing>
       </innerBoundaryIs>
    </xsl:template>
-   
+
+
+   <!-- ================================================================= -->
+   <!--    FUNCTION TO TRANSLATE X Y COORDS TO X,Y,0                      -->
+   <!--    KML format: longitude,latitude,altitude (in that order)        -->
+   <!--    Note: Used with Saxon / XSLT 2.0                               -->
+   <!-- ================================================================= -->
+   <xsl:template name="parseCoord">
+      <xsl:param name="coordinates"/>
+      
+      <xsl:variable name="tokens" select="tokenize($coordinates, '\s+')"/>
+      <xsl:variable name="start" select="true()"/>
+      
+      <xsl:for-each select="$tokens">
+         <xsl:variable name="pos" select="position()"/>
+         <xsl:if test="$pos != last()">
+
+            <!-- Add space after each set of coordinates -->
+            <xsl:if test="$pos != 1 and $pos != (last() - 1)">
+               <xsl:value-of select="' '" />
+            </xsl:if>
+
+            <!-- Print set of coordinates -->
+            <xsl:if test="$pos mod 2 != 0">
+               <xsl:value-of select="concat(., ',', $tokens[$pos + 1], ',0')" />
+            </xsl:if>
+         </xsl:if>
+      </xsl:for-each>
+      
+   </xsl:template>
+
    
    <!-- ================================================================= -->
    <!--    FUNCTION TO TRANSLATE X Y COORDS TO X,Y,0                      -->
    <!--    KML format: longitude,latitude,altitude (in that order)        -->
+   <!--    Note: Used with Xalan as it does not suppport XSLT 2.0         -->
    <!-- ================================================================= -->
+   <!--
    <xsl:template name="parseCoord">
    
       <xsl:param name="coordinates"/>
-      <!-- CHECK IF THERE IS CONTENT BEFORE THE FIRST SPACE YOU REACH -->
+       CHECK IF THERE IS CONTENT BEFORE THE FIRST SPACE YOU REACH 
       <xsl:if test="substring-before($coordinates,' ')!=''">
 
-         <!-- DIVIDE THE SET OF COORDINATES INTO TWO SECTIONS,
-              BEFORE AND AFTER THE FIRST SPACE (CURRENT AND REST) -->
+          DIVIDE THE SET OF COORDINATES INTO TWO SECTIONS,
+              BEFORE AND AFTER THE FIRST SPACE (CURRENT AND REST) 
          <xsl:variable name="longitude">
             <xsl:value-of select="substring-before($coordinates,' ')"/>
          </xsl:variable>
@@ -604,41 +607,27 @@
             <xsl:value-of select="substring-after($rest,' ')"/>
          </xsl:variable>
          
-         <!-- APPEND A "," to lon AND A ",0" (0 VALUE) TO LAT AND PRINT IT OUT -->
+          APPEND A "," to lon AND A ",0" (0 VALUE) TO LAT AND PRINT IT OUT 
          <xsl:value-of select="concat($longitude,',')"/>
          <xsl:value-of select="concat($latitude,',0')"/>
          
-         <!-- CHECK IF THERE IS STILL MORE CONTENT -->
+          CHECK IF THERE IS STILL MORE CONTENT 
          <xsl:if test="substring-before($rest1,' ')!=''">
-            <!-- IF THERE IS, ADD A SPACE TO SEPERATE IT FROM THE NEXT COORDS -->
+             IF THERE IS, ADD A SPACE TO SEPERATE IT FROM THE NEXT COORDS 
             <xsl:value-of select="' '"/>
          </xsl:if>
          
-         <!-- SEND THE 'REST' BACK INTO THIS FUNCTION (RECURSION)
-             TO BE PROCESSED THE SAME WAY -->
+          SEND THE 'REST' BACK INTO THIS FUNCTION (RECURSION)
+             TO BE PROCESSED THE SAME WAY 
          <xsl:call-template name="parseCoord">
             <xsl:with-param name="coordinates" select="$rest1"/>
          </xsl:call-template>
         
       </xsl:if>
    </xsl:template>
-   
-   
-   <!-- ================================================================= 
-   <xsl:template name="parseCoordinates">
-      <xsl:param name="coords"/>
-      
-      <xsl:variable name="tokens" select="tokenize($coords, ' ')"/>
-      
-      <xsl:for-each select="$tokens">
-         <xsl:variable name="pos" select="position()"/>
-         <xsl:if test="$pos mod 2 != 0">
-            <xsl:value-of select="concat(., ',', $tokens[$pos + 1], ',0 ')" />
-         </xsl:if>
-      </xsl:for-each>
-      
-   </xsl:template>
-   -->
+   -->   
    
    <!-- ================================================================= -->
+   
+   
 </xsl:stylesheet>
