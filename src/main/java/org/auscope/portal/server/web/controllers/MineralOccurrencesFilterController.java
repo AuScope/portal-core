@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.apache.commons.httpclient.ConnectTimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
@@ -167,6 +168,46 @@ public class MineralOccurrencesFilterController {
             //if everything is good then return the KML
             return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request));
 
+        } catch (Exception e) {
+            return this.handleExceptionResponse(e);
+        }
+    }
+
+    @RequestMapping("/doMineralOccurrenceFilterKML.do")
+    public ModelAndView doMineralOccurrenceFilterKML(
+            @RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("commodityName") String commodityName,
+            @RequestParam("commodityGroup") String commodityGroup,
+            @RequestParam("measureType") String measureType,
+            @RequestParam("minOreAmount") String minOreAmount,
+            @RequestParam("minOreAmountUOM") String minOreAmountUOM,
+            @RequestParam("minCommodityAmount") String minCommodityAmount,
+            @RequestParam("minCommodityAmountUOM") String minCommodityAmountUOM,
+            @RequestParam("cutOffGrade") String cutOffGrade,
+            @RequestParam("cutOffGradeUOM") String cutOffGradeUOM,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        try {
+            //get the mineral occurrences
+            String mineralOccurrenceResponse = this.mineralOccurrenceServiceClient.getMineralOccurrenceGML(serviceUrl,
+                                                                                        commodityName,
+                                                                                        commodityGroup,
+                                                                                        measureType,
+                                                                                        minOreAmount,
+                                                                                        minOreAmountUOM,
+                                                                                        minCommodityAmount,
+                                                                                        minCommodityAmountUOM,
+                                                                                        cutOffGrade,
+                                                                                        cutOffGradeUOM);
+            //if there are 0 features then send a nice message to the user
+            if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
+                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
+
+            //if everything is good then return the KML
+            //return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request));
+            response.getWriter().write(gmlToKml.convert(mineralOccurrenceResponse, request));
+
+            return null;
         } catch (Exception e) {
             return this.handleExceptionResponse(e);
         }
