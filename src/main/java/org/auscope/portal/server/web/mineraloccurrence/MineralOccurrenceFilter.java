@@ -56,7 +56,7 @@ public class MineralOccurrenceFilter implements IFilter {
     public String getFilterString() {                  //TODO: this sucks! use geotools api to build queries...
         StringBuffer queryString = new StringBuffer();
 
-        queryString.append("<ogc:Filter xmlns:mo=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\"\n" +
+        queryString.append("<ogc:Filter xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\"\n" +
                 "        xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
                 "        xmlns:ogc=\"http://www.opengis.net/ogc\"\n" +
                 "        xmlns:gml=\"http://www.opengis.net/gml\"\n" +
