@@ -114,11 +114,14 @@ function initialize(pMapContainer) {
 /**
 * This is the main function which is called from the initialize function.
 * It parses the capabilities document to get the GetFeature request for different services
+*
+* NOTE: This function is not used ...?
 */
 function getCapabilities() {
     //var proxy = "/restproxy?";
     // NVCL Get Capabilities url
-  var url = "http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetCapabilities&version=1.0.0";
+  var url = "" //"http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetCapabilities&version=1.0.0";
+
   GDownloadUrl(ProxyURL+url, function(pData, pResponseCode) {
     if (pResponseCode == 200) {
       var xmlDoc = GXml.parse(pData);
@@ -127,7 +130,7 @@ function getCapabilities() {
   });
 
   // Geodesy Get Capabilities url
-  var url = "http://auscope-portal.arrc.csiro.au/geodesy/wfs?request=GetCapabilities";
+  var url = "" //"http://auscope-portal.arrc.csiro.au/geodesy/wfs?request=GetCapabilities";
   GDownloadUrl(ProxyURL+url, function(pData, pResponseCode) {
     if (pResponseCode == 200) {
       var xmlDoc = GXml.parse(pData);

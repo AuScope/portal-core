@@ -105,9 +105,9 @@ var kmlProxyUrl = "/xsltRestProxy?url=";
 
 var gaFeatureTypeProxy = new Array();
 //gaFeatureTypeProxy["gsml:Borehole"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/proxy?";
-gaFeatureTypeProxy["gsml:Borehole"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/nvcl/wfs?";
-gaFeatureTypeProxy["geodesy:stations"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/geodesy/wfs?";//top.location.protocol + "//" + top.location.host + "/geodesyworkflow/geodesy/proxy?";
-gaFeatureTypeProxy["sa:SamplingPoint"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/gnss/wfs?";
+//gaFeatureTypeProxy["gsml:Borehole"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/nvcl/wfs?";
+//gaFeatureTypeProxy["geodesy:stations"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/geodesy/wfs?";//top.location.protocol + "//" + top.location.host + "/geodesyworkflow/geodesy/proxy?";
+//gaFeatureTypeProxy["sa:SamplingPoint"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/gnss/wfs?";
 gaFeatureTypeProxy["Avhrr48to72Hours-1404"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/ga/sentinel/proxy?";
 gaFeatureTypeProxy["Modis48to72Hours-1604"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/ga/sentinel/proxy?";
 

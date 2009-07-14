@@ -60,13 +60,13 @@ public class GmlToKml {
          // Write the output to a stream
          transformer.transform (new StreamSource (new StringReader(geoXML)),
                                 new StreamResult (sw));
-         
+
       } catch (TransformerConfigurationException tce) {
          log.error(tce);
       } catch (TransformerException e) {
          log.error("Failed to transform kml file: " + e);
       }     
-
+      log.debug(sw.toString());
       return sw.toString();
    }
 

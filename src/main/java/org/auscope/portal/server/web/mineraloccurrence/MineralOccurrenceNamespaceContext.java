@@ -14,7 +14,7 @@ public class MineralOccurrenceNamespaceContext implements NamespaceContext {
     private Map<String, String> map = new HashMap<String, String>() {{
                 put("gmd", "http://www.isotc211.org/2005/gmd");
                 put("srv", "http://www.isotc211.org/2005/srv");
-                put("mo", "urn:cgi:xmlns:GGIC:MineralOccurrence:1.0");
+                put("er", "urn:cgi:xmlns:GGIC:EarthResource:1.1");
                 put("gco", "http://www.isotc211.org/2005/gco");
                 put("xs", "http://www.w3.org/2001/XMLSchema");
                 put("xlink", "http://www.w3.org/1999/xlink");

@@ -1,9 +1,9 @@
-<mo:Mine gml:id="mo.mine.361068" xmlns:gco="http://www.isotc211.org/2005/gco"
-         xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:mo="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0"
+<er:Mine gml:id="mo.mine.361068" xmlns:gco="http://www.isotc211.org/2005/gco"
+         xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
          xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink"
          xmlns:wfs="http://www.opengis.net/wfs" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml"
-         xsi:schemaLocation="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0 https://www.seegrid.csiro.au/subversion/xmml/GGIC/trunk/schema/MineralOccurrence/1.0.1/mineralOccurrence.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
+         xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
     <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">Good Hope</gml:name>
     <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">Mitchell</gml:name>
     <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">New Good Hope</gml:name>
@@ -18,8 +18,8 @@
             <gml:pos srsDimension="2">147.10619 -37.33473</gml:pos>
         </gml:Envelope>
     </gml:boundedBy>
-    <mo:occurrence>
-        <mo:MiningFeatureOccurrence gml:id="mo.miningfeatureoccurrence.361068">
+    <er:occurrence>
+        <er:MiningFeatureOccurrence gml:id="mo.miningfeatureoccurrence.361068">
             <gml:name codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">
                 urn:cgi:feature:GSV:MiningFeatureOccurrence:361068
             </gml:name>
@@ -30,69 +30,69 @@
                     <gml:pos srsDimension="2">147.10619 -37.33473</gml:pos>
                 </gml:Envelope>
             </gml:boundedBy>
-            <mo:observationMethod>
+            <er:observationMethod>
                 <gsml:CGI_TermValue>
                     <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
                 </gsml:CGI_TermValue>
-            </mo:observationMethod>
-            <mo:positionalAccuracy>
+            </er:observationMethod>
+            <er:positionalAccuracy>
                 <gsml:CGI_NumericValue>
                     <gsml:principalValue uom="urn:ogc:def:uom:UCUM:metre">5</gsml:principalValue>
 
                 </gsml:CGI_NumericValue>
-            </mo:positionalAccuracy>
-            <mo:specification xlink:href="urn:cgi:feature:GSV:Mine:361068"/>
-            <mo:location>
+            </er:positionalAccuracy>
+            <er:specification xlink:href="urn:cgi:feature:GSV:Mine:361068"/>
+            <er:location>
                 <gml:Point srsName="EPSG:4283">
                     <gml:pos srsDimension="2">147.10619 -37.33473</gml:pos>
                 </gml:Point>
-            </mo:location>
-        </mo:MiningFeatureOccurrence>
-    </mo:occurrence>
-    <mo:startDate>
+            </er:location>
+        </er:MiningFeatureOccurrence>
+    </er:occurrence>
+    <er:startDate>
         <gml:TimeInstant>
             <gml:timePosition>1865-01-01T00:00:00</gml:timePosition>
         </gml:TimeInstant>
-    </mo:startDate>
+    </er:startDate>
 
-    <mo:endDate>
+    <er:endDate>
         <gml:TimeInstant>
             <gml:timePosition>1914-12-31T00:00:00</gml:timePosition>
         </gml:TimeInstant>
-    </mo:endDate>
-    <mo:mineName>
-        <mo:MineName>
-            <mo:isPreferred>true</mo:isPreferred>
-            <mo:mineName>Good Hope</mo:mineName>
-        </mo:MineName>
-    </mo:mineName>
-    <mo:mineName>
-        <mo:MineName>
-            <mo:isPreferred>false</mo:isPreferred>
+    </er:endDate>
+    <er:mineName>
+        <er:MineName>
+            <er:isPreferred>true</er:isPreferred>
+            <er:mineName>Good Hope</er:mineName>
+        </er:MineName>
+    </er:mineName>
+    <er:mineName>
+        <er:MineName>
+            <er:isPreferred>false</er:isPreferred>
 
-            <mo:mineName>Mitchell</mo:mineName>
-        </mo:MineName>
-    </mo:mineName>
-    <mo:mineName>
-        <mo:MineName>
-            <mo:isPreferred>false</mo:isPreferred>
-            <mo:mineName>New Good Hope</mo:mineName>
-        </mo:MineName>
-    </mo:mineName>
-    <mo:mineName>
-        <mo:MineName>
-            <mo:isPreferred>false</mo:isPreferred>
-            <mo:mineName>New Good Hope Tribute</mo:mineName>
+            <er:mineName>Mitchell</er:mineName>
+        </er:MineName>
+    </er:mineName>
+    <er:mineName>
+        <er:MineName>
+            <er:isPreferred>false</er:isPreferred>
+            <er:mineName>New Good Hope</er:mineName>
+        </er:MineName>
+    </er:mineName>
+    <er:mineName>
+        <er:MineName>
+            <er:isPreferred>false</er:isPreferred>
+            <er:mineName>New Good Hope Tribute</er:mineName>
 
-        </mo:MineName>
-    </mo:mineName>
-    <mo:mineName>
-        <mo:MineName>
-            <mo:isPreferred>false</mo:isPreferred>
-            <mo:mineName>New Good Hope Tribute</mo:mineName>
-        </mo:MineName>
-    </mo:mineName>
-    <mo:sourceReference>
+        </er:MineName>
+    </er:mineName>
+    <er:mineName>
+        <er:MineName>
+            <er:isPreferred>false</er:isPreferred>
+            <er:mineName>New Good Hope Tribute</er:mineName>
+        </er:MineName>
+    </er:mineName>
+    <er:sourceReference>
         <gmd:CI_Citation id="gmd.ci.citation.19900">
             <gmd:title>
                 <gco:CharacterString>Notes on the geological structure of north Gippsland</gco:CharacterString>
@@ -109,8 +109,8 @@
                 </gmd:CI_Date>
             </gmd:date>
         </gmd:CI_Citation>
-    </mo:sourceReference>
-    <mo:sourceReference>
+    </er:sourceReference>
+    <er:sourceReference>
         <gmd:CI_Citation id="gmd.ci.citation.20414">
             <gmd:title>
                 <gco:CharacterString>Wonnangatta</gco:CharacterString>
@@ -127,37 +127,37 @@
                 </gmd:CI_Date>
             </gmd:date>
         </gmd:CI_Citation>
-    </mo:sourceReference>
-    <mo:status>unknown</mo:status>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:83"/>
+    </er:sourceReference>
+    <er:status>unknown</er:status>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:83"/>
 
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:90"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:78"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27891"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:85"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27885"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27886"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:89"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:93"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:94"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:95"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:76"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27916"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:80"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:84"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27890"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:91"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:92"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:90"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:78"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27891"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:85"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27885"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27886"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:89"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:93"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:94"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:95"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:76"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27916"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:80"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:84"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27890"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:91"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:92"/>
 
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:98"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:100"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:81"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:82"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:75"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27887"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27915"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:86"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:97"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:99"/>
-    <mo:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:77"/>
-</mo:Mine>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:98"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:100"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:81"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:82"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:75"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27887"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27915"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:86"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:97"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:99"/>
+    <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:77"/>
+</er:Mine>

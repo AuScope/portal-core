@@ -1,10 +1,13 @@
 package org.auscope.portal.server.web.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.auscope.portal.server.web.HttpServiceCaller;
 import org.auscope.portal.server.util.PortalURIResolver;
+import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 
 import org.apache.log4j.Logger;
 
@@ -29,6 +32,10 @@ import java.net.URL;
 public class GeologicUnitController {
     private Logger logger = Logger.getLogger(getClass());
 
+    @Autowired
+    @Qualifier(value = "propertyConfigurer")
+    private PortalPropertyPlaceholderConfigurer hostConfigurer;
+    
     @RequestMapping("/geologicUnitPopup.do")
     public void geologicUnitPopup(HttpServletRequest request,
                                   HttpServletResponse response,
@@ -36,7 +43,9 @@ public class GeologicUnitController {
                                   @RequestParam("lng") String longitude) throws IOException {
 
         //deegree does not like fully encoded URLS, it only likes spaces to be encoded with %20
-        String url = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS&version=1.1.0&request=GetFeature&typeName=gsml:GeologicUnit&filter=<ogc:Filter xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"><ogc:BBOX><ogc:PropertyName>gsml:occurrence/gsml:MappedFeature/gsml:shape</ogc:PropertyName><gml:Envelope srsName=\"EPSG:4326\"><gml:lowerCorner>"+longitude+" "+latitude+"</gml:lowerCorner><gml:upperCorner>"+longitude+" "+latitude+"</gml:upperCorner></gml:Envelope></ogc:BBOX></ogc:Filter>";
+        //String url = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS&version=1.1.0&request=GetFeature&typeName=gsml:GeologicUnit&filter=<ogc:Filter xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"><ogc:BBOX><ogc:PropertyName>gsml:occurrence/gsml:MappedFeature/gsml:shape</ogc:PropertyName><gml:Envelope srsName=\"EPSG:4326\"><gml:lowerCorner>"+longitude+" "+latitude+"</gml:lowerCorner><gml:upperCorner>"+longitude+" "+latitude+"</gml:upperCorner></gml:Envelope></ogc:BBOX></ogc:Filter>";
+        String url = hostConfigurer.resolvePlaceholder("gsv.gu.url") 
+           + "WFS&version=1.1.0&request=GetFeature&typeName=gsml:GeologicUnit&filter=<ogc:Filter xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"><ogc:BBOX><ogc:PropertyName>gsml:occurrence/gsml:MappedFeature/gsml:shape</ogc:PropertyName><gml:Envelope srsName=\"EPSG:4326\"><gml:lowerCorner>"+longitude+" "+latitude+"</gml:lowerCorner><gml:upperCorner>"+longitude+" "+latitude+"</gml:upperCorner></gml:Envelope></ogc:BBOX></ogc:Filter>";
         url = url.replace(" ", "%20");
         //String url = "http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS&version=1.1.0&request=GetFeature&outputFormat=text/xml;%20subtype=geoscimlhtml&featureid=gsml.geologicunit.16777549126932018";
 

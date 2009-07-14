@@ -121,11 +121,11 @@ public class GetDataSourcesJSONController {
         
         put(GEOLOGIC_UNIT, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>gsml:GeologicUnit</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         
-        put(MINERAL_OCCURENCES, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MineralOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(MINERAL_OCCURENCES, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>er:MineralOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         
-        put(MINING_ACTIVITY, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:MiningActivity</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(MINING_ACTIVITY, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>er:MiningActivity</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
         
-        put(MINES, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo:Mine</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
+        put(MINES, "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>er:Mine</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0");
     }};
 
     //create a map to hold the get features query stuff
@@ -159,9 +159,9 @@ public class GetDataSourcesJSONController {
         put(GEODESY, "geodesy:stations");
         //put(GEOLOGIC_UNIT, "gsml:GeologicUnit");
         put(GEOLOGIC_UNIT, "gsml:ShearDisplacementStructure");
-        put(MINERAL_OCCURENCES, "mo:MineralOccurrence");
-        put(MINING_ACTIVITY, "mo:MiningActivity");
-        put(MINES, "mo:Mine");
+        put(MINERAL_OCCURENCES, "er:MineralOccurrence");
+        put(MINING_ACTIVITY, "er:MiningActivity");
+        put(MINES, "er:Mine");
     }};
 
     //some contants which will be used as prefixes in the tree nde name to identify themes and insitutions
@@ -234,13 +234,12 @@ public class GetDataSourcesJSONController {
      */
     private JSONArray getInstitutionalProviders(String theme) {
         CSWRecord[] cswRecords;
+
         try {
-            String cswUrl = hostConfigurer.resolvePlaceholder("HOST.cswservice.url");
-            
+            String cswUrl = hostConfigurer.resolvePlaceholder("HOST.cswservice.url");            
             cswRecords =
                 new CSWClient(cswUrl, themeContraints.get(theme))
                     .getRecordResponse().getCSWRecords();
-
             JSONArray jsonArray = new JSONArray();
             for(CSWRecord record : cswRecords) {
                 String wfsUrl = this.stripUrlAndGetFeatures(record.getServiceUrl());
@@ -263,7 +262,6 @@ public class GetDataSourcesJSONController {
 
                 jsonArray.add(node);
             }
-
             return jsonArray;
         } catch (MissingResourceException e) {
             logger.error(e);
@@ -372,13 +370,13 @@ public class GetDataSourcesJSONController {
 
             return jsonArray;
         } else if(institution.equals("gsv")) {
-            return getWmsLayers("http://www.gsv-tb.dpi.vic.gov.au/AuScope-TestWMS/services?"); 
+           return getWmsLayers(hostConfigurer.resolvePlaceholder("gsv.wms"));
         } else if(institution.equals("gswa")) {
-            return getWmsLayers("http://gissdi.doir.wa.gov.au/SDIPrd/services/Mineral/MapServer/WMSServer?");
+           return getWmsLayers(hostConfigurer.resolvePlaceholder("gswa.wms"));
         } else if(institution.equals("ga")) {
-            return getWmsLayers("http://www.ga.gov.au/wms/getmap?dataset=geows");
+           return getWmsLayers(hostConfigurer.resolvePlaceholder("geows.wms"));
         } else {
-            return getWmsLayers("http://www.ga.gov.au/wms/getmap?dataset=geows_outcrops");
+           return getWmsLayers(hostConfigurer.resolvePlaceholder("geows_outcrops.wms"));
         }
         
     }

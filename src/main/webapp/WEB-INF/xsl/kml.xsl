@@ -1,16 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="2.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  
     xmlns:wfs="http://www.opengis.net/wfs"
-    xmlns:kml="http://www.opengis.net/kml/2.2"
+    xmlns="http://www.opengis.net/kml/2.2"
     xmlns:gml="http://www.opengis.net/gml"
     xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
     xmlns:sa="http://www.opengis.net/sampling/1.0" 
-    xmlns:geodesy="http://auscope.org.au/geodesy"
-    xmlns:mo="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:xalan="http://xml.apache.org/xalan"
-    xmlns:str="http://exslt.org/strings" exclude-result-prefixes="str">
+    xmlns:geodesy="http://www.auscope.org/geodesy"
+    xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink" exclude-result-prefixes="xsl wfs gml gsml sa geodesy er xlink">
+
+   <xsl:output method="xml" version="1.0" encoding="UTF-8" 
+      indent="no" cdata-section-elements="description Snippet text" 
+      media-type="application/vnd.google-earth.kml+xml"/>
     
+<!-- xmlns:mo="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0" -->
+<!-- xmlns:geodesy="http://auscope.org.au/geodesy" -->
+<!-- xmlns:xalan="http://xml.apache.org/xalan" -->
     
 <!--  Examples of available markers - not easy to find on the net
     xmlns:str="http://exslt.org/strings" exclude-result-prefixes="str"
@@ -55,7 +61,7 @@
    <!-- ================================================================= -->
    <xsl:template match="wfs:FeatureCollection">
        
-      <!-- <kml xmlns="http://www.opengis.net/kml/2.2"> -->
+      <!--<kml xmlns="http://www.opengis.net/kml/2.2">-->
       <kml>
          <Document>
             <!-- STANDARD NAME AND DESCRIPTION FOR CONVERTED FILE -->
@@ -67,16 +73,17 @@
                <xsl:text>GeoSciML data converted to KML</xsl:text>
             </description>
 
-            <xsl:apply-templates select="gml:featureMember/mo:Mine"/>
-            <xsl:apply-templates select="gml:featureMember/mo:MiningActivity"/>
-            <xsl:apply-templates select="gml:featureMember/mo:MiningFeatureOccurrence"/>
-            <xsl:apply-templates select="gml:featureMember/mo:MineralOccurrence"/>
+            <xsl:apply-templates select="gml:featureMember/er:Mine"/>
+            <xsl:apply-templates select="gml:featureMember/er:MiningActivity"/>
+            <xsl:apply-templates select="gml:featureMember/er:MiningFeatureOccurrence"/>
+            <xsl:apply-templates select="gml:featureMember/er:MineralOccurrence"/>
             <xsl:apply-templates select="gml:featureMember/geodesy:stations"/>
             <xsl:apply-templates select="gml:featureMember/gsml:GeologicUnit"/>
             <xsl:apply-templates select="gml:featureMember/gsml:MappedFeature"/>
             <xsl:apply-templates select="gml:featureMember/gsml:ShearDisplacementStructure"/>
             
-            <xsl:apply-templates select="gml:featureMembers/mo:MineralOccurrence"/>
+            <xsl:apply-templates select="gml:featureMembers/geodesy:stations"/>
+            <xsl:apply-templates select="gml:featureMembers/er:MineralOccurrence"/>
             <xsl:apply-templates select="gml:featureMembers/gsml:Borehole"/>
             <xsl:apply-templates select="gml:featureMembers/sa:SamplingPoint"/>
          </Document>
@@ -86,40 +93,28 @@
    
    <!-- TEMPLATE FOR TRANSLATING Mine -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/mo:Mine">
+   <xsl:template match="gml:featureMember/er:Mine">
    
       <xsl:variable name="coordinates">
-         <xsl:value-of select="./mo:occurrence/mo:MiningFeatureOccurrence/mo:location/gml:Point/gml:pos"/>
+         <xsl:value-of select="./er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point/gml:pos"/>
       </xsl:variable>
       <xsl:variable name="mineName">
-         <xsl:value-of select="./mo:mineName/mo:MineName[./mo:isPreferred = true()]/mo:mineName/text()"/>
+         <xsl:value-of select="./er:mineName/er:MineName[./er:isPreferred = true()]/er:mineName/text()"/>
       </xsl:variable>
       
       <xsl:if test="$coordinates">  
          <Placemark>
             <name><xsl:value-of select="$mineName"/></name>
             <description>
-               <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
+               <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
                <tr><td>ID</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
                <![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]><xsl:value-of select="$mineName"/>
-               <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
-               <![CDATA[</td></tr><tr><td>Status</td><td>]]><xsl:value-of select="./mo:status"/>
+               <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>
+               <![CDATA[</td></tr><tr><td>Status</td><td>]]><xsl:value-of select="./er:status"/>
                <![CDATA[</td></tr></table>]]>
             </description>
-            <Point>
-               <Style>
-                  <IconStyle>
-                     <Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon>
-                  </IconStyle>
-               </Style>
-              
-               <coordinates>
-                  <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
-                  <xsl:call-template name="parseCoord">
-                     <xsl:with-param name="coordinates" select="$coordinates"/>
-                  </xsl:call-template>
-               </coordinates>
-            </Point>
+            
+            <xsl:apply-templates select="er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point"/>
          </Placemark>
       </xsl:if>
    
@@ -128,41 +123,29 @@
    
    <!-- TEMPLATE FOR TRANSLATING Maining Activity -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/mo:MiningActivity">
+   <xsl:template match="gml:featureMember/er:MiningActivity">
 
       <xsl:variable name="coordinates">
-         <xsl:value-of select="./mo:occurrence/mo:MiningFeatureOccurrence/mo:location/gml:Point/gml:pos"/>
+         <xsl:value-of select="./er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point/gml:pos"/>
       </xsl:variable>
 
       <xsl:if test="$coordinates">  
          <Placemark>
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
-               <![CDATA[</br><table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
+               <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
                <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
-               <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>
-               <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
-               <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./mo:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/>
-               <![CDATA[</td></tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./mo:activityType"/>            
-               <![CDATA[</td></tr><tr><td>Associated Mine</td><td>]]><xsl:value-of select="./mo:associatedMine"/>
-               <![CDATA[</td></tr><tr><td>Product</td><td>]]><xsl:value-of select="./mo:producedMaterial/mo:Product/mo:productName/gsml:CGI_TermValue/gsml:value"/>
-               <xsl:apply-templates select=".//mo:sourceCommodity"/>
+               <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>
+               <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
+               <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/>
+               <![CDATA[</td></tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./er:activityType"/>            
+               <![CDATA[</td></tr><tr><td>Associated Mine</td><td>]]><xsl:value-of select="./er:associatedMine"/>
+               <![CDATA[</td></tr><tr><td>Product</td><td>]]><xsl:value-of select="./er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value"/>
+               <xsl:apply-templates select=".//er:sourceCommodity"/>
                <![CDATA[</td></tr></table>]]>
             </description>
-            <Point>
-               <Style>
-                  <IconStyle>
-                     <Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon>
-                  </IconStyle>
-               </Style>
-              
-               <coordinates>
-                  <!-- CALL THE PARSECOORDS FUNCTION TO PROCESS THE COORDINATES -->
-                  <xsl:call-template name="parseCoord">
-                     <xsl:with-param name="coordinates" select="$coordinates"/>
-                  </xsl:call-template>
-               </coordinates>
-            </Point>
+            
+            <xsl:apply-templates select="./er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point"/>            
          </Placemark>
       </xsl:if>
    </xsl:template>
@@ -170,39 +153,28 @@
    
    <!-- TEMPLATE FOR TRANSLATING Mining Feature Occurence -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/mo:MiningFeatureOccurrence">
+   <xsl:template match="gml:featureMember/er:MiningFeatureOccurrence">
    
       <xsl:variable name="coordinates">
-         <xsl:value-of select="./mo:location/gml:Point/gml:pos"/>
+         <xsl:value-of select="./er:location/gml:Point/gml:pos"/>
       </xsl:variable>
       <Placemark>
          <name><xsl:value-of select="./gml:name"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
+            <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>
-            <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="$coordinates"/>            
+            <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>            
             <![CDATA[</td></tr></table>]]>            
          </description>
-         <Point>
-            <Style>
-               <IconStyle>
-                  <Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon>
-               </IconStyle>
-            </Style>
-      
-            <coordinates>
-               <xsl:call-template name="parseCoord">
-                  <xsl:with-param name="coordinates" select="$coordinates"/>
-               </xsl:call-template>
-            </coordinates>
-         </Point>
+         
+         <xsl:apply-templates select="./er:location/gml:Point"/>
       </Placemark>
    </xsl:template>
    
    
    <!-- TEMPLATE FOR TRANSLATING Mineral Occurence -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/mo:MineralOccurrence | gml:featureMembers/mo:MineralOccurrence">
+   <xsl:template match="gml:featureMember/er:MineralOccurrence | gml:featureMembers/er:MineralOccurrence">
    
       <xsl:variable name="coordinates">
          <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
@@ -214,43 +186,32 @@
       <Placemark>
          <name><xsl:value-of select="$resource_id"/></name>
          <description>
-            <![CDATA[</br><table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
+            <![CDATA[<table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
             <tr><td>Id</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="$resource_id"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a>]]>
-            <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./mo:type"/>
-            <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./mo:classification/mo:MineralDepositModel/mo:mineralDepositGroup"/>
+            <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./er:type"/>
+            <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./er:classification/er:MineralDepositModel/er:mineralDepositGroup"/>
             <!-- commodity and ore amount is currently not required
             <![CDATA[</td></tr><tr><td>Commodity Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>
             <![CDATA[</td></tr><tr><td>Commodity Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>           
             <![CDATA[</td></tr><tr><td>Ore Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/>
             <![CDATA[</td></tr><tr><td>Ore Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/> -->
-            <xsl:apply-templates select="./mo:commodityDescription"/><![CDATA[</td></tr></table>]]>
+            <xsl:apply-templates select="./er:commodityDescription"/><![CDATA[</td></tr></table>]]>
          </description>
-         <Point>
-            <Style>
-               <IconStyle>
-                  <Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon>
-               </IconStyle>
-            </Style>
-      
-            <coordinates>
-               <xsl:call-template name="parseCoord">
-                  <xsl:with-param name="coordinates" select="$coordinates"/>
-               </xsl:call-template>
-            </coordinates>
-         </Point>
+         
+         <xsl:apply-templates select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>
       </Placemark>
    </xsl:template>
    
    
    <!-- TEMPLATE FOR Commodity Description | Source Commodity -->
    <!-- ================================================================= -->
-   <xsl:template match="mo:commodityDescription | mo:sourceCommodity">
+   <xsl:template match="er:commodityDescription | er:sourceCommodity">
      <![CDATA[</td></tr><tr><td>Commodity Description</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="@xlink:href"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="@xlink:href"/><![CDATA[</a>]]>
    </xsl:template>
    
    
-   <!-- TEMPLATE FOR TRANSLATING GPS -->
-   <!-- ================================================================= -->
+   <!-- TEMPLATE FOR TRANSLATING GPS - geodesy WFS 1.0.0 GML2 -->
+   <!-- =================================================================
    <xsl:template match="gml:featureMember/geodesy:stations">
    
       <xsl:variable name="coordinates">
@@ -259,7 +220,7 @@
       <Placemark>
          <name><xsl:value-of select="@fid"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
+            <![CDATA[br/><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Station Id</td><td>]]><xsl:value-of select="./geodesy:station_id"/>
             <![CDATA[</td></tr><tr><td>Name</td><td>]]><xsl:value-of select="./geodesy:name"/>
             <![CDATA[</td></tr><tr><td>Url</td><td>]]><xsl:value-of select="./geodesy:url"/>
@@ -279,6 +240,7 @@
          </Point>
       </Placemark>
    </xsl:template>
+   -->
    
    
    <!-- TEMPLATE FOR TRANSLATING Geologic Unit -->
@@ -294,7 +256,7 @@
             <name><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/></name>
             <description>
             <!--
-               <![CDATA[</br><table border="1" cellspacing="1" width="100%">
+               <![CDATA[<table border="1" cellspacing="1" width="100%">
                <tr><td>GeologicUnit</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
                <![CDATA[</td></tr><tr><td>Name</td><td>]]><xsl:value-of select="./gml:description"/>
                <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./gsml:geologicUnitType"/>
@@ -321,7 +283,7 @@
       <Placemark>
          <name><xsl:value-of select="@gml:id"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
+            <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
             <![CDATA[</td></tr><tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>            
             <![CDATA[</td></tr></table>]]>
@@ -345,7 +307,7 @@
          <Placemark>
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
-               <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
+               <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
                <tr><td>Id</td><td>]]><xsl:value-of select="./gml:name[2]"/>
                <![CDATA[</td></tr></table>]]>
             </description>
@@ -353,6 +315,29 @@
             <xsl:apply-templates select="./gsml:occurrence//gsml:shape"/>
          </Placemark>
       </xsl:if>
+   </xsl:template>
+
+
+   <!-- TEMPLATE FOR TRANSLATING GPS -->
+   <!-- ================================================================= -->
+   <xsl:template match="gml:featureMember/geodesy:stations | gml:featureMembers/geodesy:stations">
+   
+      <xsl:variable name="coordinates">
+         <xsl:value-of select="./gml:location/gml:Point/gml:pos"/>
+      </xsl:variable>
+      <Placemark>
+         <name><xsl:value-of select="@gml:id"/></name>
+         <description>
+            <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
+            <tr><td>Station Id</td><td>]]><xsl:value-of select="./geodesy:station_id"/>
+            <![CDATA[</td></tr><tr><td>Name</td><td>]]><xsl:value-of select="./geodesy:name"/>
+            <![CDATA[</td></tr><tr><td>Url</td><td>]]><xsl:value-of select="./geodesy:url"/>
+            <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>            
+            <![CDATA[</td></tr></table>]]>            
+         </description>
+         
+         <xsl:apply-templates select="./geodesy:location/gml:Point"/>
+      </Placemark>
    </xsl:template>
    
    
@@ -367,9 +352,9 @@
       <Placemark>
          <name><xsl:value-of select="@gml:id"/></name>
          <description>
-            <![CDATA[</br><table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
+            <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Borehole Name</td><td>]]><xsl:value-of select="./gml:name"/>
-            <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
+            <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
             <![CDATA[</td></tr><tr><td>Project</td><td>]]><xsl:value-of select="./gml:metaDataProperty/@xlink:title"/>
             <![CDATA[</td></tr><tr><td>Core Custodian</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:href"/>
             <![CDATA[</td></tr><tr><td>Operator</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:operator/@xlink:href"/>
@@ -379,19 +364,8 @@
             <![CDATA[</td></tr><tr><td>Start Point</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:startPoint"/>
             <![CDATA[</td></tr></table>]]>
          </description>
-         <Point>
-            <Style>
-               <IconStyle>
-                  <Icon><href>http://maps.google.com/mapfiles/kml/paddle/blu-blank.png</href></Icon>
-               </IconStyle>
-            </Style>
-      
-            <coordinates>
-               <xsl:call-template name="parseCoord">
-                  <xsl:with-param name="coordinates" select="$coordinates"/>
-               </xsl:call-template>
-            </coordinates>
-         </Point>
+         
+         <xsl:apply-templates select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point"/>
       </Placemark>
    </xsl:template>
 
@@ -411,19 +385,8 @@
             <![CDATA[</td></tr><tr><td>Lng Lat (deg)</td><td>]]><xsl:value-of select="./sa:position/gml:Point/gml:pos"/>            
             <![CDATA[</td></tr></table>]]>
          </description>
-         <Point>
-            <Style>
-               <IconStyle>
-                  <Icon><href>http://maps.google.com/mapfiles/kml/paddle/grn-blank.png</href></Icon>
-               </IconStyle>
-            </Style>
-
-            <coordinates>
-               <xsl:call-template name="parseCoord">
-                  <xsl:with-param name="coordinates" select="$coordinates"/>
-               </xsl:call-template>
-            </coordinates>
-         </Point>
+         
+         <xsl:apply-templates select="./sa:position/gml:Point"/>
       </Placemark>
    </xsl:template>
    
@@ -444,18 +407,37 @@
       <xsl:variable name="coordinates">
          <xsl:value-of select="./gml:pos"/>
       </xsl:variable>
-      
+
       <Point>
          <Style>
             <IconStyle>
                <Icon><href>http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png</href></Icon>
             </IconStyle>
          </Style>
-
+         
          <coordinates>
-            <xsl:call-template name="parseCoord">
-               <xsl:with-param name="coordinates" select="$coordinates"/>
-            </xsl:call-template>
+            <xsl:choose>
+               <xsl:when test="starts-with(@srsName,'EPSG')">
+                  <xsl:call-template name="parseLongLatCoord">
+                     <xsl:with-param name="coordinates" select="$coordinates"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:when test="starts-with(@srsName,'http://www.opengis.net/gml/srs/epsg.xml')">
+                  <xsl:call-template name="parseLongLatCoord">
+                     <xsl:with-param name="coordinates" select="$coordinates"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:when test="starts-with(@srsName,'urn:x-ogc:def:crs:EPSG')">
+                  <xsl:call-template name="parseLatLongCoord">
+                     <xsl:with-param name="coordinates" select="$coordinates"/>
+                  </xsl:call-template>
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:call-template name="parseLatLongCoord">
+                     <xsl:with-param name="coordinates" select="$coordinates"/>
+                  </xsl:call-template>
+               </xsl:otherwise>
+            </xsl:choose>
          </coordinates>
       </Point>
    </xsl:template>
@@ -485,7 +467,7 @@
       
 		<LineString>
          <coordinates>
-            <xsl:call-template name="parseCoord">
+            <xsl:call-template name="parseLatLongCoord">
                <xsl:with-param name="coordinates" select="$coordinates"/>
             </xsl:call-template>
 			</coordinates>
@@ -520,7 +502,7 @@
       <outerBoundaryIs> 
          <LinearRing> 
             <coordinates>
-               <xsl:call-template name="parseCoord">
+               <xsl:call-template name="parseLatLongCoord">
                   <xsl:with-param name="coordinates" select="$ext_coordinates" />
                </xsl:call-template>
             </coordinates>
@@ -541,7 +523,7 @@
       <innerBoundaryIs>
          <LinearRing>
             <coordinates>
-               <xsl:call-template name="parseCoord">
+               <xsl:call-template name="parseLatLongCoord">
                   <xsl:with-param name="coordinates" select="$int_coordinates"/>
                </xsl:call-template>
             </coordinates>
@@ -551,11 +533,11 @@
 
 
    <!-- ================================================================= -->
-   <!--    FUNCTION TO TRANSLATE X Y COORDS TO X,Y,0                      -->
-   <!--    KML format: longitude,latitude,altitude (in that order)        -->
+   <!--    FUNCTION TO TRANSLATE  X Y  COORDS TO  X,Y,0                   -->
+   <!--    KML format:LONGITUDE(X),LATITUDE(Y),ALTITUDE(0) (in that order)-->
    <!--    Note: Used with Saxon / XSLT 2.0                               -->
    <!-- ================================================================= -->
-   <xsl:template name="parseCoord">
+   <xsl:template name="parseLongLatCoord">
       <xsl:param name="coordinates"/>
       
       <xsl:variable name="tokens" select="tokenize($coordinates, '\s+')"/>
@@ -578,7 +560,37 @@
       </xsl:for-each>
       
    </xsl:template>
+   
+   
+   <!-- ================================================================= -->
+   <!--    FUNCTION TO TRANSLATE  Y X  COORDS TO  X,Y,0                   -->
+   <!--    KML format:LONGITUDE(X),LATITUDE(Y),ALTITUDE(0) (in that order)-->
+   <!--    Note: Used with Saxon / XSLT 2.0                               -->
+   <!-- ================================================================= -->
+   <xsl:template name="parseLatLongCoord">
+      <xsl:param name="coordinates"/>
+      
+      <xsl:variable name="tokens" select="tokenize($coordinates, '\s+')"/>
+      <xsl:variable name="start" select="true()"/>
+      
+      <xsl:for-each select="$tokens">
+         <xsl:variable name="pos" select="position()"/>
+         <xsl:if test="$pos != last()">
 
+            <!-- Add space after each set of coordinates -->
+            <xsl:if test="$pos != 1 and $pos != (last() - 1)">
+               <xsl:value-of select="' '" />
+            </xsl:if>
+
+            <!-- Print set of coordinates -->
+            <xsl:if test="$pos mod 2 != 0">
+               <xsl:value-of select="concat($tokens[$pos + 1],',',.,',0')" />
+            </xsl:if>
+         </xsl:if>
+      </xsl:for-each>
+      
+   </xsl:template>
+   
    
    <!-- ================================================================= -->
    <!--    FUNCTION TO TRANSLATE X Y COORDS TO X,Y,0                      -->
@@ -586,7 +598,7 @@
    <!--    Note: Used with Xalan as it does not suppport XSLT 2.0         -->
    <!-- ================================================================= -->
    <!--
-   <xsl:template name="parseCoord">
+   <xsl:template name="parseLatLongCoord">
    
       <xsl:param name="coordinates"/>
        CHECK IF THERE IS CONTENT BEFORE THE FIRST SPACE YOU REACH 
@@ -619,7 +631,7 @@
          
           SEND THE 'REST' BACK INTO THIS FUNCTION (RECURSION)
              TO BE PROCESSED THE SAME WAY 
-         <xsl:call-template name="parseCoord">
+         <xsl:call-template name="parseLatLongCoord">
             <xsl:with-param name="coordinates" select="$rest1"/>
          </xsl:call-template>
         
@@ -631,3 +643,4 @@
    
    
 </xsl:stylesheet>
+

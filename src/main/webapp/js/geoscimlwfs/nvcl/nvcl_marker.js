@@ -17,8 +17,8 @@ function NVCLMarker (boreholeId, marker, description) {
   // Create the Borehole object from the XML node
   //this.moBorehole = new Borehole(pBoreholeNode);
 
-    this.moMarker = marker;
-    this.boreholeId = boreholeId;
+  this.moMarker = marker;
+  this.boreholeId = boreholeId;
   this.msSummaryHtml = description;
   this.msMosaicHtml = "";
   this.msPlotScalarsHtml = "";
@@ -227,9 +227,8 @@ function NVCLMarker_getMarkerClickedFn() {
 * @param scalarName {String} name of the scalar
 */
 function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
-  var downloadProxy = "/downloadProxy?rest=true&url=";
-  var vocabsService = "http://apacsrv2.arrc.csiro.au/vocab-service/query?repository=nvcl-scalars%26label=";
-  var vocabsQuery = downloadProxy + vocabsService + scalarName.replace(/%/, "%25");
+  var downloadProxy = "/downloadProxy?rest=true&url=";  
+  var vocabsQuery = downloadProxy + VOCAB_SERVICE_URL + scalarName.replace(/%/, "%25");
   
   GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
     if(pResponseCode == 200) {
@@ -270,12 +269,11 @@ function NVCLMarker_markerClicked()
   // We need to strip the nvcl_core: part to get the actual coreid
   // accepted by all nvcl web services
   var sCoreId = this.boreholeId.substring(10);//oBorehole.msId.substring(10);
-	
+  
   // Web service to get the scalars belonging to a given borehole
-  //var scalars_proxy = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/scalars";
-  var scalars_proxy = ProxyURL + "http://150.229.98.207/scalars.asmx/get";
-
+  var scalars_proxy = ProxyURL + NVCL_WEB_SERVICE_IP + "/scalars.asmx/get";
   scalars_proxy += "?coreid=" + sCoreId;
+
    
   if (this.maScalars.length == 0) {
 	GDownloadUrl(scalars_proxy, function(pData, pResponseCode) {    
@@ -429,8 +427,7 @@ function NVCLMarker_createMosaicTabHtml() {
   
   // Check if the mosaic image has already been downloaded.
   if (!this.msMosaicHtml) {
-    //var sMosaicUrl = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/mosaic/trays?";
-    var sMosaicUrl = ProxyURL + "http://150.229.98.207/scalars.asmx/trayids?";
+    var sMosaicUrl = ProxyURL +  NVCL_WEB_SERVICE_IP + "/scalars.asmx/trayids?";    
     sMosaicUrl += "coreid=" + sCoreId;
 		
     GDownloadUrl(sMosaicUrl, function(pData, pResponseCode) {    
@@ -474,10 +471,11 @@ function NVCLMarker_createMosaicTabHtml() {
           // Each tray image has a thumbnail and an enlarged version.
           // This is common part of the web service for each tray.
           //var trayImageThmbUrlCmn = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/tray/thumb?coreid=" + sCoreId;
-            var trayImageThmbUrlCmn = ProxyURL+"http://150.229.98.207/Display_Tray_Thumb.aspx?coreid=" + sCoreId;
-            var trayImageThmbUrl = "";
-          //var trayImageUrlCmn = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/tray/image?coreid=" + sCoreId;
-            var trayImageUrlCmn = ProxyURL+"http://150.229.98.207/Display_Tray_Full.aspx?coreid=" + sCoreId;
+          //var trayImageThmbUrlCmn = ProxyURL+"http://150.229.98.207/Display_Tray_Thumb.aspx?coreid=" + sCoreId;
+          var trayImageThmbUrlCmn = ProxyURL + NVCL_WEB_SERVICE_IP + "/Display_Tray_Thumb.aspx?coreid=" + sCoreId;
+            
+          var trayImageThmbUrl = "";
+          var trayImageUrlCmn = ProxyURL + NVCL_WEB_SERVICE_IP + "/Display_Tray_Full.aspx?coreid=" + sCoreId;
             var trayImageUrl = "";
                       						
           for(var i=0; i<oNVCLMarker.maMosaicTrays.length; i++) {
@@ -910,8 +908,8 @@ function NVCLMarker_plotSelectedScalars() {
 
       // Build the web service to be called
       var sParamsList = "";
-      //var sScalarsPlotUrl = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/plot/scalars?";
-      var sScalarsPlotUrl = ProxyURL + "http://150.229.98.207/plotscalar.aspx?";
+      var sScalarsPlotUrl = ProxyURL + NVCL_WEB_SERVICE_IP + "/plotscalar.aspx?";
+
       sScalarsPlotUrl += "coreid=" + sCoreId;
       sScalarsPlotUrl += "&scalarids=" + sSelectedScalars;
       sScalarsPlotUrl += "&width="+width;

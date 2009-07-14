@@ -16,13 +16,13 @@ public class MineFilter implements IFilter {
 
     public String getFilterString() {
         return  "        <ogc:Filter " +
-                "                   xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" " +
+                "                   xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\" " +
                 "                   xmlns:ogc=\"http://www.opengis.net/ogc\" " +
                 "                   xmlns:gml=\"http://www.opengis.net/gml\" " +
                 "                   xmlns:xlink=\"http://www.w3.org/1999/xlink\" " +
                 "                   xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
                 "                <ogc:PropertyIsEqualTo>\n" +
-                "                    <ogc:PropertyName>mo:mineName/mo:MineName/mo:mineName</ogc:PropertyName>\n" +
+                "                    <ogc:PropertyName>er:mineName/er:MineName/er:mineName</ogc:PropertyName>\n" +
                 "                    <ogc:Literal>" + mineName + "</ogc:Literal>\n" +
                 "                </ogc:PropertyIsEqualTo>\n" +
                 "        </ogc:Filter>";

@@ -139,12 +139,12 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
         treePanel.getSelectionModel().select(node, true);
 
         if(node.attributes.layerType == 'gmap' && (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '')) {
-            googleMapServiceHandler();    
+        	googleMapServiceHandler();    
         }
         if (node.attributes.layerType == 'wms' && (node.attributes.tileOverlay == null || node.attributes.tileOverlay == '')) {
             wmsHandler();
         }
-        else if (node.attributes.layerType == 'wfs') {
+        else if (node.attributes.layerType == 'wfs') {        	
             statusBar.setStatus({
                 text: 'Finished loading',
                 iconCls: 'ok-icon',

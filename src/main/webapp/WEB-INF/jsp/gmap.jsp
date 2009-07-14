@@ -21,16 +21,21 @@
       <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=${googleKey}" type="text/javascript"></script>
       <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js"
              type="text/javascript"></script>
+             
+      <script type="text/javascript">
+         var VOCAB_SERVICE_URL = "${vocabServiceUrl}"; 
+         var NVCL_WEB_SERVICE_IP = "${nvclWebServiceIP}";
+      </script>     
       
       <jsp:include page="/jsimports.htm"/>
-      
+
       <!-- for IE -->
       <style type="text/css">v\:* {
         behavior: url(#default#VML);
       }</style>
    </head>
 
-   <body onunload="GUnload()">
+   <body onunload="GUnload()" >
       <!-- Include Navigation Header -->
       <%@ include file="page_header.jsp" %>
    </body>

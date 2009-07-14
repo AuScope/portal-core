@@ -65,7 +65,7 @@ public class HttpServiceCaller {
 
         //TODO: remove the mo namespace and have it passed in as a parameter
         String postString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" maxFeatures=\"200\">\n" +
+                "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\" maxFeatures=\"200\">\n" +
                 "    <wfs:Query typeName=\""+featureType+"\">" +
                         filterString +
                 "    </wfs:Query>" +
@@ -119,13 +119,15 @@ public class HttpServiceCaller {
         //return it
         return response;
     }
-
+    
+    /*
     public static void main(String[] args) throws Exception {
         HttpServiceCaller caller = new HttpServiceCaller();
         HttpMethodBase method = caller.constructWFSGetFeatureMethod("http://apacsrv1.arrc.csiro.au/deegree-wfs/services?", "mo:Mine", "");
         caller.callMethod(method, new HttpClient());
     }
-
+   */
+    
     /**
      * Generate a new httpClient
      * @return

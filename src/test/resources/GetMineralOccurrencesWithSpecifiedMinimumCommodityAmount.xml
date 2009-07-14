@@ -1,4 +1,4 @@
-<ogc:Filter xmlns:mo="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0"
+<ogc:Filter xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
     xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
     xmlns:ogc="http://www.opengis.net/ogc"
     xmlns:gml="http://www.opengis.net/gml"
@@ -7,21 +7,21 @@
     <ogc:Or>
         <ogc:And>
             <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>
+                <ogc:PropertyName>er:oreAmount/er:Resource/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>
                 <ogc:Literal>urn:ogc:def:uom:UCUM:t</ogc:Literal>
             </ogc:PropertyIsEqualTo>
             <ogc:PropertyIsGreaterThan>
-                <ogc:PropertyName>mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
+                <ogc:PropertyName>er:oreAmount/er:Resource/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
                 <ogc:Literal>7000000</ogc:Literal>
             </ogc:PropertyIsGreaterThan>
         </ogc:And>
         <ogc:And>
             <ogc:PropertyIsEqualTo>
-                <ogc:PropertyName>mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>
+                <ogc:PropertyName>er:oreAmount/er:Reserve/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>
                 <ogc:Literal>urn:ogc:def:uom:UCUM:t</ogc:Literal>
             </ogc:PropertyIsEqualTo>
             <ogc:PropertyIsGreaterThan>
-                <ogc:PropertyName>mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
+                <ogc:PropertyName>er:oreAmount/er:Reserve/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
                 <ogc:Literal>7000000</ogc:Literal>
             </ogc:PropertyIsGreaterThan>
         </ogc:And>

@@ -8,7 +8,7 @@
           // paramList should contain coreid=xxx
           var sparamsList =  location.search.substring(1);
           //var sMosaicUrl = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/mosaic/trays?";
-            var sMosaicUrl = ProxyURL + "http://150.229.98.207/scalars.asmx/trayids?";
+          var sMosaicUrl = ProxyURL + NVCL_WEB_SERVICE_IP + "/scalars.asmx/trayids?";
           sMosaicUrl += sparamsList;
           GDownloadUrl(sMosaicUrl, function(pData, pResponseCode) {
             if(pResponseCode == 200) {
@@ -46,9 +46,9 @@
 
                 var columnCounter = 0;
                 // Each tray image has a thumbnail and an enlarged version.
-                var trayImageThmbUrlCmn = "http://150.229.98.207/Display_Tray_Thumb.aspx?" + sparamsList;
+                var trayImageThmbUrlCmn = NVCL_WEB_SERVICE_IP + "/Display_Tray_Thumb.aspx?" + sparamsList;
                 var trayImageThmbUrl = "";
-                var trayImageUrlCmn = "http://150.229.98.207/Display_Tray_Full.aspx?" + sparamsList;
+                var trayImageUrlCmn = NVCL_WEB_SERVICE_IP + "/Display_Tray_Full.aspx?" + sparamsList;
                 var trayImageUrl = "";
 
                 for(var i=0; i<aBoreholeTrays.length; i++) {

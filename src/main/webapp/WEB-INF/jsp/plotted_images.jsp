@@ -7,8 +7,9 @@
       		if(location.search!='')
       		{
          		var sparamsList =  location.search.substring(1);
-         		var imageSrc = ProxyURL + "http://150.229.98.207/plotscalar.aspx?" + location.search.substring(1);
-
+         		//var imageSrc = ProxyURL + "http://150.229.98.207/plotscalar.aspx?" + location.search.substring(1);
+                var imageSrc = ProxyURL + NVCL_WEB_SERVICE_IP + "/plotscalar.aspx?" + location.search.substring(1);
+                
          		var img = document.getElementById("plotted_images");
 				img.src = imageSrc;
       		}

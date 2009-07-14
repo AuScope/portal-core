@@ -1,11 +1,11 @@
-<mo:MineralOccurrence gml:id="mo.mineral.occurrence.394deposit" xmlns:gco="http://www.isotc211.org/2005/gco"
+<er:MineralOccurrence gml:id="mo.mineral.occurrence.394deposit" xmlns:gco="http://www.isotc211.org/2005/gco"
 					  xmlns:gmd="http://www.isotc211.org/2005/gmd"
-					  xmlns:mo="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0"
+					  xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" 
 					  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink"
 					  xmlns:wfs="http://www.opengis.net/wfs" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
 					  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 					  xmlns:gml="http://www.opengis.net/gml"
-					  xsi:schemaLocation="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0 https://www.seegrid.csiro.au/subversion/xmml/GGIC/trunk/schema/MineralOccurrence/1.0.1/mineralOccurrence.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
+					  xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
 	<gml:name codeSpace="http://localhost:8080/deegree-wfs/services">urn:cgi:feature:PIRSA:MineralOccurrence:394deposit</gml:name>
 	<gml:name codeSpace="http://localhost:8080/deegree-wfs/services">TARCOOLA PERSEVERANCE</gml:name>
 	<gml:name codeSpace="http://localhost:8080/deegree-wfs/services">PERSEVERENCE</gml:name>
@@ -54,7 +54,7 @@
 		</gsml:MappedFeature>
 	</gsml:occurrence>
 
-	<mo:sourceReference>
+	<er:sourceReference>
 		<gmd:CI_Citation id="gmd.ci.citation.9832">
 			<gmd:title>
 				<gco:CharacterString>Tarcoola Goldfield geological investigations. Drilling and geological studies.</gco:CharacterString>
@@ -72,8 +72,8 @@
 			</gmd:date>
 
 		</gmd:CI_Citation>
-	</mo:sourceReference>
-	<mo:sourceReference>
+	</er:sourceReference>
+	<er:sourceReference>
 		<gmd:CI_Citation id="gmd.ci.citation.12111">
 			<gmd:title>
 				<gco:CharacterString>Tarcoola. Progress reports for the period 19/7/84 to 6/12/90.</gco:CharacterString>
@@ -91,21 +91,21 @@
 
 			</gmd:date>
 		</gmd:CI_Citation>
-	</mo:sourceReference>
-	<mo:form>
+	</er:sourceReference>
+	<er:form>
 		<gsml:CGI_TermValue>
 			<gsml:value codeSpace="urn:cgi:classifierScheme:PIRSA:DepositType">Fault Contact</gsml:value>
 		</gsml:CGI_TermValue>
-	</mo:form>
-	<mo:classification>
-		<mo:MineralDepositModel>
-			<mo:mineralDepositGroup
-				codeSpace="urn:cgi:classifierScheme:PIRSA:DepositStyle:Genetic">Hydrothermal: precipitation of ore and gangue from watery fluids of diverse origin, temperature range 50-7000C, generally below 4000C, pressure 1-3 kbar</mo:mineralDepositGroup>
-		</mo:MineralDepositModel>
-	</mo:classification>
-	<mo:commodityDescription
+	</er:form>
+	<er:classification>
+		<er:MineralDepositModel>
+			<er:mineralDepositGroup
+				codeSpace="urn:cgi:classifierScheme:PIRSA:DepositStyle:Genetic">Hydrothermal: precipitation of ore and gangue from watery fluids of diverse origin, temperature range 50-7000C, generally below 4000C, pressure 1-3 kbar</er:mineralDepositGroup>
+		</er:MineralDepositModel>
+	</er:classification>
+	<er:commodityDescription
 		xlink:href="urn:cgi:feature:PIRSA:MineralCommodity:394deposit:Au" />
-	<mo:child xlink:href="urn:cgi:feature:PIRSA:MineralOccurrence:394zone" />
+	<er:child xlink:href="urn:cgi:feature:PIRSA:MineralOccurrence:394zone" />
 
-	<mo:type>ore deposit</mo:type>
-</mo:MineralOccurrence>
+	<er:type>ore deposit</er:type>
+</er:MineralOccurrence>

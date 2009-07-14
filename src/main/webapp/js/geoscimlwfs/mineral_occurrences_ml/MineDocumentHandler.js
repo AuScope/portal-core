@@ -304,7 +304,7 @@ function MineDocumentHandler(xmlDocMineGetFeatureResponse) {
      */
     this.getMines = function() {
         //get all the mine features from the document
-        var mineNodes = xmlDocMineGetFeatureResponse.getElementsByTagName("mo:Mine");
+        var mineNodes = xmlDocMineGetFeatureResponse.getElementsByTagName("er:Mine");
 
         //placeholder for the mines
         var mines = new Array();

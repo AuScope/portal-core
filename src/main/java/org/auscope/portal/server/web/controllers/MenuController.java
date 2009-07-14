@@ -46,10 +46,18 @@ public class MenuController {
    public ModelAndView gmap() {
       String googleKey 
          = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
-      logger.debug(googleKey);
-
+      String vocabServiceUrl
+         = hostConfigurer.resolvePlaceholder("HOST.vocabService.url");
+      String nvclWebService
+         = hostConfigurer.resolvePlaceholder("nvcl-web-service.url");
+      logger.debug("googleKey: " + googleKey);
+      logger.debug("vocabServiceUrl: " + vocabServiceUrl);
+      logger.debug("nvclWebServiceUrl: " + nvclWebService);
+      
       ModelAndView mav = new ModelAndView("gmap");
-      mav.addObject("googleKey",googleKey);      
+      mav.addObject("googleKey", googleKey);
+      mav.addObject("vocabServiceUrl", vocabServiceUrl);
+      mav.addObject("nvclWebServiceIP", nvclWebService);
       return mav;
    }
 

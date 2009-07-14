@@ -1,4 +1,4 @@
-<ogc:Filter xmlns:mo="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0"
+<ogc:Filter xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
         xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
         xmlns:ogc="http://www.opengis.net/ogc"
         xmlns:gml="http://www.opengis.net/gml"
