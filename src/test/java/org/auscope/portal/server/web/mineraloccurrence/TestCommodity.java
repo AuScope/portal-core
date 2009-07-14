@@ -43,7 +43,7 @@ public class TestCommodity {
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
-        XPathExpression expr = xPath.compile("/mo:Commodity");
+        XPathExpression expr = xPath.compile("/er:Commodity");
         Node commodityNode = (Node)expr.evaluate(mineDocument, XPathConstants.NODE);
         validCommodity = new Commodity(commodityNode);
 
@@ -57,7 +57,7 @@ public class TestCommodity {
         XPath xPath2 = factory2.newXPath();
         xPath2.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
-        XPathExpression expr2 = xPath2.compile("/mo:Commodity");
+        XPathExpression expr2 = xPath2.compile("/er:Commodity");
         Node commodityNode2 = (Node)expr2.evaluate(mineDocument2, XPathConstants.NODE);
         invalidCommodity = new Commodity(commodityNode2);
 

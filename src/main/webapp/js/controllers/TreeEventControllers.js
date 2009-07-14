@@ -18,15 +18,15 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
      */
     this.getFeatureTypeHandler = function(featureTypeString) {
         switch (featureTypeString) {
-            case 'mo:MiningActivity': return miningActivityHandler; break;
-            case 'mo:Mine': return mineHandler; break;
-            case 'mo:MineralOccurrence': return mineralOccurrenceHandler; break;
+            case 'er:MiningActivity': return miningActivityHandler; break;
+            case 'er:Mine': return mineHandler; break;
+            case 'er:MineralOccurrence': return mineralOccurrenceHandler; break;
             default: return simpleKmlHandler; break;
         }
     };
 
     /**
-     * Handles feature types of type mo:MiningActivity
+     * Handles feature types of type er:MiningActivity
      */
     this.miningActivityHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
@@ -44,7 +44,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     };
 
     /**
-     *  Handles feature types of type mo:Mine
+     *  Handles feature types of type er:Mine
      */
     this.mineHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {
@@ -62,7 +62,7 @@ var treeCheckChangeController = function(node, isChecked, map, statusBar, viewpo
     };
 
     /**
-     * Handles feature types of type mo:MineralOccurrence
+     * Handles feature types of type er:MineralOccurrence
      */
     this.mineralOccurrenceHandler = function() {
         if (node.attributes.filterPanel == null || node.attributes.filterPanel == "") {

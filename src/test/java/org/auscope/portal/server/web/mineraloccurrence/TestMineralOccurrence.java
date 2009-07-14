@@ -44,7 +44,7 @@ public class TestMineralOccurrence {
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
-        XPathExpression expr = xPath.compile("/mo:MineralOccurrence");
+        XPathExpression expr = xPath.compile("/er:MineralOccurrence");
         Node mineralOccurrenceNode = (Node)expr.evaluate(mineralOccurrenceDocument, XPathConstants.NODE);
         validMineralOccurrence = new MineralOccurrence(mineralOccurrenceNode);
 
@@ -58,7 +58,7 @@ public class TestMineralOccurrence {
         XPath xPath2 = factory2.newXPath();
         xPath2.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
-        XPathExpression expr2 = xPath2.compile("/mo:MineralOccurrence");
+        XPathExpression expr2 = xPath2.compile("/er:MineralOccurrence");
         Node mineralOccurrenceNode2 = (Node)expr2.evaluate(mineralOccurrenceDocument2, XPathConstants.NODE);
         invalidMineralOccurrence = new MineralOccurrence(mineralOccurrenceNode2);
     }

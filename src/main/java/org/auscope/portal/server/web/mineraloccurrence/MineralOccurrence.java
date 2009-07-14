@@ -52,7 +52,7 @@ public class MineralOccurrence {
     public String getType() {
 
         try {
-            XPathExpression expr = xPath.compile("mo:type");
+            XPathExpression expr = xPath.compile("er:type");
             Node result = (Node)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODE);
             return result.getTextContent();
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class MineralOccurrence {
 
         try {
             XPathExpression expr =
-                xPath.compile("mo:classification/mo:MineralDepositModel/mo:mineralDepositGroup");
+                xPath.compile("er:classification/er:MineralDepositModel/er:mineralDepositGroup");
             Node result = (Node)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODE);
             return result.getTextContent();
         } catch (Exception e) {
@@ -75,7 +75,7 @@ public class MineralOccurrence {
     public Collection<String> getCommodityDescriptionURNs() {
         
         try {
-            XPathExpression expr = xPath.compile("mo:commodityDescription");
+            XPathExpression expr = xPath.compile("er:commodityDescription");
             NodeList commodityNodes = (NodeList)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
             
             ArrayList<String> commodityDescriptionURNs = new ArrayList<String>();

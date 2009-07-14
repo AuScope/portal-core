@@ -32,7 +32,7 @@ public class Commodity {
     public String getCommodityName() throws XPathExpressionException {
         
         try {
-            XPathExpression expr = xPath.compile("mo:commodityName");
+            XPathExpression expr = xPath.compile("er:commodityName");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
             return result.getTextContent();
         } catch (Exception e) {
@@ -43,7 +43,7 @@ public class Commodity {
     public String getMineralOccurrenceURI() {
 
         try {
-            XPathExpression expr = xPath.compile("mo:source");
+            XPathExpression expr = xPath.compile("er:source");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
             return result.getAttributes().getNamedItem("xlink:href").getTextContent();
         } catch (Exception e) {
@@ -54,7 +54,7 @@ public class Commodity {
     public String getCommodityImportance() throws XPathExpressionException {
         
         try {
-            XPathExpression expr = xPath.compile("mo:commodityImportance");
+            XPathExpression expr = xPath.compile("er:commodityImportance");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
             return result.getTextContent();
         } catch (Exception e) {

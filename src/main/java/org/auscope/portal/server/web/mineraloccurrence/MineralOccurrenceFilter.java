@@ -152,13 +152,13 @@ public class MineralOccurrenceFilter implements IFilter {
     {
         return "            <ogc:And>\n" +
                "                <ogc:PropertyIsEqualTo>\n" +
-               "                    <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
-               "/mo:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
+               "                    <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +
+               "/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
                "                    <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n" +
                "                </ogc:PropertyIsEqualTo>\n" +
                "                <ogc:PropertyIsGreaterThan>\n" +
-               "                    <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
-               "/mo:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+               "                    <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +
+               "/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
                "                    <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
                "                </ogc:PropertyIsGreaterThan>\n" +
                "            </ogc:And>\n";
@@ -173,13 +173,13 @@ public class MineralOccurrenceFilter implements IFilter {
     {
         return "                <ogc:And>" +
                "                   <ogc:PropertyIsEqualTo>\n" +
-               "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
-               "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
+               "                      <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +
+               "/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
                "                      <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n" +
                "                   </ogc:PropertyIsEqualTo>" +
                "                   <ogc:PropertyIsGreaterThan>\n" +
-               "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
-               "/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+               "                      <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +            
+               "/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
                "                      <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
                "                   </ogc:PropertyIsGreaterThan>" +
                "                </ogc:And>";
@@ -194,13 +194,13 @@ public class MineralOccurrenceFilter implements IFilter {
     {
         return "                <ogc:And>" +
                "                   <ogc:PropertyIsEqualTo>\n" +
-               "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +
-               "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
+               "                      <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +
+               "/er:measureDetails/er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
                "                      <ogc:Literal>"+this.cutOffGradeUOM+"</ogc:Literal>\n" +
                "                   </ogc:PropertyIsEqualTo>" +
                "                   <ogc:PropertyIsGreaterThan>\n" +
-               "                      <ogc:PropertyName>mo:oreAmount/" + getMeasureTypeTag(type) +            
-               "/mo:measureDetails/mo:CommodityMeasure/mo:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
+               "                      <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +            
+               "/er:measureDetails/er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
                "                      <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
                "                   </ogc:PropertyIsGreaterThan>" +
                "                </ogc:And>";
@@ -215,13 +215,13 @@ public class MineralOccurrenceFilter implements IFilter {
         switch (type) {
         // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this
 //            case ENDOWMENT:
-//                return "mo:Endowment";
+//                return "er:Endowment";
                 
             case RESOURCE:
-                return "mo:Resource";
+                return "er:Resource";
                 
             case RESERVE:
-                return "mo:Reserve";
+                return "er:Reserve";
     
             default:
                 // TODO shouldn't go there, error handling?

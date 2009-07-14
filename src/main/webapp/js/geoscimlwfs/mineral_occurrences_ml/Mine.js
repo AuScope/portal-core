@@ -166,7 +166,7 @@ function Mine(mineNode) {
      */
     this.getPreferredName = function() {
         //get the mine name nodes
-        var mineNameNodes = mineNode.getElementsByTagName("mo:MineName");
+        var mineNameNodes = mineNode.getElementsByTagName("er:MineName");
 
         //find the preffered name
         for(i=0; i<mineNameNodes.length; i++) {

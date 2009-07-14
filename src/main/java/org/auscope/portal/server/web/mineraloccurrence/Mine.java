@@ -33,10 +33,10 @@ public class Mine {
     }
 
     public String getMineNamePreffered() throws XPathExpressionException {
-        XPathExpression expr = xPath.compile("mo:mineName/mo:MineName/mo:isPreferred");
+        XPathExpression expr = xPath.compile("er:mineName/er:MineName/er:isPreferred");
         NodeList prefferedNodes = (NodeList)expr.evaluate(mineNode, XPathConstants.NODESET);
 
-        expr = xPath.compile("mo:mineName/mo:MineName/mo:mineName");
+        expr = xPath.compile("er:mineName/er:MineName/er:mineName");
         NodeList nameNodes = (NodeList)expr.evaluate(mineNode, XPathConstants.NODESET);
 
         for (int i = 0; i < prefferedNodes.getLength(); i++) {
@@ -50,7 +50,7 @@ public class Mine {
     public String getMineNameURI() {
 
         try {
-            XPathExpression expr = xPath.compile("mo:occurrence/mo:MiningFeatureOccurrence/mo:specification");
+            XPathExpression expr = xPath.compile("er:occurrence/er:MiningFeatureOccurrence/er:specification");
             Node result = (Node)expr.evaluate(mineNode, XPathConstants.NODE);
             return result.getAttributes().getNamedItem("xlink:href").getTextContent();
         } catch (Exception e) {

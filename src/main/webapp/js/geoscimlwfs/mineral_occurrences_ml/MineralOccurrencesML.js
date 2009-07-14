@@ -12,7 +12,7 @@ function MineralOccurrencesML(webFeatureService) {
     }
 
     /**
-     * Takes a mineResponse mo:Mine coolection from a WebFeatureService and returns a list/array of Mine objects
+     * Takes a mineResponse er:Mine coolection from a WebFeatureService and returns a list/array of Mine objects
      * @param mineResponse
      */
     function parseMineResponse(mineResponse) {

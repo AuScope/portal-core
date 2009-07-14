@@ -38,7 +38,7 @@ public class TestMine {
         xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
-        XPathExpression expr = xPath.compile("/mo:Mine");
+        XPathExpression expr = xPath.compile("/er:Mine");
         Node mineNode = (Node)expr.evaluate(mineDocument, XPathConstants.NODE);
         mine = new Mine(mineNode);
 

@@ -60,7 +60,7 @@ public class MineralOccurrenceServiceClient {
      */
     public String getAllMinesGML(String serviceURL) throws Exception {
         //create a GetFeature request with an empty filter - get all
-        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", "");
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "er:Mine", "");
 
         //call the service, and get all the mines
         return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
@@ -96,7 +96,7 @@ public class MineralOccurrenceServiceClient {
         MineFilter mineFilter = new MineFilter(mineName);
 
         //create a GetFeature request with an empty filter - get all
-        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Mine", mineFilter.getFilterString());
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "er:Mine", mineFilter.getFilterString());
 
         //call the service, and get all the mines
         return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
@@ -117,13 +117,13 @@ public class MineralOccurrenceServiceClient {
 
         //if we don't have a name or a group, then just get all of them
         if(commodityGroup.equals("") && commodityName.equals("")) {
-            method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Commodity", "");
+            method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "er:Commodity", "");
         } else {
             //create the filter to append to the url
             CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
 
             //create a GetFeature request with an empty filter - get all
-            method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:Commodity", commodityFilter.getFilterString());
+            method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString());
         }
 
         //call the service, and get all the commodities
@@ -176,7 +176,7 @@ public class MineralOccurrenceServiceClient {
                                                                                         cutOffGradeUOM);
 
         //create the method
-        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
 
         //run the dam query
         return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
@@ -198,7 +198,7 @@ public class MineralOccurrenceServiceClient {
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         //create the method
-        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "mo:MiningActivity", miningActivityFilter.getFilterString());
+        HttpMethodBase method = httpServiceCaller.constructWFSGetFeatureMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterString());
 
         //run dat query
         return this.httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
