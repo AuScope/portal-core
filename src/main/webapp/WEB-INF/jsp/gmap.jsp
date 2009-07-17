@@ -38,6 +38,12 @@
    <body onunload="GUnload()" >
       <!-- Include Navigation Header -->
       <%@ include file="page_header.jsp" %>
+      
+      <security:authorize ifAllGranted="ROLE_DOWNLOAD">
+        <script type="text/javascript">
+  		  buttonsPanel.enable();
+        </script>
+      </security:authorize>
    </body>
 
 </html>

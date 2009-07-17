@@ -13,7 +13,7 @@
                                     
    <http auto-config="false" entry-point-ref="entryPoint" session-fixation-protection="none" access-denied-page="/access_error.html">
       <intercept-url pattern="/admin.html" access="ROLE_ADMINISTRATOR" />
-      <intercept-url pattern="/downloadProxy**" access="ROLE_DOWNLOAD" />
+ <!-- <intercept-url pattern="/downloadProxy\?urls**" access="ROLE_DOWNLOAD" /> -->
       <intercept-url pattern="/**" filters="none" />
    </http>
       

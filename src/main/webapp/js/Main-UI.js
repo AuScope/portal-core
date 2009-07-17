@@ -1,12 +1,22 @@
 //this runs on DOM load - you can access all the good stuff now.
 var theglobalexml;
+var downloadUrls = new Hashtable();
 
+//buttons for things like downloading datasets
+var buttonsPanel = new Ext.FormPanel({
+    disabled: true,
+	region: 'south',
+    autoScroll:true,
+    width: '100%',
+    timeout: 360,
+    items: [{border: false}] ,
+    buttons: [{text: "Download Datasets", handler: function() {downloadController(downloadUrls);} }]
+});
 
 Ext.onReady(function() {
 
     var map;
-    var downloadUrls = new Hashtable();
-
+    
     //this tree holds all of the data sources
     var tree = new Ext.tree.TreePanel({
         title: 'Themes',
@@ -34,17 +44,7 @@ Ext.onReady(function() {
         activeItem: 0,
         items: [{html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'}]
     });
-
-    //buttons for things like downloading datasets
-    var buttonsPanel = new Ext.FormPanel({
-        region: 'south',
-        autoScroll:true,
-        width: '100%',
-        timeout: 360,
-        items: [{border: false}],
-        buttons: [{text: "Download Datasets", handler: function() {downloadController(downloadUrls);} }]
-    });
-
+ 
     //used as a placeholder for the tree and details panel on the left of screen
     var westPanel = {
         layout: 'border',
@@ -55,7 +55,7 @@ Ext.onReady(function() {
         width: 350,
 
         items:[tree, filterPanel, buttonsPanel]
-    }
+    };
 
     //this center panel will hold the google maps
     var centerPanel = new Ext.Panel({region:"center", margins:'100 0 0 0', cmargins:'100 0 0 0'});
@@ -104,7 +104,6 @@ Ext.onReady(function() {
         map.addControl(new GOverviewMapControl(Tsize));
 
         map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(345, 7)));
-
     }
 
     //a dud gloabal for geoxml class
