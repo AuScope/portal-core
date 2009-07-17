@@ -1,10 +1,5 @@
 package org.auscope.portal.server.web.servlet;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import org.auscope.portal.server.util.GmlToKml;
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -13,8 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
-import javax.servlet.http.*;
 
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -25,6 +18,16 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 
+import javax.servlet.http.*;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.auscope.portal.server.util.GmlToKml;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * RestProxyServlet
@@ -45,11 +48,15 @@ import java.util.Date;
  * Sourcecode from - https://bitbucket.org/kkubasik/roomiereal/src/tip/web/rest/RestProxyServlet.txt
  * 
  */
-public class XSLTRestProxy extends HttpServlet {
+@Controller
+public class XSLTRestProxy {
     protected final Log logger = LogFactory.getLog(getClass().getName());
     
-    @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) {
+    @Autowired 
+    private GmlToKml gmlToKml;
+    
+    @RequestMapping("/xsltRestProxy.do")
+    public void xsltRestProxy(HttpServletRequest request, HttpServletResponse response) {
         String[][] queryParams = new String[][]{};
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         
@@ -61,15 +68,14 @@ public class XSLTRestProxy extends HttpServlet {
         
         try {
             String result = conn.get(headers).getDataAsString();
-
             // Send response back to client
-            response.getWriter().println(new GmlToKml().convert( result, request));
+            response.getWriter().println(gmlToKml.convert( result, request));
         } catch (IOException ex) {
             logger.error("doGet: ", ex);
         }
     }
 
-    @Override
+    /*@Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) {
         StringBuffer bodyContent = null;
         try {
@@ -102,7 +108,7 @@ public class XSLTRestProxy extends HttpServlet {
         } catch (Exception e) {
             logger.error("doPost: " + e);
         }
-    }
+    }*/
 
     public class RestConnection {
 
