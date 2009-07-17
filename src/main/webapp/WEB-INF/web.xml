@@ -23,27 +23,6 @@
       <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
    </listener>
 
-   <!--
-   <servlet>
-      <servlet-name>googlemap</servlet-name>
-      <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-      <load-on-startup>1</load-on-startup>
-   </servlet>
-
-   <servlet>
-      <servlet-name>HttpProxy</servlet-name>
-      <servlet-class>com.jsos.httpproxy.HttpProxyServlet</servlet-class>
-      <init-param>
-         <param-name>host</param-name>
-         <param-value>http://auscope-portal.arrc.csiro.au/gnss/wfs</param-value>
-      </init-param>
-   </servlet>
-
-   <servlet-mapping>
-      <servlet-name>HttpProxy</servlet-name>
-      <url-pattern>/geoserver/wfs</url-pattern>
-   </servlet-mapping>-->
-
    <servlet>
       <servlet-name>RestProxy</servlet-name>
       <servlet-class>com.jsos.restproxy.RestProxyServlet</servlet-class>
@@ -52,16 +31,6 @@
    <servlet-mapping>
       <servlet-name>RestProxy</servlet-name>
       <url-pattern>/restproxy</url-pattern>
-   </servlet-mapping>
-
-   <servlet>
-      <servlet-name>XSLTRestProxy</servlet-name>
-      <servlet-class>org.auscope.portal.server.web.servlet.XSLTRestProxy</servlet-class>
-   </servlet>
-
-   <servlet-mapping>
-      <servlet-name>XSLTRestProxy</servlet-name>
-      <url-pattern>/xsltRestProxy</url-pattern>
    </servlet-mapping>
 
    <servlet>
@@ -100,13 +69,6 @@
       <servlet-name>annotationsDispatcher</servlet-name>
       <url-pattern>*.json</url-pattern>
    </servlet-mapping>
-   
-   <!--
-   <servlet-mapping>
-      <servlet-name>gmlDispatcher</servlet-name>
-      <url-pattern>*.gml</url-pattern>
-   </servlet-mapping>
-   -->
    
    <welcome-file-list>
       <welcome-file>index.jsp</welcome-file>
