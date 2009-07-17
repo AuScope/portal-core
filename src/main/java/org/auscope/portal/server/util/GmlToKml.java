@@ -1,7 +1,6 @@
 package org.auscope.portal.server.util;
 
 import java.io.*;
-import java.util.ResourceBundle;
 
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -14,15 +13,26 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+
+import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 
 /**
  * <p> This class converts geoSciML into KML format </p>
  * @author jsanders
  */
-@Repository
+@Component
 public class GmlToKml {
    private static final Log log = LogFactory.getLog(GmlToKml.class);
+
+   @Autowired
+   @Qualifier(value = "propertyConfigurer")
+   private PortalPropertyPlaceholderConfigurer hostConfigurer;
+   
    
    /**
     * Utility method to transform xml file. It is kml.xml specific as it sets
@@ -33,7 +43,6 @@ public class GmlToKml {
     */   
    public String convert(String geoXML, InputStream inXSLT) {
       //log.debug(geoXML);
-      
       StringWriter sw = new StringWriter();
       try {
          // Use the static TransformerFactory.newInstance() method:
@@ -55,7 +64,7 @@ public class GmlToKml {
          // Set stylesheet parameter 
          transformer.setParameter 
             ("uriResolverURL"
-            ,ResourceBundle.getBundle("config").getString("uriResolver.url") );
+            , hostConfigurer.resolvePlaceholder("HOST.uriResolver.url"));
          
          // Write the output to a stream
          transformer.transform (new StreamSource (new StringReader(geoXML)),
