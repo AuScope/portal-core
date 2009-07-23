@@ -35,9 +35,9 @@ public class PreAuthenticatedProcessingFilter
                logger.debug(name + " : " + value);
          }
       }
-      logger.debug("Name: " + request.getHeader("Shib-Person-commonName"));
-      logger.debug("mail: " + request.getHeader("Shib-Person-mail"));
-      logger.debug("Token: " + request.getHeader("Shib-Shared-Token"));
+      //logger.debug("Shib-Person-commonName: " + request.getHeader("Shib-Person-commonName"));
+      logger.info("Shib-Person-mail: " + request.getHeader("Shib-Person-mail"));
+      //logger.debug("Shib-Shared-Token: " + request.getHeader("Shib-Shared-Token"));
       return request.getHeader("Shib-Person-mail");
    }
    
