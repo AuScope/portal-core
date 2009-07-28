@@ -10,7 +10,10 @@
       <meta name="author" content="AuScope"/>
       
       <!-- Page Style -->
+      <link rel="stylesheet" type="text/css" href="css/menu.css"> 
       <link rel="stylesheet" type="text/css" href="css/styles.css">
+      <link rel="stylesheet" type="text/css" href="css/grid-examples.css">
+
       <STYLE type="text/css">
         #nav-example-02 a {
             background: url("/img/navigation.gif") -100px -38px no-repeat;
@@ -28,14 +31,14 @@
       </script>     
       
       <jsp:include page="/jsimports.htm"/>
-
+      
       <!-- for IE -->
       <style type="text/css">v\:* {
         behavior: url(#default#VML);
       }</style>
    </head>
 
-   <body onunload="GUnload()" >
+   <body onunload="GUnload()">
       <!-- Include Navigation Header -->
       <%@ include file="page_header.jsp" %>
       

@@ -10,10 +10,10 @@
          <a href="admin.html"><span>Administration</span></a>
       </security:authorize>
       <div id="menu">
-         <ul id="nav-example">
-            <li id="nav-example-01"><a href="http://www.auscope.org"><span>AuScope.org</span></a></li>
-            <li id="nav-example-02"><a href="gmap.html"><span>AuScope Discovery Portal</span></a></li>
-            <li id="nav-example-03"><a href="login.html"><span>Login</span></a></li>
+         <ul >
+            <li ><a href="http://www.auscope.org">AuScope.org<span></span></a></li>
+            <li class="current"><a href="gmap.html">AuScope Discovery Portal<span></span></a></li>
+            <li ><a href="login.html">Login<span></span></a></li>
          </ul>
       </div>
    </div>

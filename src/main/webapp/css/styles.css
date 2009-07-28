@@ -36,7 +36,7 @@
         display: none;
     }
     
-    #menu {
+    /*#menu {
         position: absolute;
         top: 0px;
         right: 0px;
@@ -120,5 +120,5 @@
     #nav-example-03 a:hover {
         background: url( "/img/navigation.gif" ) -200px -38px no-repeat;
     }
-
+*/
    
