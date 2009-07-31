@@ -42,7 +42,7 @@ public class GmlToKml {
     * @return Xml output string
     */   
    public String convert(String geoXML, InputStream inXSLT) {
-      //log.debug(geoXML);
+      log.debug("GML input: " + geoXML);      
       StringWriter sw = new StringWriter();
       try {
          // Use the static TransformerFactory.newInstance() method:
@@ -75,7 +75,7 @@ public class GmlToKml {
       } catch (TransformerException e) {
          log.error("Failed to transform kml file: " + e);
       }     
-      log.debug(sw.toString());
+      log.debug("KML output: " + sw.toString());
       return sw.toString();
    }
 

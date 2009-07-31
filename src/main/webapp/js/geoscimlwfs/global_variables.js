@@ -32,7 +32,9 @@ var IMAGES_DIR = "img";
 * gaMonths
 *   All the months of a year
 */
-var gaYears = new Array(2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001, 2000, 1999, 1998);
+//var gaYears = new Array(2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001, 2000, 1999, 1998);
+var gaYears = getYearsArrayFrom(1998);
+
 var gaMonths = new Array();
 gaMonths[1] = "Jan";
 gaMonths[2] = "Feb";

@@ -57,7 +57,7 @@ public class GetDataSourcesJSONController {
     private PortalPropertyPlaceholderConfigurer hostConfigurer;
 
     public static final String WEPMAPSERVICE = "Web Map Service Layers";
-
+    
     public static final String XSLT_PROXY_URL = "/xsltRestProxy?url=";
     public static final String PROXY_URL      = "/restproxy?";
 
@@ -65,6 +65,7 @@ public class GetDataSourcesJSONController {
     public static final String GNSS               = "Global Navigation Satellite Systems";
     public static final String GEODESY            = "Geodesy";
     public static final String GEOLOGIC_UNIT      = "Geologic Unit";
+    public static final String EARTH_RESOURCES    = "Earth Resources";
     public static final String MINERAL_OCCURENCES = "Mineral Occurrences";
     public static final String MINING_ACTIVITY    = "Mining Activity";
     public static final String MINES              = "Mines";
@@ -74,9 +75,11 @@ public class GetDataSourcesJSONController {
                                             GNSS,
                                             GEODESY,
                                             GEOLOGIC_UNIT,
+                                            EARTH_RESOURCES,
                                             MINERAL_OCCURENCES,
                                             MINING_ACTIVITY,
-                                            MINES};
+                                            MINES
+                                          };
 
     //create a map to hold the CSW query contraints for each theme
     // TODO can filterAPI be used for CSW as well? 
@@ -177,7 +180,10 @@ public class GetDataSourcesJSONController {
         //if we are opening the root node then we want to send back all of the available themes
         if (node.equals("root"))
             jsonArray = getThemes();
-
+        
+        if(node.equals(THEME + EARTH_RESOURCES))
+           jsonArray = getEarthResources();
+        
         //hyperspectral is a special case because it is MAP data, and has to be categorised futher down into layers
         //differently to the feature services
         else if (node.equals(THEME + WEPMAPSERVICE))
@@ -213,16 +219,46 @@ public class GetDataSourcesJSONController {
         jsonArray.add(hyperspectral);
 
         for(String themeName : THEMES) {
-            Map<String, Serializable> theme = new HashMap<String, Serializable>();
-            theme.put("id", THEME + themeName);
-            theme.put("text", themeName);
-            //theme.put("checked", Boolean.FALSE);
-            theme.put("leaf", Boolean.FALSE);
-            jsonArray.add(theme);
+           if (!themeName.equals(MINERAL_OCCURENCES) && !themeName.equals(MINING_ACTIVITY) && !themeName.equals(MINES)) { 
+              Map<String, Serializable> theme = new HashMap<String, Serializable>();
+              theme.put("id", THEME + themeName);
+              theme.put("text", themeName);
+              //theme.put("checked", Boolean.FALSE);
+              theme.put("leaf", Boolean.FALSE);
+              jsonArray.add(theme);
+           }
         }
 
         //create a model and view and return it
         return jsonArray;
+    }
+    
+    private JSONArray getEarthResources() {
+       JSONArray jsonArray = new JSONArray();
+
+       Map<String, Serializable> minOcc = new HashMap<String, Serializable>();
+       minOcc.put("id", THEME + MINERAL_OCCURENCES);
+       minOcc.put("text", MINERAL_OCCURENCES);
+       //hyperspectral.put("checked", Boolean.FALSE);
+       minOcc.put("leaf", Boolean.FALSE);
+       jsonArray.add(minOcc);
+       
+       Map<String, Serializable> miningActivity = new HashMap<String, Serializable>();
+       miningActivity.put("id", THEME + MINING_ACTIVITY);
+       miningActivity.put("text", MINING_ACTIVITY);
+       //hyperspectral.put("checked", Boolean.FALSE);
+       miningActivity.put("leaf", Boolean.FALSE);
+       jsonArray.add(miningActivity);
+       
+       Map<String, Serializable> mines = new HashMap<String, Serializable>();
+       mines.put("id", THEME + MINES);
+       mines.put("text", MINES);
+       //hyperspectral.put("checked", Boolean.FALSE);
+       mines.put("leaf", Boolean.FALSE);
+       jsonArray.add(mines);
+
+       //create a model and view and return it
+       return jsonArray;
     }
 
     /**

@@ -21,7 +21,8 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description)
     this.moMarker = marker;
     
   // Initiaize all the members
-  this.msWfsUrl = pWfsUrl;
+  //cut off this from the URL "%26request=GetFeature%26typeName=geodesy:stations"  
+  this.msWfsUrl = pWfsUrl.substring(0,pWfsUrl.indexOf('?')+1);
   this.msDataLayerName = pDataLayerName;
   this.maStationDataForDate = new Array();
   this.maYearMonthWfsUrlQueried = new Array();
@@ -663,7 +664,7 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
     this.setCheckedStateForYear(year, yearChkObj.checked);
   }
   
-  var sStationDataUrl = this.msWfsYearDataUrl[year];
+  var sStationDataUrl = ProxyURL + this.msWfsYearDataUrl[year];
   sStationDataUrl= sStationDataUrl + "AND(id='" + station + "')";  
   
   // Download renix files for this year
@@ -1020,7 +1021,7 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
   var datesDivObj = pDatesDivObj;
   
   // Create the wfs call that will get the data
-  var sStationDataUrl = this.msYearMonthWfsUrl[year][month];
+  var sStationDataUrl = ProxyURL + this.msYearMonthWfsUrl[year][month];
   sStationDataUrl= sStationDataUrl + "AND(id='" + station + "')";
   
   if (this.maYearMonthWfsUrlQueried[year][month]) {

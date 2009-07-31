@@ -326,7 +326,7 @@
          <xsl:value-of select="./gml:location/gml:Point/gml:pos"/>
       </xsl:variable>
       <Placemark>
-         <name><xsl:value-of select="@gml:id"/></name>
+         <name><xsl:value-of select="./geodesy:station_id"/></name>
          <description>
             <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Station Id</td><td>]]><xsl:value-of select="./geodesy:station_id"/>
@@ -433,7 +433,7 @@
                   </xsl:call-template>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:call-template name="parseLatLongCoord">
+                  <xsl:call-template name="parseLongLatCoord">
                      <xsl:with-param name="coordinates" select="$coordinates"/>
                   </xsl:call-template>
                </xsl:otherwise>
