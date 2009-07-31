@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.auscope.portal.server.web.service.HttpServiceCaller;
 
 import junit.framework.Assert;
 
@@ -27,6 +28,8 @@ public class TestHttpServiceCaller {
     }};
     private HttpClient mockHttpClient;
 
+    private IWFSGetFeatureMethodMaker methodMaker;
+
     private HttpServiceCaller httpServiceCaller;
     private static final String SERVICE_URL = "http://localhost?";
     private static final String FEATURE_TYPE = "gh:SomeType";
@@ -36,6 +39,7 @@ public class TestHttpServiceCaller {
     public void setup() {
         mockHttpClient = context.mock(HttpClient.class);
         httpServiceCaller = new HttpServiceCaller();
+        methodMaker = new WFSGetFeatureMethodMakerPOST();
     }
 
     /**
@@ -44,7 +48,7 @@ public class TestHttpServiceCaller {
      */
     @Test
     public void testConstructWFSGetFeatureMethodAllParameters() throws Exception {
-        PostMethod method = (PostMethod)httpServiceCaller.constructWFSGetFeatureMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING);
+        PostMethod method = (PostMethod)methodMaker.makeMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING);
 
         String expectedPost = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                               "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\" maxFeatures=\"200\">\n" +
@@ -82,7 +86,7 @@ public class TestHttpServiceCaller {
      */
     @Test (expected = Exception.class)
     public void testConstructWFSGetFeatureMethodNoFeatureType() throws Exception {
-        httpServiceCaller.constructWFSGetFeatureMethod(SERVICE_URL, "", FILTER_STRING);
+        methodMaker.makeMethod(SERVICE_URL, "", FILTER_STRING);
     }
 
     /**
@@ -91,7 +95,7 @@ public class TestHttpServiceCaller {
      */
     @Test (expected = Exception.class)
     public void testConstructWFSGetFeatureMethodNoURL() throws Exception {
-        httpServiceCaller.constructWFSGetFeatureMethod("", FEATURE_TYPE, FILTER_STRING);
+        methodMaker.makeMethod("", FEATURE_TYPE, FILTER_STRING);
     }
 
     /**
@@ -132,4 +136,5 @@ public class TestHttpServiceCaller {
 
         httpServiceCaller.callMethod(method, mockHttpClient);
     }
+
 }

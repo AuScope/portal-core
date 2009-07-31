@@ -3,13 +3,11 @@ package org.auscope.portal.server.web.controllers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.Assert;
-import org.xml.sax.SAXException;
-import org.auscope.portal.server.web.HttpServiceCaller;
+import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.web.service.MineralOccurrenceService;
 import org.auscope.portal.server.web.ErrorMessages;
-import org.auscope.portal.server.web.view.JSONModelAndView;
-import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrencesResponseHandler;
-import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrenceServiceClient;
-import org.auscope.portal.server.web.mineraloccurrence.Mine;
+import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
+import org.auscope.portal.mineraloccurrence.Mine;
 import org.auscope.portal.server.util.GmlToKml;
 import org.jmock.Mockery;
 import org.jmock.Expectations;
@@ -18,7 +16,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.apache.commons.httpclient.ConnectTimeoutException;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
@@ -26,8 +23,6 @@ import java.util.List;
 import java.net.UnknownHostException;
 import java.net.ConnectException;
 
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -41,7 +36,7 @@ public class TestMineralOccurrencesFilterController {
     private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
     private MineralOccurrencesFilterController minerOccurrenceFilterController;
-    private MineralOccurrenceServiceClient mineralOccurrenceServiceClient;
+    private MineralOccurrenceService mineralOccurrenceService;
     private HttpServletRequest mockHttpRequest;
     private HttpServletResponse mockHttpResponse;
     private GmlToKml mockGmlToKml;
@@ -54,9 +49,9 @@ public class TestMineralOccurrencesFilterController {
     public void setup() {
         this.httpServiceCaller =  context.mock(HttpServiceCaller.class);
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
-        this.mineralOccurrenceServiceClient = context.mock(MineralOccurrenceServiceClient.class);
+        this.mineralOccurrenceService = context.mock(MineralOccurrenceService.class);
         this.mockGmlToKml = context.mock(GmlToKml.class);
-        this.minerOccurrenceFilterController = new MineralOccurrencesFilterController(this.mineralOccurrencesResponseHandler, this.mineralOccurrenceServiceClient, this.mockGmlToKml);
+        this.minerOccurrenceFilterController = new MineralOccurrencesFilterController(this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService, this.mockGmlToKml);
         this.mockHttpRequest = context.mock(HttpServletRequest.class);
         this.mockHttpResponse = context.mock(HttpServletResponse.class);
     }
@@ -78,7 +73,7 @@ public class TestMineralOccurrencesFilterController {
 
         context.checking(new Expectations() {{
             //return a list of mock mines for the controller to build up json from
-            oneOf (mineralOccurrenceServiceClient).getAllMines(serviceURL);will(returnValue(Arrays.asList(mockMine1, mockMine2)));
+            oneOf (mineralOccurrenceService).getAllMines(serviceURL);will(returnValue(Arrays.asList(mockMine1, mockMine2)));
 
             //return the names which are in our expectedJSONResponse
             oneOf (mockMine1).getMineNamePreffered(); will(returnValue("Balh1"));
@@ -116,7 +111,7 @@ public class TestMineralOccurrencesFilterController {
 
         context.checking(new Expectations() {{
             //get the call the throw an exception
-            oneOf (mineralOccurrenceServiceClient).getAllMines(serviceURL);will(throwException(new Exception()));
+            oneOf (mineralOccurrenceService).getAllMines(serviceURL);will(throwException(new Exception()));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
@@ -151,7 +146,7 @@ public class TestMineralOccurrencesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getAllMinesGML(serviceURL);
+            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL);
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
@@ -186,7 +181,7 @@ public class TestMineralOccurrencesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedNameGML(serviceURL, mineName);
+            oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName);
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
@@ -220,7 +215,7 @@ public class TestMineralOccurrencesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedNameGML(serviceURL, mineName);will(throwException(new UnknownHostException()));
+            oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName);will(throwException(new UnknownHostException()));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
@@ -244,7 +239,7 @@ public class TestMineralOccurrencesFilterController {
     @Test
     public void testDoMineralOccurrenceFilter() throws Exception {
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");
+            oneOf (mineralOccurrenceService).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");
             oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(1));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(mockHttpRequest));
         }});
@@ -255,7 +250,7 @@ public class TestMineralOccurrencesFilterController {
     @Test
     public void testDoMineralOccurrenceFilterNoResults() throws Exception {
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");
+            oneOf (mineralOccurrenceService).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");
             oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(0));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(mockHttpRequest));
         }});
@@ -270,7 +265,7 @@ public class TestMineralOccurrencesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");will(throwException(new ConnectTimeoutException()));
+            oneOf (mineralOccurrenceService).getMineralOccurrenceGML("", "", "", "", "", "", "", "", "", "");will(throwException(new ConnectTimeoutException()));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
@@ -297,9 +292,9 @@ public class TestMineralOccurrencesFilterController {
         final List<Mine> mines = Arrays.asList(context.mock(Mine.class));
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getAllMines("");will(returnValue(mines));
+            oneOf (mineralOccurrenceService).getAllMines("");will(returnValue(mines));
 
-            oneOf (mineralOccurrenceServiceClient).getMiningActivityGML("", mines, "", "", "", "", "", "");
+            oneOf (mineralOccurrenceService).getMiningActivityGML("", mines, "", "", "", "", "", "");
             oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(1));
 
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(mockHttpRequest));
@@ -321,7 +316,7 @@ public class TestMineralOccurrencesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getAllMines("");will(returnValue(mines));
+            oneOf (mineralOccurrenceService).getAllMines("");will(returnValue(mines));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
@@ -354,9 +349,9 @@ public class TestMineralOccurrencesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getAllMines("");will(returnValue(mines));
+            oneOf (mineralOccurrenceService).getAllMines("");will(returnValue(mines));
 
-            oneOf (mineralOccurrenceServiceClient).getMiningActivityGML("", mines, "", "", "", "", "", "");
+            oneOf (mineralOccurrenceService).getMiningActivityGML("", mines, "", "", "", "", "", "");
             oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(0));
 
             //check that the correct response is getting output
@@ -385,10 +380,10 @@ public class TestMineralOccurrencesFilterController {
         final List<Mine> mines = Arrays.asList(context.mock(Mine.class));
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedName("", "");will(returnValue(mines));
+            oneOf (mineralOccurrenceService).getMineWithSpecifiedName("", "");will(returnValue(mines));
             oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(1));
 
-            oneOf (mineralOccurrenceServiceClient).getMiningActivityGML("", mines, "", "", "", "", "", "");
+            oneOf (mineralOccurrenceService).getMiningActivityGML("", mines, "", "", "", "", "", "");
             oneOf (mineralOccurrencesResponseHandler).getNumberOfFeatures(with(any(String.class))); will(returnValue(1));
 
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(mockHttpRequest));
@@ -404,7 +399,7 @@ public class TestMineralOccurrencesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceServiceClient).getMineWithSpecifiedName("", "");will(throwException(new ConnectException()));
+            oneOf (mineralOccurrenceService).getMineWithSpecifiedName("", "");will(throwException(new ConnectException()));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));

@@ -471,7 +471,7 @@ function GeodesyMarker_markerClicked()
   
   // Open the popup window for the marker with the tabs Main and Data
   oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, this.msSummaryHtml),
-                                  new GInfoWindowTab(label2, this.msRenixFilesHtml)]);
+                                  new GInfoWindowTab(label2, this.msRenixFilesHtml)], {autoScroll:true});
     //oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label2, this.msRenixFilesHtml)]);
 }
 

@@ -5,10 +5,7 @@ import org.junit.Test;
 import org.junit.Assert;
 import org.xml.sax.SAXException;
 import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 import org.auscope.portal.Util;
-import org.auscope.portal.server.web.mineraloccurrence.MineralOccurrenceNamespaceContext;
-import org.auscope.portal.server.web.mineraloccurrence.Commodity;
 
 import javax.xml.xpath.*;
 import javax.xml.parsers.ParserConfigurationException;

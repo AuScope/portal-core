@@ -34,10 +34,6 @@
 		</property>
 	</bean>
 
-	<!-- ********** controllers ********** -->
-	<bean id="gMapController" class="org.auscope.portal.server.web.controllers.GMapController"></bean>
-	
-    
     <!-- resource bundle location -->
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">

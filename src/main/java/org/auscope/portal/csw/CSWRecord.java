@@ -11,29 +11,70 @@ import javax.xml.xpath.XPathExpressionException;
  * Date: 11/02/2009
  * Time: 11:58:21 AM
  */
+//TODO: refactor into data and service records
 public class CSWRecord {
     private Node recordNode;
+    private String serviceName;
+    private String serviceUrl;
+    private String onlineResourceName;
+    private String onlineResourceDescription;
+    private String onlineResourceProtocol;
+    private String contactOrganisation;
 
-    public CSWRecord(Node node) {
+
+    public CSWRecord(Node node) throws XPathExpressionException {
         this.recordNode = node;
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        xPath.setNamespaceContext(new CSWNamespaceContext());
+
+        String serviceTitleExpression = "gmd:identificationInfo/srv:SV_ServiceIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
+        Node tempNode = (Node)xPath.evaluate(serviceTitleExpression, recordNode, XPathConstants.NODE);
+        serviceName = tempNode != null ? tempNode.getTextContent() : "";
+
+        String serviceUrleExpression = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:linkage/gmd:URL";
+        tempNode = (Node)xPath.evaluate(serviceUrleExpression, recordNode, XPathConstants.NODE);
+        serviceUrl = tempNode != null ? tempNode.getTextContent() : "";
+
+        String onlineResourceNameExpression = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
+        tempNode = (Node)xPath.evaluate(onlineResourceNameExpression, recordNode, XPathConstants.NODE);
+        onlineResourceName = tempNode != null ? tempNode.getTextContent() : "";
+
+        String onlineResourceDescriptionExpression = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:description/gco:CharacterString";
+        tempNode = (Node)xPath.evaluate(onlineResourceDescriptionExpression, recordNode, XPathConstants.NODE);
+        onlineResourceDescription = tempNode != null ? tempNode.getTextContent() : "";
+
+        String onlineResourceProtocolExpression = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString";
+        tempNode = (Node)xPath.evaluate(onlineResourceProtocolExpression, recordNode, XPathConstants.NODE);
+        onlineResourceProtocol = tempNode != null ? tempNode.getTextContent() : "";
+
+        String contactOrganisationExpression = "gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString";
+        tempNode = (Node)xPath.evaluate(contactOrganisationExpression, recordNode, XPathConstants.NODE);
+        contactOrganisation = tempNode != null ? tempNode.getTextContent() : "";
     }
 
     public String getServiceName() throws XPathExpressionException {
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        xPath.setNamespaceContext(new CSWNamespaceContext());
-        String serviceTitleExpression =
-            "gmd:identificationInfo/srv:SV_ServiceIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
-        Node node = (Node) xPath.evaluate(serviceTitleExpression, recordNode, XPathConstants.NODE);
-        return node.getTextContent();
+        return serviceName;
     }
 
     public String getServiceUrl() throws XPathExpressionException {
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        xPath.setNamespaceContext(new CSWNamespaceContext());
-        String serviceUrleExpression =
-            "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:linkage/gmd:URL";
-        Node node = (Node) xPath.evaluate(serviceUrleExpression, recordNode, XPathConstants.NODE);
-        return node.getTextContent();        
+        return serviceUrl;
+    }
+
+    public String getOnlineResourceName() throws XPathExpressionException {
+        return onlineResourceName;
+    }
+
+    public String getOnlineResourceDescription() throws XPathExpressionException {
+        return onlineResourceDescription;
+    }
+
+    public String getOnlineResourceProtocol() throws XPathExpressionException {
+        return onlineResourceProtocol;
+    }
+
+    public String getContactOrganisation() throws XPathExpressionException {
+        return contactOrganisation;
     }
     
 }

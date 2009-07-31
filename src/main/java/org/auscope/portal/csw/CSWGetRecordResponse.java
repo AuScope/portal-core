@@ -27,6 +27,8 @@ public class CSWGetRecordResponse {
         String serviceTitleExpression = "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata";
         NodeList nodes = (NodeList) xPath.evaluate(serviceTitleExpression, this.recordResponse, XPathConstants.NODESET);
 
+        System.out.println(nodes.getLength());
+
         records = new CSWRecord[nodes.getLength()];
         for(int i=0; i<nodes.getLength(); i++ ) {
             records[i] = new CSWRecord(nodes.item(i));
