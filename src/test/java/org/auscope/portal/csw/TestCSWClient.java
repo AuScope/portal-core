@@ -14,12 +14,12 @@ import java.io.IOException;
  */
 public class TestCSWClient {
 
-    /*@Test
+    @Test
     public void testManyRecords() throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         //String filter = "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>GPS</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0";
         //String filter = "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?><Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\"><And><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>WFS</Literal></PropertyIsEqualTo><PropertyIsEqualTo><PropertyName>keyword</PropertyName><Literal>mo%3AMiningFeatureOccurrence</Literal></PropertyIsEqualTo></And></Filter>&constraintLanguage=FILTER&constraint_language_version=1.1.0";
 
-        String filter =
+        /*String filter =
             "<?xml+version=\"1.0\"+encoding=\"UTF-8\"?>" +
                 "<Filter+xmlns=\"http://www.opengis.net/ogc\"+xmlns:gml=\"http://www.opengis.net/gml\">" +
                 "<PropertyIsEqualTo>" +
@@ -34,7 +34,7 @@ public class TestCSWClient {
                     .getRecordResponse().getCSWRecords();
         
         for(CSWRecord record : cswRecords)
-            System.out.println(record.getServiceName() + " " + record.getServiceUrl());
+            System.out.println(record.getServiceName() + " " + record.getServiceUrl());*/
 
-    }*/
+    }
 }
