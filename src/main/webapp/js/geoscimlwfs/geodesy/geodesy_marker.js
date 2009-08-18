@@ -388,6 +388,9 @@ function GeodesyMarker_markerClicked()
   var sLatitude = oGeodesyStation.moLocation.msLatitude;
   var sLongitude = oGeodesyStation.moLocation.msLongitude;*/
   var oMarker = this.moMarker;
+
+    //show loading status
+    oMarker.openInfoWindowHtml('<div > <img src="js/external/ext-2.2/resources/images/default/grid/loading.gif"> Loading... </div>');
     
   /**
   * The popup for a marker contains two tabs - Summary and Renix Files

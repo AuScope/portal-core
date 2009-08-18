@@ -60,11 +60,11 @@ public class XSLTRestProxy {
         String[][] queryParams = new String[][]{};
         String[][] headers = new String[][]{{"Accept", "application/json"}};
         
-        logger.debug("URL: " + request.getParameter("url"));
-        logger.debug("URL replaced: " + request.getParameter("url").replace("%26", "&"));
+        logger.debug("URL: " + request.getParameter("serviceUrl"));
+        logger.debug("URL replaced: " + request.getParameter("serviceUrl").replace("%26", "&"));
         
         RestConnection conn 
-            = new RestConnection(request.getParameter("url").replace("%26", "&"), queryParams);
+            = new RestConnection(request.getParameter("serviceUrl").replace("%26", "&"), queryParams);
         
         try {
             String result = conn.get(headers).getDataAsString();

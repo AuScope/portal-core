@@ -263,6 +263,10 @@ function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
 function NVCLMarker_markerClicked()
 {
   var oNVCLMarker = this;
+
+    //show loading status
+    oNVCLMarker.moMarker.openInfoWindowHtml('<div > <img src="js/external/ext-2.2/resources/images/default/grid/loading.gif"> Loading... </div>');
+    
   //var oBorehole = this.moBorehole;
   
   // msId is of the format nvcl_core.4

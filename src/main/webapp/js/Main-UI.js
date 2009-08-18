@@ -190,61 +190,7 @@ Ext.onReady(function() {
         //iconCls:'remove',
         handler: function() {
             var selectedRecord = activeLayersPanel.getSelectionModel().getSelected();
-
-            //if there is already a filter running for this record then don't call another
-            if(selectedRecord.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
-                alert('there is a query running just wait');
-                return;
-            }
-
-            if(selectedRecord.tileOverlay instanceof MarkerManager) selectedRecord.tileOverlay.clearMarkers();
-
-            var serviceURLs = selectedRecord.get('serviceURLs');
-            var proxyURL = selectedRecord.get('proxyURL');
-            var iconUrl = selectedRecord.get('iconUrl'); 
-
-            var finishedLoadingCounter = serviceURLs.length;
-           // var markerOverlay = new MarkerOverlay();
-
-            var markerManager = new MarkerManager(map);
-            selectedRecord.tileOverlay = markerManager;
-
-            //set the status as loading for this record
-            selectedRecord.set('loadingStatus', '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">');
-
-            for (var i = 0; i < serviceURLs.length; i++) {
-                GDownloadUrl(proxyURL + '?' + filterPanel.getLayout().activeItem.getForm().getValues(true) + '&serviceUrl=' + serviceURLs[i], function(data, responseCode) {
-                    if (responseCode == 200) {
-                        var jsonResponse = eval('(' + data + ')');
-                        if(jsonResponse.success) {
-                            var icon = new GIcon(G_DEFAULT_ICON, iconUrl);
-                            icon.iconSize = new GSize(32, 32);
-                            var markers = new KMLParser(jsonResponse.data.kml).makeMarkers(icon);
-                            markerManager.addMarkers(markers, 0);
-                            markerManager.refresh();
-                        } else {
-                            //alert("Failed to retrieve information from " + serviceURLs[i]);
-                        }
-                        //markerOverlay.addList(markers);
-                    } else if (responseCode == -1) {
-                        alert("Data request timed out. Please try later.");
-                    } else {
-                        alert("Request resulted in error. Check XML file is retrievable.");
-                    }
-
-                    //decrement the counter
-                    finishedLoadingCounter--;
-
-                    //check if we can set the status to finished
-                    if(finishedLoadingCounter <= 0) {
-                        selectedRecord.set('loadingStatus', '<img src="js/external/ext-2.2/resources/images/default/grid/done.gif">');
-                    }
-
-                    //markerOverlay.redraw(true);
-                });
-            }
-
-           // map.addOverlay(markerOverlay);
+            wfsHandler(selectedRecord);
         }
     });
 
@@ -354,9 +300,67 @@ Ext.onReady(function() {
         }
     };
 
-    var wfsHandler = function(record) {
-        //var geoXml = new GGeoXml("http://mapgadgets.googlepages.com/cta.kml");
+    var wfsHandler = function(selectedRecord) {
+        //if there is already a filter running for this record then don't call another
+        if(selectedRecord.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
+            alert('there is a query running just wait');
+            return;
+        }
 
+        if(selectedRecord.tileOverlay instanceof MarkerManager) selectedRecord.tileOverlay.clearMarkers();
+
+        var serviceURLs = selectedRecord.get('serviceURLs');
+        var proxyURL = selectedRecord.get('proxyURL');
+        var iconUrl = selectedRecord.get('iconUrl');
+
+        var finishedLoadingCounter = serviceURLs.length;
+       // var markerOverlay = new MarkerOverlay();
+
+        var markerManager = new MarkerManager(map);
+        selectedRecord.tileOverlay = markerManager;
+
+        //set the status as loading for this record
+        selectedRecord.set('loadingStatus', '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">');
+
+        var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName="+selectedRecord.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
+
+        var serviceUrl;
+        for (var i = 0; i < serviceURLs.length; i++) {
+
+            serviceUrl = serviceURLs[i];
+            GDownloadUrl(proxyURL + '?' + filterParameters  + '&serviceUrl=' + serviceURLs[i], function(data, responseCode) {
+                if (responseCode == 200) {
+                    var jsonResponse = eval('(' + data + ')');
+                    if(jsonResponse.success) {
+                        var icon = new GIcon(G_DEFAULT_ICON, iconUrl);
+                        icon.iconSize = new GSize(32, 32);
+                        var markers = new KMLParser(jsonResponse.data.kml).makeMarkers(icon, function(marker) {
+                            marker.typeName = selectedRecord.get('typeName');
+                            marker.wfsUrl = serviceUrl;
+                        });
+                        markerManager.addMarkers(markers, 0);
+                        markerManager.refresh();
+                    } else {
+                        //alert("Failed to retrieve information from " + serviceURLs[i]);
+                    }
+                    //markerOverlay.addList(markers);
+                } else if (responseCode == -1) {
+                    alert("Data request timed out. Please try later.");
+                } else {
+                    alert("Request resulted in error. Check XML file is retrievable.");
+                }
+
+                //decrement the counter
+                finishedLoadingCounter--;
+
+                //check if we can set the status to finished
+                if(finishedLoadingCounter <= 0) {
+                    selectedRecord.set('loadingStatus', '<img src="js/external/ext-2.2/resources/images/default/grid/done.gif">');
+                }
+
+                //markerOverlay.redraw(true);
+            });
+        }
     };
 
     var wmsHandler = function(record) {

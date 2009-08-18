@@ -19,9 +19,11 @@ public class CSWController {
 
     @Autowired private CSWService cswService;
     
-    private KnownType[] knownTypes = {  new KnownType("er:Mine", "Earth Resource Mine", "Description", "/doMineFilter.do", "http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"),
-                                        new KnownType("er:MineralOccurrence", "Earth Resource Mineral Occurrence", "Description", "/doMineralOccurrenceFilter.do", "http://maps.google.com/mapfiles/kml/paddle/purple-blank.png"),
-                                        new KnownType("er:MiningActivity", "Earth Resource Mining Activity", "Description", "/doMiningActivityFilter.do", "http://maps.google.com/mapfiles/kml/paddle/orange-blank.png") };
+    private KnownType[] knownTypes = {  new KnownType("er:Mine", "Earth Resource Mine", "", "/doMineFilter.do", "http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"),
+                                        new KnownType("er:MineralOccurrence", "Earth Resource Mineral Occurrence", "", "/doMineralOccurrenceFilter.do", "http://maps.google.com/mapfiles/kml/paddle/purple-blank.png"),
+                                        new KnownType("er:MiningActivity", "Earth Resource Mining Activity", "", "/doMiningActivityFilter.do", "http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"),
+                                        new KnownType("gsml:Borehole", "National Virtual Core Library", "", "/getAllFeatures.do", "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"),
+                                        new KnownType("geodesy:stations", "Geodesy", "", "/getAllFeatures.do", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png")};
 
     /**
      * This controller queries geonetwork for all of its data records, then created a JSON response as a list
@@ -88,11 +90,7 @@ public class CSWController {
             dataItems.add(tableRow);
         }
 
-        //System.out.println(JSONSerializer.toJSON(dataItems).toString());
         return new JSONModelAndView(dataItems);
-
-        //return new JSONModelAndView(cswJsonBuilder.makeWFSModel(cswService.getWFSRecordsKnownTypes()));
-
     }
 
     @RequestMapping("/getWMSLayers.do")

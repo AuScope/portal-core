@@ -2,7 +2,7 @@ function KMLParser(kml) {
 
     var rootNode = GXml.parse(kml).documentElement;
 
-    this.makeMarkers = function(icon) {
+    this.makeMarkers = function(icon, markerHandler) {
         //an array to hold the markers
         var markers = [];
 
@@ -24,6 +24,11 @@ function KMLParser(kml) {
 
                 var marker = new GMarker(point, {icon: icon});
                 marker.description = description;
+                marker.title = name;
+
+                //if there are some custom properties that need to be set
+                if(markerHandler)
+                    markerHandler(marker);
 
                 markers.push(marker);
             }

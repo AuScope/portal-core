@@ -65,7 +65,7 @@ public class MineralOccurrenceService {
      */
     public String getAllMinesGML(String serviceURL) throws Exception {
         //create a GetFeature request with an empty filter - get all
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "mo:Mine", "");
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", "");
 
         //call the service, and get all the mines
         return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
@@ -101,7 +101,7 @@ public class MineralOccurrenceService {
         MineFilter mineFilter = new MineFilter(mineName);
 
         //create a GetFeature request with an empty filter - get all
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "mo:Mine", mineFilter.getFilterString());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", mineFilter.getFilterString());
 
         //call the service, and get all the mines
         return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
@@ -122,13 +122,13 @@ public class MineralOccurrenceService {
 
         //if we don't have a name or a group, then just get all of them
         if(commodityGroup.equals("") && commodityName.equals("")) {
-            method = methodMaker.makeMethod(serviceURL, "mo:Commodity", "");
+            method = methodMaker.makeMethod(serviceURL, "er:Commodity", "");
         } else {
             //create the filter to append to the url
             CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
 
             //create a GetFeature request with an empty filter - get all
-            method = methodMaker.makeMethod(serviceURL, "mo:Commodity", commodityFilter.getFilterString());
+            method = methodMaker.makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString());
         }
 
         //call the service, and get all the commodities
@@ -181,7 +181,7 @@ public class MineralOccurrenceService {
                                                                                         cutOffGradeUOM);
 
         //create the method
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "mo:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
 
         //run the dam query
         return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
@@ -203,7 +203,7 @@ public class MineralOccurrenceService {
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         //create the method
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "mo:MiningActivity", miningActivityFilter.getFilterString());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterString());
 
         //run dat query
         return this.httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());

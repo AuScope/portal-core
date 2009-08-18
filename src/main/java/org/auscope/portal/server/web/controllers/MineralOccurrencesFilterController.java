@@ -58,6 +58,21 @@ public class MineralOccurrencesFilterController {
     }
 
     /**
+     * Wildcard search on a collection of services for mine names. Aggregate the responses, then pass them
+     * back on the response. The portal will use this to populate a combo box with the filtered mines names.
+     *
+     * @param serviceUrls
+     * @param searchText
+     * @return
+     */
+    /*@RequestMapping("/searchMines.do")
+    public ModelAndView searchMines(@RequestParam("serviceUrls") String[] serviceUrls,
+                                    @RequestParam("searchText") String searchText,
+                                    ModelMap model) {
+           
+    }*/
+
+    /**
      * Gets all of the mine names from a given service. It then builds a JSON response as follows:
      * <p/>
      * {"success":true,
@@ -233,7 +248,6 @@ public class MineralOccurrencesFilterController {
             kmls.put(kml.hashCode(), kml);
 
             model.put("key", kml.hashCode());
-            System.out.println("YO DOWG");
             return new JSONModelAndView(model);
 
             //response.getWriter().write("{key:"+kml.hashCode()+"}");
@@ -258,7 +272,6 @@ public class MineralOccurrencesFilterController {
             //response.getWriter().write(gmlToKml.convert(mineralOccurrenceResponse, request));
             System.out.println(kml.getBytes().length);
             response.getWriter().println(kml);
-            System.out.println("YO DOWG");
             //return null;
         } catch (Exception e) {
            // return this.handleExceptionResponse(e);

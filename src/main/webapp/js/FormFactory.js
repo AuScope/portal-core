@@ -64,7 +64,14 @@ var buildMineFilterForm = function(id, serviceUrl) {
             autoHeight:true,
             anchor: '100%',
             
-            items :[new Ext.form.ComboBox({
+            items :[
+            {
+                anchor: '100%',
+                xtype: 'textfield',
+                fieldLabel: 'Mine Name',
+                name: 'mineName'
+            }
+            /*new Ext.form.ComboBox({
                 anchor: '100%',
                 autoWidth: true,
                 name: 'mineName',
@@ -80,7 +87,7 @@ var buildMineFilterForm = function(id, serviceUrl) {
                 typeAhead: true,
                 valueField:'mineDisplayName',
                 xtype: 'combo'
-            })
+            })*/
             ]
         }]
         /*buttons: [{
@@ -146,7 +153,14 @@ var buildMiningActivityFilterForm = function(id, serviceUrl) {
 
             defaultType: 'datefield',
 
-            items :[new Ext.form.ComboBox({
+            items :[
+            {
+                anchor: '100%',
+                xtype: 'textfield',
+                fieldLabel: 'Associated Mine',
+                name: 'mineName'
+            }
+            /*new Ext.form.ComboBox({
                 anchor: '100%',
                 fieldLabel: 'Mine Name',
                 name: 'mineName',
@@ -160,7 +174,7 @@ var buildMiningActivityFilterForm = function(id, serviceUrl) {
                 store: mineNamesStore,
                 displayField:'mineDisplayName',
                 valueField:'mineDisplayName'
-            }),{
+            })*/,{
                 anchor: '100%',
                 xtype: 'textfield',
                 fieldLabel: 'Produced Material Name',

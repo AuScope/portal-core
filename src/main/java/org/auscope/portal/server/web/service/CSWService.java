@@ -30,6 +30,7 @@ public class CSWService {
     private String serviceUrl;
     private CSWThreadExecutor executor;
     private long lastUpdated = 0;
+    private static final int UPDATE_INTERVAL = 300000;
 
     @Autowired
     public CSWService(CSWThreadExecutor executor, HttpServiceCaller serviceCaller) throws Exception {
@@ -42,7 +43,7 @@ public class CSWService {
     }
 
     public void updateCSWRecords() throws Exception {
-        if(System.currentTimeMillis() - lastUpdated > 300000) { //if older that 5 mins then do the update
+        if(System.currentTimeMillis() - lastUpdated > UPDATE_INTERVAL) { //if older that 5 mins then do the update
             executor.execute(new Runnable() {
                 public void run() {
                     try {
