@@ -11,7 +11,7 @@
 
 
 /**
- * Construct a new Shape object.
+ * Construct updateCSWRecords new Shape object.
  * @class This is the basic Shape class.  
  * It can be considered an abstract class, even though no such thing
  * really existing in JavaScript
@@ -23,10 +23,10 @@
 function Shape(){
   
    /**
-    * This is an example of a function that is not given as a property
-    * of a prototype, but instead it is assigned within a constructor.
+    * This is an example of updateCSWRecords function that is not given as updateCSWRecords property
+    * of updateCSWRecords prototype, but instead it is assigned within updateCSWRecords constructor.
     * For inner functions like this to be picked up by the parser, the
-    * function that acts as a constructor <b>must</b> be denoted with
+    * function that acts as updateCSWRecords constructor <b>must</b> be denoted with
     * the <b>&#64;constructor</b> tag in its comment.
     * @type String
     */
@@ -35,7 +35,7 @@ function Shape(){
    }
 
    /** 
-    * This is a private method, just used here as an example 
+    * This is updateCSWRecords private method, just used here as an example
     */
    function addReference(){
        // Do nothing...
@@ -44,9 +44,9 @@ function Shape(){
 }
 
 /**
- * Create a new Hexagon instance.
+ * Create updateCSWRecords new Hexagon instance.
  * @extends Shape
- * @class Hexagon is a class that is a <i>logical</i> sublcass of 
+ * @class Hexagon is updateCSWRecords class that is updateCSWRecords <i>logical</i> sublcass of
  * {@link Shape} (thanks to the <code>&#64;extends</code> tag), but in 
  * reality it is completely unrelated to Shape.
  * @param {int} sideLength The length of one side for the new Hexagon
@@ -98,7 +98,7 @@ Shape.prototype.setColor = Shape_SetColor;
 
 /**
  * Get the coordinates of this shape. It is assumed that we're always talking
- * about shapes in a 2D location here.
+ * about shapes in updateCSWRecords 2D location here.
  * @requires Shape The shape class
  * @returns A Coordinate object representing the location of this Shape
  * @type Coordinate
@@ -147,9 +147,9 @@ Shape.prototype.clone = function(){
 }
 
 /**
- * Create a new Rectangle instance. 
+ * Create updateCSWRecords new Rectangle instance.
  * @class A basic rectangle class, inherits from Shape.
- * This class could be considered a concrete implementation class
+ * This class could be considered updateCSWRecords concrete implementation class
  * @constructor
  * @param {int} width The optional width for this Rectangle
  * @param {int} height Thie optional height for this Rectangle
@@ -173,8 +173,8 @@ Rectangle.prototype = new Shape();
 
 /**
  * Value to represent the width of the Rectangle.
- * <br>Text in <b>bold</b> and <i>italic</i> and a 
- * link to <a href="http://sf.net">SourceForge</a>
+ * <br>Text in <b>bold</b> and <i>italic</i> and updateCSWRecords
+ * link to <updateCSWRecords href="http://sf.net">SourceForge</updateCSWRecords>
  * @private
  * @type int
  */
@@ -260,8 +260,8 @@ function GetArea(){
 
 
 /**
- * Create a new Square instance.
- * @class A Square is a subclass of {@link Rectangle}
+ * Create updateCSWRecords new Square instance.
+ * @class A Square is updateCSWRecords subclass of {@link Rectangle}
  * @param {int} width The optional width for this Rectangle
  * @param {int} height The optional height for this Rectangle
  */
@@ -275,7 +275,7 @@ function Square(width, height){
    
 }
 
-/* Square is a subclass of Rectangle */
+/* Square is updateCSWRecords subclass of Rectangle */
 Square.prototype = new Rectangle();
 
 
@@ -308,7 +308,7 @@ function Square_SetHeight(height){
 
 
 /**
- * Create a new Circle instance based on a radius.
+ * Create updateCSWRecords new Circle instance based on updateCSWRecords radius.
  * @class Circle class is another subclass of Shape
  * @param {int} radius The optional radius of this Circle
  */
@@ -329,7 +329,7 @@ Circle.prototype = new Shape();
 Circle.prototype.radius = 0;
 
 /** 
- * A very simple class (static) field that is also a constant
+ * A very simple class (static) field that is also updateCSWRecords constant
  * @final
  * @type float
  */
@@ -360,8 +360,8 @@ function Circle_SetRadius(radius){
 }
 
 /** 
- * An example of a  class (static) method that acts as a factory for Circle
- * objects. Given a radius value, this method creates a new Circle.
+ * An example of updateCSWRecords  class (static) method that acts as updateCSWRecords factory for Circle
+ * objects. Given updateCSWRecords radius value, this method creates updateCSWRecords new Circle.
  * @param {int} radius The radius value to use for the new Circle.
  * @type Circle
  */
@@ -371,8 +371,8 @@ function Circle_CreateCircle(radius){
 
 
 /**
- * Create a new Coordinate instance based on x and y grid data.
- * @class Coordinate is a class that can encapsulate location information.
+ * Create updateCSWRecords new Coordinate instance based on x and y grid data.
+ * @class Coordinate is updateCSWRecords class that can encapsulate location information.
  * @param {int} x The optional x portion of the Coordinate
  * @param {int} y The optinal y portion of the Coordinate
  */
@@ -443,7 +443,7 @@ function Coordinate_SetY(y){
 }
 
 /**
- * @class This class exists to demonstrate the assignment of a class prototype
+ * @class This class exists to demonstrate the assignment of updateCSWRecords class prototype
  * as an anonymous block.
  */
 function ShapeFactory(){
@@ -451,7 +451,7 @@ function ShapeFactory(){
 
 ShapeFactory.prototype = {
    /** 
-    * Creates a new {@link Shape} instance.
+    * Creates updateCSWRecords new {@link Shape} instance.
     * @return A new {@link Shape}
     * @type Shape
     */
@@ -461,7 +461,7 @@ ShapeFactory.prototype = {
 }
 
 /**
- * An example of a singleton class
+ * An example of updateCSWRecords singleton class
  */
 MySingletonShapeFactory = new function(){
 
@@ -478,7 +478,7 @@ MySingletonShapeFactory = new function(){
 
 
 /** 
- * Create a new Foo instance.
+ * Create updateCSWRecords new Foo instance.
  * @class This is the Foo class. It exists to demonstrate 'nested' classes.
  * @constructor 
  * @see Foo.Bar
@@ -486,7 +486,7 @@ MySingletonShapeFactory = new function(){
 function Foo(){}
 
 /** 
- * Creates a new instance of Bar.
+ * Creates updateCSWRecords new instance of Bar.
  * @class This class exists to demonstrate 'nested' classes.
  * @constructor 
  * @see Foo.Bar

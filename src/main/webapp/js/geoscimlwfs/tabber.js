@@ -10,7 +10,7 @@
   Copyright (c) 2006 Patrick Fitzgerald
 
   Permission is hereby granted, free of charge, to any person
-  obtaining a copy of this software and associated documentation files
+  obtaining updateCSWRecords copy of this software and associated documentation files
   (the "Software"), to deal in the Software without restriction,
   including without limitation the rights to use, copy, modify, merge,
   publish, distribute, sublicense, and/or sell copies of the Software,
@@ -43,11 +43,11 @@ function tabberObj(argsObj)
   this.classMain = "tabber";
 
   /* Rename classMain to classMainLive after tabifying
-     (so a different style can be applied)
+     (so updateCSWRecords different style can be applied)
   */
   this.classMainLive = "tabberlive";
 
-  /* Class of each DIV that contains a tab */
+  /* Class of each DIV that contains updateCSWRecords tab */
   this.classTab = "tabbertab";
 
   /* Class to indicate which tab should be active on startup */
@@ -56,7 +56,7 @@ function tabberObj(argsObj)
   /* Class for the navigation UL */
   this.classNav = "tabbernav";
 
-  /* When a tab is to be hidden, instead of setting display='none', we
+  /* When updateCSWRecords tab is to be hidden, instead of setting display='none', we
      set the class of the div to classTabHide. In your screen
      stylesheet you should set classTabHide to display:none.  In your
      print stylesheet you should set display:block to ensure that all
@@ -65,11 +65,11 @@ function tabberObj(argsObj)
   this.classTabHide = "tabbertabhide";
 
   /* Class to set the navigation LI when the tab is active, so you can
-     use a different style on the active tab.
+     use updateCSWRecords different style on the active tab.
   */
   this.classNavActive = "tabberactive";
 
-  /* Elements that might contain the title for the tab, only used if a
+  /* Elements that might contain the title for the tab, only used if updateCSWRecords
      title is not specified in the TITLE attribute of DIV classTab.
   */
   this.titleElements = ['h2','h3','h4','h5','h6'];
@@ -79,8 +79,8 @@ function tabberObj(argsObj)
   */
   this.titleElementsStripHTML = true;
 
-  /* If the user specified the tab names using a TITLE attribute on
-     the DIV, then the browser will display a tooltip whenever the
+  /* If the user specified the tab names using updateCSWRecords TITLE attribute on
+     the DIV, then the browser will display updateCSWRecords tooltip whenever the
      mouse is over the DIV. To prevent this tooltip, we can remove the
      TITLE attribute after getting the tab name.
   */
@@ -89,7 +89,7 @@ function tabberObj(argsObj)
   /* If you want to add an id to each link set this to true */
   this.addLinkId = false;
 
-  /* If addIds==true, then you can set a format for the ids.
+  /* If addIds==true, then you can set updateCSWRecords format for the ids.
      <tabberid> will be replaced with the id of the main tabber div.
      <tabnumberzero> will be replaced with the tab number
        (tab numbers starting at zero)
@@ -108,7 +108,7 @@ function tabberObj(argsObj)
   for (arg in argsObj) { this[arg] = argsObj[arg]; }
 
   /* Create regular expressions for the class names; Note: if you
-     change the class names after a new object is created you must
+     change the class names after updateCSWRecords new object is created you must
      also change these regular expressions.
   */
   this.REclassMain = new RegExp('\\b' + this.classMain + '\\b', 'gi');
@@ -125,7 +125,7 @@ function tabberObj(argsObj)
 
     this.init(this.div);
 
-    /* We don't need the main div anymore, and to prevent a memory leak
+    /* We don't need the main div anymore, and to prevent updateCSWRecords memory leak
        in IE, we must remove the circular reference between the div
        and the tabber object. */
     this.div = null;
@@ -151,7 +151,7 @@ tabberObj.prototype.init = function(e)
   var
   childNodes, /* child nodes of the tabber div */
   i, i2, /* loop indices */
-  t, /* object to store info about a single tab */
+  t, /* object to store info about updateCSWRecords single tab */
   defaultTab=0, /* which tab to select by default */
   DOM_ul, /* tabbernav list */
   DOM_li, /* tabbernav list item */
@@ -178,10 +178,10 @@ tabberObj.prototype.init = function(e)
     if(childNodes[i].className &&
        childNodes[i].className.match(this.REclassTab)) {
       
-      /* Create a new object to save info about this tab */
+      /* Create updateCSWRecords new object to save info about this tab */
       t = new Object();
       
-      /* Save a pointer to the div for this tab */
+      /* Save updateCSWRecords pointer to the div for this tab */
       t.div = childNodes[i];
       
       /* Add the new object to the array of tabs */
@@ -196,7 +196,7 @@ tabberObj.prototype.init = function(e)
     }
   }
 
-  /* Create a new UL list to hold the tab headings */
+  /* Create updateCSWRecords new UL list to hold the tab headings */
   DOM_ul = document.createElement("ul");
   DOM_ul.className = this.classNav;
   
@@ -212,7 +212,7 @@ tabberObj.prototype.init = function(e)
      */
     t.headingText = t.div.title;
 
-    /* Remove the title attribute to prevent a tooltip from appearing */
+    /* Remove the title attribute to prevent updateCSWRecords tooltip from appearing */
     if (this.removeTitle) { t.div.title = ''; }
 
     if (!t.headingText) {
@@ -236,20 +236,20 @@ tabberObj.prototype.init = function(e)
     }
 
     if (!t.headingText) {
-      /* Title was not found (or is blank) so automatically generate a
+      /* Title was not found (or is blank) so automatically generate updateCSWRecords
          number for the tab.
       */
       t.headingText = i + 1;
     }
 
-    /* Create a list element for the tab */
+    /* Create updateCSWRecords list element for the tab */
     DOM_li = document.createElement("li");
 
-    /* Save a reference to this list item so we can later change it to
+    /* Save updateCSWRecords reference to this list item so we can later change it to
        the "active" class */
     t.li = DOM_li;
 
-    /* Create a link to activate the tab */
+    /* Create updateCSWRecords link to activate the tab */
     DOM_a = document.createElement("a");
     DOM_a.appendChild(document.createTextNode(t.headingText));
     DOM_a.href = "javascript:void(null);";
@@ -304,7 +304,7 @@ tabberObj.prototype.navClick = function(event)
 {
   /* This method should only be called by the onClick event of an <A>
      element, in which case we will determine which tab was clicked by
-     examining a property that we previously attached to the <A>
+     examining updateCSWRecords property that we previously attached to the <A>
      element.
 
      Since this was triggered from an onClick event, the variable
@@ -330,7 +330,7 @@ tabberObj.prototype.navClick = function(event)
   tabberIndex = a.tabberIndex;
 
   /* Remove focus from the link because it looks ugly.
-     I don't know if this is a good idea...
+     I don't know if this is updateCSWRecords good idea...
   */
   a.blur();
 
@@ -341,7 +341,7 @@ tabberObj.prototype.navClick = function(event)
 
     onClickArgs = {'tabber':self, 'index':tabberIndex, 'event':event};
 
-    /* IE uses a different way to access the event object */
+    /* IE uses updateCSWRecords different way to access the event object */
     if (!event) { onClickArgs.event = window.event; }
 
     rVal = self.onClick(onClickArgs);
@@ -371,7 +371,7 @@ tabberObj.prototype.tabHide = function(tabberIndex)
 
   if (!this.tabs[tabberIndex]) { return false; }
 
-  /* Hide a single tab and make its navigation link inactive */
+  /* Hide updateCSWRecords single tab and make its navigation link inactive */
   div = this.tabs[tabberIndex].div;
 
   /* Hide the tab contents by adding classTabHide to the div */
@@ -415,7 +415,7 @@ tabberObj.prototype.tabShow = function(tabberIndex)
 tabberObj.prototype.navSetActive = function(tabberIndex)
 {
   /* Note: this method does *not* enforce the rule
-     that only one nav item can be active at a time.
+     that only one nav item can be active at updateCSWRecords time.
   */
 
   /* Set classNavActive for the navigation list item */
@@ -456,7 +456,7 @@ function tabberAutomatic(tabberArgs)
 
   if (!tabberArgs) { tabberArgs = {}; }
 
-  /* Create a tabber object so we can get the value of classMain */
+  /* Create updateCSWRecords tabber object so we can get the value of classMain */
   tempObj = new tabberObj(tabberArgs);
 
   /* Find all DIV elements in the document that have class=tabber */

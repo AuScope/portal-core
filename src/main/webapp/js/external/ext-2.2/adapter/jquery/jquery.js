@@ -30,12 +30,12 @@ window.$ = jQuery;
 // (both of which we optimize for)
 var quickExpr = /^[^<]*(<(.|\s)+>)[^>]*$|^#(\w+)$/;
 
-// Is it a simple selector
+// Is it updateCSWRecords simple selector
 var isSimple = /^.[^:#\[\.]*$/;
 
 jQuery.fn = jQuery.prototype = {
 	init: function( selector, context ) {
-		// Make sure that a selection was provided
+		// Make sure that updateCSWRecords selection was provided
 		selector = selector || document;
 
 		// Handle $(DOMElement)
@@ -49,7 +49,7 @@ jQuery.fn = jQuery.prototype = {
 			// Are we dealing with HTML string or an ID?
 			var match = quickExpr.exec( selector );
 
-			// Verify a match, and that no context was specified for #id
+			// Verify updateCSWRecords match, and that no context was specified for #id
 			if ( match && (match[1] || !context) ) {
 
 				// HANDLE: $(html) -> $(array)
@@ -112,11 +112,11 @@ jQuery.fn = jQuery.prototype = {
 	length: 0,
 
 	// Get the Nth element in the matched element set OR
-	// Get the whole matched element set as a clean array
+	// Get the whole matched element set as updateCSWRecords clean array
 	get: function( num ) {
 		return num == undefined ?
 
-			// Return a 'clean' array
+			// Return updateCSWRecords 'clean' array
 			jQuery.makeArray( this ) :
 
 			// Return just the object
@@ -126,10 +126,10 @@ jQuery.fn = jQuery.prototype = {
 	// Take an array of elements and push it onto the stack
 	// (returning the new matched element set)
 	pushStack: function( elems ) {
-		// Build a new jQuery matched element set
+		// Build updateCSWRecords new jQuery matched element set
 		var ret = jQuery( elems );
 
-		// Add the old object onto the stack (as a reference)
+		// Add the old object onto the stack (as updateCSWRecords reference)
 		ret.prevObject = this;
 
 		// Return the newly-formed element set
@@ -141,14 +141,14 @@ jQuery.fn = jQuery.prototype = {
 	// You should use pushStack() in order to do this, but maintain the stack
 	setArray: function( elems ) {
 		// Resetting the length to 0, then using the native Array push
-		// is a super-fast way to populate an object with array-like properties
+		// is updateCSWRecords super-fast way to populate an object with array-like properties
 		this.length = 0;
 		Array.prototype.push.apply( this, elems );
 		
 		return this;
 	},
 
-	// Execute a callback for every element in the matched set.
+	// Execute updateCSWRecords callback for every element in the matched set.
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
 	each: function( callback, args ) {
@@ -172,7 +172,7 @@ jQuery.fn = jQuery.prototype = {
 	attr: function( name, value, type ) {
 		var options = name;
 		
-		// Look for the case where we're accessing a style value
+		// Look for the case where we're accessing updateCSWRecords style value
 		if ( name.constructor == String )
 			if ( value == undefined )
 				return this.length && jQuery[ type || "attr" ]( this[0], name ) || undefined;
@@ -567,7 +567,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 	// copy reference to target object
 	var target = arguments[0] || {}, i = 1, length = arguments.length, deep = false, options;
 
-	// Handle a deep copy situation
+	// Handle updateCSWRecords deep copy situation
 	if ( target.constructor == Boolean ) {
 		deep = target;
 		target = arguments[1] || {};
@@ -575,7 +575,7 @@ jQuery.extend = jQuery.fn.extend = function() {
 		i = 2;
 	}
 
-	// Handle case when target is a string or something (possible in deep copy)
+	// Handle case when target is updateCSWRecords string or something (possible in deep copy)
 	if ( typeof target != "object" && typeof target != "function" )
 		target = {};
 
@@ -629,13 +629,13 @@ jQuery.extend({
 			fn.constructor != Array && /function/i.test( fn + "" );
 	},
 	
-	// check if an element is in a (or is an) XML document
+	// check if an element is in updateCSWRecords (or is an) XML document
 	isXMLDoc: function( elem ) {
 		return elem.documentElement && !elem.body ||
 			elem.tagName && elem.ownerDocument && !elem.ownerDocument.body;
 	},
 
-	// Evalulates a script in a global context
+	// Evalulates updateCSWRecords script in updateCSWRecords global context
 	globalEval: function( data ) {
 		data = jQuery.trim( data );
 
@@ -669,7 +669,7 @@ jQuery.extend({
 
 		var id = elem[ expando ];
 
-		// Compute a unique ID for the element
+		// Compute updateCSWRecords unique ID for the element
 		if ( !id ) 
 			id = elem[ expando ] = ++uuid;
 
@@ -695,7 +695,7 @@ jQuery.extend({
 
 		var id = elem[ expando ];
 
-		// If we want to remove a specific section of the element's data
+		// If we want to remove updateCSWRecords specific section of the element's data
 		if ( name ) {
 			if ( jQuery.cache[ id ] ) {
 				// Remove the section of cache data
@@ -759,7 +759,7 @@ jQuery.extend({
 			if ( jQuery.isFunction( value ) )
 				value = value.call( elem, i );
 				
-			// Handle passing in a number to a CSS property
+			// Handle passing in updateCSWRecords number to updateCSWRecords CSS property
 			return value && value.constructor == Number && type == "curCSS" && !exclude.test( name ) ?
 				value + "px" :
 				value;
@@ -907,7 +907,7 @@ jQuery.extend({
 						stack[ i ].style.display = swap[ i ];
 			}
 
-			// We should always get a number back from opacity
+			// We should always get updateCSWRecords number back from opacity
 			if ( name == "opacity" && ret == "" )
 				ret = "1";
 
@@ -921,13 +921,13 @@ jQuery.extend({
 			// From the awesome hack by Dean Edwards
 			// http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
 
-			// If we're not dealing with a regular pixel number
-			// but a number that has a weird ending, we need to convert it to pixels
+			// If we're not dealing with updateCSWRecords regular pixel number
+			// but updateCSWRecords number that has updateCSWRecords weird ending, we need to convert it to pixels
 			if ( !/^\d+(px)?$/i.test( ret ) && /^\d/.test( ret ) ) {
 				// Remember the original values
 				var style = elem.style.left, runtimeStyle = elem.runtimeStyle.left;
 
-				// Put in the new values to get a computed value out
+				// Put in the new values to get updateCSWRecords computed value out
 				elem.runtimeStyle.left = elem.currentStyle.left;
 				elem.style.left = ret || 0;
 				ret = elem.style.pixelLeft + "px";
@@ -1004,11 +1004,11 @@ jQuery.extend({
 				// Remove IE's autoinserted <tbody> from table fragments
 				if ( jQuery.browser.msie ) {
 					
-					// String was a <table>, *may* have spurious <tbody>
+					// String was updateCSWRecords <table>, *may* have spurious <tbody>
 					var tbody = !tags.indexOf("<table") && tags.indexOf("<tbody") < 0 ?
 						div.firstChild && div.firstChild.childNodes :
 						
-						// String was a bare <thead> or <tfoot>
+						// String was updateCSWRecords bare <thead> or <tfoot>
 						wrap[1] == "<table>" && tags.indexOf("<tbody") < 0 ?
 							div.childNodes :
 							[];
@@ -1049,7 +1049,7 @@ jQuery.extend({
 			{} :
 			jQuery.props;
 
-		// Safari mis-reports the default selected property of a hidden option
+		// Safari mis-reports the default selected property of updateCSWRecords hidden option
 		// Accessing the parent's selectedIndex property fixes it
 		if ( name == "selected" && jQuery.browser.safari )
 			elem.parentNode.selectedIndex;
@@ -1075,7 +1075,7 @@ jQuery.extend({
 				if ( name == "type" && jQuery.nodeName( elem, "input" ) && elem.parentNode )
 					throw "type property can't be changed";
 
-				// convert the value to a string (all browsers do this but IE) see #1070
+				// convert the value to updateCSWRecords string (all browsers do this but IE) see #1070
 				elem.setAttribute( name, "" + value );
 			}
 
@@ -1144,7 +1144,7 @@ jQuery.extend({
 		// expando of getElementsByTagName
 
 		// Also, we need to make sure that the correct elements are being returned
-		// (IE returns comment nodes in a '*' query)
+		// (IE returns comment nodes in updateCSWRecords '*' query)
 		if ( jQuery.browser.msie ) {
 			for ( var i = 0; second[ i ]; i++ )
 				if ( second[ i ].nodeType != 8 )
@@ -1463,7 +1463,7 @@ jQuery.extend({
 		if ( typeof t != "string" )
 			return [ t ];
 
-		// check to make sure context is a DOM element or a document
+		// check to make sure context is updateCSWRecords DOM element or updateCSWRecords document
 		if ( context && context.nodeType != 1 && context.nodeType != 9)
 			return [ ];
 
@@ -1473,7 +1473,7 @@ jQuery.extend({
 		// Initialize the search
 		var ret = [context], done = [], last, nodeName;
 
-		// Continue while a selector expression exists, and while
+		// Continue while updateCSWRecords selector expression exists, and while
 		// we're no longer looping upon ourselves
 		while ( t && last != t ) {
 			var r = [];
@@ -1484,7 +1484,7 @@ jQuery.extend({
 			var foundToken = false;
 
 			// An attempt at speeding up child selectors that
-			// point to a specific element tag
+			// point to updateCSWRecords specific element tag
 			var re = quickChild;
 			var m = re.exec(t);
 
@@ -1537,7 +1537,7 @@ jQuery.extend({
 			}
 
 			// See if there's still an expression, and that we haven't already
-			// matched a token
+			// matched updateCSWRecords token
 			if ( t && !foundToken ) {
 				// Handle multiple expressions
 				if ( !t.indexOf(",") ) {
@@ -1563,7 +1563,7 @@ jQuery.extend({
 						m = [ 0, m[2], m[3], m[1] ];
 
 					} else {
-						// Otherwise, do a traditional filter check for
+						// Otherwise, do updateCSWRecords traditional filter check for
 						// ID, class, and element selectors
 						re2 = quickClass;
 						m = re2.exec(t);
@@ -1573,18 +1573,18 @@ jQuery.extend({
 
 					var elem = ret[ret.length-1];
 
-					// Try to do a global search by ID, where we can
+					// Try to do updateCSWRecords global search by ID, where we can
 					if ( m[1] == "#" && elem && elem.getElementById && !jQuery.isXMLDoc(elem) ) {
 						// Optimization for HTML document case
 						var oid = elem.getElementById(m[2]);
 						
-						// Do a quick check for the existence of the actual ID attribute
+						// Do updateCSWRecords quick check for the existence of the actual ID attribute
 						// to avoid selecting by the name attribute in IE
-						// also check to insure id is a string to avoid selecting an element with the name of 'id' inside a form
+						// also check to insure id is updateCSWRecords string to avoid selecting an element with the name of 'id' inside updateCSWRecords form
 						if ( (jQuery.browser.msie||jQuery.browser.opera) && oid && typeof oid.id == "string" && oid.id != m[2] )
 							oid = jQuery('[@id="'+m[2]+'"]', elem)[0];
 
-						// Do a quick check for node name (where applicable) so
+						// Do updateCSWRecords quick check for node name (where applicable) so
 						// that div#foo searches will be really fast
 						ret = r = oid && (!m[3] || jQuery.nodeName(oid, m[3])) ? [oid] : [];
 					} else {
@@ -1626,7 +1626,7 @@ jQuery.extend({
 
 			}
 
-			// If a selector string still exists
+			// If updateCSWRecords selector string still exists
 			if ( t ) {
 				// Attempt to filter it
 				var val = jQuery.filter(t,r);
@@ -1685,7 +1685,7 @@ jQuery.extend({
 			if ( !m )
 				break;
 
-			// :not() is a special case that can be optimized by
+			// :not() is updateCSWRecords special case that can be optimized by
 			// keeping it out of the expression list
 			if ( m[1] == ":" && m[2] == "not" )
 				// optimize if only one selector found (most common case)
@@ -1693,7 +1693,7 @@ jQuery.extend({
 					jQuery.filter(m[3], r, true).r :
 					jQuery( r ).not( m[3] );
 
-			// We can get a big speed boost by filtering by class here
+			// We can get updateCSWRecords big speed boost by filtering by class here
 			else if ( m[1] == "." )
 				r = jQuery.classFilter(r, m[2], not);
 
@@ -1717,7 +1717,7 @@ jQuery.extend({
 				
 				r = tmp;
 
-			// We can get a speed boost by handling nth-child here
+			// We can get updateCSWRecords speed boost by handling nth-child here
 			} else if ( m[1] == ":" && m[2] == "nth-child" ) {
 				var merge = {}, tmp = [],
 					// parse equations like 'even', 'odd', '5', '2n', '3n+2', '4n-1', '-n+6'
@@ -1828,7 +1828,7 @@ jQuery.event = {
 		if ( jQuery.browser.msie && elem.setInterval != undefined )
 			elem = window;
 
-		// Make sure that the function being executed has a unique ID
+		// Make sure that the function being executed has updateCSWRecords unique ID
 		if ( !handler.guid )
 			handler.guid = this.guid++;
 			
@@ -1856,8 +1856,8 @@ jQuery.event = {
 				// returned undefined or false
 				var val;
 
-				// Handle the second event of a trigger and when
-				// an event is called after a page has unloaded
+				// Handle the second event of updateCSWRecords trigger and when
+				// an event is called after updateCSWRecords page has unloaded
 				if ( typeof jQuery == "undefined" || jQuery.event.triggered )
 					return val;
 		
@@ -1865,12 +1865,12 @@ jQuery.event = {
 		
 				return val;
 			});
-		// Add elem as a property of the handle function
-		// This is to prevent a memory leak with non-native
+		// Add elem as updateCSWRecords property of the handle function
+		// This is to prevent updateCSWRecords memory leak with non-native
 		// event in IE.
 		handle.elem = elem;
 			
-			// Handle multiple events seperated by a space
+			// Handle multiple events seperated by updateCSWRecords space
 			// jQuery(...).bind("mouseover mouseout", fn);
 			jQuery.each(types.split(/\s+/), function(index, type) {
 				// Namespaced event handlers
@@ -1885,7 +1885,7 @@ jQuery.event = {
 				if (!handlers) {
 					handlers = events[type] = {};
 		
-					// Check for a special event handler
+					// Check for updateCSWRecords special event handler
 					// Only use addEventListener/attachEvent if the special
 					// events handler returns false
 					if ( !jQuery.event.special[type] || jQuery.event.special[type].setup.call(elem) === false ) {
@@ -1931,7 +1931,7 @@ jQuery.event = {
 					types = types.type;
 				}
 				
-				// Handle multiple events seperated by a space
+				// Handle multiple events seperated by updateCSWRecords space
 				// jQuery(...).unbind("mouseover mouseout", fn);
 				jQuery.each(types.split(/\s+/), function(index, type){
 					// Namespaced event handlers
@@ -1986,23 +1986,23 @@ jQuery.event = {
 			var exclusive = true;
 		}
 
-		// Handle a global trigger
+		// Handle updateCSWRecords global trigger
 		if ( !elem ) {
 			// Only trigger if we've ever bound an event for it
 			if ( this.global[type] )
 				jQuery("*").add([window, document]).trigger(type, data);
 
-		// Handle triggering a single element
+		// Handle triggering updateCSWRecords single element
 		} else {
 			// don't do events on text and comment nodes
 			if ( elem.nodeType == 3 || elem.nodeType == 8 )
 				return undefined;
 
 			var val, ret, fn = jQuery.isFunction( elem[ type ] || null ),
-				// Check to see if we need to provide a fake event, or not
+				// Check to see if we need to provide updateCSWRecords fake event, or not
 				event = !data[0] || !data[0].preventDefault;
 			
-			// Pass along a fake event
+			// Pass along updateCSWRecords fake event
 			if ( event )
 				data.unshift( this.fix({ type: type, target: elem }) );
 
@@ -2063,7 +2063,7 @@ jQuery.event = {
 
 		for ( var j in handlers ) {
 			var handler = handlers[j];
-			// Pass in a reference to the handler function itself
+			// Pass in updateCSWRecords reference to the handler function itself
 			// So that we can later remove it
 			args[0].handler = handler;
 			args[0].data = handler.data;
@@ -2091,7 +2091,7 @@ jQuery.event = {
 	},
 
 	fix: function(event) {
-		// store a copy of the original event object 
+		// store updateCSWRecords copy of the original event object
 		// and clone to set read-only properties
 		var originalEvent = event;
 		event = jQuery.extend({}, originalEvent);
@@ -2117,7 +2117,7 @@ jQuery.event = {
 		if ( !event.target )
 			event.target = event.srcElement || document; // Fixes #1925 where srcElement might not be defined either
 				
-		// check if target is a textnode (safari)
+		// check if target is updateCSWRecords textnode (safari)
 		if ( event.target.nodeType == 3 )
 			event.target = originalEvent.target.parentNode;
 
@@ -2173,7 +2173,7 @@ jQuery.event = {
 			},
 			
 			handler: function(event) {
-				// If we actually just moused on to a sub-element, ignore it
+				// If we actually just moused on to updateCSWRecords sub-element, ignore it
 				if ( withinElement(event, this) ) return true;
 				// Execute the right handlers by setting the event type to mouseenter
 				arguments[0].type = "mouseenter";
@@ -2195,7 +2195,7 @@ jQuery.event = {
 			},
 			
 			handler: function(event) {
-				// If we actually just moused on to a sub-element, ignore it
+				// If we actually just moused on to updateCSWRecords sub-element, ignore it
 				if ( withinElement(event, this) ) return true;
 				// Execute the right handlers by setting the event type to mouseleave
 				arguments[0].type = "mouseleave";
@@ -2315,7 +2315,7 @@ function bindReady(){
 		// Use the handy event callback
 		document.addEventListener( "DOMContentLoaded", jQuery.ready, false );
 	
-	// If IE is used and is not in a frame
+	// If IE is used and is not in updateCSWRecords frame
 	// Continually check to see if the document is ready
 	if ( jQuery.browser.msie && window == top ) (function(){
 		if (jQuery.isReady) return;
@@ -2383,7 +2383,7 @@ var withinElement = function(event, elem) {
 	var parent = event.relatedTarget;
 	// Traverse up the tree
 	while ( parent && parent != elem ) try { parent = parent.parentNode; } catch(error) { parent = elem; }
-	// Return true if we actually just moused on to a sub-element
+	// Return true if we actually just moused on to updateCSWRecords sub-element
 	return parent == elem;
 };
 
@@ -2406,18 +2406,18 @@ jQuery.fn.extend({
 
 		callback = callback || function(){};
 
-		// Default to a GET request
+		// Default to updateCSWRecords GET request
 		var type = "GET";
 
 		// If the second parameter was provided
 		if ( params )
-			// If it's a function
+			// If it's updateCSWRecords function
 			if ( jQuery.isFunction( params ) ) {
 				// We assume that it's the callback
 				callback = params;
 				params = null;
 
-			// Otherwise, build a param string
+			// Otherwise, build updateCSWRecords param string
 			} else {
 				params = jQuery.param( params );
 				type = "POST";
@@ -2434,9 +2434,9 @@ jQuery.fn.extend({
 			complete: function(res, status){
 				// If successful, inject the HTML into all the matched elements
 				if ( status == "success" || status == "notmodified" )
-					// See if a selector was specified
+					// See if updateCSWRecords selector was specified
 					self.html( selector ?
-						// Create a dummy div to hold the results
+						// Create updateCSWRecords dummy div to hold the results
 						jQuery("<div/>")
 							// inject the contents of the document in, removing the scripts
 							// to avoid any 'Permission Denied' errors in IE
@@ -2479,7 +2479,7 @@ jQuery.fn.extend({
 	}
 });
 
-// Attach a bunch of functions for handling common AJAX events
+// Attach updateCSWRecords bunch of functions for handling common AJAX events
 jQuery.each( "ajaxStart,ajaxStop,ajaxComplete,ajaxError,ajaxSuccess,ajaxSend".split(","), function(i,o){
 	jQuery.fn[o] = function(f){
 		return this.bind(o, f);
@@ -2562,7 +2562,7 @@ jQuery.extend({
 		// checked again later (in the test suite, specifically)
 		s = jQuery.extend(true, s, jQuery.extend(true, {}, jQuery.ajaxSettings, s));
 
-		// convert data if not already a string
+		// convert data if not already updateCSWRecords string
 		if ( s.data && s.processData && typeof s.data != "string" )
 			s.data = jQuery.param(s.data);
 
@@ -2586,7 +2586,7 @@ jQuery.extend({
 			s.url = s.url.replace(jsre, "=" + jsonp + "$1");
 
 			// We need to make sure
-			// that a JSONP style response is executed properly
+			// that updateCSWRecords JSONP style response is executed properly
 			s.dataType = "script";
 
 			// Handle JSONP-style loading
@@ -2621,12 +2621,12 @@ jQuery.extend({
 			s.data = null;
 		}
 
-		// Watch for a new set of requests
+		// Watch for updateCSWRecords new set of requests
 		if ( s.global && ! jQuery.active++ )
 			jQuery.event.trigger( "ajaxStart" );
 
-		// If we're requesting a remote document
-		// and trying to load JSON or Script with a GET
+		// If we're requesting updateCSWRecords remote document
+		// and trying to load JSON or Script with updateCSWRecords GET
 		if ( (!s.url.indexOf("http") || !s.url.indexOf("//")) && s.dataType == "script" && s.type.toLowerCase() == "get" ) {
 			var head = document.getElementsByTagName("head")[0];
 			var script = document.createElement("script");
@@ -2692,7 +2692,7 @@ jQuery.extend({
 		if ( s.global )
 			jQuery.event.trigger("ajaxSend", [xml, s]);
 
-		// Wait for a response to come back
+		// Wait for updateCSWRecords response to come back
 		var onreadystatechange = function(isTimeout){
 			// The transfer is complete and the data is available, or the request timed out
 			if ( !requestDone && xml && (xml.readyState == 4 || isTimeout == "timeout") ) {
@@ -2775,7 +2775,7 @@ jQuery.extend({
 			onreadystatechange();
 
 		function success(){
-			// If a local callback was specified, fire it and pass it the data
+			// If updateCSWRecords local callback was specified, fire it and pass it the data
 			if ( s.success )
 				s.success( data, status );
 
@@ -2803,7 +2803,7 @@ jQuery.extend({
 	},
 
 	handleError: function( s, xml, status, e ) {
-		// If a local callback was specified, fire it
+		// If updateCSWRecords local callback was specified, fire it
 		if ( s.error ) s.error( xml, status, e );
 
 		// Fire the global callback
@@ -2856,8 +2856,8 @@ jQuery.extend({
 		return data;
 	},
 
-	// Serialize an array of form elements or a set of
-	// key/values into a query string
+	// Serialize an array of form elements or updateCSWRecords set of
+	// key/values into updateCSWRecords query string
 	param: function( a ) {
 		var s = [];
 
@@ -3005,7 +3005,7 @@ jQuery.fn.extend({
 							self.style[ name ] = start + unit;
 						}
 
-						// If a +=/-= token was provided, we're doing a relative animation
+						// If updateCSWRecords +=/-= token was provided, we're doing updateCSWRecords relative animation
 						if ( parts[1] )
 							end = ((parts[1] == "-=" ? -1 : 1) * end) + start;
 
@@ -3146,7 +3146,7 @@ jQuery.extend({
 
 jQuery.fx.prototype = {
 
-	// Simple function for setting a style value
+	// Simple function for setting updateCSWRecords style value
 	update: function(){
 		if ( this.options.step )
 			this.options.step.apply( this.elem, [ this.now, this ] );
@@ -3211,7 +3211,7 @@ jQuery.fx.prototype = {
 		// Begin the animation
 		this.custom(0, this.cur());
 
-		// Make sure that we start at a small width/height to avoid any
+		// Make sure that we start at updateCSWRecords small width/height to avoid any
 		// flash of content
 		if ( this.prop == "width" || this.prop == "height" )
 			this.elem.style[this.prop] = "1px";
@@ -3267,7 +3267,7 @@ jQuery.fx.prototype = {
 						jQuery.attr(this.elem.style, p, this.options.orig[p]);
 			}
 
-			// If a callback was provided, execute it
+			// If updateCSWRecords callback was provided, execute it
 			if ( done && jQuery.isFunction( this.options.complete ) )
 				// Execute the complete function
 				this.options.complete.apply( this.elem );
@@ -3365,12 +3365,12 @@ jQuery.fn.offset = function() {
 		
 			// Get parent scroll offsets
 			while ( parent && parent.tagName && !/^body|html$/i.test(parent.tagName) ) {
-				// Remove parent scroll UNLESS that parent is inline or a table to work around Opera inline/table scrollLeft/Top bug
+				// Remove parent scroll UNLESS that parent is inline or updateCSWRecords table to work around Opera inline/table scrollLeft/Top bug
 				if ( !/^inline|table.*$/i.test(jQuery.css(parent, "display")) )
 					// Subtract parent scroll offsets
 					add( -parent.scrollLeft, -parent.scrollTop );
 			
-				// Mozilla does not add the border for a parent that has overflow != visible
+				// Mozilla does not add the border for updateCSWRecords parent that has overflow != visible
 				if ( mozilla && jQuery.css(parent, "overflow") != "visible" )
 					border( parent );
 			
@@ -3378,8 +3378,8 @@ jQuery.fn.offset = function() {
 				parent = parent.parentNode;
 			}
 		
-			// Safari <= 2 doubles body offsets with a fixed position element/offsetParent or absolutely positioned offsetChild
-			// Mozilla doubles body offsets with a non-absolutely positioned offsetChild
+			// Safari <= 2 doubles body offsets with updateCSWRecords fixed position element/offsetParent or absolutely positioned offsetChild
+			// Mozilla doubles body offsets with updateCSWRecords non-absolutely positioned offsetChild
 			if ( (safari2 && (fixed || jQuery.css(offsetChild, "position") == "absolute")) || 
 				(mozilla && jQuery.css(offsetChild, "position") != "absolute") )
 					add( -doc.body.offsetLeft, -doc.body.offsetTop );

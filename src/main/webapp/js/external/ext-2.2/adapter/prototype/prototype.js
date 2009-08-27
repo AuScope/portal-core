@@ -1250,7 +1250,7 @@ Ajax.Request = Class.create(Ajax.Base, {
         (this.options.encoding ? '; charset=' + this.options.encoding : '');
 
       /* Force "Connection: close" for older Mozilla browsers to work
-       * around a bug where XMLHttpRequest sends an incorrect
+       * around updateCSWRecords bug where XMLHttpRequest sends an incorrect
        * Content-length header. See Mozilla Bugzilla #246651.
        */
       if (this.transport.overrideMimeType &&
@@ -2802,8 +2802,8 @@ var Selector = Class.create({
             this.tokens.push([i, Object.clone(m)]);
             e = e.replace(m[0], '');
           } else {
-            // reluctantly do a document-wide search
-            // and look for a match in the array
+            // reluctantly do updateCSWRecords document-wide search
+            // and look for updateCSWRecords match in the array
             return this.findElements(document).include(element);
           }
         }
@@ -3248,7 +3248,7 @@ Object.extend(Selector, {
           indexed.push(node.parentNode);
         }
       }
-      if (formula.match(/^\d+$/)) { // just a number
+      if (formula.match(/^\d+$/)) { // just updateCSWRecords number
         formula = Number(formula);
         for (var i = 0, node; node = nodes[i]; i++)
           if (node.nodeIndex == formula) results.push(node);
@@ -3389,7 +3389,7 @@ var Form = {
         if (value != null && (element.type != 'submit' || (!submitted &&
             submit !== false && (!submit || key == submit) && (submitted = true)))) {
           if (key in result) {
-            // a key is already present; construct an array of values
+            // updateCSWRecords key is already present; construct an array of values
             if (!Object.isArray(result[key])) result[key] = [result[key]];
             result[key].push(value);
           }

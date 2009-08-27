@@ -72,7 +72,7 @@ public class TestMineralOccurrencesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            //return a list of mock mines for the controller to build up json from
+            //return updateCSWRecords list of mock mines for the controller to build up json from
             oneOf (mineralOccurrenceService).getAllMines(serviceURL);will(returnValue(Arrays.asList(mockMine1, mockMine2)));
 
             //return the names which are in our expectedJSONResponse
@@ -85,7 +85,7 @@ public class TestMineralOccurrencesFilterController {
             //oneOf (mockPrintWriter).write(expectedJSONResponse);
         }});
 
-        //call getMineNames with a dud service url
+        //call getMineNames with updateCSWRecords dud service url
         ModelAndView modelAndView = this.minerOccurrenceFilterController.getMineNames(serviceURL, new ModelMap());
 
         //calling the renderer will write the JSON to our mocks
@@ -118,7 +118,7 @@ public class TestMineralOccurrencesFilterController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
 
-        //call getMineNames with a dud service url
+        //call getMineNames with updateCSWRecords dud service url
         ModelAndView modelAndView = this.minerOccurrenceFilterController.getMineNames(serviceURL, new ModelMap());
 
         //calling the renderer will write the JSON to our mocks
@@ -154,7 +154,7 @@ public class TestMineralOccurrencesFilterController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
 
-        //call with a dud url
+        //call with updateCSWRecords dud url
         ModelAndView modelAndView = this.minerOccurrenceFilterController.doMineFilter(serviceURL, mineName,  mockHttpRequest);
 
         //calling the renderer will write the JSON to our mocks
@@ -189,7 +189,7 @@ public class TestMineralOccurrencesFilterController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
 
-        //call with a dud url
+        //call with updateCSWRecords dud url
         ModelAndView modelAndView = this.minerOccurrenceFilterController.doMineFilter(serviceURL, mineName,  mockHttpRequest);
 
         //calling the renderer will write the JSON to our mocks
@@ -222,7 +222,7 @@ public class TestMineralOccurrencesFilterController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
 
-        //call with a dud url
+        //call with updateCSWRecords dud url
         ModelAndView modelAndView = this.minerOccurrenceFilterController.doMineFilter(serviceURL, mineName,  mockHttpRequest);
 
         //calling the renderer will write the JSON to our mocks

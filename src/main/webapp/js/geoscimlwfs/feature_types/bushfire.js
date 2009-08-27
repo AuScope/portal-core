@@ -5,7 +5,7 @@
 
 /**
 * @class
-* This class defines information about a Avhrr48to72Hours-1404 type node.
+* This class defines information about updateCSWRecords Avhrr48to72Hours-1404 type node.
 *
 * @constructor
 * @param {DomXmlNode} pBushfire The XML node for the bushfire station.
@@ -86,9 +86,9 @@ Bushfire.prototype.moLocation = null;
 Bushfire.prototype.parseXmlElement = Bushfire_parseXmlElement;
 
 /**
-* This function extracts information from a Avhrr48to72Hours-1404 type node
+* This function extracts information from updateCSWRecords Avhrr48to72Hours-1404 type node
 * and stores it in the members of the class.<br> 
-* I am not sure if this is a standard community schema.
+* I am not sure if this is updateCSWRecords standard community schema.
 * @param {DomXmlNode} pBushfireNode The XML node for the bushfire station.
 */
 function Bushfire_parseXmlElement(pBushfireNode) {
@@ -98,7 +98,7 @@ function Bushfire_parseXmlElement(pBushfireNode) {
     nodeBushfire.setProperty("SelectionLanguage", "XPath");
   
   /**
-  * Sample XML fragment for a Geodesy station -
+  * Sample XML fragment for updateCSWRecords Geodesy station -
   * <gml:featureMember>
   *  <esri:Modis48to72Hours-1604 gml:id="Modis48to72Hours-1604.1">
   *   <esri:_shape_>
@@ -155,7 +155,7 @@ function Bushfire_parseXmlElement(pBushfireNode) {
   sPower = GXml.value(nodeBushfire.selectSingleNode("*[local-name() = 'power']"));
   sConfidence = GXml.value(nodeBushfire.selectSingleNode("*[local-name() = 'confidence']"));
 
-  // This node contains a gml:location node
+  // This node contains updateCSWRecords gml:location node
   oLocation = new Location(nodeBushfire.selectSingleNode(".//*[local-name() = 'Point']"));
 
   // Populate the arrays for the object.

@@ -1,12 +1,12 @@
 /** 
 * @fileoverview This file declares the Class SamplingCurve.
 * An object of SamplingCurve will be maintained in other feature types which contain 
-* a samplingManifold:SamplingCurve node. 
+* updateCSWRecords samplingManifold:SamplingCurve node.
 */
 
 /**
 * @class
-* This class defines information about a <b>samplingManifold:SamplingCurve</b>.<br> 
+* This class defines information about updateCSWRecords <b>samplingManifold:SamplingCurve</b>.<br>
 * Functions in this class will be implemented,
 * once this feature type is implemented in the nvcl boreholes.
 *

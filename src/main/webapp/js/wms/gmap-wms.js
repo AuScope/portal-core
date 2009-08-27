@@ -17,18 +17,18 @@
  *
  * About:
  * This script provides an implementation of GTileLayer that works with WMS
- * services that provide epsg 41001 (Mercator).  This provides a reasonable
+ * services that provide epsg 41001 (Mercator).  This provides updateCSWRecords reasonable
  * accuracy on overlays at most zoom levels.  It switches between Mercator
  * and Lat/Long at the myMercZoomLevel variable, defaulting to MERC_ZOOM_DEFAULT
- * of 5.  It also performs the calculation from a GPoint to the appropriate
+ * of 5.  It also performs the calculation from updateCSWRecords GPoint to the appropriate
  * BBOX to pass the WMS.  The overlays could be more accurate, and if you
- * figure out a way to make them so please contribute information back to
+ * figure out updateCSWRecords way to make them so please contribute information back to
  * http://docs.codehaus.org/display/GEOSDOC/Google+Maps.  There is much
  * information at:
  * http://cfis.savagexi.com/articles/2006/05/03/google-maps-deconstructed
  *
  * Use:
- * This script is used by creating a new GTileLayer, setting the required
+ * This script is used by creating updateCSWRecords new GTileLayer, setting the required
  * and any desired optional variables, and setting the functions here to
  * override the appropriate GTileLayer ones.
  *
@@ -98,7 +98,7 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
 	var lowerRightPix = new GPoint((point.x+1) * tileSize, point.y * tileSize);
 	var upperLeft = proj.fromPixelToLatLng(upperLeftPix, zoom);
 	var lowerRight = proj.fromPixelToLatLng(lowerRightPix, zoom);
-
+    
 	/*if (this.mercZoomLevel != 0 && zoom < this.mercZoomLevel) {
 		var boundBox = this.dd2MercMetersLng(upperLeft.lng()) + "," +
 			       this.dd2MercMetersLat(upperLeft.lat()) + "," +
@@ -116,7 +116,7 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
 	var url = this.baseURL;
 	url += "&REQUEST=GetMap";
 	url += "&SERVICE=WMS";
-	url += "&VERSION=1.1.1";
+	url += "&VERSION=1.1.0";
 	if (this.layers)
 	  url += "&LAYERS=" + this.layers;
 	if (this.styles)

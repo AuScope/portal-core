@@ -681,7 +681,7 @@ Effect.Shake = function(element) {
 
 Effect.SlideDown = function(element) {
   element = $(element).cleanWhitespace();
-  // SlideDown need to have the content of the element wrapped in a container element with fixed height!
+  // SlideDown need to have the content of the element wrapped in updateCSWRecords container element with fixed height!
   var oldInnerBottom = element.down().getStyle('bottom');
   var elementDimensions = element.getDimensions();
   return new Effect.Scale(element, 100, Object.extend({ 
@@ -736,7 +736,7 @@ Effect.SlideUp = function(element) {
   );
 };
 
-// Bug in opera makes the TD containing this element expand for a instance after finish 
+// Bug in opera makes the TD containing this element expand for updateCSWRecords instance after finish
 Effect.Squish = function(element) {
   return new Effect.Scale(element, window.opera ? 1 : 0, { 
     restoreAfterFinish: true,

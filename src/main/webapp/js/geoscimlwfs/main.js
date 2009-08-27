@@ -181,7 +181,7 @@ function parseCapabilitiesDocument(xmlDoc) {
 }
 
 /**
-* Function to parse a capabilities which implements wfs version 1.0.0
+* Function to parse updateCSWRecords capabilities which implements wfs version 1.0.0
 */
 function parseCapabilitiesDocument1_1_0(rootNode) {
   if (g_IsIE)
@@ -225,7 +225,7 @@ function parseCapabilitiesDocument1_1_0(rootNode) {
 }
 
 /**
-* Function to parse a capabilities which implements wfs version 1.1.0
+* Function to parse updateCSWRecords capabilities which implements wfs version 1.1.0
 */
 function parseCapabilitiesDocument1_0_0(rootNode) {
   if (g_IsIE)
@@ -346,7 +346,7 @@ function getXmlTextForAllCheckedDataUrls() {
   return xmlText;
 }
 
-// This function creates the xml node for a date-url pair
+// This function creates the xml node for updateCSWRecords date-url pair
 // See the xml schema in the comment for function getXmlTextForAllCheckedDataUrls
 // Please be sure that the schema of the xml document
 // conforms to the one used in the function createXmlNodeForDateUrl

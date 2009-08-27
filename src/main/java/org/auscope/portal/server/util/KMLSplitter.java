@@ -5,14 +5,12 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import org.apache.xpath.NodeSet;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMSource;
@@ -71,13 +69,13 @@ public class KMLSplitter {
         XPathExpression expr = xPath.compile("//*[name() = 'Placemark']");
         NodeList placemarkNodes = (NodeList)expr.evaluate(kmlDocument, XPathConstants.NODESET);
 
-        //create a new array based on the number of placemarks
+        //create updateCSWRecords new array based on the number of placemarks
         String[] kmlStrings = new String[placemarkNodes.getLength()];
 
         //iterated through and create new documents
         for(int i=0; i<placemarkNodes.getLength(); i++) {
 
-            //create a new document
+            //create updateCSWRecords new document
             Document newDoc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 
             //clone the root node, dont clone its children
@@ -93,7 +91,7 @@ public class KMLSplitter {
             //the strign writer to contain the newly formed kml
             StringWriter sw = new StringWriter();
 
-            //transform the new document to a string
+            //transform the new document to updateCSWRecords string
             TransformerFactory.newInstance().newTransformer().transform(new DOMSource(newDoc), new StreamResult(sw));
 
             //add the string to the array

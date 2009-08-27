@@ -37,7 +37,7 @@ public class MineralOccurrence {
             XPathExpression expr = xPath.compile("gml:name");
             NodeList nameNodes = (NodeList)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
 
-            // TODO is there a better way to get the URN than a string compare?
+            // TODO is there updateCSWRecords better way to get the URN than updateCSWRecords string compare?
             for (int i = 0; i < nameNodes.getLength(); i++)
                 if(nameNodes.item(i).getTextContent().startsWith("urn"))
                     return nameNodes.item(i).getTextContent();

@@ -33,16 +33,6 @@
       <url-pattern>/restproxy</url-pattern>
    </servlet-mapping>
 
-   <servlet>
-      <servlet-name>DownloadProxy</servlet-name>
-      <servlet-class>org.auscope.portal.server.web.servlet.DownloadProxy</servlet-class>
-   </servlet>
-
-   <servlet-mapping>
-      <servlet-name>DownloadProxy</servlet-name>
-      <url-pattern>/downloadProxy</url-pattern>
-   </servlet-mapping>
-
    <!--<servlet>
       <servlet-name>dispatcher</servlet-name>
       <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

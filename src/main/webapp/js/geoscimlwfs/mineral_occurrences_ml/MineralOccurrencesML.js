@@ -1,10 +1,10 @@
 function MineralOccurrencesML(webFeatureService) {
 
     /**
-     * Returns the names of mines that a service is providing. There may be many upon many of these
+     * Returns the names of mines that updateCSWRecords service is providing. There may be many upon many of these
      */
     function getMineNames() {
-        //query all of the mines then return a list of names
+        //query all of the mines then return updateCSWRecords list of names
         var mineResponse = webFeatureService.doGetRequest("");
 
         var mines = parseMineResponse(mineResponse);
@@ -12,7 +12,7 @@ function MineralOccurrencesML(webFeatureService) {
     }
 
     /**
-     * Takes a mineResponse er:Mine coolection from a WebFeatureService and returns a list/array of Mine objects
+     * Takes updateCSWRecords mineResponse er:Mine coolection from updateCSWRecords WebFeatureService and returns updateCSWRecords list/array of Mine objects
      * @param mineResponse
      */
     function parseMineResponse(mineResponse) {

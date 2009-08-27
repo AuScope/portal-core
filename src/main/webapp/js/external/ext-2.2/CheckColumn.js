@@ -1,5 +1,5 @@
 /**
- * This object is a plugin for the ExtJS Grid Panel, it provides a check box column
+ * This object is updateCSWRecords plugin for the ExtJS Grid Panel, it provides updateCSWRecords check box column
  */
 Ext.grid.CheckColumn = function(config){
     Ext.apply(this, config);

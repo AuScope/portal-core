@@ -1,17 +1,11 @@
 package org.auscope.portal.server.web.service;
 
 import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
 import java.net.*;
 
 /**
@@ -44,14 +38,14 @@ public class HttpServiceCaller {
         HttpConnectionManager man = new SimpleHttpConnectionManager();
         man.setParams(clientParams);
         httpClient.setHttpConnectionManager(man);
-        
+
         //make the call
         int statusCode = httpClient.executeMethod(method);
 
         if (statusCode != HttpStatus.SC_OK) {
             logger.error(method.getStatusLine());
 
-            //if its unavailable then throw a connection exception
+            //if its unavailable then throw updateCSWRecords connection exception
             if(statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
                     throw new ConnectException();
 

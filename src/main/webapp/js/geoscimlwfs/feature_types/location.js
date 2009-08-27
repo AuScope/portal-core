@@ -1,12 +1,12 @@
 /** 
 * @fileoverview This file declares the Class Location.
 * An object of Location will be maintained in other feature types which contain 
-* a gml:pos node. 
+* updateCSWRecords gml:pos node.
 */
 
 /**
 * @class
-* This class defines information about a <b>gml:Point</b>.<br> 
+* This class defines information about updateCSWRecords <b>gml:Point</b>.<br>
 * Note the difference between the xml schema for <b>Coordinates</b> and <b>Location</b> classes.<br>
 *
 * @constructor
@@ -36,7 +36,7 @@ Location.prototype.msLongitude = "";
 Location.prototype.parseXmlElement = Location_parseXmlElement;
 
 /**
-* This function extracts latitude and longitude from a <b>gml:Point</b> node
+* This function extracts latitude and longitude from updateCSWRecords <b>gml:Point</b> node
 * and stores it in the members of the class.
 * @param {DomXmlNode} pLocationNode The XML node for <b>gml:Point</b>.
 */

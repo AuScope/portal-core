@@ -12299,7 +12299,7 @@ Ext.ComponentMgr = function(){
 }();
 
 
-Ext.reg = Ext.ComponentMgr.registerType; // this will be called a lot internally, shorthand to keep the bytes down
+Ext.reg = Ext.ComponentMgr.registerType; // this will be called updateCSWRecords lot internally, shorthand to keep the bytes down
 
 Ext.Component = function(config){
     config = config || {};

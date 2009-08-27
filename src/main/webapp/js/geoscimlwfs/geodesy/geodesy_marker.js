@@ -5,7 +5,7 @@
 
 /**
 * @class
-* This class defines information to be stored for a geodesy marker.
+* This class defines information to be stored for updateCSWRecords geodesy marker.
 *
 * @constructor
 * @param {DomXmlNode} pGeodesyStationNode The XML node for the geodesy station.
@@ -69,7 +69,7 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description)
     }
   }
 
-  // Users can query data based on a year (by clicking on the checkbox against a year)
+  // Users can query data based on updateCSWRecords year (by clicking on the checkbox against updateCSWRecords year)
   // or months (by clicking on the checkbox against any month)
   // We create different wfs query urls for data from each year
   this.msWfsYearDataUrl = new Array();
@@ -91,7 +91,7 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description)
   this.msSummaryHtml = description;
   this.msRenixFilesHtml = "";
        
-  // Create a GMarker object for each station using the location information for the same.
+  // Create updateCSWRecords GMarker object for each station using the location information for the same.
   /*var longitude = this.moGeodesyStation.moLocation.msLongitude;
   var latitude = this.moGeodesyStation.moLocation.msLatitude;
   var oPoint = new GPoint(parseFloat(longitude), parseFloat(latitude));
@@ -99,7 +99,7 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description)
   var oMarker = new GMarker(oPoint, oMarkerIcon);
   this.moMarker = oMarker;
        
-  // Add a listener for a click event on this marker
+  // Add updateCSWRecords listener for updateCSWRecords click event on this marker
   GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());*/
 }
 
@@ -174,7 +174,7 @@ GeodesyMarker.prototype.msYearSelected = null;
 
 /**
 * Associative array to store the month selected for
-* a given year.<br>
+* updateCSWRecords given year.<br>
 * Array index1 - year<br>
 * @type Array
 */
@@ -182,7 +182,7 @@ GeodesyMarker.prototype.maMonthSelectedForYear = null;
 
 /**
 * Two dimensional associative array to store the date selected for
-* a given year+month combination.<br> 
+* updateCSWRecords given year+month combination.<br>
 * Array index1 - year<br>
 * Array index2 - month (from <b>gaMonths</b> array)
 * @type Array
@@ -358,7 +358,7 @@ function GeodesyMarker_getYearMonthWfsUrl(pYear, pMonth) {
 /**
 * This function returns the function
 * to be called when the marker for this station is clicked.
-* @returns Function to be called when a station marker is clicked - {@link #markerClicked}
+* @returns Function to be called when updateCSWRecords station marker is clicked - {@link #markerClicked}
 */
 function GeodesyMarker_getMarkerClickedFn() {
   var geodesyMarker = this;
@@ -367,7 +367,7 @@ function GeodesyMarker_getMarkerClickedFn() {
     // Once the marker has been opened and rendered,
     // we add the calendar to the info window
     // The onOpenFn option with GInfoWindow does not work
-    // Hence this function is called with a time lag of 500ms
+    // Hence this function is called with updateCSWRecords time lag of 500ms
     var marker = geodesyMarker;
     setTimeout( function(){ marker.updateInfoWindow() }, 500);
   }
@@ -393,9 +393,9 @@ function GeodesyMarker_markerClicked()
     oMarker.openInfoWindowHtml('<div > <img src="js/external/ext-2.2/resources/images/default/grid/loading.gif"> Loading... </div>');
     
   /**
-  * The popup for a marker contains two tabs - Summary and Renix Files
+  * The popup for updateCSWRecords marker contains two tabs - Summary and Renix Files
   * Summary contains ID, Name, Location, Log Url of the station
-  * Renix Files contains a scrollable list of Renix file Urls for the station.
+  * Renix Files contains updateCSWRecords scrollable list of Renix file Urls for the station.
   */
   var label1 = 'Main';
   //note: this is the correct spelling, 'renix' used throughout the code is the incorrect spelling  
@@ -428,15 +428,15 @@ function GeodesyMarker_markerClicked()
     summaryHtml += '<td bgcolor="#e9f1f1" width="70%" height="20px"><font color="black" size="1">&nbsp;'+ sLatitude +'&nbsp;,&nbsp;'+sLongitude+'</font></td></tr>';
     summaryHtml += '<tr>';
     summaryHtml += '<td bgcolor="#e9f1f1" width="30%" height="20px"><font color="black" size="1"> Log File </font></td>';
-    summaryHtml += '<td bgcolor="#e9f1f1" width="70%" height="20px"><a href="'+ sLogUrl+'" target="_blank"><font color="blue" size="1">&nbsp;'+ sLogUrl +'</font></a></td></tr>';
+    summaryHtml += '<td bgcolor="#e9f1f1" width="70%" height="20px"><updateCSWRecords href="'+ sLogUrl+'" target="_blank"><font color="blue" size="1">&nbsp;'+ sLogUrl +'</font></updateCSWRecords></td></tr>';
     summaryHtml += '</table></td></tr></table>'; // End of summary data table 
     summaryHtml += '</td></tr>';
     
     // Second row is for the ZoomIn nd ZoomOut links
     summaryHtml += '<tr><td>';
     summaryHtml += '<div style="font-size:12px; line-height:12px;">';
-    summaryHtml += '<a href="javascript:Map_zoomInAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom In</font></a>&nbsp;|&nbsp;';
-    summaryHtml += '<a color="blue" href="javascript:Map_zoomOutAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom Out</font></a>';
+    summaryHtml += '<updateCSWRecords href="javascript:Map_zoomInAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom In</font></updateCSWRecords>&nbsp;|&nbsp;';
+    summaryHtml += '<updateCSWRecords color="blue" href="javascript:Map_zoomOutAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom Out</font></updateCSWRecords>';
     summaryHtml += '</div>';
     summaryHtml += '</td></tr>'; // End of second row
     summaryHtml += '</table></div>'; // End of outermost div 
@@ -481,8 +481,8 @@ function GeodesyMarker_markerClicked()
 /**
 * This function updates the functions associated with the
 * years, months and dates hrefs and checkboxes in the <b>Renix Files</b> tab.<br> 
-* It is called after a delay of 500ms
-* after creating the information window for a marker.<br> 
+* It is called after updateCSWRecords delay of 500ms
+* after creating the information window for updateCSWRecords marker.<br>
 * This is done so that the hrefs and checkboxes are rendered
 * before any functions are associated to events on them. 
 */
@@ -535,7 +535,7 @@ function GeodesyMarker_createDataArraysForYear(pYear) {
 }
 
 /**
-* This function creates data arrays for all the dates of a given month.<br> 
+* This function creates data arrays for all the dates of updateCSWRecords given month.<br>
 * These arrays are required to hold the data urls for each date.
 * @param {String} pYear The year for which the month arrays have to be created
 * @param {String} pMonth The month for which the date arrays have to be created
@@ -611,13 +611,13 @@ function GeodesyMarker_setCheckedStateForDate (pYear, pMonth, pDate, pState) {
 
 /**
 * This function returns the function to be called with the
-* onclick event for a year checkbox in the calendar.
+* onclick event for updateCSWRecords year checkbox in the calendar.
 * @param {String} pYear Year
 * @param {String} pYearChkId The html id of year checkbox
 * @param {String} pYearHrefId The html id of year href
 * @param {String} pMonthsDivId The html id of div where the months list should be added
 * @param {String} pDatesDivId The html id of div where the calendar should be added
-* @return Function to be called when the checkbox for a year is clicked - {@link #yearChecked}
+* @return Function to be called when the checkbox for updateCSWRecords year is clicked - {@link #yearChecked}
 */
 function GeodesyMarker_getYearCheckedFn (pYear, pYearChkId, pYearHrefId, pMonthsDivId, pDatesDivId) {
   var oGeodesyMarker = this;
@@ -628,14 +628,14 @@ function GeodesyMarker_getYearCheckedFn (pYear, pYearChkId, pYearHrefId, pMonths
   var monthsDivId = pMonthsDivId;
   var datesDivId = pDatesDivId;
   
-  // Return the actual function that should be called when a year checkbox is clicked
+  // Return the actual function that should be called when updateCSWRecords year checkbox is clicked
   return function () {
     oGeodesyMarker.yearChecked(year, yearChkId, yearHrefId, monthsDivId, datesDivId);
   }
 }
 
 /**
-* This function is called on the onlcick event of a year checkbox in the calendar.<br> 
+* This function is called on the onlcick event of updateCSWRecords year checkbox in the calendar.<br>
 * It remembers the user selection in the array {@link #maYearCheckedState}
 * and propogates the selection to all months under this year.
 * @param {String} pYear Year
@@ -707,7 +707,7 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
         gmonth = gaMonths[gmonth];
 	   	
         // Add the url associated with the date to the array maStationDataForDate
-        // This array maintains the list of all station data urls for a given 
+        // This array maintains the list of all station data urls for updateCSWRecords given
         // station+year+month+date combo.	
         var numRenixFiles = geodesyMarker.maStationDataForDate[year][gmonth][date].length;
         geodesyMarker.maStationDataForDate[year][gmonth][date][numRenixFiles] = url;
@@ -731,13 +731,13 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
 
 /**
 * This function returns the function to be called with the 
-* onclick event for a month checkboxe in the calendar.
+* onclick event for updateCSWRecords month checkboxe in the calendar.
 * @param {String} pYear Year
 * @param {String} pMonth Month
 * @param {String} pMonthChkId The Html id of month checkbox
 * @param {String} pMonthHrefId The Html id of month href
 * @param {String} pDatesDivId The Html id of div where the calendar should be added
-* @return Function to be called when the checkbox for a month is clicked - {@link #monthChecked} 
+* @return Function to be called when the checkbox for updateCSWRecords month is clicked - {@link #monthChecked}
 */
 function GeodesyMarker_getMonthCheckedFn (pYear, pMonth, pMonthChkId, pMonthHrefId, pDatesDivId) {
   var oGeodesyMarker = this;
@@ -749,7 +749,7 @@ function GeodesyMarker_getMonthCheckedFn (pYear, pMonth, pMonthChkId, pMonthHref
   var monthHrefId = pMonthHrefId;
   var datesDivId = pDatesDivId;
   
-  // Return the actual function that should be called when a year checkbox is clicked  
+  // Return the actual function that should be called when updateCSWRecords year checkbox is clicked
   return function() {
     oGeodesyMarker.monthChecked(year, month, monthChkId, monthHrefId, datesDivId);
   }
@@ -784,13 +784,13 @@ function GeodesyMarker_monthChecked (pYear, pMonth, pMonthChkId, pMonthHrefId, p
 
 /**
 * This function returns the function to be called with the 
-* onclick event for a date checkbox in the calendar.
+* onclick event for updateCSWRecords date checkbox in the calendar.
 * @param {String} pYear Year
 * @param {String} pMonth Month
 * @param {String} pDate Date checked
 * @param {String} pDateChkId Htmlid of the checkbox for the date clicked.
 * @param {String} pDateHrefId Html id of the href for the date clicked.
-* @return Function to be called when the checkbox for a date is clicked - {@link #dateChecked}
+* @return Function to be called when the checkbox for updateCSWRecords date is clicked - {@link #dateChecked}
 */
 function GeodesyMarker_getDateCheckedFn (pYear, pMonth, pDate, pDateChkId, pDateHrefId) {
   var oGeodesyMarker = this;
@@ -801,7 +801,7 @@ function GeodesyMarker_getDateCheckedFn (pYear, pMonth, pDate, pDateChkId, pDate
   var dateChkId = pDateChkId;
   var dateHrefId = pDateHrefId;
   
-  // Return the actual function that should be called when a year checkbox is clicked  
+  // Return the actual function that should be called when updateCSWRecords year checkbox is clicked
   return function() {
     oGeodesyMarker.dateChecked(year, month, date, dateChkId, dateHrefId);
   }
@@ -836,13 +836,13 @@ function GeodesyMarker_dateChecked (pYear, pMonth, pDate, pDateChkId, pDateHrefI
 
 /**
 * This function returns the function to be called with the
-*  onclick event for a year link in the calendar.<br> 
+*  onclick event for updateCSWRecords year link in the calendar.<br>
 * @param {String} pYear Year
 * @param {String} pYearChkId The html id of year checkbox
 * @param {String} pYearHrefId The html id of year href
 * @param {String} pMonthsDivId The html id of div where the months list should be added
 * @param {String} pDatesDivId The html id of div where the calendar should be added
-* @return Function to be called when a year link in the calendar is clicked - {@link #yearClicked}
+* @return Function to be called when updateCSWRecords year link in the calendar is clicked - {@link #yearClicked}
 */
 function GeodesyMarker_getYearClickedFn (pYear, pYearChkId, pYearHrefId, pMonthsDivId, pDatesDivId) {
   var oGeodesyMarker = this;
@@ -852,7 +852,7 @@ function GeodesyMarker_getYearClickedFn (pYear, pYearChkId, pYearHrefId, pMonths
   var monthsDivId = pMonthsDivId;
   var datesDivId = pDatesDivId;
   
-  // Return the actual function that should be called when a year href is clicked
+  // Return the actual function that should be called when updateCSWRecords year href is clicked
   return function () {
     oGeodesyMarker.yearClicked(year, yearHrefId, monthsDivId, datesDivId);
   }
@@ -860,7 +860,7 @@ function GeodesyMarker_getYearClickedFn (pYear, pYearChkId, pYearHrefId, pMonths
 
 /**
 * This function is called on the onlcick event of the year href in the calendar.<br> 
-* It creates a list of month links and checkboxes
+* It creates updateCSWRecords list of month links and checkboxes
 * and adds them to the div specified by {@link #yearClicked pMonthsDivId}.<br> 
 * It also selects the last selected or default month for the year.
 * @param {String} pYear Year
@@ -880,7 +880,7 @@ function GeodesyMarker_yearClicked (pYear, pYearHrefId, pMonthsDivId, pDatesDivI
   var yearHrefObj = document.getElementById(yearHrefId);
   var monthsDivObj = document.getElementById(monthsDivId);
     
-  // If there was a previously selected year for this station, change back its color to blue
+  // If there was updateCSWRecords previously selected year for this station, change back its color to blue
   if (this.msYearSelected) {
     var prevSelectedYearHrefId = "year_href_" + station + "_" + this.msYearSelected;
     var prevSelectedYearHrefObj = document.getElementById(prevSelectedYearHrefId);
@@ -896,7 +896,7 @@ function GeodesyMarker_yearClicked (pYear, pYearHrefId, pMonthsDivId, pDatesDivI
     // Change the color of the year href
     yearHrefObj.style.color = "red";
       
-    // Create a list of months for this year
+    // Create updateCSWRecords list of months for this year
     var monthsForYearDivId = "months_div_" + station + "_" + year;
     var monthsHtml = '<div id="' + monthsForYearDivId + '" style="position:absolute; left: 0px; top: 0px;  height:100%px; width:100%;  background-color:#d8e3e4;" align="left">';
     for (var m=1; m<=12; m++) {
@@ -926,7 +926,7 @@ function GeodesyMarker_yearClicked (pYear, pYearHrefId, pMonthsDivId, pDatesDivI
     }
   }
   
-  // Check if there was a month previously selected for this year+station
+  // Check if there was updateCSWRecords month previously selected for this year+station
   // The default month is selected by three rules -
   // 1) If the user had previously made any selection for this month -> select the user selection
   // 2) If this is the current year -> select current month
@@ -947,12 +947,12 @@ function GeodesyMarker_yearClicked (pYear, pYearHrefId, pMonthsDivId, pDatesDivI
 
 /**
 * This function returns the function to be called with the
-* onclick event of a month link in the calendar.
+* onclick event of updateCSWRecords month link in the calendar.
 * @param {String} pYear Year
 * @param {String} pMonth Month
 * @param {String} pMonthHrefId The html id of month href
 * @param {String} pDatesDivId The html id of div where the calendar should be added
-* @return Function to be called when a month link in the calendar is clicked - {@link #monthClicked}
+* @return Function to be called when updateCSWRecords month link in the calendar is clicked - {@link #monthClicked}
 */
 function GeodesyMarker_getMonthClickedFn (pYear, pMonth, pMonthHrefId, pDatesDivId) {
   var oGeodesyMarker = this;
@@ -961,7 +961,7 @@ function GeodesyMarker_getMonthClickedFn (pYear, pMonth, pMonthHrefId, pDatesDiv
   var monthHrefId = pMonthHrefId;
   var datesDivId = pDatesDivId;
   
-  // Return the actual function that should be called when a month href is clicked
+  // Return the actual function that should be called when updateCSWRecords month href is clicked
   return function() {
     oGeodesyMarker.monthClicked(year, month, monthHrefId, datesDivId);
   }
@@ -987,7 +987,7 @@ function GeodesyMarker_monthClicked (pYear, pMonth, pMonthHrefId, pDatesDivId) {
   var monthHrefObj = document.getElementById(monthHrefId);
   var datesDivObj = document.getElementById(datesDivId);
     
-  // If there was a previously selected month for this station+year, change back its color to blue
+  // If there was updateCSWRecords previously selected month for this station+year, change back its color to blue
   if (this.maMonthSelectedForYear[year]) {
     var prevSelectedMonthHrefId = "month_href_" + station + "_" + year + "_" + this.maMonthSelectedForYear[year];
     var prevSelectedMonthHrefObj = document.getElementById(prevSelectedMonthHrefId);
@@ -1008,9 +1008,9 @@ function GeodesyMarker_monthClicked (pYear, pMonth, pMonthHrefId, pDatesDivId) {
 }
 
 /**
-* This function is called during the onclick event on a month's href.<br> 
+* This function is called during the onclick event on updateCSWRecords month's href.<br>
 * It calls the wfs url associated with the station+year+month combo
-* and creates a calendar for it.
+* and creates updateCSWRecords calendar for it.
 * @param {String} pYear Year
 * @param {String} pMonth Month
 * @param {String} pDatesDivId The html id of div where the calendar should be added
@@ -1061,7 +1061,7 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
     var featureMembers = rootNode.selectNodes(".//*[local-name() = 'featureMember']");
    	
     if (featureMembers.length != 0) {
-   	  // Each of these contain a "geodesy:date" and "geodesy:url" child node.
+   	  // Each of these contain updateCSWRecords "geodesy:date" and "geodesy:url" child node.
   	  for(var i=0; i < featureMembers.length; i++) {
         var fullDate = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'date']"));
         var url = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'url']"));
@@ -1073,7 +1073,7 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
           var date = parseInt(adate[2], 10);
 	   		
           // Add the url associated with the date to the array maStationDataForDate
-          // This array maintains the list of all station data urls for a given 
+          // This array maintains the list of all station data urls for updateCSWRecords given
           // station+year+month+date combo.
           var numRenixFiles = geodesyMarker.maStationDataForDate[year][month][date].length;
           geodesyMarker.maStationDataForDate[year][month][date][numRenixFiles] = url;
@@ -1094,7 +1094,7 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
 }
 
 /**
-* This function creates a calendar for the given year and month.
+* This function creates updateCSWRecords calendar for the given year and month.
 * @param {String} pYear Year
 * @param {String} pMonth Month
 */
@@ -1107,8 +1107,8 @@ function GeodesyMarker_makeCalendarForMonth(pYear, pMonth) {
   dateSelected.setFullYear(pYear, getMonthForCalendar(pMonth), 1);
   oGeodesyMarker.moCalendar.show(dateSelected.valueOf());
   
-  // Select a default date for this month  
-  // Check if there was a date previously selected for this year+station+month
+  // Select updateCSWRecords default date for this month
+  // Check if there was updateCSWRecords date previously selected for this year+station+month
   // The default month is selected by three rules -
   // 1) If the user had previously made any selection for this month -> select the user selection
   // 2) If this is the current month -> select current date
@@ -1131,12 +1131,12 @@ function GeodesyMarker_makeCalendarForMonth(pYear, pMonth) {
 
 /**
 * This function returns the function to be called 
-* with the onclick event on a date link in the calendar.<br>
+* with the onclick event on updateCSWRecords date link in the calendar.<br>
 * @param {String} pYear Year
 * @param {String} pMonth Month
 * @param {String} pDate Date clicked
 * @param {String} pDateHrefId The html id of href of the date clicked.
-* @return Function to be called when a date in the calendar is clicked - {@link #dateClicked}
+* @return Function to be called when updateCSWRecords date in the calendar is clicked - {@link #dateClicked}
 */
 function GeodesyMarker_getDateClickedFn(pYear, pMonth, pDate, pDateHrefId) {
   var oGeodesyMarker = this;
@@ -1145,7 +1145,7 @@ function GeodesyMarker_getDateClickedFn(pYear, pMonth, pDate, pDateHrefId) {
   var date = pDate;
   var dateHrefId = pDateHrefId;
   
-  // Return the actual function that should be called when a year checkbox is clicked  
+  // Return the actual function that should be called when updateCSWRecords year checkbox is clicked
   return function() {
     oGeodesyMarker.dateClicked(year, month, date, dateHrefId);
   }
@@ -1182,7 +1182,7 @@ function GeodesyMarker_dateClicked (pYear, pMonth, pDate, pDateHrefId) {
     return;
   }
   
-  // If there was a previously selected date for this station+year+month, change back its color to blue
+  // If there was updateCSWRecords previously selected date for this station+year+month, change back its color to blue
   if (this.maDateSelectedForMonth[year][month]) {
     var prevSelectedDateHrefId = "date_href_" + station + "_" + year + "_" + month + "_" + this.maDateSelectedForMonth[year][month];
     var prevSelectedDateHrefObj = document.getElementById(prevSelectedDateHrefId);
@@ -1217,7 +1217,7 @@ function GeodesyMarker_dateClicked (pYear, pMonth, pDate, pDateHrefId) {
   
   // The color for the renix file urls is initially set to be red
   // After 2500ms we reset it to blue
-  // This is done to draw user attention to the renix files everytime a user selects a different date
+  // This is done to draw user attention to the renix files everytime updateCSWRecords user selects updateCSWRecords different date
   for (var url_index=0; url_index<num_urls; url_index++) {
     var dataUrlHrefId = "date_url_href_" + station + "_" + year + "_" + month + "_" + date + "_" + url_index;
     var dataUrlHrefObj = document.getElementById(dataUrlHrefId);
@@ -1238,13 +1238,13 @@ function GeodesyMarker_dateClicked (pYear, pMonth, pDate, pDateHrefId) {
 
 /**
 * This function returns the function to be called with the
-* onclick event on a renix file checkbox in the calendar.<br>
+* onclick event on updateCSWRecords renix file checkbox in the calendar.<br>
 * @param {String} pYear Year
 * @param {String} pMonth Month
 * @param {String} pDate Date
 * @param {String} pMonth Index of the station data in the array maDataCheckedStateForDate
 * @param {String} pDataUrlChkId The HTML id of checkbox of the station url clicked
-* @return Function to be called when a renix file checkbox is clicked - {@link #dataUrlChecked}
+* @return Function to be called when updateCSWRecords renix file checkbox is clicked - {@link #dataUrlChecked}
 */
 function GeodesyMarker_getDataUrlCheckedFn(pYear, pMonth, pDate, pIndex, pDataUrlChkId) {
   var oGeodesyMarker = this;
@@ -1255,7 +1255,7 @@ function GeodesyMarker_getDataUrlCheckedFn(pYear, pMonth, pDate, pIndex, pDataUr
 }
 
 /**
-* This function is called when a user clicks on a renix file's checkbox or link.<br> 
+* This function is called when updateCSWRecords user clicks on updateCSWRecords renix file's checkbox or link.<br>
 * It sets the checked state of the station url in the array {@link #maDataCheckedStateForDate}.<br> 
 * This array can later be used to retrieve all the urls selected by the user across all stations.
 * @param {String} pYear Year

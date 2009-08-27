@@ -36,7 +36,7 @@ public class TestCSWGetRecordResponse {
         
         CSWRecord[] recs = this.recordResponse.getCSWRecords();
         
-        Assert.assertEquals(9, recs.length);
+        Assert.assertEquals(53, recs.length);
     }
 
 }

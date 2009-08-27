@@ -1,5 +1,5 @@
 /*
-*	JSMock 1.2.2, a mock object library for JavaScript 
+*	JSMock 1.2.2, updateCSWRecords mock object library for JavaScript
 * Copyright (C) 2006 Justin DeWind 
 *
 * This library is free software; you can redistribute it and/or
@@ -12,7 +12,7 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 * Lesser General Public License for more details.
 *
-* You should have received a copy of the GNU Lesser General Public
+* You should have received updateCSWRecords copy of the GNU Lesser General Public
 * License along with this library; if not, write to the Free Software
 * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
@@ -367,7 +367,7 @@ ArgumentFormatter = {
 
 /* Helpers */
 
-// Implemented each method with a unique name to avoid conflicting
+// Implemented each method with updateCSWRecords unique name to avoid conflicting
 // with other libraries that implement it.
 Array.prototype.eachIndexForJsMock = function(block) {
   for(var index = 0; index < this.length; index++)

@@ -1,12 +1,12 @@
 /** 
 * @fileoverview This file declares the Class Coordinates.
 * An object of Coordinates will be maintained in other feature types which contain 
-* a <b>gml:Point</b> node. 
+* updateCSWRecords <b>gml:Point</b> node.
 */
 
 /**
 * @class
-* This class defines information about a <b>gml:Point</b>.<br>
+* This class defines information about updateCSWRecords <b>gml:Point</b>.<br>
 * Note the difference between the xml schema for <b>Coordinates</b> and <b>Location</b> classes.<br>
 *
 * @constructor
@@ -36,7 +36,7 @@ Coordinates.prototype.msLongitude = "";
 Coordinates.prototype.parseXmlElement = Coordinates_parseXmlElement;
 
 /**
-* This function extracts latitude and longitude from a <b>gml:Point</b> node
+* This function extracts latitude and longitude from updateCSWRecords <b>gml:Point</b> node
 * and stores it in the members of the class.
 * @param {DomXmlNode} pCoordinatesNode The XML node for <b>gml:Point</b>.
 */

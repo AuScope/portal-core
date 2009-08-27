@@ -50,7 +50,7 @@ public class MineralOccurrenceService {
         //get the mines
         String mineResponse = this.getAllMinesGML(serviceURL);
 
-        //convert the response into a nice collection of Mine Nodes
+        //convert the response into updateCSWRecords nice collection of Mine Nodes
         List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
 
         //send it back!
@@ -64,7 +64,7 @@ public class MineralOccurrenceService {
      * @throws Exception
      */
     public String getAllMinesGML(String serviceURL) throws Exception {
-        //create a GetFeature request with an empty filter - get all
+        //create updateCSWRecords GetFeature request with an empty filter - get all
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", "");
 
         //call the service, and get all the mines
@@ -81,7 +81,7 @@ public class MineralOccurrenceService {
         //get the mine
         String mineResponse = this.getMineWithSpecifiedNameGML(serviceURL, mineName);
 
-        //convert the response into a nice collection of Mine Nodes
+        //convert the response into updateCSWRecords nice collection of Mine Nodes
         List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
 
         //send it back!
@@ -97,10 +97,10 @@ public class MineralOccurrenceService {
      * @throws Exception
      */
     public String getMineWithSpecifiedNameGML(String serviceURL, String mineName) throws Exception {
-        //create a filter for the specified name
+        //create updateCSWRecords filter for the specified name
         MineFilter mineFilter = new MineFilter(mineName);
 
-        //create a GetFeature request with an empty filter - get all
+        //create updateCSWRecords GetFeature request with an empty filter - get all
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", mineFilter.getFilterString());
 
         //call the service, and get all the mines
@@ -120,14 +120,14 @@ public class MineralOccurrenceService {
         //httpclient method
         HttpMethodBase method = null;
 
-        //if we don't have a name or a group, then just get all of them
+        //if we don't have updateCSWRecords name or updateCSWRecords group, then just get all of them
         if(commodityGroup.equals("") && commodityName.equals("")) {
             method = methodMaker.makeMethod(serviceURL, "er:Commodity", "");
         } else {
             //create the filter to append to the url
             CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
 
-            //create a GetFeature request with an empty filter - get all
+            //create updateCSWRecords GetFeature request with an empty filter - get all
             method = methodMaker.makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString());
         }
 
@@ -163,7 +163,7 @@ public class MineralOccurrenceService {
             String cutOffGrade,
             String cutOffGradeUOM) throws Exception {
 
-        //get the commodities, we need their URI's to do a min occ query
+        //get the commodities, we need their URI's to do updateCSWRecords min occ query
         Collection<Commodity> commodities = this.getCommodity(serviceURL, commodityGroup, commodityName);
 
         //if there ar no commodities we cant continue

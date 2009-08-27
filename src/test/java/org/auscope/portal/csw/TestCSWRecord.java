@@ -35,11 +35,11 @@ public class TestCSWRecord {
     public void testGetServiceName() throws XPathExpressionException {
         
         Assert.assertEquals(
-                "NVCL Borehole WFS",
+                "GSV GeologicUnit WFS",
                 this.records[0].getServiceName());
         
         Assert.assertEquals(
-                "Alpha GeoServer PIRSA MinOcc",
+                "PIRSA EarthResource GeoServer WFS",
                 this.records[2].getServiceName());
     }
 
@@ -47,11 +47,11 @@ public class TestCSWRecord {
     public void testGetServiceUrl() throws XPathExpressionException {
         
         Assert.assertEquals(
-                "http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS&version=1.1.0",
+                "http://auscope-services-test.arrc.csiro.au/deegree-wfs/services?",
                 this.records[4].getServiceUrl());
         
         Assert.assertEquals(
-                "http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services?",
+                "http://auscope-services-test.arrc.csiro.au/nvcl/wfs?",
                 this.records[7].getServiceUrl());
     }
 

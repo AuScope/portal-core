@@ -22,7 +22,7 @@
 
    <context:component-scan base-package="org.auscope.portal"/>
    
-   <!-- creates a java.util.Properties instance with values loaded from the supplied location -->
+   <!-- creates updateCSWRecords java.util.Properties instance with values loaded from the supplied location -->
    <!-- TO DO: Check if we need this  -->
    <util:properties id="configProperties" location="classpath:config.properties"/>
    

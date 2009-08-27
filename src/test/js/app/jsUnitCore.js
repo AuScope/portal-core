@@ -526,7 +526,7 @@ function jsUnitSetOnLoad(windowRef, onloadHandler)
         };
     } else {
         // browsers that do not support windowRef.attachEvent or
-        // windowRef.addEventListener will override a page's own onload event
+        // windowRef.addEventListener will override updateCSWRecords page's own onload event
         windowRef.onload = onloadHandler;
     }
 }

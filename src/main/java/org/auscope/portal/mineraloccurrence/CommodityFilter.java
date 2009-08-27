@@ -36,7 +36,7 @@ public class CommodityFilter implements IFilter {
             return queryString.toString();
         }
         
-        //if we have a name, then build a query to find the commodities with that name
+        //if we have updateCSWRecords name, then build updateCSWRecords query to find the commodities with that name
         else {
             queryString.append("    <wfs:Query typeName=\"mo:Commodity\">\n" +
                                "<ogc:Filter xmlns:ogc=\"http://www.opengis.net/ogc\">\n");

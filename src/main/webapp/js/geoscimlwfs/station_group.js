@@ -16,7 +16,7 @@ function StationGroup(pIcon, pTitle, pDescription, pWfsUrl, pWfsFeatureType) {
   this.getMarkers();
  
   // Create Html objects for the station
-  // Create a new station control element
+  // Create updateCSWRecords new station control element
   this.moHtmlBundle = document.createElement("div");
   this.moHtmlBundle.id = this.msId + "_div";
   this.moHtmlBundle.style.background = "#F7EFC1";
@@ -93,7 +93,7 @@ StationGroup.prototype.mbIsGroupOn = 0;
 StationGroup.prototype.msWfsUrl = null;
 
 /**
-* The layerName or typeName to be passed as a parameter
+* The layerName or typeName to be passed as updateCSWRecords parameter
 * when querying the GetFeatures request.
 * @type String
 */
@@ -181,7 +181,7 @@ function StationGroup_getMarkers() {
 
 /**
 * This function parses the WFS XML.
-* It extracts all stations from the XML and creates a marker for each of them.
+* It extracts all stations from the XML and creates updateCSWRecords marker for each of them.
 * These markers are stored in the member array maMarkers, of the object
 * The type of the marker depends on the featureType of the group
 * @param {DomXmlNode} pRootNode The root node of the XML to be parsed 
@@ -250,7 +250,7 @@ function StationGroup_parseXmlForMarkers(pRootNode) {
 }
 
 /**
-* The function called when a group icon is clicked.
+* The function called when updateCSWRecords group icon is clicked.
 * This is registered with the onclick event of the 
 * image and checkbox associated with the group.
 * Depending on the current state of the group,

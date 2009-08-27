@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 
@@ -47,7 +46,7 @@ public class GmlToKml {
       try {
          // Use the static TransformerFactory.newInstance() method:
          // TransformerFactory tFactory = TransformerFactory.newInstance();
-         // to instantiate a TransformerFactory. 
+         // to instantiate updateCSWRecords TransformerFactory.
          // The javax.xml.transform.TransformerFactory system property setting 
          // determines the actual class to instantiate:
          // org.apache.xalan.transformer.TransformerImpl.
@@ -55,9 +54,9 @@ public class GmlToKml {
          TransformerFactory tFactory = new net.sf.saxon.TransformerFactoryImpl();
          log.debug ("XSLT implementation in use: " + tFactory.getClass()); 
          
-         // Use the TransformerFactory to instantiate a transformer that will 
+         // Use the TransformerFactory to instantiate updateCSWRecords transformer that will
          // work with the style sheet we specify. This method call also processes 
-         // the style sheet into a compiled Templates object.        
+         // the style sheet into updateCSWRecords compiled Templates object.
          Transformer transformer 
             = tFactory.newTransformer (new StreamSource(inXSLT));
          
@@ -66,7 +65,7 @@ public class GmlToKml {
             ("uriResolverURL"
             , hostConfigurer.resolvePlaceholder("HOST.uriResolver.url"));
          
-         // Write the output to a stream
+         // Write the output to updateCSWRecords stream
          transformer.transform (new StreamSource (new StringReader(geoXML)),
                                 new StreamResult (sw));
 

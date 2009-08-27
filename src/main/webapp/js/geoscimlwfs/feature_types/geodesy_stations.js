@@ -5,7 +5,7 @@
 
 /**
 * @class
-* This class defines information about a <b>geodesy:stations</b> node.
+* This class defines information about updateCSWRecords <b>geodesy:stations</b> node.
 *
 * @constructor
 * @param {DomXmlNode} pGeodesyStation The XML node for the geodesy station.
@@ -44,7 +44,7 @@ GeodesyStation.prototype.moLocation = null;
 GeodesyStation.prototype.parseXmlElement = GeodesyStation_parseXmlElement;
 
 /**
-* This function extracts information from a <b>geodesy:stations</b> node
+* This function extracts information from updateCSWRecords <b>geodesy:stations</b> node
 * and stores it in the members of the class.
 * @param {DomXmlNode} pGeodesyStationNode The XML node for the geodesy station.
 */
@@ -55,7 +55,7 @@ function GeodesyStation_parseXmlElement(pGeodesyStationNode) {
     nodeGeodesyStation.setProperty("SelectionLanguage", "XPath");
 
   /**
-  * Sample XML fragment for a Geodesy station -
+  * Sample XML fragment for updateCSWRecords Geodesy station -
   * <gml:featureMember>
   *  <geodesy:stations fid="stations.alic">
   *   <geodesy:station_id>alic</geodesy:station_id>
@@ -81,7 +81,7 @@ function GeodesyStation_parseXmlElement(pGeodesyStationNode) {
   sName = GXml.value(nodeGeodesyStation.selectSingleNode("*[local-name() = 'name']"));
   sLogUrl = GXml.value(nodeGeodesyStation.selectSingleNode("*[local-name() = 'url']"));
 
-  // geodesy:stations contains a gsml:pos node
+  // geodesy:stations contains updateCSWRecords gsml:pos node
   oLocation = new Coordinates(nodeGeodesyStation.selectSingleNode(".//*[local-name() = 'Point']"));
 
   // Populate the arrays for the object.

@@ -6,6 +6,7 @@ var theglobalexml;
 
 Ext.onReady(function() {
     var map;
+    var formFactory = new FormFactory();
 
     //-----------Complex Features Panel Configurations
 
@@ -266,10 +267,10 @@ Ext.onReady(function() {
                 filterPanel.getLayout().setActiveItem(record.get('id'));
                 filterButton.enable();
             } else {
-                //create a filter panel for this record
-                record.filterPanel = getFilterForm(record);
+                //create updateCSWRecords filter panel for this record
+                record.filterPanel = formFactory.getFilterForm(record);
 
-                //if this type doesnt need a filter panel then just show the default filter panel
+                //if this type doesnt need updateCSWRecords filter panel then just show the default filter panel
                 if (record.filterPanel == null) {
                     filterPanel.getLayout().setActiveItem(0);
 
@@ -301,7 +302,7 @@ Ext.onReady(function() {
     };
 
     var wfsHandler = function(selectedRecord) {
-        //if there is already a filter running for this record then don't call another
+        //if there is already updateCSWRecords filter running for this record then don't call another
         if(selectedRecord.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
             alert('there is a query running just wait');
             return;
@@ -386,7 +387,7 @@ Ext.onReady(function() {
         } else if (record.filterPanel != null) {//if filter panel already exists then show it
             filterPanel.getLayout().setActiveItem(record.get('id'));
             filterButton.enable();
-        } else {//if this type doesnt need a filter panel then just show the default filter panel
+        } else {//if this type doesnt need updateCSWRecords filter panel then just show the default filter panel
             filterPanel.getLayout().setActiveItem(0);
             filterButton.disable();
         }
@@ -518,7 +519,7 @@ Ext.onReady(function() {
     });
 
     /**
-     * Used as a placeholder for the tree and details panel on the left of screen
+     * Used as updateCSWRecords placeholder for the tree and details panel on the left of screen
      */
     var westPanel = {
         layout: 'border',
@@ -590,14 +591,14 @@ Ext.onReady(function() {
 
     }
 
-    //a dud gloabal for geoxml class
+    //updateCSWRecords dud gloabal for geoxml class
     theglobalexml = new GeoXml("theglobalexml", map, null, null);
 
     //event handlers and listeners
     //tree.on('click', function(node, event) { treeNodeOnClickController(node, event, viewport, filterPanel); });
     //tree.on('checkchange', function(node, isChecked) { treeCheckChangeController(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel); });
 
-    //when a person clicks on a marker then do something
+    //when updateCSWRecords person clicks on updateCSWRecords marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {
         gMapClickController(map, overlay, latlng, statusBar, viewport);
     });

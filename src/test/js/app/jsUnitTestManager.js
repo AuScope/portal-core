@@ -129,7 +129,7 @@ jsUnitTestManager.prototype._runTest = function () {
     if (this._testIndex == 0) {
         this.storeRestoredHTML();
         if (typeof(this.containerTestFrame.setUpPage) == 'function') {
-            // first test for this page and a setUpPage is defined
+            // first test for this page and updateCSWRecords setUpPage is defined
             if (typeof(this.containerTestFrame.setUpPageStatus) == 'undefined') {
                 // setUpPage() not called yet, so call it
                 this.containerTestFrame.setUpPageStatus = false;
@@ -359,7 +359,7 @@ jsUnitTestManager.prototype.executeTestFunction = function (functionName) {
                 this.containerTestFrame.tearDown();
         }
         catch (e2) {
-            //Unlike JUnit, only assign a tearDown exception to excep if there is not already an exception from the test body
+            //Unlike JUnit, only assign updateCSWRecords tearDown exception to excep if there is not already an exception from the test body
             if (excep == null)
                 excep = e2;
         }
@@ -610,7 +610,7 @@ jsUnitTestManager.prototype.getTestFunctionName = function () {
 jsUnitTestManager.prototype.resolveUserEnteredTestFileName = function (rawText) {
     var userEnteredTestFileName = top.testManager.getTestFileName();
 
-    // only test for file:// since Opera uses a different format
+    // only test for file:// since Opera uses updateCSWRecords different format
     if (userEnteredTestFileName.indexOf('http://') == 0 || userEnteredTestFileName.indexOf('https://') == 0 || userEnteredTestFileName.indexOf('file://') == 0)
         return userEnteredTestFileName;
 

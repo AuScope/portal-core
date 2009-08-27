@@ -62,7 +62,7 @@ public class TestHttpServiceCaller {
 
         Assert.assertEquals(expectedPost, thePost.toString());
 
-        /*// Create a method instance.
+        /*// Create updateCSWRecords method instance.
         GetMethod method2 = new GetMethod(SERVICE_URL);
 
         //set all of the parameters

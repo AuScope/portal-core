@@ -5,7 +5,7 @@
 
 /**
 * @class
-* This class defines information about a gsml:borehole.
+* This class defines information about updateCSWRecords gsml:borehole.
 *
 * @constructor
 * @param {DomXmlNode} pBorehole The XML node for the borehole station.
@@ -107,7 +107,7 @@ Borehole.prototype.moLocation = null;
 Borehole.prototype.parseXmlElement = Borehole_parseXmlElement;
 
 /**
-* This function extracts information from a gsml:borehole node
+* This function extracts information from updateCSWRecords gsml:borehole node
 * and stores it in the members of the class.
 * @param {DomXmlNode} pBoreholeNode The XML node for the borehole station.
 */
@@ -118,7 +118,7 @@ function Borehole_parseXmlElement(pBoreholeNode) {
     nodeBorehole.setProperty("SelectionLanguage", "XPath");
 
   /**
-  * Sample XML fragment for a gsml:borehole node -
+  * Sample XML fragment for updateCSWRecords gsml:borehole node -
   *
   * <gsml:Borehole gml:id="nvcl_core.4">
   *  <gml:metaDataProperty xlink:href="http://nvcl.csiro.au/projects.aspx%3Fprojectid=Ernest%20Henry" xlink:role="Project" xlink:title="Ernest Henry"/>
@@ -192,7 +192,7 @@ function Borehole_parseXmlElement(pBoreholeNode) {
   
   sStartPoint = GXml.value(nodeBorehole.selectSingleNode(".//*[local-name() = 'startPoint']"));
    
-  // gsml:borehole contains a gsml:location node
+  // gsml:borehole contains updateCSWRecords gsml:location node
   oLocation = new Location(nodeBorehole.selectSingleNode(".//*[local-name() = 'Point']"));
 
   // Populate the arrays for the object.

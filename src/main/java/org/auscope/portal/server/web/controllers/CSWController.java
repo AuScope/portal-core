@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.auscope.portal.server.web.service.CSWService;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.server.web.view.JSONModelAndView;
+import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
+import org.apache.log4j.Logger;
 import net.sf.json.JSONArray;
 
 /**
@@ -17,6 +19,7 @@ import net.sf.json.JSONArray;
 @Controller
 public class CSWController {
 
+    private Logger logger = Logger.getLogger(getClass());
     @Autowired private CSWService cswService;
     
     private KnownType[] knownTypes = {  new KnownType("er:Mine", "Earth Resource Mine", "", "/doMineFilter.do", "http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"),
@@ -24,6 +27,22 @@ public class CSWController {
                                         new KnownType("er:MiningActivity", "Earth Resource Mining Activity", "", "/doMiningActivityFilter.do", "http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"),
                                         new KnownType("gsml:Borehole", "National Virtual Core Library", "", "/getAllFeatures.do", "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"),
                                         new KnownType("geodesy:stations", "Geodesy", "", "/getAllFeatures.do", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png")};
+
+    /**
+     * Construct
+     * @param prtalPropertyPlaceholderConfigurer
+     */
+    @Autowired
+    public CSWController(PortalPropertyPlaceholderConfigurer prtalPropertyPlaceholderConfigurer) {
+        cswService.setServiceUrl(prtalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.cswservice.url"));
+
+        try {
+            cswService.updateRecordsInBackground();
+        } catch (Exception e) {
+            logger.error(e);
+        }
+
+    }
 
     /**
      * This controller queries geonetwork for all of its data records, then created a JSON response as a list
@@ -50,7 +69,7 @@ public class CSWController {
             //add the name of the layer/feature type
             tableRow.add(knownType.displayName);
 
-            CSWRecord[] records = cswService.getWFSRecordsKnownType(knownType.featureTypeName);
+            CSWRecord[] records = cswService.getWFSRecordsForTypename(knownType.featureTypeName);
             String servicesDescription = "\nServices from: \n";
             JSONArray serviceURLs = new JSONArray();
 
@@ -64,7 +83,7 @@ public class CSWController {
                 //serviceURLs.add("http://auscope-services.arrc.csiro.au/deegree-wfs/services");
             }
 
-            //add the abstract text to be shown as a description
+            //add the abstract text to be shown as updateCSWRecords description
             tableRow.add(knownType.description + servicesDescription);
 
             //add the service URL - this is the spring controller for handling minocc
@@ -73,10 +92,10 @@ public class CSWController {
             //add the type: wfs or wms
             tableRow.add("wfs");
 
-            //TODO: add a proper unique id
+            //TODO: add updateCSWRecords proper unique id
             tableRow.add(knownType.hashCode());
 
-            //add the featureType name (in case of a WMS feature)
+            //add the featureType name (in case of updateCSWRecords WMS feature)
             tableRow.add(knownType.featureTypeName);
 
             tableRow.add(serviceURLs);
@@ -108,19 +127,19 @@ public class CSWController {
             //add the name of the layer/feature type
             tableRow.add(record.getOnlineResourceName());
 
-            //add the abstract text to be shown as a description
+            //add the abstract text to be shown as updateCSWRecords description
             tableRow.add(record.getOnlineResourceDescription());
 
-            //wms dont need a proxy url
+            //wms dont need updateCSWRecords proxy url
             tableRow.add("");
 
             //add the type: wfs or wms
             tableRow.add("wms");
 
-            //TODO: add a proper unique id
+            //TODO: add updateCSWRecords proper unique id
             tableRow.add(record.hashCode());
 
-            //add the featureType name (in case of a WMS feature)
+            //add the featureType name (in case of updateCSWRecords WMS feature)
             tableRow.add(record.getOnlineResourceName());
 
             JSONArray serviceURLs = new JSONArray();

@@ -34,7 +34,7 @@ public class TestMineralOccurrence {
 
     @BeforeClass
     public static void setup() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-        //create a valid mineral occurrence
+        //create updateCSWRecords valid mineral occurrence
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
         DocumentBuilder builder = domFactory.newDocumentBuilder();

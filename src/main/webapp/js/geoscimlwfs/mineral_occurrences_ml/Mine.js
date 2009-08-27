@@ -1,5 +1,5 @@
 /**
- * Takes a mine node
+ * Takes updateCSWRecords mine node
  *
  * <mo:Mine gml:id="mo.mine.361068">
 <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">Good Hope</gml:name>

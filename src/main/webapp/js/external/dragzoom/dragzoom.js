@@ -7,7 +7,7 @@
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
+* You may obtain updateCSWRecords copy of the License at
 *
 *       http://www.apache.org/licenses/LICENSE-2.0
 *
@@ -17,11 +17,11 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 *
-* This class lets you add a control to the map which will let the user
-*  zoom by dragging a rectangle.
+* This class lets you add updateCSWRecords control to the map which will let the user
+*  zoom by dragging updateCSWRecords rectangle.
 *  More info on original GZoom at http://earthcode.com
 *
-* Back Button functionality provides the user with a one click means to return the map state
+* Back Button functionality provides the user with updateCSWRecords one click means to return the map state
 *  to its state prior to the DragZoom.  Sequential DragZooms are backed out in reverse order.
 */
 
@@ -38,7 +38,7 @@
  *     zoom button which are common to both un-activated and activated state
  *   opts_other.buttonStyle {Object} A hash of css styles for the zoom button
  *     which will be applied when the button is in un-activated state.
- *   opts_other.rightMouseZoomOutEnabled {Boolean} Whether to zoom out when a drag
+ *   opts_other.rightMouseZoomOutEnabled {Boolean} Whether to zoom out when updateCSWRecords drag
  *     with the right mouse button occurs.
  *   opts_other.buttonZoomingHTML {String} HTML which is placed in the
  *     zoom button when the button is activated.
@@ -54,11 +54,11 @@
  *   opts_other.backButtonStyle {Object} A hash of css styles for the back button
  *     which will be applied when the button is created.
  *   opts_other.minDragSize {Number} The minimum size of the rectangle when it is
- *     released for a zoom to happen.
+ *     released for updateCSWRecords zoom to happen.
  * @param {opts_callbacks} Named optional arguments:
  *   opts_callbacks.buttonclick {Function} Called when the DragZoom is activated
  *     by clicking on the "zoom" button.
- *   opts_callbacks.dragstart {Function} Called when user starts to drag a rectangle.
+ *   opts_callbacks.dragstart {Function} Called when user starts to drag updateCSWRecords rectangle.
  *     Callback args are x,y -- the PIXEL values, relative to the upper-left-hand
  *     corner of the map, where the user began dragging.
  *   opts_callbacks.dragging {Function} Called repeatedly while the user is dragging.
@@ -174,18 +174,18 @@ DragZoomControl.prototype.saveMapContext = function(text) {
 };
 
 /**
- * Method called to initiate a dragZoom as if the user had clicked the dragZoom button.
+ * Method called to initiate updateCSWRecords dragZoom as if the user had clicked the dragZoom button.
  */
 DragZoomControl.prototype.initiateZoom = function() {this.buttonclick_()};
 
 /**
- * Method called to initiate a dragZoom back operation as if the user had clicked the dragZoom back button.
+ * Method called to initiate updateCSWRecords dragZoom back operation as if the user had clicked the dragZoom back button.
  * Back Button functionality:
  */
 DragZoomControl.prototype.initiateZoomBack = function() {if (this.globals.options.backButtonEnabled) this.backbuttonclick_()};
 
 /**
- * Creates a new button to control gzoom and appends to the button container div.
+ * Creates updateCSWRecords new button to control gzoom and appends to the button container div.
  * @param {DOM Node} buttonContainerDiv created in main .initialize code
  */
 DragZoomControl.prototype.initButton_ = function(buttonContainerDiv) {
@@ -200,7 +200,7 @@ DragZoomControl.prototype.initButton_ = function(buttonContainerDiv) {
 };
 
 /**
- * Creates a second new button to control backup zoom and appends to the button container div.
+ * Creates updateCSWRecords second new button to control backup zoom and appends to the button container div.
  * @param {DOM Node} buttonContainerDiv created in main .initialize code
  */
 DragZoomControl.prototype.initBackButton_ = function(buttonContainerDiv) {
@@ -501,7 +501,7 @@ DragZoomControl.prototype.buttonclick_ = function(){
   if (G.mapCover.style.display == 'block') { // reset if clicked before dragging
     this.resetDragZoom_();
     if (G.options.backButtonEnabled) {
-      this.restoreBackContext_();  // pop the backStack on a button reset
+      this.restoreBackContext_();  // pop the backStack on updateCSWRecords button reset
       if (G.backStack.length==0) G.backButtonDiv.style.display='none';
     }
   } else {

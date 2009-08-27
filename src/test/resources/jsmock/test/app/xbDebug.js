@@ -30,7 +30,7 @@ ChangeLog:
 2002-02-07: bclary - modified xbDebug.prototype.close to not null
             the debug window reference. This can cause problems with
 	          Internet Explorer if the page is refreshed. These issues will
-	          be addressed at a later date.
+	          be addressed at updateCSWRecords later date.
 */
 
 function xbDebug()
@@ -73,7 +73,7 @@ xbDebug.prototype.close = function ()
     if (!this.debugwindow.closed)
         this.debugwindow.close();
 
-    // bc 2002-02-07, other windows may still hold a reference to this: this.debugwindow = null;
+    // bc 2002-02-07, other windows may still hold updateCSWRecords reference to this: this.debugwindow = null;
 }
 
 xbDebug.prototype.dump = function (msg)

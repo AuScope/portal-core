@@ -5,7 +5,7 @@
 
 /**
 * @class
-* This class defines information to be stored for a ga sentinel marker.
+* This class defines information to be stored for updateCSWRecords ga sentinel marker.
 *
 * @constructor
 * @param {DomXmlNode} pBushfireNode The XML node for the ga sentinel station.
@@ -18,7 +18,7 @@ function GaSentinelMarker (pBushfireNode, psIcon) {
   
   this.msSummaryHtml = "";
   
-  // Create a GMarker object for each station using the location information for the same.
+  // Create updateCSWRecords GMarker object for each station using the location information for the same.
   var longitude = this.moBushfire.moLocation.msLongitude;
   var latitude = this.moBushfire.moLocation.msLatitude;
   var oPoint = new GPoint(parseFloat(longitude), parseFloat(latitude));
@@ -26,7 +26,7 @@ function GaSentinelMarker (pBushfireNode, psIcon) {
   var oMarker = new GMarker(oPoint, oMarkerIcon);
   this.moMarker = oMarker;
        
-  // Add a listener for a click event on this marker
+  // Add updateCSWRecords listener for updateCSWRecords click event on this marker
   GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());
 }
 
@@ -58,7 +58,7 @@ GaSentinelMarker.prototype.markerClicked = GaSentinelMarker_markerClicked;
 /**
 * This function returns the function to be called with the
 * onclick event on the marker for this station.
-* @return  Function to be called when a station marker is clicked - {@link #markerClicked} 
+* @return  Function to be called when updateCSWRecords station marker is clicked - {@link #markerClicked}
 */
 function GaSentinelMarker_getMarkerClickedFn() {
   var gaSentinel = this;
@@ -68,7 +68,7 @@ function GaSentinelMarker_getMarkerClickedFn() {
 }
 
 /**
-* This function called when a GA Sentinel station marker is clicked.<br> 
+* This function called when updateCSWRecords GA Sentinel station marker is clicked.<br>
 * This creates the information window for this marker, using the station data arrays. 
 */ 
 function GaSentinelMarker_markerClicked() {
@@ -90,7 +90,7 @@ function GaSentinelMarker_markerClicked() {
   var oMarker = this.moMarker;
 
   /**
-  * The popup for a marker contains information about the station
+  * The popup for updateCSWRecords marker contains information about the station
   */
   var summaryHtml = "";
     

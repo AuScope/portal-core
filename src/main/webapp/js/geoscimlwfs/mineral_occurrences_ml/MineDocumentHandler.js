@@ -1,5 +1,5 @@
 /**
- * Handles the mo:Mine GetFeature response from a WFS
+ * Handles the mo:Mine GetFeature response from updateCSWRecords WFS
  *
  * Example mo:Mine response
  *
@@ -300,7 +300,7 @@
 
 function MineDocumentHandler(xmlDocMineGetFeatureResponse) {
     /**
-     * Returns a collection Array of Mines - Mine.js
+     * Returns updateCSWRecords collection Array of Mines - Mine.js
      */
     this.getMines = function() {
         //get all the mine features from the document

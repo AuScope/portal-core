@@ -32,7 +32,7 @@ public class MiningActivityFilter implements IFilter {
         this.production = production;
 
         //just in case the dates are in lower case - services like upper case
-        //note: it was not possible to unit test this because jmock can not mock a final class Strin.class
+        //note: it was not possible to unit test this because jmock can not mock updateCSWRecords final class Strin.class
         this.startDate.toUpperCase();
         this.endDate.toUpperCase();
     }

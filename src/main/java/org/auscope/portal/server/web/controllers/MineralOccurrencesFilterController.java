@@ -97,7 +97,7 @@ public class MineralOccurrencesFilterController {
             //get all of the mines
             Collection<Mine> mines = this.mineralOccurrenceService.getAllMines(serviceUrl);
 
-            //create a single all mines element to add to the top of the list
+            //create updateCSWRecords single all mines element to add to the top of the list
             Map mineNameAll = new HashMap() {{
                 put("mineDisplayName", ALL_MINES);
             }};
@@ -176,7 +176,7 @@ public class MineralOccurrencesFilterController {
                                                                                         minCommodityAmountUOM,
                                                                                         cutOffGrade,
                                                                                         cutOffGradeUOM);
-            //if there are 0 features then send a nice message to the user
+            //if there are 0 features then send updateCSWRecords nice message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
@@ -214,7 +214,7 @@ public class MineralOccurrencesFilterController {
                                                                                         minCommodityAmountUOM,
                                                                                         cutOffGrade,
                                                                                         cutOffGradeUOM);
-            //if there are 0 features then send a nice message to the user
+            //if there are 0 features then send updateCSWRecords nice message to the user
             //if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
             //    return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
@@ -224,21 +224,21 @@ public class MineralOccurrencesFilterController {
 
             /*String kml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><kml xmlns:sa=\"http://www.opengis.net/sampling/1.0\" xmlns:geodesy=\"http://auscope.org.au/geodesy\" xmlns:mo=\"urn:cgi:xmlns:GGIC:MineralOccurrence:1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xalan=\"http://xml.apache.org/xalan\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:kml=\"http://www.opengis.net/kml/2.2\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"><Document><name>GML Links to KML</name><description>GeoSciML data converted to KML</description><Placemark><name>urn:cgi:feature:GSV:MineralOccurrence:361103</name><description>\n" +
                     "            &lt;/br&gt;&lt;table border=\"3\" cellspacing=\"1\" cellpadding=\"2\" height=\"100%\" bgcolor=\"#EAF0F8\"&gt;\n" +
-                    "            &lt;tr&gt;&lt;td&gt;Id&lt;/td&gt;&lt;td&gt;&lt;a href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:MineralOccurrence:361103','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:MineralOccurrence:361103&lt;/a&gt;\n" +
+                    "            &lt;tr&gt;&lt;td&gt;Id&lt;/td&gt;&lt;td&gt;&lt;updateCSWRecords href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:MineralOccurrence:361103','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:MineralOccurrence:361103&lt;/updateCSWRecords&gt;\n" +
                     "\n" +
                     "            &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Type&lt;/td&gt;&lt;td&gt;mineral deposit\n" +
                     "            &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mineral Deposit Group&lt;/td&gt;&lt;td&gt;Unknown\n" +
-                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;a href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:AG','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:AG&lt;/a&gt;\n" +
+                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;updateCSWRecords href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:AG','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:AG&lt;/updateCSWRecords&gt;\n" +
                     "\n" +
                     "   \n" +
-                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;a href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:AU','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:AU&lt;/a&gt;\n" +
+                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;updateCSWRecords href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:AU','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:AU&lt;/updateCSWRecords&gt;\n" +
                     "   \n" +
-                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;a href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:COB','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:COB&lt;/a&gt;\n" +
+                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;updateCSWRecords href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:COB','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:COB&lt;/updateCSWRecords&gt;\n" +
                     "\n" +
                     "   \n" +
-                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;a href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:NK','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:NK&lt;/a&gt;\n" +
+                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;updateCSWRecords href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:NK','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:NK&lt;/updateCSWRecords&gt;\n" +
                     "   \n" +
-                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;a href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:PB','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:PB&lt;/a&gt;\n" +
+                    "     &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Commodity Description&lt;/td&gt;&lt;td&gt;&lt;updateCSWRecords href=\"#\" onclick=\"var w=window.open('http://portal.auscope.org/UriUrlConverterClient/sampleUriUrlConverterProxy/?uri=urn:cgi:feature:GSV:Commodity:361103:PB','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;\"&gt;urn:cgi:feature:GSV:Commodity:361103:PB&lt;/updateCSWRecords&gt;\n" +
                     "\n" +
                     "   &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;\n" +
                     "         </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</href></Icon></IconStyle></Style><coordinates>147.52659,-37.6338,0</coordinates></Point></Placemark></Document></kml>";
@@ -270,7 +270,6 @@ public class MineralOccurrencesFilterController {
             response.setContentType("text/xml");
             String kml = kmls.get(key);
             //response.getWriter().write(gmlToKml.convert(mineralOccurrenceResponse, request));
-            System.out.println(kml.getBytes().length);
             response.getWriter().println(kml);
             //return null;
         } catch (Exception e) {
@@ -298,14 +297,14 @@ public class MineralOccurrencesFilterController {
             else
                 mines = this.mineralOccurrenceService.getMineWithSpecifiedName(serviceUrl, mineName);
 
-            //if there are 0 features then send a nice message to the user
+            //if there are 0 features then send updateCSWRecords nice message to the user
             if (mines.size() == 0)
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
             //get the mining activities
             String miningActivityResponse = this.mineralOccurrenceService.getMiningActivityGML(serviceUrl, mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
-            //if there are 0 features then send a nice message to the user
+            //if there are 0 features then send updateCSWRecords nice message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(miningActivityResponse) == 0)
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 

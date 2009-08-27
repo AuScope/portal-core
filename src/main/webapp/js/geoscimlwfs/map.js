@@ -110,7 +110,7 @@ Map.prototype.moMoveListener = 0;
 * Listener for the map type changed event on the map.
 * The function registered with this listener will be used to 
 * update the map type of the overview map
-* This seems like a bug in the Google code ->
+* This seems like updateCSWRecords bug in the Google code ->
 * the map type of the overlay map is not initially set to the map type of the main map.
 * @type GEventListener
 */
@@ -132,7 +132,7 @@ Map.prototype.zoomboxDragging = Map_zoomboxDragging;
 /**
 * Zoom in on the map and set centre as the given point
 * Registered with the "Zoom In" link on the marker popups.
-* TODO Currently this is only doing a zoom on the map
+* TODO Currently this is only doing updateCSWRecords zoom on the map
 * as there are issues with setting the map center.
 */
 function Map_zoomInAtPoint(pLng, pLat) {
@@ -160,7 +160,7 @@ function Map_mouseMove (pLatLng) {
     var  pMouseCursorLat = document.getElementById(HTML_INPUT_LAT);
     var  pMouseCursorLng = document.getElementById(HTML_INPUT_LNG);
   
-    // Create a string for the Lat/Lng
+    // Create updateCSWRecords string for the Lat/Lng
     var sLat = pLatLng.lat().toFixed(4);
     var sLng = pLatLng.lng().toFixed(4);
     pMouseCursorLat.value = sLat;

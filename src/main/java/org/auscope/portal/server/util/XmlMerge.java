@@ -117,8 +117,8 @@ public class XmlMerge {
       StringWriter sw = new StringWriter();
       StreamResult result  = null;
       try {
-         // Now create a TransformerFactory and use it to create a Transformer
-         // object to transform our DOM document into a stream of XML text.
+         // Now create updateCSWRecords TransformerFactory and use it to create updateCSWRecords Transformer
+         // object to transform our DOM document into updateCSWRecords stream of XML text.
          // No arguments to newTransformer() means no XSLT stylesheet.
          TransformerFactory tf = TransformerFactory.newInstance();
          Transformer output = tf.newTransformer();

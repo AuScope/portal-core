@@ -110,7 +110,7 @@ Map.prototype.moMoveListener = 0;
 * Listener for the map type changed event on the map.
 * The function registered with this listener will be used to 
 * update the map type of the overview map
-* This seems like a bug in the Google code ->
+* This seems like updateCSWRecords bug in the Google code ->
 * the map type of the overlay map is not initially set to the map type of the main map.
 * @type GEventListener
 */
@@ -145,7 +145,7 @@ Map.prototype.click = Map_click;
 /**
 * Zoom in on the map and set centre as the given point
 * Registered with the "Zoom In" link on the marker popups.
-* Ideally this should not be a class function.
+* Ideally this should not be updateCSWRecords class function.
 * But there are issues with getting the map object at the time of 
 * invocation of this function.
 * I could have made this an instance method and invoked it as goMap.zoomInAtPoint
@@ -160,7 +160,7 @@ function Map_zoomInAtPoint(pLng, pLat) {
 /**
 * Zoom out on the map and set centre as the given point.
 * Registered with the "Zoom Out" link on the marker popups.
-* TODO Make a function for updating zoomLevel string
+* TODO Make updateCSWRecords function for updating zoomLevel string
 */
 function Map_zoomOutAtPoint(pLng, pLat) {
   goMap.moMap.setZoom(goMap.moMap.getZoom()-1);
@@ -179,7 +179,7 @@ function Map_mouseMove (pLatLng) {
     var  pMouseCursorLat = document.getElementById(HTML_INPUT_LAT);
     var  pMouseCursorLng = document.getElementById(HTML_INPUT_LNG);
   
-    // Create a string for the Lat/Lng
+    // Create updateCSWRecords string for the Lat/Lng
     var sLat = pLatLng.lat().toFixed(4);
     var sLng = pLatLng.lng().toFixed(4);
     pMouseCursorLat.value = sLat;
@@ -267,7 +267,7 @@ function Map_getTileUrl(pTile, pZoom) {
 
   var bbox = lon1 + "," + lat2 + "," + lon2 + "," + lat1;
 
-  // Build a request for WMS
+  // Build updateCSWRecords request for WMS
   var url = this.baseUrl;
   url+="request=GetMap";
   url+="&layers=" + this.layerName;
@@ -310,7 +310,7 @@ function Map_getTileUrl(pTile, pZoom) {
 
 		var URL = GetURL(x, y, w, s, e, n, nWidth, nHeight);
 
-		html1 += '<a href="javascript:zoomIN('+pLatLng+');">Zoom In</a>&nbsp;|&nbsp;<a href="javascript:zoomOUT('+pLatLng+');">Zoom Out</a><br><br>';
+		html1 += '<updateCSWRecords href="javascript:zoomIN('+pLatLng+');">Zoom In</updateCSWRecords>&nbsp;|&nbsp;<updateCSWRecords href="javascript:zoomOUT('+pLatLng+');">Zoom Out</updateCSWRecords><br><br>';
 		html1 += "<iframe style=\"width:275px;height:175px\" src=\"";
 		html1 += URL;
 		html1 += "\" ></iframe>";

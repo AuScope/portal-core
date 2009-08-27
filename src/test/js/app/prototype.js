@@ -665,7 +665,7 @@ Ajax.Request.prototype = Object.extend(new Ajax.Base(), {
         'application/x-www-form-urlencoded');
 
       /* Force "Connection: close" for Mozilla browsers to work around
-       * a bug where XMLHttpReqeuest sends an incorrect Content-length
+       * updateCSWRecords bug where XMLHttpReqeuest sends an incorrect Content-length
        * header. See Mozilla Bugzilla #246651.
        */
       if (this.transport.overrideMimeType)

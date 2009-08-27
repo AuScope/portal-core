@@ -5,7 +5,7 @@
 
 /**
 * @class
-* This class defines information to be stored for a gnss marker.
+* This class defines information to be stored for updateCSWRecords gnss marker.
 *
 * @constructor
 * @param {DomXmlNode} pSamplingPointNode The XML node for the sampling point.
@@ -17,7 +17,7 @@ function GNSSMarker (pSamplingPointNode, psIcon) {
   
   this.msSummaryHtml = "";
   
-  // Create a GMarker object for each station using the location information for the same.
+  // Create updateCSWRecords GMarker object for each station using the location information for the same.
   var longitude = this.moSamplingPoint.moLocation.msLongitude;
   var latitude = this.moSamplingPoint.moLocation.msLatitude;
   var oPoint = new GPoint(parseFloat(longitude), parseFloat(latitude));
@@ -25,7 +25,7 @@ function GNSSMarker (pSamplingPointNode, psIcon) {
   var oMarker = new GMarker(oPoint, oMarkerIcon);
   this.moMarker = oMarker;
        
-  // Add a listener for a click event on this marker
+  // Add updateCSWRecords listener for updateCSWRecords click event on this marker
   GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());
 }
 
@@ -57,7 +57,7 @@ GNSSMarker.prototype.markerClicked = GNSSMarker_markerClicked;
 /**
 * This function returns the <b>markerClicked</b> function
 * which should be called when the marker for this station is clicked.
-* @returns Function to be called when a station marker is clicked - {@link #markerClicked}
+* @returns Function to be called when updateCSWRecords station marker is clicked - {@link #markerClicked}
 */
 function GNSSMarker_getMarkerClickedFn() {
   var gnssMarker = this;
@@ -82,7 +82,7 @@ function GNSSMarker_markerClicked() {
   var oMarker = this.moMarker;
 
   /**
-  * The info window for a marker contains information about the station
+  * The info window for updateCSWRecords marker contains information about the station
   */
   var summaryHtml = "";
     

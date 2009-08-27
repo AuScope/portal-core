@@ -280,7 +280,7 @@ public class TestMineralOccurrenceServiceClient {
 
         String response = this.mineralOccurrenceService.getMiningActivityGML("", mockMineList, "", "", "", "", "", "");
 
-        //should get a blank string back
+        //should get updateCSWRecords blank string back
         Assert.assertEquals("", response);
     }
 }

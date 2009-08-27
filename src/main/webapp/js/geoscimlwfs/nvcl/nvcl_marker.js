@@ -5,7 +5,7 @@
 
 /**
 * @class
-* This class defines information to be stored for a nvcl marker.
+* This class defines information to be stored for updateCSWRecords nvcl marker.
 *
 * @constructor
 * @param {DomXmlNode} pBoreholeNode The XML node for the borehole station.
@@ -35,7 +35,7 @@ function NVCLMarker (boreholeId, marker, description) {
   this.mnSamplingInterval = 1;
   this.msPlotImageSrc = "";
 		
-  // Create a GMarker object for each station using the location information for the same.
+  // Create updateCSWRecords GMarker object for each station using the location information for the same.
   /*var longitude = this.moBorehole.moLocation.msLongitude;
   var latitude = this.moBorehole.moLocation.msLatitude;
   var oPoint = new GPoint(parseFloat(longitude), parseFloat(latitude));
@@ -43,7 +43,7 @@ function NVCLMarker (boreholeId, marker, description) {
   var oMarker = new GMarker(oPoint, oMarkerIcon);
   this.moMarker = oMarker;
 
-  // Add a listener for a click event on this marker
+  // Add updateCSWRecords listener for updateCSWRecords click event on this marker
   GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());*/
 }
 
@@ -143,7 +143,7 @@ NVCLMarker.prototype.mnSamplingInterval = null;
 NVCLMarker.prototype.msPlotImageSrc = null;
 
 /**
-* The GMarker for the displaying the station as a marker on the map.
+* The GMarker for the displaying the station as updateCSWRecords marker on the map.
 * @type GMarker
 */
 NVCLMarker.prototype.moMarker = null;
@@ -210,7 +210,7 @@ NVCLMarker.prototype.getScalarNote = NVCLMarker_getScalarNote;
 /**
 * This function returns the function
 * which should be called when the oMarker for this station is clicked.
-* @returns Function to be called when a station marker is clicked - {@link #markerClicked}
+* @returns Function to be called when updateCSWRecords station marker is clicked - {@link #markerClicked}
 */
 function NVCLMarker_getMarkerClickedFn() {
   var nvclMarker = this;
@@ -227,8 +227,7 @@ function NVCLMarker_getMarkerClickedFn() {
 * @param scalarName {String} name of the scalar
 */
 function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
-  var downloadProxy = "/downloadProxy?rest=true&url=";  
-  var vocabsQuery = downloadProxy + VOCAB_SERVICE_URL + scalarName.replace(/%/, "%25");
+  var vocabsQuery = ProxyURL + VOCAB_SERVICE_URL + scalarName.replace(/%/, "%25");
   
   GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
     if(pResponseCode == 200) {
@@ -255,10 +254,10 @@ function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
 }
 
 /**
-* The function called when a marker is clicked.<br>
+* The function called when updateCSWRecords marker is clicked.<br>
 * This creates the html popup marker displaying station information.<br>  
 * It calls the nvcl web service -
-* <a href="http://nvcl.csiro.au/scalars.asmx/get">http://nvcl.csiro.au/scalars.asmx/get</a>
+* <updateCSWRecords href="http://nvcl.csiro.au/scalars.asmx/get">http://nvcl.csiro.au/scalars.asmx/get</updateCSWRecords>
 */ 
 function NVCLMarker_markerClicked()
 {
@@ -274,7 +273,7 @@ function NVCLMarker_markerClicked()
   // accepted by all nvcl web services
   var sCoreId = this.boreholeId.substring(10);//oBorehole.msId.substring(10);
   
-  // Web service to get the scalars belonging to a given borehole
+  // Web service to get the scalars belonging to updateCSWRecords given borehole
   var scalars_proxy = ProxyURL + NVCL_WEB_SERVICE_IP + "/scalars.asmx/get";
   scalars_proxy += "?coreid=" + sCoreId;
 
@@ -314,7 +313,7 @@ function NVCLMarker_markerClicked()
         for (var i=0; i < oNVCLMarker.maScalars.length; i++) {
           var scalarId = oNVCLMarker.maScalars[i];
           var scalarName = oNVCLMarker.maScalarNames[scalarId];
-          // NOTE oNVCLMarker has to be passed as a parameter to this function
+          // NOTE oNVCLMarker has to be passed as updateCSWRecords parameter to this function
           // if it is called as "oNVCLMarker.getScalarNote" it will produce errors!
           NVCLMarker_getScalarNote(oNVCLMarker, scalarId, scalarName);
         }
@@ -401,8 +400,8 @@ function NVCLMarker_createSummaryTabHtml() {
     // Second row is for the ZoomIn nd ZoomOut links
     summaryHtml += '<tr><td>';
     summaryHtml += '<div style="font-size:12px; line-height:12px;">';
-    summaryHtml += '<a href="javascript:Map_zoomInAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom In</font></a>&nbsp;|&nbsp;';
-    summaryHtml += '<a color="blue" href="javascript:Map_zoomOutAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom Out</font></a>';
+    summaryHtml += '<updateCSWRecords href="javascript:Map_zoomInAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom In</font></updateCSWRecords>&nbsp;|&nbsp;';
+    summaryHtml += '<updateCSWRecords color="blue" href="javascript:Map_zoomOutAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom Out</font></updateCSWRecords>';
     summaryHtml += '</div>';
     summaryHtml += '</td></tr>'; // End of second row
     summaryHtml += '</table></div>'; // End of outermost div 
@@ -415,8 +414,8 @@ function NVCLMarker_createSummaryTabHtml() {
 * Function to create the html to be displayed in the <b>Mosaic</b> tab
 * of the information window of the marker.<br> 
 * It stores the html string in the member {@link #msMosaicHtml}.<br>
-* It calls the nvcl web service - <a href="http://nvcl.csiro.au/scalars.asmx/trayids">http://nvcl.csiro.au/scalars.asmx/trayids</a> and 
-* <a href="http://nvcl.csiro.au/Display_Tray_Thumb.aspx">http://nvcl.csiro.au/Display_Tray_Thumb.aspx</a> 
+* It calls the nvcl web service - <updateCSWRecords href="http://nvcl.csiro.au/scalars.asmx/trayids">http://nvcl.csiro.au/scalars.asmx/trayids</updateCSWRecords> and
+* <updateCSWRecords href="http://nvcl.csiro.au/Display_Tray_Thumb.aspx">http://nvcl.csiro.au/Display_Tray_Thumb.aspx</updateCSWRecords>
 */
 function NVCLMarker_createMosaicTabHtml() {
 
@@ -460,7 +459,7 @@ function NVCLMarker_createMosaicTabHtml() {
         }
     	
         if (nTrayIndex != 0) {
-          // Link to open the moscaic image in a new window
+          // Link to open the moscaic image in updateCSWRecords new window
           //var newMosaicHtmlUrl = top.location.protocol + "//" + top.location.host + "/GoogleMap/html/mosaic_image.html?coreid=" + sCoreId;
             var newMosaicHtmlUrl = "/mosaic_image.html?coreid=" + sCoreId;
           mosaicHtml += '<div id="div_new_mosaic_window" style="height:20px; width:100%; text-align:center">'
@@ -472,7 +471,7 @@ function NVCLMarker_createMosaicTabHtml() {
           mosaicHtml += '<div style="height:400px; width:650px; overflow:auto; text-align:left">';
           var columnCounter = 0;
             
-          // Each tray image has a thumbnail and an enlarged version.
+          // Each tray image has updateCSWRecords thumbnail and an enlarged version.
           // This is common part of the web service for each tray.
           //var trayImageThmbUrlCmn = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/tray/thumb?coreid=" + sCoreId;
           //var trayImageThmbUrlCmn = ProxyURL+"http://150.229.98.207/Display_Tray_Thumb.aspx?coreid=" + sCoreId;
@@ -493,7 +492,7 @@ function NVCLMarker_createMosaicTabHtml() {
             trayImageUrl = trayImageUrlCmn + '&trayid=' + oNVCLMarker.maMosaicTrays[i];
             trayImageThmbUrl = trayImageThmbUrlCmn + '&trayid=' + oNVCLMarker.maMosaicTrays[i];
               
-            // The href is so that clicking on any tray opens an enlarged version of it in a new tab.
+            // The href is so that clicking on any tray opens an enlarged version of it in updateCSWRecords new tab.
             mosaicHtml += '<a target="_blank" href="' + trayImageUrl + '">';
             mosaicHtml += '<img src="'+ trayImageThmbUrl +'" style="border-width:0px;width:200px;" />';
             mosaicHtml += '</a>';
@@ -657,7 +656,7 @@ function NVCLMarker_createPlotScalarsTabHtml() {
 }
 
 /**
-* Function to open a <b>InfoWindowTabsHtml</b> for the marker clicked.<br>
+* Function to open updateCSWRecords <b>InfoWindowTabsHtml</b> for the marker clicked.<br>
 * This function assumes that all the data to be downloaded for the borehole,
 * like  mosaic images, list of scalars, has been downloaded.
 */
@@ -668,7 +667,7 @@ function NVCLMarker_displayInfoWindow() {
   var oMarker = this.moMarker;
 		
   /**
-   * The popup for a marker contains 4 tabs -
+   * The popup for updateCSWRecords marker contains 4 tabs -
    * Summary - contains the basic information about the borehole like id, name etc
    * Mosaic - has the mosaic images for the borehole
    * Plot Scalars - allows users to choose from the list of scalars available for the borehole
@@ -718,7 +717,7 @@ function NVCLMarker_displayInfoWindow() {
 * Function to update the onclick events for the 
 * <b>Add</b>, <b>Remove</b> and <b>Plot</b> buttons
 * on the <b>Plot Scalars</b> tab of the information window.<br>
-* This function is called after a delay of 500ms to give map
+* This function is called after updateCSWRecords delay of 500ms to give map
 * some time to render the window. 
 */
 function NVCLMarker_updateInfoWindow() {
@@ -757,11 +756,11 @@ function NVCLMarker_createPlotsTabHtml() {
     plotsHtml += '<a id="a_new_window" href="' + gsNoSclarasPlottedImg + '" style="display: none"> Open in a new window </a><br/>';
     plotsHtml += '</div>';
 		
-    // Initially we display a blank image
+    // Initially we display updateCSWRecords blank image
     // It is important that the blank text be displayed as an image and not as text.
     // Because, the GInfoWindow cannot be resized at runtime, 
-    // once a plot is actually download, it will simple overflow the popup window.
-    // So we kind of set the initial size of the window to a large one with this dummy image.
+    // once updateCSWRecords plot is actually download, it will simple overflow the popup window.
+    // So we kind of set the initial size of the window to updateCSWRecords large one with this dummy image.
     plotsHtml += '<div id="div_plotted_scalars" style="height:400px; width:100%; overflow: auto; text-align:center">';
     plotsHtml += '<img id="plot_image" src="' + gsNoSclarasPlottedImg + '">';
     plotsHtml += '</div>';
@@ -797,7 +796,7 @@ function NVCLMarker_getMoveScalarsInLists(pFromListBox, pToListBox, pIsSelecting
 
 /**
 * This function moves the selected items from one list to the other.<br>
-* It is not a generic function 
+* It is not updateCSWRecords generic function
 * because it also updates the list of selected scalars for the borehole.<br>
 * This array {@link #maScalarSelected} is used to recreate the user selection,
 * the next time the user visits the same borehole.
@@ -820,7 +819,7 @@ function NVCLMarker_moveScalarsInLists(pFromListBox, pToListBox, pIsSelecting) {
       return;
 
     while ( oFromList.options.selectedIndex >= 0 ) {
-      // Create a new instance of ListItem 
+      // Create updateCSWRecords new instance of ListItem
       var oListItem = new Option();  
       
       oListItem.text  = oFromList.options[oFromList.options.selectedIndex].text; 
@@ -863,7 +862,7 @@ function NVCLMarker_moveScalarsInLists(pFromListBox, pToListBox, pIsSelecting) {
 /**
 * This function returns the actual function to be called 
 * with the <b>Plot</b> button in the <b>Plot Scalars</b> tab.
-* @returns Function to plot the selected scalars for a station - {@link #plotSelectedScalars}  
+* @returns Function to plot the selected scalars for updateCSWRecords station - {@link #plotSelectedScalars}
 */
 function NVCLMarker_getPlotSelectedScalars() {
   var nvclMarker = this;
@@ -875,7 +874,7 @@ function NVCLMarker_getPlotSelectedScalars() {
 /**
 * Function to plot the scalars selected by the user.<br>
 * It calls the nvcl web service -
-* <a href="http://nvcl.csiro.au/plotscalar.aspx">http://nvcl.csiro.au/plotscalar.aspx</a>
+* <updateCSWRecords href="http://nvcl.csiro.au/plotscalar.aspx">http://nvcl.csiro.au/plotscalar.aspx</updateCSWRecords>
 */
 function NVCLMarker_plotSelectedScalars() {
 
@@ -971,7 +970,7 @@ function NVCLMarker_plotSelectedScalars() {
           oNVCLMarker.msPlotImageSrc = sScalarsPlotUrl;
 
           // Once the image is downloaded, 
-          // activate the link "Open in a new window"
+          // activate the link "Open in updateCSWRecords new window"
           var plotImageHref = document.getElementById("a_new_window");      				
           if (plotImageHref != null) {
             gPlottedImageSrc = sScalarsPlotUrl;

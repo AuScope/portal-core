@@ -15,7 +15,7 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
     public CSWMethodMakerGetDataRecords(String serviceURL) throws Exception {
         this.serviceURL = serviceURL;
 
-        //pretty hard to do a GetFeature query with a serviceURL, so we had better check that we have one
+        //pretty hard to do updateCSWRecords GetFeature query with updateCSWRecords serviceURL, so we had better check that we have one
         if(serviceURL == null || serviceURL.equals(""))
             throw new Exception("serviceURL parameter can not be null or empty.");
     }

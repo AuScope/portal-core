@@ -5,7 +5,7 @@
 
 /**
 * @class
-* This class defines information about a sa:SamplingPoint.
+* This class defines information about updateCSWRecords sa:SamplingPoint.
 *
 * @constructor
 * @param {DomXmlNode} pSamplingPoint The XML node for the sampling point.
@@ -41,7 +41,7 @@ SamplingPoint.prototype.moLocation = null;
 SamplingPoint.prototype.parseXmlElement = SamplingPoint_parseXmlElement;
 
 /**
-* This function extracts information from a <b>sa:SamplingPoint</b> node
+* This function extracts information from updateCSWRecords <b>sa:SamplingPoint</b> node
 * and stores it in the members of the class.
 * @param {DomXmlNode} pSamplingPointNode The XML node for the sampling point.
 */
@@ -51,7 +51,7 @@ function SamplingPoint_parseXmlElement(pSamplingPointNode) {
   if (g_IsIE)
     nodeSamplingPoint.setProperty("SelectionLanguage", "XPath");
   /**
-  * Sample XML fragment for a station -
+  * Sample XML fragment for updateCSWRecords station -
   *
   *	<gml:featureMembers>
   *	 <sa:SamplingPoint gml:id="stationno.19042">
@@ -72,7 +72,7 @@ function SamplingPoint_parseXmlElement(pSamplingPointNode) {
   sId = nodeSamplingPoint.getAttribute("gml:id");
   sName = GXml.value(nodeSamplingPoint.selectSingleNode("*[local-name() = 'name']"));
 
-  // sa:SamplingPoint contains a gsml:location node
+  // sa:SamplingPoint contains updateCSWRecords gsml:location node
   oLocation = new Location(nodeSamplingPoint.selectSingleNode(".//*[local-name() = 'Point']"));
 
   // Populate the arrays for the object.

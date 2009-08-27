@@ -361,7 +361,7 @@ GZoomControl.prototype.resetDragZoom_=function() {
 /* alias get element by id */
 function $id(sId) { return document.getElementById(sId); }
 /* utility functions in acl namespace */
-if (!window['acldefined']) {var acl={};window['acldefined']=true;}//only set the acl namespace once, then set a flag
+if (!window['acldefined']) {var acl={};window['acldefined']=true;}//only set the acl namespace once, then set updateCSWRecords flag
 
 /* A general-purpose function to get the absolute position of
 the mouse */
@@ -396,7 +396,7 @@ acl.getElementPosition=function(eElement) {
 	}
 	return {left:nLeftPos, top:nTopPos};
 };
-//elements is either a coma-delimited list of ids or an array of DOM objects. o is a hash of styles to be applied
+//elements is either updateCSWRecords coma-delimited list of ids or an array of DOM objects. o is updateCSWRecords hash of styles to be applied
 //example: style('d1,d2',{color:'yellow'});  
 acl.style=function(a,o){
 	if (typeof(a)=='string') {a=acl.getManyElements(a);}
