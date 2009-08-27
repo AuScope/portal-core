@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.HashMap;
 
 /**
+ * Acts as a proxy to WFS's
+ *
  * User: Mathew Wyatt
  * Date: 17/08/2009
  * Time: 12:10:41 PM
@@ -28,9 +30,26 @@ import java.util.HashMap;
 @Controller
 public class GSMLController {
 
-    @Autowired private HttpServiceCaller serviceCaller;
-    @Autowired private GmlToKml gmlToKml;
+    private HttpServiceCaller serviceCaller;
+    private GmlToKml gmlToKml;
 
+    @Autowired
+    public GSMLController(HttpServiceCaller serviceCaller,
+                          GmlToKml gmlToKml) {
+        this.serviceCaller = serviceCaller;
+        this.gmlToKml = gmlToKml;
+    }
+
+    /**
+     * Given a service Url and a feature type this will query for all of the features, then convert them into KML,
+     * to be displayed, assuming that the response will be complex feature GeoSciML
+     *
+     * @param serviceUrl
+     * @param featureType
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/getAllFeatures.do")
     public ModelAndView requestAllFeatures(@RequestParam("serviceUrl") final String serviceUrl,
                                            @RequestParam("typeName") final String featureType,

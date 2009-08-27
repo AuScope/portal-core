@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.auscope.portal.server.web.service.CSWService;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.server.web.view.JSONModelAndView;
+import org.auscope.portal.server.web.KnownFeatureTypeDefinition;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.apache.log4j.Logger;
 import net.sf.json.JSONArray;
+
+import java.util.ArrayList;
 
 /**
  * User: Mathew Wyatt
@@ -20,39 +23,41 @@ import net.sf.json.JSONArray;
 public class CSWController {
 
     private Logger logger = Logger.getLogger(getClass());
-    @Autowired private CSWService cswService;
-    
-    private KnownType[] knownTypes = {  new KnownType("er:Mine", "Earth Resource Mine", "", "/doMineFilter.do", "http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"),
-                                        new KnownType("er:MineralOccurrence", "Earth Resource Mineral Occurrence", "", "/doMineralOccurrenceFilter.do", "http://maps.google.com/mapfiles/kml/paddle/purple-blank.png"),
-                                        new KnownType("er:MiningActivity", "Earth Resource Mining Activity", "", "/doMiningActivityFilter.do", "http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"),
-                                        new KnownType("gsml:Borehole", "National Virtual Core Library", "", "/getAllFeatures.do", "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"),
-                                        new KnownType("geodesy:stations", "Geodesy", "", "/getAllFeatures.do", "http://maps.google.com/mapfiles/kml/paddle/wht-blank.png")};
+    private CSWService cswService;
+    private PortalPropertyPlaceholderConfigurer portalPropertyPlaceholderConfigurer;
+    private ArrayList knownTypes;
 
     /**
      * Construct
-     * @param prtalPropertyPlaceholderConfigurer
+     * @param
      */
     @Autowired
-    public CSWController(PortalPropertyPlaceholderConfigurer prtalPropertyPlaceholderConfigurer) {
-        cswService.setServiceUrl(prtalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.cswservice.url"));
+    public CSWController(CSWService cswService,
+                         PortalPropertyPlaceholderConfigurer portalPropertyPlaceholderConfigurer,
+                         ArrayList knownTypes) {
+
+        this.cswService = cswService;
+        this.portalPropertyPlaceholderConfigurer = portalPropertyPlaceholderConfigurer;
+        this.knownTypes = knownTypes;
+
+        cswService.setServiceUrl(portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.cswservice.url"));
 
         try {
             cswService.updateRecordsInBackground();
         } catch (Exception e) {
             logger.error(e);
         }
-
     }
 
     /**
-     * This controller queries geonetwork for all of its data records, then created a JSON response as a list
+     * This controller queries a CSW for all of its WFS data records based on known feature types, then created a JSON response as a list
      * which can then be put into a table.
      *
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title: "", description: "", proxyURL: "", serviceType: "", id: "", typeName: "", serviceURLs],
-     * [title: "", description: "", proxyURL: "", serviceType: "", id: "", typeName: "", serviceURLs]
+     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl],
+     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl]
      * ]
      *
      * @return
@@ -62,32 +67,35 @@ public class CSWController {
         //the main holder for the items
         JSONArray dataItems = new JSONArray();
 
-        for(KnownType knownType : knownTypes) {
+        for(Object known : knownTypes) {
+            KnownFeatureTypeDefinition knownType = (KnownFeatureTypeDefinition)known;
+
             //Add the mineral occurrence
             JSONArray tableRow = new JSONArray();
 
             //add the name of the layer/feature type
-            tableRow.add(knownType.displayName);
+            tableRow.add(knownType.getDisplayName());
 
-            CSWRecord[] records = cswService.getWFSRecordsForTypename(knownType.featureTypeName);
-            String servicesDescription = "\nServices from: \n";
+            CSWRecord[] records = cswService.getWFSRecordsForTypename(knownType.getFeatureTypeName());
+            String servicesDescription = "Institutions: ";
             JSONArray serviceURLs = new JSONArray();
 
+            //if there are no services available for this feature type then don't show it in the portal
             if(records.length == 0)
                 break;
 
             for(CSWRecord record : records) {
                 serviceURLs.add(record.getServiceUrl());
-                servicesDescription += record.getContactOrganisation() + "\n";
+                servicesDescription += record.getContactOrganisation() + ", ";
                 //serviceURLs.add("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services");
                 //serviceURLs.add("http://auscope-services.arrc.csiro.au/deegree-wfs/services");
             }
 
             //add the abstract text to be shown as updateCSWRecords description
-            tableRow.add(knownType.description + servicesDescription);
+            tableRow.add(knownType.getDescription() + " " + servicesDescription);
 
             //add the service URL - this is the spring controller for handling minocc
-            tableRow.add(knownType.proxyUrl);
+            tableRow.add(knownType.getProxyUrl());
 
             //add the type: wfs or wms
             tableRow.add("wfs");
@@ -96,15 +104,15 @@ public class CSWController {
             tableRow.add(knownType.hashCode());
 
             //add the featureType name (in case of updateCSWRecords WMS feature)
-            tableRow.add(knownType.featureTypeName);
+            tableRow.add(knownType.getFeatureTypeName());
 
             tableRow.add(serviceURLs);
 
             tableRow.add("true");
-            tableRow.add("<img src=\"js/external/ext-2.2/resources/images/default/grid/done.gif\">");
+            tableRow.add("<img src='js/external/ext-2.2/resources/images/default/grid/done.gif'>");
 
-            tableRow.add("<img width=\"16\" heigh=\"16\" src=\"" + knownType.iconUrl + "\">");
-            tableRow.add(knownType.iconUrl);
+            tableRow.add("<img width='16' heigh='16' src='" + knownType.getIconUrl() + "'>");
+            tableRow.add(knownType.getIconUrl());
 
             dataItems.add(tableRow);
         }
@@ -112,6 +120,19 @@ public class CSWController {
         return new JSONModelAndView(dataItems);
     }
 
+    /**
+     * Gets all WMS data records from a CSW service, and then creats a JSON response for the WMS layers list in the portal
+     *
+     * Returns a JSON response with a data structure like so
+     *
+     * [
+     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl],
+     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl]
+     * ]
+     *
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("/getWMSLayers.do")
     public ModelAndView getWMSLayers() throws Exception {
 
@@ -149,28 +170,11 @@ public class CSWController {
             tableRow.add(serviceURLs);
 
             tableRow.add("true");
-            tableRow.add("<img src=\"js/external/ext-2.2/resources/images/default/grid/done.gif\">");
+            tableRow.add("<img src='js/external/ext-2.2/resources/images/default/grid/done.gif'>");
 
             dataItems.add(tableRow);
         }
 
         return new JSONModelAndView(dataItems);
-    }
-
-    class KnownType {
-
-        KnownType(String featureTypeName, String displayName, String description, String proxyUrl, String iconUrl) {
-            this.featureTypeName = featureTypeName;
-            this.displayName = displayName;
-            this.description = description;
-            this.proxyUrl = proxyUrl;
-            this.iconUrl = iconUrl;
-        }
-
-        public String featureTypeName;
-        public String displayName;
-        public String description;
-        public String proxyUrl;
-        public String iconUrl;
     }
 }
