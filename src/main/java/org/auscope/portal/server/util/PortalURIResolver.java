@@ -63,10 +63,14 @@ public class PortalURIResolver implements URIResolver {
       } else { 
          ServletContextResource servletContextResource = null; 
          InputStream oXSLTStream = null; 
-         try { 
+         try {
             servletContextResource = new ServletContextResource(servletContext, defaultPath + href);
             oXSLTStream = servletContextResource.getInputStream(); 
-            source = new StreamSource(oXSLTStream); 
+            source = new StreamSource(oXSLTStream);
+
+             //cache the source
+             cache.put(href, source);
+
          } catch (IOException e) {
             logger.error("Unable to Access Xml stylesheet from PortalUriResolver", e); 
          } 

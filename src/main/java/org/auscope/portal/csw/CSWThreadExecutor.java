@@ -12,8 +12,6 @@ import java.util.concurrent.Executor;
  */
 @Repository
 public class CSWThreadExecutor implements Executor {
-    Logger logger = Logger.getLogger(getClass());
-
     public void execute(Runnable runnable) {
         new Thread(runnable).start();
     }

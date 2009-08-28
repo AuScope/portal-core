@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.Logger;
 
 import org.springframework.security.ui.FilterChainOrder;
 import org.springframework.security.ui.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -20,7 +21,7 @@ import org.springframework.security.ui.preauth.AbstractPreAuthenticatedProcessin
 public class PreAuthenticatedProcessingFilter 
    extends AbstractPreAuthenticatedProcessingFilter {
 
-   protected final Log logger = LogFactory.getLog(getClass());
+   protected final Logger logger = Logger.getLogger(getClass());
    
    protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
       java.util.Enumeration eHeaders = request.getHeaderNames();

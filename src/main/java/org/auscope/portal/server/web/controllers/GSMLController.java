@@ -13,6 +13,8 @@ import org.auscope.portal.csw.ICSWMethodMaker;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +31,7 @@ import java.util.HashMap;
 
 @Controller
 public class GSMLController {
-
+    protected final Log logger = LogFactory.getLog(getClass().getName());
     private HttpServiceCaller serviceCaller;
     private GmlToKml gmlToKml;
 
@@ -71,6 +73,20 @@ public class GSMLController {
         }.makeMethod(), serviceCaller.getHttpClient());
 
          return makeModelAndViewKML(gmlToKml.convert(gmlResponse, request));
+    }
+
+    @RequestMapping("/xsltRestProxy.do")
+    public void xsltRestProxy(@RequestParam("serviceUrl") String serviceUrl,
+                              HttpServletRequest request,
+                              HttpServletResponse response) {
+        try {
+            String result = serviceCaller.callMethod(new GetMethod(serviceUrl), serviceCaller.getHttpClient());
+
+            // Send response back to client
+            response.getWriter().println(gmlToKml.convert(result, request));
+        } catch (Exception e) {
+            logger.error(e);
+        }
     }
 
     /**
