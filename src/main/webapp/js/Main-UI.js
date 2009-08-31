@@ -256,7 +256,7 @@ Ext.onReady(function() {
         //set the record to be selected if checked
         activeLayersPanel.getSelectionModel().selectRecords([record], false);
 
-        if(record.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
+        if (record.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
             alert('there is a query running just wait');
             return;
         }
@@ -290,7 +290,7 @@ Ext.onReady(function() {
             }
         } else {
             if (record.get('serviceType') == 'wfs') {
-                if(record.tileOverlay instanceof MarkerManager) record.tileOverlay.clearMarkers();
+                if (record.tileOverlay instanceof MarkerManager) record.tileOverlay.clearMarkers();
             } else if (record.get('serviceType') == 'wms') {
                 //remove from the map
                 map.removeOverlay(record.tileOverlay);
@@ -303,19 +303,22 @@ Ext.onReady(function() {
 
     var wfsHandler = function(selectedRecord) {
         //if there is already updateCSWRecords filter running for this record then don't call another
-        if(selectedRecord.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
+        if (selectedRecord.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
             alert('there is a query running just wait');
             return;
         }
 
-        if(selectedRecord.tileOverlay instanceof MarkerManager) selectedRecord.tileOverlay.clearMarkers();
+        if (selectedRecord.tileOverlay instanceof MarkerManager) selectedRecord.tileOverlay.clearMarkers();
+
+        //a response status holder
+        selectedRecord.responseTooltip = new ResponseTooltip();
 
         var serviceURLs = selectedRecord.get('serviceURLs');
         var proxyURL = selectedRecord.get('proxyURL');
         var iconUrl = selectedRecord.get('iconUrl');
 
         var finishedLoadingCounter = serviceURLs.length;
-       // var markerOverlay = new MarkerOverlay();
+        // var markerOverlay = new MarkerOverlay();
 
         var markerManager = new MarkerManager(map);
         selectedRecord.tileOverlay = markerManager;
@@ -323,45 +326,54 @@ Ext.onReady(function() {
         //set the status as loading for this record
         selectedRecord.set('loadingStatus', '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">');
 
-        var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName="+selectedRecord.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
+        var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + selectedRecord.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
 
-        var serviceUrl;
         for (var i = 0; i < serviceURLs.length; i++) {
-
-            serviceUrl = serviceURLs[i];
-            GDownloadUrl(proxyURL + '?' + filterParameters  + '&serviceUrl=' + serviceURLs[i], function(data, responseCode) {
-                if (responseCode == 200) {
-                    var jsonResponse = eval('(' + data + ')');
-                    if(jsonResponse.success) {
-                        var icon = new GIcon(G_DEFAULT_ICON, iconUrl);
-                        icon.iconSize = new GSize(32, 32);
-                        var markers = new KMLParser(jsonResponse.data.kml).makeMarkers(icon, function(marker) {
-                            marker.typeName = selectedRecord.get('typeName');
-                            marker.wfsUrl = serviceUrl;
-                        });
-                        markerManager.addMarkers(markers, 0);
-                        markerManager.refresh();
-                    } else {
-                        //alert("Failed to retrieve information from " + serviceURLs[i]);
-                    }
-                    //markerOverlay.addList(markers);
-                } else if (responseCode == -1) {
-                    alert("Data request timed out. Please try later.");
-                } else {
-                    alert("Request resulted in error. Check XML file is retrievable.");
-                }
-
+            handleDownload(serviceURLs[i], selectedRecord, proxyURL, iconUrl, markerManager, filterParameters, function() {
                 //decrement the counter
                 finishedLoadingCounter--;
 
                 //check if we can set the status to finished
-                if(finishedLoadingCounter <= 0) {
+                if (finishedLoadingCounter <= 0) {
                     selectedRecord.set('loadingStatus', '<img src="js/external/ext-2.2/resources/images/default/grid/done.gif">');
                 }
-
-                //markerOverlay.redraw(true);
             });
         }
+    };
+
+    var handleDownload = function(serviceUrl, selectedRecord, proxyURL, iconUrl, markerManager, filterParameters, finishedLoadingHandler) {
+        selectedRecord.responseTooltip.addResponse(serviceUrl, "Loading...");
+        GDownloadUrl(proxyURL + '?' + filterParameters + '&serviceUrl=' + serviceUrl, function(data, responseCode) {
+            if (responseCode == 200) {
+                var jsonResponse = eval('(' + data + ')');
+                if (jsonResponse.success) {
+                    var icon = new GIcon(G_DEFAULT_ICON, iconUrl);
+                    icon.iconSize = new GSize(32, 32);
+                    var markers = new KMLParser(jsonResponse.data.kml).makeMarkers(icon, function(marker) {
+                        marker.typeName = selectedRecord.get('typeName');
+                        marker.wfsUrl = serviceUrl;
+                    });
+                    markerManager.addMarkers(markers, 0);
+                    markerManager.refresh();
+
+                    //store the status
+                    selectedRecord.responseTooltip.addResponse(serviceUrl, markers.length + " records retrieved.");
+                } else {
+                    //store the status
+                    selectedRecord.responseTooltip.addResponse(serviceUrl, jsonResponse.msg);
+                }
+                //markerOverlay.addList(markers);
+            } else if (responseCode == -1) {
+                //store the status
+                selectedRecord.responseTooltip.addResponse(serviceUrl, "Data request timed out. Please try again later.");
+            } else {
+                //store the status
+                selectedRecord.responseTooltip.addResponse(serviceUrl, "Request resulted in error. Please try again later.");
+            }
+
+            //we are finito
+            finishedLoadingHandler();
+        });
     };
 
     var wmsHandler = function(record) {
@@ -381,7 +393,7 @@ Ext.onReady(function() {
 
     var activeLayerSelectionHandler = function(sm, index, record) {
         //if its not checked then don't do any actions
-        if(record.get('layerVisible') == false) {
+        if (record.get('layerVisible') == false) {
             filterPanel.getLayout().setActiveItem(0);
             filterButton.disable();
         } else if (record.filterPanel != null) {//if filter panel already exists then show it
@@ -444,7 +456,7 @@ Ext.onReady(function() {
                 tooltip:'Remove Layer',
                 iconCls:'remove',
                 handler: function() {
-                    if(activeLayersPanel.getSelectionModel().getSelected().get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
+                    if (activeLayersPanel.getSelectionModel().getSelected().get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
                         alert('there is a query running just wait');
                         return;
                     }
@@ -452,7 +464,7 @@ Ext.onReady(function() {
                     var record = activeLayersPanel.getSelectionModel().getSelected();
 
                     if (record.get('serviceType') == 'wfs') {
-                        if(record.tileOverlay instanceof MarkerManager) record.tileOverlay.clearMarkers();
+                        if (record.tileOverlay instanceof MarkerManager) record.tileOverlay.clearMarkers();
                     } else if (record.get('serviceType') == 'wms') {
                         //remove from the map
                         map.removeOverlay(record.tileOverlay);
@@ -490,6 +502,42 @@ Ext.onReady(function() {
         height: 300,
         autoScroll: true
     });
+
+    var statusToolTip;
+    
+    this.activeLayersPanel.on('mouseover', function(e, t) {
+        e.stopEvent();
+
+        var row = e.getTarget('.x-grid3-row');
+        var col = e.getTarget('.x-grid3-col');
+
+        if (col != null) {
+            if (col.cellIndex == '2') {
+                if(statusToolTip == null || !statusToolTip.isVisible()) {
+
+                    var theRow = activeLayersPanel.getView().findRow(row);
+                    var record = activeLayersPanel.getStore().getAt(theRow.rowIndex);
+                    var html = 'No status has been recorded.';
+
+                    if(record.responseTooltip != null)
+                        html = record.responseTooltip.getHtml();
+
+                    statusToolTip = new Ext.ToolTip({
+                        target: e.target ,
+                        title: 'Status Information',
+                        autoHide : true,
+                        html: html ,
+                        anchor: 'bottom',
+                        trackMouse: true,
+                        showDelay:60,
+                        autoHeight:true,
+                        autoWidth: true
+                    });
+                }
+            }
+        }
+    });
+
 
     /**
      * Buttons for things like downloading datasets
@@ -559,7 +607,7 @@ Ext.onReady(function() {
      */
     var viewport = new Ext.Viewport({
         layout:'border',
-        items:[westPanel, centerPanel, statusBar]
+        items:[westPanel, centerPanel]
     });
 
     // Is user's browser suppported by Google Maps?
