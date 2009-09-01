@@ -66,7 +66,7 @@
         <gco:CharacterString>1.1</gco:CharacterString>
       </gmd:metadataStandardVersion>
       <gmd:identificationInfo>
-        <srv:SV_ServiceIdentification>
+        <gmd:MD_DataIdentification>
           <gmd:citation>
             <gmd:CI_Citation>
 
@@ -236,7 +236,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
-        </srv:SV_ServiceIdentification>
+        </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
 
       <gmd:distributionInfo>
@@ -630,7 +630,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
         <gco:CharacterString>1.0</gco:CharacterString>
       </gmd:metadataStandardVersion>
       <gmd:identificationInfo>
-        <srv:SV_ServiceIdentification>
+        <gmd:MD_DataIdentification>
           <gmd:citation>
             <gmd:CI_Citation>
               <gmd:title>
@@ -742,7 +742,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
-        </srv:SV_ServiceIdentification>
+        </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
 
       <gmd:distributionInfo>
