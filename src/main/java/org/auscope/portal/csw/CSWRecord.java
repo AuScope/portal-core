@@ -28,7 +28,7 @@ public class CSWRecord {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());
 
-        String serviceTitleExpression = "gmd:identificationInfo/srv:SV_ServiceIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
+        String serviceTitleExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
         Node tempNode = (Node)xPath.evaluate(serviceTitleExpression, recordNode, XPathConstants.NODE);
         serviceName = tempNode != null ? tempNode.getTextContent() : "";
 

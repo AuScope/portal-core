@@ -116,7 +116,7 @@ public class CSWController {
 
             dataItems.add(tableRow);
         }
-
+        logger.debug(dataItems.toString());
         return new JSONModelAndView(dataItems);
     }
 
@@ -146,7 +146,7 @@ public class CSWController {
             JSONArray tableRow = new JSONArray();
 
             //add the name of the layer/feature type
-            tableRow.add(record.getOnlineResourceName());
+            tableRow.add(record.getServiceName());
 
             //add the abstract text to be shown as updateCSWRecords description
             tableRow.add(record.getOnlineResourceDescription());
