@@ -59,7 +59,7 @@ public class TestCSWController {
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
 
     @Before
-    public void setuo() throws Exception {
+    public void setup() throws Exception {
         final String serviceUrl = "somejunk";
 
         context.checking(new Expectations() {{
@@ -162,7 +162,7 @@ public class TestCSWController {
         context.checking(new Expectations() {{
             oneOf(cswService).getWMSRecords();will(returnValue(new CSWRecord[]{mockRecord}));
 
-            oneOf(mockRecord).getOnlineResourceName();
+            oneOf(mockRecord).getServiceName();
             oneOf(mockRecord).getOnlineResourceDescription();
             oneOf(mockRecord).getOnlineResourceName();
             oneOf(mockRecord).getServiceUrl();
@@ -171,7 +171,7 @@ public class TestCSWController {
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
-
+        
         ModelAndView modelAndView = cswController.getWMSLayers();
 
         //check that our JSON response has been nicely populated

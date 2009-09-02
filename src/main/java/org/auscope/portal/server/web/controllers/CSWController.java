@@ -135,7 +135,6 @@ public class CSWController {
      */
     @RequestMapping("/getWMSLayers.do")
     public ModelAndView getWMSLayers() throws Exception {
-
         //the main holder for the items
         JSONArray dataItems = new JSONArray();
 
@@ -174,7 +173,7 @@ public class CSWController {
 
             dataItems.add(tableRow);
         }
-
+        logger.debug(dataItems.toString());
         return new JSONModelAndView(dataItems);
     }
 }
