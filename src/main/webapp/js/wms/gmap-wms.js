@@ -113,7 +113,8 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
     	               lowerRight.lat();
     	var srs = "EPSG:4326";
 	//}
-	var url = this.baseURL;
+
+    var url = this.baseURL;
 	url += "&REQUEST=GetMap";
 	url += "&SERVICE=WMS";
 	url += "&VERSION=1.1.0";

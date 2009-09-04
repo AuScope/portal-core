@@ -136,7 +136,7 @@ public class TestMineralOccurrencesFilterController {
      * Test doing a mine filter and getting all mines
      * @throws Exception
      */
-    @Test
+    /*@Test
     public void testDoMineFilterAllMines() throws Exception {
         final String serviceURL = "http://localhost?";
         final String mineName = "All Mines.."; //to get all mines
@@ -166,12 +166,12 @@ public class TestMineralOccurrencesFilterController {
             Assert.assertTrue(true);
         else
             Assert.assertFalse(true);
-    }
+    }*/
 
     /**
      * Test a mine query with a specified name
      */
-    @Test
+    /*@Test
     public void testDoMineFilterSpecifiedName() throws Exception {
         final String serviceURL = "http://localhost?";
         final String mineName = "SomeName"; //random name
@@ -201,7 +201,7 @@ public class TestMineralOccurrencesFilterController {
             Assert.assertTrue(true);
         else
             Assert.assertFalse(true);
-    }
+    }*/
 
     /**
      * Test doing a minefilter, and there being an error

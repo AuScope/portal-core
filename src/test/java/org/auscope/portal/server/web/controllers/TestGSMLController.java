@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.jmock.Mockery;
 import org.jmock.Expectations;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.auscope.portal.server.web.service.CSWService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.util.GmlToKml;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -66,7 +65,7 @@ public class TestGSMLController {
 
         context.checking(new Expectations() {{
             oneOf(httpServiceCaller).getHttpClient();
-            oneOf(httpServiceCaller).callMethod(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class)));will(returnValue(kmlBlob));
         }});
@@ -88,7 +87,7 @@ public class TestGSMLController {
 
         context.checking(new Expectations() {{
             oneOf(httpServiceCaller).getHttpClient();
-            oneOf(httpServiceCaller).callMethod(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class)));will(returnValue(kmlBlob));
             oneOf(mockHttpResponse).getWriter();will(returnValue(new PrintWriter(responseString)));

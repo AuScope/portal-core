@@ -68,7 +68,7 @@ public class MineralOccurrenceService {
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", "");
 
         //call the service, and get all the mines
-        return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
+        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
     }
 
     /**
@@ -104,7 +104,7 @@ public class MineralOccurrenceService {
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", mineFilter.getFilterString());
 
         //call the service, and get all the mines
-        return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
+        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
     }
 
     /**
@@ -132,7 +132,7 @@ public class MineralOccurrenceService {
         }
 
         //call the service, and get all the commodities
-        String commodityResponse = httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
+        String commodityResponse = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
         //parse the commodites and return them
         return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
@@ -184,7 +184,7 @@ public class MineralOccurrenceService {
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterString());
 
         //run the dam query
-        return httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
+        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
     }
 
     public String getMiningActivityGML( String serviceURL,
@@ -206,6 +206,6 @@ public class MineralOccurrenceService {
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterString());
 
         //run dat query
-        return this.httpServiceCaller.callMethod(method, httpServiceCaller.getHttpClient());
+        return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
     }
 }

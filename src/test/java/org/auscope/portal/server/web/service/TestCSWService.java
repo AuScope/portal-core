@@ -7,15 +7,10 @@ import org.jmock.Mockery;
 import org.jmock.Expectations;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.auscope.portal.csw.CSWThreadExecutor;
-import org.auscope.portal.csw.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.server.util.Util;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
-
-import java.util.Arrays;
-import java.io.PrintWriter;
 
 /**
  * User: Mathew Wyatt
@@ -94,7 +89,7 @@ public class TestCSWService {
 
         context.checking(new Expectations() {{
             oneOf(httpServiceCaller).getHttpClient();
-            oneOf(httpServiceCaller).callMethod(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(docString));
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(docString));
         }});
 
         this.cswService.updateCSWRecords();

@@ -114,7 +114,7 @@ public class TestHttpServiceCaller {
             oneOf (method).releaseConnection();
         }});
 
-        String response = httpServiceCaller.callMethod(method, mockHttpClient);
+        String response = httpServiceCaller.getMethodResponseAsString(method, mockHttpClient);
 
         Assert.assertEquals(returnString, response);
     }
@@ -134,7 +134,7 @@ public class TestHttpServiceCaller {
             oneOf (method).getStatusLine();//exception
         }});
 
-        httpServiceCaller.callMethod(method, mockHttpClient);
+        httpServiceCaller.getMethodResponseAsString(method, mockHttpClient);
     }
 
 }

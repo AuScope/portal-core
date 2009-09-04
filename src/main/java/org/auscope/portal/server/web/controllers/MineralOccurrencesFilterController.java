@@ -16,7 +16,6 @@ import org.apache.log4j.Logger;
 import org.apache.commons.httpclient.ConnectTimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
@@ -138,14 +137,16 @@ public class MineralOccurrencesFilterController {
             @RequestParam("mineName") String mineName,
             HttpServletRequest request) {
         try {
-            String kmlBlob;
+            String gmlBlob;
 
             if (mineName.equals(ALL_MINES))//get all mines
-                kmlBlob = gmlToKml.convert(this.mineralOccurrenceService.getAllMinesGML(serviceUrl), request);
+                gmlBlob =this.mineralOccurrenceService.getAllMinesGML(serviceUrl);
             else
-                kmlBlob = gmlToKml.convert(this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName), request);
+                gmlBlob = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName);
 
-            return makeModelAndViewKML(kmlBlob);
+            String kmlBlob =  gmlToKml.convert(gmlBlob, request);
+
+            return makeModelAndViewKML(kmlBlob, gmlBlob);
         } catch (Exception e) {
             return this.handleExceptionResponse(e);
         }
@@ -181,7 +182,7 @@ public class MineralOccurrencesFilterController {
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
             //if everything is good then return the KML
-            return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request));
+            return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request), mineralOccurrenceResponse);
 
         } catch (Exception e) {
             return this.handleExceptionResponse(e);
@@ -220,7 +221,7 @@ public class MineralOccurrencesFilterController {
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
             //return makeModelAndViewKML(convertToKML(mineResponse, miningActivityResponse));
-            return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request));
+            return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request), miningActivityResponse);
 
         } catch (Exception e) {
             return this.handleExceptionResponse(e);
@@ -253,11 +254,13 @@ public class MineralOccurrencesFilterController {
     /**
      * Insert a kml block into a successful JSON response
      * @param kmlBlob
+     * @param gmlBlob
      * @return
      */
-    private ModelAndView makeModelAndViewKML(final String kmlBlob) {
+    private ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob) {
         final Map data = new HashMap() {{
             put("kml", kmlBlob);
+            put("gml", gmlBlob);
         }};
 
         ModelMap model = new ModelMap() {{

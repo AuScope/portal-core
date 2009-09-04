@@ -57,7 +57,7 @@ public class GSMLController {
                                            @RequestParam("typeName") final String featureType,
                                            HttpServletRequest request) throws Exception {
 
-        String gmlResponse = serviceCaller.callMethod(new ICSWMethodMaker() {
+        String gmlResponse = serviceCaller.getMethodResponseAsString(new ICSWMethodMaker() {
             public HttpMethodBase makeMethod() {
                 GetMethod method = new GetMethod(serviceUrl);
 
@@ -72,7 +72,7 @@ public class GSMLController {
             }
         }.makeMethod(), serviceCaller.getHttpClient());
 
-         return makeModelAndViewKML(gmlToKml.convert(gmlResponse, request));
+         return makeModelAndViewKML(gmlToKml.convert(gmlResponse, request), gmlResponse);
     }
 
     @RequestMapping("/xsltRestProxy.do")
@@ -80,7 +80,7 @@ public class GSMLController {
                               HttpServletRequest request,
                               HttpServletResponse response) {
         try {
-            String result = serviceCaller.callMethod(new GetMethod(serviceUrl), serviceCaller.getHttpClient());
+            String result = serviceCaller.getMethodResponseAsString(new GetMethod(serviceUrl), serviceCaller.getHttpClient());
 
             // Send response back to client
             response.getWriter().println(gmlToKml.convert(result, request));
@@ -94,9 +94,10 @@ public class GSMLController {
      * @param kmlBlob
      * @return
      */
-    private ModelAndView makeModelAndViewKML(final String kmlBlob) {
+    private ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob) {
         final Map data = new HashMap() {{
             put("kml", kmlBlob);
+            put("gml", gmlBlob);
         }};
 
         ModelMap model = new ModelMap() {{

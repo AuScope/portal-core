@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import java.net.*;
+import java.io.IOException;
 
 /**
  * Utility class used to call web service endpoints
@@ -21,13 +22,52 @@ public class HttpServiceCaller {
     private Logger logger = Logger.getLogger(getClass());
 
     /**
-     * Makes a call to a http GetMethod
+     * Makes a call to a http GetMethod and returns the response as a string
+     *
      * @param method
      * @param httpClient
      * @return
      * @throws Exception
      */
-    public String callMethod(HttpMethodBase method, HttpClient httpClient) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+    public String getMethodResponseAsString(HttpMethodBase method, HttpClient httpClient) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+        //invoke the method
+        this.invokeTheMethod(method, httpClient);
+
+        //get the reponse before we close the connection
+        String response = method.getResponseBodyAsString();
+
+        //release the connection
+        method.releaseConnection();
+
+        //return it
+        return response;
+    }
+
+    /**
+     * Invokes a method and returns the binary response
+     *
+     * @return
+     */
+    public byte[] getMethodResponseInBytes(HttpMethodBase method, HttpClient httpClient) throws Exception {
+        //invoke the method
+        this.invokeTheMethod(method, httpClient);
+
+        //get the reponse before we close the connection
+        byte[] response = method.getResponseBody();
+
+        //release the connection
+        method.releaseConnection();
+
+        //return it
+        return response;
+    }
+
+    /**
+     * Invokes a httpmethod and takes care of some error handling
+     * @param method
+     * @param httpClient
+     */
+    private void invokeTheMethod(HttpMethodBase method, HttpClient httpClient) throws Exception {
         //set the timeout, to 1 minute
         HttpConnectionManagerParams clientParams = new HttpConnectionManagerParams();
         clientParams.setParameter(HttpMethodParams.HEAD_BODY_CHECK_TIMEOUT, 60000);
@@ -52,15 +92,6 @@ public class HttpServiceCaller {
             //if the response is not OK then throw an error
             throw new Exception("Returned status line: " + method.getStatusLine());
         }
-
-        //get the reponse before we close the connection
-        String response = method.getResponseBodyAsString();
-
-        //release the connection
-        method.releaseConnection();
-
-        //return it
-        return response;
     }
 
     /**

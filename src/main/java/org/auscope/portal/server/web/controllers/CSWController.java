@@ -56,8 +56,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl],
-     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl]
+     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
+     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
      * ]
      *
      * @return
@@ -114,6 +114,8 @@ public class CSWController {
             tableRow.add("<img width='16' heigh='16' src='" + knownType.getIconUrl() + "'>");
             tableRow.add(knownType.getIconUrl());
 
+            tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/page_code.png'></a>");
+
             dataItems.add(tableRow);
         }
         logger.debug(dataItems.toString());
@@ -126,8 +128,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl],
-     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl]
+     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
+     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
      * ]
      *
      * @return
@@ -170,6 +172,8 @@ public class CSWController {
 
             tableRow.add("true");
             tableRow.add("<img src='js/external/ext-2.2/resources/images/default/grid/done.gif'>");
+
+            tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'></a>");
 
             dataItems.add(tableRow);
         }

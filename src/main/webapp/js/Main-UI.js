@@ -45,6 +45,9 @@ Ext.onReady(function() {
             },
             {
                 name: 'iconUrl'
+            },
+            {
+                name: 'dataSourceImage'
             }
         ])
     });
@@ -130,6 +133,9 @@ Ext.onReady(function() {
             },
             {
                 name: 'loadingStatus'
+            },
+            {
+                name: 'dataSourceImage'
             }
         ])
     });
@@ -248,6 +254,9 @@ Ext.onReady(function() {
             },
             {
                 name: 'iconUrl'
+            },
+            {
+                name: 'dataSourceImage'
             }
         ])
     });
@@ -329,7 +338,7 @@ Ext.onReady(function() {
         var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + selectedRecord.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
 
         for (var i = 0; i < serviceURLs.length; i++) {
-            handleDownload(serviceURLs[i], selectedRecord, proxyURL, iconUrl, markerManager, filterParameters, function() {
+            handleQuery(serviceURLs[i], selectedRecord, proxyURL, iconUrl, markerManager, filterParameters, function() {
                 //decrement the counter
                 finishedLoadingCounter--;
 
@@ -341,7 +350,7 @@ Ext.onReady(function() {
         }
     };
 
-    var handleDownload = function(serviceUrl, selectedRecord, proxyURL, iconUrl, markerManager, filterParameters, finishedLoadingHandler) {
+    var handleQuery = function(serviceUrl, selectedRecord, proxyURL, iconUrl, markerManager, filterParameters, finishedLoadingHandler) {
         selectedRecord.responseTooltip.addResponse(serviceUrl, "Loading...");
         GDownloadUrl(proxyURL + '?' + filterParameters + '&serviceUrl=' + serviceUrl, function(data, responseCode) {
             if (responseCode == 200) {
@@ -355,6 +364,9 @@ Ext.onReady(function() {
                     });
                     markerManager.addMarkers(markers, 0);
                     markerManager.refresh();
+
+                    //store the gml for later download needs
+                    selectedRecord.gml = jsonResponse.data.gml;
 
                     //store the status
                     selectedRecord.responseTooltip.addResponse(serviceUrl, markers.length + " records retrieved.");
@@ -429,7 +441,8 @@ Ext.onReady(function() {
                 width: 32,
                 sortable: false,
                 dataIndex: 'iconImgSrc'
-            },{
+            },
+            {
                 id:'loadingStatus',
                 header: "",
                 width: 32,
@@ -443,8 +456,14 @@ Ext.onReady(function() {
                 sortable: true,
                 dataIndex: 'title'
             },
-            activeLayersPanelCheckColumn
-
+            activeLayersPanelCheckColumn,
+            {
+                id:'dataSourceImage',
+                header: "",
+                width: 32,
+                sortable: false,
+                dataIndex: 'dataSourceImage'
+            }
             //{header: "Price", width: 75, sortable: true, dataIndex: 'price'},
             //{header: "Change", width: 75, sortable: true, dataIndex: 'change'},
             //{header: "% Change", width: 75, sortable: true, dataIndex: 'pctChange'},
@@ -503,41 +522,182 @@ Ext.onReady(function() {
         autoScroll: true
     });
 
-    var statusToolTip;
-    
+    /**
+     * Tooltip for the active layers
+     */
+    var activeLayersToolTip;
+
+    /**
+     * Handler for mouse over events on the active layers panel, things like server status, and download buttons
+     */
     this.activeLayersPanel.on('mouseover', function(e, t) {
         e.stopEvent();
 
         var row = e.getTarget('.x-grid3-row');
         var col = e.getTarget('.x-grid3-col');
 
-        if (col != null) {
+        //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
+        if (col != null && (activeLayersToolTip == null || !activeLayersToolTip.isVisible())) {
+
+            //get the actual data record
+            var theRow = activeLayersPanel.getView().findRow(row);
+            var record = activeLayersPanel.getStore().getAt(theRow.rowIndex);
+
+            //this is the status icon column
             if (col.cellIndex == '2') {
-                if(statusToolTip == null || !statusToolTip.isVisible()) {
+                var html = 'No status has been recorded.';
 
-                    var theRow = activeLayersPanel.getView().findRow(row);
-                    var record = activeLayersPanel.getStore().getAt(theRow.rowIndex);
-                    var html = 'No status has been recorded.';
+                if (record.responseTooltip != null)
+                    html = record.responseTooltip.getHtml();
 
-                    if(record.responseTooltip != null)
-                        html = record.responseTooltip.getHtml();
+                activeLayersToolTip = new Ext.ToolTip({
+                    target: e.target ,
+                    title: 'Status Information',
+                    autoHide : true,
+                    html: html ,
+                    anchor: 'bottom',
+                    trackMouse: true,
+                    showDelay:60,
+                    autoHeight:true,
+                    autoWidth: true
+                });
+            }
+            //this is the column for download link icons
+            else if (col.cellIndex == '5') {
+                var serviceType = record.get('serviceType');
+                var html = '';
 
-                    statusToolTip = new Ext.ToolTip({
-                        target: e.target ,
-                        title: 'Status Information',
-                        autoHide : true,
-                        html: html ,
-                        anchor: 'bottom',
-                        trackMouse: true,
-                        showDelay:60,
-                        autoHeight:true,
-                        autoWidth: true
-                    });
+                if (serviceType == 'wms') { //if a WMS
+                    html = 'Click here to view this layers Image in new browser window.';
+                } else if (serviceType == 'wfs') {//if a WFS
+                    html = 'Click here to view this layers GML in new browser window.';
+                }
+
+                activeLayersToolTip = new Ext.ToolTip({
+                    target: e.target ,
+                    //title: 'Status Information',
+                    autoHide : true,
+                    html: html ,
+                    anchor: 'bottom',
+                    trackMouse: true,
+                    showDelay:60,
+                    autoHeight:true,
+                    autoWidth: true
+                });
+            }
+        }
+    });
+
+    /**
+     * Handler for click events on the active layers panel, used for the new browser window popup which shows the
+     * GML or WMS image
+     */
+    this.activeLayersPanel.on('click', function(e, t) {
+        e.stopEvent();
+
+        var row = e.getTarget('.x-grid3-row');
+        var col = e.getTarget('.x-grid3-col');
+
+        //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
+        if (col != null) {
+
+            //get the actual data record
+            var theRow = activeLayersPanel.getView().findRow(row);
+            var record = activeLayersPanel.getStore().getAt(theRow.rowIndex);
+
+            //this is the column for download link icons
+            if (col.cellIndex == '5') {
+                var serviceType = record.get('serviceType');
+
+                if (serviceType == 'wms') { //if a WMS, open a new window calling the download controller
+                    var serviceUrls = record.get('serviceURLs');
+                    if (serviceUrls.length >= 1) {
+                        var urlsParameter = '';
+
+                        //var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + selectedRecord.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
+                        var keys = [serviceUrls.length];
+                        var values = [serviceUrls.length];
+
+                        for (i = 0; i < serviceUrls.length; i++) {
+
+                            var boundBox = map.getBounds().getSouthWest().lng() + "," +
+                                           map.getBounds().getSouthWest().lat() + "," +
+                                           map.getBounds().getNorthEast().lng() + "," +
+                                           map.getBounds().getNorthEast().lat();
+
+                            var url = serviceUrls[i];
+                            url += "&REQUEST=GetMap";
+                            url += "&SERVICE=WMS";
+                            url += "&VERSION=1.1.0";
+                            url += "&LAYERS=" + record.get('typeName');
+                            /*if (this.styles)
+                             url += "&STYLES=" + this.styles;
+                             if (this.sld)
+                             url += "&SLD=" + this.sld;*/
+                            url += "&FORMAT=" + "image/png";
+                            url += "&BGCOLOR=0xFFFFFF";
+                            url += "&TRANSPARENT=TRUE";
+                            url += "&SRS=" + "EPSG:4326";
+                            url += "&BBOX=" + boundBox;
+                            url += "&WIDTH=" + map.getSize().width;
+                            url += "&HEIGHT=" + map.getSize().height;
+
+                            //urlsParameter += "serviceUrls=" + url + '&';
+                            keys[i] = 'serviceUrls';
+                            values[i] = url;
+                        }
+                        //alert("downloadProxy?" + url);
+                        openWindowWithPost("downloadAsZip.do?", 'WMS Layer Download', keys, values);
+                    }
+
+                } else if (serviceType == 'wfs') {//if a WFS open a new window calling the download controller
+                    var serviceUrls = record.get('serviceURLs');
+                    if (serviceUrls.length >= 1) {
+                        var urlsParameter = '';
+
+                        var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + record.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
+
+                        var keys = [serviceUrls.length];
+                        var values = [serviceUrls.length];
+
+                        for (i = 0; i < serviceUrls.length; i++) {
+                            //urlsParameter += "serviceUrls=" + serviceUrls[i] + filterParameters.replace('&', '%26') + '&';
+                            keys[i] = 'serviceUrls';
+                            values[i] =  record.get('proxyURL') + "&serviceUrl=" + serviceUrls[i];
+                        }
+
+                        //alert("downloadProxy?" + url);
+                        //window.open("downloadAsZip.do?" + urlsParameter, '');
+                        openWindowWithPost("downloadAsZip.do?", 'WFS Layer Download', keys, values);
+                    }
                 }
             }
         }
     });
 
+    /**
+     * Opens a new window and submits a POST request to a given URL for given key value pairs. This approach is needed,
+     * because it is tricky to send a list of URLs through a GET request URL. 
+     *
+     * @param url
+     * @param name
+     * @param keys
+     * @param values
+     */
+    var openWindowWithPost = function(url, name, keys, values)
+    {
+        var newWindow = window.open(url, name);
+        if (!newWindow) return false;
+        var html = "";
+        var html = ""
+        html += "<html><head></head><body><form id='formid' method='post' action='" + url + "'>";
+        if (keys && values && (keys.length == values.length))
+            for (var i = 0; i < keys.length; i++)
+                html += "<input type='hidden' name='" + keys[i] + "' value='" + values[i] + "'/>";
+        html += "</form><script type='text/javascript'>document.getElementById(\"formid\").submit()</script></body></html>";
+        newWindow.document.write(html);
+        return newWindow;
+    }
 
     /**
      * Buttons for things like downloading datasets
@@ -612,8 +772,8 @@ Ext.onReady(function() {
 
     // Is user's browser suppported by Google Maps?
     if (GBrowserIsCompatible()) {
-        map = new GMap2(centerPanel.body.dom);
 
+        map = new GMap2(centerPanel.body.dom);
 
         map.setUIToDefault();
 
@@ -657,4 +817,6 @@ Ext.onReady(function() {
 
     complexFeaturesStore.load();
     wmsLayersStore.load();
+
+
 });
