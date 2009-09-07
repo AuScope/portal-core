@@ -227,7 +227,8 @@ function NVCLMarker_getMarkerClickedFn() {
 * @param scalarName {String} name of the scalar
 */
 function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
-  var vocabsQuery = ProxyURL + VOCAB_SERVICE_URL + scalarName.replace(/%/, "%25");
+  var vocabsQuery =
+      ProxyURL + VOCAB_SERVICE_URL + "?repository=nvcl-scalars%26label=" + scalarName.replace(/%/, "%25");
   
   GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
     if(pResponseCode == 200) {
