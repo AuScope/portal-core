@@ -40,7 +40,10 @@ public class CSWController {
         this.portalPropertyPlaceholderConfigurer = portalPropertyPlaceholderConfigurer;
         this.knownTypes = knownTypes;
 
-        cswService.setServiceUrl(portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.cswservice.url"));
+        String cswServiceUrl =
+            portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.cswservice.url");
+        logger.debug("cswServiceUrl: " + cswServiceUrl);
+        cswService.setServiceUrl(cswServiceUrl);
 
         try {
             cswService.updateRecordsInBackground();
