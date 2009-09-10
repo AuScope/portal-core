@@ -62,6 +62,7 @@ public class TestGSMLController {
     @Test
     public void testGetAllFeatures() throws Exception {
         final String kmlBlob = "kmlBlob";
+        
 
         context.checking(new Expectations() {{
             oneOf(httpServiceCaller).getHttpClient();

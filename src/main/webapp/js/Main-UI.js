@@ -620,12 +620,17 @@ Ext.onReady(function() {
 
                         for (i = 0; i < serviceUrls.length; i++) {
 
-                            var boundBox = map.getBounds().getSouthWest().lng() + "," +
+                            var boundBox = (map.getBounds().getSouthWest().lng() < 0 ? map.getBounds().getSouthWest().lng() + 360.0 : map.getBounds().getSouthWest().lng()) + "," +
                                            map.getBounds().getSouthWest().lat() + "," +
-                                           map.getBounds().getNorthEast().lng() + "," +
+                                           (map.getBounds().getNorthEast().lng() < 0 ? map.getBounds().getNorthEast().lng() + 360.0 : map.getBounds().getNorthEast().lng()) + "," +
                                            map.getBounds().getNorthEast().lat();
 
+                            alert(boundBox);
+
                             var url = serviceUrls[i];
+
+                            alert(url + " " + map.getSize().width + " " + map.getSize().height);
+
                             url += "&REQUEST=GetMap";
                             url += "&SERVICE=WMS";
                             url += "&VERSION=1.1.0";
@@ -647,7 +652,7 @@ Ext.onReady(function() {
                             values[i] = url;
                         }
                         //alert("downloadProxy?" + url);
-                        openWindowWithPost("downloadAsZip.do?", 'WMS Layer Download', keys, values);
+                        openWindowWithPost("downloadWMSAsZip.do?", 'WMS Layer Download '+new Date().getTime(), keys, values);
                     }
 
                 } else if (serviceType == 'wfs') {//if a WFS open a new window calling the download controller
@@ -663,12 +668,12 @@ Ext.onReady(function() {
                         for (i = 0; i < serviceUrls.length; i++) {
                             //urlsParameter += "serviceUrls=" + serviceUrls[i] + filterParameters.replace('&', '%26') + '&';
                             keys[i] = 'serviceUrls';
-                            values[i] =  record.get('proxyURL') + "&serviceUrl=" + serviceUrls[i];
+                            values[i] =  window.location.protocol + "//" + window.location.host + record.get('proxyURL') + "?" + filterParameters + "&serviceUrl=" + serviceUrls[i];
                         }
 
                         //alert("downloadProxy?" + url);
                         //window.open("downloadAsZip.do?" + urlsParameter, '');
-                        openWindowWithPost("downloadAsZip.do?", 'WFS Layer Download', keys, values);
+                        openWindowWithPost("downloadGMLAsZip.do?", 'WFS Layer Download '+new Date().getTime(), keys, values);
                     }
                 }
             }
@@ -817,6 +822,5 @@ Ext.onReady(function() {
 
     complexFeaturesStore.load();
     wmsLayersStore.load();
-
 
 });

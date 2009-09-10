@@ -136,17 +136,18 @@ public class TestMineralOccurrencesFilterController {
      * Test doing a mine filter and getting all mines
      * @throws Exception
      */
-    /*@Test
+    @Test
     public void testDoMineFilterAllMines() throws Exception {
         final String serviceURL = "http://localhost?";
         final String mineName = "All Mines.."; //to get all mines
         final String expectedKML = "<kml/>";
-        final String expectedJSONResponse = "{\"data\":{\"kml\":\""+expectedKML+"\"},\"success\":true}";
-        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"kml\":\""+expectedKML+"\"}}";
+        final String expectedGML = "<gml/>";
+        final String expectedJSONResponse = "{\"data\":{\"kml\":\""+expectedKML+"\",\"gml\":\""+expectedGML+"\"},\"success\":true}";
+        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"kml\":\""+expectedKML+"\", \"gml\":\""+expectedGML+"\"}}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL);
+            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL);will(returnValue(expectedGML));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
@@ -166,22 +167,23 @@ public class TestMineralOccurrencesFilterController {
             Assert.assertTrue(true);
         else
             Assert.assertFalse(true);
-    }*/
+    }
 
     /**
      * Test a mine query with a specified name
      */
-    /*@Test
+    @Test
     public void testDoMineFilterSpecifiedName() throws Exception {
         final String serviceURL = "http://localhost?";
         final String mineName = "SomeName"; //random name
         final String expectedKML = "<kml/>";
-        final String expectedJSONResponse = "{\"data\":{\"kml\":\""+expectedKML+"\"},\"success\":true}";
-        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"kml\":\""+expectedKML+"\"}}";
+        final String expectedGML = "<gml/>";
+        final String expectedJSONResponse = "{\"data\":{\"kml\":\""+expectedKML+"\",\"gml\":\""+expectedGML+"\"},\"success\":true}";
+        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"kml\":\""+expectedKML+"\", \"gml\":\""+expectedGML+"\"}}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName);
+            oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName);will(returnValue(expectedGML));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
@@ -201,7 +203,7 @@ public class TestMineralOccurrencesFilterController {
             Assert.assertTrue(true);
         else
             Assert.assertFalse(true);
-    }*/
+    }
 
     /**
      * Test doing a minefilter, and there being an error

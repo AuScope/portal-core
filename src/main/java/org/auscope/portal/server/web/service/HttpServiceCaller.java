@@ -95,6 +95,17 @@ public class HttpServiceCaller {
     }
 
     /**
+     * Returns a header value for a given method and key
+     *
+     * @param method
+     * @param header
+     * @return
+     */
+    public Header getResponseHeader(HttpMethodBase method, String header) {
+        return method.getResponseHeader(header);   
+    }
+
+    /**
      * Generate a new httpClient
      * @return
      */

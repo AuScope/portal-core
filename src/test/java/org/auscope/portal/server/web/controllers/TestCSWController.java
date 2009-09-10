@@ -75,10 +75,10 @@ public class TestCSWController {
      * Test with valid records
      * @throws Exception
      */
-    /*@Test
+    @Test
     public void testGetComplexFeatures() throws Exception {
         final KnownFeatureTypeDefinition def = new KnownFeatureTypeDefinition("0", "1", "2", "3", "4");
-        final String expectedJSONResponse = "[[\"1\",\"2 Institutions: , \",\"3\",\"wfs\","+def.hashCode()+",\"0\",[\"\"],\"true\",\"<img src='js/external/ext-2.2/resources/images/default/grid/done.gif'>\",\"<img width='16' heigh='16' src='4'>\",\"4\"]]";
+        final String expectedJSONResponse = "[[\"1\",\"2 Institutions: , \",\"3\",\"wfs\","+def.hashCode()+",\"0\",[\"\"],\"true\",\"<img src='js/external/ext-2.2/resources/images/default/grid/done.gif'>\",\"<img width='16' heigh='16' src='4'>\",\"4\",\"<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/page_code.png'><\\/a>\"]]";
         final Iterator mockIterator = context.mock(Iterator.class);
         final StringWriter actualJSONResponse = new StringWriter();
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
@@ -105,12 +105,15 @@ public class TestCSWController {
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
+        System.out.println(expectedJSONResponse);
+        System.out.println(actualJSONResponse.getBuffer().toString());
+
         //check that the actual is the expected
         if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()))
             Assert.assertTrue(true);
         else
             Assert.assertFalse(true);
-    }*/
+    }
 
     /**
      * Test for when there are no services for a given feature type
@@ -152,10 +155,10 @@ public class TestCSWController {
     /**
      * Test that the JSON is formatted correctly for WMS layers
      */
-    /*@Test
+    @Test
     public void testGetWMSLayers() throws Exception {
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
-        final String expectedJSONResponse = "[[\"\",\"\",\"\",\"wms\","+mockRecord.hashCode()+",\"\",[\"\"],\"true\",\"<img src='js/external/ext-2.2/resources/images/default/grid/done.gif'>\"]]";
+        final String expectedJSONResponse = "[[\"\",\"\",\"\",\"wms\","+mockRecord.hashCode()+",\"\",[\"\"],\"true\",\"<img src='js/external/ext-2.2/resources/images/default/grid/done.gif'>\",\"<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'><\\/a>\"]]";
         final Iterator mockIterator = context.mock(Iterator.class);
         final StringWriter actualJSONResponse = new StringWriter();
 
@@ -178,12 +181,15 @@ public class TestCSWController {
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
+        System.out.println(expectedJSONResponse);
+        System.out.println(actualJSONResponse.getBuffer().toString());
+
         //check that the actual is the expected
         if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()))
             Assert.assertTrue(true);
         else
             Assert.assertFalse(true);
-    }*/
+    }
 
     //TODO: testWMS Layers no layers available, none recorded in the CSW
 

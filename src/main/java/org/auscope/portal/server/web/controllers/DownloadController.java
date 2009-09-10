@@ -11,9 +11,12 @@ import org.apache.commons.httpclient.Header;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.Date;
+
+import net.sf.json.JSONObject;
 
 /**
  * User: Mathew Wyatt
@@ -38,42 +41,80 @@ public class DownloadController {
      * @param response
      * @throws Exception
      */
-    @RequestMapping("/downloadAsZip.do")
-    public void downloadAsZip(  @RequestParam("serviceUrls") final String[] serviceUrls,
+    @RequestMapping("/downloadGMLAsZip.do")
+    public void downloadGMLAsZip(  @RequestParam("serviceUrls") final String[] serviceUrls,
                                 HttpServletResponse response) throws Exception {
 
         //set the content type for zip files
-        //response.setContentType("application/zip");
-        //response.setHeader("Content-Disposition","inline; filename=output.zip;");
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition","inline; filename=GMLDownload.zip;");
 
         //create the output stream
-        //ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
+        ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
 
         for(int i=0; i<serviceUrls.length; i++) {
-            System.out.println(serviceUrls[i]);
+
+            GetMethod method = new GetMethod(serviceUrls[i]);
+            HttpClient client = serviceCaller.getHttpClient();
+
+            String responseString = serviceCaller.getMethodResponseAsString(method, client);
+
+            JSONObject jsonObject = JSONObject.fromObject( responseString );
+
+            byte[] gmlBytes = JSONObject.fromObject(jsonObject.get("data")).get("gml").toString().getBytes();
+
+            //create a new entry in the zip file with a timestamped name
+            zout.putNextEntry(new ZipEntry(new Date().toString() +".xml"));
+
+            zout.write(gmlBytes);
+            zout.closeEntry();
+        }
+
+        zout.finish();
+        zout.flush();
+        zout.close();
+    }
+
+    /**
+     * Given a list of WMS URL's, this function will collate the responses into a zip file and send the response back to the browser.
+     * 
+     * @param serviceUrls
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping("/downloadWMSAsZip.do")
+    public void downloadWMSAsZip(   @RequestParam("serviceUrls") final String[] serviceUrls,
+                                    HttpServletResponse response) throws Exception {
+
+        //set the content type for zip files
+        response.setContentType("application/zip");
+        response.setHeader("Content-Disposition","inline; filename=PNGDownload.zip;");
+
+        //create the output stream
+        ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
+
+        for(int i=0; i<serviceUrls.length; i++) {
 
             GetMethod method = new GetMethod(serviceUrls[i]);
             HttpClient client = serviceCaller.getHttpClient();
 
             byte[] responseBytes = serviceCaller.getMethodResponseInBytes(method, client);
 
-            System.out.println(method.getResponseBodyAsString());
+            Header contentType = serviceCaller.getResponseHeader(method, "Content-Type");
 
-            Header contentType = method.getResponseHeader("Content-Type");
-            System.out.println(contentType.getValue());
-
-            /*//create a new entry in the zip file with a timestamped name
-            if(contentType.value().equals("application/xml"))
-                zout.putNextEntry(new ZipEntry(method.getName() + new Date().toString() +".xml"));
+            //create a new entry in the zip file with a timestamped name
+            if(contentType.getValue().contains("xml"))
+                zout.putNextEntry(new ZipEntry(new Date().toString() +".xml"));
             else
-                zout.putNextEntry(new ZipEntry(method.getName() + new Date().toString() +".xml"));
+                zout.putNextEntry(new ZipEntry(new Date().toString() +".png"));
 
             zout.write(responseBytes);
-            zout.closeEntry();*/
+            zout.closeEntry();
         }
 
-        /*zout.finish();
+        zout.finish();
         zout.flush();
-        zout.close();*/
+        zout.close();
     }
+
 }
