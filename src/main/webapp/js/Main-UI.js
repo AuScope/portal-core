@@ -98,7 +98,7 @@ Ext.onReady(function() {
         title: 'Community Models',
         region:'north',
         split: true,
-        height: 300,
+        height: 200,
         autoScroll: true
     });
 
@@ -186,7 +186,7 @@ Ext.onReady(function() {
         title: 'Map Layers',
         region:'north',
         split: true,
-        height: 300,
+        height: 200,
         autoScroll: true
     });
 
@@ -211,7 +211,7 @@ Ext.onReady(function() {
         width: '100%',
         layout: 'card',
         activeItem: 0,
-        height: 300,
+        height: 200,
         items: [
             {
                 html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'
@@ -536,7 +536,7 @@ Ext.onReady(function() {
         title: 'Active Layers',
         region:'center',
         split: true,
-        height: 300,
+        height: 200,
         autoScroll: true
     });
 
@@ -583,19 +583,19 @@ Ext.onReady(function() {
             //this is the column for download link icons
             else if (col.cellIndex == '5') {
                 var serviceType = record.get('serviceType');
-                var html = '';
+                //var html = 'Download layer data.';
 
-                if (serviceType == 'wms') { //if a WMS
+                /*if (serviceType == 'wms') { //if a WMS
                     html = 'Click here to view this layers Image in new browser window.';
                 } else if (serviceType == 'wfs') {//if a WFS
                     html = 'Click here to view this layers GML in new browser window.';
-                }
+                }*/
 
                 activeLayersToolTip = new Ext.ToolTip({
                     target: e.target ,
                     //title: 'Status Information',
                     autoHide : true,
-                    html: html ,
+                    html: 'Download data for this layer.' ,
                     anchor: 'bottom',
                     trackMouse: true,
                     showDelay:60,
@@ -737,7 +737,7 @@ Ext.onReady(function() {
         //title: 'Themes',
         region:'north',
         split: true,
-        height: 300,
+        height: 200,
         autoScroll: true,
         items:[
             complexFeaturesPanel,
@@ -754,7 +754,7 @@ Ext.onReady(function() {
         border: false,
         split:true,
         margins: '100 0 0 0',
-        width: 350,
+        width: 400,
 
         items:[tabsPanel, activeLayersPanel, filterPanel]
     };
