@@ -266,7 +266,13 @@ Ext.onReady(function() {
         activeLayersPanel.getSelectionModel().selectRecords([record], false);
 
         if (record.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
-            alert('there is a query running just wait');
+            Ext.MessageBox.show({
+                title: 'Please wait',
+                msg: "There is an operation in process for this layer. Please wait until it is finished.",
+                buttons: Ext.MessageBox.OK,
+                animEl: 'mb9',
+                icon: Ext.MessageBox.INFO
+            });
             return;
         }
 
@@ -313,7 +319,13 @@ Ext.onReady(function() {
     var wfsHandler = function(selectedRecord) {
         //if there is already updateCSWRecords filter running for this record then don't call another
         if (selectedRecord.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
-            alert('there is a query running just wait');
+            Ext.MessageBox.show({
+                title: 'Please wait',
+                msg: "There is an operation in process for this layer. Please wait until it is finished.",
+                buttons: Ext.MessageBox.OK,
+                animEl: 'mb9',
+                icon: Ext.MessageBox.INFO
+            });
             return;
         }
 
@@ -476,7 +488,13 @@ Ext.onReady(function() {
                 iconCls:'remove',
                 handler: function() {
                     if (activeLayersPanel.getSelectionModel().getSelected().get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
-                        alert('there is a query running just wait');
+                        Ext.MessageBox.show({
+                            title: 'Please wait',
+                            msg: "There is an operation in process for this layer. Please wait until it is finished.",
+                            buttons: Ext.MessageBox.OK,
+                            animEl: 'mb9',
+                            icon: Ext.MessageBox.INFO
+                        });
                         return;
                     }
 
@@ -625,11 +643,7 @@ Ext.onReady(function() {
                                            (map.getBounds().getNorthEast().lng() < 0 ? map.getBounds().getNorthEast().lng() + 360.0 : map.getBounds().getNorthEast().lng()) + "," +
                                            map.getBounds().getNorthEast().lat();
 
-                            alert(boundBox);
-
                             var url = serviceUrls[i];
-
-                            alert(url + " " + map.getSize().width + " " + map.getSize().height);
 
                             url += "&REQUEST=GetMap";
                             url += "&SERVICE=WMS";

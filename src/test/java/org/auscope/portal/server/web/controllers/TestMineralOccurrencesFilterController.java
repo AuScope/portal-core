@@ -162,6 +162,7 @@ public class TestMineralOccurrencesFilterController {
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
         System.out.println(expectedJSONResponse);
+        System.out.println(expectedJSONResponse2);
         System.out.println(actualJSONResponse.getBuffer().toString());
 
         //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
@@ -201,6 +202,7 @@ public class TestMineralOccurrencesFilterController {
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
 
         System.out.println(expectedJSONResponse);
+        System.out.println(expectedJSONResponse2);
         System.out.println(actualJSONResponse.getBuffer().toString());
 
         //check that the actual is the expected - could be ordered 1 of 2 ways, both valid
