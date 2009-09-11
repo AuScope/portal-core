@@ -143,7 +143,7 @@ public class TestMineralOccurrencesFilterController {
         final String expectedKML = "<kml/>";
         final String expectedGML = "<gml/>";
         final String expectedJSONResponse = "{\"data\":{\"kml\":\""+expectedKML+"\",\"gml\":\""+expectedGML+"\"},\"success\":true}";
-        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"kml\":\""+expectedKML+"\", \"gml\":\""+expectedGML+"\"}}";
+        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"gml\":\""+expectedGML+"\",\"kml\":\""+expectedKML+"\"}}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
@@ -183,7 +183,7 @@ public class TestMineralOccurrencesFilterController {
         final String expectedKML = "<kml/>";
         final String expectedGML = "<gml/>";
         final String expectedJSONResponse = "{\"data\":{\"kml\":\""+expectedKML+"\",\"gml\":\""+expectedGML+"\"},\"success\":true}";
-        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"kml\":\""+expectedKML+"\", \"gml\":\""+expectedGML+"\"}}";
+        final String expectedJSONResponse2= "{\"success\":true,\"data\":{\"gml\":\""+expectedGML+"\",\"kml\":\""+expectedKML+"\"}}";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
