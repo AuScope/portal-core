@@ -67,6 +67,9 @@ public class CSWController {
      */
     @RequestMapping("/getComplexFeatures.do")
     public ModelAndView getComplexFeatures() throws Exception {
+        //update the records if need be
+        cswService.updateRecordsInBackground();
+
         //the main holder for the items
         JSONArray dataItems = new JSONArray();
 
@@ -140,6 +143,9 @@ public class CSWController {
      */
     @RequestMapping("/getWMSLayers.do")
     public ModelAndView getWMSLayers() throws Exception {
+        //update the records if need be
+        cswService.updateRecordsInBackground();
+
         //the main holder for the items
         JSONArray dataItems = new JSONArray();
 

@@ -153,6 +153,7 @@ public class CSWService {
                     wfsRecords.add(rec);
                 }
         }
+
         return wfsRecords.toArray(new CSWRecord[wfsRecords.size()]);
     }
 }

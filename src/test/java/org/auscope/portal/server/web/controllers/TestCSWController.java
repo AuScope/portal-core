@@ -84,6 +84,7 @@ public class TestCSWController {
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
 
         context.checking(new Expectations() {{
+            oneOf(cswService).updateRecordsInBackground();
             oneOf(knownTypes).iterator();will(returnValue(mockIterator));
             oneOf(mockIterator).hasNext();will(returnValue(true));
             oneOf(mockIterator).next();will(returnValue(def));
@@ -127,6 +128,7 @@ public class TestCSWController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
+            oneOf(cswService).updateRecordsInBackground();
             oneOf(knownTypes).iterator();will(returnValue(mockIterator));
             oneOf(mockIterator).hasNext();will(returnValue(true));
             oneOf(mockIterator).next();will(returnValue(def));
@@ -163,6 +165,7 @@ public class TestCSWController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
+            oneOf(cswService).updateRecordsInBackground();
             oneOf(cswService).getWMSRecords();will(returnValue(new CSWRecord[]{mockRecord}));
 
             oneOf(mockRecord).getServiceName();
