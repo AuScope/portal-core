@@ -53,7 +53,7 @@ public class CSWService {
      * @throws Exception
      */
     public void updateRecordsInBackground() throws Exception {
-        if(System.currentTimeMillis() - lastUpdated > UPDATE_INTERVAL) { //if older that 5 mins then do the update
+        if(System.currentTimeMillis() - lastUpdated > UPDATE_INTERVAL || dataRecords.length == 0) { //if older that 5 mins or there are no records then do the update
             executor.execute(new Runnable() {
                 public void run() {
                     updateCSWRecords();
