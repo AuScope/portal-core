@@ -63,7 +63,7 @@
    </bean>
 
     <bean id="knownTypeGeodesy" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
-       <constructor-arg index="0" value="geodesy:stations"/>
+       <constructor-arg index="0" value="ngcp:GnssStation"/>
        <constructor-arg index="1" value="Geodesy"/>
        <constructor-arg index="2" value=""/>
        <constructor-arg index="3" value="/getAllFeatures.do"/>

@@ -5,40 +5,82 @@
  * @param statusBar
  * @param viewport
  */
-var gMapClickController = function(map, overlay, latlng, statusBar, viewport, treePanel) {
-    /*statusBar.showBusy();
-    statusBar.setVisible(true);
-    viewport.doLayout();*/
+var gMapClickController = function(map, overlay, latlng, statusBar, viewport, activeLayersStore) {
 
     if (overlay instanceof GMarker) {
         if (overlay.typeName == "gsml:Borehole") {
             new NVCLMarker(overlay.title, overlay, overlay.description).getMarkerClickedFn()();
         }
-        else if (overlay.typeName == "geodesy:stations") {
+        else if (overlay.typeName == "ngcp:GnssStation") {
             new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.title, overlay, overlay.description).getMarkerClickedFn()();
         }
         else if (overlay.description != null) {
             overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
                // overlay.openInfoWindowHtml(overlay.description);
         }
+    } else {        
+        for (i = 0; i < activeLayersStore.getCount(); i++) {
+            var record = activeLayersPanel.getStore().getAt(i);
+            if (record.get('serviceType') == 'wms') {
+                var TileUtl = new Tile(map,latlng);
+
+                var url = "/wmsMarkerPopup.do"
+                url += "?WMS_URL=" + record.get('serviceURLs');
+                url += "&lat=" + latlng.lat();
+                url += "&lng=" + latlng.lng();
+                url += "&QUERY_LAYERS=" + record.get('typeName');
+                url += "&x=" + TileUtl.getTilePoint().x; 
+                url += "&y=" + TileUtl.getTilePoint().y;
+                url += '&BBOX=' + TileUtl.getTileCoordinates();
+                url += '&WIDTH=' + TileUtl.getTileWidth();
+                url += '&HEIGHT=' + TileUtl.getTileHeight();    			
+                //alert(url);
+                
+                map.getDragObject().setDraggableCursor("pointer");
+                GDownloadUrl(url, function(response, pResponseCode) {
+                    if (pResponseCode == 200) {
+                        if (isDataThere(response)) {
+                            if (isHtmlPage(response)) {
+                                var openWindow = window.open('','mywindow'+i);
+                                openWindow.document.write(response);
+                                openWindow.document.close();
+                            } else {
+                                map.openInfoWindowHtml(latlng, response, {autoScroll:true});
+                            }
+                        }
+                    } else {
+                        alert(pResponseCode);
+                    }
+                });
+            }        	    			
+    	}
     }
-    /*else if(latlng != null && treePanel.getSelectionModel().getSelectedNode() != null) { //geologic unit layer
-        //var queryString = ProxyURL+"http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS%26version=1.1.0%26request=GetFeature%26typeName=gsml:GeologicUnit%26outputFormat=text/xml;%20subtype=geoscimlhtml%26filter=%3Cogc:Filter%20xmlns:wfs=%22http://www.opengis.net/wfs%22%20xmlns:ogc=%22http://www.opengis.net/ogc%22%20xmlns:gml=%22http://www.opengis.net/gml%22%20xmlns:gsml=%22urn:cgi:xmlns:CGI:GeoSciML:2.0%22%3E%3Cogc:BBOX%3E%3Cogc:PropertyName%3Egsml:occurrence/gsml:MappedFeature/gsml:shape%3C/ogc:PropertyName%3E%3Cgml:Envelope%20srsName=%22EPSG:4326%22%3E%3Cgml:lowerCorner%3E"+latlng.lng()+"%20"+latlng.lat()+"%3C/gml:lowerCorner%3E%3Cgml:upperCorner%3E"+latlng.lng()+"%20"+latlng.lat()+"%3C/gml:upperCorner%3E%3C/gml:Envelope%3E%3C/ogc:BBOX%3E%3C/ogc:Filter%3E";
-        //var queryString = ProxyURL+'http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS&version=1.1.0&request=GetFeature&typeName=gsml:GeologicUnit&outputFormat=text/xml;subtype=geoscimlhtml&filter=<ogc:Filter xmlns:wfs="http://www.opengis.net/wfs" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"><ogc:BBOX><ogc:PropertyName>gsml:occurrence/gsml:MappedFeature/gsml:shape</ogc:PropertyName><gml:Envelope srsName="EPSG:4326"><gml:lowerCorner>'+latlng.lng()+' '+latlng.lat()+'</gml:lowerCorner><gml:upperCorner>'+latlng.lng()+' '+latlng.lat()+'</gml:upperCorner></gml:Envelope></ogc:BBOX></ogc:Filter>';
-        if(treePanel.getSelectionModel().getSelectedNode().text == "Geologic Units") {
-            var url = "/geologicUnitPopup.do?lat=" + latlng.lat() + "&lng=" + latlng.lng();
-            GDownloadUrl(url, function(response, pResponseCode) {
-                if(pResponseCode == 200) {
-                    map.openInfoWindowHtml(latlng, response, {autoScroll:true});
-                    //map.openInfoWindowHtml(latlng, response);
-                }
-            });
-        }
-    }*/
-
-
-    /*statusBar.clearStatus();
-    statusBar.setVisible(false);
-    viewport.doLayout();*/
-
 };
+
+/**
+ * Attempts to find out if WMS GetFeatureInfo query returns data.
+ * 
+ * We need to hack a bit here as there is not much that we can check  
+ * for. For example the data does not have to come in tabular format.
+ * In addition html does not have to be well formed.
+ * 
+ * So ... we assume that minimum html must be longer then 30 chars
+ * eg. data string: <table border="1"></table>
+ * 
+ * @param iStr HTML string content to be verified 
+ * @return Boolean. 
+ */
+function isDataThere(iStr) {
+	return (iStr.length > 30) ? true : false;
+}
+
+/**
+ * Attempts to find out if WMS GetFeatureInfo query returns content
+ * with page markup.
+ *
+ * @param iStr HTML string content to be verified 
+ * @return Boolean. 
+ */
+function isHtmlPage(iStr) {
+	return (iStr.toLowerCase().indexOf('<body') !=-1);
+}

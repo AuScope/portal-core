@@ -827,7 +827,7 @@ Ext.onReady(function() {
 
     //when updateCSWRecords person clicks on updateCSWRecords marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {
-        gMapClickController(map, overlay, latlng, statusBar, viewport);
+        gMapClickController(map, overlay, latlng, statusBar, viewport, activeLayersStore);
     });
 
     new Ext.LoadMask(tabsPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});

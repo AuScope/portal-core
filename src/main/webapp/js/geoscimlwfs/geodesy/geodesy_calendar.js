@@ -207,7 +207,7 @@ function GeodesyCalendar_show (pDateSelected) {
          tdateHrefObj.id = tdateHrefId;
          tdateHrefObj.href = 'javascript:void(0)';
          tdateHrefObj.style.color = "blue";
-         tdateHrefObj.innerHTML = '<font size="2">' + nDate + '</font>';
+         tdateHrefObj.innerHTML = '<font size="2">&nbsp;&nbsp;' + nDate + '</font>';
          tdateHrefObj.onclick = this.moParentMarker.getDateClickedFn(nYear, nMonth, nDate, tdateHrefId); 
          
          var tdateChkId = "date_chk_" + this.msStation + "_" + nYear + "_" + nMonth + "_" + nDate;    

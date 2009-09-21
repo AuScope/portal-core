@@ -3,14 +3,20 @@ package org.auscope.portal.server.web.service;
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.springframework.stereotype.Repository;
 
 import java.net.*;
+import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
 
+
 /**
- * Utility class used to call web service endpoints
+ * Utility class used to call web service end points
  * 
  * User: Mathew Wyatt
  * Date: 25/03/2009
@@ -19,8 +25,7 @@ import java.io.IOException;
 
 @Repository
 public class HttpServiceCaller {
-    private Logger logger = Logger.getLogger(getClass());
-
+    protected final Log log = LogFactory.getLog(getClass());
     /**
      * Makes a call to a http GetMethod and returns the response as a string
      *
@@ -83,11 +88,11 @@ public class HttpServiceCaller {
         int statusCode = httpClient.executeMethod(method);
 
         if (statusCode != HttpStatus.SC_OK) {
-            logger.error(method.getStatusLine());
+            log.error(method.getStatusLine());
 
             //if its unavailable then throw updateCSWRecords connection exception
             if(statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
-                    throw new ConnectException();
+                throw new ConnectException();
 
             //if the response is not OK then throw an error
             throw new Exception("Returned status line: " + method.getStatusLine());
@@ -112,4 +117,30 @@ public class HttpServiceCaller {
     public HttpClient getHttpClient() {
         return new HttpClient();        
     }
+    
+    /**
+     * Given a URL, call it, convert the response into a String and return
+     * @param serviceUrl
+     * @return
+     * @throws IOException
+     */
+    public String callHttpUrlGET(URL serviceUrl) throws IOException {
+        return responseToString(new BufferedInputStream(serviceUrl.openStream()));
+    }
+    
+    /**
+     * Convert a Buffered stream into a String
+     * @param stream
+     * @return
+     * @throws IOException
+     */
+    public String responseToString(BufferedInputStream stream) throws IOException {
+        StringBuffer stringBuffer = new StringBuffer();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+        String line;
+        while((line = reader.readLine()) != null) {
+            stringBuffer.append(line);
+        }
+        return stringBuffer.toString();
+    }   
 }
