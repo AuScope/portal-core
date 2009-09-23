@@ -169,7 +169,7 @@ public class TestCSWController {
             oneOf(cswService).getWMSRecords();will(returnValue(new CSWRecord[]{mockRecord}));
 
             oneOf(mockRecord).getServiceName();
-            oneOf(mockRecord).getOnlineResourceDescription();
+            oneOf(mockRecord).getDataIdentificationAbstract();
             oneOf(mockRecord).getOnlineResourceName();
             oneOf(mockRecord).getServiceUrl();
 

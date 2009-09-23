@@ -59,8 +59,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
-     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
+     * [title, description, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
+     * [title, description, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
      * ]
      *
      * @return
@@ -134,8 +134,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
-     * [title, description, proxyURL, serviceType, id, typeName, serviceURLs, checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
+     * [title, description, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
+     * [title, description, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
      * ]
      *
      * @return
@@ -159,7 +159,7 @@ public class CSWController {
             tableRow.add(record.getServiceName());
 
             //add the abstract text to be shown as updateCSWRecords description
-            tableRow.add(record.getOnlineResourceDescription());
+            tableRow.add(record.getDataIdentificationAbstract());
 
             //wms dont need updateCSWRecords proxy url
             tableRow.add("");

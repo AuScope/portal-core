@@ -22,6 +22,9 @@ public class CSWRecord {
     private String contactOrganisation;
 
 
+    private String dataIdentificationAbstract;
+
+
     public CSWRecord(Node node) throws XPathExpressionException {
         this.recordNode = node;
 
@@ -31,6 +34,10 @@ public class CSWRecord {
         String serviceTitleExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
         Node tempNode = (Node)xPath.evaluate(serviceTitleExpression, recordNode, XPathConstants.NODE);
         serviceName = tempNode != null ? tempNode.getTextContent() : "";
+
+        String dataIdentificationAbstractExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString";
+        tempNode = (Node)xPath.evaluate(dataIdentificationAbstractExpression, recordNode, XPathConstants.NODE);
+        dataIdentificationAbstract = tempNode != null ? tempNode.getTextContent() : "";
 
         String serviceUrleExpression = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:linkage/gmd:URL";
         tempNode = (Node)xPath.evaluate(serviceUrleExpression, recordNode, XPathConstants.NODE);
@@ -76,5 +83,8 @@ public class CSWRecord {
     public String getContactOrganisation() throws XPathExpressionException {
         return contactOrganisation;
     }
-    
+
+    public String getDataIdentificationAbstract() {
+        return dataIdentificationAbstract;
+    }
 }

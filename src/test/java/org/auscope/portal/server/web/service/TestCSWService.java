@@ -66,6 +66,7 @@ public class TestCSWService {
         this.cswService.setServiceUrl("http://localhost");
     }
 
+    //TODO: test when there are no data records and the time interval is less than 5 minutes, see cswService.updateRecordsInBackground() funtion for logic to test
     /**
      * Test that the thread is executed
      * @throws Exception

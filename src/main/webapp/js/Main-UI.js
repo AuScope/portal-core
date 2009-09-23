@@ -54,7 +54,7 @@ Ext.onReady(function() {
 
     var complexFeaturesRowExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template(
-                '<p><b>Description:</b> {description} </p><br>'
+                '<p>{description} </p><br>'
                 )
     });
 
@@ -142,7 +142,7 @@ Ext.onReady(function() {
 
     var wmsLayersRowExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template(
-                '<p><b>Description:</b> {description}</p><br>'
+                '<p>{description}</p><br>'
                 )
     });
 
@@ -439,7 +439,7 @@ Ext.onReady(function() {
 
     var activeLayersPanelExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template(
-                '<p><b>Description:</b> {description}</p><br>'
+                '<p>{description}</p><br>'
                 )
     });
 
