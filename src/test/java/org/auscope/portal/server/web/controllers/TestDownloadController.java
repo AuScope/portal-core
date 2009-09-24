@@ -115,6 +115,41 @@ public class TestDownloadController {
     }
 
     /**
+     * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data
+     */
+    @Test
+    public void testDownloadGMLAsZipWithError() throws Exception {
+        final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
+        final String[] serviceUrls = {"http://someUrl"};
+        final String dummyGml = "<someGmlHere/>";
+        final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\"" + dummyGml + "\"},\"success\":false}";
+
+        context.checking(new Expectations() {{
+            //setting of the headers for the return content
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).setHeader(with(any(String.class)), with(any(String.class)));
+            oneOf(mockHttpResponse).getOutputStream();
+            will(returnValue(servletOutputStream));
+
+            //calling the service
+            oneOf(httpServiceCaller).getHttpClient();
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
+            will(returnValue(dummyJSONResponse));
+        }});
+
+        downloadController.downloadGMLAsZip(serviceUrls, mockHttpResponse);
+
+        //check that the zip file contains the correct data
+        ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
+        ZipEntry ze = null;
+        while ((ze = zipInputStream.getNextEntry()) != null) {
+            System.out.println(ze.getName());
+            Assert.assertTrue(ze.getName().endsWith("operation-failed.xml"));
+        }
+        zipInputStream.close();
+    }
+
+    /**
      * Test that this function makes all of the approriate calls, and see if it returns xml file zipped up
      */
     @Test

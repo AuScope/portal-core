@@ -406,7 +406,7 @@ Ext.onReady(function() {
         tileLayer.layers = record.get('typeName');
 
         //TODO: remove code specific to feature types and styles specific to GSV
-        if (record.get('title') == 'gsmlGeologicUnit')
+        if (record.get('typeName') == 'gsmlGeologicUnit')
             tileLayer.styles = 'ColorByLithology';
         //if (record.get('id') == '7')
         //    tileLayer.styles = '7';

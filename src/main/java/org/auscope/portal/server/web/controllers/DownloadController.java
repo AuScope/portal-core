@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.Date;
+import java.io.ByteArrayOutputStream;
 
 import net.sf.json.JSONObject;
 
@@ -52,19 +53,32 @@ public class DownloadController {
         //create the output stream
         ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
 
+        logger.info("No. of serviceUrls: " + serviceUrls.length);
+
         for(int i=0; i<serviceUrls.length; i++) {
 
             GetMethod method = new GetMethod(serviceUrls[i]);
             HttpClient client = serviceCaller.getHttpClient();
 
+            logger.info("Calling service: " + serviceUrls[i]);
+
             String responseString = serviceCaller.getMethodResponseAsString(method, client);
+
+            logger.info("Response: " + responseString);
 
             JSONObject jsonObject = JSONObject.fromObject( responseString );
 
             byte[] gmlBytes = JSONObject.fromObject(jsonObject.get("data")).get("gml").toString().getBytes();
 
-            //create a new entry in the zip file with a timestamped name
-            zout.putNextEntry(new ZipEntry(new Date().toString() +".xml"));
+            logger.info(gmlBytes.length);
+
+            if(jsonObject.get("success").toString().equals("false")) {
+                zout.putNextEntry(new ZipEntry(new Date().toString() +"-operation-failed.xml"));
+            }
+            else {
+                //create a new entry in the zip file with a timestamped name
+                zout.putNextEntry(new ZipEntry(new Date().toString() +".xml"));
+            }
 
             zout.write(gmlBytes);
             zout.closeEntry();
