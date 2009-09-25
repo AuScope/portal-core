@@ -48,8 +48,10 @@ var gMapClickController = function(map, overlay, latlng, statusBar, viewport, ac
                                 map.openInfoWindowHtml(latlng, response, {autoScroll:true});
                             }
                         }
+                    } else if(responseCode == -1) {
+                        alert("Data request timed out. Please try later.");
                     } else {
-                        alert(pResponseCode);
+                        alert('Remote server returned error code: ' + pResponseCode);
                     }
                 });
             }        	    			
