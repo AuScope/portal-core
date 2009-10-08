@@ -82,6 +82,8 @@
             <xsl:apply-templates select="gml:featureMember/gsml:MappedFeature"/>
             <xsl:apply-templates select="gml:featureMember/gsml:ShearDisplacementStructure"/>
 
+            <xsl:apply-templates select="gml:featureMembers/er:Mine"/>
+            <xsl:apply-templates select="gml:featureMembers/er:MiningActivity"/>
             <xsl:apply-templates select="gml:featureMembers/ngcp:GnssStation"/>
             <xsl:apply-templates select="gml:featureMembers/er:MineralOccurrence"/>
             <xsl:apply-templates select="gml:featureMembers/gsml:Borehole"/>
@@ -93,7 +95,7 @@
    
    <!-- TEMPLATE FOR TRANSLATING Mine -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/er:Mine">
+   <xsl:template match="gml:featureMember/er:Mine | gml:featureMembers/er:Mine">
    
       <xsl:variable name="coordinates">
          <xsl:value-of select="./er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point/gml:pos"/>
@@ -122,7 +124,7 @@
    
    <!-- TEMPLATE FOR TRANSLATING Maining Activity -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/er:MiningActivity">
+   <xsl:template match="gml:featureMember/er:MiningActivity | gml:featureMembers/er:MiningActivity">
 
       <xsl:variable name="coordinates">
          <xsl:value-of select="./er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point/gml:pos"/>
@@ -133,7 +135,7 @@
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
                <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
-               <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
+               <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="./gml:name"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="./gml:name"/><![CDATA[</a>]]>
                <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
                <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/>
@@ -141,6 +143,10 @@
                <xsl:call-template name="displayUrnResolverLink">
                   <xsl:with-param name="tableRowLabel" select=" 'Associated Mine' "/>
                   <xsl:with-param name="tableRowValue" select="./er:associatedMine/@xlink:href"/>
+               </xsl:call-template>
+               <xsl:call-template name="displayUrnResolverLink">
+                  <xsl:with-param name="tableRowLabel" select=" 'Deposit' "/>
+                  <xsl:with-param name="tableRowValue" select="./er:deposit/@xlink:href"/>
                </xsl:call-template>               
                <![CDATA[</td></tr><tr><td>Product</td><td>]]><xsl:value-of select="./er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value"/>
                <xsl:apply-templates select="./er:sourceCommodity"/>
