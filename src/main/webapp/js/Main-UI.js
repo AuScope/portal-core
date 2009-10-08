@@ -607,8 +607,8 @@ Ext.onReady(function() {
     });
 
     /**
-     * Handler for click events on the active layers panel, used for the new browser window popup which shows the
-     * GML or WMS image
+     * Handler for click events on the active layers panel, used for the  
+     * new browser window popup which shows the GML or WMS image
      */
     this.activeLayersPanel.on('click', function(e, t) {
         e.stopEvent();
@@ -616,7 +616,8 @@ Ext.onReady(function() {
         var row = e.getTarget('.x-grid3-row');
         var col = e.getTarget('.x-grid3-col');
 
-        //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
+        // if there is no visible tooltip then create one, if on is 
+        // visible already we don't want to layer another one on top
         if (col != null) {
 
             //get the actual data record
@@ -695,8 +696,9 @@ Ext.onReady(function() {
     });
 
     /**
-     * Opens a new window and submits a POST request to a given URL for given key value pairs. This approach is needed,
-     * because it is tricky to send a list of URLs through a GET request URL. 
+     * Opens a new window and submits a POST request to a given URL for given 
+     * key value pairs. This approach is needed, because it is tricky to send 
+     * a list of URLs through a GET request URL. 
      *
      * @param url
      * @param name
@@ -762,7 +764,12 @@ Ext.onReady(function() {
     /**
      * This center panel will hold the google maps
      */
-    var centerPanel = new Ext.Panel({region:"center", margins:'100 0 0 0', cmargins:'100 0 0 0'});
+    var centerPanel = new Ext.Panel({
+        region: 'center', 
+        id: 'center_region', 
+        margins: '100 0 0 0', 
+        cmargins:'100 0 0 0'
+    });
 
     /**
      * Used for notifications of activity
@@ -814,10 +821,16 @@ Ext.onReady(function() {
         map.addControl(new GOverviewMapControl(Tsize));
 
         map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(345, 7)));
-
-
     }
 
+    // Fix for IE resize problem
+    if(Ext.isIE){
+        map.checkResize();
+        Ext.get('center_region').on('resize',function(){
+            map.checkResize();
+        },this);
+    }  
+    
     //updateCSWRecords dud gloabal for geoxml class
     theglobalexml = new GeoXml("theglobalexml", map, null, null);
 
