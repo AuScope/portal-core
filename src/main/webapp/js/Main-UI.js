@@ -13,43 +13,20 @@ Ext.onReady(function() {
     var complexFeaturesStore = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: '/getComplexFeatures.do', timeout:180000})),
         reader: new Ext.data.ArrayReader({}, [
-            {
-                name:'title'
-            },
-            {
-                name:'description'
-            },
-            {
-                name:'proxyURL'
-            },
-            {
-                name: 'serviceType'
-            },
-            {
-                name: 'id'
-            },
-            {
-                name: 'typeName'
-            },
-            {
-                name: 'serviceURLs'
-            },
-            {
-                name: 'layerVisible'
-            },
-            {
-                name: 'loadingStatus'
-            },
-            {
-                name: 'iconImgSrc'
-            },
-            {
-                name: 'iconUrl'
-            },
-            {
-                name: 'dataSourceImage'
-            }
-        ])
+            {   name: 'title'           },
+            {   name: 'description'     },
+            {   name: 'proxyURL'        },
+            {   name: 'serviceType'     },
+            {   name: 'id'              },
+            {   name: 'typeName'        },
+            {   name: 'serviceURLs'     },
+            {   name: 'layerVisible'    },
+            {   name: 'loadingStatus'   },
+            {   name: 'iconImgSrc'      },
+            {   name: 'iconUrl'         },
+            {   name: 'dataSourceImage' },
+        ]),
+        sortInfo: {field:'title', direction:'ASC'}
     });
 
     var complexFeaturesRowExpander = new Ext.grid.RowExpander({
@@ -75,6 +52,7 @@ Ext.onReady(function() {
                 text:'Add Layer to Map',
                 tooltip:'Add Layer to Map',
                 iconCls:'add',
+                pressed: true,
                 handler: function() {
                     var recordToAdd = complexFeaturesPanel.getSelectionModel().getSelected();
 
@@ -107,37 +85,18 @@ Ext.onReady(function() {
     var wmsLayersStore = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy({url: '/getWMSLayers.do'}),
         reader: new Ext.data.ArrayReader({}, [
-            {
-                name:'title'
-            },
-            {
-                name:'description'
-            },
-            {
-                name:'proxyURL'
-            },
-            {
-                name: 'serviceType'
-            },
-            {
-                name: 'id'
-            },
-            {
-                name: 'typeName'
-            },
-            {
-                name: 'serviceURLs'
-            },
-            {
-                name: 'layerVisible'
-            },
-            {
-                name: 'loadingStatus'
-            },
-            {
-                name: 'dataSourceImage'
-            }
-        ])
+            {   name: 'title'           },
+            {   name: 'description'     },
+            {   name: 'proxyURL'        },
+            {   name: 'serviceType'     },
+            {   name: 'id'              },
+            {   name: 'typeName'        },
+            {   name: 'serviceURLs'     },
+            {   name: 'layerVisible'    },
+            {   name: 'loadingStatus'   },
+            {   name: 'dataSourceImage' }
+        ]),
+        sortInfo: {field:'title', direction:'ASC'}
     });
 
     var wmsLayersRowExpander = new Ext.grid.RowExpander({
@@ -163,6 +122,7 @@ Ext.onReady(function() {
                 text:'Add Layer to Map',
                 tooltip:'Add Layer to Map',
                 iconCls:'add',
+                pressed:true,
                 handler: function() {
                     var recordToAdd = wmsLayersPanel.getSelectionModel().getSelected();
 
@@ -222,42 +182,18 @@ Ext.onReady(function() {
 
     var activeLayersStore = new Ext.data.Store({
         reader: new Ext.data.ArrayReader({}, [
-            {
-                name:'title'
-            },
-            {
-                name:'description'
-            },
-            {
-                name:'proxyURL'
-            },
-            {
-                name: 'serviceType'
-            },
-            {
-                name: 'id'
-            },
-            {
-                name: 'typeName'
-            },
-            {
-                name: 'serviceURLs'
-            },
-            {
-                name: 'layerVisible'
-            },
-            {
-                name: 'loadingStatus'
-            },
-            {
-                name: 'iconImgSrc'
-            },
-            {
-                name: 'iconUrl'
-            },
-            {
-                name: 'dataSourceImage'
-            }
+            {   name:'title'            },
+            {   name:'description'      },
+            {   name:'proxyURL'         },
+            {   name: 'serviceType'     },
+            {   name: 'id'              },
+            {   name: 'typeName'        },
+            {   name: 'serviceURLs'     },
+            {   name: 'layerVisible'    },
+            {   name: 'loadingStatus'   },
+            {   name: 'iconImgSrc'      },
+            {   name: 'iconUrl'         },
+            {   name: 'dataSourceImage' }
         ])
     });
 
@@ -281,6 +217,7 @@ Ext.onReady(function() {
             if (record.filterPanel != null) {
                 filterPanel.getLayout().setActiveItem(record.get('id'));
                 filterButton.enable();
+                filterButton.toggle(true);
             } else {
                 //create updateCSWRecords filter panel for this record
                 record.filterPanel = formFactory.getFilterForm(record);
@@ -301,6 +238,7 @@ Ext.onReady(function() {
                     filterPanel.add(record.filterPanel);
                     filterPanel.getLayout().setActiveItem(record.get('id'));
                     filterButton.enable();
+                    filterButton.toggle(true);
                 }
             }
         } else {
@@ -423,6 +361,7 @@ Ext.onReady(function() {
         } else if (record.filterPanel != null) {//if filter panel already exists then show it
             filterPanel.getLayout().setActiveItem(record.get('id'));
             filterButton.enable();
+            filterButton.toggle(true);
         } else {//if this type doesnt need updateCSWRecords filter panel then just show the default filter panel
             filterPanel.getLayout().setActiveItem(0);
             filterButton.disable();
@@ -486,6 +425,7 @@ Ext.onReady(function() {
                 text:'Remove Layer',
                 tooltip:'Remove Layer',
                 iconCls:'remove',
+                pressed:true,
                 handler: function() {
                     if (activeLayersPanel.getSelectionModel().getSelected().get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
                         Ext.MessageBox.show({
