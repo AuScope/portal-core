@@ -1,13 +1,13 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
 
-<html>
+<html xmlns:v="urn:schemas-microsoft-com:vml">
    <head>
       <title>AuScope Discovery Portal</title>
       
-      <meta name="description" content="Access geoscientific information from around Australia, via AuScopes national e-Research infrastructure."/>
-      <meta name="keywords" content="AuScope, Discovery, Resources, GeoSciML, Mineral Occurrence, Geologic Unit, Australia"/>
-      <meta name="author" content="AuScope"/>
+      <meta name="description" content="Access geoscientific information from around Australia, via AuScopes national e-Research infrastructure.">
+      <meta name="keywords" content="AuScope, Discovery, Resources, GeoSciML, Mineral Occurrence, Geologic Unit, Australia">
+      <meta name="author" content="AuScope">
       
       <!-- Page Style -->
       <link rel="stylesheet" type="text/css" href="css/menu.css"> 
@@ -15,11 +15,21 @@
       <link rel="stylesheet" type="text/css" href="css/grid-examples.css">
 
       <STYLE type="text/css">
-        #nav-example-02 a {
+         #nav-example-02 a {
             background: url("/img/navigation.gif") -100px -38px no-repeat;
-        }
+         }
+         /* for IE */
+         v\:* {
+            behavior: url(#default#VML);
+         }        
       </STYLE>
-      
+         
+      <!--[if !mso]>
+      <STYLE type="text/css">
+         v\:* { behavior: url(#default#VML); }
+      </STYLE>
+      <![endif]-->
+                  
       <!-- Google Maps imports -->
       <script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=${googleKey}" type="text/javascript"></script>
       <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js"
@@ -31,11 +41,6 @@
       </script>     
       
       <jsp:include page="/jsimports.htm"/>
-      
-      <!-- for IE -->
-      <style type="text/css">v\:* {
-        behavior: url(#default#VML);
-      }</style>
    </head>
 
    <body onunload="GUnload()">
