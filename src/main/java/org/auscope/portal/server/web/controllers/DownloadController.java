@@ -78,10 +78,10 @@ public class DownloadController {
             logger.info(gmlBytes.length);
 
             if(jsonObject.get("success").toString().equals("false"))
-               zout.putNextEntry(new ZipEntry(new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + "-operation-failed.xml"));
+               zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + "-operation-failed.xml"));
             else {
                 //create a new entry in the zip file with a timestamped name 
-               zout.putNextEntry(new ZipEntry(new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".xml"));               
+               zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));               
             }
 
             zout.write(gmlBytes);
@@ -123,9 +123,9 @@ public class DownloadController {
 
             //create a new entry in the zip file with a timestamped name
             if(contentType.getValue().contains("xml"))
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
             else
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".png"));
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".png"));
 
             zout.write(responseBytes);
             zout.closeEntry();
