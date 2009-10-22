@@ -108,8 +108,8 @@
          <Placemark>
             <name><xsl:value-of select="$mineName"/></name>
             <description>
-               <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
-               <tr><td>ID</td><td>]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/>
+               <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
+               <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/><![CDATA[</a>]]>
                <![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]><xsl:value-of select="$mineName"/>
                <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Status</td><td>]]><xsl:value-of select="./er:status"/>
