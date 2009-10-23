@@ -73,7 +73,7 @@ Ext.onReady(function() {
         plugins: [complexFeaturesRowExpander],
         viewConfig: {scrollOffset: 0},
 
-        title: 'Community Models',
+        title: 'Feature Layers',
         region:'north',
         split: true,
         height: 200,
