@@ -607,7 +607,7 @@ Ext.onReady(function() {
                             values[i] = url;
                         }
                         //alert("downloadProxy?" + url);
-                        openWindowWithPost("downloadWMSAsZip.do?", 'WMS Layer Download '+new Date().getTime(), keys, values);
+                        openWindowWithPost("downloadWMSAsZip.do?", 'WMS_Layer_Download_'+new Date().getTime(), keys, values);
                     }
 
                 } else if (serviceType == 'wfs') {//if a WFS open a new window calling the download controller
@@ -628,7 +628,7 @@ Ext.onReady(function() {
 
                         //alert("downloadProxy?" + url);
                         //window.open("downloadAsZip.do?" + urlsParameter, '');
-                        openWindowWithPost("downloadGMLAsZip.do?", 'WFS Layer Download '+new Date().getTime(), keys, values);
+                        openWindowWithPost("downloadGMLAsZip.do?", 'WFS_Layer_Download_'+new Date().getTime(), keys, values);
                     }
                 }
             }
@@ -647,7 +647,7 @@ Ext.onReady(function() {
      */
     var openWindowWithPost = function(url, name, keys, values)
     {
-        var newWindow = window.open(url, name);
+        var newWindow = window.open(url,name);
         if (!newWindow) return false;
         var html = "";
         var html = ""
