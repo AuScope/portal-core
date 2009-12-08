@@ -15,6 +15,7 @@
       <intercept-url pattern="/admin.html" access="ROLE_ADMINISTRATOR" />
  <!-- <intercept-url pattern="/downloadProxy\?urls**" access="ROLE_DOWNLOAD" /> -->
       <intercept-url pattern="/**" filters="none" />
+      <concurrent-session-control max-sessions="1"/>
    </http>
       
    <authentication-manager alias="authenticationManager" />
