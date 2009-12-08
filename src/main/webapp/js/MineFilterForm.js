@@ -17,7 +17,7 @@ MineFilterForm = function(id, serviceUrl) {
         //collapsible: true,
         //title: "Filter Properties",
         //url: loadUrl,
-        id: id,
+        id: 'my-id-'+id,
         border: false,
         autoScroll:true,
         hideMode:'offsets',

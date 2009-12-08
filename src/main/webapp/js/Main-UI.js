@@ -236,7 +236,7 @@ Ext.onReady(function() {
                 } else {
                     //show the filter panel
                     filterPanel.add(record.filterPanel);
-                    filterPanel.getLayout().setActiveItem(record.get('id'));
+                    filterPanel.getLayout().setActiveItem('my-id-'+record.get('id'));
                     filterButton.enable();
                     filterButton.toggle(true);
                 }
@@ -359,7 +359,7 @@ Ext.onReady(function() {
             filterPanel.getLayout().setActiveItem(0);
             filterButton.disable();
         } else if (record.filterPanel != null) {//if filter panel already exists then show it
-            filterPanel.getLayout().setActiveItem(record.get('id'));
+            filterPanel.getLayout().setActiveItem('my-id-'+record.get('id'));
             filterButton.enable();
             filterButton.toggle(true);
         } else {//if this type doesnt need updateCSWRecords filter panel then just show the default filter panel
@@ -713,7 +713,7 @@ Ext.onReady(function() {
 
     /**
      * Used for notifications of activity
-     */
+     *
     var statusBar = new Ext.StatusBar({
         region: "south",
         id: 'my-status',
@@ -726,7 +726,7 @@ Ext.onReady(function() {
         // values to set initially:
         text: 'Ready',
         iconCls: 'ready-icon'
-    });
+    });*/
 
     /**
      * Add all the panels to the viewport
@@ -780,7 +780,7 @@ Ext.onReady(function() {
 
     //when updateCSWRecords person clicks on updateCSWRecords marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {
-        gMapClickController(map, overlay, latlng, statusBar, viewport, activeLayersStore);
+        gMapClickController(map, overlay, latlng, viewport, activeLayersStore);
     });
 
     new Ext.LoadMask(tabsPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});

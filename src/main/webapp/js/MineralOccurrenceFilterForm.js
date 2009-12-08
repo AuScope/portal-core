@@ -72,7 +72,7 @@ MineralOccurrenceFilterForm = function(id) {
         //collapsible: true,
         //title: "Filter Properties",
         //url: loadUrl,
-        id: id,
+        id: 'my-id-'+id,
         border: false,
         autoScroll:true,
         hideMode:'offsets',
