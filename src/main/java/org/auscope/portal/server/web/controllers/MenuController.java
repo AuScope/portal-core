@@ -13,14 +13,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
-import org.auscope.portal.server.gridjob.GridAccessController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Controller that handles all {@link Menu}-related requests,
@@ -35,9 +33,7 @@ public class MenuController {
    @Autowired
    @Qualifier(value = "propertyConfigurer")
    private PortalPropertyPlaceholderConfigurer hostConfigurer;
-  
-   @Autowired
-   private GridAccessController gridAccess;
+
    /* Commented out, for the time being we are redirecting Home link to AuScope site
    @RequestMapping("/home.html")
    public ModelAndView menu() {
@@ -143,42 +139,5 @@ public class MenuController {
    @RequestMapping("/access_error.html")
    public ModelAndView access_error() {
       return new ModelAndView("access_error");
-   }
-   
-   @RequestMapping("/data_service_tool.html")
-   public ModelAndView data_service_tool() {
-      return new ModelAndView("data_service_tool");
-   }
- 
-   @RequestMapping("/gridsubmit.html")
-   public ModelAndView gridsubmit(HttpServletRequest request) {
-       // Ensure user has valid grid credentials
-       if (gridAccess.isProxyValid(
-                   request.getSession().getAttribute("userCred"))) {
-           logger.debug("No/invalid action parameter; returning gridsubmit view.");
-           return new ModelAndView("gridsubmit");
-       } else {
-           request.getSession().setAttribute(
-                   "redirectAfterLogin", "/gridsubmit.html");
-           logger.warn("Proxy not initialized. Redirecting to gridLogin.");
-           return new ModelAndView(
-                   new RedirectView("/gridLogin.do", true, false, false));
-       }	   
-   }
-
-   @RequestMapping("/joblist.html")
-   public ModelAndView joblist(HttpServletRequest request) {
-       // Ensure user has valid grid credentials
-       if (gridAccess.isProxyValid(
-                   request.getSession().getAttribute("userCred"))) {
-           logger.debug("No/invalid action parameter; returning jobList view.");
-           return new ModelAndView("joblist");
-       } else {
-           request.getSession().setAttribute(
-                   "redirectAfterLogin", "/joblist.html");
-           logger.warn("Proxy not initialized. Redirecting to gridLogin.");
-           return new ModelAndView(
-                   new RedirectView("/gridLogin.do", true, false, false));
-       }
    }
 }

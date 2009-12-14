@@ -22,11 +22,7 @@
 
    <context:component-scan base-package="org.auscope.portal"/>
    
-   <bean name="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
-      <property name="order" value="1"/>
-   </bean>
-   
-   <!-- creates a java.util.Properties instance with values loaded from the supplied location -->
+   <!-- creates updateCSWRecords java.util.Properties instance with values loaded from the supplied location -->
    <!-- TO DO: Check if we need this  -->
    <util:properties id="configProperties" location="classpath:config.properties"/>
    
@@ -34,29 +30,8 @@
    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
    
    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-      <property name="order" value="2"/>
-      <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
       <property name="prefix" value="/WEB-INF/jsp/"/>
       <property name="suffix" value=".jsp"/>
-   </bean>    
-
-   <bean id="methodNameResolver" class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
-      <property name="paramName" value="action"/>
-   </bean>
-        
-   <!--<bean name="/gridLogin.html" class="org.auscope.portal.server.web.controllers.GridLoginController">
-      <property name="gridAccess" ref="gridAccess"/>
-   </bean>-->
-   
-    <!--<bean name="/gridsubmit.html" class="org.auscope.portal.server.web.controllers.GridSubmitController">
-        <property name="gridAccess" ref="gridAccess"/>
-        <property name="jobManager" ref="geodesyJobManager"/>
-        <property name="methodNameResolver" ref="methodNameResolver"/>
-    </bean>-->
+   </bean>  
     
-    <!--<bean name="/joblist.html" class="org.auscope.portal.server.web.controllers.JobListController">
-        <property name="gridAccess" ref="gridAccess"/>
-        <property name="jobManager" ref="geodesyJobManager"/>
-        <property name="methodNameResolver" ref="methodNameResolver"/>
-    </bean>--> 
 </beans>

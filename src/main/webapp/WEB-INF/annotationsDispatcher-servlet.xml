@@ -21,10 +21,6 @@
 
     <context:component-scan base-package="org.auscope.portal"/>
 
-   <bean name="xmlViewResolver" class="org.springframework.web.servlet.view.XmlViewResolver">
-      <property name="order" value="1"/>
-   </bean>
-   
     <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
     <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/>
@@ -34,7 +30,6 @@
     <util:properties id="configProperties" location="classpath:config.properties"/>
 
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-      <property name="order" value="2"/>
       <property name="prefix" value="/WEB-INF/jsp/"/>
       <property name="suffix" value=".jsp"/>
    </bean> 

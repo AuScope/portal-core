@@ -30,9 +30,11 @@ var IMAGES_DIR = "img";
 * gaYears
 *   Years for which we would display data urls
 * gaMonths
-*   All the months of a year
+*   All the months of updateCSWRecords year
 */
-var gaYears = new Array(2009, 2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001, 2000, 1999, 1998);
+//var gaYears = new Array(2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001, 2000, 1999, 1998);
+var gaYears = getYearsArrayFrom(1998);
+
 var gaMonths = new Array();
 gaMonths[1] = "Jan";
 gaMonths[2] = "Feb";
@@ -68,14 +70,14 @@ var gsCurrentDate = goToday.getDate();
 
 /**
 * These arrays define the feature types which are recognized by the appliction
-* Everytime the application is modified to accept a new feature type,
+* Everytime the application is modified to accept updateCSWRecords new feature type,
 * entries for the new feature type should be added to these arrays.
 * gaFeatureTypes: 
 *   Array of recognized feature types
 *   The map interface will display feature types only if they belong to this array.
 * gaFeatureTypeIconOn: 
 *   Associative array of the icons 
-*   Any changes to the groups (associated with a category) should be reflected in this array.
+*   Any changes to the groups (associated with updateCSWRecords category) should be reflected in this array.
 *   Addition of new categories should be reflected in this array.
 * gaCategoryHtmlDiv:
 *   Associate array of the html div id associated with each station category.
@@ -85,8 +87,6 @@ var gsCurrentDate = goToday.getDate();
 var gaFeatureTypes = new Array("gsml:Borehole", "geodesy:stations", "sa:SamplingPoint", "Avhrr48to72Hours-1404", "Modis48to72Hours-1604");
 
 var gaGroups = new Array();
-
-var geoMarkers = new Array();
 
 var gaFeatureTypeIconOn = new Array();
 gaFeatureTypeIconOn["gsml:Borehole"] = IMAGES_DIR + "/nvcl/borehole_on.png";

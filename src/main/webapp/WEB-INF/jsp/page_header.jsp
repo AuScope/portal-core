@@ -11,22 +11,10 @@
          <a href="admin.html"><span>Administration</span></a>
       </security:authorize>
       
-      <STYLE type="text/css">
-        H2 { text-align: center}
-        #nav-example-02 a {
-            background: url("../img/navigation.gif") -100px -38px no-repeat;
-        }
-      </STYLE>
-      
       <div id="menu">
          <ul >
-            <li class="current"><a href="gmap.html">Map Client<span></span></a></li>
-            <security:authorize ifAllGranted="ROLE_JOB_SUBMISSION"> </security:authorize>
-            <li ><a href="data_service_tool.html">Data Service<span></span></a></li>
-            <li ><a href="gridsubmit.html">Submit Jobs<span></span></a></li>
-            <li ><a href="joblist.html">Monitor Jobs<span></span></a></li>
-            <li ><a href="http://apacsrv1.arrc.csiro.au/wms_v0.9dev/">GPS View<span></span></a></li>
-            
+            <li ><a href="http://www.auscope.org">AuScope.org<span></span></a></li>
+            <li class="current"><a href="gmap.html">AuScope Discovery Portal<span></span></a></li>
             <li ><a href="login.html">Login<span></span></a></li>
          </ul>
       </div>

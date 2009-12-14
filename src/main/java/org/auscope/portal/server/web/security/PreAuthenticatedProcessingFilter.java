@@ -39,8 +39,6 @@ public class PreAuthenticatedProcessingFilter
       //logger.debug("Shib-Person-commonName: " + request.getHeader("Shib-Person-commonName"));
       logger.info("Shib-Person-mail: " + request.getHeader("Shib-Person-mail"));
       //logger.debug("Shib-Shared-Token: " + request.getHeader("Shib-Shared-Token"));
-      request.getSession().setAttribute("Shib-Shared-Token", request.getHeader("Shib-Shared-Token"));
-      request.getSession().setAttribute("Shib-Person-commonName", request.getHeader("Shib-Person-commonName"));
       return request.getHeader("Shib-Person-mail");
    }
    

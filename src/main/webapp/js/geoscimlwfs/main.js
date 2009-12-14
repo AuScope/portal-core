@@ -181,7 +181,7 @@ function parseCapabilitiesDocument(xmlDoc) {
 }
 
 /**
-* Function to parse a capabilities which implements wfs version 1.0.0
+* Function to parse updateCSWRecords capabilities which implements wfs version 1.0.0
 */
 function parseCapabilitiesDocument1_1_0(rootNode) {
   if (g_IsIE)
@@ -225,7 +225,7 @@ function parseCapabilitiesDocument1_1_0(rootNode) {
 }
 
 /**
-* Function to parse a capabilities which implements wfs version 1.1.0
+* Function to parse updateCSWRecords capabilities which implements wfs version 1.1.0
 */
 function parseCapabilitiesDocument1_0_0(rootNode) {
   if (g_IsIE)
@@ -274,15 +274,12 @@ function parseCapabilitiesDocument1_0_0(rootNode) {
 * It creates an xml document of the format
 * <dst:data>
 *   <dst:url_date>
-*     <dst:select_item>
-*       false
-*     <dst:select_item>
-*     <dst:fileDate>
+*     <dst:date>
 *       2008-01-31
-*     <dst:fileDate>
-*     <dst:fileUrl>
+*     <dst:date>
+*     <dst:url>
 *        http://srb.ivec.org/gpsdata/08061/alic0610.08o.Z
-*     <dst:fileUrl>
+*     <dst:url>
 *   </dst:url_date>
 * </dst:data>  
 */
@@ -290,9 +287,9 @@ function getXmlTextForAllCheckedDataUrls() {
 
   // Variables to create the xml text that would be converted to an XML doc
   // to be passed onto the DST portlet
-  var xmlText = '<?xml version="1.0" encoding="ISO-8859-1"?>';
-  var xmlNamespace = "";
-  var xmlRoot = xmlNamespace + "data";
+  var xmlText = "";
+  var xmlNamespace = "dst";
+  var xmlRoot = xmlNamespace + ":data";
 
   
   var group;
@@ -306,68 +303,62 @@ function getXmlTextForAllCheckedDataUrls() {
   xmlText += "<" + xmlRoot + ">";
   
   // Loop over all groups in geodesy
-  var group = geoMarkers;
+  var group = gaGroups["geodesy:stations"];
   if (group) {
-    num_stations = group.length;
+    num_stations = group.maMarkers.length;
     // Loop over all the stations in the group
-    for (i in geoMarkers) {
-      if(i != 'remove') //Only process the stations. JS adds functions to the Array.
-      {  
-	      // Loop over all years for the station
-	      for (var year_index=0; year_index<gaYears.length; year_index++) {
-	        year = gaYears[year_index];
-	        if (geoMarkers[i].maStationDataForDate[year] != undefined) {
-	          // Loop over all months in the year
-	          for (var month_index=1; month_index<=12; month_index++) {
-	            month = gaMonths[month_index];
-	            if (geoMarkers[i].maStationDataForDate[year][month] 
-	                && geoMarkers[i].maStationDataForDate[year][month].length!=0) {
-	              // Loop over all dates for the month
-	              for (var date=1; date<=31; date++) {
-	                if (geoMarkers[i].maStationDataForDate[year][month][date] 
-	                    && geoMarkers[i].maStationDataForDate[year][month][date].length!=0) {
-	                  // If data is avaialable for this date,
-	                  // look for the renix urls that had been "checked" by the user
-	                  // using the station popup windows.
-	                  var num_urls = geoMarkers[i].maStationDataForDate[year][month][date].length;
-	                  for (var url_index=0; url_index<num_urls; url_index++) {
-	                    if (geoMarkers[i].maDataCheckedStateForDate[year][month][date][url_index]) {
-	                      // create the xml fragment for each node.
-	                      xmlDate = year + "-" + month + "-" + date;
-	                      xmlUrl = geoMarkers[i].maStationDataForDate[year][month][date][url_index];
-	                      xmlText += createXmlNodeForDateUrl(xmlDate, xmlUrl);
-	  					}
-	                  }
-	                }
-	              } 
-	            }
-	          }
-	        }
-	      }
-      }    
+    for (var station_index=0; station_index<num_stations; station_index++) {
+      station = group.maMarkers[station_index];
+      // Loop over all years for the station
+      for (var year_index=0; year_index<gaYears.length; year_index++) {
+        year = gaYears[year_index];
+        if (station.maStationDataForDate[year] != undefined) {
+          // Loop over all months in the year
+          for (var month_index=1; month_index<=12; month_index++) {
+            month = gaMonths[month_index];
+            if (station.maStationDataForDate[year][month] 
+                && station.maStationDataForDate[year][month].length!=0) {
+              // Loop over all dates for the month
+              for (var date=1; date<=31; date++) {
+                if (station.maStationDataForDate[year][month][date] 
+                    && station.maStationDataForDate[year][month][date].length!=0) {
+                  // If data is avaialable for this date,
+                  // look for the renix urls that had been "checked" by the user
+                  // using the station popup windows.
+                  var num_urls = station.maStationDataForDate[year][month][date].length;
+                  for (var url_index=0; url_index<num_urls; url_index++) {
+                    if (station.maDataCheckedStateForDate[year][month][date][url_index]) {
+                      // create the xml fragment for each node.
+                      xmlDate = year + "-" + month + "-" + date;
+                      xmlUrl = station.maStationDataForDate[year][month][date][url_index];
+                      xmlText += createXmlNodeForDateUrl(xmlDate, xmlUrl);
+  					}
+                  }
+                }
+              } 
+            }
+          }
+        }
+      }
     }
   }
   xmlText += "</" + xmlRoot + ">";
   return xmlText;
 }
 
-// This function creates the xml node for a date-url pair
+// This function creates the xml node for updateCSWRecords date-url pair
 // See the xml schema in the comment for function getXmlTextForAllCheckedDataUrls
 // Please be sure that the schema of the xml document
 // conforms to the one used in the function createXmlNodeForDateUrl
 // in the DataServiceToolPortlet - WEB-INF/data_service_tool/dataservicetool.jsp file
 function createXmlNodeForDateUrl (pDate, pUrl) {
 	var xmlNode = "";
-	var xmlNamespace = "";
-	var xmlPairNode = xmlNamespace + "url_date";
-	var xmlSelectItemNode = xmlNamespace + "select_item"; //Needed to keep track of which files are selected in DST later.
-  	var xmlUrlNode = xmlNamespace + "fileUrl";
-  	var xmlDateNode = xmlNamespace + "fileDate";
+	var xmlNamespace = "dst";
+	var xmlPairNode = xmlNamespace + ":url_date";
+  	var xmlUrlNode = xmlNamespace + ":url";
+  	var xmlDateNode = xmlNamespace + ":date";
 
 	xmlNode += "<" + xmlPairNode + ">";
-  	xmlNode += "<" + xmlSelectItemNode + ">";
-	xmlNode += "false";
-	xmlNode += "</" + xmlSelectItemNode + ">";	
   	xmlNode += "<" + xmlDateNode + ">";
 	xmlNode += pDate;
 	xmlNode += "</" + xmlDateNode + ">";

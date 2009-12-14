@@ -12,24 +12,6 @@
         <connection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</connection>
         <developerConnection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</developerConnection>
     </scm>
-    <reporting>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-               <links>
-                  <link>http://www.globus.org/api/javadoc-4.0/globus_java_ws_core</link>
-                  <link>http://www.globus.org/api/javadoc-4.0/globus_wsrf_gram_client_java</link>
-                  <link>http://www.globus.org/api/javadoc-4.0/globus_wsrf_gram_common_java</link>
-                  <link>http://www.globus.org/api/javadoc-4.0/globus_wsrf_gram_utils_java</link>
-                  <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
-                  <link>http://static.springframework.org/spring/docs/2.5.x/api</link>
-               </links>
-            </configuration>
-         </plugin>
-      </plugins>
-    </reporting>        
     <build>
         <finalName>AuScope-Portal</finalName>
         <plugins>
@@ -140,21 +122,6 @@
             <name>geotools</name>
             <url>http://download.osgeo.org/webdav/geotools</url>
         </repository>
-      <repository>
-         <id>vpac</id>
-         <name>vpac</name>
-         <url>http://hudson.vpac.org/maven_repository</url>
-      </repository>
-      <repository>
-         <id>shibboleth</id> <!-- for commons-ssl -->
-         <name>shibboleth</name>
-         <url>http://shibboleth.internet2.edu/downloads/maven2</url>
-      </repository>
-      <repository>
-         <id>cgsrv8.arrc.csiro.au-releases</id>
-         <name>cgsrv8.arrc.csiro.au-releases</name>
-         <url>https://cgsrv8.arrc.csiro.au:443/artifactory/Geodesy-repo</url>
-      </repository>        
     </repositories>
 
     <dependencies>
@@ -168,7 +135,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
@@ -243,11 +210,6 @@
             <artifactId>json-lib</artifactId>
             <version>2.2.3</version>
             <classifier>jdk15</classifier>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.json-lib</groupId>
-            <artifactId>json-lib-ext-spring</artifactId>
-            <version>1.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
@@ -339,46 +301,5 @@
             <artifactId>xom</artifactId>
             <version>1.1d2</version>
         </dependency>
-        <!-- Added for Job Submission -->
-      <dependency>
-         <groupId>commons-dbcp</groupId>
-         <artifactId>commons-dbcp</artifactId>
-         <version>1.2.2</version>
-      </dependency>
-      <dependency>
-         <groupId>commons-fileupload</groupId>
-         <artifactId>commons-fileupload</artifactId>
-         <version>1.2.1</version>
-      </dependency>
-      <dependency>
-         <groupId>commons-io</groupId>
-         <artifactId>commons-io</artifactId>
-         <version>1.3.2</version>
-      </dependency>
-      <dependency>
-         <groupId>org.apache.commons.ssl</groupId>
-         <artifactId>not-yet-commons-ssl</artifactId>
-         <version>0.3.10</version>
-      </dependency>
-      <dependency>
-         <groupId>org.hibernate</groupId>
-         <artifactId>hibernate</artifactId>
-         <version>3.2.6.ga</version>
-      </dependency>
-      <dependency>
-         <groupId>commons-collections</groupId>
-         <artifactId>commons-collections</artifactId>
-         <version>3.2.1</version>
-      </dependency>
-      <dependency>
-         <groupId>org.globus</groupId>
-         <artifactId>wsgram-api</artifactId>
-         <version>4.0.8</version>
-      </dependency>
-      <dependency>
-         <groupId>org.glite.slcs</groupId>
-         <artifactId>slsc-common</artifactId>
-         <version>1.4.0.1</version>
-      </dependency>        
     </dependencies>
 </project>

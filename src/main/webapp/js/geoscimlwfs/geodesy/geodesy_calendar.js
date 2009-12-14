@@ -58,7 +58,7 @@ GeodesyCalendar.prototype.show = GeodesyCalendar_show;
 GeodesyCalendar.prototype.parseStringDate = GeodesyCalendar_parseStringDate;
 
 /**
-* This function parses a given string and converts it into a valid date.
+* This function parses updateCSWRecords given string and converts it into updateCSWRecords valid date.
 * @param {String} pStringDate String representing date and time as seconds.
 * @return Date represented by the above string.
 */
@@ -76,7 +76,7 @@ function GeodesyCalendar_parseStringDate (pStringDate) {
 }
 
 /**
-* This function creates a calendar 
+* This function creates updateCSWRecords calendar
 * and adds it to the {@link #msParentDiv} html div of the object.
 * @param {String} pDateSelected The date (providing the month and year information)
 * for which the calendar is to be created. 
@@ -142,12 +142,12 @@ function GeodesyCalendar_show (pDateSelected) {
 
   innerHTML += '</table></td></tr></table>';
   
-  // Create a calendar html div object.
+  // Create updateCSWRecords calendar html div object.
   datesDivObj = document.getElementById(this.msParentDiv);
   
   // Id for the calendar is calendar_div + station_id
   var calendarDivId = "calendar_div_" + this.msStation;
-  // If this frame already exists - remove it before creating a new one.
+  // If this frame already exists - remove it before creating updateCSWRecords new one.
   var calendarDivObj = document.getElementById(calendarDivId);
   if (calendarDivObj) {
     datesDivObj.removeChild(calendarDivObj);
@@ -161,7 +161,7 @@ function GeodesyCalendar_show (pDateSelected) {
   
   // Create an html div object to display the urls of the date selected.
   var dateUrlsDivId = "date_urls_div_" + this.msStation;
-  // If this frame already exists - remove it before creating a new one.
+  // If this frame already exists - remove it before creating updateCSWRecords new one.
   var dateUrlsDivObj = document.getElementById(dateUrlsDivId);
   if (dateUrlsDivObj) {
     datesDivObj.removeChild(dateUrlsDivObj);
@@ -170,28 +170,11 @@ function GeodesyCalendar_show (pDateSelected) {
   dateUrlsDivObj.id = dateUrlsDivId;
   dateUrlsDivObj.style.position = 'absolute';
   dateUrlsDivObj.style.left = '0px';
-  dateUrlsDivObj.style.top = '190px';
-
-  // Create an html div object to display the submit button.
-  var buttonDivId = "button_div_" + this.msStation;
-  // If this frame already exists - remove it before creating a new one.
-  var buttonDivObj = document.getElementById(buttonDivId);
-  if (buttonDivObj) {
-    datesDivObj.removeChild(buttonDivObj);
-  }
-  buttonDivObj = document.createElement("div");
-  buttonDivObj.id = buttonDivId;
-  buttonDivObj.style.position = 'absolute';
-  buttonDivObj.style.right = '10px';
-  buttonDivObj.style.bottom = '10px';
-  buttonDivObj.innerHTML = '<FORM><INPUT type="button" value="Export to Data Service Tool" onClick="GeodesyMarker.prototype.getSubmitButtonFn();"></FORM>' 
-  
-
+  dateUrlsDivObj.style.top = '220px';
   
   // Append the calendar and the urls div in the parent object.
   datesDivObj.appendChild(calendarDivObj);
   datesDivObj.appendChild(dateUrlsDivObj);
-  datesDivObj.appendChild(buttonDivObj);
   
   // Now we parse all the station urls for the dates,
   // depending on whether there is one available, 
@@ -224,7 +207,7 @@ function GeodesyCalendar_show (pDateSelected) {
          tdateHrefObj.id = tdateHrefId;
          tdateHrefObj.href = 'javascript:void(0)';
          tdateHrefObj.style.color = "blue";
-         tdateHrefObj.innerHTML = '<font size="2">' + nDate + '</font>';
+         tdateHrefObj.innerHTML = '<font size="2">&nbsp;&nbsp;' + nDate + '</font>';
          tdateHrefObj.onclick = this.moParentMarker.getDateClickedFn(nYear, nMonth, nDate, tdateHrefId); 
          
          var tdateChkId = "date_chk_" + this.msStation + "_" + nYear + "_" + nMonth + "_" + nDate;    
@@ -236,7 +219,7 @@ function GeodesyCalendar_show (pDateSelected) {
 
          tdateDivObj.appendChild(tdateChkObj);
          // This is required for IE
-         // When using "appendChild" for a checkbox, the checked state of the checkbox is set to false in IE
+         // When using "appendChild" for updateCSWRecords checkbox, the checked state of the checkbox is set to false in IE
          // So we need to reset it.
          tdateChkObj.checked = this.moParentMarker.maDateCheckedStateForMonth[nYear][nMonth][nDate];
          tdateDivObj.appendChild(tdateHrefObj);
