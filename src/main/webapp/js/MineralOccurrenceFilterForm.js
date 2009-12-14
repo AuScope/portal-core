@@ -1,7 +1,8 @@
 /**
- * Builds updateCSWRecords form panel for Mineral Occurrence filters
- * @param id to specify the id of this formpanel instance
- * @param serviceUrl the service url for submit
+ * Builds a form panel for Mineral Occurrence filters
+ *
+ * @param {id} to specify the id of this formpanel instance
+ * @param {serviceUrl} the service url for submit
  */
 MineralOccurrenceFilterForm = function(id) {
     var unitsOfMeasure = [
@@ -68,11 +69,7 @@ MineralOccurrenceFilterForm = function(id) {
     measureTypeCombo.setValue('Any');
 
     Ext.FormPanel.call(this,{
-        //region: "center",
-        //collapsible: true,
-        //title: "Filter Properties",
-        //url: loadUrl,
-        id: id,
+        id: id + '', // Convert id to string
         border: false,
         autoScroll:true,
         hideMode:'offsets',
@@ -87,7 +84,6 @@ MineralOccurrenceFilterForm = function(id) {
             title: 'Mineral Occurrence Filter Properties',
             autoHeight:true,
             anchor: '100%',
-
 
             //defaultType: 'textfield',
 

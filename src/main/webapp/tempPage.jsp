@@ -25,15 +25,15 @@
              type="text/javascript"></script>
 
       <!-- Bring in the ExtJs Libraries and CSS -->
-        <link rel="stylesheet" type="text/css" href="js/external/ext-2.2/resources/css/ext-all.css">
+        <link rel="stylesheet" type="text/css" href="js/external/extjs/resources/css/ext-all.css">
         <script type="text/javascript" src="js/FirefoxXPathFix.js"></script>
 
-        <script type="text/javascript" src="js/external/ext-2.2/adapter/ext/ext-base.js"></script>
-        <script type="text/javascript" src="js/external/ext-2.2/ext-all-debug.js"></script>
-        <!--<script type="text/javascript" src="js/external/ext-2.2/ext-basex.js"></script>-->
-        <script type="text/javascript" src="js/external/ext-2.2/RowExpander.js"></script>
-        <script type="text/javascript" src="js/external/ext-2.2/CheckColumn.js"></script>
-        <script type="text/javascript" src="js/external/ext-2.2/adapter/jquery/jquery.js"></script>
+        <script type="text/javascript" src="js/external/extjs/adapter/ext/ext-base.js"></script>
+        <script type="text/javascript" src="js/external/extjs/ext-all-debug.js"></script>
+        <!--<script type="text/javascript" src="js/external/extjs/ext-basex.js"></script>-->
+        <script type="text/javascript" src="js/external/extjs/RowExpander.js"></script>
+        <script type="text/javascript" src="js/external/extjs/CheckColumn.js"></script>
+        <script type="text/javascript" src="js/external/extjs/adapter/jquery/jquery.js"></script>
 
 
         <script src="js/external/geoxml/geoxml.js" type="text/javascript"></script>

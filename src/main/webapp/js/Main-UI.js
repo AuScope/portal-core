@@ -201,7 +201,7 @@ Ext.onReady(function() {
         //set the record to be selected if checked
         activeLayersPanel.getSelectionModel().selectRecords([record], false);
 
-        if (record.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
+        if (record.get('loadingStatus') == '<img src="js/external/extjs/resources/images/default/grid/loading.gif">') {
             Ext.MessageBox.show({
                 title: 'Please wait',
                 msg: "There is an operation in process for this layer. Please wait until it is finished.",
@@ -256,7 +256,7 @@ Ext.onReady(function() {
 
     var wfsHandler = function(selectedRecord) {
         //if there is already updateCSWRecords filter running for this record then don't call another
-        if (selectedRecord.get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
+        if (selectedRecord.get('loadingStatus') == '<img src="js/external/extjs/resources/images/default/grid/loading.gif">') {
             Ext.MessageBox.show({
                 title: 'Please wait',
                 msg: "There is an operation in process for this layer. Please wait until it is finished.",
@@ -283,7 +283,7 @@ Ext.onReady(function() {
         selectedRecord.tileOverlay = markerManager;
 
         //set the status as loading for this record
-        selectedRecord.set('loadingStatus', '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">');
+        selectedRecord.set('loadingStatus', '<img src="js/external/extjs/resources/images/default/grid/loading.gif">');
 
         var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + selectedRecord.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
 
@@ -294,7 +294,7 @@ Ext.onReady(function() {
 
                 //check if we can set the status to finished
                 if (finishedLoadingCounter <= 0) {
-                    selectedRecord.set('loadingStatus', '<img src="js/external/ext-2.2/resources/images/default/grid/done.gif">');
+                    selectedRecord.set('loadingStatus', '<img src="js/external/extjs/resources/images/default/grid/done.gif">');
                 }
             });
         }
@@ -427,7 +427,7 @@ Ext.onReady(function() {
                 iconCls:'remove',
                 pressed:true,
                 handler: function() {
-                    if (activeLayersPanel.getSelectionModel().getSelected().get('loadingStatus') == '<img src="js/external/ext-2.2/resources/images/default/grid/loading.gif">') {
+                    if (activeLayersPanel.getSelectionModel().getSelected().get('loadingStatus') == '<img src="js/external/extjs/resources/images/default/grid/loading.gif">') {
                         Ext.MessageBox.show({
                             title: 'Please wait',
                             msg: "There is an operation in process for this layer. Please wait until it is finished.",
@@ -713,7 +713,7 @@ Ext.onReady(function() {
 
     /**
      * Used for notifications of activity
-     */
+     *
     var statusBar = new Ext.StatusBar({
         region: "south",
         id: 'my-status',
@@ -727,6 +727,7 @@ Ext.onReady(function() {
         text: 'Ready',
         iconCls: 'ready-icon'
     });
+    */
 
     /**
      * Add all the panels to the viewport
@@ -780,7 +781,7 @@ Ext.onReady(function() {
 
     //when updateCSWRecords person clicks on updateCSWRecords marker then do something
     GEvent.addListener(map, "click", function(overlay, latlng) {
-        gMapClickController(map, overlay, latlng, statusBar, viewport, activeLayersStore);
+        gMapClickController(map, overlay, latlng, activeLayersStore);
     });
 
     new Ext.LoadMask(tabsPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});

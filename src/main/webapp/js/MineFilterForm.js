@@ -1,7 +1,7 @@
 /**
- * Builds updateCSWRecords form panel for Mine filters
- * @param id to specify the id of this formpanel instance
- * @param serviceUrl the service url for submit
+ * Builds a form panel for Mine filters
+ * @param {id} to specify the id of this formpanel instance
+ * @param {serviceUrl} the service url for submit
  */
 MineFilterForm = function(id, serviceUrl) {
     /*var mineNamesStore = new Ext.data.Store({
@@ -13,11 +13,7 @@ MineFilterForm = function(id, serviceUrl) {
     });*/
 
     Ext.FormPanel.call(this, {
-        //region: "center",
-        //collapsible: true,
-        //title: "Filter Properties",
-        //url: loadUrl,
-        id: id,
+        id: id + '', // Convert id to string
         border: false,
         autoScroll:true,
         hideMode:'offsets',
@@ -25,14 +21,12 @@ MineFilterForm = function(id, serviceUrl) {
         buttonAlign: 'right',
         labelAlign: 'right',
         labelWidth: 60,
-
         //labelWidth: 140,
         timeout: 180, //should not time out before the server does
 
         items: [{
             xtype:'fieldset',
             title: 'Mine Filter Properties',
-
             autoHeight:true,
             anchor: '100%',
 

@@ -1,7 +1,8 @@
 /**
- * Builds updateCSWRecords form panel for Mining Activity filters
- * @param id to specify the id of this formpanel instance
- * @param serviceUrl the service url for submit
+ * Builds a form panel for Mining Activity filters
+ *
+ * @param {id} to specify the id of this formpanel instance
+ * @param {serviceUrl} the service url for submit
  */
 MiningActivityFilterForm = function(id, serviceUrl) {
     /*var mineNamesStore = new Ext.data.Store({
@@ -13,11 +14,7 @@ MiningActivityFilterForm = function(id, serviceUrl) {
     });*/
 
     Ext.FormPanel.call(this, {
-        //region: "center",
-        //collapsible: true,
-        //title: "Filter Properties",
-        //url: loadUrl,
-        id: id,
+        id: id + '', // Convert id to string
         border: false,
         autoScroll:true,
         hideMode:'offsets',
@@ -30,10 +27,8 @@ MiningActivityFilterForm = function(id, serviceUrl) {
         items: [{
             xtype:'fieldset',
             title: 'Mining Activity Filter Properties',
-
             autoHeight:true,
             anchor: '100%',
-
             defaultType: 'datefield',
 
             items :[

@@ -265,7 +265,7 @@ function NVCLMarker_markerClicked()
   var oNVCLMarker = this;
 
     //show loading status
-    oNVCLMarker.moMarker.openInfoWindowHtml('<div > <img src="js/external/ext-2.2/resources/images/default/grid/loading.gif"> Loading... </div>');
+    oNVCLMarker.moMarker.openInfoWindowHtml('<div > <img src="js/external/extjs/resources/images/default/grid/loading.gif"> Loading... </div>');
     
   //var oBorehole = this.moBorehole;
   

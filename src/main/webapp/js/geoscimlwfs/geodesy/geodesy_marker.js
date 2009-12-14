@@ -390,7 +390,7 @@ function GeodesyMarker_markerClicked()
   var oMarker = this.moMarker;
 
     //show loading status
-    oMarker.openInfoWindowHtml('<div > <img src="js/external/ext-2.2/resources/images/default/grid/loading.gif"> Loading... </div>');
+    oMarker.openInfoWindowHtml('<div > <img src="js/external/extjs/resources/images/default/grid/loading.gif"> Loading... </div>');
     
   /**
   * The popup for updateCSWRecords marker contains two tabs - Summary and Renix Files

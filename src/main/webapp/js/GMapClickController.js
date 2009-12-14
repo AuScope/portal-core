@@ -1,11 +1,12 @@
 /**
- * When someone clicks on the google maps we show popups specific to each feature type/marker that is clicked on
- * @param overlay
- * @param latlng
- * @param statusBar
- * @param viewport
+ * When someone clicks on the google maps we show popups specific to each 
+ * feature type/marker that is clicked on
+ * @param {map}
+ * @param {overlay}
+ * @param {latlng}
+ * @param {activeLayersStore}
  */
-var gMapClickController = function(map, overlay, latlng, statusBar, viewport, activeLayersStore) {
+var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
 
     if (overlay instanceof GMarker) {
         if (overlay.typeName == "gsml:Borehole") {
@@ -37,8 +38,8 @@ var gMapClickController = function(map, overlay, latlng, statusBar, viewport, ac
                 //alert(url);
                 
                 map.getDragObject().setDraggableCursor("pointer");
-                GDownloadUrl(url, function(response, pResponseCode) {
-                    if (pResponseCode == 200) {
+                GDownloadUrl(url, function(response, responseCode) {
+                    if (responseCode == 200) {
                         if (isDataThere(response)) {
                             if (isHtmlPage(response)) {
                                 var openWindow = window.open('','mywindow'+i);
@@ -51,7 +52,7 @@ var gMapClickController = function(map, overlay, latlng, statusBar, viewport, ac
                     } else if(responseCode == -1) {
                         alert("Data request timed out. Please try later.");
                     } else {
-                        alert('Remote server returned error code: ' + pResponseCode);
+                        alert('Remote server returned error code: ' + responseCode);
                     }
                 });
             }        	    			
@@ -60,28 +61,28 @@ var gMapClickController = function(map, overlay, latlng, statusBar, viewport, ac
 };
 
 /**
- * Attempts to find out if WMS GetFeatureInfo query returns data.
+ * Returns true if WMS GetFeatureInfo query returns data.
  * 
- * We need to hack a bit here as there is not much that we can check  
- * for. For example the data does not have to come in tabular format.
+ * We need to hack a bit here as there is not much that we can check for.
+ * For example the data does not have to come in tabular format.
  * In addition html does not have to be well formed.
  * 
- * So ... we assume that minimum html must be longer then 30 chars
+ * So ... we will assume that minimum html must be longer then 30 chars
  * eg. data string: <table border="1"></table>
  * 
- * @param iStr HTML string content to be verified 
- * @return Boolean. 
+ * @param {iStr} HTML string content to be verified 
+ * @return {Boolean} Status of the
  */
 function isDataThere(iStr) {
 	return (iStr.length > 30) ? true : false;
 }
 
 /**
- * Attempts to find out if WMS GetFeatureInfo query returns content
- * with page markup.
+ * Returns true if WMS GetFeatureInfo query returns content
+ * within html page markup.
  *
- * @param iStr HTML string content to be verified 
- * @return Boolean. 
+ * @param {iStr} HTML string content to be verified
+ * @return {Boolean}
  */
 function isHtmlPage(iStr) {
 	return (iStr.toLowerCase().indexOf('<body') !=-1);
