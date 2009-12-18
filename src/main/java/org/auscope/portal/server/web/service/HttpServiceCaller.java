@@ -18,9 +18,7 @@ import java.io.IOException;
 /**
  * Utility class used to call web service end points
  * 
- * User: Mathew Wyatt
- * Date: 25/03/2009
- * Time: 11:37:40 AM
+ * @version $Id$
  */
 
 @Repository
