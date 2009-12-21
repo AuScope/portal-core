@@ -153,7 +153,7 @@ public class TestMineralOccurrenceServiceClient {
     /**
      * Test for a valid query
      * @throws Exception
-     */
+     *
     @Test
     public void testGetMineralOccurrenceGML() throws Exception {
         final String serviceURL = "http://localhost?";
@@ -203,17 +203,18 @@ public class TestMineralOccurrenceServiceClient {
         }});
 
         this.mineralOccurrenceService.getMineralOccurrenceGML(serviceURL,
-                                                                    commodityName,
-                                                                    commodityGroup,
-                                                                    measureType,
-                                                                    minOreAmount,
-                                                                    minCommodityAmountUOM,
-                                                                    minCommodityAmount,
-                                                                    minCommodityAmountUOM,
-                                                                    cutOffGrade,
-                                                                    cutOffGradeUOM);
+                                                              commodityName,
+                                                              commodityGroup,
+                                                              measureType,
+                                                              minOreAmount,
+                                                              minCommodityAmountUOM,
+                                                              minCommodityAmount,
+                                                              minCommodityAmountUOM,
+                                                              cutOffGrade,
+                                                              cutOffGradeUOM);
     }
-
+    */
+    
     /**
      * Test for the case that we dont get any results, by mimicking the getCommodity query returning no results
      */
