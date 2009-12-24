@@ -1,27 +1,45 @@
 /**
  * When someone clicks on the google maps we show popups specific to each 
  * feature type/marker that is clicked on
- * @param {map}
- * @param {overlay}
- * @param {latlng}
- * @param {activeLayersStore}
+ * 
+ * This event is fired when the user clicks on the map with the mouse. A
+ * click event passes different arguments based on the context of the
+ * click, and whether or not the click occured on a clickable overlay. If
+ * the click does not occur on a clickable overlay, the overlay argument
+ * is null and the latlng argument contains the geographical coordinates
+ * of the point that was clicked. If the user clicks on an overlay that
+ * is clickable (such as a GMarker, GPolygon, GPolyline, or GInfoWindow),
+ * the overlay argument contains the overlay object, while the
+ * overlaylatlng argument contains the coordinates of the clicked
+ * overlay. In addition, a click event is then also fired on the overlay
+ * itself. 
+ * 
+ * @param {GMap2}
+ * @param {GOverlay} overlay object (such as a GMarker, GPolygon, GPolyline, or GInfoWindow)
+ * @param {GLatLng}  geographical coordinates
+ * @param {Ext.data.Store}
+ * 
+ * @version $Id$
  */
 var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
 
     if (overlay instanceof GMarker) {
+        
         if (overlay.typeName == "gsml:Borehole") {
-            new NVCLMarker(overlay.title, overlay, overlay.description).getMarkerClickedFn()();
+            new NvclInfoWindow(map,overlay).show();
         }
         else if (overlay.typeName == "ngcp:GnssStation") {
             new GeodesyMarker(overlay.wfsUrl, "geodesy:station_observations", overlay.title, overlay, overlay.description).getMarkerClickedFn()();
         }
         else if (overlay.description != null) {
             overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
-               // overlay.openInfoWindowHtml(overlay.description);
         }
+        
     } else {        
         for (i = 0; i < activeLayersStore.getCount(); i++) {
+            
             var record = activeLayersPanel.getStore().getAt(i);
+            
             if (record.get('serviceType') == 'wms') {
                 var TileUtl = new Tile(map,latlng);
 
@@ -70,7 +88,7 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
  * So ... we will assume that minimum html must be longer then 30 chars
  * eg. data string: <table border="1"></table>
  * 
- * @param {iStr} HTML string content to be verified 
+ * @param {String} HTML string content to be verified 
  * @return {Boolean} Status of the
  */
 function isDataThere(iStr) {
@@ -81,7 +99,7 @@ function isDataThere(iStr) {
  * Returns true if WMS GetFeatureInfo query returns content
  * within html page markup.
  *
- * @param {iStr} HTML string content to be verified
+ * @param {String} HTML string content to be verified
  * @return {Boolean}
  */
 function isHtmlPage(iStr) {
