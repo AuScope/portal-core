@@ -47,9 +47,8 @@ NvclInfoWindow.prototype = {
     
     'show': function() {
         this.retrieveDatasets();                
-        this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);
-        
-        this.Marker.openInfoWindowTabs(this.tabsArray);                
+        this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);        
+        this.Marker.openInfoWindowTabs(this.tabsArray);             
     },
     
     /*
@@ -74,6 +73,8 @@ NvclInfoWindow.prototype = {
   
                 // get the dataset tag (inside is the info we need)
                 var aDataset = rootNode.getElementsByTagName("Dataset");
+                
+                // Loop over the Datatests and get DatasetId : DatasetName pairs
                 if (aDataset.length > 0) {           
 
                     // Dataset Collection of key : value pairs
@@ -99,7 +100,7 @@ NvclInfoWindow.prototype = {
                     me.tabsArray[1] = new GInfoWindowTab(me.TAB_2, sHtml);
                         
                     // Add new tab to pop-up window
-                    me.Map.updateInfoWindow(me.tabsArray);                    
+                    me.Map.updateInfoWindow(me.tabsArray);                   
                 }
                                                 
             } else if(responseCode == -1) {
@@ -116,7 +117,7 @@ NvclInfoWindow.prototype = {
      * @param {Array} string array of dataset Names
      */
     'createDetailsTabHtml' : function(datasetCol) {
-        
+      
         var lHtml = "";
         
         if (datasetCol.getCount() > 0) {
@@ -124,7 +125,7 @@ NvclInfoWindow.prototype = {
                   +     '<p> Available data sets: </p>'
                   + '</div>'
                   + '<div align="center">'
-                  +     '<form method="post" action="showNvclDetails(\''+ this.Marker.title +'\'); ">'
+                  +     '<form method="post">'
                   +         '<select name="selDataset" id="selDataset" size="5" style="width:200px;">';
 
             datasetCol.eachKey( function(key,item) {
@@ -138,7 +139,7 @@ NvclInfoWindow.prototype = {
             lHtml +=            '</select>'
                   +             '<div align="right">'
                   +                 '<br>'
-                  +                     '<input type="button" value="Display Dataset" name=butSelectDataset onclick="showNvclDetails(\''+ this.wfsServerUrl +'\',this.form.selDataset.value);">'
+                  +                     '<input type="button" id="displayDatasetBtn" value="Display Dataset" name=butSelectDataset onclick="showBoreholeDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value);">'
                   +             '</div>'
                   +         '</form>'
                   +     '</div>';   
@@ -153,18 +154,16 @@ NvclInfoWindow.prototype = {
  * Static method called from google map's info window to open a 
  * new Ext JS window with borehole details
  * 
+ * @param {String} iBoreholeId
  * @param {String} iServerName
  * @param {String} iDatasetId
  */
-function showNvclDetails(iServerName, iDatasetId) {    
+function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
+    
     var lDatasetId    = iDatasetId.replace(/'/g, '');
-    //var startSampleNo = 0;
-    //var endSampleNo   = 100;
     var LOG_PATH      = '/NVCLDataServices/getLogCollection.html?datasetid=';
     var MOSAIC_PATH   = '/NVCLDataServices/mosaic.html?logid=';
     var PLOT_PATH     = '/NVCLDataServices/plotscalar.html?logid=';
-
-    // alert(iServerName + '\n' + LOG_PATH + '\n' + lDatasetId);
 
     // For a given DatasetID get its LogCollection and findout 'Imagery' LogId 
     var logId = (function (iDatasetId) {
@@ -229,11 +228,9 @@ function showNvclDetails(iServerName, iDatasetId) {
         resizable: false,
         modal:  true,
         plain:  false,
-        title:  'Borehole Id: ',
+        title:  'Borehole Id: '+ iBoreholeId,
         height: 600,          
         width:  820,
-        //x:    500,
-        //y:    50,
         items:[{
             xtype:'tabpanel',
             id   : 'tab-panel',
@@ -252,6 +249,7 @@ function showNvclDetails(iServerName, iDatasetId) {
     var startSampleNo = 0;
     var endSampleNo = 100;
     var sampleIncrement = 100;
+    var totalCount = 21695;     // To Do: get this from server
 
     var cardNav = function(incr) {
         
@@ -261,13 +259,14 @@ function showNvclDetails(iServerName, iDatasetId) {
             Ext.getCmp('card-prev').setDisabled(startSampleNo < 1);
             Ext.get('nav').dom.src = "http://nvclwebservices.vm.csiro.au/NVCLDataServices/mosaic.html?logid=fae8f90d-2015-4200-908a-b30da787f01&startsampleno=" + startSampleNo + "&endsampleno=" + endSampleNo;
             Ext.get('nav').dom.src = iServerName + MOSAIC_PATH + logId + '&startsampleno=' + startSampleNo + '&endsampleno=' + endSampleNo;
-            Ext.fly('display-count').update('Displaying Images: ' + startSampleNo + ' - ' + endSampleNo);                      
+            Ext.fly('display-count').update('Displaying Images: ' + startSampleNo + ' - ' + endSampleNo + ' of ' + totalCount);                      
         }
-        
-        Ext.getCmp('card-prev').setDisabled(startSampleNo <= 0);                
+
+        Ext.getCmp('card-prev').setDisabled(startSampleNo <= 0);
+        Ext.getCmp('card-next').setDisabled(startSampleNo + sampleIncrement >= totalCount);                
     }
         
-//alert(ProxyURL + iServerName + MOSAIC_PATH + logId + '&startsampleno=1&endsampleno=100');    
+    //alert(ProxyURL + iServerName + MOSAIC_PATH + logId + '&startsampleno=1&endsampleno=100');    
     // Shall we add Mosaic tab?
     if (logId != -1) {      
         var tab = tp.add({
@@ -276,16 +275,18 @@ function showNvclDetails(iServerName, iDatasetId) {
             layout:'fit',
             html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' 
                   + iServerName + MOSAIC_PATH + logId 
-                  + '&startsampleno=1&endsampleno=100"></iframe>',            
+                  + '&startsampleno='+ startSampleNo 
+                  + '&endsampleno=' + sampleIncrement 
+                  +'"></iframe>',            
             bbar: [{
                 id   : 'display-count',
-                text : 'Displaying Images: ' + startSampleNo + ' - ' + endSampleNo
+                text : 'Displaying Images: ' + startSampleNo + ' - ' + endSampleNo + ' of ' + totalCount
             },
             '->',
             {
                 id  : 'card-prev',
                 text: '< Previous',
-                //disabled: true,
+                disabled: true,
                 handler: cardNav.createDelegate(this, [-100])
             },{
                 id  : 'card-next',
@@ -525,5 +526,5 @@ function showNvclDetails(iServerName, iDatasetId) {
     } else {
         Ext.MessageBox.alert('Info', 'Selected dataset is empty!');
     }       
-} // End of showNvclDetails()
+} // End of showBoreholeDetails()
 
