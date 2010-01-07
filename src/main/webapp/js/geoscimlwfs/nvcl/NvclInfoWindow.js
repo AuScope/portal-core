@@ -10,23 +10,20 @@
  * @param {GMap2}
  * @param {GMarker}
  */ 
- function NvclInfoWindow(iMap, iMarker) {
+function NvclInfoWindow(iMap, iMarker) {
      
     this.Map = iMap;    
     this.Marker = iMarker;
-    this.tabsArray = new Array();    
-    this.boreholeId = this.Marker.title || "";
-    this.summaryHtml = this.Marker.description || "";
-    
+    this.tabsArray = new Array();               // Window Tabs    
+    this.boreholeId = iMarker.title || "";
+    this.summaryHtml = iMarker.description || "";    
     this.waitHtml 
-        = "<div>" +
-              "<b>" + this.boreholeId + "</b>" +
-               "<p style=\"text-align:center;\">" +
-                   "<img src=\"img/wait.gif\" style=\"padding-top:50px;\" />" +
-               "</p>" +
-          "</div>"
-                    
-    this.wfsUrl = this.Marker.wfsUrl;
+        = "<div>"
+        +     "<b>" + this.boreholeId + "</b>"
+        +     "<p style=\"text-align:center;\">"
+        +         "<img src=\"img/wait.gif\" style=\"padding-top:50px;\" />"
+        +     "</p>"
+        + "</div>";                    
     
     /**
      * From Url remove pathname and return only protocol with hostname
@@ -37,21 +34,22 @@
         var str = url.slice( ("http://").length);   
         return 'http://' + str.slice(0,str.indexOf("/"));
         
-    })(this.wfsUrl);
+    })(iMarker.wfsUrl);
 }
 
 NvclInfoWindow.prototype = {
 
     'TAB_1' : "Summary",
+    
     'TAB_2' : "Details",
+    
     'NVCL_SERVICE' : "/NVCLDataServices/getDatasetCollection.html?holeidentifier=",
     
     'show': function() {
-
         this.retrieveDatasets();                
         this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);
-        this.Marker.openInfoWindowTabs(this.tabsArray);        
         
+        this.Marker.openInfoWindowTabs(this.tabsArray);                
     },
     
     /*
@@ -59,9 +57,9 @@ NvclInfoWindow.prototype = {
      */
     'retrieveDatasets' : function() {
         
-        var that = this,
-            serverAddr = this.wfsServerUrl,      
-            url = ProxyURL + serverAddr + this.NVCL_SERVICE + this.Marker.title;
+        var me = this;
+        var serverAddr = this.wfsServerUrl;      
+        var url = ProxyURL + serverAddr + this.NVCL_SERVICE + this.Marker.title;
 
         GDownloadUrl(url, function(response, responseCode) {
             if (responseCode == 200) {
@@ -74,27 +72,35 @@ NvclInfoWindow.prototype = {
                 if (!rootNode)
                     return;
   
-                // get the concept tag (inside is the additional info)
+                // get the dataset tag (inside is the info we need)
                 var aDataset = rootNode.getElementsByTagName("Dataset");
-                if (aDataset.length == 0)
-                    return;           
+                if (aDataset.length > 0) {           
 
-                var datasetIds = new Array(),
-                    datasetNames = new Array(),
-                    dataset_idx = 0;   
-
-                for (var i=0; i < aDataset.length; i++ ) {
-                    var nvclDataset = aDataset[i];
-                    datasetIds[dataset_idx] 
-                        = GXml.value(aDataset[i].selectSingleNode
-                                ("*[local-name() = 'DatasetID']"));
-                    datasetNames[dataset_idx] 
-                        = GXml.value(aDataset[i].selectSingleNode
-                                ("*[local-name() = 'DatasetName']"));                    
-                    dataset_idx++;
+                    // Dataset Collection of key : value pairs
+                    // 6dd70215-fe38-457c-be42-3b165fd98c7 : WTB5
+                    var datasetCol = new Ext.util.MixedCollection();
+                    var sId, sName;
+                    
+                    for (var i=0; i < aDataset.length; i++ ) {
+ 
+                         aId = GXml.value(aDataset[i].selectSingleNode
+                                    ("*[local-name() = 'DatasetID']"));
+ 
+                         aName = GXml.value(aDataset[i].selectSingleNode
+                                    ("*[local-name() = 'DatasetName']"));
+                                    
+                        datasetCol.add(aId, aName);                    
+                    }
+                    
+                    // Get tab content
+                    var sHtml = me.createDetailsTabHtml(datasetCol);
+                    
+                    // Create new tab
+                    me.tabsArray[1] = new GInfoWindowTab(me.TAB_2, sHtml);
+                        
+                    // Add new tab to pop-up window
+                    me.Map.updateInfoWindow(me.tabsArray);                    
                 }
-                
-                that.parseDatasetSearch(datasetIds, datasetNames);
                                                 
             } else if(responseCode == -1) {
                 alert("Data request timed out. Please try later.");
@@ -104,74 +110,69 @@ NvclInfoWindow.prototype = {
         });        
     },
 
-    'parseDatasetSearch' : function(datasetIds, datasetNames) {        
-        if (datasetIds.length > 0) {
-            var lHtml = "" +
-            '<div style="padding:20px;" >' + 
-                '<p> Available data sets: </p>' +
-            '</div>' +
-            '<div align="center">' +
-                '<form method="post" action="showNvclDetails(\''+ this.Marker.title +'\'); ">' +
-                    '<select name="selAge" id="selAge" size="5" style="width:200px;">';
+    /*
+     * Creates 'Details' tab markup based on an array of datasets
+     * @param {Array} string array of dataset Ids
+     * @param {Array} string array of dataset Names
+     */
+    'createDetailsTabHtml' : function(datasetCol) {
+        
+        var lHtml = "";
+        
+        if (datasetCol.getCount() > 0) {
+            lHtml += '<div style="padding:20px;" >' 
+                  +     '<p> Available data sets: </p>'
+                  + '</div>'
+                  + '<div align="center">'
+                  +     '<form method="post" action="showNvclDetails(\''+ this.Marker.title +'\'); ">'
+                  +         '<select name="selDataset" id="selDataset" size="5" style="width:200px;">';
 
-            for (var i=0; i < datasetIds.length; i++ ) {
-                if (i==0)
-                    lHtml += '<option value="\''+datasetIds[i] +'\'" selected="selected">'+ datasetNames[i] + ' (Latest)</option>';
-                else 
-                    lHtml += '<option value="\''+datasetIds[i] +'\'">'+ datasetNames[i] +'</option>';
-            }
-            lHtml += '</select>' +
-                    '<div align="right">' +
-                        '<br>' +
-                        '<input type="button" value="Select DataSet" name=butSelectDataset onclick="showNvclDetails(\''+ this.wfsServerUrl +'\',this.form.selAge.value);">' +
-                    '</div>' +
-                '</form>' +
-            '</div>';            
-
-            this.tabsArray[1] = new GInfoWindowTab(this.TAB_2, lHtml);
-            this.Map.updateInfoWindow(this.tabsArray);
+            datasetCol.eachKey( function(key,item) {
+                if (datasetCol.indexOfKey(key) == 0) {
+                    lHtml += '<option value="\''+ key +'\'" selected="selected">'+ item + ' (Latest)</option>';                    
+                } else {
+                    lHtml += '<option value="\''+ key +'\'">'+ item +'</option>';
+                }
+            });            
+          
+            lHtml +=            '</select>'
+                  +             '<div align="right">'
+                  +                 '<br>'
+                  +                     '<input type="button" value="Display Dataset" name=butSelectDataset onclick="showNvclDetails(\''+ this.wfsServerUrl +'\',this.form.selDataset.value);">'
+                  +             '</div>'
+                  +         '</form>'
+                  +     '</div>';   
         }
+        return lHtml;        
     },
     
-    'showNvclDetails' : function (iServerName, iDatasetId) {
-    
-        alert(iDatasetId.replace(/'/g, ''));
-    
-        var lDatasetId = iDatasetId.replace(/'/g, '');
-        var startSampleNo = 0;
-        var endSampleNo = 100;
-        var LOG_PATH = '/NVCLDataServices/getLogCollection.html?datasetid=';
-        var MOSAIC_PATH = '/NVCLDataServices/mosaic.html?logid=';
+} // End of NvclInfoWindow.prototype
 
-        alert(iServerName + '\n' + LOG_PATH + '\n' + lDatasetId);
-    }
-}
 
 /**
- * Static method called from within HTML/javascript markup to open a 
- * new Ext JS window
+ * Static method called from google map's info window to open a 
+ * new Ext JS window with borehole details
  * 
- * To DO: More elegant OO solution
+ * @param {String} iServerName
+ * @param {String} iDatasetId
  */
-function showNvclDetails(iServerName, iDatasetId) {
-    
-    alert(iDatasetId.replace(/'/g, ''));
-    
-    var lDatasetId = iDatasetId.replace(/'/g, '');
-    var startSampleNo = 0;
-    var endSampleNo = 100;
-    var LOG_PATH = '/NVCLDataServices/getLogCollection.html?datasetid=';
-    var MOSAIC_PATH = '/NVCLDataServices/mosaic.html?logid=';
-    var PLOT_PATH = '/NVCLDataServices/plotscalar.html?logid=';
+function showNvclDetails(iServerName, iDatasetId) {    
+    var lDatasetId    = iDatasetId.replace(/'/g, '');
+    //var startSampleNo = 0;
+    //var endSampleNo   = 100;
+    var LOG_PATH      = '/NVCLDataServices/getLogCollection.html?datasetid=';
+    var MOSAIC_PATH   = '/NVCLDataServices/mosaic.html?logid=';
+    var PLOT_PATH     = '/NVCLDataServices/plotscalar.html?logid=';
 
-    alert(iServerName + '\n' + LOG_PATH + '\n' + lDatasetId);
+    // alert(iServerName + '\n' + LOG_PATH + '\n' + lDatasetId);
 
-    var logId = (function (lDatasetId) {
+    // For a given DatasetID get its LogCollection and findout 'Imagery' LogId 
+    var logId = (function (iDatasetId) {
+        
         var aLogId = -1;
-        var logIdQuery = ProxyURL + iServerName + LOG_PATH
-                       + lDatasetId + '&mosaicsvc=yes';
-        //alert('logIdQuery: ' + logIdQuery);
-                                        
+        var logIdQuery 
+            = ProxyURL + iServerName + LOG_PATH + iDatasetId + '&mosaicsvc=yes';
+                                
         try {
             // create an XMLHttpRequest
             var request = GXmlHttp.create();
@@ -199,8 +200,12 @@ function showNvclDetails(iServerName, iDatasetId) {
                     return -1;
                 
                 for (var i=0; i < aLog.length; i++ ) {
-                    if (GXml.value(aLog[i].selectSingleNode("*[local-name() = 'LogName']")) == "Imagery");
-                        aLogId = GXml.value(aLog[i].selectSingleNode("*[local-name() = 'LogID']")); 
+                    if (GXml.value(aLog[i].selectSingleNode
+                            ("*[local-name() = 'LogName']")) == "Imagery");
+                    {
+                        aLogId = GXml.value(aLog[i].selectSingleNode
+                                        ("*[local-name() = 'LogID']"));
+                    } 
                 }
             } else {
                 alert('Remote server returned HTTP status: ' + request.status);
@@ -210,53 +215,87 @@ function showNvclDetails(iServerName, iDatasetId) {
         }
 
         return aLogId;
-    })(lDatasetId);
         
+    })(lDatasetId);
+      
+    // Borehole detail window  
     var win = new Ext.Window({
         //autoScroll:true,
         border: true,        
-        height: 600,
         //html: iStr,
         id    : 'nvclDetailsWindow',
         layout: 'fit',
-        maximizable:true,
+        //maximizable:false,
+        resizable: false,
         modal:  true,
         plain:  false,
-        title:  'Borehole Id: ',          
+        title:  'Borehole Id: ',
+        height: 600,          
         width:  820,
         //x:    500,
-        y:    50,
+        //y:    50,
         items:[{
             xtype:'tabpanel',
             id   : 'tab-panel',
             //defaults:{layout:'fit'},
             activeItem:0,
             enableTabScroll:true,
-            items: [{
-                autoShow: true,
-                title:   'Plot',
-                id:      'plottab',
-                iconCls: 'icon-info', 
-                //html: '<div><p><br><b>' + iDatasetId +'<b></p></div>'
-                //html: '<iframe style="overflow:auto;width:100%;height:100%;" frameborder="0"  src="' + iServerName + LOG_PATH + lDatasetId + '&startsampleno=' + startSampleNo + logId +'&endsampleno=' + endSampleNo + '"></iframe>'
-                //html: '<iframe style="overflow:auto;width:100%;height:100%;" frameborder="0"  src="' + iServerName + LOG_PATH + lDatasetId + '"></iframe>'
-                html: 'hello'  
-            }]        
+            buttonAlign: 'center',
+            items: []        
         }],             
         
       });
-    var tp = win.items.itemAt(0);
     
+    // Window Tab handle  
+    var tp = win.items.itemAt(0);
+
+    var startSampleNo = 0;
+    var endSampleNo = 100;
+    var sampleIncrement = 100;
+
+    var cardNav = function(incr) {
+        
+        if ( startSampleNo >= 0 && endSampleNo >= sampleIncrement) {
+            startSampleNo = 1 * startSampleNo + incr;
+            endSampleNo = 1 * endSampleNo + incr;
+            Ext.getCmp('card-prev').setDisabled(startSampleNo < 1);
+            Ext.get('nav').dom.src = "http://nvclwebservices.vm.csiro.au/NVCLDataServices/mosaic.html?logid=fae8f90d-2015-4200-908a-b30da787f01&startsampleno=" + startSampleNo + "&endsampleno=" + endSampleNo;
+            Ext.get('nav').dom.src = iServerName + MOSAIC_PATH + logId + '&startsampleno=' + startSampleNo + '&endsampleno=' + endSampleNo;
+            Ext.fly('display-count').update('Displaying Images: ' + startSampleNo + ' - ' + endSampleNo);                      
+        }
+        
+        Ext.getCmp('card-prev').setDisabled(startSampleNo <= 0);                
+    }
+        
+//alert(ProxyURL + iServerName + MOSAIC_PATH + logId + '&startsampleno=1&endsampleno=100');    
     // Shall we add Mosaic tab?
     if (logId != -1) {      
         var tab = tp.add({
-            title:  'Mosaic',
+            title:  ' Mosaic ',
             id:     'mosaictab',
-            iconCls: 'icon-info',
-            html: '<iframe style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' + iServerName + MOSAIC_PATH + logId + '&startsampleno=1&endsampleno=100"></iframe>'
+            layout:'fit',
+            html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' 
+                  + iServerName + MOSAIC_PATH + logId 
+                  + '&startsampleno=1&endsampleno=100"></iframe>',            
+            bbar: [{
+                id   : 'display-count',
+                text : 'Displaying Images: ' + startSampleNo + ' - ' + endSampleNo
+            },
+            '->',
+            {
+                id  : 'card-prev',
+                text: '< Previous',
+                //disabled: true,
+                handler: cardNav.createDelegate(this, [-100])
+            },{
+                id  : 'card-next',
+                text: 'Next >',
+                handler: cardNav.createDelegate(this,[100])
+            }]                     
        });
     }
 
+    // List of Scalars
     var scalarStore = new Ext.data.XmlStore({
         url: ProxyURL + iServerName + LOG_PATH + lDatasetId,
         record: 'Log',
@@ -264,8 +303,6 @@ function showNvclDetails(iServerName, iDatasetId) {
         fields: ['LogID','logName']
     });
 
-
-    
     var CheckBox = new Ext.grid.CheckboxSelectionModel();
     var scalarGrid = new Ext.grid.GridPanel({
         //title: 'Available Scalars',
@@ -286,19 +323,35 @@ function showNvclDetails(iServerName, iDatasetId) {
         loadMask: true
     });
     
-    scalarStore.load();    
-    // load the store at the latest possible moment
+    // How to load the store at the latest possible moment?
+    scalarStore.load();
+    /*
+    scalarStore.load({
+        // store loading is asynchronous, use a load listener or callback to handle results
+        callback: function(){
+            Ext.Msg.show({
+                title: 'Store Load Callback',
+                msg: 'store was loaded, data available for processing',
+                modal: false,
+                icon: Ext.Msg.INFO,
+                buttons: Ext.Msg.OK
+            });
+        }
+    }
+    );
+    */    
     /* this.on({
         afterlayout:{scope:this, single:true, fn:function() {
             //this.scalarStore.load({params:{start:0, limit:10}});
             this.scalarStore.load();
         }}
     }); */
-          
+
+    // Scalars Tab          
     tab = tp.add({
         title  : 'Scalars',
         id     : 'scalarstab',
-        iconCls: 'icon-info',
+        //iconCls: 'icon-info',
         layout : 'fit',
         border : false,
         items: {
@@ -447,34 +500,30 @@ function showNvclDetails(iServerName, iDatasetId) {
                             html: sHtml,
                             id    : 'plWindow',
                             layout: 'fit',
-                            maximizable:false,
+                            maximizable:true,
                             modal:  true,
                             plain:  false,
                             title:  'Plot: ',
                             autoHeight: true,          
                             autoWidth: true,
                             x:10,
-                            y:10,
-                          });                        
+                            y:10
+                          }); 
+                                                 
                         winPlot.show();
-                        
                     }
                 }]
             }]
         }
 
     });
-    //alert("Before windows show");
-    //alert(logId);
-    //alert("after");
-        
+ 
     // TO Do: Add check for Plot tab --> Don't display if neither Mosaic nor Plot exist    
     if (logId != -1) {
         win.show();
-
+        win.center();
     } else {
         Ext.MessageBox.alert('Info', 'Selected dataset is empty!');
-    }
-    
-    
-}
+    }       
+} // End of showNvclDetails()
+
