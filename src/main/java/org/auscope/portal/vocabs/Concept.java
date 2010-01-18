@@ -37,9 +37,17 @@ public class Concept {
 
     public String getSchemeUrn() {
         try {
-            XPathExpression expr = xPath.compile("skos:inScheme ");
+            XPathExpression expr = xPath.compile("skos:inScheme");
             Node result = (Node)expr.evaluate(conceptNode, XPathConstants.NODE);
             return result.getAttributes().getNamedItem("rdf:resource").getTextContent();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+    
+    public String getConceptUrn() {
+        try {
+            return conceptNode.getAttributes().getNamedItem("rdf:about").getTextContent();
         } catch (Exception e) {
             return "";
         }

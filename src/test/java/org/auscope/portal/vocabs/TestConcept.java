@@ -67,4 +67,11 @@ public class TestConcept {
                 concept.getSchemeUrn());
     }
 
+    @Test
+    public void testGetConceptUrn() throws XPathExpressionException {
+        Assert.assertEquals(
+                "Concept URN is: urn:cgi:classifier:PIRSA:commodity:RHYRB",
+                "urn:cgi:classifier:PIRSA:commodity:RHYRB",
+                concept.getConceptUrn());
+    }
 }
