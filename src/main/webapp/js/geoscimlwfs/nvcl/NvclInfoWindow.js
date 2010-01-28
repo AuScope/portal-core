@@ -140,6 +140,8 @@ NvclInfoWindow.prototype = {
                   +             '<div align="right">'
                   +                 '<br>'
                   +                     '<input type="button" id="displayDatasetBtn" value="Display Dataset" name=butSelectDataset onclick="showBoreholeDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value);">'
+                  +                     '&#160;' 
+                  +                     '<input type="button" id="downloadDatasetBtn" value="Download Dataset" name=butDownloadDataset onclick="showDownloadDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value)">'
                   +             '</div>'
                   +         '</form>'
                   +     '</div>';   
@@ -528,3 +530,205 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     }       
 } // End of showBoreholeDetails()
 
+/**
+ * Static method called from google map's info window to open a 
+ * new Ext JS window with borehole details
+ * 
+ * @param {String} iBoreholeId
+ * @param {String} iDatasetId
+ */
+function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
+    
+    var lDatasetId  = iDatasetId.replace(/'/g, '');
+    var CSV_PATH    = 'To Be Anounced';
+    var TSG_PATH    = '/NVCLTSGDownloadServices/downloadtsg.html?'
+        
+    // Dataset download window  
+    var win = new Ext.Window({
+        //autoScroll:true,
+        border: true,        
+        //html: iStr,
+        id    : 'nvclDownloadWindow',
+        layout: 'fit',
+        //maximizable:false,
+        resizable: false,
+        modal:  true,
+        plain:  false,
+        title:  'Borehole Id: '+ iBoreholeId,
+        height: 450,          
+        width:  600,
+        defaultButton:'emailAddress',
+        items:[{
+           // Bounding form
+            id     :'nvcl-download-form'
+            ,xtype :'form'
+            ,layout:'form'
+            ,frame : true
+             
+            // these are applied to columns
+            ,defaults:{
+                xtype: 'fieldset', layout: 'form'
+            }
+            
+            // fieldsets
+            ,items:[{
+                title       :'Hint',
+                defaultType:'textfield',
+                // fields
+                items:[{
+                    xtype  : 'box',
+                    id     : 'indicator',
+                    autoEl : {
+                        tag  : 'div',
+                        html : 'This form allows to download the selected Hylogging dataset in the form of the Spectral Geologist (TSG) data file or comma-separated values (CSV) file format (not available at the moment.)'
+                    }
+                }]
+            },{
+                title       :'Requested File Format',
+                defaultType:'combo',
+                defaults:{anchor:'-50'},
+                bodyStyle : 'padding:0 0 0 50px',
+                items:[{
+                    xtype: 'combo',
+                    id   : 'formatCmb',
+                    fieldLabel: 'Format',
+                    emptyText: 'Select a format ...',
+                    // TSG file is a TSG Data file. The Spectral Geologist (TSG), developed by the CSIRO, is the industry standard tool for geological analysis of spectral reflectance data of minerals, rocks and soils, including drill cores and chips.
+                    store: [
+                        ["TSG","TSG Data file"],
+                        ["CSV","CSV"]
+                    ],
+                    displayField: 'name',
+                    valueField  : 'format_code',
+                    selectOnFocus: true,
+                    mode: 'local',
+                    typeAhead: true,
+                    //triggerAction: 'all', // disable CSV for the time being 
+                    value: 'TSG'                    
+                }]                
+            },{
+                title       :'Options',
+                defaultType:'textfield',
+                defaults:{anchor:'-50'},
+                bodyStyle : 'padding:0 0 0 50px',
+                // fields
+                items:[{
+                    xtype   :'hidden',
+                    name    :'datasetid', //name of the field sent to the server
+                    value   : lDatasetId//value of the field                    
+                },{                
+                    xtype     : 'textfield',
+                    fieldLabel: 'Email Address',
+                    value     : 'Your.Name@csiro.au',
+                    name      : 'email',
+                    id        : 'emailAddress',
+                    selectOnFocus: true,
+                    allowBlank   : false
+                },{
+                    xtype: 'combo',
+                    id   : 'linescanCmb',
+                    name:'linescan',
+                    fieldLabel:'linescan',
+                    triggerAction: 'all',
+                    store: [
+                        ["yes","yes"],
+                        ["no","no"]
+                    ],
+                    value: 'yes'
+                },{
+                    xtype      : 'combo',
+                    id         : 'spectraCmb',
+                    name       : 'spectra',
+                    fieldLabel :'spectra',
+                    triggerAction: 'all',
+                    store      : [
+                        ["yes","yes"],
+                        ["no","no"]
+                    ],
+                    value: 'yes'
+                },{
+                    xtype      : 'combo',
+                    id         : 'profilometerCmb',
+                    name       : 'profilometer',
+                    fieldLabel :'profilometer',
+                    triggerAction: 'all',
+                    store      : [
+                        ["yes","yes"],
+                        ["no","no"]
+                    ],
+                    value: 'yes'
+                },{
+                    xtype      : 'combo',
+                    id         : 'traypicsCmb',
+                    name       : 'traypics',
+                    fieldLabel :'traypics',
+                    triggerAction: 'all',
+                    store      : [
+                        ["yes","yes"],
+                        ["no","no"]
+                    ],
+                    value: 'yes'
+                },{
+                    xtype      : 'combo',
+                    id         : 'mospicCmb',
+                    name       : 'mospic',
+                    fieldLabel :'mospic',
+                    triggerAction: 'all',
+                    store      : [
+                        ["yes","yes"],
+                        ["no","no"]
+                    ],
+                    value: 'yes'
+                },{
+                    xtype      : 'combo',
+                    id         : 'mappicsCmb',
+                    name       : 'mappics',
+                    fieldLabel :'mappics',
+                    triggerAction: 'all',
+                    store      : [
+                        ["yes","yes"],
+                        ["no","no"]
+                    ],
+                    value: 'yes'                     
+                }]
+            }],
+            buttons:[{
+                text: 'Download',
+                handler: function() {
+                    var downloadForm = Ext.getCmp('nvcl-download-form').getForm();
+                    var sUrl = '';
+                    var sTmp = downloadForm.getValues(true);
+                    sUrl += ProxyURL + iServerName + TSG_PATH;
+                    // Need to figure out how to prevent submitting formatCmb
+                    // For the time being I will just strip the string
+                    sUrl += sTmp.substr(sTmp.indexOf('datasetid'));
+                    // http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/downloadtsg.html?datasetid=6dd70215-fe38-457c-be42-3b165fd98c7&email=peter.warren@csiro.au
+                    //alert(sUrl);
+
+                    var winDwld = new Ext.Window({
+                        autoScroll:true,
+                        border: true,        
+                        autoLoad: sUrl,
+                        id    : 'dwldWindow',
+                        layout: 'fit',
+                        maximizable:true,
+                        modal:  true,
+                        plain:  false,
+                        title:  'Download confirmation: '//,
+                        //autoHeight: true,          
+                        //autoWidth: true,
+                        //x:80,
+                        //y:80
+                      }); 
+                    winDwld.on('show',function(){
+                        winDwld.center();
+                    });                       
+                    winDwld.show();
+                }
+            }]            
+        }],                             
+      });
+      
+      win.show();
+      
+} // End of showDownloadDetails()
