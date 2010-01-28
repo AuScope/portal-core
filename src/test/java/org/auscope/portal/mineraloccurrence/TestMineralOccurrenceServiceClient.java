@@ -22,7 +22,7 @@ import junit.framework.Assert;
  * Created by IntelliJ IDEA.
  * User: Mathew Wyatt
  * Date: Jun 4, 2009
- * Time: 11:41:09 AM
+ * @version: $Id$
  */
 public class TestMineralOccurrenceServiceClient {
     private MineralOccurrenceService mineralOccurrenceService;
@@ -100,7 +100,6 @@ public class TestMineralOccurrenceServiceClient {
 
     /**
      * Test the event that we dont provide a name or group
-     *
      * @throws Exception
      */
     @Test
@@ -153,7 +152,7 @@ public class TestMineralOccurrenceServiceClient {
     /**
      * Test for a valid query
      * @throws Exception
-     *
+     */
     @Test
     public void testGetMineralOccurrenceGML() throws Exception {
         final String serviceURL = "http://localhost?";
@@ -172,30 +171,33 @@ public class TestMineralOccurrenceServiceClient {
         final String mockCommodityResponse = new String();
         final Commodity mockCommodity = context.mock(Commodity.class);
         final Collection<Commodity> commodities = Arrays.asList(mockCommodity);
-
+           
         context.checking(new Expectations() {{
             //this comes from my instantiation of the MineralOccurrenceFilter
             oneOf (mockCommodity).getMineralOccurrenceURI(); will(returnValue("dudURI"));
         }});
+        
+        final MineralOccurrenceFilter mineralOccurrenceFilter 
+            = new MineralOccurrenceFilter( commodities,
+                                           measureType,
+                                           minOreAmount,
+                                           minOreAmountUOM,
+                                           minCommodityAmount,
+                                           minCommodityAmountUOM,
+                                           cutOffGrade,
+                                           cutOffGradeUOM );
 
-        final MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(  commodities,
-                                                                                        measureType,
-                                                                                        minOreAmount,
-                                                                                        minOreAmountUOM,
-                                                                                        minCommodityAmount,
-                                                                                        minCommodityAmountUOM,
-                                                                                        cutOffGrade,
-                                                                                        cutOffGradeUOM);
-
-        context.checking(new Expectations() {{
-            //this the get commodities part
+        context.checking(new Expectations() {{           
+           
+            // This is the get commodities part
             oneOf (methodMaker).makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString()); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(commodities));
 
             oneOf (mockCommodity).getMineralOccurrenceURI(); will(returnValue("dudURI"));
-
+            oneOf (mockCommodity).getMineralOccurrenceURI(); will(returnValue("dudURI"));
+            
             //the mineral occurrence query part
             oneOf (methodMaker).makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterString()); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
@@ -213,7 +215,7 @@ public class TestMineralOccurrenceServiceClient {
                                                               cutOffGrade,
                                                               cutOffGradeUOM);
     }
-    */
+    
     
     /**
      * Test for the case that we dont get any results, by mimicking the getCommodity query returning no results
