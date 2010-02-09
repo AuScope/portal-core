@@ -1,71 +1,74 @@
 <!-- Bring in the ExtJs Libraries and CSS -->
+
+<!-- Ext relies on its default css              -->
+<!-- This must come BEFORE javascript includes! -->
 <link rel="stylesheet" type="text/css" href="js/external/extjs/resources/css/ext-all.css">
 <link rel="stylesheet" type="text/css" href="js/external/extjs/ux/css/ux-all.css">
 
+<!-- Include here portal own css files -->
+<link rel="stylesheet" type="text/css" href="css/linkbutton.css">
+
 <script type="text/javascript" src="js/XPathFixFirefox.js"></script>
 
-<!-- ExtJS library: base/adapter -->
+<!-- First of javascript includes must be an adapter... -->
 <script type="text/javascript" src="js/external/extjs/adapter/ext/ext-base.js"></script>
 
-<!-- ExtJS library: all widgets -->
+<!-- ...then you need the Ext itself, either debug or production version. -->
 <script type="text/javascript" src="js/external/extjs/ext-all-debug.js"></script>
 
 <!-- ExtJS extensions -->
 <script type="text/javascript" src="js/external/extjs/ux/ux-all-debug.js"></script>
 
-<!--<script type="text/javascript" src="js/external/ext-2.2/ext-basex.js"></script>
-<script type="text/javascript" src="js/external/extjs/RowExpander.js"></script>
-<script type="text/javascript" src="js/external/extjs/CheckColumn.js"></script>
--->
-
-
-<!--
-<script type="text/javascript" src="js/external/ext-2.2/adapter/jquery/jquery.js"></script>
-<script type="text/javascript" src="js/external/gridsearch/Ext.ux.grid.Search.js"></script>
--->
+<!-- Application javascript files -->
 
 <script src="js/external/geoxml/geoxml.js" type="text/javascript"></script>
 
-<!-- Scripts for interperating the geosciml -->
+<!-- Scripts for interpreting the geosciml -->
 <script src="js/geoscimlwfs/utility_functions.js" type="text/javascript"></script>
 <script src="js/geoscimlwfs/feature_types/location.js" type="text/javascript"></script>
 <script src="js/geoscimlwfs/feature_types/coordinates.js" type="text/javascript"></script>
+
+<!-- 
 <script src="js/geoscimlwfs/feature_types/sampling_curve.js" type="text/javascript"></script>
 <script src="js/geoscimlwfs/feature_types/borehole.js" type="text/javascript"></script>
+-->
+
+<script src="js/geoscimlwfs/feature_types/bushfire.js" type="text/javascript"></script>
 <script src="js/geoscimlwfs/feature_types/geodesy_stations.js" type="text/javascript"></script>
 <script src="js/geoscimlwfs/feature_types/sampling_point.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/feature_types/bushfire.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/global_variables.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/station_group.js" type="text/javascript"></script>
-<!-- 
-<script src="js/geoscimlwfs/nvcl/nvcl_marker.js" type="text/javascript"></script>
--->
-<script src="js/geoscimlwfs/nvcl/NvclInfoWindow.js" type="text/javascript"></script>
+
+<script src="js/geoscimlwfs/ga_sentinel/ga_sentinel_marker.js" type="text/javascript"></script>
 
 <script src="js/geoscimlwfs/geodesy/geodesy_calendar.js" type="text/javascript"></script>
 <script src="js/geoscimlwfs/geodesy/geodesy_marker.js" type="text/javascript"></script>
+
+<script src="js/geoscimlwfs/global_variables.js" type="text/javascript"></script>
 <script src="js/geoscimlwfs/gnss/gnss_marker.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/ga_sentinel/ga_sentinel_marker.js" type="text/javascript"></script>
 <script src="js/geoscimlwfs/gzoom.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/map.js" type="text/javascript"></script>
-<!--<script src="js/geoscimlwfs/main.js" type="text/javascript"></script>-->
-<script src="js/geoscimlwfs/mineral_occurrences_ml/MineralOccurrencesML.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/mineral_occurrences_ml/Mine.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/WebFeatureService.js" type="text/javascript"></script>
+<script src="js/geoscimlwfs/station_group.js" type="text/javascript"></script>
 
 <!-- Page specific javascript -->
-<script src="js/ResponseTooltip.js" type="text/javascript"></script>
-<script src="js/KMLParser.js" type="text/javascript"></script>
+
 <script src="js/FormFactory.js" type="text/javascript"></script>
+<script src="js/GMapClickController.js" type="text/javascript"></script>
+<script src="js/KMLParser.js" type="text/javascript"></script>
+<script src="js/Main-UI.js" type="text/javascript"></script>
 <script src="js/MineFilterForm.js" type="text/javascript"></script>
 <script src="js/MiningActivityFilterForm.js" type="text/javascript"></script>
 <script src="js/MineralOccurrenceFilterForm.js" type="text/javascript"></script>
-<script src="js/GMapClickController.js" type="text/javascript"></script>
-<script src="js/Main-UI.js" type="text/javascript"></script>
+<script src="js/ResponseTooltip.js" type="text/javascript"></script>
 
+<script src="js/LinkButton.js" type="text/javascript"></script>
+
+<!--  Do we need this?
 <script src="js/external/jhashtable/jshashtable.js" type="text/javascript"></script>
+-->
+
 <script src="js/external/dragzoom/dragzoom.js" type="text/javascript"></script>
 
-<!-- WMS import -->
+<!-- WFS imports -->
+<script src="js/wfs/nvcl/NvclInfoWindow.js" type="text/javascript"></script>
+
+<!-- WMS imports -->
 <script src="js/wms/gmap-wms.js" type="text/javascript"></script>
 <script src="js/wms/tile.js" type="text/javascript"></script>
