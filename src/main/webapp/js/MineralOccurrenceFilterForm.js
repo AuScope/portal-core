@@ -39,6 +39,8 @@ MineralOccurrenceFilterForm = function(id) {
         data: unitsOfMeasure
     });
 
+    //-----------Measure type
+
     var measureTypes =  [
             ['Any'],
             ['Resource'],
@@ -55,18 +57,16 @@ MineralOccurrenceFilterForm = function(id) {
         anchor: '100%',
         name: 'measureType',
         fieldLabel: 'Measure Type',
-        //emptyText:'Select updateCSWRecords Measure Type...',
+        editable: false,
         forceSelection: true,
         mode: 'local',
-        //selectOnFocus: true,
         store: measureTypeStore,
         triggerAction: 'all',
         typeAhead: true,
-        displayField:'type',
-        valueField:'type'
+        displayField: 'type',
+        valueField: 'type',
+        value: 'Any'
     });
-
-    measureTypeCombo.setValue('Any');
 
     //-----------Commodities
 
@@ -93,7 +93,7 @@ MineralOccurrenceFilterForm = function(id) {
         store: commodityStore,
         triggerAction: 'all',
         typeAhead: true,
-        displayField:'label',        /* change tpl field to this value as well! */
+        displayField:'label',           /* change tpl field to this value as well! */
         valueField:'urn'
     });
     
@@ -141,12 +141,13 @@ MineralOccurrenceFilterForm = function(id) {
                 emptyText:'Select a Unit Of Measure...',
                 forceSelection: true,
                 mode: 'local',
-                /*selectOnFocus: true,*/
+                selectOnFocus: true,
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
-                displayField:'unitLabel',
-                valueField:'urn'
+                displayField: 'unitLabel',
+                valueField: 'urn',
+                value: 'TONNE'
             }),{
                 anchor: '100%',
                 xtype: 'textfield',
@@ -161,12 +162,13 @@ MineralOccurrenceFilterForm = function(id) {
                 emptyText:'Select a Unit Of Measure...',
                 forceSelection: true,
                 mode: 'local',
-                /*selectOnFocus: true,*/
+                selectOnFocus: true,
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
-                displayField:'unitLabel',
-                valueField:'urn'
+                displayField: 'unitLabel',
+                valueField: 'urn',
+                value: 'TONNE'
             }),{
                 anchor: '100%',
                 xtype: 'textfield',
@@ -183,12 +185,13 @@ MineralOccurrenceFilterForm = function(id) {
                 emptyText:'Select a Unit Of Measure...',
                 forceSelection: true,
                 mode: 'local',
-                /*selectOnFocus: true,*/
+                selectOnFocus: true,
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
-                displayField:'unitLabel',
-                valueField:'urn',
+                displayField: 'unitLabel',
+                valueField: 'urn',
+                value: 'TONNE',
                 hidden: true,
                 hideLabel: true
             })]
