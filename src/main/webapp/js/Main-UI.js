@@ -8,19 +8,6 @@ Ext.onReady(function() {
     var map;
     var formFactory = new FormFactory();
 
-    //-----------Vocab stuff
-    
-    var commodityStore = new Ext.data.Store({
-        proxy: new Ext.data.HttpProxy({url: '/getCommodities.do'}),
-        reader: new Ext.data.ArrayReader({}, [
-            {   name:'URN'        },
-            {   name:'label'      }
-        ])
-    });
-    
-    //TODO: debug, remove line below after UI implementation
-    //commodityStore.reload();
-    
     //-----------Complex Features Panel Configurations
 
     var complexFeaturesStore = new Ext.data.Store({

@@ -68,8 +68,39 @@ MineralOccurrenceFilterForm = function(id) {
 
     measureTypeCombo.setValue('Any');
 
+    //-----------Commodities
+
+    var commodityStore = new Ext.data.SimpleStore({
+        fields: ['urn', 'label'],
+        proxy: new Ext.data.HttpProxy({url: '/getCommodities.do'}),
+        reader: new Ext.data.ArrayReader({}, [
+            { name:'urn'   },
+            { name:'label' }
+        ])
+    });
+    
+    commodityStore.reload();
+    
+    var commodityNameCombo = new Ext.form.ComboBox({
+        tpl: '<tpl for="."><div ext:qtip="{label}" class="x-combo-list-item">{label}</div></tpl>',
+        anchor: '100%',
+        name: 'commodityNameDisplayed', /* this just returns the values from displayField! */
+        hiddenName: 'commodityName',    /* this returns the values from valueField! */
+        fieldLabel: 'Commodity Name',
+        forceSelection: true,
+        mode: 'local',
+        /*selectOnFocus: true,*/
+        store: commodityStore,
+        triggerAction: 'all',
+        typeAhead: true,
+        displayField:'label',        /* change tpl field to this value as well! */
+        valueField:'urn'
+    });
+    
+    //-----------Panel
+    
     Ext.FormPanel.call(this,{
-        id: id + '', // Convert id to string
+        id: id + '', /* Convert id to string*/
         border: false,
         autoScroll:true,
         hideMode:'offsets',
@@ -77,7 +108,7 @@ MineralOccurrenceFilterForm = function(id) {
         buttonAlign: 'right',
         labelAlign: 'right',
         labelWidth: 140,
-        timeout: 180, //should not time out before the server does
+        timeout: 180, /*should not time out before the server does*/
 
         items: [{
             xtype:'fieldset',
@@ -85,14 +116,11 @@ MineralOccurrenceFilterForm = function(id) {
             autoHeight:true,
             anchor: '100%',
 
-            //defaultType: 'textfield',
+            /*defaultType: 'textfield',*/
 
-            items :[{
-                anchor: '100%',
-                xtype: 'textfield',
-                fieldLabel: 'Commodity Name',
-                name: 'commodityName'
-            },{
+            items :[
+                commodityNameCombo
+            ,{
                 anchor: '100%',
                 xtype: 'textfield',
                 fieldLabel: 'Commodity Group',
@@ -107,13 +135,13 @@ MineralOccurrenceFilterForm = function(id) {
             },  new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
-                name: 'minOreAmountUOMName',
+                name: 'minOreAmountUOMDisplayed',
                 hiddenName: 'minOreAmountUOM',
                 fieldLabel: 'Min. Ore Amount Unit',
                 emptyText:'Select a Unit Of Measure...',
                 forceSelection: true,
                 mode: 'local',
-                //selectOnFocus: true,
+                /*selectOnFocus: true,*/
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
@@ -127,13 +155,13 @@ MineralOccurrenceFilterForm = function(id) {
             },  new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
-                name: 'minCommodityAmountUOMName',
+                name: 'minCommodityAmountUOMDisplayed',
                 hiddenName: 'minCommodityAmountUOM',
                 fieldLabel: 'Min. Commodity Amount Unit',
                 emptyText:'Select a Unit Of Measure...',
                 forceSelection: true,
                 mode: 'local',
-                //selectOnFocus: true,
+                /*selectOnFocus: true,*/
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
@@ -149,13 +177,13 @@ MineralOccurrenceFilterForm = function(id) {
             },  new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
-                name: 'cutOffGradeUOMName',
+                name: 'cutOffGradeUOMDisplayed',
                 hiddenName: 'cutOffGradeUOM',
                 fieldLabel: 'Cut Off Grade Unit',
                 emptyText:'Select a Unit Of Measure...',
                 forceSelection: true,
                 mode: 'local',
-                //selectOnFocus: true,
+                /*selectOnFocus: true,*/
                 store: unitOfMeasureStore,
                 triggerAction: 'all',
                 typeAhead: true,
