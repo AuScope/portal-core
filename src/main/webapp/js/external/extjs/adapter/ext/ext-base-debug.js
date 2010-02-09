@@ -1,6 +1,6 @@
 /*!
- * Ext JS Library 3.0.3
- * Copyright(c) 2006-2009 Ext JS, LLC
+ * Ext JS Library 3.1.1
+ * Copyright(c) 2006-2010 Ext JS, LLC
  * licensing@extjs.com
  * http://www.extjs.com/license
  */
@@ -19,7 +19,7 @@ Ext = {
      * The version of the framework
      * @type String
      */
-    version : '3.0.3'
+    version : '3.1.1'
 };
 
 /**
@@ -53,7 +53,7 @@ Ext.apply = function(o, c, defaults){
         DOC = document,
         isStrict = DOC.compatMode == "CSS1Compat",
         isOpera = check(/opera/),
-        isChrome = check(/chrome/),
+        isChrome = check(/\bchrome\b/),
         isWebKit = check(/webkit/),
         isSafari = !isChrome && check(/safari/),
         isSafari2 = isSafari && check(/applewebkit\/4/), // unique to Safari 2
@@ -86,7 +86,7 @@ Ext.apply = function(o, c, defaults){
          * the IE insecure content warning (<tt>'about:blank'</tt>, except for IE in secure mode, which is <tt>'javascript:""'</tt>).
          * @type String
          */
-        SSL_SECURE_URL : isSecure && isIE ? 'javascript:""' : 'about:blank', 
+        SSL_SECURE_URL : isSecure && isIE ? 'javascript:""' : 'about:blank',
         /**
          * True if the browser is in strict (standards-compliant) mode, as opposed to quirks mode
          * @type Boolean
@@ -116,11 +116,17 @@ Ext.apply = function(o, c, defaults){
         enableGarbageCollector : true,
 
         /**
-         * True to automatically purge event listeners after uncaching an element (defaults to false).
-         * Note: this only happens if {@link #enableGarbageCollector} is true.
+         * True to automatically purge event listeners during garbageCollection (defaults to false).
          * @type Boolean
          */
         enableListenerCollection : false,
+
+        /**
+         * EXPERIMENTAL - True to cascade listener removal to child elements when an element is removed.
+         * Currently not optimized for performance.
+         * @type Boolean
+         */
+        enableNestedListenerRemoval : false,
 
         /**
          * Indicates whether to use native browser parsing for JSON methods.
@@ -155,7 +161,11 @@ Ext.apply = function(o, c, defaults){
          * @return {String} The generated Id.
          */
         id : function(el, prefix){
-            return (el = Ext.getDom(el) || {}).id = el.id || (prefix || "ext-gen") + (++idSeed);
+            el = Ext.getDom(el, true) || {};
+            if (!el.id) {
+                el.id = (prefix || "ext-gen") + (++idSeed);
+            }
+            return el.id;
         },
 
         /**
@@ -197,7 +207,7 @@ MyGridPanel = Ext.extend(Ext.grid.GridPanel, {
          * prototype, and are therefore shared among all instances of the new class.</div></li>
          * </ul></div>
          *
-         * @param {Function} subclass The constructor of class being extended.
+         * @param {Function} superclass The constructor of class being extended.
          * @param {Object} overrides <p>A literal with members which are copied into the subclass's
          * prototype, and are therefore shared between all instances of the new class.</p>
          * <p>This may contain a special member named <tt><b>constructor</b></tt>. This is used
@@ -205,7 +215,7 @@ MyGridPanel = Ext.extend(Ext.grid.GridPanel, {
          * <i>not</i> specified, a constructor is generated and returned which just calls the
          * superclass's constructor passing on its parameters.</p>
          * <p><b>It is essential that you call the superclass constructor in any provided constructor. See example code.</b></p>
-         * @return {Function} The subclass constructor.
+         * @return {Function} The subclass constructor from the <code>overrides</code> parameter, or a generated one if not provided.
          */
         extend : function(){
             // inline overrides
@@ -267,7 +277,7 @@ Ext.override(MyClass, {
             if(overrides){
                 var p = origclass.prototype;
                 Ext.apply(p, overrides);
-                if(Ext.isIE && overrides.toString != origclass.toString){
+                if(Ext.isIE && overrides.hasOwnProperty('toString')){
                     p.toString = overrides.toString;
                 }
             }
@@ -373,19 +383,19 @@ Ext.urlDecode("foo=1&bar=2&bar=3&bar=4", false); // returns {foo: "1", bar: ["2"
          * @param {Iterable} the iterable object to be turned into a true Array.
          * @return (Array) array
          */
-        toArray : function(){
-            return isIE ?
-                function(a, i, j, res){
-                    res = [];
-                    Ext.each(a, function(v) {
-                        res.push(v);
-                    });
-                    return res.slice(i || 0, j || res.length);
-                } :
-                function(a, i, j){
-                    return Array.prototype.slice.call(a, i || 0, j || a.length);
-                }
-        }(),
+         toArray : function(){
+             return isIE ?
+                 function(a, i, j, res){
+                     res = [];
+                     for(var x = 0, len = a.length; x < len; x++) {
+                         res.push(a[x]);
+                     }
+                     return res.slice(i || 0, j || res.length);
+                 } :
+                 function(a, i, j){
+                     return Array.prototype.slice.call(a, i || 0, j || a.length);
+                 }
+         }(),
 
         isIterable : function(v){
             //check for array or arguments
@@ -398,7 +408,7 @@ Ext.urlDecode("foo=1&bar=2&bar=3&bar=4", false); // returns {foo: "1", bar: ["2"
             }
             //NodeList has an item and length property
             //IXMLDOMNodeList has nextNode method, needs to be checked first.
-            return ((v.nextNode || v.item) && Ext.isNumber(v.length));
+            return ((typeof v.nextNode != 'undefined' || v.item) && Ext.isNumber(v.length));
         },
 
         /**
@@ -450,10 +460,10 @@ Ext.urlDecode("foo=1&bar=2&bar=3&bar=4", false); // returns {foo: "1", bar: ["2"
          * <li>Arrays : <tt>(Object item, Number index, Array allItems)</tt>
          * <div class="sub-desc">
          * When iterating an array, the supplied function is called with each item.</div></li>
-         * <li>Objects : <tt>(String key, Object value)</tt>
+         * <li>Objects : <tt>(String key, Object value, Object)</tt>
          * <div class="sub-desc">
          * When iterating an object, the supplied function is called with each key-value pair in
-         * the object.</div></li>
+         * the object, and the iterated object</div></li>
          * </ul></div>
          * @param {Object} scope The scope (<code>this</code> reference) in which the specified function is executed. Defaults to
          * the <code>object</code> being iterated.
@@ -468,7 +478,7 @@ Ext.urlDecode("foo=1&bar=2&bar=3&bar=4", false); // returns {foo: "1", bar: ["2"
             }else if(Ext.isObject(obj)){
                 for(var prop in obj){
                     if(obj.hasOwnProperty(prop)){
-                        if(fn.call(scope || obj, prop, obj[prop]) === false){
+                        if(fn.call(scope || obj, prop, obj[prop], obj) === false){
                             return;
                         };
                     }
@@ -478,6 +488,8 @@ Ext.urlDecode("foo=1&bar=2&bar=3&bar=4", false); // returns {foo: "1", bar: ["2"
 
         /**
          * Return the dom node for the passed String (id), dom node, or Ext.Element.
+         * Optional 'strict' flag is needed for IE since it can return 'name' and
+         * 'id' elements by using getElementById.
          * Here are some examples:
          * <pre><code>
 // gets dom node based on id
@@ -497,11 +509,29 @@ function(el){
          * @param {Mixed} el
          * @return HTMLElement
          */
-        getDom : function(el){
+        getDom : function(el, strict){
             if(!el || !DOC){
                 return null;
             }
-            return el.dom ? el.dom : (Ext.isString(el) ? DOC.getElementById(el) : el);
+            if (el.dom){
+                return el.dom;
+            } else {
+                if (Ext.isString(el)) {
+                    var e = DOC.getElementById(el);
+                    // IE returns elements with the 'name' and 'id' attribute.
+                    // we do a strict check to return the element with only the id attribute
+                    if (e && isIE && strict) {
+                        if (el == e.getAttribute('id')) {
+                            return e;
+                        } else {
+                            return null;
+                        }
+                    }
+                    return e;
+                } else {
+                    return el;
+                }
+            }
         },
 
         /**
@@ -513,21 +543,31 @@ function(el){
         },
 
         /**
-         * Removes a DOM node from the document.  The body node will be ignored if passed in.
+         * Removes a DOM node from the document.
+         */
+        /**
+         * <p>Removes this element from the document, removes all DOM event listeners, and deletes the cache reference.
+         * All DOM event listeners are removed from this element. If {@link Ext#enableNestedListenerRemoval} is
+         * <code>true</code>, then DOM event listeners are also removed from all child nodes. The body node
+         * will be ignored if passed in.</p>
          * @param {HTMLElement} node The node to remove
          */
-        removeNode : isIE ? function(){
+        removeNode : isIE && !isIE8 ? function(){
             var d;
             return function(n){
                 if(n && n.tagName != 'BODY'){
+                    (Ext.enableNestedListenerRemoval) ? Ext.EventManager.purgeElement(n, true) : Ext.EventManager.removeAll(n);
                     d = d || DOC.createElement('div');
                     d.appendChild(n);
                     d.innerHTML = '';
+                    delete Ext.elCache[n.id];
                 }
             }
         }() : function(n){
             if(n && n.parentNode && n.tagName != 'BODY'){
+                (Ext.enableNestedListenerRemoval) ? Ext.EventManager.purgeElement(n, true) : Ext.EventManager.removeAll(n);
                 n.parentNode.removeChild(n);
+                delete Ext.elCache[n.id];
             }
         },
 
@@ -571,7 +611,7 @@ function(el){
          * @return {Boolean}
          */
         isObject : function(v){
-            return v && typeof v == "object";
+            return !!v && Object.prototype.toString.call(v) === '[object Object]';
         },
 
         /**
@@ -617,6 +657,15 @@ function(el){
          */
         isBoolean : function(v){
             return typeof v === 'boolean';
+        },
+
+        /**
+         * Returns true if the passed value is an HTMLElement
+         * @param {Mixed} value The value to test
+         * @return {Boolean}
+         */
+        isElement : function(v) {
+            return !!v && v.tagName;
         },
 
         /**
@@ -743,8 +792,9 @@ Company.data.CustomStore = function(config) { ... }
     Ext.ns = Ext.namespace;
 })();
 
-Ext.ns("Ext", "Ext.util", "Ext.lib", "Ext.data");
+Ext.ns("Ext.util", "Ext.lib", "Ext.data");
 
+Ext.elCache = {};
 
 /**
  * @class Function
@@ -974,7 +1024,7 @@ Ext.applyIf(Array.prototype, {
  * @class Ext
  */
 
-Ext.ns("Ext.grid", "Ext.dd", "Ext.tree", "Ext.form", "Ext.menu",
+Ext.ns("Ext.grid", "Ext.list", "Ext.dd", "Ext.tree", "Ext.form", "Ext.menu",
        "Ext.state", "Ext.layout", "Ext.app", "Ext.ux", "Ext.chart", "Ext.direct");
     /**
      * Namespace alloted for extensions to the framework.
@@ -1024,8 +1074,8 @@ Ext.apply(Ext, function(){
          * @return {Number} Value, if numeric, else defaultValue
          */
         num : function(v, defaultValue){
-            v = Number(Ext.isEmpty(v) || Ext.isBoolean(v) ? NaN : v);
-            return isNaN(v)? defaultValue : v;
+            v = Number(Ext.isEmpty(v) || Ext.isArray(v) || Ext.isBoolean(v) || (Ext.isString(v) && v.trim().length == 0) ? NaN : v);
+            return isNaN(v) ? defaultValue : v;
         },
 
         /**
@@ -1298,7 +1348,7 @@ ImageComponent = Ext.extend(Ext.BoxComponent, {
          * @return {Number} The mean.
          */
         mean : function(arr){
-           return Ext.sum(arr) / arr.length;
+           return arr.length > 0 ? Ext.sum(arr) / arr.length : undefined;
         },
 
         /**
@@ -1985,24 +2035,23 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
     return Ext.lib.Region.getRegion(el);
 };Ext.lib.Event = function() {
     var loadComplete = false,
-        listeners = [],
-        unloadListeners = [],
+        unloadListeners = {},
         retryCount = 0,
         onAvailStack = [],
         _interval,
         locked = false,
         win = window,
         doc = document,
-        
-        // constants            
+
+        // constants
         POLL_RETRYS = 200,
         POLL_INTERVAL = 20,
         EL = 0,
-        TYPE = 1,
-        FN = 2,
-        WFN = 3,
-        OBJ = 3,
-        ADJ_SCOPE = 4,   
+        TYPE = 0,
+        FN = 1,
+        WFN = 2,
+        OBJ = 2,
+        ADJ_SCOPE = 3,
         SCROLLLEFT = 'scrollLeft',
         SCROLLTOP = 'scrollTop',
         UNLOAD = 'unload',
@@ -2033,7 +2082,7 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
                 ret = function(){};
             }
             return ret;
-        }(),    
+        }(),
         // private
         doRemove = function(){
             var ret;
@@ -2043,7 +2092,7 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
                         eventName = MOUSEOVER;
                     } else if (eventName == 'mouseleave') {
                         eventName = MOUSEOUT;
-                    }                        
+                    }
                     el.removeEventListener(eventName, fn, (capture));
                 };
             } else if (win.detachEvent) {
@@ -2054,19 +2103,19 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
                 ret = function(){};
             }
             return ret;
-        }();        
-        
+        }();
+
     function checkRelatedTarget(e) {
         return !elContains(e.currentTarget, pub.getRelatedTarget(e));
     }
 
     function elContains(parent, child) {
-       if(parent && parent.firstChild){  
+       if(parent && parent.firstChild){
          while(child) {
             if(child === parent) {
                 return true;
             }
-            child = child.parentNode;            
+            child = child.parentNode;
             if(child && (child.nodeType != 1)) {
                 child = null;
             }
@@ -2075,44 +2124,32 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
         return false;
     }
 
-        
-    // private  
-    function _getCacheIndex(el, eventName, fn) {
-        for(var v, index = -1, len = listeners.length, i = len - 1; i >= 0; --i){
-            v = listeners[i];
-            if (v && v[FN] == fn && v[EL] == el && v[TYPE] == eventName) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-                    
     // private
     function _tryPreloadAttach() {
-        var ret = false,                
+        var ret = false,
             notAvail = [],
-            element,
-            tryAgain = !loadComplete || (retryCount > 0);                       
-        
+            element, i, len, v,
+            tryAgain = !loadComplete || (retryCount > 0);
+
         if (!locked) {
             locked = true;
-            
-            Ext.each(onAvailStack, function (v,i,a){
+
+            for (i = 0, len = onAvailStack.length; i < len; i++) {
+                v = onAvailStack[i];
                 if(v && (element = doc.getElementById(v.id))){
                     if(!v.checkReady || loadComplete || element.nextSibling || (doc && doc.body)) {
                         element = v.override ? (v.override === true ? v.obj : v.override) : element;
                         v.fn.call(element, v.obj);
-                        onAvailStack[i] = null;
+                        onAvailStack.remove(v);
                     } else {
                         notAvail.push(v);
                     }
-                }   
-            });
+                }
+            }
 
             retryCount = (notAvail.length === 0) ? 0 : retryCount - 1;
 
-            if (tryAgain) { 
+            if (tryAgain) {
                 startInterval();
             } else {
                 clearInterval(_interval);
@@ -2123,20 +2160,20 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
         }
         return ret;
     }
-    
-    // private              
-    function startInterval() {            
-        if(!_interval){                    
+
+    // private
+    function startInterval() {
+        if(!_interval){
             var callback = function() {
                 _tryPreloadAttach();
             };
             _interval = setInterval(callback, POLL_INTERVAL);
         }
     }
-    
-    // private 
+
+    // private
     function getScroll() {
-        var dd = doc.documentElement, 
+        var dd = doc.documentElement,
             db = doc.body;
         if(dd && (dd[SCROLLTOP] || dd[SCROLLLEFT])){
             return [dd[SCROLLLEFT], dd[SCROLLTOP]];
@@ -2146,7 +2183,7 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
             return [0, 0];
         }
     }
-        
+
     // private
     function getPageCoord (ev, xy) {
         ev = ev.browserEvent || ev;
@@ -2163,8 +2200,9 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
     }
 
     var pub =  {
-        onAvailable : function(p_id, p_fn, p_obj, p_override) {             
-            onAvailStack.push({ 
+        extAdapter: true,
+        onAvailable : function(p_id, p_fn, p_obj, p_override) {
+            onAvailStack.push({
                 id:         p_id,
                 fn:         p_fn,
                 obj:        p_obj,
@@ -2175,52 +2213,43 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
             startInterval();
         },
 
-
+        // This function should ALWAYS be called from Ext.EventManager
         addListener: function(el, eventName, fn) {
-            var ret;                
-            el = Ext.getDom(el);                
+            el = Ext.getDom(el);
             if (el && fn) {
-                if (UNLOAD == eventName) {
-                    ret = !!(unloadListeners[unloadListeners.length] = [el, eventName, fn]);                    
-                } else {
-                    listeners.push([el, eventName, fn, ret = doAdd(el, eventName, fn, false)]);
+                if (eventName == UNLOAD) {
+                    if (unloadListeners[el.id] === undefined) {
+                        unloadListeners[el.id] = [];
+                    }
+                    unloadListeners[el.id].push([eventName, fn]);
+                    return fn;
                 }
+                return doAdd(el, eventName, fn, false);
             }
-            return !!ret;
+            return false;
         },
 
+        // This function should ALWAYS be called from Ext.EventManager
         removeListener: function(el, eventName, fn) {
-            var ret = false,
-                index, 
-                cacheItem;
-
             el = Ext.getDom(el);
-
-            if(!fn) {                   
-                ret = this.purgeElement(el, false, eventName);
-            } else if (UNLOAD == eventName) {   
-                Ext.each(unloadListeners, function(v, i, a) {
-                    if( v && v[0] == el && v[1] == eventName && v[2] == fn) {
-                        unloadListeners.splice(i, 1);
-                        ret = true;
+            var i, len, li, lis;
+            if (el && fn) {
+                if(eventName == UNLOAD){
+                    if((lis = unloadListeners[el.id]) !== undefined){
+                        for(i = 0, len = lis.length; i < len; i++){
+                            if((li = lis[i]) && li[TYPE] == eventName && li[FN] == fn){
+                                unloadListeners[el.id].splice(i, 1);
+                            }
+                        }
                     }
-                });
-            } else {    
-                index = arguments[3] || _getCacheIndex(el, eventName, fn);
-                cacheItem = listeners[index];
-                
-                if (el && cacheItem) {
-                    doRemove(el, eventName, cacheItem[WFN], false);     
-                    cacheItem[WFN] = cacheItem[FN] = null;                       
-                    listeners.splice(index, 1);     
-                    ret = true;
+                    return;
                 }
+                doRemove(el, eventName, fn, false);
             }
-            return ret;
         },
 
         getTarget : function(ev) {
-            ev = ev.browserEvent || ev;                
+            ev = ev.browserEvent || ev;
             return this.resolveTextNode(ev.target || ev.srcElement);
         },
 
@@ -2240,11 +2269,11 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
 
         getRelatedTarget : function(ev) {
             ev = ev.browserEvent || ev;
-            return this.resolveTextNode(ev.relatedTarget || 
+            return this.resolveTextNode(ev.relatedTarget ||
                     (ev.type == MOUSEOUT ? ev.toElement :
                      ev.type == MOUSEOVER ? ev.fromElement : null));
         },
-        
+
         getPageX : function(ev) {
             return getPageCoord(ev, "X");
         },
@@ -2254,26 +2283,11 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
         },
 
 
-        getXY : function(ev) {                             
+        getXY : function(ev) {
             return [this.getPageX(ev), this.getPageY(ev)];
         },
 
-// Is this useful?  Removing to save space unless use case exists.
-//             getTime: function(ev) {
-//                 ev = ev.browserEvent || ev;
-//                 if (!ev.time) {
-//                     var t = new Date().getTime();
-//                     try {
-//                         ev.time = t;
-//                     } catch(ex) {
-//                         return t;
-//                     }
-//                 }
-
-//                 return ev.time;
-//             },
-
-        stopEvent : function(ev) {                            
+        stopEvent : function(ev) {
             this.stopPropagation(ev);
             this.preventDefault(ev);
         },
@@ -2295,7 +2309,7 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
                 ev.returnValue = false;
             }
         },
-        
+
         getEvent : function(e) {
             e = e || win.event;
             if (!e) {
@@ -2317,92 +2331,51 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
         },
 
         //clearCache: function() {},
+        // deprecated, call from EventManager
+        getListeners : function(el, eventName) {
+            Ext.EventManager.getListeners(el, eventName);
+        },
+
+        // deprecated, call from EventManager
+        purgeElement : function(el, recurse, eventName) {
+            Ext.EventManager.purgeElement(el, recurse, eventName);
+        },
 
         _load : function(e) {
             loadComplete = true;
-            var EU = Ext.lib.Event;    
+            var EU = Ext.lib.Event;
             if (Ext.isIE && e !== true) {
         // IE8 complains that _load is null or not an object
         // so lets remove self via arguments.callee
                 doRemove(win, "load", arguments.callee);
             }
-        },            
-        
-        purgeElement : function(el, recurse, eventName) {
-            var me = this;
-            Ext.each( me.getListeners(el, eventName), function(v){
-                if(v){
-                    me.removeListener(el, v.type, v.fn, v.index);
-                }
-            });
-
-            if (recurse && el && el.childNodes) {
-                Ext.each(el.childNodes, function(v){
-                    me.purgeElement(v, recurse, eventName);
-                });
-            }
-        },
-
-        getListeners : function(el, eventName) {
-            var me = this,
-                results = [], 
-                searchLists;
-
-            if (eventName){  
-                searchLists = eventName == UNLOAD ? unloadListeners : listeners;
-            }else{
-                searchLists = listeners.concat(unloadListeners);
-            }
-
-            Ext.each(searchLists, function(v, i){
-                if (v && v[EL] == el && (!eventName || eventName == v[TYPE])) {
-                    results.push({
-                                type:   v[TYPE],
-                                fn:     v[FN],
-                                obj:    v[OBJ],
-                                adjust: v[ADJ_SCOPE],
-                                index:  i
-                            });
-                }   
-            });                
-
-            return results.length ? results : null;
         },
 
         _unload : function(e) {
-             var EU = Ext.lib.Event, 
-                i, 
-                j, 
-                l, 
-                len, 
-                index,
-                scope;
-                
+             var EU = Ext.lib.Event,
+                i, j, l, v, ul, id, len, index, scope;
 
-            Ext.each(unloadListeners, function(v) {
-                if (v) {
-                    try{
-                        scope =  v[ADJ_SCOPE] ? (v[ADJ_SCOPE] === true ? v[OBJ] : v[ADJ_SCOPE]) :  win; 
-                        v[FN].call(scope, EU.getEvent(e), v[OBJ]);
-                    }catch(ex){}
-                }   
-            });     
+
+            for (id in unloadListeners) {
+                ul = unloadListeners[id];
+                for (i = 0, len = ul.length; i < len; i++) {
+                    v = ul[i];
+                    if (v) {
+                        try{
+                            scope = v[ADJ_SCOPE] ? (v[ADJ_SCOPE] === true ? v[OBJ] : v[ADJ_SCOPE]) :  win;
+                            v[FN].call(scope, EU.getEvent(e), v[OBJ]);
+                        }catch(ex){}
+                    }
+                }
+            };
 
             unloadListeners = null;
-
-            if(listeners && (j = listeners.length)){                    
-                while(j){                        
-                    if((l = listeners[index = --j])){
-                        EU.removeListener(l[EL], l[TYPE], l[FN], index);
-                    }                        
-                }
-                //EU.clearCache();
-            }
+            Ext.EventManager._unload();
 
             doRemove(win, UNLOAD, EU._unload);
-        }            
-    };        
-    
+        }
+    };
+
     // Initialize stuff.
     pub.on = pub.addListener;
     pub.un = pub.removeListener;
@@ -2411,374 +2384,372 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
     } else {
         doAdd(win, "load", pub._load);
     }
-    doAdd(win, UNLOAD, pub._unload);    
+    doAdd(win, UNLOAD, pub._unload);
     _tryPreloadAttach();
-    
+
     return pub;
-}();/*
- * Portions of this file are based on pieces of Yahoo User Interface Library
- * Copyright (c) 2007, Yahoo! Inc. All rights reserved.
- * YUI licensed under the BSD License:
- * http://developer.yahoo.net/yui/license.txt
- */
-    Ext.lib.Ajax = function() {	    
-	    var activeX = ['MSXML2.XMLHTTP.3.0',
-			           'MSXML2.XMLHTTP',
-			           'Microsoft.XMLHTTP'],
-            CONTENTTYPE = 'Content-Type';
-			           
-		// private
-		function setHeader(o) {
-	        var conn = o.conn,
-	        	prop;
-	        
-	        function setTheHeaders(conn, headers){
-		     	for (prop in headers) {
-                    if (headers.hasOwnProperty(prop)) {
-                        conn.setRequestHeader(prop, headers[prop]);
-                    }
-                }   
-	        }		
-	        
-            if (pub.defaultHeaders) {
-	            setTheHeaders(conn, pub.defaultHeaders);
-            }
-
-            if (pub.headers) {
-				setTheHeaders(conn, pub.headers);
-                delete pub.headers;                
-            }
-        }    
+}();
+/*
+* Portions of this file are based on pieces of Yahoo User Interface Library
+* Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+* YUI licensed under the BSD License:
+* http://developer.yahoo.net/yui/license.txt
+*/
+Ext.lib.Ajax = function() {     
+    var activeX = ['MSXML2.XMLHTTP.3.0',
+                   'MSXML2.XMLHTTP',
+                   'Microsoft.XMLHTTP'],
+        CONTENTTYPE = 'Content-Type';
+                   
+    // private
+    function setHeader(o) {
+        var conn = o.conn,
+            prop;
         
-        // private
-        function createExceptionObject(tId, callbackArg, isAbort, isTimeout) {	        
-            return {
-	            tId : tId,
-	            status : isAbort ? -1 : 0,
-	            statusText : isAbort ? 'transaction aborted' : 'communication failure',
-                isAbort: isAbort,
-                isTimeout: isTimeout,
-	            argument : callbackArg
-            };
-        }  
+        function setTheHeaders(conn, headers){
+            for (prop in headers) {
+                if (headers.hasOwnProperty(prop)) {
+                    conn.setRequestHeader(prop, headers[prop]);
+                }
+            }   
+        }       
         
-        // private 
-        function initHeader(label, value) {         
-			(pub.headers = pub.headers || {})[label] = value;			            
+        if (pub.defaultHeaders) {
+            setTheHeaders(conn, pub.defaultHeaders);
         }
-	    
-        // private
-        function createResponseObject(o, callbackArg) {
-            var headerObj = {},
-                headerStr,              
-                conn = o.conn,
-                t,
-                s;
 
-            try {
-                headerStr = o.conn.getAllResponseHeaders();   
-                Ext.each(headerStr.replace(/\r\n/g, '\n').split('\n'), function(v){
-                    t = v.indexOf(':');
-                    if(t >= 0){
-                        s = v.substr(0, t).toLowerCase();
-                        if(v.charAt(t + 1) == ' '){
-                            ++t;
-                        }
-                        headerObj[s] = v.substr(t + 1);
-                    }
-                });
-            } catch(e) {}
-                        
-            return {
-                tId : o.tId,
-                status : conn.status,
-                statusText : conn.statusText,
-                getResponseHeader : function(header){return headerObj[header.toLowerCase()];},
-                getAllResponseHeaders : function(){return headerStr},
-                responseText : conn.responseText,
-                responseXML : conn.responseXML,
-                argument : callbackArg
-            };
+        if (pub.headers) {
+            setTheHeaders(conn, pub.headers);
+            delete pub.headers;                
         }
-        
-        // private
-        function releaseObject(o) {
-            o.conn = null;
-            o = null;
-        }        
-	    
-        // private
-        function handleTransactionResponse(o, callback, isAbort, isTimeout) {
-            if (!callback) {
-                releaseObject(o);
-                return;
-            }
+    }    
+    
+    // private
+    function createExceptionObject(tId, callbackArg, isAbort, isTimeout) {          
+        return {
+            tId : tId,
+            status : isAbort ? -1 : 0,
+            statusText : isAbort ? 'transaction aborted' : 'communication failure',
+            isAbort: isAbort,
+            isTimeout: isTimeout,
+            argument : callbackArg
+        };
+    }  
+    
+    // private 
+    function initHeader(label, value) {         
+        (pub.headers = pub.headers || {})[label] = value;                       
+    }
+    
+    // private
+    function createResponseObject(o, callbackArg) {
+        var headerObj = {},
+            headerStr,              
+            conn = o.conn,
+            t,
+            s;
 
-            var httpStatus, responseObject;
-
-            try {
-                if (o.conn.status !== undefined && o.conn.status != 0) {
-                    httpStatus = o.conn.status;
-                }
-                else {
-                    httpStatus = 13030;
-                }
-            }
-            catch(e) {
-                httpStatus = 13030;
-            }
-
-            if ((httpStatus >= 200 && httpStatus < 300) || (Ext.isIE && httpStatus == 1223)) {
-                responseObject = createResponseObject(o, callback.argument);
-                if (callback.success) {
-                    if (!callback.scope) {
-                        callback.success(responseObject);
+        try {
+            headerStr = o.conn.getAllResponseHeaders();   
+            Ext.each(headerStr.replace(/\r\n/g, '\n').split('\n'), function(v){
+                t = v.indexOf(':');
+                if(t >= 0){
+                    s = v.substr(0, t).toLowerCase();
+                    if(v.charAt(t + 1) == ' '){
+                        ++t;
                     }
-                    else {
-                        callback.success.apply(callback.scope, [responseObject]);
-                    }
+                    headerObj[s] = v.substr(t + 1);
                 }
+            });
+        } catch(e) {}
+                    
+        return {
+            tId : o.tId,
+            status : conn.status,
+            statusText : conn.statusText,
+            getResponseHeader : function(header){return headerObj[header.toLowerCase()];},
+            getAllResponseHeaders : function(){return headerStr},
+            responseText : conn.responseText,
+            responseXML : conn.responseXML,
+            argument : callbackArg
+        };
+    }
+    
+    // private
+    function releaseObject(o) {
+        o.conn = null;
+        o = null;
+    }        
+    
+    // private
+    function handleTransactionResponse(o, callback, isAbort, isTimeout) {
+        if (!callback) {
+            releaseObject(o);
+            return;
+        }
+
+        var httpStatus, responseObject;
+
+        try {
+            if (o.conn.status !== undefined && o.conn.status != 0) {
+                httpStatus = o.conn.status;
             }
             else {
-                switch (httpStatus) {
-                    case 12002:
-                    case 12029:
-                    case 12030:
-                    case 12031:
-                    case 12152:
-                    case 13030:
-                        responseObject = createExceptionObject(o.tId, callback.argument, (isAbort ? isAbort : false), isTimeout);
-                        if (callback.failure) {
-                            if (!callback.scope) {
-                                callback.failure(responseObject);
-                            }
-                            else {
-                                callback.failure.apply(callback.scope, [responseObject]);
-                            }
-                        }
-                        break;
-                    default:
-                        responseObject = createResponseObject(o, callback.argument);
-                        if (callback.failure) {
-                            if (!callback.scope) {
-                                callback.failure(responseObject);
-                            }
-                            else {
-                                callback.failure.apply(callback.scope, [responseObject]);
-                            }
-                        }
-                }
+                httpStatus = 13030;
             }
-
-            releaseObject(o);
-            responseObject = null;
-        }  
-        
-        // private
-        function handleReadyState(o, callback){
-	    callback = callback || {};
-            var conn = o.conn,
-            	tId = o.tId,
-            	poll = pub.poll,
-		cbTimeout = callback.timeout || null;
-
-            if (cbTimeout) {
-                pub.timeout[tId] = setTimeout(function() {
-                    pub.abort(o, callback, true);
-                }, cbTimeout);
-            }
-
-            poll[tId] = setInterval(
-                function() {
-                    if (conn && conn.readyState == 4) {
-                        clearInterval(poll[tId]);
-                        poll[tId] = null;
-
-                        if (cbTimeout) {
-                            clearTimeout(pub.timeout[tId]);
-                            pub.timeout[tId] = null;
-                        }
-
-                        handleTransactionResponse(o, callback);
-                    }
-                },
-                pub.pollInterval);
         }
-        
-        // private
-        function asyncRequest(method, uri, callback, postData) {
-            var o = getConnectionObject() || null;
+        catch(e) {
+            httpStatus = 13030;
+        }
 
-            if (o) {
-                o.conn.open(method, uri, true);
-
-                if (pub.useDefaultXhrHeader) {                    
-                	initHeader('X-Requested-With', pub.defaultXhrHeader);
+        if ((httpStatus >= 200 && httpStatus < 300) || (Ext.isIE && httpStatus == 1223)) {
+            responseObject = createResponseObject(o, callback.argument);
+            if (callback.success) {
+                if (!callback.scope) {
+                    callback.success(responseObject);
                 }
-
-                if(postData && pub.useDefaultHeader && (!pub.headers || !pub.headers[CONTENTTYPE])){
-                    initHeader(CONTENTTYPE, pub.defaultPostHeader);
+                else {
+                    callback.success.apply(callback.scope, [responseObject]);
                 }
-
-                if (pub.defaultHeaders || pub.headers) {
-                    setHeader(o);
-                }
-
-                handleReadyState(o, callback);
-                o.conn.send(postData || null);
             }
+        }
+        else {
+            switch (httpStatus) {
+                case 12002:
+                case 12029:
+                case 12030:
+                case 12031:
+                case 12152:
+                case 13030:
+                    responseObject = createExceptionObject(o.tId, callback.argument, (isAbort ? isAbort : false), isTimeout);
+                    if (callback.failure) {
+                        if (!callback.scope) {
+                            callback.failure(responseObject);
+                        }
+                        else {
+                            callback.failure.apply(callback.scope, [responseObject]);
+                        }
+                    }
+                    break;
+                default:
+                    responseObject = createResponseObject(o, callback.argument);
+                    if (callback.failure) {
+                        if (!callback.scope) {
+                            callback.failure(responseObject);
+                        }
+                        else {
+                            callback.failure.apply(callback.scope, [responseObject]);
+                        }
+                    }
+            }
+        }
+
+        releaseObject(o);
+        responseObject = null;
+    }  
+    
+    // private
+    function handleReadyState(o, callback){
+    callback = callback || {};
+        var conn = o.conn,
+            tId = o.tId,
+            poll = pub.poll,
+            cbTimeout = callback.timeout || null;
+
+        if (cbTimeout) {
+            pub.timeout[tId] = setTimeout(function() {
+                pub.abort(o, callback, true);
+            }, cbTimeout);
+        }
+
+        poll[tId] = setInterval(
+            function() {
+                if (conn && conn.readyState == 4) {
+                    clearInterval(poll[tId]);
+                    poll[tId] = null;
+
+                    if (cbTimeout) {
+                        clearTimeout(pub.timeout[tId]);
+                        pub.timeout[tId] = null;
+                    }
+
+                    handleTransactionResponse(o, callback);
+                }
+            },
+            pub.pollInterval);
+    }
+    
+    // private
+    function asyncRequest(method, uri, callback, postData) {
+        var o = getConnectionObject() || null;
+
+        if (o) {
+            o.conn.open(method, uri, true);
+
+            if (pub.useDefaultXhrHeader) {                    
+                initHeader('X-Requested-With', pub.defaultXhrHeader);
+            }
+
+            if(postData && pub.useDefaultHeader && (!pub.headers || !pub.headers[CONTENTTYPE])){
+                initHeader(CONTENTTYPE, pub.defaultPostHeader);
+            }
+
+            if (pub.defaultHeaders || pub.headers) {
+                setHeader(o);
+            }
+
+            handleReadyState(o, callback);
+            o.conn.send(postData || null);
+        }
+        return o;
+    }
+    
+    // private
+    function getConnectionObject() {
+        var o;          
+
+        try {
+            if (o = createXhrObject(pub.transactionId)) {
+                pub.transactionId++;
+            }
+        } catch(e) {
+        } finally {
             return o;
         }
-        
-        // private
-        function getConnectionObject() {
-            var o;      	
+    }
+       
+    // private
+    function createXhrObject(transactionId) {
+        var http;
+            
+        try {
+            http = new XMLHttpRequest();                
+        } catch(e) {
+            for (var i = 0; i < activeX.length; ++i) {              
+                try {
+                    http = new ActiveXObject(activeX[i]);                        
+                    break;
+                } catch(e) {}
+            }
+        } finally {
+            return {conn : http, tId : transactionId};
+        }
+    }
+         
+    var pub = {
+        request : function(method, uri, cb, data, options) {
+            if(options){
+                var me = this,              
+                    xmlData = options.xmlData,
+                    jsonData = options.jsonData,
+                    hs;
+                    
+                Ext.applyIf(me, options);           
+                
+                if(xmlData || jsonData){
+                    hs = me.headers;
+                    if(!hs || !hs[CONTENTTYPE]){
+                        initHeader(CONTENTTYPE, xmlData ? 'text/xml' : 'application/json');
+                    }
+                    data = xmlData || (!Ext.isPrimitive(jsonData) ? Ext.encode(jsonData) : jsonData);
+                }
+            }                       
+            return asyncRequest(method || options.method || "POST", uri, cb, data);
+        },
 
-            try {
-                if (o = createXhrObject(pub.transactionId)) {
-                    pub.transactionId++;
-                }
-            } catch(e) {
-            } finally {
-                return o;
-            }
-        }
-	       
-        // private
-        function createXhrObject(transactionId) {
-            var http;
-            	
-            try {
-                http = new XMLHttpRequest();                
-            } catch(e) {
-                for (var i = 0; i < activeX.length; ++i) {	            
-                    try {
-                        http = new ActiveXObject(activeX[i]);                        
-                        break;
-                    } catch(e) {}
-                }
-            } finally {
-                return {conn : http, tId : transactionId};
-            }
-        }
-	         
-	    var pub = {
-	        request : function(method, uri, cb, data, options) {
-			    if(options){
-			        var me = this,		        
-			        	xmlData = options.xmlData,
-			        	jsonData = options.jsonData,
-                        hs;
-			        	
-			        Ext.applyIf(me, options);	        
-		            
-		            if(xmlData || jsonData){
-                        hs = me.headers;
-                        if(!hs || !hs[CONTENTTYPE]){
-			                initHeader(CONTENTTYPE, xmlData ? 'text/xml' : 'application/json');
-                        }
-			            data = xmlData || (Ext.isObject(jsonData) ? Ext.encode(jsonData) : jsonData);
-			        }
-			    }		    		    
-			    return asyncRequest(method || options.method || "POST", uri, cb, data);
-	        },
-	
-	        serializeForm : function(form) {
-		        var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements,
-	            	hasSubmit = false,
-	            	encoder = encodeURIComponent,
-		        	element,
-	            	options, 
-	            	name, 
-	            	val,             	
-	            	data = '',
-	            	type;
-	            	
-		        Ext.each(fElements, function(element) {		            
-	                name = element.name;	             
-					type = element.type;
-					
-	                if (!element.disabled && name){
-		                if(/select-(one|multiple)/i.test(type)){			                
-				            Ext.each(element.options, function(opt) {
-					            if (opt.selected) {
-						            data += String.format("{0}={1}&", 						            					  
-						            					 encoder(name),
-                                                         encoder((opt.hasAttribute ? opt.hasAttribute('value') : opt.getAttribute('value') !== null) ? opt.value : opt.text));
-                                }								
-                            });
-		                } else if(!/file|undefined|reset|button/i.test(type)) {
-			                if(!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)){
-                                    
+        serializeForm : function(form) {
+            var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements,
+                hasSubmit = false,
+                encoder = encodeURIComponent,
+                element,
+                options, 
+                name, 
+                val,                
+                data = '',
+                type;
+                
+            Ext.each(fElements, function(element) {                 
+                name = element.name;                 
+                type = element.type;
+                
+                if (!element.disabled && name){
+                    if(/select-(one|multiple)/i.test(type)) {
+                        Ext.each(element.options, function(opt) {
+                            if (opt.selected) {
+                                data += String.format("{0}={1}&", encoder(name), encoder((opt.hasAttribute ? opt.hasAttribute('value') : opt.getAttribute('value') !== null) ? opt.value : opt.text));
+                            }                               
+                        });
+                    } else if(!/file|undefined|reset|button/i.test(type)) {
+                            if(!(/radio|checkbox/i.test(type) && !element.checked) && !(type == 'submit' && hasSubmit)){
+                                
                                 data += encoder(name) + '=' + encoder(element.value) + '&';                     
                                 hasSubmit = /submit/i.test(type);    
-                            } 		                
-		                } 
-	                }
-	            });            
-	            return data.substr(0, data.length - 1);
-	        },
-	        
-	        useDefaultHeader : true,
-	        defaultPostHeader : 'application/x-www-form-urlencoded; charset=UTF-8',
-	        useDefaultXhrHeader : true,
-	        defaultXhrHeader : 'XMLHttpRequest',        
-	        poll : {},
-	        timeout : {},
-	        pollInterval : 50,
-	        transactionId : 0,
-	        
-//	This is never called - Is it worth exposing this?  		        
-// 	        setProgId : function(id) {
-// 	            activeX.unshift(id);
-// 	        },
+                            }                       
+                    } 
+                }
+            });            
+            return data.substr(0, data.length - 1);
+        },
+        
+        useDefaultHeader : true,
+        defaultPostHeader : 'application/x-www-form-urlencoded; charset=UTF-8',
+        useDefaultXhrHeader : true,
+        defaultXhrHeader : 'XMLHttpRequest',        
+        poll : {},
+        timeout : {},
+        pollInterval : 50,
+        transactionId : 0,
+        
+//  This is never called - Is it worth exposing this?               
+//          setProgId : function(id) {
+//              activeX.unshift(id);
+//          },
 
-//	This is never called - Is it worth exposing this?  	
-// 	        setDefaultPostHeader : function(b) {
-// 	            this.useDefaultHeader = b;
-// 	        },
-	        
-//	This is never called - Is it worth exposing this?  	
-// 	        setDefaultXhrHeader : function(b) {
-// 	            this.useDefaultXhrHeader = b;
-// 	        },
+//  This is never called - Is it worth exposing this?   
+//          setDefaultPostHeader : function(b) {
+//              this.useDefaultHeader = b;
+//          },
+        
+//  This is never called - Is it worth exposing this?   
+//          setDefaultXhrHeader : function(b) {
+//              this.useDefaultXhrHeader = b;
+//          },
 
-//	This is never called - Is it worth exposing this?        	
-// 	        setPollingInterval : function(i) {
-// 	            if (typeof i == 'number' && isFinite(i)) {
-// 	                this.pollInterval = i;
-// 	            }
-// 	        },
-	        
-//	This is never called - Is it worth exposing this?
-// 	        resetDefaultHeaders : function() {
-// 	            this.defaultHeaders = null;
-// 	        },
-	
-	        abort : function(o, callback, isTimeout) {
-		        var me = this,
-		        	tId = o.tId,
-		        	isAbort = false;
-		        
-	            if (me.isCallInProgress(o)) {
-	                o.conn.abort();
-	                clearInterval(me.poll[tId]);
-	               	me.poll[tId] = null;
-	                if (isTimeout) {
-	                    me.timeout[tId] = null;
-	                }
-					
-	                handleTransactionResponse(o, callback, (isAbort = true), isTimeout);                
-	            }
-	            return isAbort;
-	        },
-	
-	        isCallInProgress : function(o) {
-	            // if there is a connection and readyState is not 0 or 4
-	            return o.conn && !{0:true,4:true}[o.conn.readyState];	        
-	        }
-	    };
-	    return pub;
+//  This is never called - Is it worth exposing this?           
+//          setPollingInterval : function(i) {
+//              if (typeof i == 'number' && isFinite(i)) {
+//                  this.pollInterval = i;
+//              }
+//          },
+        
+//  This is never called - Is it worth exposing this?
+//          resetDefaultHeaders : function() {
+//              this.defaultHeaders = null;
+//          },
+    
+            abort : function(o, callback, isTimeout) {
+                var me = this,
+                    tId = o.tId,
+                    isAbort = false;
+                
+                if (me.isCallInProgress(o)) {
+                    o.conn.abort();
+                    clearInterval(me.poll[tId]);
+                    me.poll[tId] = null;
+                    clearTimeout(pub.timeout[tId]);
+                    me.timeout[tId] = null;
+                    
+                    handleTransactionResponse(o, callback, (isAbort = true), isTimeout);                
+                }
+                return isAbort;
+            },
+    
+            isCallInProgress : function(o) {
+                // if there is a connection and readyState is not 0 or 4
+                return o.conn && !{0:true,4:true}[o.conn.readyState];           
+            }
+        };
+        return pub;
     }();	Ext.lib.Region = function(t, r, b, l) {
 		var me = this;
         me.top = t;
@@ -2968,9 +2939,9 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
             }else if(isset(by)) {
                 if (Ext.isArray(start)){
                     end = [];
-                    Ext.each(start, function(v, i){
-                        end[i] = v + by[i];
-                    });
+					for(var i=0,len=start.length; i<len; i++) {
+						end[i] = start[i] + by[i];
+					}
                 }else{
                     end = start + by;
                 }
@@ -3133,8 +3104,9 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
             },
             
             run: function(){
-                var tf;
-                Ext.each(queue, function(tween){
+                var tf, i, len, tween;
+                for(i = 0, len = queue.length; i<len; i++) {
+                    tween = queue[i];
                     if(tween && tween.isAnimated){
                         tf = tween.totalFrames;
                         if(tween.curFrame < tf || tf === null){
@@ -3146,22 +3118,20 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
                         }else{
                             me.stop(tween);
                         }
-                    }
-                }, me);
+                    }                   
+                }
             }
         });
 
         var getIndex = function(anim) {
-            var out = -1;
-            Ext.each(queue, function(item, idx){
-                if(item == anim){
-                    out = idx;
-                    return false;
+            var i, len;
+            for(i = 0, len = queue.length; i<len; i++) {
+                if(queue[i] === anim) {
+                    return i;
                 }
-            });
-            return out;
+            }
+            return -1;
         };
-
 
         var correctFrame = function(tween) {
             var frames = tween.totalFrames,
@@ -3498,7 +3468,7 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
 	    if (s.length == 3) {
             return s;
         }
-        
+		
         Ext.each([hexRE, rgbRE, hex3RE], function(re, idx){
             base = (idx % 2 == 0) ? 16 : 10;
             c = re.exec(s);
@@ -3529,15 +3499,18 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
         doMethod : function(attr, start, end) {
             var me = this,
             	val,
-            	floor = Math.floor;            
+            	floor = Math.floor,
+				i, 
+                len,
+                v;            
 
             if(colorRE.test(attr)){
                 val = [];
-             
-	            Ext.each(start, function(v, i) {
-                    val[i] = superclass.doMethod.call(me, attr, v, end[i]);
-                });
-
+				
+				for(i = 0, len = start.length; i < len; i++) {
+					v = start[i];
+					val[i] = superclass.doMethod.call(me, attr, v, end[i]);
+				}
                 val = 'rgb(' + floor(val[0]) + ',' + floor(val[1]) + ',' + floor(val[2]) + ')';
             }else{
                 val = superclass.doMethod.call(me, attr, start, end);
@@ -3560,9 +3533,9 @@ Ext.TaskMgr = new Ext.util.TaskRunner();(function(){
 
                 if(!isset(to) && isset(by)){
                     end = parseColor(by);
-                    Ext.each(start, function(item, i){
-                        end[i] = item + end[i];
-                    });
+					for(var i=0,len=start.length; i<len; i++) {
+						end[i] = start[i] + end[i];
+					}
                 }
                 ra.start = start;
                 ra.end = end;
