@@ -77,7 +77,7 @@ public class MineralOccurrenceFilter implements IFilter {
                 for( Commodity commodity : commodities ) {
                     queryString.append("                <ogc:PropertyIsEqualTo>\n" +
                                        "                    <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
-                                       "                    <ogc:Literal>"+commodity.getMineralOccurrenceURI()+"</ogc:Literal>\n" +
+                                       "                    <ogc:Literal>"+commodity.getSource()+"</ogc:Literal>\n" +
                                        "                </ogc:PropertyIsEqualTo>\n");
                 }
                 

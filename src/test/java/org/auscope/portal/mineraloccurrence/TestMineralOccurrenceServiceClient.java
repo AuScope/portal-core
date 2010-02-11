@@ -174,7 +174,7 @@ public class TestMineralOccurrenceServiceClient {
            
         context.checking(new Expectations() {{
             //this comes from my instantiation of the MineralOccurrenceFilter
-            oneOf (mockCommodity).getMineralOccurrenceURI(); will(returnValue("dudURI"));
+            oneOf (mockCommodity).getSource(); will(returnValue("dudURI"));
         }});
         
         final MineralOccurrenceFilter mineralOccurrenceFilter 
@@ -195,8 +195,8 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(commodities));
 
-            oneOf (mockCommodity).getMineralOccurrenceURI(); will(returnValue("dudURI"));
-            oneOf (mockCommodity).getMineralOccurrenceURI(); will(returnValue("dudURI"));
+            oneOf (mockCommodity).getSource(); will(returnValue("dudURI"));
+            oneOf (mockCommodity).getSource(); will(returnValue("dudURI"));
             
             //the mineral occurrence query part
             oneOf (methodMaker).makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterString()); will(returnValue(mockMethod));

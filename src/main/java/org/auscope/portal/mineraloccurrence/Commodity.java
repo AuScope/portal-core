@@ -40,7 +40,7 @@ public class Commodity {
         }
     }
 
-    public String getMineralOccurrenceURI() {
+    public String getSource() {
 
         try {
             XPathExpression expr = xPath.compile("er:source");

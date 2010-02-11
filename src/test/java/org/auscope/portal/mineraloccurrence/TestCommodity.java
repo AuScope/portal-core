@@ -69,8 +69,8 @@ public class TestCommodity {
     }
 
     @Test
-    public void testGetMineralOccurrenceURIvalid() throws XPathExpressionException {
-        Assert.assertEquals("URI is: urn:cgi:feature:GSV:MineralOccurrence:361169", "urn:cgi:feature:GSV:MineralOccurrence:361169", validCommodity.getMineralOccurrenceURI());
+    public void testGetSourcevalid() throws XPathExpressionException {
+        Assert.assertEquals("URI is: urn:cgi:feature:GSV:MineralOccurrence:361169", "urn:cgi:feature:GSV:MineralOccurrence:361169", validCommodity.getSource());
     }
 
     @Test
@@ -84,8 +84,8 @@ public class TestCommodity {
     }
 
     @Test
-    public void testGetMineralOccurrenceURIInvalid() throws XPathExpressionException {
-        Assert.assertEquals("URI is: empty string", "", invalidCommodity.getMineralOccurrenceURI());
+    public void testGetSourceInvalid() throws XPathExpressionException {
+        Assert.assertEquals("URI is: empty string", "", invalidCommodity.getSource());
     }
 
     @Test

@@ -30,8 +30,8 @@ public class TestMineralOccurrenceFilter {
         final Collection<Commodity> commodities = Arrays.asList(commodity1, commodity2);
         
         context.checking(new Expectations() {{
-            oneOf (commodity1).getMineralOccurrenceURI(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361169"));
-            oneOf (commodity2).getMineralOccurrenceURI(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361179"));
+            oneOf (commodity1).getSource(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361169"));
+            oneOf (commodity2).getSource(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361179"));
         }});
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
@@ -48,7 +48,7 @@ public class TestMineralOccurrenceFilter {
         final Collection<Commodity> commodities = Arrays.asList(commodity1);
 
         context.checking(new Expectations() {{
-            oneOf (commodity1).getMineralOccurrenceURI(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361179"));
+            oneOf (commodity1).getSource(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361179"));
         }});
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
