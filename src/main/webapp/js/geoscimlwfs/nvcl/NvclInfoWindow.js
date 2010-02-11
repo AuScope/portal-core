@@ -148,7 +148,7 @@ NvclInfoWindow.prototype = {
                   +     '</div>';   
         }
         return lHtml;        
-    },
+    }
     
 } // End of NvclInfoWindow.prototype
 
@@ -167,61 +167,8 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     var LOG_PATH    = '/NVCLDataServices/getLogCollection.html?datasetid=';
     var MOSAIC_PATH = '/NVCLDataServices/mosaic.html?logid=';
     var PLOT_PATH   = '/NVCLDataServices/plotscalar.html?logid=';
-
-    // For a given DatasetID get its LogCollection and findout 'Imagery' LogId 
-    var logId = (function (iDatasetId) {
         
-        var aLogId = -1;
-
-        //http://nvclwebservices.vm.csiro.au:80/NVCLDataServices/getLogCollection.html?datasetid=6dd70215-fe38-457c-be42-3b165fd98c7&mosaicsvc=yes
-        var logIdQuery 
-            = ProxyURL + iServerName + LOG_PATH + iDatasetId + '&mosaicsvc=yes';
-                                
-        try {
-            // create an XMLHttpRequest
-            var request = GXmlHttp.create();
-            
-            // Prepare synchronous HTTP request to the server (3rd param = false)
-            request.open("GET", logIdQuery, false); 
-            
-            // Processing will pause until response is available
-            request.send(null);     
-
-            if (request.status == 200) {
-                var XmlDoc = GXml.parse(request.responseText);
-            
-                if (g_IsIE)
-                    XmlDoc.setProperty("SelectionLanguage", "XPath");
-        
-                var rootNode = XmlDoc.documentElement;
-                
-                if (!rootNode) 
-                    return -1;
-                   
-                var aLog = rootNode.getElementsByTagName("Log");
-        
-                if (aLog.length == 0) 
-                    return -1;
-                
-                for (var i=0; i < aLog.length; i++ ) {
-                    if (GXml.value(aLog[i].selectSingleNode
-                            ("*[local-name() = 'LogName']")) == "Imagery");
-                    {
-                        // To Do: Need to also get <SampleCount> value
-                        aLogId = GXml.value(aLog[i].selectSingleNode
-                                        ("*[local-name() = 'LogID']"));
-                    } 
-                }
-            } else {
-                alert('Remote server returned HTTP status: ' + request.status);
-            }
-        } catch(e) {
-            alert("Network error");
-        }
-
-        return aLogId;
-        
-    })(lDatasetId);
+    var aLog        = getImageLog(iServerName, lDatasetId, "Imagery");
       
     // Borehole detail window  
     var win = new Ext.Window({
@@ -245,18 +192,16 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             enableTabScroll : true,
             buttonAlign     : 'center',
             items           : []        
-        }],             
-        
+        }]                     
       });
     
     // Window Tab handle  
     var tp = win.items.itemAt(0);
 
-    var startSampleNo = 0;
-    var endSampleNo = 100;
+    var startSampleNo   = 0;
+    var endSampleNo     = 100;
     var sampleIncrement = 100;
-// To Dooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo
-    var totalCount = 21695;     // To Do: get this from server
+    var totalCount      = aLog.SampleCount;
 
     var cardNav = function(incr) {
         
@@ -265,7 +210,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             endSampleNo = 1 * endSampleNo + incr;
             Ext.getCmp('card-prev').setDisabled(startSampleNo < 1);
             //Ext.get('nav').dom.src = "http://nvclwebservices.vm.csiro.au/NVCLDataServices/mosaic.html?logid=fae8f90d-2015-4200-908a-b30da787f01&startsampleno=" + startSampleNo + "&endsampleno=" + endSampleNo;
-            Ext.get('nav').dom.src = iServerName + MOSAIC_PATH + logId + '&startsampleno=' + startSampleNo + '&endsampleno=' + endSampleNo;
+            Ext.get('nav').dom.src = iServerName + MOSAIC_PATH + aLog.LogId + '&startsampleno=' + startSampleNo + '&endsampleno=' + endSampleNo;
             Ext.fly('display-count').update('Displaying Images: ' + startSampleNo + ' - ' + endSampleNo + ' of ' + totalCount);                      
         }
 
@@ -275,13 +220,13 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     // alert(ProxyURL + iServerName + MOSAIC_PATH + logId + '&startsampleno=1&endsampleno=100');
     
     
-    if (logId != -1) {      // Shall we add Mosaic tab?      
+    if (aLog.LogId != '') {      // Shall we add Mosaic tab?      
         var tab = tp.add({
             title:  ' Mosaic ',
             id:     'mosaicTab',
             layout:'fit',
             html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' 
-                  + iServerName + MOSAIC_PATH + logId 
+                  + iServerName + MOSAIC_PATH + aLog.LogId
                   + '&startsampleno='+ startSampleNo 
                   + '&endsampleno=' + sampleIncrement 
                   +'"></iframe>',            
@@ -298,7 +243,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             },{
                 id  : 'card-next',
                 text: 'Next >',
-                handler: cardNav.createDelegate(this,[100])
+                handler: cardNav.createDelegate(this, [100])
             }]                     
        });
     }
@@ -317,19 +262,20 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
         //title         : 'Available Scalars',
         store           : scalarStore,
         sm              : CheckBox,
+        autoExpandColumn: 'log-name-col',
+        height          : 450,        
+        width           : 200,
+        loadMask        : true,        
         columns         : [
             CheckBox,
         {
             header: "ID", width: 50, dataIndex: 'LogID', 
             sortable: true, hidden: true
         },{
-            id: 'log-name-col', header: "Scalar", width: 100, dataIndex: 'logName',
+            id: 'log-name-col', 
+            header: "Scalar", width: 100, dataIndex: 'logName',
             sortable: true
-        }],
-        autoExpandColumn: 'log-name-col',
-        width           : 200,
-        height          : 450,
-        loadMask        : true
+        }]
     });
     
     // How to load the store at the latest possible moment?
@@ -348,8 +294,8 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
         }
     }
     );
-    */    
-    /* this.on({
+    
+        this.on({
         afterlayout:{scope:this, single:true, fn:function() {
             //this.scalarStore.load({params:{start:0, limit:10}});
             this.scalarStore.load();
@@ -360,7 +306,6 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     tab = tp.add({
         title  : 'Scalars',
         id     : 'scalarsTab',
-        //iconCls: 'icon-info',
         layout : 'fit',
         border : false,
         items: {
@@ -495,7 +440,6 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
                                 sHtml +='<img src="'; 
                                 sHtml += ProxyURL + iServerName + PLOT_PATH;
                                 sHtml += s[i].data.LogID;
-                                // startDepth=0&endDepth=99999&interval=1&rb-col=2
                                 sHtml += '&' + scalarForm.getValues(true);
                                 sHtml += '&width=300';
                                 sHtml += '&height=600';
@@ -528,13 +472,14 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     });
  
     // TO Do: Add check for Plot tab --> Don't display if neither Mosaic nor Plot exist    
-    if (logId != -1) {
+    if (aLog.LogId != '') {
         win.show();
         win.center();
     } else {
         Ext.MessageBox.alert('Info', 'Selected dataset is empty!');
     }       
 } // End of showBoreholeDetails()
+
 
 /**
  * Static method called from google map's info window to open a 
@@ -546,10 +491,21 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
  */
 function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
     
-    var lDatasetId  = iDatasetId.replace(/'/g, '');
-    var CSV_PATH    = '/geoserver/wfs?request=GetFeature&typeName=om:GETSIMPLELOGS&CQL_FILTER=%28DATASET_ID=%27';
-    var CSV_PATH_END= '%27%29&outputformat=csv';
-    var TSG_PATH    = '/NVCLTSGDownloadServices/downloadtsg.html?' 
+    var lDatasetId   = iDatasetId.replace(/'/g, '');
+    
+    //"http://nvclwebservices.vm.csiro.au/geoserver/wfs?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='6dd70215-fe38-457c-be42-3b165fd98c7')&outputformat=csv",
+    var CSV_PATH     = Ext.util.Format.htmlEncode("/geoserver/wfs?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='");
+    var CSV_PATH_END = Ext.util.Format.htmlEncode("')&outputformat=csv");
+    
+    var TSG_PATH     = '/NVCLTSGDownloadServices/downloadtsg.html?';
+    
+    //'/xsltRestProxy.do?serviceUrl=' + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au'     
+    //restproxy?http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au'
+    var TSG_CHCK_PATH= ProxyURL + iServerName + '/NVCLTSGDownloadServices/checkstatus.html?email=';
+    
+    // http://nvclwebservices.vm.csiro.au/geoserver/wfs?request=GetFeature&typeName=sa:SamplingFeatureCollection&FILTER=%3CFilter%3E%3CFeatureId%20fid=%22SamplingFeatureCollectionID_6dd70215-fe38-457c-be42-3b165fd98c7%22/%3E%3C/Filter%3E
+    var O_M_PATH     = iServerName + '/geoserver/wfs?request=GetFeature&typeName=sa:SamplingFeatureCollection&FILTER=%3CFilter%3E%3CFeatureId%20fid=%22SamplingFeatureCollectionID_';
+    var O_M_PATH_END = '%22/%3E%3C/Filter%3E';       
         
     // Dataset download window  
     var win = new Ext.Window({
@@ -563,7 +519,7 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
         modal           : true,
         plain           : false,
         title           : 'Borehole Id:  '+ iBoreholeId,
-        height          : 350,          
+        height          : 400,          
         width           : 500,
         defaultButton   :'emailAddress',
         items:[{
@@ -595,43 +551,41 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                 xtype   :'hidden',
                 name    :'datasetid', //name of the field sent to the server
                 value   : lDatasetId  //value of the field                                                        
-            },{
+            },{                
                 id              : 'csvFldSet',
                 title           : 'CSV',
                 checkboxName    : 'csv',
                 checkboxToggle  : true,
                 collapsed       : true,
-                items:[{
-                    id      :'csvFormatHdn',
-                    xtype   :'hidden',
-                    name    :'format', //name of the field sent to the server
-                    value   :'csv', //value of the field,
-                    disabled: true                                                                            
+                buttonAlign     : 'right',
+                buttons:[{
+                    text : 'Download',
+                    xtype: 'linkbutton',
+                    href : iServerName + CSV_PATH + lDatasetId + CSV_PATH_END
+                    //handler: function(){ console.log(iServerName + CSV_PATH + lDatasetId + CSV_PATH_END) }
                 }],
                 listeners: {
                     'expand' : {
                         scope: this,
                         fn : function(panel) {
                             Ext.getCmp('tsgFldSet').collapse();
-                            //Ext.getCmp('csvFormatHdn')[checked ? 'expand' : 'collapse']();
-                            //Ext.getCmp('tsgFldSet')[checked ? 'expand' : 'collapse']();
-                            //alert(Ext.getCmp('tsgFldSet').collapsed);
+                            Ext.getCmp('omFldSet').collapse();
                         }
                     }
                 }
-            },{
+            },{ 
                 id              : 'tsgFldSet',
                 title           : 'TSG',
                 checkboxName    : 'tsg',
                 checkboxToggle  : true,
                 defaultType     : 'textfield',
                 bodyStyle       : 'padding: 0 0 0 50px',
+                //html :"<div style='margin-left:60px;'><br>(*) denotes mandatory fields</div>",
                 items:[{
                     id              : 'emailAddress',                        
                     xtype           : 'textfield',
-                    fieldLabel      : 'Email Address',
-                    //value           : 'Your.Name@csiro.au',
-                    value           : 'Jarek.Sanders@csiro.au',
+                    fieldLabel      : 'Email Address*',
+                    value           : 'Your.Name@csiro.au',
                     name            : 'email',
                     selectOnFocus   : true,
                     allowBlank      : false,
@@ -650,93 +604,216 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                         {boxLabel: 'mappics', name: 'mappics', inputValue: 'yes', checked: true}
                     ]                    
                 }],
+                buttonAlign:'right',
+                buttons:[{
+                    text: 'Check Status',
+                    handler: function() {
+                        var sEmail = Ext.getCmp('emailAddress').getValue();
+                        if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
+                            Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');                            
+                            Ext.getCmp('emailAddress').markInvalid();
+                            return;
+                        } else {
+                            var sUrl = '';
+                            sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="'; 
+                            //sUrl += ProxyURL + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
+                            //sUrl += '/xsltRestProxy.do?serviceUrl=' + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
+                            sUrl += TSG_CHCK_PATH + sEmail;
+                            sUrl += '"></iframe>';
+                            
+                            var winStat = new Ext.Window({
+                                autoScroll  : true,
+                                border      : true,        
+                                //html      : sUrl,
+                                //url       : 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
+                                autoLoad    : TSG_CHCK_PATH + sEmail,
+                                id          : 'dwldStatusWindow',
+                                layout      : 'fit',
+                                modal       : true,
+                                plain       : false,
+                                title       : 'Download status: ',
+                                height      : 400,          
+                                width       : 1200
+                              });
+                           
+                            winStat.on('show',function(){
+                                winStat.center();
+                            });                       
+                            winStat.show();
+                        }
+                    }
+                },{
+                    text: 'Download',
+                    handler: function(button) {
+                        var sUrl = '';
+                        var sEmail = Ext.getCmp('emailAddress').getValue();         
+                        if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
+                            Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');                            
+                            Ext.getCmp('emailAddress').markInvalid();
+                            return;
+                        } else {
+                            var downloadForm = Ext.getCmp('nvclDownloadFrm').getForm();
+                            sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="'; 
+                            sUrl += ProxyURL + iServerName + TSG_PATH;
+                            sUrl += downloadForm.getValues(true);
+                            sUrl += '"></iframe>';
+                            //alert(sUrl);
+                            
+                            var winDwld = new Ext.Window({
+                                autoScroll  : true,
+                                border      : true,        
+                                //autoLoad  : sUrl,
+                                html        : sUrl,
+                                id          : 'dwldWindow',
+                                layout      : 'fit',
+                                maximizable : true,
+                                modal       : true,
+                                plain       : false,
+                                title       : 'Download confirmation: ',
+                                height      : 200,          
+                                width       : 840
+                              });
+                               
+                            winDwld.on('show',function(){
+                                winDwld.center();
+                            });                       
+                            winDwld.show();
+                        }
+                    }                                      
+                }],
                 listeners: {
                     'expand' : {
                         scope: this,
                         fn : function(panel, anim) {
                             Ext.getCmp('csvFldSet').collapse();
+                            Ext.getCmp('omFldSet').collapse();
                         }
                     }
-                }              
-            }],
-            buttons:[{
-                text: 'Download',
-                handler: function() {
-                    var sUrl = '';                                        
-                    // CSV Download request?
-                    if (!Ext.getCmp('csvFldSet').collapsed) {
-                        // http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/downloadtsg.html?datasetid=6dd70215-fe38-457c-be42-3b165fd98c7&email=peter.warren@csiro.au
-                        //<a href='http://hostname/tsgdownload-services/checkstatus.html?email=Jarek.Sanders@csiro.au'>
-                        sUrl += ProxyURL + iServerName + CSV_PATH;
-                        sUrl += lDatasetId;
-                        sUrl += CSV_PATH_END;
-                    } else {
-                        var downloadForm = Ext.getCmp('nvclDownloadFrm').getForm();
-                        sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="'; 
-                        sUrl += ProxyURL + iServerName + TSG_PATH;
-                        sUrl += downloadForm.getValues(true);
-                        sUrl += '"></iframe>';
-                    }
-
-                    //alert(sUrl);
-                        
-                    var winDwld = new Ext.Window({
-                        autoScroll  : true,
-                        border      : true,        
-                        //autoLoad  : sUrl,
-                        html        : sUrl,
-                        id          : 'dwldWindow',
-                        layout      : 'fit',
-                        maximizable : true,
-                        modal       : true,
-                        plain       : false,
-                        title       : 'Download confirmation: ',
-                        height      : 200,          
-                        width       : 840
-                        //x:80,
-                        //y:80
-                      });
-                       
-                    winDwld.on('show',function(){
-                        winDwld.center();
-                    });                       
-                    winDwld.show();
                 }
+ 
             },{
-                text: 'Check Status',
-                handler: function() {
-                    var sUrl = '';
-                        //sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="';
-                        sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="'; 
-                        //sUrl += ProxyURL + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
-                        sUrl += '/xsltRestProxy.do?serviceUrl=' + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
-                        sUrl += '"></iframe>';
-                        
-                    var winStat = new Ext.Window({
-                        autoScroll  : true,
-                        border      : true,        
-                        //autoLoad  : sUrl,
-                        //html      : sUrl,
-                        //url       : 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
-                        autoLoad    : ProxyURL + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
-                        id          : 'dwldStatusWindow',
-                        layout      : 'fit',
-                        modal       : true,
-                        plain       : false,
-                        title       : 'Download status: ',
-                        height      : 400,          
-                        width       : 1200
-                      });
-                       
-                    winStat.on('show',function(){
-                        winStat.center();
-                    });                       
-                    winStat.show();
-                }                
-            }]            
-        }],                             
-      });
+                id              : 'omFldSet',
+                title           : 'Observations and Measurements',
+                checkboxName    : 'om',
+                checkboxToggle  : true,
+                collapsed       : true,
+                buttonAlign     : 'right',
+                buttons:[{
+                    text : 'Download',
+                    xtype: 'linkbutton',
+                    href : O_M_PATH + lDatasetId + O_M_PATH_END
+                    //handler: function(){ console.log(O_M_PATH + lDatasetId + O_M_PATH_END) }                    
+                }],
+                listeners: {
+                    'expand' : {
+                        scope: this,
+                        fn : function(panel) {
+                            Ext.getCmp('csvFldSet').collapse();
+                            Ext.getCmp('tsgFldSet').collapse();
+                        }
+                    }
+                } 
+            }]         
+        }]                             
+    });
       
-      win.show();
+    win.show();
       
 } // End of showDownloadDetails()
+
+
+/*
+ * Queries NVCL service for a dataset LogCollection. From the result set 
+ * extracts LogId and total count of sub-images for a given image type. 
+ * 
+ * <LogCollection>
+ *   <Log>
+ *     <LogID>63d31981-bd0c-44dd-a118-6a3406c5d68</LogID>
+ *     <LogName>Mosaic</LogName>
+ *     <SampleCount>1</SampleCount>
+ *   </Log>
+ *   ..
+ *   ..
+ * </LogCollection>
+ * 
+ * Note: This function uses synchronous HTTP request as we first need to 
+ * get image
+ * @param {String} iServerName
+ * @param {String} iDatasetId
+ * @param {String} iLogName  Image type eg: Mosaic or Imagery 
+ */
+function getImageLog(iServerName, iDatasetId, iLogName) {
+
+    var LOG_PATH     = '/NVCLDataServices/getLogCollection.html?datasetid=';
+    var aLogId       = '';
+    var aSampleCount = 0;
+
+    //http://nvclwebservices.vm.csiro.au:80/NVCLDataServices/getLogCollection.html?datasetid=6dd70215-fe38-457c-be42-3b165fd98c7&mosaicsvc=yes
+    var logIdQuery   = 
+             ProxyURL + iServerName + LOG_PATH + iDatasetId + '&mosaicsvc=yes';
+                            
+    try {
+        // create an XMLHttpRequest
+        var request = GXmlHttp.create();
+        
+        // Prepare synchronous HTTP request to the server (3rd param = false)
+        request.open("GET", logIdQuery, false); 
+        
+        // Processing will pause until response is available
+        request.send(null);     
+
+        if (request.status == 200) {
+            var XmlDoc = GXml.parse(request.responseText);
+        
+            if (g_IsIE)
+                XmlDoc.setProperty("SelectionLanguage", "XPath");
+    
+            var rootNode = XmlDoc.documentElement;
+            
+            if (!rootNode)
+                throw "EmptyXMLException"; 
+               
+            var aLog = rootNode.getElementsByTagName("Log");
+    
+            if (aLog.length == 0) 
+                throw "EmptyXMLException";
+            
+            for (var i=0; i < aLog.length; i++ ) {
+                if (GXml.value(aLog[i].selectSingleNode
+                        ("*[local-name() = 'LogName']")) == "Imagery");
+                {
+                    // To Do: Need to also get <SampleCount> value
+                    aLogId = GXml.value(aLog[i].selectSingleNode
+                                    ("*[local-name() = 'LogID']"));
+                    aSampleCount = GXml.value(aLog[i].selectSingleNode
+                                    ("*[local-name() = 'SampleCount']"));
+                } 
+            }
+        } else {
+            alert('Remote server returned HTTP status: ' + request.status);
+        }
+    } catch (e) { 
+        if (e == "EmptyXMLException") {
+            // Do nothing
+        } else {
+            alert("Network error");
+        }
+    }
+
+    return {
+        LogId       :aLogId, 
+        SampleCount :aSampleCount
+    };
+}   // End of getImageLog()  
+
+
+/*
+ * Not used - work in progress
+ */
+function validation() {
+    
+    if(Ext.getCmp('emailAddress').getValue="") {
+        Ext.MessageBox.alert("Error","Please enter a name");
+    }
+
+}
