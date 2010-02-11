@@ -1,19 +1,30 @@
 package org.auscope.portal.server.web.service;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
+
+import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.csw.CSWThreadExecutor;
+import org.auscope.portal.csw.ICSWMethodMaker;
+import org.auscope.portal.csw.CSWMethodMakerGetDataRecords;
+import org.auscope.portal.csw.CSWGetRecordResponse;
+
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.util.Util;
-import org.auscope.portal.csw.*;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import org.w3c.dom.Document;
+
 
 /**
  * Provides some utility methods for accessing data from a CSW service
  *
  * @version $Id$
+ * TODO: create an interface, as this implementation does things like caching,
+ * TODO: which is not desirable in all cases
  */
 @Service
 public class CSWService {
