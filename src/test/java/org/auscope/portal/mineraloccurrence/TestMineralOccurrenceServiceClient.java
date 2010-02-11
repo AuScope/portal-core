@@ -256,8 +256,15 @@ public class TestMineralOccurrenceServiceClient {
                                                                     minCommodityAmountUOM,
                                                                     cutOffGrade,
                                                                     cutOffGradeUOM);
+        
+        final String expectedValue =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            "<wfs:FeatureCollection numberOfFeatures=\"0\"" +
+            "    xsi:schemaLocation=\"http://www.opengis.net/wfs\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\">" +
+            "    <gml:featureMembers/>" +
+            "</wfs:FeatureCollection>";
 
-        Assert.assertEquals("", returnValue);
+        Assert.assertEquals(expectedValue, returnValue);
     }
 
     @Test
