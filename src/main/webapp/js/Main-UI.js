@@ -741,9 +741,25 @@ Ext.onReady(function() {
     if (GBrowserIsCompatible()) {
 
         map = new GMap2(centerPanel.body.dom);
-
+        
+        /* TODO:    AUS-1526
+        // Two ways of enabling search bar        
+        map = new GMap2( centerPanel.body.dom
+                       , {googleBarOptions:{ showOnLoad : true//,
+                          //resultList:G_GOOGLEBAR_RESULT_LIST_SUPPRESS//,
+                                             //onMarkersSetCallback : myCallback
+                                            }
+                        });
+        or ....
+        map.enableGoogleBar();        
+        // Problems, find out how to
+        1. turn out advertising
+        2. Narrow down location seraches to the current map view 
+                        (or Australia). Search for Albany retruns Albany, US
+        */
+        
         map.setUIToDefault();
-
+        
         //add google earth
         map.addMapType(G_SATELLITE_3D_MAP);
 
