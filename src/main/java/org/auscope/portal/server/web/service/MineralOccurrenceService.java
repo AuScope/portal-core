@@ -174,8 +174,13 @@ public class MineralOccurrenceService {
         Collection<Commodity> commodities = this.getCommodity(serviceURL, commodityGroup, commodityName);
 
         //if there are no commodities we can't continue
+        //and return a valid response
         if(commodities.size() == 0)
-                return "";
+            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                   "<wfs:FeatureCollection numberOfFeatures=\"0\"" +
+                   "    xsi:schemaLocation=\"http://www.opengis.net/wfs\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\">" +
+                   "    <gml:featureMembers/>" +
+                   "</wfs:FeatureCollection>";
 
         //create the mineral occurrence filter
         MineralOccurrenceFilter mineralOccurrenceFilter = new MineralOccurrenceFilter(  commodities,
