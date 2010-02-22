@@ -77,15 +77,15 @@ public class MineralOccurrenceService {
 
     /**
      * Given a specific service and a mineName, get that mine from the service
-     * @param serviceURL - the service to get the mine from
-     * @param mineName - the name of the mine to get
-     * @return
+     * @param  serviceURL - the service to get the mine from
+     * @param  mineName - the name of the mine to get
+     * @return the list collection of Mine node objects
      */
     public List<Mine> getMineWithSpecifiedName(String serviceURL, String mineName) throws Exception {
         //get the mine
         String mineResponse = this.getMineWithSpecifiedNameGML(serviceURL, mineName);
 
-        //convert the response into updateCSWRecords nice collection of Mine Nodes
+        //convert the response into a collection of Mine Nodes
         List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
 
         //send it back!
@@ -104,7 +104,7 @@ public class MineralOccurrenceService {
         //create a filter for the specified name
         MineFilter mineFilter = new MineFilter(mineName);
 
-        log.debug(serviceURL + "\n" + mineFilter.getFilterString());
+        log.debug("\n" + serviceURL + "\n" + mineFilter.getFilterString());
 
         //create a GetFeature request with filter constraints on a query
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", mineFilter.getFilterString());
@@ -140,7 +140,8 @@ public class MineralOccurrenceService {
 
         //call the service, and get all the commodities
         String commodityResponse = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-
+System.out.println("........................");
+System.out.println(commodityResponse);
         //parse the commodites and return them
         return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
     }

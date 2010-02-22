@@ -16,6 +16,7 @@ import org.xml.sax.SAXException;
  * User: Michael Stegherr
  * Date: 27/03/2009
  * Time: 5:13:06 PM
+ * @version $Id$
  */
 public class Commodity {
     private Node commodityNode;
@@ -45,12 +46,15 @@ public class Commodity {
         try {
             XPathExpression expr = xPath.compile("er:source");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
-            return result.getAttributes().getNamedItem("xlink:href").getTextContent();
+            String search  = "urn:cgi";
+            String s = result.getAttributes().getNamedItem("xlink:href").getTextContent();
+            return s.substring(s.indexOf(search));
         } catch (Exception e) {
             return "";
         }
     }
-        
+    
+    
     public String getCommodityImportance() throws XPathExpressionException {
         
         try {

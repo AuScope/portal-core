@@ -93,7 +93,7 @@
    </xsl:template>
    
    
-   <!-- TEMPLATE FOR TRANSLATING Mine -->
+   <!-- TEMPLATE FOR TRANSLATING er:Mine -->
    <!-- ================================================================= -->
    <xsl:template match="gml:featureMember/er:Mine | gml:featureMembers/er:Mine">
    
@@ -103,13 +103,43 @@
       <xsl:variable name="mineName">
          <xsl:value-of select="./er:mineName/er:MineName[./er:isPreferred = true()]/er:mineName/text()"/>
       </xsl:variable>
+      <!-- 
+      <xsl:variable name="specification">
+         <xsl:value-of select="./er:occurrence/er:MiningFeatureOccurrence/er:specification/@xlink:href"/>
+      </xsl:variable>
+      -->
+      
+      <xsl:variable name="specificationResolverLink">
+         <xsl:call-template name="getLinkToMiningActivity">
+         <xsl:with-param name="thisGmlName" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
+         <xsl:with-param name="specification" select="./er:occurrence/er:MiningFeatureOccurrence/er:specification/@xlink:href"/>
+         <xsl:with-param name="candidate1" select="./er:relatedActivity[1]/@xlink:href"/>
+         <xsl:with-param name="candidate2" select="''"/>
+         </xsl:call-template>
+      </xsl:variable>
       
       <xsl:if test="$coordinates">  
          <Placemark>
             <name><xsl:value-of select="$mineName"/></name>
             <description>
+               <!--
                <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
                <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="./gml:name[starts-with(@codeSpace,'http://')]"/><![CDATA[</a>]]>
+               -->
+               <!-- 
+               <xsl:choose>               
+                  <xsl:when test="starts-with($specification,'#')">
+                    <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
+                    <tr><td>Name</td><td><a href="#" onclick="var w=window.open('','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.document.write(']]><xsl:copy-of select=".." disable-output-escaping="yes"/><![CDATA[');w.focus();return false;">]]><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/><![CDATA[</a>]]>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
+                    <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="./er:occurrence/er:MiningFeatureOccurrence/er:specification/@xlink:href"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/><![CDATA[</a>]]>
+                  </xsl:otherwise>                  
+               </xsl:choose>                  
+               -->
+               <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
+               <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$specificationResolverLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/><![CDATA[</a>]]>             
                <![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]><xsl:value-of select="$mineName"/>
                <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Status</td><td>]]><xsl:value-of select="./er:status"/>
@@ -122,7 +152,7 @@
    </xsl:template>
    
    
-   <!-- TEMPLATE FOR TRANSLATING Maining Activity -->
+   <!-- TEMPLATE FOR TRANSLATING Mining Activity -->
    <!-- ================================================================= -->
    <xsl:template match="gml:featureMember/er:MiningActivity | gml:featureMembers/er:MiningActivity">
 
@@ -130,21 +160,34 @@
          <xsl:value-of select="./er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point/gml:pos"/>
       </xsl:variable>
 
+      <xsl:variable name="specificationResolverLink">
+         <xsl:call-template name="getLinkToMiningActivity">
+         <xsl:with-param name="thisGmlName" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
+         <xsl:with-param name="specification" select="./er:occurrence/er:MiningFeatureOccurrence/er:specification/@xlink:href"/>
+         <xsl:with-param name="candidate1" select="./er:associatedMine/@xlink:href"/>
+         <xsl:with-param name="candidate2" select="./er:deposit/@xlink:href"/>
+         </xsl:call-template>
+      </xsl:variable>
+
       <xsl:if test="$coordinates">  
          <Placemark>
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
+               <!-- 
                <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
                <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="./gml:name"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="./gml:name"/><![CDATA[</a>]]>
+               -->
+               <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
+               <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$specificationResolverLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/><![CDATA[</a>]]>
                <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>
                <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
                <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/>
                <![CDATA[</td></tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./er:activityType"/>            
-               <xsl:call-template name="displayUrnResolverLink">
+               <xsl:call-template name="displayUrnResolverLinkWithoutHTTP">
                   <xsl:with-param name="tableRowLabel" select=" 'Associated Mine' "/>
                   <xsl:with-param name="tableRowValue" select="./er:associatedMine/@xlink:href"/>
                </xsl:call-template>
-               <xsl:call-template name="displayUrnResolverLink">
+               <xsl:call-template name="displayUrnResolverLinkWithoutHTTP">
                   <xsl:with-param name="tableRowLabel" select=" 'Deposit' "/>
                   <xsl:with-param name="tableRowValue" select="./er:deposit/@xlink:href"/>
                </xsl:call-template>               
@@ -557,9 +600,59 @@
    <xsl:template name="displayUrnResolverLink">
       <xsl:param name="tableRowLabel"/>
       <xsl:param name="tableRowValue"/>
-      
+      <!-- 
       <![CDATA[</td></tr><tr><td>]]><xsl:value-of select="$tableRowLabel"/><![CDATA[</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="$tableRowValue"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$tableRowValue"/><![CDATA[</a>]]>
+      -->
+      <![CDATA[</td></tr><tr><td>]]><xsl:value-of select="$tableRowLabel"/><![CDATA[</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$tableRowValue"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$tableRowValue"/><![CDATA[</a>]]>      
+   </xsl:template>
 
+
+   <!-- ================================================================= -->
+   <!--    THIS FUNCTION DISPLAYS URN RESOLVER LINK WITH 'http://...='    -->
+   <!--    PREFFIX STRIPPED                                               -->
+   <!--    PARAM: tableRowLabel                                           -->
+   <!--    PARAM: tableRowValue                                           -->
+   <!-- ================================================================= -->
+   <xsl:template name="displayUrnResolverLinkWithoutHTTP">
+      <xsl:param name="tableRowLabel"/>
+      <xsl:param name="tableRowValue"/>
+      <!-- 
+      <![CDATA[</td></tr><tr><td>]]><xsl:value-of select="$tableRowLabel"/><![CDATA[</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="$tableRowValue"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$tableRowValue"/><![CDATA[</a>]]>
+      -->
+      <![CDATA[</td></tr><tr><td>]]><xsl:value-of select="$tableRowLabel"/><![CDATA[</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$tableRowValue"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="substring-after($tableRowValue,'=')"/><![CDATA[</a>]]>      
+   </xsl:template>
+
+
+   <!-- ================================================================= -->
+   <!--    THIS FUNCTION ATTEMPTS TO CONSTRUCT A LINK TO MiningActivity   --> 
+   <!--    URL RESOLVER WHEN ONLY xPonter URI IS GIVEN                    -->
+   <!--    eg. #er.miningactivity.1                                       -->
+   <!--    PARAM: specification                                           -->
+   <!--    PARAM: associatedMine                                          -->
+   <!--    PARAM: deposit                                                 -->
+   <!-- ================================================================= -->
+   <xsl:template name="getLinkToMiningActivity">
+      <xsl:param name="thisGmlName"/>
+      <xsl:param name="specification"/>
+      <xsl:param name="candidate1"/>
+      <xsl:param name="candidate2"/>
+            
+      <xsl:choose>
+         <xsl:when test="starts-with($specification,'http')"> 
+            <xsl:value-of select="$specification" />
+         </xsl:when>
+         <xsl:when test="starts-with($specification,'#')">
+            <xsl:choose>
+               <xsl:when test="starts-with($candidate1,'http')">               
+                  <xsl:value-of select="substring-before($candidate1,'urn:cgi')" /><xsl:value-of select="$thisGmlName" />
+               </xsl:when>
+               <xsl:otherwise>
+                  <xsl:value-of select="substring-before($candidate2,'urn:cgi')" /><xsl:value-of select="$thisGmlName" />                  
+               </xsl:otherwise>            
+            </xsl:choose>            
+         </xsl:when>         
+      </xsl:choose>         
+               
    </xsl:template>
 
 

@@ -100,15 +100,15 @@ MineralOccurrenceFilterForm = function(id) {
     //-----------Panel
     
     Ext.FormPanel.call(this,{
-        id: id + '', /* Convert id to string*/
-        border: false,
-        autoScroll:true,
-        hideMode:'offsets',
-        width: '100%',
-        buttonAlign: 'right',
-        labelAlign: 'right',
-        labelWidth: 140,
-        timeout: 180, /*should not time out before the server does*/
+        id          : String.format('{0}',id),
+        border      : false,
+        autoScroll  : true,
+        hideMode    : 'offsets',
+        width       : '100%',
+        buttonAlign : 'right',
+        labelAlign  : 'right',
+        labelWidth  : 140,
+        timeout     : 180, /*should not time out before the server does*/
 
         items: [{
             xtype:'fieldset',

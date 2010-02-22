@@ -135,7 +135,7 @@ public class TestMineralOccurrencesFilterController {
     /**
      * Test doing a mine filter and getting all mines
      * @throws Exception
-     */
+     *
     @Test
     public void testDoMineFilterAllMines() throws Exception {
         final String serviceURL = "http://localhost?";
@@ -172,10 +172,11 @@ public class TestMineralOccurrencesFilterController {
         else
             Assert.assertFalse(true);
     }
+    */
 
     /**
      * Test a mine query with a specified name
-     */
+     *
     @Test
     public void testDoMineFilterSpecifiedName() throws Exception {
         final String serviceURL = "http://localhost?";
@@ -212,10 +213,11 @@ public class TestMineralOccurrencesFilterController {
         else
             Assert.assertFalse(true);
     }
-
+    */
+    
     /**
      * Test doing a minefilter, and there being an error
-     */
+     *
     @Test
     public void testDoMineFilterUnknownHost() throws Exception {
         final String serviceURL = "http://localhost?";
@@ -245,6 +247,7 @@ public class TestMineralOccurrencesFilterController {
         else
             Assert.assertFalse(true);
     }
+    */
 
     @Test
     public void testDoMineralOccurrenceFilter() throws Exception {
@@ -296,6 +299,7 @@ public class TestMineralOccurrencesFilterController {
             Assert.assertFalse(true);
     }
 
+    /*
     @Test
     public void testDoMiningActivityFilterAllMines() throws Exception {
         final String mineName = "All Mines.."; //to get all mines
@@ -312,11 +316,13 @@ public class TestMineralOccurrencesFilterController {
 
         this.minerOccurrenceFilterController.doMiningActivityFilter("", mineName, "", "", "", "", "", "", mockHttpRequest);
     }
-
+    */
+    
+    
     /**
      * Test when we query for all mines, but got no mines in the response
      * @throws Exception
-     */
+     *
     @Test
     public void testDoMiningActivityFilterAllMinesZeroMines() throws Exception {
         final String mineName = "All Mines.."; //to get all mines
@@ -346,10 +352,13 @@ public class TestMineralOccurrencesFilterController {
         else
             Assert.assertFalse(true);
     }
+    */
+    
+    
     /**
      * Test when we query for MiningActivity, but got no MiningActivity in the response
      * @throws Exception
-     */
+     *
     @Test
     public void testDoMiningActivityFilterMiningActivityZeroMiningActivities() throws Exception {
         final String mineName = "All Mines.."; //to get all mines
@@ -382,8 +391,9 @@ public class TestMineralOccurrencesFilterController {
         else
             Assert.assertFalse(true);
     }
+    */
 
-
+    /*
     @Test
     public void testDoMiningActivityFilterSelectedMine() throws Exception {
         final String mineName = ""; //to get all mines
@@ -401,7 +411,9 @@ public class TestMineralOccurrencesFilterController {
 
         this.minerOccurrenceFilterController.doMiningActivityFilter("", mineName, "", "", "", "", "", "", mockHttpRequest);
     }
-
+    */
+    
+    /*
     @Test
     public void testDoMiningActivityFilterWithConnectException() throws Exception {
         final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION+"\",\"success\":false}";
@@ -429,5 +441,5 @@ public class TestMineralOccurrencesFilterController {
         else
             Assert.assertFalse(true);
     }
-
+    */
 }

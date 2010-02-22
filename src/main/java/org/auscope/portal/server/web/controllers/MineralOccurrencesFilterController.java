@@ -92,6 +92,7 @@ public class MineralOccurrencesFilterController {
     @RequestMapping("/getMineNames.do")
     public ModelAndView getMineNames(@RequestParam("serviceUrl") String serviceUrl,
                                      ModelMap model) {
+
         try {
             //get all of the mines
             Collection<Mine> mines = this.mineralOccurrenceService.getAllMines(serviceUrl);
@@ -123,34 +124,7 @@ public class MineralOccurrencesFilterController {
         }
     }
 
-    /**
-     * Performs a filter query on a given service, then converts the GML response into KML and returns
-     *
-     * @param serviceUrl
-     * @param mineName
-     * @param request
-     * @return
-     */
-    @RequestMapping("/doMineFilter.do")
-    public ModelAndView doMineFilter(
-            @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("mineName") String mineName,
-            HttpServletRequest request) {
-        try {
-            String gmlBlob;
 
-            if (mineName.equals(ALL_MINES))//get all mines
-                gmlBlob =this.mineralOccurrenceService.getAllMinesGML(serviceUrl);
-            else
-                gmlBlob = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName);
-
-            String kmlBlob =  gmlToKml.convert(gmlBlob, request);
-
-            return makeModelAndViewKML(kmlBlob, gmlBlob);
-        } catch (Exception e) {
-            return this.handleExceptionResponse(e);
-        }
-    }
 
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
@@ -166,6 +140,7 @@ public class MineralOccurrencesFilterController {
             @RequestParam("cutOffGradeUOM") String cutOffGradeUOM,
             HttpServletRequest request) {
         try {
+
             //get the mineral occurrences
             String mineralOccurrenceResponse = this.mineralOccurrenceService.getMineralOccurrenceGML(serviceUrl,
                                                                                         commodityName,
@@ -189,44 +164,6 @@ public class MineralOccurrencesFilterController {
         }
     }
 
-    @RequestMapping("/doMiningActivityFilter.do")
-    public ModelAndView doMiningActivityFilter(
-            @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("mineName") String mineName,
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate,
-            @RequestParam("oreProcessed") String oreProcessed,
-            @RequestParam("producedMaterial") String producedMaterial,
-            @RequestParam("cutOffGrade") String cutOffGrade,
-            @RequestParam("production") String production,
-            HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-
-        try {
-            List<Mine> mines;
-
-            if (mineName.equals(ALL_MINES))
-                mines = this.mineralOccurrenceService.getAllMines(serviceUrl);
-            else
-                mines = this.mineralOccurrenceService.getMineWithSpecifiedName(serviceUrl, mineName);
-
-            //if there are 0 features then send updateCSWRecords nice message to the user
-            if (mines.size() == 0)
-                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
-
-            //get the mining activities
-            String miningActivityResponse = this.mineralOccurrenceService.getMiningActivityGML(serviceUrl, mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
-
-            //if there are 0 features then send updateCSWRecords nice message to the user
-            if (mineralOccurrencesResponseHandler.getNumberOfFeatures(miningActivityResponse) == 0)
-                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
-
-            //return makeModelAndViewKML(convertToKML(mineResponse, miningActivityResponse));
-            return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request), miningActivityResponse);
-
-        } catch (Exception e) {
-            return this.handleExceptionResponse(e);
-        }
-    }
 
     /**
      * Depending on the type of exception we get, present the user with a nice meaningful message

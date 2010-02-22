@@ -1,17 +1,24 @@
 package org.auscope.portal.mineraloccurrence;
 
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.*;
-import java.io.IOException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
- * User: Mathew Wyatt
- * Date: 23/03/2009
- * Time: 4:52:06 PM
+ * This class is a wrapper for er:Mine XML feature  
+ * 
+ * @version $Id$
  */
 public class Mine {
     //private Document mineDocument;
@@ -51,5 +58,48 @@ public class Mine {
             return "";
         }
     }
-        
+
+    public List<String> getRelatedActivities() {
+        List<String> result = new ArrayList<String>();
+        try {
+            XPathExpression expr = xPath.compile("er:relatedActivity/@xlink:href");
+            Object relatedNodes = expr.evaluate(mineNode, XPathConstants.NODESET);
+            NodeList nodes = (NodeList) relatedNodes;
+            String search  = "urn:cgi";
+            String s;
+            int j;
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                s = nodes.item(i).getNodeValue();
+                j = s.indexOf(search);
+                if (j!=-1)
+                    result.add(s.substring(j));
+            }
+
+            return result;
+        } catch (Exception e) {
+            return result;
+        }
+    }
+
+    
+    public List<String> getRelatedMiningActivities() {
+        List<String> result = new ArrayList<String>();
+        try {
+            // Deal with local pointer reference eg. xlink:href="#er.mine.361023
+            XPathExpression expr = xPath.compile("er:occurrence/er:MiningFeatureOccurrence/er:specification[starts-with(@xlink:href,'#']");
+            Object relatedNodes = expr.evaluate(mineNode, XPathConstants.NODESET);            
+            NodeList nodes = (NodeList) relatedNodes;
+            
+            for (int i = 0; i < nodes.getLength(); i++) {
+                System.out.println(nodes.item(i).getNodeValue());
+                result.add(nodes.item(i).getNodeValue());
+            }
+
+            return result;
+        } catch (Exception e) {
+            return result;
+        }
+    }    
+    
 }
