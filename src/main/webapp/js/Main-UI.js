@@ -780,13 +780,11 @@ Ext.onReady(function() {
         map.addControl(new DragZoomControl(), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(345, 7)));
     }
 
-    // Fix for IE resize problem
-    if(Ext.isIE){
-        map.checkResize();
-        Ext.get('center_region').on('resize',function(){
-            map.checkResize();
-        },this);
-    }  
+    // Fix for IE/Firefox resize problem (See issue AUS-1364 and AUS-1565 for more info)
+    map.checkResize();
+    centerPanel.on('resize', function() {
+    	map.checkResize();
+    });
     
     //updateCSWRecords dud gloabal for geoxml class
     theglobalexml = new GeoXml("theglobalexml", map, null, null);
@@ -806,5 +804,5 @@ Ext.onReady(function() {
 
     complexFeaturesStore.load();
     wmsLayersStore.load();
-
+    
 });
