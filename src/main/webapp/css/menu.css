@@ -11,6 +11,10 @@
     padding-right: 30px;
 }
 
+#logo {
+	position:fixed;
+}
+
 #menu li {
 	display:inline;
 }
