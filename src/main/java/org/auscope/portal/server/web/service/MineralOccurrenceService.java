@@ -140,8 +140,7 @@ public class MineralOccurrenceService {
 
         //call the service, and get all the commodities
         String commodityResponse = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-System.out.println("........................");
-System.out.println(commodityResponse);
+
         //parse the commodites and return them
         return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
     }
@@ -192,7 +191,8 @@ System.out.println(commodityResponse);
                                                                                         minCommodityAmountUOM,
                                                                                         cutOffGrade,
                                                                                         cutOffGradeUOM);
-        log.debug(serviceURL + "\n" + mineralOccurrenceFilter.getFilterString());
+
+        log.debug("\n" + serviceURL + "\n" + mineralOccurrenceFilter.getFilterString());
         
         //create the method
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterString());

@@ -57,14 +57,15 @@ public class MineralOccurrenceFilter implements IFilter {
         StringBuffer queryString = new StringBuffer();
 
         queryString.append("<ogc:Filter xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\"\n" +
-                "        xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
-                "        xmlns:ogc=\"http://www.opengis.net/ogc\"\n" +
-                "        xmlns:gml=\"http://www.opengis.net/gml\"\n" +
-                "        xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n" +
-                "        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
+                "            xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n" +
+                "            xmlns:ogc=\"http://www.opengis.net/ogc\"\n" +
+                "            xmlns:gml=\"http://www.opengis.net/gml\"\n" +
+                "            xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n" +
+                "            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");        
+
 
         if(checkMany())
-            queryString.append("<ogc:And>\n");
+            queryString.append("      <ogc:And>\n");
         
         if(this.commodities != null)
         {
@@ -115,7 +116,7 @@ public class MineralOccurrenceFilter implements IFilter {
                 queryString.append("                 </ogc:Or>\n");
             }
             else
-                queryString.append(createCommodityAmountQuery(this.measureType));            
+                queryString.append(createCommodityAmountQuery(this.measureType));
         }
 
         if(!this.cutOffGrade.equals(""))
@@ -135,9 +136,9 @@ public class MineralOccurrenceFilter implements IFilter {
         }
 
         if(checkMany())
-            queryString.append("</ogc:And>\n");
+            queryString.append("      </ogc:And>\n");
 
-        queryString.append("        </ogc:Filter>\n");
+        queryString.append("</ogc:Filter>\n");
 
         return queryString.toString();
 

@@ -126,43 +126,7 @@ public class MineralOccurrencesFilterController {
 
 
 
-    @RequestMapping("/doMineralOccurrenceFilter.do")
-    public ModelAndView doMineralOccurrenceFilter(
-            @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("commodityName") String commodityName,
-            @RequestParam("commodityGroup") String commodityGroup,
-            @RequestParam("measureType") String measureType,
-            @RequestParam("minOreAmount") String minOreAmount,
-            @RequestParam("minOreAmountUOM") String minOreAmountUOM,
-            @RequestParam("minCommodityAmount") String minCommodityAmount,
-            @RequestParam("minCommodityAmountUOM") String minCommodityAmountUOM,
-            @RequestParam("cutOffGrade") String cutOffGrade,
-            @RequestParam("cutOffGradeUOM") String cutOffGradeUOM,
-            HttpServletRequest request) {
-        try {
 
-            //get the mineral occurrences
-            String mineralOccurrenceResponse = this.mineralOccurrenceService.getMineralOccurrenceGML(serviceUrl,
-                                                                                        commodityName,
-                                                                                        commodityGroup,
-                                                                                        measureType,
-                                                                                        minOreAmount,
-                                                                                        minOreAmountUOM,
-                                                                                        minCommodityAmount,
-                                                                                        minCommodityAmountUOM,
-                                                                                        cutOffGrade,
-                                                                                        cutOffGradeUOM);
-            //if there are 0 features then send updateCSWRecords nice message to the user
-            if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
-                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
-
-            //if everything is good then return the KML
-            return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request), mineralOccurrenceResponse);
-
-        } catch (Exception e) {
-            return this.handleExceptionResponse(e);
-        }
-    }
 
 
     /**

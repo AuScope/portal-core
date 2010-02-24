@@ -52,7 +52,7 @@ public class EarthResourcesFilterController {
     
     /** Log object for this class. */
     protected final Log log = LogFactory.getLog(getClass());
-    //private static String ALL_MINES = "All Mines..";        // To DO: Remove
+    //private static String ALL_MINES = "All Mines..";         // To DO: Remove
     
     /** Query all mines command */
     private static String ALL_MINES = "";
@@ -79,7 +79,7 @@ public class EarthResourcesFilterController {
     // ------------------------------------------- Property Setters and Getters   
     
     /**
-     * Handles the Earth Resource Mine name filter query.
+     * Handles the Earth Resource Mine filter queries.
      *
      * @param serviceUrl the url of the service to query
      * @param mineName   the name of the mine to query for
@@ -91,21 +91,80 @@ public class EarthResourcesFilterController {
             @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("mineName") String mineName,
             HttpServletRequest request) {
-System.out.println("* * * 2a");
+
         try {
             String gmlBlob;
 
             if (mineName.equals(ALL_MINES)) {//get all mines 
-                System.out.println("* ALL_MINES * 2a");
+
                 gmlBlob = this.mineralOccurrenceService.getAllMinesGML(serviceUrl);
             }
             else
                 gmlBlob = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName);
 
             String kmlBlob =  gmlToKml.convert(gmlBlob, request);
-System.out.println(kmlBlob);
+            //log.debug(kmlBlob);
             
             return makeModelAndViewKML(kmlBlob, gmlBlob);
+        } catch (Exception e) {
+            return this.handleExceptionResponse(e);
+        }
+    }
+
+    
+    /**
+     * Handles the Earth Resource MineralOccerrence filter queries.
+     *
+     * @param serviceUrl
+     * @param commodityName
+     * @param commodityGroup
+     * @param measureType
+     * @param minOreAmount
+     * @param minOreAmountUOM
+     * @param minCommodityAmount
+     * @param minCommodityAmountUOM
+     * @param cutOffGrade
+     * @param cutOffGradeUOM
+     * @param request                the HTTP client request
+     * 
+     * @return a WFS response converted into KML
+     */
+    @RequestMapping("/doMineralOccurrenceFilter.do")
+    public ModelAndView doMineralOccurrenceFilter(
+            @RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("commodityName") String commodityName,
+            @RequestParam("commodityGroup") String commodityGroup,
+            @RequestParam("measureType") String measureType,
+            @RequestParam("minOreAmount") String minOreAmount,
+            @RequestParam("minOreAmountUOM") String minOreAmountUOM,
+            @RequestParam("minCommodityAmount") String minCommodityAmount,
+            @RequestParam("minCommodityAmountUOM") String minCommodityAmountUOM,
+            @RequestParam("cutOffGrade") String cutOffGrade,
+            @RequestParam("cutOffGradeUOM") String cutOffGradeUOM,
+            HttpServletRequest request) {
+        try {
+
+            //get the mineral occurrences
+            String mineralOccurrenceResponse = this.mineralOccurrenceService.getMineralOccurrenceGML(serviceUrl,
+                                                                                        commodityName,
+                                                                                        commodityGroup,
+                                                                                        measureType,
+                                                                                        minOreAmount,
+                                                                                        minOreAmountUOM,
+                                                                                        minCommodityAmount,
+                                                                                        minCommodityAmountUOM,
+                                                                                        cutOffGrade,
+                                                                                        cutOffGradeUOM);
+
+            log.debug("mineralOccurrenceResponse");
+
+            // If there are 0 features then send NO_RESULTS message to the user
+            if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
+                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
+
+            //if everything is good then return the KML
+            return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request), mineralOccurrenceResponse);
+
         } catch (Exception e) {
             return this.handleExceptionResponse(e);
         }
@@ -118,21 +177,27 @@ System.out.println(kmlBlob);
      *
      * @param serviceUrl
      * @param mineName
+     * @param startDate 
+     * @param endDate 
+     * @param oreProcessed 
+     * @param producedMaterial 
+     * @param cutOffGrade 
+     * @param production 
      * @param request
      * @return the KML response
      */    
     @RequestMapping("/doMiningActivityFilter.do")
     public ModelAndView doMiningActivityFilter(
-            @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("mineName") String mineName,
-            @RequestParam("startDate") String startDate,
-            @RequestParam("endDate") String endDate,
-            @RequestParam("oreProcessed") String oreProcessed,
+            @RequestParam("serviceUrl")       String serviceUrl,
+            @RequestParam("mineName")         String mineName,
+            @RequestParam("startDate")        String startDate,
+            @RequestParam("endDate")          String endDate,
+            @RequestParam("oreProcessed")     String oreProcessed,
             @RequestParam("producedMaterial") String producedMaterial,
-            @RequestParam("cutOffGrade") String cutOffGrade,
-            @RequestParam("production") String production,
-            HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
-
+            @RequestParam("cutOffGrade")      String cutOffGrade,
+            @RequestParam("production")       String production,
+            HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException 
+    {
         try {
             List<Mine> mines;   
 
@@ -145,14 +210,13 @@ System.out.println(kmlBlob);
             if (mines.size() == 0)
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
-            //get the mining activities
+            // Get the mining activities
             String miningActivityResponse = this.mineralOccurrenceService.getMiningActivityGML(serviceUrl, mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
-            //if there are 0 features then send updateCSWRecords nice message to the user
+            // If there are 0 features then send NO_RESULTS message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(miningActivityResponse) == 0)
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
-            //return makeModelAndViewKML(convertToKML(mineResponse, miningActivityResponse));
             return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request), miningActivityResponse);
 
         } catch (Exception e) {
@@ -160,27 +224,27 @@ System.out.println(kmlBlob);
         }
     }
 
-    
+
     /**
-     * Depending on the type of exception we get, present the user with a nice meaningful message
-     * @param e
-     * @return
+     * Exception resolver that maps exceptions to views presented to the user
+     * @param exception
+     * @return ModelAndView object with error message 
      */
     public ModelAndView handleExceptionResponse(Exception e) {
-        //log the error
+
         log.error(e);
 
-        //service down or host down
+        // Service down or host down
         if(e instanceof ConnectException || e instanceof UnknownHostException) {
             return this.makeModelAndViewFailure(ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION);
         }
 
-        //timouts
+        // Timouts
         if(e instanceof ConnectTimeoutException) {
             return this.makeModelAndViewFailure(ErrorMessages.OPERATION_TIMOUT);
         }
 
-        //an error we don't specifically handle of expect
+        // An error we don't specifically handle or expect
         return makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
     } 
    
@@ -189,10 +253,10 @@ System.out.println(kmlBlob);
 
     // ------------------------------------------------------ Private Methods
     /**
-     * Insert a kml block into a successful JSON response
+     * Create a new ModelAndView given a kml block and serialised xml document.
      * @param kmlBlob
      * @param gmlBlob
-     * @return
+     * @return ModelAndView JSON response object
      */
     private ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob) {
         final Map data = new HashMap() {{

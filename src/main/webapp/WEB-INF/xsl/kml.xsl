@@ -192,7 +192,7 @@
                   <xsl:with-param name="tableRowValue" select="./er:deposit/@xlink:href"/>
                </xsl:call-template>               
                <![CDATA[</td></tr><tr><td>Product</td><td>]]><xsl:value-of select="./er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value"/>
-               <xsl:apply-templates select="./er:sourceCommodity"/>
+               <xsl:apply-templates select="./er:producedMaterial/er:Product/er:sourceCommodity"/>
                <![CDATA[</td></tr></table>]]>
             </description>
             
@@ -231,14 +231,23 @@
          <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
       </xsl:variable>
       <xsl:variable name="resource_id">
-         <xsl:value-of select="./gml:name[starts-with(.,'urn')][starts-with(@codeSpace,'http://')] "/>
+         <xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
+      </xsl:variable>
+
+      <xsl:variable name="specificationResolverLink">
+         <xsl:call-template name="getLinkToMiningActivity">
+         <xsl:with-param name="thisGmlName" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
+         <xsl:with-param name="specification" select="./gsml:occurrence/gsml:MappedFeature/gsml:specification/@xlink:href"/>
+         <xsl:with-param name="candidate1" select="./er:commodityDescription[1]/@xlink:href"/>
+         <xsl:with-param name="candidate2" select="''"/>
+         </xsl:call-template>
       </xsl:variable>
 
       <Placemark>
          <name><xsl:value-of select="$resource_id"/></name>
          <description>
             <![CDATA[<table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
-            <tr><td>Id</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="$resource_id"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a>]]>
+            <tr><td>Id</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$specificationResolverLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a>]]>
             <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./er:type"/>
             <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./er:classification/er:MineralDepositModel/er:mineralDepositGroup"/>
             <!-- commodity and ore amount is currently not required
@@ -258,7 +267,7 @@
    <!-- ================================================================= -->
    <xsl:template match="er:commodityDescription | er:sourceCommodity">
    
-      <xsl:call-template name="displayUrnResolverLink">
+      <xsl:call-template name="displayUrnResolverLinkWithoutHTTP">
          <xsl:with-param name="tableRowLabel" select=" 'Commodity Description' "/>
          <xsl:with-param name="tableRowValue" select="@xlink:href"/>
       </xsl:call-template>
