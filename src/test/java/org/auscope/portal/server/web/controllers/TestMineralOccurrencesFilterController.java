@@ -248,7 +248,7 @@ public class TestMineralOccurrencesFilterController {
             Assert.assertFalse(true);
     }
     */
-
+    /*
     @Test
     public void testDoMineralOccurrenceFilter() throws Exception {
         context.checking(new Expectations() {{
@@ -259,7 +259,8 @@ public class TestMineralOccurrencesFilterController {
 
         this.minerOccurrenceFilterController.doMineralOccurrenceFilter("", "", "", "", "", "", "", "", "", "", mockHttpRequest);
     }
-
+    */
+    /*
     @Test
     public void testDoMineralOccurrenceFilterNoResults() throws Exception {
         context.checking(new Expectations() {{
@@ -270,7 +271,8 @@ public class TestMineralOccurrencesFilterController {
 
         this.minerOccurrenceFilterController.doMineralOccurrenceFilter("", "", "", "", "", "", "", "", "", "", mockHttpRequest);
     }
-
+    */
+    /*
     @Test
     public void testDoMineralOccurrenceFilterTimout() throws Exception {
         final String expectedJSONResponse = "{\"msg\":\""+ErrorMessages.OPERATION_TIMOUT+"\",\"success\":false}";
@@ -298,7 +300,7 @@ public class TestMineralOccurrencesFilterController {
         else
             Assert.assertFalse(true);
     }
-
+    */
     /*
     @Test
     public void testDoMiningActivityFilterAllMines() throws Exception {
