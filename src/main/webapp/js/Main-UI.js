@@ -369,7 +369,7 @@ Ext.onReady(function() {
     };
 
     // custom column plugin example
-    var activeLayersPanelCheckColumn = new Ext.grid.CheckColumn({
+    var activeLayersPanelCheckColumn = new Ext.ux.grid.EventCheckColumn({
         header: "Visible",
         dataIndex: 'layerVisible',
         width: 55,
