@@ -223,10 +223,22 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     // alert(ProxyURL + iServerName + MOSAIC_PATH + logId + '&startsampleno=1&endsampleno=100');
     
     
-    if (aLog.LogId != '') {      // Shall we add Mosaic tab?      
+    if (aLogMosaic.LogId != '') {      // Shall we add Mosaic tab?      
         var tab = tp.add({
             title:  ' Mosaic ',
             id:     'mosaicTab',
+            layout:'fit',
+            html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' 
+                  + iServerName + MOSAIC_PATH + aLogMosaic.LogId 
+                  +'"></iframe>'            
+       });
+    }
+
+
+    if (aLog.LogId != '') {      // Shall we add Imagery tab?      
+        var tab = tp.add({
+            title:  ' Imagery ',
+            id:     'imageryTab',
             layout:'fit',
             html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' 
                   + iServerName + MOSAIC_PATH + aLog.LogId
@@ -284,7 +296,8 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
         },{
             id: 'log-name-col', 
             header: "Scalar", width: 100, dataIndex: 'logName',
-            sortable: true
+            sortable: true,
+            renderer: renderCell.createDelegate(this)
         }]
     });
     
@@ -790,8 +803,8 @@ function getImageLog(iServerName, iDatasetId, iLogName) {
             
             for (var i=0; i < aLog.length; i++ ) {
                 if (GXml.value(aLog[i].selectSingleNode
-                        ("*[local-name() = 'LogName']")) == "Imagery");
-                {
+                        ("*[local-name() = 'LogName']")) == iLogName) {
+                    
                     // To Do: Need to also get <SampleCount> value
                     aLogId = GXml.value(aLog[i].selectSingleNode
                                     ("*[local-name() = 'LogID']"));
