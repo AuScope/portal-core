@@ -106,7 +106,6 @@ public class TestMineralOccurrenceServiceClient {
     public void testGetCommodityNoNameOrGroup() throws Exception {
         final String serviceURL = "http://localhost?";
         final String commodityName = "";
-        final String commodityGroup = "";
 
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockCommodityResponse = new String();
@@ -119,7 +118,7 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(mockCommodities));
         }});
 
-        Collection<Commodity> commodities = this.mineralOccurrenceService.getCommodity(serviceURL, commodityName, commodityGroup);
+        Collection<Commodity> commodities = this.mineralOccurrenceService.getCommodity(serviceURL, commodityName);
         Assert.assertEquals(mockCommodities, commodities);
     }
 
@@ -131,9 +130,8 @@ public class TestMineralOccurrenceServiceClient {
     public void testGetCommodity() throws Exception {
         final String serviceURL = "http://localhost?";
         final String commodityName = "someName";
-        final String commodityGroup = "";
 
-        final CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
+        final CommodityFilter commodityFilter = new CommodityFilter(commodityName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockCommodityResponse = new String();
         final Collection<Commodity> mockCommodities = (Collection<Commodity>)context.mock(Collection.class);
@@ -145,7 +143,7 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(mockCommodities));
         }});
 
-        Collection<Commodity> commodities = this.mineralOccurrenceService.getCommodity(serviceURL, commodityGroup, commodityName);
+        Collection<Commodity> commodities = this.mineralOccurrenceService.getCommodity(serviceURL, commodityName);
         Assert.assertEquals(mockCommodities, commodities);
     }
 
@@ -157,7 +155,6 @@ public class TestMineralOccurrenceServiceClient {
     public void testGetMineralOccurrenceGML() throws Exception {
         final String serviceURL = "http://localhost?";
         final String commodityName = "someName";
-        final String commodityGroup = "";
         final String measureType = "";
         final String minOreAmount = "";
         final String minOreAmountUOM = "";
@@ -166,7 +163,7 @@ public class TestMineralOccurrenceServiceClient {
         final String cutOffGrade = "";
         final String cutOffGradeUOM = "";
 
-        final CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
+        final CommodityFilter commodityFilter = new CommodityFilter(commodityName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockCommodityResponse = new String();
         final Commodity mockCommodity = context.mock(Commodity.class);
@@ -206,7 +203,6 @@ public class TestMineralOccurrenceServiceClient {
 
         this.mineralOccurrenceService.getMineralOccurrenceGML(serviceURL,
                                                               commodityName,
-                                                              commodityGroup,
                                                               measureType,
                                                               minOreAmount,
                                                               minCommodityAmountUOM,
@@ -224,7 +220,6 @@ public class TestMineralOccurrenceServiceClient {
     public void testGetMineralOccurrenceGMLNoResults() throws Exception {
         final String serviceURL = "http://localhost?";
         final String commodityName = "someName";
-        final String commodityGroup = "";
         final String measureType = "";
         final String minOreAmount = "";
         final String minOreAmountUOM = "";
@@ -233,7 +228,7 @@ public class TestMineralOccurrenceServiceClient {
         final String cutOffGrade = "";
         final String cutOffGradeUOM = "";
 
-        final CommodityFilter commodityFilter = new CommodityFilter(commodityGroup, commodityName);
+        final CommodityFilter commodityFilter = new CommodityFilter(commodityName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockCommodityResponse = new String();
         final Collection<Commodity> commodities = new ArrayList<Commodity>();
@@ -248,7 +243,6 @@ public class TestMineralOccurrenceServiceClient {
 
         String returnValue = this.mineralOccurrenceService.getMineralOccurrenceGML(serviceURL,
                                                                     commodityName,
-                                                                    commodityGroup,
                                                                     measureType,
                                                                     minOreAmount,
                                                                     minCommodityAmountUOM,

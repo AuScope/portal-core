@@ -111,28 +111,21 @@ MineralOccurrenceFilterForm = function(id) {
         timeout     : 180, /*should not time out before the server does*/
 
         items: [{
-            xtype:'fieldset',
-            title: 'Mineral Occurrence Filter Properties',
-            autoHeight:true,
-            anchor: '100%',
-
-            /*defaultType: 'textfield',*/
-
+            xtype      : 'fieldset',
+            title      : 'Mineral Occurrence Filter Properties',
+            autoHeight : true,
+            anchor     : '100%',
             items :[
                 commodityNameCombo
-            ,{
-                anchor: '100%',
-                xtype: 'textfield',
-                fieldLabel: 'Commodity Group',
-                name: 'commodityGroup'
-            },
+            ,
                 measureTypeCombo
             ,{
-                anchor: '100%',
-                xtype: 'textfield',
-                fieldLabel: 'Min. Ore Amount',
-                name: 'minOreAmount'
-            },  new Ext.form.ComboBox({
+                anchor     : '100%',
+                xtype      : 'textfield',
+                fieldLabel : 'Min. Ore Amount',
+                name       : 'minOreAmount'
+            },  
+                new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
                 name: 'minOreAmountUOMDisplayed',
@@ -153,7 +146,8 @@ MineralOccurrenceFilterForm = function(id) {
                 xtype: 'textfield',
                 fieldLabel: 'Min. Commodity Amount',
                 name: 'minCommodityAmount'
-            },  new Ext.form.ComboBox({
+            },  
+                new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
                 name: 'minCommodityAmountUOMDisplayed',
@@ -176,7 +170,8 @@ MineralOccurrenceFilterForm = function(id) {
                 name: 'cutOffGrade',
                 hidden: true,
                 hideLabel: true
-            },  new Ext.form.ComboBox({
+            },  
+                new Ext.form.ComboBox({
                 tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
                 anchor: '100%',
                 name: 'cutOffGradeUOMDisplayed',
@@ -196,27 +191,6 @@ MineralOccurrenceFilterForm = function(id) {
                 hideLabel: true
             })]
         }]
-        /*,buttons: [{
-            text: 'Show Me >>',
-            handler: function() {
-                preSubmitFunction();
-                thePanel.getForm().submit({
-                    url:submitUrl,
-                    waitMsg:'Running query...',
-                    params: {serviceUrl: serviceUrl},
-                    success: successFunction,
-                    failure: function(form, action) {
-                        Ext.MessageBox.show({
-                            title: 'Filter Failed',
-                            msg: action.result.msg,
-                            buttons: Ext.MessageBox.OK,
-                            animEl: 'mb9',
-                            icon: Ext.MessageBox.ERROR
-                        });
-                    }
-                });
-            }
-        }]*/
     });
 };
 

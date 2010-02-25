@@ -4,14 +4,13 @@ package org.auscope.portal.mineraloccurrence;
  * User: Michael Stegherr
  * Date: 23/03/2009
  * Time: 1:59:02 PM
+ * @version $Id$
  */
 public class CommodityFilter implements IFilter {
-    private String commodityGroup;
+
     private String commodityName;
 
-    public CommodityFilter(String commodityGroup,
-                           String commodityName) {
-        this.commodityGroup = commodityGroup;
+    public CommodityFilter(String commodityName) {
         this.commodityName  = commodityName;
     }
 
@@ -68,6 +67,11 @@ public class CommodityFilter implements IFilter {
 
     }*/
 
+    
+    /**
+     * Build the query string based on given properties
+     * @return String for sending in a POST request
+     */
     public String getFilterString() {
         StringBuffer queryString = new StringBuffer();
 
@@ -79,12 +83,6 @@ public class CommodityFilter implements IFilter {
 
         if(checkMany())
             queryString.append("<ogc:And>");
-
-        if(!this.commodityGroup.equals(""))
-            queryString.append("<ogc:PropertyIsEqualTo>\n" +
-                    "                   <ogc:PropertyName>er:commodityGroup</ogc:PropertyName>\n" +
-                    "                   <ogc:Literal>"+this.commodityGroup+"</ogc:Literal>\n" +
-                    "           </ogc:PropertyIsEqualTo>");
 
         if(!this.commodityName.equals(""))
             queryString.append("<ogc:PropertyIsEqualTo>\n" +
@@ -102,14 +100,12 @@ public class CommodityFilter implements IFilter {
     
 
     /**
-     * Do more than one query parameter have a value
-     * @return
+     * Checks if more than one query parameter have a value.
+     * @return true, if more than one parameter is found
      */
     private boolean checkMany() {
         int howManyHaveaValue = 0;
 
-        if(!this.commodityGroup.equals(""))
-            howManyHaveaValue++;
         if(!this.commodityName.equals(""))
             howManyHaveaValue++;
 

@@ -28,8 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.xml.sax.SAXException;
 
-//import net.sf.json.JSONArray;
-
 /**
  * Controller that handles all Earth Resource related requests
  * <p>
@@ -117,7 +115,6 @@ public class EarthResourcesFilterController {
      *
      * @param serviceUrl
      * @param commodityName
-     * @param commodityGroup
      * @param measureType
      * @param minOreAmount
      * @param minOreAmountUOM
@@ -131,30 +128,30 @@ public class EarthResourcesFilterController {
      */
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
-            @RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("commodityName") String commodityName,
-            @RequestParam("commodityGroup") String commodityGroup,
-            @RequestParam("measureType") String measureType,
-            @RequestParam("minOreAmount") String minOreAmount,
-            @RequestParam("minOreAmountUOM") String minOreAmountUOM,
-            @RequestParam("minCommodityAmount") String minCommodityAmount,
+            @RequestParam("serviceUrl")            String serviceUrl,
+            @RequestParam("commodityName")         String commodityName,
+            @RequestParam("measureType")           String measureType,
+            @RequestParam("minOreAmount")          String minOreAmount,
+            @RequestParam("minOreAmountUOM")       String minOreAmountUOM,
+            @RequestParam("minCommodityAmount")    String minCommodityAmount,
             @RequestParam("minCommodityAmountUOM") String minCommodityAmountUOM,
-            @RequestParam("cutOffGrade") String cutOffGrade,
-            @RequestParam("cutOffGradeUOM") String cutOffGradeUOM,
+            @RequestParam("cutOffGrade")           String cutOffGrade,
+            @RequestParam("cutOffGradeUOM")        String cutOffGradeUOM,
             HttpServletRequest request) {
         try {
 
             //get the mineral occurrences
-            String mineralOccurrenceResponse = this.mineralOccurrenceService.getMineralOccurrenceGML(serviceUrl,
-                                                                                        commodityName,
-                                                                                        commodityGroup,
-                                                                                        measureType,
-                                                                                        minOreAmount,
-                                                                                        minOreAmountUOM,
-                                                                                        minCommodityAmount,
-                                                                                        minCommodityAmountUOM,
-                                                                                        cutOffGrade,
-                                                                                        cutOffGradeUOM);
+            String mineralOccurrenceResponse 
+                = this.mineralOccurrenceService.getMineralOccurrenceGML
+                                                      ( serviceUrl,
+                                                        commodityName,
+                                                        measureType,
+                                                        minOreAmount,
+                                                        minOreAmountUOM,
+                                                        minCommodityAmount,
+                                                        minCommodityAmountUOM,
+                                                        cutOffGrade,
+                                                        cutOffGradeUOM);
 
             log.debug("mineralOccurrenceResponse");
 
