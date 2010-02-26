@@ -291,7 +291,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             id: 'log-name-col', 
             header: "Scalar", width: 100, dataIndex: 'logName',
             sortable: true,
-            renderer: renderCell.createDelegate(this)
+            //renderer: renderCell.createDelegate(this)
         }]
     });
     
