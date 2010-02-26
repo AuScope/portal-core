@@ -273,18 +273,12 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
 
     var CheckBox = new Ext.grid.CheckboxSelectionModel();
     
-    var renderCell = function(val, cell, record) {
-
-        cell.attr =  'ext:qtitle="'  + "Definition for Scalar: " + val + '"';
-        cell.attr += ' ext:qtip=" the definition for: '  + val + ' is: ..."';
-        return val;
-    };
-    
     var scalarGrid = new Ext.grid.GridPanel({
         //title         : 'Available Scalars',
         store           : scalarStore,
         sm              : CheckBox,
         autoExpandColumn: 'log-name-col',
+        id				: 'nvcl-scalar-grid',
         height          : 450,        
         width           : 200,
         loadMask        : true,        
@@ -300,6 +294,50 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             renderer: renderCell.createDelegate(this)
         }]
     });
+    
+    //This is for loading our tool tips
+    scalarGrid.on('render', function(grid) {
+        var store = grid.getStore();  // Capture the Store.
+        var view = grid.getView();    // Capture the GridView.
+
+        scalarGrid.tip = new Ext.ToolTip({
+            target: view.mainBody,    // The overall target element.
+            delegate: '.x-grid3-row', // Each grid row causes its own seperate show and hide.
+            trackMouse: true,         // Moving within the row should not hide the tip.
+            renderTo: document.body,  // Render immediately so that tip.body can be referenced prior to the first show.
+            autoWidth: true,
+            listeners: {              // Change content dynamically depending on which element triggered the show.
+                beforeshow: function updateTipBody(tip) {
+        			var grid = Ext.getCmp('nvcl-scalar-grid');
+        			var store = grid.getStore();  // Capture the Store.
+        	        var view = grid.getView();    // Capture the GridView.
+                    var rowIndex = view.findRowIndex(tip.triggerElement);
+                    var record = store.getAt(rowIndex);
+                    
+                    tip.body.dom.innerHTML = "Loading...";
+                    
+                    //Load our vocab string asynchronously
+                    var vocabsQuery = 'getScalar.do?repository=nvcl-scalars&label=' + escape(record.get('logName').replace(' ', '_'));
+                    GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
+                        if(pResponseCode != 200) {
+                        	tip.body.dom.innerHTML = "ERROR: " + pResponseCode;
+                      	  	return;
+                        }
+                        
+                        var response = eval('(' + pData + ')');
+                        if (!response.success) {
+                        	tip.body.dom.innerHTML = "ERROR: server returned error";
+                      	  	return;
+                        }
+                          
+                        //Update tool tip
+                        tip.body.dom.innerHTML = response.scopeNote;
+                      });
+                }
+            }
+        });
+    });
+
     
     // How to load the store at the latest possible moment?
     scalarStore.load();

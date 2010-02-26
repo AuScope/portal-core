@@ -64,7 +64,7 @@ public class TestVocabController {
 
         context.checking(new Expectations() {{
             //constructor gets a host property
-            oneOf(propertyConfigurer).resolvePlaceholder(with(any(String.class)));will(returnValue(serviceUrl));
+        	allowing(propertyConfigurer).resolvePlaceholder(with(any(String.class)));will(returnValue(serviceUrl));
             
             //TODO check, that queryString has been built correctly!
             
@@ -105,13 +105,45 @@ public class TestVocabController {
         //calling the renderer will write the JSON to our mocks
         mav.getView().render(mav.getModel(), mockHttpRequest, mockHttpResponse);
 
-        System.out.println(expectedJSONResponse);
-        System.out.println(actualJSONResponse.getBuffer().toString());
+        //System.out.println(expectedJSONResponse);
+        //System.out.println(actualJSONResponse.getBuffer().toString());
 
         //check that the actual is the expected
         if(expectedJSONResponse.equals(actualJSONResponse.getBuffer().toString()))
             Assert.assertTrue(true);
         else
             Assert.assertFalse(true);        
+    }
+    
+    /**
+     * Tests the getScalarQuery method is correctly forming a JSON response from an XML chunk received from a remote URL.
+     * @throws Exception
+     */
+    @Test
+    public void testGetScalarQuery() throws Exception {
+        final String docString = org.auscope.portal.Util.loadXML("src/test/resources/GetVocabQuery_Success.xml");
+        final String returnedString = docString.replace("\"", "\\\"").replace("\t","\\t").replace("</", "<\\/");
+        final String expectedJSONResponse = "{\"scopeNote\":\"Mineral index for TSA singleton match or primary mixture component\",\"success\":true,\"label\":\"TSA_S_Mineral1\",\"data\":\"" + returnedString + "\"}";
+        final StringWriter actualJSONResponse = new StringWriter();
+        final String repositoryName = "testRepository";
+        final String labelName = "testLabel";
+
+        context.checking(new Expectations() {{
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(GetMethod.class)),with(any(HttpClient.class)));will(returnValue(docString));
+            oneOf(httpServiceCaller).getHttpClient();
+            
+            
+            //check that the correct response is getting output
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+        }});
+        
+        ModelAndView mav = this.vocabController.getScalarQuery(repositoryName, labelName);
+        mav.getView().render(mav.getModel(), mockHttpRequest, mockHttpResponse);
+        
+        System.out.println(expectedJSONResponse);
+        System.out.println(actualJSONResponse.getBuffer().toString());
+        
+        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
     }
 }
