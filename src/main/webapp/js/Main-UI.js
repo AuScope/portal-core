@@ -586,12 +586,18 @@ Ext.onReady(function() {
 
                             var url = serviceUrls[i];
 
+                            if (url.length > 0 && url[url.length - 1] != '?')
+                            	url += '?';
+                            
                             url += "&REQUEST=GetMap";
                             url += "&SERVICE=WMS";
                             url += "&VERSION=1.1.0";
                             url += "&LAYERS=" + record.get('typeName');
-                            /*if (this.styles)
-                             url += "&STYLES=" + this.styles;
+                            if (this.styles)
+                            	url += "&STYLES=" + this.styles;
+                            else
+                            	url += "&STYLES="; //Styles parameter is mandatory, using a null string ensures default style  
+                            /*
                              if (this.sld)
                              url += "&SLD=" + this.sld;*/
                             url += "&FORMAT=" + "image/png";
