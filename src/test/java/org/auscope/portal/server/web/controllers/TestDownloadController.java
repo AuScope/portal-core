@@ -115,6 +115,49 @@ public class TestDownloadController {
     }
 
     /**
+     * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data 
+     * 
+     * This dummy data is missing the data element but contains a msg property (This added in response to JIRA AUS-1575)
+     */
+    @Test
+    public void testDownloadGMLAsZipWithJSONError() throws Exception {
+    	final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
+        final String[] serviceUrls = {"http://someUrl", "http://someOtherUrl"};
+        final String dummyMessage = "hereisadummymessage";
+        final String dummyJSONResponse = "{\"msg\": '" + dummyMessage +  "',\"success\":false}";
+        final String dummyJSONResponseNoMsg = "{\"success\":false}";
+
+        context.checking(new Expectations() {{
+            //setting of the headers for the return content
+            exactly(2).of(mockHttpResponse).setContentType(with(any(String.class)));
+            exactly(2).of(mockHttpResponse).setHeader(with(any(String.class)), with(any(String.class)));
+            exactly(2).of(mockHttpResponse).getOutputStream();will(returnValue(servletOutputStream));
+
+            //calling the service
+            exactly(2).of(httpServiceCaller).getHttpClient();
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
+            will(returnValue(dummyJSONResponse));
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
+            will(returnValue(dummyJSONResponseNoMsg));
+        }});
+
+        downloadController.downloadGMLAsZip(serviceUrls, mockHttpResponse);
+
+        //check that the zip file contains the correct data
+        ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
+        ZipEntry ze = zipInputStream.getNextEntry();
+        
+        Assert.assertNotNull(ze);
+        Assert.assertTrue(ze.getName().endsWith(dummyMessage + ".xml"));
+        
+        ze = zipInputStream.getNextEntry();
+        Assert.assertNotNull(ze);
+        Assert.assertTrue(ze.getName().endsWith("operation-failed.xml"));
+        
+        zipInputStream.close();
+    }
+    
+    /**
      * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data
      */
     @Test

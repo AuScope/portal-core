@@ -73,15 +73,36 @@ public class DownloadController {
 
             JSONObject jsonObject = JSONObject.fromObject( responseString );
 
-            byte[] gmlBytes = JSONObject.fromObject(jsonObject.get("data")).get("gml").toString().getBytes();
+            //Extract our data (if it exists)
+            byte[] gmlBytes = new byte[] {}; //The error response is an empty array
+            Object dataObject = jsonObject.get("data");
+            Object messageObject = jsonObject.get("msg"); //This will be used as an error string
+            if (messageObject == null) {
+            	messageObject = ""; 
+            }
+            if (dataObject != null) {
+            	Object gmlResponseObject = JSONObject.fromObject(dataObject).get("gml");
+            	
+            	if (gmlResponseObject != null) {
+            		gmlBytes = gmlResponseObject.toString().getBytes();
+            	}
+            }
 
             logger.info(gmlBytes.length);
 
-            if(jsonObject.get("success").toString().equals("false"))
-               zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + "-operation-failed.xml"));
-            else {
+            if(jsonObject.get("success").toString().equals("false")) {
+            	//The server may have returned an error message, if so, lets include it in the filename
+            	String messageString = messageObject.toString();
+            	if (messageString.length() == 0)
+            		messageString = "operation-failed";
+            	
+            	//"Tidy" up the message
+            	messageString = messageString.replace(' ', '_').replace(".", "");
+            	
+            	zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + "-" + messageString + ".xml"));
+            } else {
                 //create a new entry in the zip file with a timestamped name 
-               zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));               
+            	zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));               
             }
 
             zout.write(gmlBytes);
