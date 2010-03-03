@@ -33,7 +33,7 @@ KMLParser.prototype.makeMarkers = function(icon, markerHandler) {
 
             var point = new GLatLng(parseFloat(lat), parseFloat(lon));
 
-            var marker = new GMarker(point, {icon: icon});
+            var marker = new GMarker(point, {icon: icon, title: name});
             marker.description = description;
             marker.title = name;
 
