@@ -60,6 +60,10 @@ NvclInfoWindow.prototype = {
         var serverAddr = this.wfsServerUrl;      
         var url = ProxyURL + serverAddr + this.NVCL_SERVICE + this.Marker.title;
 
+        var myMask = new Ext.LoadMask(Ext.get('center_region'), {msg:"Please wait..."});
+        myMask.show();         
+        
+        
         GDownloadUrl(url, function(response, responseCode) {
             if (responseCode == 200) {
                 var XmlDoc = GXml.parse(response);
@@ -102,10 +106,13 @@ NvclInfoWindow.prototype = {
                     // Add new tab to pop-up window
                     me.Map.updateInfoWindow(me.tabsArray);                   
                 }
+                myMask.hide();
                                                 
             } else if(responseCode == -1) {
+            	myMask.hide();
                 alert("Data request timed out. Please try later.");
             } else {
+            	myMask.hide();
                 alert('Remote server returned error code: ' + responseCode);
             }
         });        
