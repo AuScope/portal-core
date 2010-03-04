@@ -60,7 +60,7 @@ Ext.onReady(function() {
                     if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {                
 	                    //add to active layers
 	                    activeLayersStore.add(recordToAdd);
-	
+	                    
 	                    //invoke this layer as being checked
 	                    activeLayerCheckHandler(complexFeaturesPanel.getSelectionModel().getSelected(), true);
                     }
@@ -129,11 +129,14 @@ Ext.onReady(function() {
                 handler: function() {
                     var recordToAdd = wmsLayersPanel.getSelectionModel().getSelected();
 
-                    //add to active layers
-                    activeLayersStore.add(recordToAdd);
-
-                    //invoke this layer as being checked
-                    activeLayerCheckHandler(wmsLayersPanel.getSelectionModel().getSelected(), true);
+                    //Only add if the record isn't already there
+                    if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {                
+	                    //add to active layers
+	                    activeLayersStore.add(recordToAdd);
+	                    
+	                    //invoke this layer as being checked
+	                    activeLayerCheckHandler(complexFeaturesPanel.getSelectionModel().getSelected(), true);
+                    }
 
                     //set this record to selected
                     activeLayersPanel.getSelectionModel().selectRecords([recordToAdd], false);
