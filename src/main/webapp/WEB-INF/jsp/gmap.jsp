@@ -49,7 +49,7 @@
       
       <security:authorize ifAllGranted="ROLE_DOWNLOAD">
         <script type="text/javascript">
-  		  buttonsPanel.enable();
+  		  //buttonsPanel.enable();
         </script>
       </security:authorize>
    </body>
