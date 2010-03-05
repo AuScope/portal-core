@@ -433,7 +433,11 @@ Ext.onReady(function() {
                 iconCls:'remove',
                 pressed:true,
                 handler: function() {
-                    if (activeLayersPanel.getSelectionModel().getSelected().get('loadingStatus') == '<img src="js/external/extjs/resources/images/default/grid/loading.gif">') {
+            		var record = activeLayersPanel.getSelectionModel().getSelected();
+            		if (record == null)
+            			return;
+            		
+                    if (record.get('loadingStatus') == '<img src="js/external/extjs/resources/images/default/grid/loading.gif">') {
                         Ext.MessageBox.show({
                             title: 'Please wait',
                             msg: "There is an operation in process for this layer. Please wait until it is finished.",
@@ -443,8 +447,6 @@ Ext.onReady(function() {
                         });
                         return;
                     }
-
-                    var record = activeLayersPanel.getSelectionModel().getSelected();
 
                     if (record.get('serviceType') == 'wfs') {
                         if (record.tileOverlay instanceof MarkerManager) record.tileOverlay.clearMarkers();
