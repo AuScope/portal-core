@@ -96,7 +96,15 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
  * @return {Boolean} Status of the
  */
 function isDataThere(iStr) {
-	return (iStr.length > 30) ? true : false;
+	//This isn't perfect and can technically fail
+	//but it is "good enough" unless you want to start going mental with the checking
+	var startIndex = iStr.search('<body>');
+	var endIndex = iStr.search('</body>');
+	
+	if (startIndex == -1 || endIndex == -1)
+		return false;
+	
+	return ((endIndex - startIndex) > 32);
 }
 
 /**
