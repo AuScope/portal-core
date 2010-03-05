@@ -14,16 +14,16 @@ function NvclInfoWindow(iMap, iMarker) {
      
     this.Map = iMap;    
     this.Marker = iMarker;
-    this.tabsArray = new Array();               // Window Tabs    
+    this.tabsArray = [];                            // Window Tabs    
     this.boreholeId = iMarker.title || "";
     this.summaryHtml = iMarker.description || "";    
-    this.waitHtml 
-        = "<div>"
-        +     "<b>" + this.boreholeId + "</b>"
-        +     "<p style=\"text-align:center;\">"
-        +         "<img src=\"img/wait.gif\" style=\"padding-top:50px;\" />"
-        +     "</p>"
-        + "</div>";                    
+    this.waitHtml = 
+        "<div>" +
+            "<b>" + this.boreholeId + "</b>" +
+            "<p style=\"text-align:center;\">" +
+                "<img src=\"img/wait.gif\" style=\"padding-top:50px;\" />" +
+            "</p>" +
+        "</div>";                    
     
     /**
      * From Url remove pathname and return only protocol with hostname
@@ -84,7 +84,7 @@ NvclInfoWindow.prototype = {
                     // Dataset Collection of key : value pairs
                     // 6dd70215-fe38-457c-be42-3b165fd98c7 : WTB5
                     var datasetCol = new Ext.util.MixedCollection();
-                    var sId, sName;
+                    var aId, aName;
                     
                     for (var i=0; i < aDataset.length; i++ ) {
  
@@ -109,10 +109,10 @@ NvclInfoWindow.prototype = {
                 myMask.hide();
                                                 
             } else if(responseCode == -1) {
-            	myMask.hide();
+                myMask.hide();
                 alert("Data request timed out. Please try later.");
             } else {
-            	myMask.hide();
+                myMask.hide();
                 alert('Remote server returned error code: ' + responseCode);
             }
         });        
@@ -128,36 +128,36 @@ NvclInfoWindow.prototype = {
         var lHtml = "";
         
         if (datasetCol.getCount() > 0) {
-            lHtml += '<div style="padding:20px;" >' 
-                  +     '<p> Available data sets: </p>'
-                  + '</div>'
-                  + '<div align="center">'
-                  +     '<form method="post">'
-                  +         '<select name="selDataset" id="selDataset" size="5" style="width:200px;">';
+            lHtml += '<div style="padding:20px;" >' + 
+                        '<p> Available data sets: </p>' +
+                     '</div>' +
+                     '<div align="center">' +
+                        '<form method="post">' +
+                           '<select name="selDataset" id="selDataset" size="5" style="width:200px;">';
 
             datasetCol.eachKey( function(key,item) {                
-                if (datasetCol.indexOfKey(key) == 0) {
+                if (datasetCol.indexOfKey(key) === 0) {
                     lHtml += '<option value="\''+ key +'\'" selected="selected">'+ item + ' (Latest)</option>';                    
                 } else {
                     lHtml += '<option value="\''+ key +'\'">'+ item +'</option>';
                 }
             });            
           
-            lHtml +=            '</select>'
-                  +             '<div align="right">'
-                  +                 '<br>'
-                  +                     '<input type="button" id="displayDatasetBtn"  value="Display" name=butSelectDataset onclick="showBoreholeDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value);">'
-                  +                     '&#160;'
-                  +                     '&#160;' 
-                  +                     '<input type="button" id="downloadDatasetBtn" value="Download" name=butDownloadDataset onclick="showDownloadDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value)">'
-                  +             '</div>'
-                  +         '</form>'
-                  +     '</div>';   
+            lHtml +=       '</select>' +
+                           '<div align="right">' +
+                              '<br>' +
+                              '<input type="button" id="displayDatasetBtn"  value="Display" name=butSelectDataset onclick="showBoreholeDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value);">' +
+                              '&#160;' +
+                              '&#160;' +
+                              '<input type="button" id="downloadDatasetBtn" value="Download" name=butDownloadDataset onclick="showDownloadDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value)">' +
+                           '</div>' +
+                        '</form>' +
+                     '</div>';   
         }
         return lHtml;        
     }
     
-} // End of NvclInfoWindow.prototype
+}; // End of NvclInfoWindow.prototype
 
 
 /**
@@ -216,42 +216,45 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     var cardNav = function(incr) {
         
         if ( startSampleNo >= 0 && endSampleNo >= sampleIncrement) {
+        
             startSampleNo = 1 * startSampleNo + incr;
             endSampleNo = 1 * endSampleNo + incr;
             Ext.getCmp('card-prev').setDisabled(startSampleNo < 1);
             //Ext.get('nav').dom.src = "http://nvclwebservices.vm.csiro.au/NVCLDataServices/mosaic.html?logid=fae8f90d-2015-4200-908a-b30da787f01&startsampleno=" + startSampleNo + "&endsampleno=" + endSampleNo;
-            Ext.get('nav').dom.src = iServerName + MOSAIC_PATH + aLog.LogId + '&startsampleno=' + startSampleNo + '&endsampleno=' + endSampleNo;
-            Ext.fly('display-count').update('Displaying Images: ' + startSampleNo + ' - ' + endSampleNo + ' of ' + totalCount);                      
+            Ext.get('imageryFrame').dom.src = iServerName + MOSAIC_PATH + aLog.LogId + '&startsampleno=' + startSampleNo + '&endsampleno=' + endSampleNo;
+            
+            // Ext.fly ... does not work in IE7
+            //Ext.fly('display-count').update('Displayying Images: ' + startSampleNo + ' - ' + endSampleNo + ' of ' + totalCount);
+            Ext.getCmp('display-count').setText('Displaying Imagess: ' + startSampleNo + ' - ' + endSampleNo + ' of ' + totalCount);
         }
 
         Ext.getCmp('card-prev').setDisabled(startSampleNo <= 0);
         Ext.getCmp('card-next').setDisabled(startSampleNo + sampleIncrement >= totalCount);                
-    }        
-    // alert(ProxyURL + iServerName + MOSAIC_PATH + logId + '&startsampleno=1&endsampleno=100');
-    
+    };
+        
     
     if (aLogMosaic.LogId != '') {      // Shall we add Mosaic tab?      
-        var tab = tp.add({
+        tp.add({
             title:  ' Mosaic ',
             id:     'mosaicTab',
             layout:'fit',
-            html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' 
-                  + iServerName + MOSAIC_PATH + aLogMosaic.LogId 
-                  +'"></iframe>'            
+            html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' + 
+                  iServerName + MOSAIC_PATH + aLogMosaic.LogId + 
+                  '"></iframe>'            
        });
     }
 
 
     if (aLog.LogId != '') {      // Shall we add Imagery tab?      
-        var tab = tp.add({
+        tp.add({
             title:  ' Imagery ',
             id:     'imageryTab',
             layout:'fit',
-            html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' 
-                  + iServerName + MOSAIC_PATH + aLog.LogId
-                  + '&startsampleno='+ startSampleNo 
-                  + '&endsampleno=' + sampleIncrement 
-                  +'"></iframe>',            
+            html: '<iframe id="imageryFrame" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' +
+                  iServerName + MOSAIC_PATH + aLog.LogId +
+                  '&startsampleno='+ startSampleNo +
+                  '&endsampleno=' + sampleIncrement +
+                  '"></iframe>',            
             bbar: [{
                 id   : 'display-count',
                 text : 'Displaying Images: ' + startSampleNo + ' - ' + endSampleNo + ' of ' + totalCount
@@ -304,7 +307,8 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     
     //This is for loading our tool tips
     scalarGrid.on('render', function(grid) {
-        var store = grid.getStore();  // Capture the Store.
+
+        //var store = grid.getStore();  // Capture the Store.
         var view = grid.getView();    // Capture the GridView.
 
         scalarGrid.tip = new Ext.ToolTip({
@@ -315,9 +319,9 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             autoWidth: true,
             listeners: {              // Change content dynamically depending on which element triggered the show.
                 beforeshow: function updateTipBody(tip) {
-        			var grid = Ext.getCmp('nvcl-scalar-grid');
-        			var store = grid.getStore();  // Capture the Store.
-        	        var view = grid.getView();    // Capture the GridView.
+                    var grid = Ext.getCmp('nvcl-scalar-grid');
+                    var store = grid.getStore();  // Capture the Store.
+                    var view = grid.getView();    // Capture the GridView.
                     var rowIndex = view.findRowIndex(tip.triggerElement);
                     var record = store.getAt(rowIndex);
                     
@@ -327,14 +331,14 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
                     var vocabsQuery = 'getScalar.do?repository=nvcl-scalars&label=' + escape(record.get('logName').replace(' ', '_'));
                     GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
                         if(pResponseCode != 200) {
-                        	tip.body.dom.innerHTML = "ERROR: " + pResponseCode;
-                      	  	return;
+                            tip.body.dom.innerHTML = "ERROR: " + pResponseCode;
+                            return;
                         }
                         
                         var response = eval('(' + pData + ')');
                         if (!response.success) {
-                        	tip.body.dom.innerHTML = "ERROR: server returned error";
-                      	  	return;
+                            tip.body.dom.innerHTML = "ERROR: server returned error";
+                            return;
                         }
                           
                         //Update tool tip
@@ -371,7 +375,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     }); */
 
     // Scalars Tab          
-    tab = tp.add({
+    tp.add({
         title  : 'Scalars',
         id     : 'scalarsTab',
         layout : 'fit',
@@ -412,15 +416,15 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             },{ // column 2
                 // these are applied to fieldsets
                 defaults:{
-                    xtype       : 'fieldset',
-                    layout      : 'form',
-                    anchor      : '100%',
-                    autoHeight  : true,
+                    xtype: 'fieldset',
+                    layout: 'form',
+                    anchor: '100%',
+                    autoHeight: true,
                     paddingRight: '10px'
-                }
+                },
                  
                 // fieldsets
-                ,items:[{
+                items:[{
                     title       : 'Hint',
                     defaultType : 'textfield',
                     // fields
@@ -873,15 +877,3 @@ function getImageLog(iServerName, iDatasetId, iLogName) {
         SampleCount :aSampleCount
     };
 }   // End of getImageLog()  
-
-
-/*
- * Not used - work in progress
- */
-function validation() {
-    
-    if(Ext.getCmp('emailAddress').getValue="") {
-        Ext.MessageBox.alert("Error","Please enter a name");
-    }
-
-}
