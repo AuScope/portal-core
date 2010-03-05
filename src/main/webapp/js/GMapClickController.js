@@ -23,10 +23,6 @@
  */
 var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
 	
-	//If the user clicks on an info window, we will still get click events, lets ignore these
-	if (latlng == null || latlng == undefined)
-		return;
-	
     if (overlay instanceof GMarker) {
         
         if (overlay.typeName == "gsml:BoreholeHeader") {
@@ -39,7 +35,11 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
             overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
         }
         
-    } else {        
+    } else {
+    	//If the user clicks on an info window, we will still get click events, lets ignore these
+    	if (latlng == null || latlng == undefined)
+    		return;
+    	
         for (i = 0; i < activeLayersStore.getCount(); i++) {
             
             var record = activeLayersPanel.getStore().getAt(i);
