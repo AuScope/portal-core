@@ -9,11 +9,15 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.csw.CSWNamespaceContext;
 import org.auscope.portal.mineraloccurrence.Mine;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.util.GmlToKml;
@@ -103,7 +107,13 @@ public class EarthResourcesFilterController {
             String kmlBlob =  gmlToKml.convert(gmlBlob, request);
             //log.debug(kmlBlob);
             
-            return makeModelAndViewKML(kmlBlob, gmlBlob);
+            //This failure test should be made a little bit more robust
+            //And should probably try to extract an error message
+            if (kmlBlob == null || kmlBlob.length() == 0) {
+            	return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED);
+            } else {
+            	return makeModelAndViewKML(kmlBlob, gmlBlob);
+            }
         } catch (Exception e) {
             return this.handleExceptionResponse(e);
         }
