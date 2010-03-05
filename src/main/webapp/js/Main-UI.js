@@ -135,7 +135,7 @@ Ext.onReady(function() {
 	                    activeLayersStore.add(recordToAdd);
 	                    
 	                    //invoke this layer as being checked
-	                    activeLayerCheckHandler(complexFeaturesPanel.getSelectionModel().getSelected(), true);
+	                    activeLayerCheckHandler(wmsLayersPanel.getSelectionModel().getSelected(), true);
                     }
 
                     //set this record to selected
