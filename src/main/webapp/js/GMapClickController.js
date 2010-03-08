@@ -39,15 +39,15 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
     	//If the user clicks on an info window, we will still get click events, lets ignore these
     	if (latlng == null || latlng == undefined)
     		return;
-    	
-        for (i = 0; i < activeLayersStore.getCount(); i++) {
+
+        for (var i = 0; i < activeLayersStore.getCount(); i++) {
             
             var record = activeLayersPanel.getStore().getAt(i);
             
             if (record.get('serviceType') == 'wms') {
                 var TileUtl = new Tile(map,latlng);
 
-                var url = "/wmsMarkerPopup.do"
+                var url = "/wmsMarkerPopup.do";
                 url += "?WMS_URL=" + record.get('serviceURLs');
                 url += "&lat=" + latlng.lat();
                 url += "&lng=" + latlng.lng();
@@ -56,7 +56,7 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
                 url += "&y=" + TileUtl.getTilePoint().y;
                 url += '&BBOX=' + TileUtl.getTileCoordinates();
                 url += '&WIDTH=' + TileUtl.getTileWidth();
-                url += '&HEIGHT=' + TileUtl.getTileHeight();    			
+                url += '&HEIGHT=' + TileUtl.getTileHeight();
                 //alert(url);
                 
                 map.getDragObject().setDraggableCursor("pointer");
@@ -77,8 +77,8 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
                         alert('Remote server returned error code: ' + responseCode);
                     }
                 });
-            }        	    			
-    	}
+            }
+        }
     }
 };
 
