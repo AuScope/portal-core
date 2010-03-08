@@ -139,8 +139,7 @@ MineralOccurrenceFilterForm = function(id) {
                 triggerAction: 'all',
                 typeAhead: true,
                 displayField: 'unitLabel',
-                valueField: 'urn',
-                value: 'TONNE'
+                valueField: 'urn'
             }),{
                 anchor: '100%',
                 xtype: 'textfield',
@@ -161,8 +160,7 @@ MineralOccurrenceFilterForm = function(id) {
                 triggerAction: 'all',
                 typeAhead: true,
                 displayField: 'unitLabel',
-                valueField: 'urn',
-                value: 'TONNE'
+                valueField: 'urn'
             }),{
                 anchor: '100%',
                 xtype: 'textfield',
