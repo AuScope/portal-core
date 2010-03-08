@@ -648,11 +648,9 @@ Ext.onReady(function() {
             }
         }
     });
-
+    
     /**
-     * Opens a new window and submits a POST request to a given URL for given 
-     * key value pairs. This approach is needed, because it is tricky to send 
-     * a list of URLs through a GET request URL. 
+     * Opens a new window to the specified URL and passes URL parameters like so keys[x]=values[x]
      *
      * @param url
      * @param name
@@ -661,17 +659,11 @@ Ext.onReady(function() {
      */
     var openWindowWithPost = function(url, name, keys, values)
     {
-        var newWindow = window.open(url,name);
-        if (!newWindow) return false;
-        var html = "";
-        var html = ""
-        html += "<html><head></head><body><form id='formid' method='post' action='" + url + "'>";
-        if (keys && values && (keys.length == values.length))
+    	if (keys && values && (keys.length == values.length))
             for (var i = 0; i < keys.length; i++)
-                html += "<input type='hidden' name='" + keys[i] + "' value='" + values[i] + "'/>";
-        html += "</form><script type='text/javascript'>document.getElementById(\"formid\").submit()</script></body></html>";
-        newWindow.document.write(html);
-        return newWindow;
+            	url += '&' + keys[i] + '=' + escape(values[i]);
+    	
+    	return window.open(url,name);
     }
 
     /**
