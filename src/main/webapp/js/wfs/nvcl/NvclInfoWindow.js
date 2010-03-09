@@ -46,9 +46,12 @@ NvclInfoWindow.prototype = {
     'NVCL_SERVICE' : "/NVCLDataServices/getDatasetCollection.html?holeidentifier=",
     
     'show': function() {
-        this.retrieveDatasets();                
-        this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);        
-        this.Marker.openInfoWindowTabs(this.tabsArray);             
+		//Open our window with the basic info displayed
+		this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);
+        this.Marker.openInfoWindowTabs(this.tabsArray);
+        
+        //And update it with the downloaded data as it arrives
+        this.retrieveDatasets();  
     },
     
     /*
