@@ -15,6 +15,7 @@ Ext.onReady(function() {
         reader: new Ext.data.ArrayReader({}, [
             {   name: 'title'           },
             {   name: 'description'     },
+            {   name: 'contactOrgs'     },
             {   name: 'proxyURL'        },
             {   name: 'serviceType'     },
             {   name: 'id'              },
@@ -85,11 +86,12 @@ Ext.onReady(function() {
 
     //----------- WMS Layers Panel Configurations
 
-    var wmsLayersStore = new Ext.data.Store({
+    var wmsLayersStore = new Ext.data.GroupingStore({
         proxy: new Ext.data.HttpProxy({url: '/getWMSLayers.do'}),
         reader: new Ext.data.ArrayReader({}, [
             {   name: 'title'           },
             {   name: 'description'     },
+            {   name: 'contactOrg'     },
             {   name: 'proxyURL'        },
             {   name: 'serviceType'     },
             {   name: 'id'              },
@@ -99,6 +101,7 @@ Ext.onReady(function() {
             {   name: 'loadingStatus'   },
             {   name: 'dataSourceImage' }
         ]),
+        groupField:'contactOrg',
         sortInfo: {field:'title', direction:'ASC'}
     });
 
@@ -118,6 +121,15 @@ Ext.onReady(function() {
                 width: 160,
                 sortable: true,
                 dataIndex: 'title'
+            },
+            
+            {
+                id:'contactOrg',
+                header: "Contact",
+                width: 160,
+                sortable: true,
+                dataIndex: 'contactOrg',
+                hidden:true
             }
         ],
         bbar: [
@@ -143,11 +155,18 @@ Ext.onReady(function() {
                 }
             }
         ],
+        
+        view: new Ext.grid.GroupingView({
+            forceFit:true,
+            groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+        }),
+
 
         stripeRows: true,
         autoExpandColumn: 'title',
         plugins: [wmsLayersRowExpander],
         viewConfig: {scrollOffset: 0},
+
 
         title: 'Map Layers',
         region:'north',

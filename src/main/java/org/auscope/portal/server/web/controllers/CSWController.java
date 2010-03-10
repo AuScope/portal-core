@@ -59,8 +59,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
-     * [title, description, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
+     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
+     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
      * ]
      *
      * @return
@@ -78,6 +78,7 @@ public class CSWController {
 
             //Add the mineral occurrence
             JSONArray tableRow = new JSONArray();
+            JSONArray contactOrgs = new JSONArray();
 
             //add the name of the layer/feature type
             tableRow.add(knownType.getDisplayName());
@@ -93,12 +94,16 @@ public class CSWController {
             for(CSWRecord record : records) {
                 serviceURLs.add(record.getServiceUrl());
                 servicesDescription += record.getContactOrganisation() + ", ";
+                contactOrgs.add(record.getContactOrganisation());
                 //serviceURLs.add("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services");
                 //serviceURLs.add("http://auscope-services.arrc.csiro.au/deegree-wfs/services");
             }
 
             //add the abstract text to be shown as updateCSWRecords description
             tableRow.add(knownType.getDescription() + " " + servicesDescription);
+            
+            //Add the list of contact organisations
+            tableRow.add(contactOrgs);
 
             //add the service URL - this is the spring controller for handling minocc
             tableRow.add(knownType.getProxyUrl());
@@ -134,8 +139,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
-     * [title, description, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
+     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
+     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
      * ]
      *
      * @return
@@ -160,6 +165,12 @@ public class CSWController {
 
             //add the abstract text to be shown as updateCSWRecords description
             tableRow.add(record.getDataIdentificationAbstract());
+            
+            //Add the contact organisation
+            String org = record.getContactOrganisation();
+            if (org == null || org.length() == 0)
+            	org = "Unknown";
+            tableRow.add(org);
 
             //wms dont need updateCSWRecords proxy url
             tableRow.add("");
