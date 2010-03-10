@@ -9,7 +9,7 @@ import java.util.Collection;
  */
 public class MineralOccurrenceFilter implements IFilter {
     // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this
-    public enum MeasureType { /*ENDOWMENT,*/ RESOURCE, RESERVE, ANY }
+    public enum MeasureType { ENDOWMENT, RESOURCE, RESERVE, ANY }
     
     private Collection<Commodity> commodities;
     private MeasureType measureType;
@@ -38,15 +38,16 @@ public class MineralOccurrenceFilter implements IFilter {
         this.cutOffGradeUOM        = cutOffGradeUOM;
         
         // parse strings from combobox into enum values
-        // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this
-/*        if(measureType.compareTo("Endowment") == 0)
+        if (measureType.equals("Endowment")) {
             this.measureType = MeasureType.ENDOWMENT;
-        else */if(measureType.compareTo("Resource") == 0)
+        } else if (measureType.equals("Resource")) {
             this.measureType = MeasureType.RESOURCE;
-        else if(measureType.compareTo("Reserve") == 0)
+        } else if (measureType.equals("Reserve")) {
             this.measureType = MeasureType.RESERVE;
-        else // anything else will query for every measure type
+        } else {
+            // anything else will query for every measure type
             this.measureType = MeasureType.ANY;
+        }
     }
 
     /**
@@ -91,13 +92,13 @@ public class MineralOccurrenceFilter implements IFilter {
         {
             if(this.measureType == MeasureType.ANY)
             {
-                queryString.append("                 <ogc:Or>\n");
+                queryString.append("            <ogc:Or>\n");
                 
                 for(MeasureType t : MeasureType.values())
                     if(t!=MeasureType.ANY)
                         queryString.append(createOreAmountQuery(t));
                 
-                queryString.append("                 </ogc:Or>\n");
+                queryString.append("            </ogc:Or>\n");
             }
             else
                 queryString.append(createOreAmountQuery(this.measureType));
@@ -107,13 +108,13 @@ public class MineralOccurrenceFilter implements IFilter {
         {
             if(this.measureType == MeasureType.ANY)
             {
-                queryString.append("                 <ogc:Or>\n");
+                queryString.append("            <ogc:Or>\n");
                 
                 for(MeasureType t : MeasureType.values())
                     if(t!=MeasureType.ANY)
                         queryString.append(createCommodityAmountQuery(t));
                 
-                queryString.append("                 </ogc:Or>\n");
+                queryString.append("            </ogc:Or>\n");
             }
             else
                 queryString.append(createCommodityAmountQuery(this.measureType));
@@ -151,18 +152,36 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private String createOreAmountQuery(MeasureType type)
     {
-        return "            <ogc:And>\n" +
-               "                <ogc:PropertyIsEqualTo>\n" +
-               "                    <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +
-               "/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
-               "                    <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n" +
-               "                </ogc:PropertyIsEqualTo>\n" +
-               "                <ogc:PropertyIsGreaterThan>\n" +
-               "                    <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +
-               "/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-               "                    <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n" +
-               "                </ogc:PropertyIsGreaterThan>\n" +
-               "            </ogc:And>\n";
+        StringBuffer queryString = new StringBuffer();
+        
+        if (this.minOreAmountUOM.equals("")) {
+            queryString.append("            <ogc:PropertyIsGreaterThan>\n");
+            queryString.append("                <ogc:PropertyName>er:oreAmount/");
+            queryString.append(                      getMeasureTypeTag(type));
+            queryString.append(                      "/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            queryString.append("                <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n");
+            queryString.append("            </ogc:PropertyIsGreaterThan>\n");
+        } else {
+            queryString.append("            <ogc:And>\n");
+            
+            queryString.append("                <ogc:PropertyIsEqualTo>\n");
+            queryString.append("                    <ogc:PropertyName>er:oreAmount/");
+            queryString.append(                         getMeasureTypeTag(type));
+            queryString.append(                         "/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
+            queryString.append("                    <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n");
+            queryString.append("                </ogc:PropertyIsEqualTo>\n");
+            
+            queryString.append("                <ogc:PropertyIsGreaterThan>\n");
+            queryString.append("                    <ogc:PropertyName>er:oreAmount/");
+            queryString.append(                         getMeasureTypeTag(type));
+            queryString.append(                         "/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            queryString.append("                    <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n");
+            queryString.append("                </ogc:PropertyIsGreaterThan>\n");
+            
+            queryString.append("            </ogc:And>\n");
+        }        
+
+        return queryString.toString();
     }
     
     /**
@@ -172,19 +191,38 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private String createCommodityAmountQuery(MeasureType type)
     {
-        return "                <ogc:And>" +
-               "                   <ogc:PropertyIsEqualTo>\n" +
-               "                      <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +
-               "/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n" +
-               "                      <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n" +
-               "                   </ogc:PropertyIsEqualTo>" +
-               "                   <ogc:PropertyIsGreaterThan>\n" +
-               "                      <ogc:PropertyName>er:oreAmount/" + getMeasureTypeTag(type) +            
-               "/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-               "                      <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n" +
-               "                   </ogc:PropertyIsGreaterThan>" +
-               "                </ogc:And>";
+        StringBuffer queryString = new StringBuffer();
+        
+        if (this.minCommodityAmountUOM.equals("")) {
+            queryString.append("            <ogc:PropertyIsGreaterThan>\n");            
+            queryString.append("                <ogc:PropertyName>er:oreAmount/");
+            queryString.append(                     getMeasureTypeTag(type));
+            queryString.append(                     "/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            queryString.append("                <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
+            queryString.append("            </ogc:PropertyIsGreaterThan>\n");
+        } else {
+            queryString.append("            <ogc:And>\n");
+            
+            queryString.append("                <ogc:PropertyIsEqualTo>\n");
+            queryString.append("                    <ogc:PropertyName>er:oreAmount/");
+            queryString.append(                         getMeasureTypeTag(type));
+            queryString.append(                         "/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
+            queryString.append("                    <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n");
+            queryString.append("                </ogc:PropertyIsEqualTo>\n");
+            
+            queryString.append("            <ogc:PropertyIsGreaterThan>\n");            
+            queryString.append("                <ogc:PropertyName>er:oreAmount/");
+            queryString.append(                     getMeasureTypeTag(type));
+            queryString.append(                     "/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            queryString.append("                <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
+            queryString.append("            </ogc:PropertyIsGreaterThan>");
+            
+            queryString.append("            </ogc:And>\n");
+        }
+        
+        return queryString.toString();
     }
+            
     
     /**
      * Returns a PropertyIsGreaterThan query for cut off grade
@@ -214,19 +252,11 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     public String getMeasureTypeTag(MeasureType type) {
         switch (type) {
-        // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this
-//            case ENDOWMENT:
-//                return "er:Endowment";
-                
-            case RESOURCE:
-                return "er:Resource";
-                
-            case RESERVE:
-                return "er:Reserve";
-    
-            default:
-                // TODO shouldn't go there, error handling?
-                return "";
+            case ENDOWMENT : return "er:Endowment";               
+            case RESOURCE  : return "er:Resource";              
+            case RESERVE   : return "er:Reserve";
+            // TODO shouldn't go there, error handling?            
+            default        : return ""; 
         }
     }
 

@@ -129,7 +129,8 @@ public class CSWController {
 
             dataItems.add(tableRow);
         }
-        logger.debug(dataItems.toString());
+        
+        logger.debug("\n" + dataItems.toString());
         return new JSONModelAndView(dataItems);
     }
 

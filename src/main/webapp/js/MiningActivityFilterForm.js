@@ -19,18 +19,17 @@ MiningActivityFilterForm = function(id, serviceUrl) {
         autoScroll  : true,
         hideMode    : 'offsets',
         width       : '100%',
-        buttonAlign : 'right',
         labelAlign  : 'right',
-        labelWidth  : 140,
+        labelWidth  : 150,
         timeout     : 180, //should not timeout before the server does
-
+        //height: 300,
+        //autoHeight: true,
+        bodyStyle   : 'padding:5px',
         items: [{
             xtype:'fieldset',
             title: 'Mining Activity Filter Properties',
             autoHeight:true,
-            anchor: '100%',
             defaultType: 'datefield',
-
             items :[
             {
                 anchor: '100%',

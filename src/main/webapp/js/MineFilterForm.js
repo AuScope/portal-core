@@ -18,17 +18,17 @@ MineFilterForm = function(id, serviceUrl) {
         border      : false,
         autoScroll  : true,
         hideMode    :'offsets',
-        width       : '100%',
-        buttonAlign : 'right',
-        labelAlign  : 'right',
-        labelWidth  : 60,
-        //labelWidth: 140,
+        width       :'100%',
+        buttonAlign :'right',
+        labelAlign  :'right',
+        labelWidth  : 70,
         timeout     : 180, //should not time out before the server does
+        bodyStyle   :'padding:5px',
+        autoHeight: true,
         items       : [{
             xtype      :'fieldset',
             title      : 'Mine Filter Properties',
             autoHeight : true,
-            anchor     : '100%',
             items      : [
             {
                 anchor     : '100%',
