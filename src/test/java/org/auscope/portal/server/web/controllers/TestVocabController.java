@@ -121,9 +121,12 @@ public class TestVocabController {
      */
     @Test
     public void testGetScalarQuery() throws Exception {
-        final String docString = org.auscope.portal.Util.loadXML("src/test/resources/GetVocabQuery_Success.xml");
+    	final String docString = org.auscope.portal.Util.loadXML("src/test/resources/GetVocabQuery_Success.xml");
         final String returnedString = docString.replace("\"", "\\\"").replace("\t","\\t").replace("</", "<\\/");
-        final String expectedJSONResponse = "{\"scopeNote\":\"Mineral index for TSA singleton match or primary mixture component\",\"success\":true,\"label\":\"TSA_S_Mineral1\",\"data\":\"" + returnedString + "\"}";
+        final String expectedScopeNote =  "\"scopeNote\":\"Mineral index for TSA singleton match or primary mixture component\"";
+        final String expectedSuccess = "\"success\":true";
+        final String expectedLabel = "\"label\":\"TSA_S_Mineral1\"";
+        final String expectedData = "\"data\":\"" + returnedString + "\"";
         final StringWriter actualJSONResponse = new StringWriter();
         final String repositoryName = "testRepository";
         final String labelName = "testLabel";
@@ -141,9 +144,12 @@ public class TestVocabController {
         ModelAndView mav = this.vocabController.getScalarQuery(repositoryName, labelName);
         mav.getView().render(mav.getModel(), mockHttpRequest, mockHttpResponse);
         
-        System.out.println(expectedJSONResponse);
-        System.out.println(actualJSONResponse.getBuffer().toString());
         
-        Assert.assertEquals(expectedJSONResponse, actualJSONResponse.getBuffer().toString());
+        String response = actualJSONResponse.getBuffer().toString();
+        Assert.assertTrue(response.contains(expectedScopeNote));
+        Assert.assertTrue(response.contains(expectedSuccess));
+        Assert.assertTrue(response.contains(expectedLabel));
+        Assert.assertTrue(response.contains(expectedData));
+        
     }
 }
