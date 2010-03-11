@@ -124,7 +124,7 @@ Ext.onReady(function() {
                 dataIndex: 'title'
             },{
                 id:'contactOrg',
-                header: "Contact",
+                header: "Provider",
                 width: 160,
                 sortable: true,
                 dataIndex: 'contactOrg',
