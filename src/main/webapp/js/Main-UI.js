@@ -579,16 +579,15 @@ Ext.onReady(function() {
             //get the actual data record
             var theRow = activeLayersPanel.getView().findRow(row);
             var record = activeLayersPanel.getStore().getAt(theRow.rowIndex);
-            var keys = [serviceUrls.length];
-            var values = [serviceUrls.length];
-
+            
             //this is the column for download link icons
             if (col.cellIndex == '5') {
-                var serviceType = record.get('serviceType');
+            	var serviceType = record.get('serviceType');
                 var serviceUrls = record.get('serviceURLs');
-                    
+                var keys = [serviceUrls.length];
+                var values = [serviceUrls.length];
+                
                 if (serviceType == 'wms') { //if a WMS, open a new window calling the download controller
-
                     if (serviceUrls.length >= 1) {
 
                         for (i = 0; i < serviceUrls.length; i++) {
