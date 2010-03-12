@@ -45,6 +45,19 @@ NvclInfoWindow.prototype = {
     
     'NVCL_SERVICE' : "/NVCLDataServices/getDatasetCollection.html?holeidentifier=",
     
+    'generateErrorHtml': function(responseCode, message, remoteUrl) {
+		//Generate an error page
+	    var htmlString = '<html><body>';
+	    
+	    htmlString += '<h1>Remote server error ' + responseCode + '</h1>';
+	    htmlString += '<p>' + message + '</p>';
+	    htmlString += '<p>' + remoteUrl + '</p>';
+	    
+	    htmlString += '</body></html>';
+	    
+	    return htmlString;
+	},
+    
     'show': function() {
 		//Open our window with the basic info displayed
 		this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);
@@ -54,14 +67,17 @@ NvclInfoWindow.prototype = {
         this.retrieveDatasets();  
     },
     
+    
+    
     /*
      * Returns datasets for the selected borehole
      */
     'retrieveDatasets' : function() {
         
         var me = this;
-        var serverAddr = this.wfsServerUrl;      
-        var url = ProxyURL + serverAddr + this.NVCL_SERVICE + this.Marker.title;
+        var serverAddr = this.wfsServerUrl;
+        var remoteServer = serverAddr + this.NVCL_SERVICE + this.Marker.title;
+        var url = ProxyURL + remoteServer;
 
         var myMask = new Ext.LoadMask(Ext.get('center_region'), {msg:"Please wait..."});
         myMask.show();         
@@ -113,10 +129,16 @@ NvclInfoWindow.prototype = {
                                                 
             } else if(responseCode == -1) {
                 myMask.hide();
-                alert("Data request timed out. Please try later.");
+                
+                var html = me.generateErrorHtml('(Request Timeout)', 'Error occured whilst retrieving datasets', remoteServer);
+                me.Marker.openInfoWindowHtml(html);
             } else {
                 myMask.hide();
-                alert('Remote server returned error code: ' + responseCode);
+                
+                //Generate an error page
+                var html = me.generateErrorHtml(responseCode, 'Error occured whilst retrieving datasets', remoteServer);
+                me.Marker.openInfoWindowHtml(html);
+                //alert('Remote server returned error code: ' + responseCode);
             }
         });        
     },
