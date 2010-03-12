@@ -1,34 +1,7 @@
 package org.auscope.portal.server.web.controllers;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.auscope.portal.csw.CSWNamespaceContext;
-import org.auscope.portal.csw.ICSWMethodMaker;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
-import org.auscope.portal.server.web.view.JSONModelAndView;
-import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
-import org.auscope.portal.server.util.Util;
-import org.auscope.portal.vocabs.VocabularyServiceResponseHandler;
-import org.auscope.portal.vocabs.Concept;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.log4j.Logger;
-
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -37,6 +10,34 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import net.sf.json.JSONArray;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
+
+import org.apache.log4j.Logger;
+
+import org.auscope.portal.csw.ICSWMethodMaker;
+import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
+import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.web.view.JSONModelAndView;
+import org.auscope.portal.vocabs.Concept;
+import org.auscope.portal.vocabs.VocabularyServiceResponseHandler;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.xml.sax.InputSource;
 
 /**
  * User: Mathew Wyatt, Michael Stegherr
@@ -83,11 +84,12 @@ public class VocabController {
 
         //set all of the parameters
         NameValuePair repo     = new NameValuePair("repository", "commodity_vocab");
-        NameValuePair property = new NameValuePair("property1", "skos:inScheme");
-        NameValuePair value    = new NameValuePair("property_value1", "<urn:cgi:classifierScheme:GA:commodity>");
-
+        //NameValuePair property = new NameValuePair("property1", "skos:inScheme");
+        //NameValuePair value    = new NameValuePair("property_value1", "<urn:cgi:classifierScheme:GA:commodity>");
+        NameValuePair property = new NameValuePair("property2", "<urn:cgi:classifierScheme:GA:commodity>");
+        
         //attach them to the method
-        this.method.setQueryString(new NameValuePair[]{repo, property, value});
+        this.method.setQueryString(new NameValuePair[]{repo, property});
         this.portalPropertyPlaceholderConfigurer = portalPropertyPlaceholderConfigurer;
     }
     
@@ -194,4 +196,68 @@ public class VocabController {
 
         return new JSONModelAndView(dataItems);
     }
+    
+    
+    /**
+     * Get all GA commodity URNs with prefLabels
+     * 
+     * @param
+     */        
+    @RequestMapping("/getAllCommodities.do")
+    public ModelAndView getAllCommodities() throws Exception {
+
+        String response = ""; 
+        JSONArray dataItems = new JSONArray();
+        
+        //Attempt to request and parse our response
+        try {
+            //Do the request
+            response = httpServiceCaller.getMethodResponseAsString(new ICSWMethodMaker() {
+                public HttpMethodBase makeMethod() {
+                    GetMethod method = new GetMethod(portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.vocabService.url"));
+                        
+                    //set all of the parameters
+                    NameValuePair request   = new NameValuePair("repository", "commodity_vocab");
+                    NameValuePair elementSet = new NameValuePair("property2", "<urn:cgi:classifierScheme:GA:commodity>");
+    
+                    //attach them to the method
+                    method.setQueryString(new NameValuePair[]{request, elementSet});
+    
+                    return method;
+                }
+            }.makeMethod(), httpServiceCaller.getHttpClient());
+
+            // Parse the response            
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();            
+            InputSource inputSource = new InputSource(new StringReader(response));
+            Document doc = builder.parse(inputSource); 
+            
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            NodeList exprResult = (NodeList)xPath.evaluate("/sparql/results/result", doc, XPathConstants.NODESET);            
+            
+            JSONArray tableRow;
+
+            for (int i=0; i < exprResult.getLength(); i++) {                
+
+                Element result = (Element)exprResult.item(i);
+
+                tableRow = new JSONArray();
+
+                tableRow.add(result.getElementsByTagName("uri").item(0).getTextContent());
+                tableRow.add(result.getElementsByTagName("literal").item(0).getTextContent());
+
+                //add to the list
+                dataItems.add(tableRow);
+            }
+            
+            return new JSONModelAndView(dataItems);
+            
+        } catch (Exception ex) {
+            //On error, just return failure JSON (and the response string if any)
+            logger.error("getAllCommodities Exception: " + ex.getMessage());
+        
+            return new JSONModelAndView(dataItems);
+        }
+    }    
 }
