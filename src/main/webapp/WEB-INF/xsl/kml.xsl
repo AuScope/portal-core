@@ -86,7 +86,7 @@
             <xsl:apply-templates select="gml:featureMembers/er:MiningActivity"/>
             <xsl:apply-templates select="gml:featureMembers/ngcp:GnssStation"/>
             <xsl:apply-templates select="gml:featureMembers/er:MineralOccurrence"/>
-            <xsl:apply-templates select="gml:featureMembers/gsml:BoreholeHeader"/>
+            <xsl:apply-templates select="gml:featureMembers/gsml:Borehole"/>
             <xsl:apply-templates select="gml:featureMembers/sa:SamplingPoint"/>
          </Document>
       </kml>
@@ -412,7 +412,7 @@
    
    <!-- TEMPLATE FOR TRANSLATING NVCL -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMembers/gsml:BoreholeHeader">
+   <xsl:template match="gml:featureMembers/gsml:Borehole">
 
       <xsl:variable name="coordinates">
          <xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
@@ -422,7 +422,7 @@
          <name><xsl:value-of select="@gml:id"/></name>
          <description>
             <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
-            <tr><td>Borehole Name</td><td>]]><xsl:value-of select="./gml:name"/>
+            <tr><td>Borehole Name</td><td>]]><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
             <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
             <![CDATA[</td></tr><tr><td>Elevation (]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation/@uomLabels"/><![CDATA[)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation"/>
             <![CDATA[</td></tr><tr><td>Start Depth (m)</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner"/>

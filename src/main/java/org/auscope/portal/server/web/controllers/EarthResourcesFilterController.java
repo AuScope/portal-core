@@ -9,27 +9,27 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.csw.CSWNamespaceContext;
+
 import org.auscope.portal.mineraloccurrence.Mine;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
+import org.auscope.portal.server.web.service.NvclService;
 import org.auscope.portal.server.web.view.JSONModelAndView;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
 import org.xml.sax.SAXException;
 
 /**
@@ -46,7 +46,6 @@ import org.xml.sax.SAXException;
  * @author Jarek Sanders
  * @version $Id$
  */
-
 @Controller
 public class EarthResourcesFilterController {
 
@@ -54,7 +53,6 @@ public class EarthResourcesFilterController {
     
     /** Log object for this class. */
     protected final Log log = LogFactory.getLog(getClass());
-    //private static String ALL_MINES = "All Mines..";         // To DO: Remove
     
     /** Query all mines command */
     private static String ALL_MINES = "";
@@ -63,6 +61,7 @@ public class EarthResourcesFilterController {
     
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
     private MineralOccurrenceService mineralOccurrenceService;
+    private NvclService nvclService;
     private GmlToKml gmlToKml;
 
     // ----------------------------------------------------------- Constructors
@@ -71,10 +70,12 @@ public class EarthResourcesFilterController {
     public EarthResourcesFilterController
         ( MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler,
           MineralOccurrenceService mineralOccurrenceService,
+          NvclService nvclService,
           GmlToKml gmlToKml ) {
         
         this.mineralOccurrencesResponseHandler = mineralOccurrencesResponseHandler;
         this.mineralOccurrenceService = mineralOccurrenceService;
+        this.nvclService = nvclService;
         this.gmlToKml = gmlToKml;
     }
 
@@ -231,7 +232,46 @@ public class EarthResourcesFilterController {
         }
     }
 
+    
+    /**
+     * Handles the NVCL filter queries.
+     *
+     * @param serviceUrl the url of the service to query
+     * @param mineName   the name of the mine to query for
+     * @param request    the HTTP client request
+     * @return a WFS response converted into KML
+     */
+    @RequestMapping("/doNvclFilter.do")
+    public ModelAndView doNvclFilter( @RequestParam("serviceUrl") String serviceUrl,
+                                      HttpServletRequest request) {
+        try {
+            String gmlBlob = this.nvclService.getAllBoreholes(serviceUrl);
 
+            String kmlBlob =  gmlToKml.convert(gmlBlob, request);
+            //log.debug(kmlBlob);
+                
+            // This failure test should be more robust,
+            // it should try to extract an error message
+            if (kmlBlob == null || kmlBlob.length() == 0) {
+                return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED);
+            } else {
+                return makeModelAndViewKML(kmlBlob, gmlBlob);
+            }
+        } catch (Exception e) {
+            return this.handleExceptionResponse(e);
+        }
+    }    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /**
      * Exception resolver that maps exceptions to views presented to the user
      * @param exception

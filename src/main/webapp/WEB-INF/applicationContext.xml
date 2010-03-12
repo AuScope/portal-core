@@ -55,10 +55,10 @@
    </bean>
 
     <bean id="knownTypeBorehole" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
-       <constructor-arg index="0" value="gsml:BoreholeHeader"/>
+       <constructor-arg index="0" value="gsml:Borehole"/>
        <constructor-arg index="1" value="National Virtual Core Library"/>
        <constructor-arg index="2" value=""/>
-       <constructor-arg index="3" value="/getAllFeatures.do"/>
+       <constructor-arg index="3" value="/doNvclFilter.do"/>
        <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
    </bean>
 

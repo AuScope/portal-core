@@ -569,7 +569,7 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
     var lDatasetId   = iDatasetId.replace(/'/g, '');
     
     //"http://nvclwebservices.vm.csiro.au/geoserver/wfs?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='6dd70215-fe38-457c-be42-3b165fd98c7')&outputformat=csv",
-    var CSV_PATH     = Ext.util.Format.htmlEncode("/geoserver/wfs?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='");
+    var CSV_PATH     = Ext.util.Format.htmlEncode("/geoserverBH/wfs?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='");
     var CSV_PATH_END = Ext.util.Format.htmlEncode("')&outputformat=csv");
     
     var TSG_PATH     = '/NVCLTSGDownloadServices/downloadtsg.html?';
@@ -579,9 +579,12 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
     var TSG_CHCK_PATH= ProxyURL + iServerName + '/NVCLTSGDownloadServices/checkstatus.html?email=';
     
     // http://nvclwebservices.vm.csiro.au/geoserver/wfs?request=GetFeature&typeName=sa:SamplingFeatureCollection&FILTER=%3CFilter%3E%3CFeatureId%20fid=%22SamplingFeatureCollectionID_6dd70215-fe38-457c-be42-3b165fd98c7%22/%3E%3C/Filter%3E
-    var O_M_PATH     = iServerName + '/geoserver/wfs?request=GetFeature&typeName=sa:SamplingFeatureCollection&FILTER=%3CFilter%3E%3CFeatureId%20fid=%22SamplingFeatureCollectionID_';
-    var O_M_PATH_END = '%22/%3E%3C/Filter%3E';       
-        
+    //var O_M_PATH     = iServerName + '/geoserver/wfs?request=GetFeature&typeName=sa:SamplingFeatureCollection&FILTER=%3CFilter%3E%3CFeatureId%20fid=%22SamplingFeatureCollectionID_';
+    //var O_M_PATH_END = '%22/%3E%3C/Filter%3E';
+
+    // TODO: Get gsml:Borehole from request insted of hardcoding
+    var O_M_PATH     = iServerName + '/geoserverOM/wfs?request=GetFeature&typeName=gsml:Borehole&featureid=';
+               
     // Dataset download window  
     var win = new Ext.Window({
         id              : 'nvclDownloadWindow',        
@@ -776,7 +779,8 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                 buttons:[{
                     text : 'Download',
                     xtype: 'linkbutton',
-                    href : O_M_PATH + lDatasetId + O_M_PATH_END
+                    //href : O_M_PATH + lDatasetId + O_M_PATH_END
+                    href : O_M_PATH + iBoreholeId
                     //handler: function(){ console.log(O_M_PATH + lDatasetId + O_M_PATH_END) }                    
                 }],
                 listeners: {
