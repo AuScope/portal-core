@@ -7,13 +7,12 @@
          </h1>
       </div>
                                   
-      <security:authorize ifAllGranted="ROLE_ADMINISTRATOR">
-         <a href="admin.html"><span>Administration</span></a>
-      </security:authorize>
-      
+     
       <div id="menu">
          <ul >
-         
+         	<security:authorize ifAllGranted="ROLE_ADMINISTRATOR">
+				<li ><a href="admin.html">Administration<span></span></a></li>
+      		</security:authorize>
             <li ><a href="http://www.auscope.org">AuScope.org<span></span></a></li>
             <li <%if (request.getRequestURL().toString().contains("/gmap.jsp")) {%>class="current" <%} %>><a href="gmap.html">AuScope Discovery Portal<span></span></a></li>
             <li ><a href="login.html">Login<span></span></a></li>
