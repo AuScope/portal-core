@@ -644,7 +644,7 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                     xtype  : 'box',
                     autoEl : {
                         tag  : 'div',
-                        html : 'This form allows to download the selected Hylogging dataset in the form of the Spectral Geologist (TSG) data file or comma-separated values (CSV) file.'
+                        html : 'Download Hylogging dataset'
                     }
                 }]
             },{
@@ -653,7 +653,7 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                 value   : lDatasetId  //value of the field                                                        
             },{                
                 id              : 'csvFldSet',
-                title           : 'CSV',
+                title           : 'Comma-separated values (CSV) file',
                 checkboxName    : 'csv',
                 checkboxToggle  : true,
                 collapsed       : true,
@@ -675,7 +675,7 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                 }
             },{ 
                 id              : 'tsgFldSet',
-                title           : 'TSG',
+                title           : 'Spectral Geologist (TSG) data file',
                 checkboxName    : 'tsg',
                 checkboxToggle  : true,
                 defaultType     : 'textfield',
