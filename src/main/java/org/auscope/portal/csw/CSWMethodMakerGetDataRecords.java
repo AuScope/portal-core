@@ -15,7 +15,7 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
     public CSWMethodMakerGetDataRecords(String serviceURL) throws Exception {
         this.serviceURL = serviceURL;
 
-        //pretty hard to do updateCSWRecords GetFeature query with updateCSWRecords serviceURL, so we had better check that we have one
+        //pretty hard to do a GetFeature query with a serviceURL, so we had better check that we have one
         if(serviceURL == null || serviceURL.equals(""))
             throw new Exception("serviceURL parameter can not be null or empty.");
     }
@@ -23,6 +23,14 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
     public HttpMethodBase makeMethod() {
         GetMethod method = new GetMethod(this.serviceURL);
 
+        String filterString =
+            "<Filter xmlns=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\">" +
+                "<PropertyIsLike wildCard=\"%\" singleChar=\"_\" escapeChar=\"\\\">" +
+                    "<PropertyName>AnyText</PropertyName>" +
+                    "<Literal>%</Literal>" +
+                "</PropertyIsLike>" +
+            "</Filter>";
+        
         //set all of the parameters
         NameValuePair service = new NameValuePair("service", "CSW");
         NameValuePair version = new NameValuePair("constraint_language_version", "1.1.0");
@@ -34,10 +42,10 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
         NameValuePair resultType = new NameValuePair("resultType", "results");
         NameValuePair namespace = new NameValuePair("namespace", "csw:http://www.opengis.net/cat/csw");
         NameValuePair elementSet = new NameValuePair("elementSetName", "full");
-        //NameValuePair constraint = new NameValuePair("constraint", filterString);
+        NameValuePair constraint = new NameValuePair("constraint", filterString);
 
         //attach them to the method
-        method.setQueryString(new NameValuePair[]{service, version, request, outputSchema, constraintLanguage, maxRecords, typeNames, resultType, namespace, elementSet});
+        method.setQueryString(new NameValuePair[]{service, version, request, outputSchema, constraintLanguage, maxRecords, typeNames, resultType, namespace, elementSet, constraint});
 
         return method;
     }
