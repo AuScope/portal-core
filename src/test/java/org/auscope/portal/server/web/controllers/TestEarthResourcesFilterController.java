@@ -16,6 +16,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 import org.apache.commons.httpclient.ConnectTimeoutException;
+import org.auscope.portal.server.web.service.NvclService;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -35,6 +36,7 @@ public class TestEarthResourcesFilterController {
     private HttpServletRequest mockHttpRequest;
     private HttpServletResponse mockHttpResponse;
     private GmlToKml mockGmlToKml;
+    private NvclService mockNvclService;
 
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
@@ -46,9 +48,11 @@ public class TestEarthResourcesFilterController {
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.mineralOccurrenceService = context.mock(MineralOccurrenceService.class);
         this.mockGmlToKml = context.mock(GmlToKml.class);
-        this.earthResourcesFilterController = new EarthResourcesFilterController(this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService, this.mockGmlToKml);
+        this.mockNvclService = context.mock(NvclService.class);
+        this.earthResourcesFilterController = new EarthResourcesFilterController(this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService,this.mockNvclService, this.mockGmlToKml);
         this.mockHttpRequest = context.mock(HttpServletRequest.class);
         this.mockHttpResponse = context.mock(HttpServletResponse.class);
+
     }
     
     /**
