@@ -1,5 +1,6 @@
 package org.auscope.portal.server.web.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,22 +21,26 @@ import org.auscope.portal.server.web.WFSGetFeatureMethodMakerPOST;
 import org.springframework.stereotype.Service;
 
 /**
- * A utility class which provides methods for querying a mineral occurrence service
+ * Manages mineral occurrence queries
  *
  * @version $Id$
  */
 @Service
 public class MineralOccurrenceService {
-   
+
+    // -------------------------------------------------------------- Constants
+    
     protected final Log log = LogFactory.getLog(getClass());
+    
+    // ----------------------------------------------------- Instance variables
     
     private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
     private IWFSGetFeatureMethodMaker methodMaker;
 
-    /**
-     * Initialise
-     */
+    
+    // ----------------------------------------------------------- Constructors
+    
     public MineralOccurrenceService() {
         this.httpServiceCaller = new HttpServiceCaller();
         this.mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
@@ -48,6 +53,9 @@ public class MineralOccurrenceService {
         this.methodMaker = methodMaker;
     }
 
+    
+    // ------------------------------------------- Property Setters and Getters 
+    
     /**
      * Get all the mines from a given service url and return them as Mine objects
      *
@@ -66,6 +74,7 @@ public class MineralOccurrenceService {
         return mines;
     }
 
+    
     /**
      * Get all the mines from a given service url and return the response
      * @param serviceURL
@@ -80,6 +89,7 @@ public class MineralOccurrenceService {
         return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
     }
 
+    
     /**
      * Given a specific service and a mineName, get that mine from the service
      * @param  serviceURL - the service to get the mine from
@@ -97,6 +107,7 @@ public class MineralOccurrenceService {
         return mines;
     }
 
+    
     /**
      * Given a specific service and a mineName, get that mine from the service
      *
@@ -151,6 +162,7 @@ public class MineralOccurrenceService {
         return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
     }
 
+    
     /**
      * Given a list of parameters, call a service and get the Mineral Occurrence GML
      * @param serviceURL
@@ -165,28 +177,32 @@ public class MineralOccurrenceService {
      * @return
      */
     public String getMineralOccurrenceGML( String serviceURL,
-            String commodityName,
-            String measureType,
-            String minOreAmount,
-            String minOreAmountUOM,
-            String minCommodityAmount,
-            String minCommodityAmountUOM,
-            String cutOffGrade,
-            String cutOffGradeUOM) throws Exception {
+                                           String commodityName,
+                                           String measureType,
+                                           String minOreAmount,
+                                           String minOreAmountUOM,
+                                           String minCommodityAmount,
+                                           String minCommodityAmountUOM,
+                                           String cutOffGrade,
+                                           String cutOffGradeUOM) throws Exception {
 
-        // Get the commodities, we need their URI's to do a min occ query
-        Collection<Commodity> commodities = this.getCommodity(serviceURL, commodityName);
+        Collection<Commodity> commodities = new ArrayList<Commodity>();        
 
-        //if there are no commodities we can't continue
-        //and return a valid response
-        if(commodities.size() == 0)
-            return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                   "<wfs:FeatureCollection numberOfFeatures=\"0\"" +
-                   "    xsi:schemaLocation=\"http://www.opengis.net/wfs\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\">" +
-                   "    <gml:featureMembers/>" +
-                   "</wfs:FeatureCollection>";
+        // If user selected commodity name, then get commodity' URIs
+        // as we need it for Min Occ query to narrow down search results
+        if (!commodityName.isEmpty()) {
 
-        //create the mineral occurrence filter
+            commodities = this.getCommodity(serviceURL, commodityName);
+              
+            // Can't continue if there are no commodities; Return valid response
+            if (commodities.size() == 0)
+                return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                       "<wfs:FeatureCollection numberOfFeatures=\"0\"" +
+                       "    xsi:schemaLocation=\"http://www.opengis.net/wfs\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\">" +
+                       "    <gml:featureMembers/>" +
+                       "</wfs:FeatureCollection>";
+        }                        
+            
         MineralOccurrenceFilter mineralOccurrenceFilter 
             = new MineralOccurrenceFilter( commodities,
                                            measureType,
@@ -206,6 +222,7 @@ public class MineralOccurrenceService {
         return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
     }
 
+    
     public String getMiningActivityGML( String serviceURL,
                                         List<Mine> mines,
                                         String startDate,
@@ -214,7 +231,7 @@ public class MineralOccurrenceService {
                                         String producedMaterial,
                                         String cutOffGrade,
                                         String production) throws Exception {
-        if(mines.size() == 0)
+        if (mines.size() == 0)
                 return "";
         
         //create the filter

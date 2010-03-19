@@ -8,7 +8,7 @@ import java.util.Collection;
  * Time: 5:18:28 PM
  */
 public class MineralOccurrenceFilter implements IFilter {
-    // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this
+    // TODO: endowment to be commented in again, when data model (mineraloccurrence ml) includes this 
     public enum MeasureType { ENDOWMENT, RESOURCE, RESERVE, ANY }
     
     private Collection<Commodity> commodities;
@@ -67,6 +67,7 @@ public class MineralOccurrenceFilter implements IFilter {
 
         if(checkMany())
             queryString.append("      <ogc:And>\n");
+
         
         if(this.commodities != null)
         {
@@ -87,33 +88,39 @@ public class MineralOccurrenceFilter implements IFilter {
                     queryString.append("            </ogc:Or>\n");
             }
         }
+
         
-        if(!this.minOreAmount.equals(""))
+        if (!this.minOreAmount.equals(""))
         {
             if(this.measureType == MeasureType.ANY)
             {
                 queryString.append("            <ogc:Or>\n");
                 
-                for(MeasureType t : MeasureType.values())
-                    if(t!=MeasureType.ANY)
+                for(MeasureType t : MeasureType.values()) {
+                    //TODO: Remove check for ENDOWMENT when services will support it
+                    if(t!=MeasureType.ANY && t!=MeasureType.ENDOWMENT) { 
                         queryString.append(createOreAmountQuery(t));
-                
+                    }
+                }
                 queryString.append("            </ogc:Or>\n");
             }
             else
                 queryString.append(createOreAmountQuery(this.measureType));
         }
-
+        
+        
         if(!this.minCommodityAmount.equals(""))
         {
             if(this.measureType == MeasureType.ANY)
             {
                 queryString.append("            <ogc:Or>\n");
-                
-                for(MeasureType t : MeasureType.values())
-                    if(t!=MeasureType.ANY)
+                  
+                for(MeasureType t : MeasureType.values()) {
+                    //TODO: Remove check for ENDOWMENT when services will support it
+                    if(t!=MeasureType.ANY && t!=MeasureType.ENDOWMENT) {
                         queryString.append(createCommodityAmountQuery(t));
-                
+                    }
+                }
                 queryString.append("            </ogc:Or>\n");
             }
             else
@@ -215,7 +222,7 @@ public class MineralOccurrenceFilter implements IFilter {
             queryString.append(                     getMeasureTypeTag(type));
             queryString.append(                     "/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
             queryString.append("                <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
-            queryString.append("            </ogc:PropertyIsGreaterThan>");
+            queryString.append("            </ogc:PropertyIsGreaterThan>\n");
             
             queryString.append("            </ogc:And>\n");
         }
