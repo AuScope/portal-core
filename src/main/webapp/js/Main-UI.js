@@ -206,7 +206,10 @@ Ext.onReady(function() {
         ])
     });
 
-    var activeLayerCheckHandler = function(record, isChecked) {
+    /**
+     *@param forceApplyFilter (Optional) if set AND isChecked is set AND this function has a filter panel, it will force the current filter to be loaded
+     */
+    var activeLayerCheckHandler = function(record, isChecked, forceApplyFilter) {
         //set the record to be selected if checked
         activeLayersPanel.getSelectionModel().selectRecords([record], false);
 
@@ -227,6 +230,9 @@ Ext.onReady(function() {
                 filterPanel.getLayout().setActiveItem(record.get('id'));
                 filterButton.enable();
                 filterButton.toggle(true);
+                
+                if (forceApplyFilter)
+                    filterButton.handler();
             } else {
                 //create updateCSWRecords filter panel for this record
                 record.filterPanel = formFactory.getFilterForm(record);
@@ -363,6 +369,7 @@ Ext.onReady(function() {
         //    tileLayer.styles = '7';
 
         record.tileOverlay = new GTileLayerOverlay(tileLayer);
+
         map.addOverlay(record.tileOverlay);
     };
 
@@ -388,7 +395,9 @@ Ext.onReady(function() {
         header: "Visible",
         dataIndex: 'layerVisible',
         width: 30,
-        handler: activeLayerCheckHandler
+        handler: function(record, data) {
+            activeLayerCheckHandler(record,data,true);
+        }
     });
 
     var activeLayersPanelExpander = new Ext.grid.RowExpander({
