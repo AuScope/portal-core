@@ -404,6 +404,46 @@ Ext.onReady(function() {
         tpl : new Ext.Template('<p>{description}</p><br>')
     });
 
+    var activeLayersRemoveButton = {
+                text:'Remove Layer',
+                tooltip:'Remove Layer',
+                iconCls:'remove',
+                pressed:true,
+                handler: function() {
+                    var record = activeLayersPanel.getSelectionModel().getSelected();
+                    if (record == null)
+                        return;
+
+                    if (record.get('loadingStatus') == '<img src="js/external/extjs/resources/images/default/grid/loading.gif">') {
+                        Ext.MessageBox.show({
+                            title: 'Please wait',
+                            msg: "There is an operation in process for this layer. Please wait until it is finished.",
+                            buttons: Ext.MessageBox.OK,
+                            animEl: 'mb9',
+                            icon: Ext.MessageBox.INFO
+                        });
+                        return;
+                    }
+
+                    if (record.get('serviceType') == 'wfs') {
+                        if (record.tileOverlay instanceof MarkerManager) {
+                            record.tileOverlay.clearMarkers();
+                        }
+                    } else if (record.get('serviceType') == 'wms') {
+                        //remove from the map
+                        map.removeOverlay(record.tileOverlay);
+                    }
+                    //remove from the map
+                    //map.removeOverlay(activeLayersPanel.getSelectionModel().getSelected().tileOverlay);
+
+                    //remove it from active layers
+                    activeLayersStore.remove(record);
+
+                    //set the filter panels active item to 0
+                    filterPanel.getLayout().setActiveItem(0);
+                }
+            };
+
     this.activeLayersPanel = new Ext.grid.GridPanel({
         plugins: [activeLayersPanelCheckColumn, activeLayersPanelExpander],
 
@@ -454,45 +494,7 @@ Ext.onReady(function() {
             }
         ],
         bbar: [
-            {
-                text:'Remove Layer',
-                tooltip:'Remove Layer',
-                iconCls:'remove',
-                pressed:true,
-                handler: function() {
-                    var record = activeLayersPanel.getSelectionModel().getSelected();
-                    if (record == null)
-                        return;
-
-                    if (record.get('loadingStatus') == '<img src="js/external/extjs/resources/images/default/grid/loading.gif">') {
-                        Ext.MessageBox.show({
-                            title: 'Please wait',
-                            msg: "There is an operation in process for this layer. Please wait until it is finished.",
-                            buttons: Ext.MessageBox.OK,
-                            animEl: 'mb9',
-                            icon: Ext.MessageBox.INFO
-                        });
-                        return;
-                    }
-
-                    if (record.get('serviceType') == 'wfs') {
-                        if (record.tileOverlay instanceof MarkerManager) {
-                            record.tileOverlay.clearMarkers();
-                        }
-                    } else if (record.get('serviceType') == 'wms') {
-                        //remove from the map
-                        map.removeOverlay(record.tileOverlay);
-                    }
-                    //remove from the map
-                    //map.removeOverlay(activeLayersPanel.getSelectionModel().getSelected().tileOverlay);
-
-                    //remove it from active layers
-                    activeLayersStore.remove(record);
-
-                    //set the filter panels active item to 0
-                    filterPanel.getLayout().setActiveItem(0);
-                }
-            }
+            activeLayersRemoveButton
         ],
 
         sm: new Ext.grid.RowSelectionModel({
@@ -653,6 +655,21 @@ Ext.onReady(function() {
                 }
             }
         }
+    });
+
+    this.activeLayersPanel.on('cellcontextmenu', function(grid, rowIndex, colIndex, event) {
+        //Stop the event propogating
+        event.stopEvent();
+
+        //Ensure the row that is right clicked gets selected
+        activeLayersPanel.getSelectionModel().selectRow(rowIndex);
+
+        //Create the context menu to hold the buttons
+        var contextMenu = new Ext.menu.Menu();
+        contextMenu.add(activeLayersRemoveButton);
+
+        //Show the menu
+        contextMenu.showAt(event.getXY());
     });
     
     /**
