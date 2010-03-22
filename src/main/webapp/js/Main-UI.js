@@ -261,8 +261,6 @@ Ext.onReady(function() {
                     wfsHandler(record);
                 }
             }
-
-            loadLayer(record);
         } else {
             if (record.get('serviceType') == 'wfs') {
                 if (record.tileOverlay instanceof MarkerManager) {

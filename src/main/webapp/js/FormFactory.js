@@ -20,10 +20,7 @@ FormFactory = function() {};
 FormFactory.prototype.getFilterForm = function(record, map) {
 
     if (record.get('serviceType') == 'wms') {
-        //return new WMSLayerFilterForm(record, map);
-
-        //We have to resort to NOT using an inherited FormPanel as card layout falls apart with multiple inherited instances of the same class
-        return generateWMSLayerFilterForm(record, map);
+        return new WMSLayerFilterForm(record, map);
     } else {
         switch (record.get('typeName')) {
             case 'er:Mine': return new MineFilterForm(record.get('id'), record.get('serviceURLs')[0]); break;

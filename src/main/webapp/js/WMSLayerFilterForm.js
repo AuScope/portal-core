@@ -2,7 +2,8 @@
  * Builds a form panel for WMS Layers (Containing WMS specific options such as transparency).
  *
  */
-var generateWMSLayerFilterForm = function(record, map) {
+
+WMSLayerFilterForm = function(record, map) {
 
     var sliderHandler = function(caller, newValue) {
         record.set('opacity', (newValue / 100));
@@ -12,11 +13,9 @@ var generateWMSLayerFilterForm = function(record, map) {
         map.removeOverlay(record.tileOverlay);
         map.addOverlay(record.tileOverlay);
     };
-    
 
     //-----------Panel
-
-    return new Ext.FormPanel({
+    WMSLayerFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',record.get('id')),
         border      : false,
         autoScroll  : true,
@@ -42,3 +41,7 @@ var generateWMSLayerFilterForm = function(record, map) {
 
     });
 };
+
+Ext.extend(WMSLayerFilterForm, Ext.FormPanel, {
+    
+});
