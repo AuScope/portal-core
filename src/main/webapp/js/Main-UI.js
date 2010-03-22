@@ -94,7 +94,8 @@ Ext.onReady(function() {
             {   name: 'serviceURLs'     },
             {   name: 'layerVisible'    },
             {   name: 'loadingStatus'   },
-            {   name: 'dataSourceImage' }
+            {   name: 'dataSourceImage' },
+            {   name: 'opacity'         }
         ]),
         groupField:'contactOrg',
         sortInfo: {field:'title', direction:'ASC'}
@@ -181,6 +182,9 @@ Ext.onReady(function() {
         activeItem: 0,
         height: 200,
         autoScroll  : true,
+        layoutConfig: {
+            layoutOnCardChange: true// Important when not specifying an items array
+        },
         items: [
             {
                 html: '<p style="margin:15px;padding:15px;border:1px dotted #999;color:#555;background: #f9f9f9;"> Filter options will be shown here for special services.</p>'
@@ -209,7 +213,7 @@ Ext.onReady(function() {
     /**
      *@param forceApplyFilter (Optional) if set AND isChecked is set AND this function has a filter panel, it will force the current filter to be loaded
      */
-    var activeLayerCheckHandler = function(record, isChecked, forceApplyFilter) {
+    var activeLayerCheckHandler = function(record, isChecked, forceApplyFilter) {        
         //set the record to be selected if checked
         activeLayersPanel.getSelectionModel().selectRecords([record], false);
 
@@ -225,37 +229,40 @@ Ext.onReady(function() {
         }
 
         if (isChecked) {
-            //if filter panel already exists then show it
-            if (record.filterPanel != null) {
-                filterPanel.getLayout().setActiveItem(record.get('id'));
-                filterButton.enable();
-                filterButton.toggle(true);
-                
-                if (forceApplyFilter)
-                    filterButton.handler();
-            } else {
-                //create updateCSWRecords filter panel for this record
-                record.filterPanel = formFactory.getFilterForm(record);
+            //Create our filter panel or use the existing one
+            if (record.filterPanel == null) {
+                record.filterPanel = formFactory.getFilterForm(record, map);
+            } else if (forceApplyFilter && !filterButton.disabled) {
+                filterButton.handler(); //If we are using an existing one, we may need to retrigger it's filter
+            }
+            
+            //Hide show filter panel based on WMS / WFS type
+            //WFS layers will NOT load immediately if they have a filter type (they wait on the filterButton to be clicked)
+            //WFS layers will load normally if they DONT have a filter type
+            //WMS layers will ALWAYS load normally
+            if (record.get('serviceType') == 'wms') {
+                if (record.filterPanel != null) {
+                    filterPanel.add(record.filterPanel);
+                    filterPanel.getLayout().setActiveItem(record.get('id'));
+                    filterPanel.doLayout();
+                }
 
-                //if this type doesnt need updateCSWRecords filter panel then just show the default filter panel
-                if (record.filterPanel == null) {
-                    filterPanel.getLayout().setActiveItem(0);
-
-                    //show the layer on the map
-                    if (record.get('serviceType') == 'wfs') {
-                        wfsHandler(record);
-                    } else if (record.get('serviceType') == 'wms') {
-                        wmsHandler(record);
-                    }
-
-                } else {
-                    //show the filter panel
+                wmsHandler(record);
+            } else if (record.get('serviceType') == 'wfs') {
+                if (record.filterPanel != null) {
                     filterPanel.add(record.filterPanel);
                     filterPanel.getLayout().setActiveItem(record.get('id'));
                     filterButton.enable();
                     filterButton.toggle(true);
+                    filterPanel.doLayout();
+                } else {
+                    filterPanel.getLayout().setActiveItem(0);
+
+                    wfsHandler(record);
                 }
             }
+
+            loadLayer(record);
         } else {
             if (record.get('serviceType') == 'wfs') {
                 if (record.tileOverlay instanceof MarkerManager) {
@@ -362,6 +369,8 @@ Ext.onReady(function() {
         tileLayer.baseURL = record.get('serviceURLs')[0];
         tileLayer.layers = record.get('typeName');
 
+        tileLayer.opacity = record.get('opacity');
+
         //TODO: remove code specific to feature types and styles specific to GSV
         if (record.get('typeName') == 'gsmlGeologicUnit')
             tileLayer.styles = 'ColorByLithology';
@@ -381,8 +390,14 @@ Ext.onReady(function() {
         } else if (record.filterPanel != null) {
             //if filter panel already exists then show it
             filterPanel.getLayout().setActiveItem(record.get('id'));
-            filterButton.enable();
-            filterButton.toggle(true);
+
+            if (record.get('serviceType') == 'wfs') {
+                filterButton.enable();
+                filterButton.toggle(true);
+            } else if (record.get('serviceType') == 'wms') {
+                filterButton.disable();
+            }
+
         } else {
             //if this type doesnt need a filter panel then just show the default filter panel
             filterPanel.getLayout().setActiveItem(0);
