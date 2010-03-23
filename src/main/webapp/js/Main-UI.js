@@ -221,10 +221,12 @@ Ext.onReady(function() {
             var record = activeLayersStore.getAt(i);
 
             if (record.tileOverlay && record.get('serviceType') == 'wms') {
-                record.tileOverlay.zPriority = activeLayersStore.getCount() - i;
+                if (record.get('layerVisible') == true) {
+                    record.tileOverlay.zPriority = activeLayersStore.getCount() - i;
 
-                map.removeOverlay(record.tileOverlay);
-                map.addOverlay(record.tileOverlay);
+                    map.removeOverlay(record.tileOverlay);
+                    map.addOverlay(record.tileOverlay);
+                }
             }
         }
     };
