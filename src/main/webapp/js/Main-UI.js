@@ -66,8 +66,8 @@ Ext.onReady(function() {
 
                 //Only add if the record isn't already there
                 if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {                
-                    //add to active layers
-                    activeLayersStore.add(recordToAdd);
+                    //add to active layers (At the top of the Z-order)
+                    activeLayersStore.insert(0, [recordToAdd]);
                     
                     //invoke this layer as being checked
                     activeLayerCheckHandler(complexFeaturesPanel.getSelectionModel().getSelected(), true);
@@ -142,8 +142,8 @@ Ext.onReady(function() {
 
                 //Only add if the record isn't already there
                 if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {                
-                    //add to active layers
-                    activeLayersStore.add(recordToAdd);
+                    //add to active layers (At the top of the Z-order)
+                    activeLayersStore.insert(0, [recordToAdd]);
                     
                     //invoke this layer as being checked
                     activeLayerCheckHandler(wmsLayersPanel.getSelectionModel().getSelected(), true);
@@ -209,6 +209,25 @@ Ext.onReady(function() {
             {   name: 'dataSourceImage' }
         ])
     });
+
+    /**
+     *Iterates through the activeLayersStore and updates each WMS layer's Z-Order to is position within the store
+     *
+     *This function will refresh every WMS layer too
+     */
+    var updateActiveLayerZOrder = function() {
+        //Update the Z index for each WMS item in the store
+        for (var i = 0; i < activeLayersStore.getCount(); i++) {
+            var record = activeLayersStore.getAt(i);
+
+            if (record.tileOverlay && record.get('serviceType') == 'wms') {
+                record.tileOverlay.zPriority = activeLayersStore.getCount() - i;
+
+                map.removeOverlay(record.tileOverlay);
+                map.addOverlay(record.tileOverlay);
+            }
+        }
+    };
 
     /**
      *@param forceApplyFilter (Optional) if set AND isChecked is set AND this function has a filter panel, it will force the current filter to be loaded
@@ -377,7 +396,8 @@ Ext.onReady(function() {
 
         record.tileOverlay = new GTileLayerOverlay(tileLayer);
 
-        map.addOverlay(record.tileOverlay);
+        //This will handle adding the WMS layer (as well as updating the Z-Order)
+        updateActiveLayerZOrder();
     };
 
     var activeLayerSelectionHandler = function(sm, index, record) {
@@ -457,17 +477,25 @@ Ext.onReady(function() {
                 }
             };
 
+    var activeLayersRowDragPlugin = new Ext.ux.dd.GridDragDropRowOrder({
+                    copy: false, 
+                    scrollable: true,
+                    listeners: {afterrowmove: updateActiveLayerZOrder}
+                 });
+
     this.activeLayersPanel = new Ext.grid.GridPanel({
-        plugins: [activeLayersPanelCheckColumn, activeLayersPanelExpander],
+        plugins: [activeLayersPanelCheckColumn, 
+                  activeLayersPanelExpander,
+                  activeLayersRowDragPlugin],
 
         stripeRows: true,
         autoExpandColumn: 'title',
         viewConfig: {scrollOffset: 0,forceFit:true},
-
         title: 'Active Layers',
         region:'center',
         split: true,
         height: '100',
+        ddText:'',
         //autoScroll: true,
         store: activeLayersStore,
         layout: 'fit',

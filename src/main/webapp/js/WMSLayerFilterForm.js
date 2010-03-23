@@ -8,7 +8,6 @@ WMSLayerFilterForm = function(record, map) {
     var sliderHandler = function(caller, newValue) {
         record.set('opacity', (newValue / 100));
         record.tileOverlay.getTileLayer().opacity = record.get('opacity');
-        record.tileOverlay.refresh();
 
         map.removeOverlay(record.tileOverlay);
         map.addOverlay(record.tileOverlay);
