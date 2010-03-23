@@ -119,7 +119,7 @@ public class CSWController {
 
             tableRow.add(serviceURLs);
 
-            tableRow.add("true");
+            tableRow.element(true);
             tableRow.add("<img src='js/external/extjs/resources/images/default/grid/done.gif'>");
 
             tableRow.add("<img width='16' heigh='16' src='" + knownType.getIconUrl() + "'>");
@@ -191,7 +191,7 @@ public class CSWController {
 
             tableRow.add(serviceURLs);
 
-            tableRow.add("true");
+            tableRow.element(true);
             tableRow.add("<img src='js/external/extjs/resources/images/default/grid/done.gif'>");
 
             tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'></a>");

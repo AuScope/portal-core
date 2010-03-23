@@ -79,7 +79,7 @@ public class TestCSWController {
     public void testGetComplexFeatures() throws Exception {
     	final String orgName = "testOrg";
         final KnownFeatureTypeDefinition def = new KnownFeatureTypeDefinition("0", "1", "2", "3", "4");
-        final String expectedJSONResponse = "[[\"1\",\"2 Institutions: " + orgName + ", \",[\"" + orgName +  "\"],\"3\",\"wfs\","+def.hashCode()+",\"0\",[\"\"],\"true\",\"<img src='js/external/extjs/resources/images/default/grid/done.gif'>\",\"<img width='16' heigh='16' src='4'>\",\"4\",\"<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/page_code.png'><\\/a>\"]]";
+        final String expectedJSONResponse = "[[\"1\",\"2 Institutions: " + orgName + ", \",[\"" + orgName +  "\"],\"3\",\"wfs\","+def.hashCode()+",\"0\",[\"\"],true,\"<img src='js/external/extjs/resources/images/default/grid/done.gif'>\",\"<img width='16' heigh='16' src='4'>\",\"4\",\"<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/page_code.png'><\\/a>\"]]";
         final Iterator mockIterator = context.mock(Iterator.class);
         final StringWriter actualJSONResponse = new StringWriter();
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
@@ -162,7 +162,7 @@ public class TestCSWController {
     public void testGetWMSLayers() throws Exception {
     	final String orgName = "testOrg";
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
-        final String expectedJSONResponse = "[[\"\",\"\",\"" + orgName + "\",\"\",\"wms\","+mockRecord.hashCode()+",\"\",[\"\"],\"true\",\"<img src='js/external/extjs/resources/images/default/grid/done.gif'>\",\"<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'><\\/a>\",\"1.0\"]]";
+        final String expectedJSONResponse = "[[\"\",\"\",\"" + orgName + "\",\"\",\"wms\","+mockRecord.hashCode()+",\"\",[\"\"],true,\"<img src='js/external/extjs/resources/images/default/grid/done.gif'>\",\"<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'><\\/a>\",\"1.0\"]]";
         final Iterator mockIterator = context.mock(Iterator.class);
         final StringWriter actualJSONResponse = new StringWriter();
 
