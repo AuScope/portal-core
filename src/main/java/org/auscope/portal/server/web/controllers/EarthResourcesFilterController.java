@@ -1,6 +1,7 @@
 package org.auscope.portal.server.web.controllers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -105,7 +106,7 @@ public class EarthResourcesFilterController {
             else
                 gmlBlob = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName);
 
-            String kmlBlob =  gmlToKml.convert(gmlBlob, request);
+            String kmlBlob =  convertToKml(gmlBlob, request, serviceUrl);
             //log.debug(kmlBlob);
             
             //This failure test should be made a little bit more robust
@@ -171,7 +172,7 @@ public class EarthResourcesFilterController {
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
             //if everything is good then return the KML
-            return makeModelAndViewKML(gmlToKml.convert(mineralOccurrenceResponse, request), mineralOccurrenceResponse);
+            return makeModelAndViewKML(convertToKml(mineralOccurrenceResponse, request, serviceUrl), mineralOccurrenceResponse);
 
         } catch (Exception e) {
             return this.handleExceptionResponse(e);
@@ -225,7 +226,7 @@ public class EarthResourcesFilterController {
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(miningActivityResponse) == 0)
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
 
-            return makeModelAndViewKML(gmlToKml.convert(miningActivityResponse, request), miningActivityResponse);
+            return makeModelAndViewKML(convertToKml(miningActivityResponse, request, serviceUrl), miningActivityResponse);
 
         } catch (Exception e) {
             return this.handleExceptionResponse(e);
@@ -247,7 +248,7 @@ public class EarthResourcesFilterController {
         try {
             String gmlBlob = this.nvclService.getAllBoreholes(serviceUrl);
 
-            String kmlBlob =  gmlToKml.convert(gmlBlob, request);
+            String kmlBlob = convertToKml(gmlBlob, request, serviceUrl);
             //log.debug(kmlBlob);
                 
             // This failure test should be more robust,
@@ -261,16 +262,6 @@ public class EarthResourcesFilterController {
             return this.handleExceptionResponse(e);
         }
     }    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /**
      * Exception resolver that maps exceptions to views presented to the user
@@ -334,5 +325,16 @@ public class EarthResourcesFilterController {
 
         return new JSONModelAndView(model);
     }
-   
+    
+    
+    /**
+     * Assemble a call to convert GeoSciML into kml format 
+     * @param geoXML
+     * @param httpRequest
+     * @param serviceUrl
+     */
+    private String convertToKml(String geoXML, HttpServletRequest httpRequest, String serviceUrl) {
+        InputStream inXSLT = httpRequest.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
+        return gmlToKml.convert(geoXML, inXSLT, serviceUrl);
+    }
 }

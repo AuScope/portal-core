@@ -18,6 +18,8 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
+import java.io.InputStream;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -25,8 +27,7 @@ import java.util.HashMap;
  * Acts as a proxy to WFS's
  *
  * User: Mathew Wyatt
- * Date: 17/08/2009
- * Time: 12:10:41 PM
+ * @version $Id$
  */
 
 @Controller
@@ -57,22 +58,23 @@ public class GSMLController {
                                            @RequestParam("typeName") final String featureType,
                                            HttpServletRequest request) throws Exception {
 
-        String gmlResponse = serviceCaller.getMethodResponseAsString(new ICSWMethodMaker() {
-            public HttpMethodBase makeMethod() {
-                GetMethod method = new GetMethod(serviceUrl);
+        String gmlResponse = 
+            serviceCaller.getMethodResponseAsString(new ICSWMethodMaker() {
+                public HttpMethodBase makeMethod() {
+                    GetMethod method = new GetMethod(serviceUrl);
+    
+                    //set all of the parameters
+                    NameValuePair request = new NameValuePair("request", "GetFeature");
+                    NameValuePair elementSet = new NameValuePair("typeName", featureType);
+    
+                    //attach them to the method
+                    method.setQueryString(new NameValuePair[]{request, elementSet});
+    
+                    return method;
+                }
+            }.makeMethod(), serviceCaller.getHttpClient());
 
-                //set all of the parameters
-                NameValuePair request = new NameValuePair("request", "GetFeature");
-                NameValuePair elementSet = new NameValuePair("typeName", featureType);
-
-                //attach them to the method
-                method.setQueryString(new NameValuePair[]{request, elementSet});
-
-                return method;
-            }
-        }.makeMethod(), serviceCaller.getHttpClient());
-
-         return makeModelAndViewKML(gmlToKml.convert(gmlResponse, request), gmlResponse);
+        return makeModelAndViewKML(convertToKml(gmlResponse, request, serviceUrl), gmlResponse);
     }
 
     @RequestMapping("/xsltRestProxy.do")
@@ -83,7 +85,7 @@ public class GSMLController {
             String result = serviceCaller.getMethodResponseAsString(new GetMethod(serviceUrl), serviceCaller.getHttpClient());
 
             // Send response back to client
-            response.getWriter().println(gmlToKml.convert(result, request));
+            response.getWriter().println(convertToKml(result, request, serviceUrl));
         } catch (Exception e) {
             logger.error(e);
         }
@@ -107,4 +109,25 @@ public class GSMLController {
 
         return new JSONModelAndView(model);
     }
+    
+    /**
+     * Assemble a call to convert GeoSciML into kml format 
+     * @param geoXML
+     * @param httpRequest
+     * @param serviceUrl
+     */
+    private String convertToKml(String geoXML, HttpServletRequest httpRequest, String serviceUrl) {
+        InputStream inXSLT = httpRequest.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
+        return gmlToKml.convert(geoXML, inXSLT, serviceUrl);
+    }
+    /**
+     * Utility method specific to Auscope Portal
+     * @param geoXML
+     * @param httpRequest
+     *
+   public String convert(String geoXML, HttpServletRequest httpRequest) {
+      InputStream inXSLT = httpRequest.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");      
+      return this.convert(geoXML, inXSLT);
+   }
+   */
 }

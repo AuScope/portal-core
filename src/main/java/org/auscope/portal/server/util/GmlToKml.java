@@ -1,47 +1,43 @@
 package org.auscope.portal.server.util;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.io.StringWriter;
 
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.Transformer;
-import javax.servlet.http.HttpServletRequest;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 
 /**
- * <p> This class converts geoSciML into KML format </p>
+ * <p> Utility class that converts GeoSciML into KML format </p>
+ * 
  * @author jsanders
+ * @version $Id$
  */
 @Component
 public class GmlToKml {
-   private static final Log log = LogFactory.getLog(GmlToKml.class);
-
-   @Autowired
-   @Qualifier(value = "propertyConfigurer")
-   private PortalPropertyPlaceholderConfigurer hostConfigurer;
-   
+   private static final Log log = LogFactory.getLog(GmlToKml.class);   
    
    /**
-    * Utility method to transform xml file. It is kml.xml specific as it sets
-    * uriResolverURL parameter for the stylesheet.
-    * @param geoXML file to be converted in geoSciMl format
+    * Utility method to transform xml file. It is kml.xml specific as 
+    * the stylesheet needs serviceURL parameter.
+    * 
+    * @param geoXML file to be converted in kml format
     * @param inXSLT XSLT stylesheet
+    * @param serviceUrl URL of the service providing data
     * @return Xml output string
     */   
-   public String convert(String geoXML, InputStream inXSLT) {
-      log.debug("GML input: " + geoXML);      
+   public String convert(String geoXML, InputStream inXSLT, String serviceUrl) {
+      log.debug("GML input: \n" + geoXML);      
       StringWriter sw = new StringWriter();
       try {
          // Use the static TransformerFactory.newInstance() method:
@@ -61,9 +57,7 @@ public class GmlToKml {
             = tFactory.newTransformer (new StreamSource(inXSLT));
          
          // Set stylesheet parameter 
-         transformer.setParameter 
-            ("uriResolverURL"
-            , hostConfigurer.resolvePlaceholder("HOST.uriResolver.url"));
+         transformer.setParameter("serviceURL", serviceUrl);
          
          // Write the output to updateCSWRecords stream
          transformer.transform (new StreamSource (new StringReader(geoXML)),
@@ -81,9 +75,10 @@ public class GmlToKml {
      * Utility method specific to Auscope Portal
      * @param geoXML
      * @param httpRequest
-     */
+     *
    public String convert(String geoXML, HttpServletRequest httpRequest) {
       InputStream inXSLT = httpRequest.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
       return this.convert(geoXML, inXSLT);
    }
+   */
 }
