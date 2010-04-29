@@ -7,11 +7,11 @@
  
 /**
  * @constructor
- * @param {GMap2}
- * @param {GMarker}
+ * @param {GMap2} iMap
+ * @param {GMarker} iMarker
  */ 
 function NvclInfoWindow(iMap, iMarker) {
-     
+ 
     this.Map = iMap;    
     this.Marker = iMarker;
     this.tabsArray = [];                            // Window Tabs    
@@ -24,16 +24,15 @@ function NvclInfoWindow(iMap, iMarker) {
                 "<img src=\"img/wait.gif\" style=\"padding-top:50px;\" />" +
             "</p>" +
         "</div>";                    
-    
+    this.wfsServiceUrl = iMarker.wfsUrl; 
     /**
-     * From Url remove pathname and return only protocol with hostname
-     * eg.: http://server.com.au:80/some_path --> http://server.com.au:80 
+     * iMarker.wfsUrl comes from GeoNetwork and represents GeoServer's service 
+     * Url. From this Url we remove pathname and return only protocol with 
+     * hostname eg.: http://server.com.au/nvcl/wfs --> http://server.com.au  
      */       
-    this.wfsServerUrl = (function(url) {
-        
+    this.geoServerUrl = (function(url) {        
         var str = url.slice( ("http://").length);   
         return 'http://' + str.slice(0,str.indexOf("/"));
-        
     })(iMarker.wfsUrl);
 }
 
@@ -53,16 +52,14 @@ NvclInfoWindow.prototype = {
         //And update it with the downloaded data as it arrives
         this.retrieveDatasets();  
     },
-    
-    
-    
+            
     /*
      * Returns datasets for the selected borehole
      */
     'retrieveDatasets' : function() {
         
         var me = this;
-        var serverAddr = this.wfsServerUrl;      
+        var serverAddr = this.geoServerUrl;      
         var url = ProxyURL + serverAddr + this.NVCL_SERVICE + this.Marker.title;
 
         var myMask = new Ext.LoadMask(Ext.get('center_region'), {msg:"Please wait..."});
@@ -151,10 +148,10 @@ NvclInfoWindow.prototype = {
             lHtml +=       '</select>' +
                            '<div align="right">' +
                               '<br>' +
-                              '<input type="button" id="displayDatasetBtn"  value="Display" name=butSelectDataset onclick="showBoreholeDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value);">' +
+                              '<input type="button" id="displayDatasetBtn"  value="Display" name=butSelectDataset onclick="showBoreholeDetails(\''+ this.boreholeId +'\',\''+ this.geoServerUrl +'\', this.form.selDataset.value);">' +
                               '&#160;' +
                               '&#160;' +
-                              '<input type="button" id="downloadDatasetBtn" value="Download" name=butDownloadDataset onclick="showDownloadDetails(\''+ this.boreholeId +'\',\''+ this.wfsServerUrl +'\', this.form.selDataset.value)">' +
+                              '<input type="button" id="downloadDatasetBtn" value="Download" name=butDownloadDataset onclick="showDownloadDetails(\''+ this.boreholeId +'\',\''+ this.wfsServiceUrl +'\',\''+ this.geoServerUrl +'\', this.form.selDataset.value)">' +
                            '</div>' +
                         '</form>' +
                      '</div>';   
@@ -170,10 +167,10 @@ NvclInfoWindow.prototype = {
  * new Ext JS window with borehole details
  * 
  * @param {String} iBoreholeId
- * @param {String} iServerName
+ * @param {String} iServerUrl
  * @param {String} iDatasetId
  */
-function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
+function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
 
     Ext.QuickTips.init();
         
@@ -182,8 +179,8 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
     var MOSAIC_PATH = '/NVCLDataServices/mosaic.html?logid=';
     var PLOT_PATH   = '/NVCLDataServices/plotscalar.html?logid=';
 
-    var aLogMosaic  = getImageLog(iServerName, lDatasetId, "Mosaic");        
-    var aLog        = getImageLog(iServerName, lDatasetId, "Imagery");
+    var aLogMosaic  = getImageLog(iServerUrl, lDatasetId, "Mosaic");        
+    var aLog        = getImageLog(iServerUrl, lDatasetId, "Imagery");
       
     // Borehole detail window  
     var win = new Ext.Window({
@@ -226,7 +223,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             endSampleNo = 1 * endSampleNo + incr;
             Ext.getCmp('card-prev').setDisabled(startSampleNo < 1);
             //Ext.get('nav').dom.src = "http://nvclwebservices.vm.csiro.au/NVCLDataServices/mosaic.html?logid=fae8f90d-2015-4200-908a-b30da787f01&startsampleno=" + startSampleNo + "&endsampleno=" + endSampleNo;
-            Ext.get('imageryFrame').dom.src = iServerName + MOSAIC_PATH + aLog.LogId + '&startsampleno=' + startSampleNo + '&endsampleno=' + endSampleNo;
+            Ext.get('imageryFrame').dom.src = iServerUrl + MOSAIC_PATH + aLog.LogId + '&startsampleno=' + startSampleNo + '&endsampleno=' + endSampleNo;
             
             // Ext.fly ... does not work in IE7
             //Ext.fly('display-count').update('Displayying Images: ' + startSampleNo + ' - ' + endSampleNo + ' of ' + totalCount);
@@ -244,7 +241,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             id:     'mosaicTab',
             layout:'fit',
             html: '<iframe id="nav" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' + 
-                  iServerName + MOSAIC_PATH + aLogMosaic.LogId + 
+                  iServerUrl + MOSAIC_PATH + aLogMosaic.LogId + 
                   '"></iframe>'            
        });
     }
@@ -256,7 +253,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
             id:     'imageryTab',
             layout:'fit',
             html: '<iframe id="imageryFrame" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="' +
-                  iServerName + MOSAIC_PATH + aLog.LogId +
+                  iServerUrl + MOSAIC_PATH + aLog.LogId +
                   '&startsampleno='+ startSampleNo +
                   '&endsampleno=' + sampleIncrement +
                   '"></iframe>',            
@@ -280,7 +277,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
 
     // List of Scalars
     var scalarStore = new Ext.data.XmlStore({
-        url     : ProxyURL + iServerName + LOG_PATH + lDatasetId,
+        url     : ProxyURL + iServerUrl + LOG_PATH + lDatasetId,
         record  : 'Log',
         idPath  : 'LogID',
         fields  : ['LogID','logName']
@@ -515,7 +512,7 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
                             var s = scalarGrid.getSelectionModel().getSelections();
                             for(var i = 0, len = s.length; i < len; i++){
                                 sHtml +='<img src="'; 
-                                sHtml += ProxyURL + iServerName + PLOT_PATH;
+                                sHtml += ProxyURL + iServerUrl + PLOT_PATH;
                                 sHtml += s[i].data.LogID;
                                 sHtml += '&' + scalarForm.getValues(true);
                                 sHtml += '&width=300';
@@ -563,30 +560,29 @@ function showBoreholeDetails(iBoreholeId, iServerName, iDatasetId) {
  * new Ext JS window with borehole details
  * 
  * @param {String} iBoreholeId
- * @param {String} iServerName
+ * @param {String} iWfsServiceUrl - GeoServer Borehole service url
+ * @param {String} iServerUrl
  * @param {String} iDatasetId
  */
-function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
-    
+function showDownloadDetails(iBoreholeId, iWfsServiceUrl, iServerUrl, iDatasetId) {
+
     var lDatasetId   = iDatasetId.replace(/'/g, '');
     
-    //"http://nvclwebservices.vm.csiro.au/geoserver/wfs?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='6dd70215-fe38-457c-be42-3b165fd98c7')&outputformat=csv",
-    var CSV_PATH     = Ext.util.Format.htmlEncode("/geoserverBH/wfs?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='");
+    var CSV_PATH     = Ext.util.Format.htmlEncode("?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='");
     var CSV_PATH_END = Ext.util.Format.htmlEncode("')&outputformat=csv");
-    
-    var TSG_PATH     = '/NVCLTSGDownloadServices/downloadtsg.html?';
     
     //'/xsltRestProxy.do?serviceUrl=' + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au'     
     //restproxy?http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au'
-    var TSG_CHCK_PATH= ProxyURL + iServerName + '/NVCLTSGDownloadServices/checkstatus.html?email=';
-    
-    // http://nvclwebservices.vm.csiro.au/geoserver/wfs?request=GetFeature&typeName=sa:SamplingFeatureCollection&FILTER=%3CFilter%3E%3CFeatureId%20fid=%22SamplingFeatureCollectionID_6dd70215-fe38-457c-be42-3b165fd98c7%22/%3E%3C/Filter%3E
-    //var O_M_PATH     = iServerName + '/geoserver/wfs?request=GetFeature&typeName=sa:SamplingFeatureCollection&FILTER=%3CFilter%3E%3CFeatureId%20fid=%22SamplingFeatureCollectionID_';
-    //var O_M_PATH_END = '%22/%3E%3C/Filter%3E';
+    //var TSG_CHCK_PATH= ProxyURL + iServerUrl + '/NVCLTSGDownloadServices/checkstatus.html?email=';
+    var TSG_PATH     = '/NVCLDownloadServices/downloadtsg.html?';
+    var TSG_CHCK_PATH = '/NVCLDownloadServices/checktsgstatus.html?email=';
 
-    // TODO: Get gsml:Borehole from request insted of hardcoding
-    var O_M_PATH     = iServerName + '/geoserverOM/wfs?request=GetFeature&typeName=gsml:Borehole&featureid=';
-               
+    // TODO: Get gsml:Borehole from request instead of hardcoding    
+    // http://apacsrv3.arrc.csiro.au/nvcldownload-services/downloadwfs.html?email=florence.tan@csiro.au&boreholeid=UDD1420&serviceurl=http://apacsrv3.arrc.csiro.au/geoserverOM/wfs&typename=gsml:Borehole      
+    // http://apacsrv3.arrc.csiro.au/nvcldownload-services/checkwfsstatus.html?email= Jarek.Sanders@csiro.au
+    var O_M_PATH = '/NVCLDownloadServices/downloadwfs.html?';
+    var O_M_CHCK_PATH = '/NVCLDownloadServices/checkwfsstatus.html?';
+    
     // Dataset download window  
     var win = new Ext.Window({
         id              : 'nvclDownloadWindow',        
@@ -601,7 +597,7 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
         title           : 'Borehole Id:  '+ iBoreholeId,
         height          : 400,          
         width           : 500,
-        defaultButton   :'emailAddress',
+        //defaultButton   :'emailAddress',
         items:[{
             // Bounding form
             id      :'nvclDownloadFrm',
@@ -641,8 +637,9 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                 buttons:[{
                     text : 'Download',
                     xtype: 'linkbutton',
-                    href : iServerName + CSV_PATH + lDatasetId + CSV_PATH_END
-                    //handler: function(){ console.log(iServerName + CSV_PATH + lDatasetId + CSV_PATH_END) }
+                    //href : iServerUrl + CSV_PATH + lDatasetId + CSV_PATH_END
+                    href : iWfsServiceUrl + CSV_PATH + lDatasetId + CSV_PATH_END
+                    //handler: function(){ console.log(iServerUrl + CSV_PATH + lDatasetId + CSV_PATH_END) }
                 }],
                 listeners: {
                     'expand' : {
@@ -662,7 +659,7 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                 bodyStyle       : 'padding: 0 0 0 50px',
                 //html :"<div style='margin-left:60px;'><br>(*) denotes mandatory fields</div>",
                 items:[{
-                    id              : 'emailAddress',                        
+                    id              : 'tsgEmailAddress',                        
                     xtype           : 'textfield',
                     fieldLabel      : 'Email Address*',
                     value           : 'Your.Name@csiro.au',
@@ -688,25 +685,25 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                 buttons:[{
                     text: 'Check Status',
                     handler: function() {
-                        var sEmail = Ext.getCmp('emailAddress').getValue();
+                        var sEmail = Ext.getCmp('tsgEmailAddress').getValue();
                         if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
                             Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');                            
-                            Ext.getCmp('emailAddress').markInvalid();
+                            Ext.getCmp('tsgEmailAddress').markInvalid();
                             return;
                         } else {
+                            Ext.getCmp('omEmailAddress').setValue(sEmail);
                             var sUrl = '';
                             sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="'; 
-                            //sUrl += ProxyURL + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
-                            //sUrl += '/xsltRestProxy.do?serviceUrl=' + 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
-                            sUrl += TSG_CHCK_PATH + sEmail;
+                            sUrl += ProxyURL + iServerUrl + TSG_CHCK_PATH + sEmail;
                             sUrl += '"></iframe>';
-                            
+                            //alert(sUrl);
+                             
                             var winStat = new Ext.Window({
                                 autoScroll  : true,
                                 border      : true,        
                                 //html      : sUrl,
                                 //url       : 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
-                                autoLoad    : TSG_CHCK_PATH + sEmail,
+                                autoLoad    : ProxyURL + iServerUrl + TSG_CHCK_PATH + sEmail,
                                 id          : 'dwldStatusWindow',
                                 layout      : 'fit',
                                 modal       : true,
@@ -726,15 +723,16 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                     text: 'Download',
                     handler: function(button) {
                         var sUrl = '';
-                        var sEmail = Ext.getCmp('emailAddress').getValue();         
+                        var sEmail = Ext.getCmp('tsgEmailAddress').getValue();         
                         if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
                             Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');                            
-                            Ext.getCmp('emailAddress').markInvalid();
+                            Ext.getCmp('tsgEmailAddress').markInvalid();
                             return;
                         } else {
+                            Ext.getCmp('omEmailAddress').setValue(sEmail);
                             var downloadForm = Ext.getCmp('nvclDownloadFrm').getForm();
                             sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="'; 
-                            sUrl += ProxyURL + iServerName + TSG_PATH;
+                            sUrl += ProxyURL + iServerUrl + TSG_PATH;
                             sUrl += downloadForm.getValues(true);
                             sUrl += '"></iframe>';
                             //alert(sUrl);
@@ -770,20 +768,104 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
                         }
                     }
                 }
- 
             },{
                 id              : 'omFldSet',
                 title           : 'Observations and Measurements',
                 checkboxName    : 'om',
                 checkboxToggle  : true,
                 collapsed       : true,
+                bodyStyle       : 'padding: 0 0 0 50px',
+                items:[ {
+                    id            : 'omEmailAddress',
+                    xtype         : 'textfield',
+                    fieldLabel    : 'Email Address*',
+                    value         : 'Your.Name@csiro.au',
+                    name          : 'email',
+                    selectOnFocus : true,
+                    allowBlank    : false,
+                    anchor        : '-50'
+                }],
                 buttonAlign     : 'right',
                 buttons:[{
+                    text    : 'Check Status',
+                    handler : function() {
+                        var sEmail = Ext.getCmp('omEmailAddress').getValue();
+                        if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
+                            Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
+                            Ext.getCmp('omEmailAddress').markInvalid();
+                            return;    
+                        } else {
+                            Ext.getCmp('tsgEmailAddress').setValue(sEmail);
+                            var sUrl = '';
+                            sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="'; 
+                            sUrl += ProxyURL + iServerUrl + O_M_CHCK_PATH;
+                            sUrl += '&email=' + sEmail;
+                            sUrl += '"></iframe>';
+                            //alert(sUrl);
+                            
+                            var winStat = new Ext.Window({
+                                autoScroll  : true,
+                                border      : true,        
+                                //html      : sUrl,
+                                //url       : 'http://nvclwebservices.vm.csiro.au/NVCLTSGDownloadServices/checkstatus.html?email=Jarek.Sanders@csiro.au',
+                                autoLoad    : ProxyURL + iServerUrl + O_M_CHCK_PATH + '&email=' + sEmail,
+                                id          : 'omDwldStatusWindow',
+                                layout      : 'fit',
+                                modal       : true,
+                                plain       : false,
+                                title       : 'Download status: ',
+                                height      : 400,          
+                                width       : 1200
+                              });
+                           
+                            winStat.on('show',function(){
+                                winStat.center();
+                            });                       
+                            winStat.show();
+                        }
+                    }
+                },{
                     text : 'Download',
-                    xtype: 'linkbutton',
-                    //href : O_M_PATH + lDatasetId + O_M_PATH_END
-                    href : O_M_PATH + iBoreholeId
-                    //handler: function(){ console.log(O_M_PATH + lDatasetId + O_M_PATH_END) }                    
+                    handler: function(button) {
+                        var sUrl = '';
+                        var sEmail = Ext.getCmp('omEmailAddress').getValue();         
+                        if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
+                            Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');                            
+                            Ext.getCmp('omEmailAddress').markInvalid();
+                            return;                    
+                        } else {
+                            Ext.getCmp('tsgEmailAddress').setValue(sEmail);
+                            var downloadForm = Ext.getCmp('nvclDownloadFrm').getForm();
+                            sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="'; 
+                            sUrl += ProxyURL + iServerUrl + O_M_PATH;
+                            sUrl += 'boreholeid=' + iBoreholeId;
+                            sUrl += '&serviceurl=' + iServerUrl + '/geoserverOM/wfs';
+                            sUrl += '&typename=gsml:Borehole'; 
+                            sUrl += '&email=' + sEmail;
+                            sUrl += '"></iframe>';
+                            //alert(sUrl);
+                            
+                            var winDwld = new Ext.Window({
+                                autoScroll  : true,
+                                border      : true,        
+                                //autoLoad  : sUrl,
+                                html        : sUrl,
+                                id          : 'dwldWindow',
+                                layout      : 'fit',
+                                maximizable : true,
+                                modal       : true,
+                                plain       : false,
+                                title       : 'Download confirmation: ',
+                                height      : 200,          
+                                width       : 840
+                              });
+                               
+                            winDwld.on('show',function(){
+                                winDwld.center();
+                            });                       
+                            winDwld.show();
+                        }
+                    }                                      
                 }],
                 listeners: {
                     'expand' : {
@@ -819,11 +901,11 @@ function showDownloadDetails(iBoreholeId, iServerName, iDatasetId) {
  * 
  * Note: This function uses synchronous HTTP request as we first need to 
  * get image
- * @param {String} iServerName
+ * @param {String} iServerUrl
  * @param {String} iDatasetId
  * @param {String} iLogName  Image type eg: Mosaic or Imagery 
  */
-function getImageLog(iServerName, iDatasetId, iLogName) {
+function getImageLog(iServerUrl, iDatasetId, iLogName) {
 
     var LOG_PATH     = '/NVCLDataServices/getLogCollection.html?datasetid=';
     var aLogId       = '';
@@ -831,7 +913,7 @@ function getImageLog(iServerName, iDatasetId, iLogName) {
 
     //http://nvclwebservices.vm.csiro.au:80/NVCLDataServices/getLogCollection.html?datasetid=6dd70215-fe38-457c-be42-3b165fd98c7&mosaicsvc=yes
     var logIdQuery   = 
-             ProxyURL + iServerName + LOG_PATH + iDatasetId + '&mosaicsvc=yes';
+             ProxyURL + iServerUrl + LOG_PATH + iDatasetId + '&mosaicsvc=yes';
                             
     try {
         // create an XMLHttpRequest
@@ -863,7 +945,6 @@ function getImageLog(iServerName, iDatasetId, iLogName) {
                 if (GXml.value(aLog[i].selectSingleNode
                         ("*[local-name() = 'LogName']")) == iLogName) {
                     
-                    // To Do: Need to also get <SampleCount> value
                     aLogId = GXml.value(aLog[i].selectSingleNode
                                     ("*[local-name() = 'LogID']"));
                     aSampleCount = GXml.value(aLog[i].selectSingleNode
