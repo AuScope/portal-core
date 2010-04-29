@@ -7,7 +7,7 @@
  
 /**
  * @constructor
- * @param {GMap2} iMap
+ * @param {GMap2}   iMap
  * @param {GMarker} iMarker
  */ 
 function NvclInfoWindow(iMap, iMarker) {
