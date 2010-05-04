@@ -370,13 +370,15 @@ Ext.onReady(function() {
                     selectedRecord.responseTooltip.addResponse(serviceUrl, jsonResponse.msg);
                 }
                 //markerOverlay.addList(markers);
-            } else if (responseCode == -1) {
-                //store the status
+            }else if(responseCode == -1) {
                 selectedRecord.responseTooltip.addResponse(serviceUrl, "Data request timed out. Please try again later.");
+            } else if ((responseCode >= 400) & (responseCode < 500)){
+                alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
+            } else if ((responseCode >= 500) & (responseCode <= 506)){
+                alert('Requested service not available, not implemented or internal service error. Error code is: ' + responseCode);
             } else {
-                //store the status
-                selectedRecord.responseTooltip.addResponse(serviceUrl, "Request resulted in error. Please try again later.");
-            }
+                alert('Remote server returned error code: ' + responseCode);
+            } 
 
             //we are finito
             finishedLoadingHandler();

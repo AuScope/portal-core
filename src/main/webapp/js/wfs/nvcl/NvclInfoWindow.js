@@ -113,7 +113,12 @@ NvclInfoWindow.prototype = {
             } else if(responseCode == -1) {
                 myMask.hide();
                 alert("Data request timed out. Please try later.");
-            } else {
+            } else if ((responseCode >= 400) & (responseCode < 500)){
+                myMask.hide();
+                alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
+            } else if ((responseCode >= 500) & (responseCode <= 506)){
+                myMask.hide();
+            }else {
                 myMask.hide();
                 alert('Remote server returned error code: ' + responseCode);
             }

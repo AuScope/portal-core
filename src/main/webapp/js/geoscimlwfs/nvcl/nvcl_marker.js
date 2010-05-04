@@ -250,6 +250,14 @@ function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
       // the full name of the info tag is "skos:scopeNote"
       scopeNote = GXml.value(aConcepts[0].selectSingleNode("*[local-name() = 'scopeNote']"));
       marker.maScalarNotes[scalarId] = scopeNote;
+    }else if(responseCode == -1) {
+        alert("Data request timed out. Please try later.");
+    } else if ((responseCode >= 400) & (responseCode <= 500)){
+        alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
+    } else if ((responseCode >= 500) & (responseCode <= 506)){
+        alert('Requested service not available, not implemented or internal service error. Error code is: ' + responseCode);
+    }else {
+        alert('Remote server returned error code: ' + responseCode);
     }
   });
 }
@@ -321,6 +329,14 @@ function NVCLMarker_markerClicked()
 
         oNVCLMarker.createSummaryTabHtml();
         oNVCLMarker.createMosaicTabHtml();
+      }else if(responseCode == -1) {
+          selectedRecord.responseTooltip.addResponse(serviceUrl, "Data request timed out. Please try again later.");
+      } else if ((responseCode >= 400) & (responseCode < 500)){
+          alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
+      } else if ((responseCode >= 500) & (responseCode < 506)){
+          alert('Requested service not available, not implemented or internal service error. Error code is: ' + responseCode);
+      } else {
+          alert('Remote server returned error code: ' + responseCode);
       }
     });
 
@@ -986,12 +1002,19 @@ function NVCLMarker_plotSelectedScalars() {
             oMessagesDiv.innerHTML = '<div style="color:red; font-size:12px"> Plots loaded. </div>';
             oMessagesDiv.innerHTML += 'Please select the "Plots" tab to check results.';
           }
-        } else {
-          // Set the message that user should check results on the Plot tab
-          if (oMessagesDiv != null) {
-            oMessagesDiv.style.color = "red";
-            oMessagesDiv.innerHTML = "Error in loading plots. Please try later.";
-          }
+        } else if(responseCode == -1) {
+            myMask.hide();
+            alert("Data request timed out. Please try later.");
+        } else if ((responseCode >= 400) & (responseCode <= 500)){
+            myMask.hide();
+            alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
+        } else if ((responseCode >= 500) & (responseCode < 506)){
+            myMask.hide();
+            alert('Remote server: requested service not available, not implemented or internal service error. Error code is: ' + responseCode);
+        }else {
+            myMask.hide();
+            alert('Remote server returned error code: ' + responseCode);
+        }
         }
       });
     } else if (oMessagesDiv != null) {
