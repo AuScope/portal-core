@@ -33,7 +33,7 @@ public class MineralOccurrenceNamespaceContext implements NamespaceContext {
         return null;
     }
 
-    public Iterator getPrefixes(String s) {
+    public Iterator<String> getPrefixes(String s) {
         return null;
     }
 }

@@ -30,7 +30,7 @@ public class JSONView extends AbstractView {
         this.jsonArray = jsonArray;
     }
 
-    protected void renderMergedOutputModel(Map model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(getContentType());
 
         if(jsonArray != null) { //convert just the array

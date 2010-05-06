@@ -297,7 +297,7 @@ public class EarthResourcesFilterController {
      * @return ModelAndView JSON response object
      */
     private ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob) {
-        final Map data = new HashMap() {{
+        final Map<String,String> data = new HashMap<String,String>() {{
             put("kml", kmlBlob);
             put("gml", gmlBlob);
         }};
