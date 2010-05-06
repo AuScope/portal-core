@@ -1,14 +1,13 @@
 package org.auscope.portal.csw;
 
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Repository;
-
 import java.util.concurrent.Executor;
+
+import org.springframework.stereotype.Repository;
 
 /**
  * User: Mathew Wyatt
  * Date: 12/07/2009
- * Time: 9:07:53 PM
+ * @version $Id$
  */
 @Repository
 public class CSWThreadExecutor implements Executor {

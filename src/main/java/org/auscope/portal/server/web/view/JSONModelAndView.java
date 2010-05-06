@@ -1,7 +1,7 @@
 package org.auscope.portal.server.web.view;
 
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.ui.Model;
+
 import org.springframework.ui.ModelMap;
 import net.sf.json.JSONArray;
 

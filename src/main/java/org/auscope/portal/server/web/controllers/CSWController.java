@@ -1,31 +1,32 @@
 package org.auscope.portal.server.web.controllers;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.auscope.portal.server.web.service.CSWService;
-import org.auscope.portal.csw.CSWRecord;
-import org.auscope.portal.server.web.view.JSONModelAndView;
-import org.auscope.portal.server.web.KnownFeatureTypeDefinition;
-import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
-import org.apache.log4j.Logger;
-import net.sf.json.JSONArray;
-
 import java.util.ArrayList;
 
+import net.sf.json.JSONArray;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
+import org.auscope.portal.server.web.KnownFeatureTypeDefinition;
+import org.auscope.portal.server.web.service.CSWService;
+import org.auscope.portal.server.web.view.JSONModelAndView;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
 /**
- * User: Mathew Wyatt
- * Date: 23/06/2009
- * Time: 4:57:12 PM
+ * @version $Id$
  */
 @Controller
 public class CSWController {
 
-    private Logger logger = Logger.getLogger(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
     private CSWService cswService;
-    private PortalPropertyPlaceholderConfigurer portalPropertyPlaceholderConfigurer;
-    private ArrayList knownTypes;
+    private ArrayList<KnownFeatureTypeDefinition> knownTypes;
 
     /**
      * Construct
@@ -34,21 +35,20 @@ public class CSWController {
     @Autowired
     public CSWController(CSWService cswService,
                          PortalPropertyPlaceholderConfigurer portalPropertyPlaceholderConfigurer,
-                         ArrayList knownTypes) {
+                         ArrayList<KnownFeatureTypeDefinition> knownTypes) {
 
         this.cswService = cswService;
-        this.portalPropertyPlaceholderConfigurer = portalPropertyPlaceholderConfigurer;
         this.knownTypes = knownTypes;
 
         String cswServiceUrl =
             portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.cswservice.url");
-        logger.debug("cswServiceUrl: " + cswServiceUrl);
+        log.debug("cswServiceUrl: " + cswServiceUrl);
         cswService.setServiceUrl(cswServiceUrl);
 
         try {
             cswService.updateRecordsInBackground();
         } catch (Exception e) {
-            logger.error(e);
+            log.error(e);
         }
     }
 
@@ -130,7 +130,7 @@ public class CSWController {
             dataItems.add(tableRow);
         }
         
-        logger.debug("\n" + dataItems.toString());
+        log.debug("\n" + dataItems.toString());
         return new JSONModelAndView(dataItems);
     }
 
@@ -200,7 +200,7 @@ public class CSWController {
 
             dataItems.add(tableRow);
         }
-        logger.debug(dataItems.toString());
+        log.debug(dataItems.toString());
         return new JSONModelAndView(dataItems);
     }
 }

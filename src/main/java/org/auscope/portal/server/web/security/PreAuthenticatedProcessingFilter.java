@@ -4,13 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import org.springframework.security.ui.FilterChainOrder;
-import org.springframework.security.ui.preauth.AbstractPreAuthenticatedProcessingFilter;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 /**
- * This AbstractPreAuthenticatedProcessingFilter implementation obtains 
- * the username from Shibboleth request headers.   
+ * This AbstractPreAuthenticatedProcessingFilter implementation attempts to
+ * extract user information from the HTTP request Shibboleth headers.      
  *  
  * @author Jarek Sanders
  * @version $Id$
@@ -19,9 +17,12 @@ public class PreAuthenticatedProcessingFilter
     extends AbstractPreAuthenticatedProcessingFilter {
     
     protected final Log log = LogFactory.getLog(getClass());
-    
+  
+    @Override
     protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
-      
+        
+        log.debug("getPreAuthenticatedCredentials: " + request.getRequestURI());
+
         java.util.Enumeration<?> eHeaders = request.getHeaderNames();
       
         while(eHeaders.hasMoreElements()) {
@@ -50,9 +51,9 @@ public class PreAuthenticatedProcessingFilter
        return "NONE";
     }
 
-   
+/*   
     public int getOrder() {
        return FilterChainOrder.PRE_AUTH_FILTER;
     }
-    
+*/    
 }

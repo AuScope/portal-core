@@ -12,6 +12,8 @@
         <connection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</connection>
         <developerConnection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</developerConnection>
     </scm>
+    
+    <!-- Build Configuration -->
     <build>
         <finalName>AuScope-Portal</finalName>
         <plugins>
@@ -83,12 +85,12 @@
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
-                <version>6.1.7</version>
+                <version>6.1.16</version>
                 <dependencies>
                     <dependency>
                         <groupId>log4j</groupId>
                         <artifactId>log4j</artifactId>
-                        <version>1.2.13</version>
+                        <version>${log4j.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>
@@ -111,9 +113,11 @@
         </plugins>
     </build>
     
+    <!-- Project properties -->
     <properties>
         <jetty.version>6.1.7</jetty.version>
-        <spring.version>2.5.6</spring.version>
+        <log4j.version>1.2.16</log4j.version>
+        <spring.version>3.0.2.RELEASE</spring.version>
         <spring.security.version>2.0.4</spring.security.version>
         <geotools.version>2.6.1</geotools.version>
     </properties>
@@ -126,6 +130,7 @@
         </repository>
     </repositories>
 
+    <!-- Dependencies -->
     <dependencies>
         <!-- Servlets 2.4 - JSTL 1.1 -->
         <dependency>
@@ -144,31 +149,76 @@
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
         </dependency>
+
+        <!-- Spring framework -->        
+        <!--
+        Core utilities used by other modules.
+        Define this if you use Spring Utility APIs
+        (org.springframework.core.*/org.springframework.util.*)        
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
+            <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javax.servlet</artifactId>
-                    <groupId>jstl</groupId>
-                </exclusion>
-            </exclusions>
+            <scope>compile</scope>
         </dependency>
+        -->
+        <!--
+        Bean Factory and JavaBeans utilities (depends on spring-core)
+        Define this if you use Spring Bean APIs (org.springframework.beans.*)
+        -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <!--
+        Application Context (depends on spring-core, spring-expression, spring-aop, spring-beans)
+        This is the central artifact for Spring's Dependency Injection Container and is generally
+        always defined 
+        (org.springframework.stereotype.*, org.springframework.ui.*)
+        -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope> 
+        </dependency>
+                
+        <!--
+        Web application development utilities applicable to both Servlet and Portlet Environments
+        (depends on spring-core, spring-beans, spring-context)
+        Define this if you use Spring MVC, or wish to use Struts, JSF, or another web framework
+        with Spring (org.springframework.web.*)
+        -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        
+        <!--
+        Spring MVC for Servlet Environments (depends on spring-core, spring-beans, spring-context,
+        spring-web)
+        Define this if you use Spring MVC with a Servlet Container such as Apache Tomcat
+        (org.springframework.web.servlet.*)
+        -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
+            <scope>compile</scope>
         </dependency>
+        
+        <!--
+        Required by any application which uses Spring Security. -->
         <dependency>
             <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core-tiger</artifactId>
-            <version>${spring.security.version}</version>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring.version}</version>
             <exclusions>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-support</artifactId>
@@ -178,7 +228,7 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-taglibs</artifactId>
-            <version>${spring.security.version}</version>
+            <version>${spring.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
@@ -186,21 +236,35 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- 
+        The security namespace parsing code (and hence nothing that you are 
+        likely to use directly in your application). You need it if you are 
+        using the Spring Security XML namespace for configuration. The main 
+        package is org.springframework.security.config.Namespace parsing code -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
             <version>${spring.version}</version>
         </dependency>
+                        
+        <!--
+        JDBC Data Access Library (depends on spring-core, spring-beans, spring-context, spring-tx)
+        Define this if you use Spring's JdbcTemplate API (org.springframework.jdbc.*)
+        -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${spring.version}</version>
+            <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
-            <version>2.0-rc3</version>
+            <version>2.0.8</version>
         </dependency>
+                
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
@@ -217,13 +281,6 @@
             <artifactId>gt-wms</artifactId>
             <version>${geotools.version}</version>
         </dependency>
-        <!-- 
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.7.1</version>
-        </dependency>
-        -->
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>saxon-xom</artifactId>
@@ -233,17 +290,36 @@
             <groupId>RestProxy</groupId>
             <artifactId>RestProxy</artifactId>
             <version>1.1</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.5</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.13</version>
+            <version>${log4j.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>net.jsunit</groupId>
@@ -274,12 +350,12 @@
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
             <version>2.5.1</version>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <version>2.1_3</version>
-        </dependency>
+        </dependency> 
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>

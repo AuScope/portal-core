@@ -2,15 +2,15 @@ package org.auscope.portal.server.web.service;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import org.auscope.portal.csw.CSWGetRecordResponse;
+import org.auscope.portal.csw.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.csw.CSWThreadExecutor;
 import org.auscope.portal.csw.ICSWMethodMaker;
-import org.auscope.portal.csw.CSWMethodMakerGetDataRecords;
-import org.auscope.portal.csw.CSWGetRecordResponse;
 
-import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.util.Util;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ import org.w3c.dom.Document;
  */
 @Service
 public class CSWService {
-    private Logger logger = Logger.getLogger(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
 
     private CSWRecord[] dataRecords = new CSWRecord[0];
     private HttpServiceCaller serviceCaller;
@@ -85,7 +85,7 @@ public class CSWService {
 
             setDatarecords(tempRecords);
         } catch (Exception e) {
-            logger.error(e);
+            log.error(e);
         }
     }
 

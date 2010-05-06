@@ -1,18 +1,18 @@
 package org.auscope.portal.server.util;
 
-import java.io.InputStream;
 import java.io.IOException;
-
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.support.ServletContextResource;
 
 /**
@@ -23,10 +23,12 @@ import org.springframework.web.context.support.ServletContextResource;
  * TransformerFactory factory = TransformerFactory.newInstance(); 
  * factory.setURIResolver(new XmlResolver(servletContext)); 
  * Transformer transformer = factory.newTransformer(new StreamSource(oXSLTStream));
+ * 
+ * @version $Id$
  */
 public class PortalURIResolver implements URIResolver {
 
-   private Logger logger = Logger.getLogger(getClass());
+   protected final Log log = LogFactory.getLog(getClass());
    
    //Servlet Context to pull the file from 
    private ServletContext servletContext;
@@ -35,7 +37,7 @@ public class PortalURIResolver implements URIResolver {
    private String defaultPath = "/WEB-INF/xsl/";
    
    //Simple Cache to improve speed 
-   private Map cache = new HashMap();
+   private Map<String,Source> cache = new HashMap<String,Source>();
    
    /**
     * Create a URIResolver
@@ -55,7 +57,7 @@ public class PortalURIResolver implements URIResolver {
     */
    public Source resolve(String href, String base) throws TransformerException {
       
-      logger.debug("Invoking XmlResolver"); 
+      log.debug("Invoking XmlResolver"); 
       Source source = null;
       
       if (cache.containsKey(href)) {
@@ -72,7 +74,7 @@ public class PortalURIResolver implements URIResolver {
              cache.put(href, source);
 
          } catch (IOException e) {
-            logger.error("Unable to Access Xml stylesheet from PortalUriResolver", e); 
+            log.error("Unable to Access Xml stylesheet from PortalUriResolver", e); 
          } 
       } 
       return source; 

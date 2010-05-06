@@ -15,8 +15,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.auscope.portal.csw.ICSWMethodMaker;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
@@ -42,12 +42,12 @@ import org.xml.sax.InputSource;
 /**
  * User: Mathew Wyatt, Michael Stegherr
  * Date: 27/11/2009
- * Time: 11:55:10 AM
+ * @version $Id$
  */
 @Controller
 public class VocabController {
+    protected final Log log = LogFactory.getLog(getClass());
 
-    private Logger logger = Logger.getLogger(getClass());
     private GetMethod method;
     private HttpServiceCaller httpServiceCaller;
     private VocabularyServiceResponseHandler vocabularyServiceResponseHandler;
@@ -78,7 +78,7 @@ public class VocabController {
         
 
         String vocabServiceUrl = portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.vocabService.url");
-        logger.debug("vocab service URL: " + vocabServiceUrl);
+        log.debug("vocab service URL: " + vocabServiceUrl);
 
         this.method = new GetMethod(vocabServiceUrl);
 
@@ -144,7 +144,7 @@ public class VocabController {
     		return CreateScalarQueryModel(true,response, scopeNoteString, labelString);
     	} catch (Exception ex) {
     		//On error, just return failure JSON (and the response string if any)
-    		logger.error("getVocabQuery ERROR: " + ex.getMessage());
+    		log.error("getVocabQuery ERROR: " + ex.getMessage());
     	
     		return CreateScalarQueryModel(false,response, "", "");
     	}
@@ -169,7 +169,7 @@ public class VocabController {
     @RequestMapping("/getCommodities.do")
     public ModelAndView getCommodities() throws Exception {
 
-        logger.debug("vocab service query: " + this.method.getQueryString());
+        log.debug("vocab service query: " + this.method.getQueryString());
 
         //query the vocab service
         String vocabResponse = this.httpServiceCaller.getMethodResponseAsString(this.method, new HttpClient());
@@ -255,7 +255,7 @@ public class VocabController {
             
         } catch (Exception ex) {
             //On error, just return failure JSON (and the response string if any)
-            logger.error("getAllCommodities Exception: " + ex.getMessage());
+            log.error("getAllCommodities Exception: " + ex.getMessage());
         
             return new JSONModelAndView(dataItems);
         }
