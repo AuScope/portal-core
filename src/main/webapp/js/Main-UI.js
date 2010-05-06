@@ -732,10 +732,29 @@ Ext.onReady(function() {
                 url += '&' + keys[i] + '=' + escape(values[i]);
             }
         }
-        return window.open(url,name);
+        downloadFile(url);
     };
 
-
+    //downloads given specified file.
+    downloadFile = function(url) {
+        var body = Ext.getBody();
+        var frame = body.createChild({
+            tag:'iframe',
+            cls:'x-hidden',
+            id:'iframe',
+            name:'iframe'
+        });
+        var form = body.createChild({
+            tag:'form',
+            cls:'x-hidden',
+            id:'form',
+            target:'iframe',
+            method:'POST'
+        });
+        form.dom.action = url;
+        form.dom.submit();
+    }
+    
     // basic tabs 1, built from existing content
     var tabsPanel = new Ext.TabPanel({
         //width:450,
