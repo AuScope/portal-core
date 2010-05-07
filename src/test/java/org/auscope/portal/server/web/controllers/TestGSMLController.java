@@ -1,21 +1,26 @@
 package org.auscope.portal.server.web.controllers;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
-import org.jmock.Mockery;
-import org.jmock.Expectations;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
-import org.auscope.portal.server.util.GmlToKml;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpClient;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.auscope.portal.server.util.GmlToKml;
+import org.auscope.portal.server.web.service.HttpServiceCaller;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * User: Mathew Wyatt
@@ -68,7 +73,7 @@ public class TestGSMLController {
             oneOf(httpServiceCaller).getHttpClient();
             oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
 
-            oneOf(gmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class)));will(returnValue(kmlBlob));
+            oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
         }});
 
         ModelAndView modelAndView = gsmlController.requestAllFeatures("fake", "fake", null);
@@ -90,7 +95,7 @@ public class TestGSMLController {
             oneOf(httpServiceCaller).getHttpClient();
             oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
 
-            oneOf(gmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class)));will(returnValue(kmlBlob));
+            oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
             oneOf(mockHttpResponse).getWriter();will(returnValue(new PrintWriter(responseString)));
         }});
 

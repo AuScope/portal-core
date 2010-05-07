@@ -1,21 +1,23 @@
 package org.auscope.portal.server.web.service;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
-import org.jmock.Mockery;
-import org.jmock.Expectations;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.auscope.portal.csw.CSWThreadExecutor;
-import org.auscope.portal.server.util.Util;
-import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.auscope.portal.csw.CSWThreadExecutor;
+import org.auscope.portal.server.util.Util;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * User: Mathew Wyatt
  * Date: 20/08/2009
- * Time: 12:05:48 PM
+ * @version $Id$
  */
 public class TestCSWService {
 
@@ -40,11 +42,6 @@ public class TestCSWService {
      * Mock thread executor
      */
     private CSWThreadExecutor threadExecutor = context.mock(CSWThreadExecutor.class);
-
-     /**
-     * Mock property configurer
-     */
-    private PortalPropertyPlaceholderConfigurer propertyConfigurer = context.mock(PortalPropertyPlaceholderConfigurer.class);
 
     /**
      * Mock Util

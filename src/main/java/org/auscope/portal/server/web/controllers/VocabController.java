@@ -104,8 +104,8 @@ public class VocabController {
      * @return
      */
     @RequestMapping("/getScalar.do")
-    public ModelAndView getScalarQuery(@RequestParam("repository") final String repository,
-    								 @RequestParam("label") final String label) throws Exception {
+    public ModelAndView getScalarQuery( @RequestParam("repository") final String repository,
+                                        @RequestParam("label") final String label) throws Exception {
     	String response = ""; 
     	
     	//Attempt to request and parse our response
@@ -150,13 +150,13 @@ public class VocabController {
     	}
     }
     
-    private JSONModelAndView CreateScalarQueryModel(final boolean success, final String data, final String scopeNote, final String label) {
-    	ModelMap map = new ModelMap() {{
-            put("success", success);
-            put("data", data);
-            put("scopeNote", scopeNote);
-            put("label", label);
-        }};
+    private JSONModelAndView CreateScalarQueryModel
+            (final boolean success, final String data, final String scopeNote, final String label) {
+    	ModelMap map = new ModelMap();
+    	map.put("success", success);
+    	map.put("data", data);
+    	map.put("scopeNote", scopeNote);
+    	map.put("label", label);
         
         return new JSONModelAndView(map);
     }

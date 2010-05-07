@@ -58,6 +58,7 @@ public class TestMineralOccurrenceServiceClient {
 
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockMineResponse = new String();
+        @SuppressWarnings("unchecked")
         final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
@@ -85,6 +86,7 @@ public class TestMineralOccurrenceServiceClient {
         final MineFilter mineFilter = new MineFilter(mineName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockMineResponse = new String();
+        @SuppressWarnings("unchecked")
         final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
@@ -109,6 +111,7 @@ public class TestMineralOccurrenceServiceClient {
 
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockCommodityResponse = new String();
+        @SuppressWarnings("unchecked")
         final Collection<Mine> mockCommodities = (Collection<Mine>)context.mock(Collection.class);
 
         context.checking(new Expectations() {{
@@ -134,6 +137,7 @@ public class TestMineralOccurrenceServiceClient {
         final CommodityFilter commodityFilter = new CommodityFilter(commodityName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockCommodityResponse = new String();
+        @SuppressWarnings("unchecked")
         final Collection<Commodity> mockCommodities = (Collection<Commodity>)context.mock(Collection.class);
 
         context.checking(new Expectations() {{
@@ -245,7 +249,7 @@ public class TestMineralOccurrenceServiceClient {
                                                                     commodityName,
                                                                     measureType,
                                                                     minOreAmount,
-                                                                    minCommodityAmountUOM,
+                                                                    minOreAmountUOM,
                                                                     minCommodityAmount,
                                                                     minCommodityAmountUOM,
                                                                     cutOffGrade,

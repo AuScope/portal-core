@@ -1,35 +1,32 @@
 package org.auscope.portal.server.web.controllers;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
-import org.auscope.portal.server.web.service.MineralOccurrenceService;
-import org.auscope.portal.server.web.ErrorMessages;
-import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
-import org.auscope.portal.mineraloccurrence.Mine;
-import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.util.Util;
-import org.jmock.Mockery;
-import org.jmock.Expectations;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
-import org.apache.commons.httpclient.ConnectTimeoutException;
-import org.auscope.portal.server.web.service.NvclService;
-
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.List;
-import java.net.UnknownHostException;
-import java.net.ConnectException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
+import org.auscope.portal.server.util.GmlToKml;
+import org.auscope.portal.server.web.service.CommodityService;
+import org.auscope.portal.server.web.service.MineralOccurrenceService;
+import org.auscope.portal.server.web.service.NvclService;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import org.springframework.web.servlet.ModelAndView;
+
+/**
+ * @author san218
+ * @version $Id$
+ */
 public class TestEarthResourcesFilterController {
-    private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
     private EarthResourcesFilterController earthResourcesFilterController;
     private MineralOccurrenceService mineralOccurrenceService;
@@ -37,6 +34,7 @@ public class TestEarthResourcesFilterController {
     private HttpServletResponse mockHttpResponse;
     private GmlToKml mockGmlToKml;
     private NvclService mockNvclService;
+    private CommodityService mockCommodityService;
 
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
@@ -44,15 +42,14 @@ public class TestEarthResourcesFilterController {
 
     @Before
     public void setup() {
-        this.httpServiceCaller =  context.mock(HttpServiceCaller.class);
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.mineralOccurrenceService = context.mock(MineralOccurrenceService.class);
         this.mockGmlToKml = context.mock(GmlToKml.class);
         this.mockNvclService = context.mock(NvclService.class);
-        this.earthResourcesFilterController = new EarthResourcesFilterController(this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService,this.mockNvclService, this.mockGmlToKml);
+        this.earthResourcesFilterController = new EarthResourcesFilterController(this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService,this.mockNvclService, this.mockGmlToKml, this.mockCommodityService);
         this.mockHttpRequest = context.mock(HttpServletRequest.class);
         this.mockHttpResponse = context.mock(HttpServletResponse.class);
-
+        this.mockCommodityService = context.mock(CommodityService.class);
     }
     
     /**
@@ -61,23 +58,23 @@ public class TestEarthResourcesFilterController {
      */
     @Test
     public void testDoMineFilterSpecificError() throws Exception {
-    	final String mineName = "testMine";
-    	final String serviceURL = "http://testblah.com";
-    	final String expectedKML = ""; 
-    	final String xmlErrorResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetMineError.xml");
-    	final StringWriter jsonResponse = new StringWriter();
-    	
-    	context.checking(new Expectations() {{
-    		oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName);will(returnValue(xmlErrorResponse));
-    		oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class))); will(returnValue(expectedKML));
-    		
-    		//check that the correct response is getting output
-    		oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-    		oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
-    	}});
-    	
-    	ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName,  mockHttpRequest);
-
+        final String mineName = "testMine";
+        final String serviceURL = "http://testblah.com";
+        final String expectedKML = ""; 
+        final String xmlErrorResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetMineError.xml");
+        final StringWriter jsonResponse = new StringWriter();
+        
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName);will(returnValue(xmlErrorResponse));
+            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
+            
+            //check that the correct response is getting output
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
+        }});
+        
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName,  mockHttpRequest);
+        
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
         
@@ -95,22 +92,22 @@ public class TestEarthResourcesFilterController {
      */
     @Test
     public void testDoMineFilterAnyError() throws Exception {
-    	final String serviceURL = "http://testblah.com";
-    	final String expectedKML = ""; 
-    	final String xmlErrorResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetMineError.xml");
-    	final StringWriter jsonResponse = new StringWriter();
-    	
-    	context.checking(new Expectations() {{
-    		oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL);will(returnValue(xmlErrorResponse));
-    		oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class))); will(returnValue(expectedKML));
-    		
-    		//check that the correct response is getting output
-    		oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-    		oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
-    	}});
-    	
-    	ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, "",  mockHttpRequest);
-
+        final String serviceURL = "http://testblah.com";
+        final String expectedKML = "";
+        final String xmlErrorResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetMineError.xml");
+        final StringWriter jsonResponse = new StringWriter();
+        
+        context.checking(new Expectations() {{
+            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL);will(returnValue(xmlErrorResponse));
+            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
+            
+            //check that the correct response is getting output
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
+        }});
+        
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, "",  mockHttpRequest);
+        
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
         
@@ -138,7 +135,7 @@ public class TestEarthResourcesFilterController {
 
         context.checking(new Expectations() {{
             oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL);will(returnValue(expectedGML));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(HttpServletRequest.class))); will(returnValue(expectedKML));
+            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));

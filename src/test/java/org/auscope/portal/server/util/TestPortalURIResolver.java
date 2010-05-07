@@ -1,22 +1,22 @@
 package org.auscope.portal.server.util;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
-import org.jmock.Mockery;
-import org.jmock.Expectations;
-import org.jmock.lib.legacy.ClassImposteriser;
+import java.io.InputStream;
 
 import javax.servlet.ServletContext;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.Source;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.transform.TransformerException;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * User: Mathew Wyatt
  * Date: 28/08/2009
- * Time: 3:03:49 PM
+ * @version $Id$
  */
 public class TestPortalURIResolver {
 

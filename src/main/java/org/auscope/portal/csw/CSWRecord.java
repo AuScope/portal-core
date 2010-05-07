@@ -9,11 +9,10 @@ import javax.xml.xpath.XPathExpressionException;
 /**
  * User: Mathew Wyatt
  * Date: 11/02/2009
- * Time: 11:58:21 AM
+ * @version $Id$
  */
 //TODO: refactor into data and service records
 public class CSWRecord {
-    private Node recordNode;
     private String serviceName;
     private String serviceUrl;
     private String onlineResourceName;
@@ -26,7 +25,6 @@ public class CSWRecord {
 
 
     public CSWRecord(Node node) throws XPathExpressionException {
-        //this.recordNode = node;
 
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());

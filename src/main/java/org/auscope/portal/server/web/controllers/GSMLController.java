@@ -97,15 +97,15 @@ public class GSMLController {
      * @return
      */
     private ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob) {
-        final Map<String,String> data = new HashMap<String,String>() {{
-            put("kml", kmlBlob);
-            put("gml", gmlBlob);
-        }};
 
-        ModelMap model = new ModelMap() {{
-            put("success", true);
-            put("data", data);
-        }};
+        final Map<String,String> data = new HashMap<String,String>();
+        data.put("kml", kmlBlob);
+        data.put("gml", gmlBlob);
+
+        
+        ModelMap model = new ModelMap();
+        model.put("success", true);
+        model.put("data", data);
 
         return new JSONModelAndView(model);
     }

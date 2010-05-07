@@ -1,40 +1,40 @@
 package org.auscope.portal.server.web.controllers;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.Assert;
-import org.jmock.Mockery;
-import org.jmock.Expectations;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
-import org.auscope.portal.server.util.GmlToKml;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.Header;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.ServletOutputStream;
-import java.io.*;
-import java.util.zip.ZipInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.auscope.portal.server.web.service.HttpServiceCaller;
+
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * User: Mathew Wyatt
- * Date: 10/09/2009
- * Time: 10:46:21 AM
+ * @version $Id$
  */
-
-
 public class TestDownloadController {
-
+    
     /**
      * JMock context
      */
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
-
+    
     /**
      * Mock httpService caller
      */
@@ -44,29 +44,27 @@ public class TestDownloadController {
      * The controller to test
      */
     private DownloadController downloadController;
-
+    
     /**
      * Mock response
      */
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
-
+    
     /**
      * Needed so we can check the contents of our zip file after it is written
      */
     final class MyServletOutputStream extends ServletOutputStream {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
+        
         public void write(int i) throws IOException {
             byteArrayOutputStream.write(i);
         }
-
+        
         public ZipInputStream getZipInputStream() {
             return new ZipInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
         }
-    }
-
-    ;
-
+    };
+    
     @Before
     public void setup() {
         downloadController = new DownloadController(httpServiceCaller);
@@ -81,7 +79,7 @@ public class TestDownloadController {
         final String[] serviceUrls = {"http://someUrl"};
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\"" + dummyGml + "\"},\"success\":true}";
-
+        
         context.checking(new Expectations() {{
             //setting of the headers for the return content
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
@@ -97,21 +95,22 @@ public class TestDownloadController {
 
         downloadController.downloadGMLAsZip(serviceUrls, mockHttpResponse);
 
-        //check that the zip file contains the correct data
-        ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
-        ZipEntry ze = null;
-        while ((ze = zipInputStream.getNextEntry()) != null) {
+        // Check that the zip file contains the correct data
+        ZipInputStream in = servletOutputStream.getZipInputStream();
+        while (in.available() != 0) {
             ByteArrayOutputStream fout = new ByteArrayOutputStream();
-            for (int c = zipInputStream.read(); c != -1; c = zipInputStream.read()) {
+            for (int c = in.read(); c != -1; c = in.read()) {
                 fout.write(c);
             }
-            zipInputStream.closeEntry();
+            in.closeEntry();
             fout.close();
 
             //should only have one entery with the gml data in it
             Assert.assertEquals(new String(dummyGml.getBytes()), new String(fout.toByteArray()));
+            
         }
-        zipInputStream.close();
+        
+        in.close();
     }
 
     /**
@@ -121,7 +120,7 @@ public class TestDownloadController {
      */
     @Test
     public void testDownloadGMLAsZipWithJSONError() throws Exception {
-    	final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
+        final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
         final String[] serviceUrls = {"http://someUrl", "http://someOtherUrl"};
         final String dummyMessage = "hereisadummymessage";
         final String dummyJSONResponse = "{\"msg\": '" + dummyMessage +  "',\"success\":false}";
