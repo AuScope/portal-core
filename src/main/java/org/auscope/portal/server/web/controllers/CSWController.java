@@ -67,14 +67,19 @@ public class CSWController {
      */
     @RequestMapping("/getComplexFeatures.do")
     public ModelAndView getComplexFeatures() throws Exception {
+
         //update the records if need be
         cswService.updateRecordsInBackground();
 
         //the main holder for the items
         JSONArray dataItems = new JSONArray();
 
+        log.info("WFS Layers: ");
         for(Object known : knownTypes) {
+
             KnownFeatureTypeDefinition knownType = (KnownFeatureTypeDefinition)known;
+
+            log.info("KnownType: " + knownType.getFeatureTypeName() + " --> " + knownType.getDisplayName());
 
             //Add the mineral occurrence
             JSONArray tableRow = new JSONArray();
@@ -88,10 +93,12 @@ public class CSWController {
             JSONArray serviceURLs = new JSONArray();
 
             //if there are no services available for this feature type then don't show it in the portal
-            if(records.length == 0)
-                break;
+            if(records.length == 0) {                
+                continue;
+            }
 
             for(CSWRecord record : records) {
+                log.info("...registered service: " + record.getServiceUrl());
                 serviceURLs.add(record.getServiceUrl());
                 servicesDescription += record.getContactOrganisation() + ", ";
                 contactOrgs.add(record.getContactOrganisation());

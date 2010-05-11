@@ -42,6 +42,9 @@ public class HttpServiceCaller {
         //release the connection
         method.releaseConnection();
 
+        log.debug("XML response from server:");
+        log.debug("\n" + response);
+        
         //return it
         return response;
     }

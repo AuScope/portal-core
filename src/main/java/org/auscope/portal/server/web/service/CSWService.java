@@ -78,7 +78,8 @@ public class CSWService {
     public void updateCSWRecords() {
         try {
             ICSWMethodMaker getRecordsMethod = new CSWMethodMakerGetDataRecords(serviceUrl);
-
+            log.debug("....................................................");
+            log.debug(getRecordsMethod.makeMethod().getQueryString());
             Document document = util.buildDomFromString(serviceCaller.getMethodResponseAsString(getRecordsMethod.makeMethod(), serviceCaller.getHttpClient()));
 
             CSWRecord[] tempRecords = new CSWGetRecordResponse(document).getCSWRecords();
