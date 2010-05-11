@@ -12,7 +12,39 @@ MiningActivityFilterForm = function(id, serviceUrl) {
             root:'data'
         }, [{name:'mineDisplayName', mapping:'mineDisplayName'}])
     });*/
+	
+    //-----------Commodities
 
+    var commodityStore = new Ext.data.SimpleStore({
+        fields   : ['urn', 'label'],
+        proxy    : new Ext.data.HttpProxy({url: '/getAllCommodities.do'}),
+        sortInfo : {field:'label',order:'ASC'},
+        reader : new Ext.data.ArrayReader({}, [
+            { name:'urn'   },
+            { name:'label' }
+        ])
+    });
+    
+    commodityStore.reload();
+    
+    var producedMaterialCombo = new Ext.form.ComboBox({
+        tpl: '<tpl for="."><div ext:qtip="{label}" class="x-combo-list-item">{label}</div></tpl>',
+        anchor         : '100%',
+        name           : 'producedMaterialDisplayed', /* this just returns the values from displayField! */
+        hiddenName     : 'producedMaterial',         /* this returns the values from valueField! */
+        fieldLabel     : 'Produced Material',
+        labelAlign     : 'right',
+        forceSelection : true,
+        mode           : 'local',
+        /*selectOnFocus: true,*/
+        store          : commodityStore,
+        triggerAction  : 'all',
+        typeAhead      : true,
+        displayField   :'label',   /* change tpl field to this value as well! */
+        valueField     :'label'
+    });	
+	
+	
     Ext.FormPanel.call(this, {
         id          : String.format('{0}',id),
         border      : false,
@@ -20,7 +52,7 @@ MiningActivityFilterForm = function(id, serviceUrl) {
         hideMode    : 'offsets',
         width       : '100%',
         labelAlign  : 'right',
-        labelWidth  : 150,
+        labelWidth  : 130,
         timeout     : 180, //should not timeout before the server does
         //height: 300,
         //autoHeight: true,
@@ -28,12 +60,11 @@ MiningActivityFilterForm = function(id, serviceUrl) {
         items: [{
             xtype:'fieldset',
             title: 'Mining Activity Filter Properties',
-            autoHeight:true,
-            defaultType: 'datefield',
+            //autoHeight:true,
+            defaultType: 'textfield',
+            defaults: {anchor: '100%'},
             items :[
             {
-                anchor: '100%',
-                xtype: 'textfield',
                 fieldLabel: 'Associated Mine',
                 name: 'mineName'
             }
@@ -51,40 +82,31 @@ MiningActivityFilterForm = function(id, serviceUrl) {
                 store: mineNamesStore,
                 displayField:'mineDisplayName',
                 valueField:'mineDisplayName'
-            })*/,{
-                anchor: '100%',
-                xtype: 'textfield',
-                fieldLabel: 'Produced Material Name',
-                name: 'producedMaterial'
-            },{
-                anchor: '100%',
-                fieldLabel: 'Mining Activity Start Date',
+            })*/
+            ,producedMaterialCombo
+            ,{
+                xtype: 'datefield',
+                fieldLabel: 'Activity Start Date',
                 name: 'startDate',
-                format: "d/M/Y",
-                value: ''
-            }, {
-                anchor: '100%',
-                fieldLabel: 'Mining Activity End Date',
-                name: 'endDate',
-                format: "d/M/Y",
+                format: "Y-m-d",
                 value: ''
             },{
-                anchor: '100%',
-                xtype: 'textfield',
+                xtype: 'datefield',
+                fieldLabel: 'Activity End Date',
+                name: 'endDate',
+                format: "Y-m-d",
+                value: ''
+            },{
                 fieldLabel: 'Min. Ore Processed',
                 name: 'oreProcessed'
             },{
-                anchor: '100%',
-                xtype: 'textfield',
+                fieldLabel: 'Min. Prod. Amount',
+                name: 'production'
+            },{                
                 fieldLabel: 'Grade',
                 name: 'cutOffGrade',
                 hidden: true,
                 hideLabel: true
-            },{
-                anchor: '100%',
-                xtype: 'textfield',
-                fieldLabel: 'Min. Production Amount',
-                name: 'production'
             }]
         }]
         /*buttons: [{

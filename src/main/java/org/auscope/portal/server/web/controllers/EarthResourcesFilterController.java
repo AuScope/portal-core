@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.auscope.portal.mineraloccurrence.Commodity;
 import org.auscope.portal.mineraloccurrence.Mine;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.util.GmlToKml;
@@ -23,6 +26,7 @@ import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
 import org.auscope.portal.server.web.service.NvclService;
 import org.auscope.portal.server.web.view.JSONModelAndView;
+import org.auscope.portal.server.web.service.CommodityService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,6 +68,7 @@ public class EarthResourcesFilterController {
     private MineralOccurrenceService mineralOccurrenceService;
     private NvclService nvclService;
     private GmlToKml gmlToKml;
+    private CommodityService commodityService;
 
     // ----------------------------------------------------------- Constructors
     
@@ -72,12 +77,14 @@ public class EarthResourcesFilterController {
         ( MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler,
           MineralOccurrenceService mineralOccurrenceService,
           NvclService nvclService,
-          GmlToKml gmlToKml ) {
+          GmlToKml gmlToKml,
+          CommodityService commodityService) {
         
         this.mineralOccurrencesResponseHandler = mineralOccurrencesResponseHandler;
         this.mineralOccurrenceService = mineralOccurrenceService;
         this.nvclService = nvclService;
         this.gmlToKml = gmlToKml;
+        this.commodityService = commodityService;
     }
 
     // ------------------------------------------- Property Setters and Getters   
@@ -149,14 +156,24 @@ public class EarthResourcesFilterController {
             @RequestParam("minCommodityAmountUOM") String minCommodityAmountUOM,
             @RequestParam("cutOffGrade")           String cutOffGrade,
             @RequestParam("cutOffGradeUOM")        String cutOffGradeUOM,
-            HttpServletRequest request) {
+            HttpServletRequest request) 
+    {
         try {
+            Collection<Commodity> commodities = new ArrayList<Commodity>();
+            
+            if (!commodityName.equals("")) {
+                commodities = this.commodityService.get(serviceUrl, commodityName);
+                
+                // If there are 0 features then send nice message to the user
+                if (commodities.size() == 0)
+                    return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
+            }                        
 
             //get the mineral occurrences
             String mineralOccurrenceResponse 
                 = this.mineralOccurrenceService.getMineralOccurrenceGML
                                                       ( serviceUrl,
-                                                        commodityName,
+                                                        commodities, //commodityName,
                                                         measureType,
                                                         minOreAmount,
                                                         minOreAmountUOM,
@@ -164,8 +181,6 @@ public class EarthResourcesFilterController {
                                                         minCommodityAmountUOM,
                                                         cutOffGrade,
                                                         cutOffGradeUOM);
-
-            log.debug("mineralOccurrenceResponse");
 
             // If there are 0 features then send NO_RESULTS message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
@@ -205,27 +220,37 @@ public class EarthResourcesFilterController {
             @RequestParam("producedMaterial") String producedMaterial,
             @RequestParam("cutOffGrade")      String cutOffGrade,
             @RequestParam("production")       String production,
-            HttpServletRequest request) throws IOException, SAXException, XPathExpressionException, ParserConfigurationException 
+            HttpServletRequest request) 
+    throws IOException, SAXException, XPathExpressionException, ParserConfigurationException 
     {
         try {
-            List<Mine> mines;   
-
-            if (mineName.equals(ALL_MINES))
-                mines = this.mineralOccurrenceService.getAllMines(serviceUrl);
-            else
-                mines = this.mineralOccurrenceService.getMineWithSpecifiedName(serviceUrl, mineName);
-
-            //if there are 0 features then send nice message to the user
-            if (mines.size() == 0)
-                return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
+            List<Mine> mines = new ArrayList<Mine>();   
+           
+            if (!mineName.equals("")) {
+                mines = this.mineralOccurrenceService.getMineWithSpecifiedName
+                                                                    ( serviceUrl
+                                                                    , mineName);
+                
+                // If there are 0 features then send nice message to the user
+                if (mines.size() == 0)
+                    return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);                    
+            }
 
             // Get the mining activities
-            String miningActivityResponse = this.mineralOccurrenceService.getMiningActivityGML(serviceUrl, mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
-
+            String miningActivityResponse = 
+                this.mineralOccurrenceService.getMiningActivityGML( serviceUrl
+                                                                  , mines
+                                                                  , startDate
+                                                                  , endDate
+                                                                  , oreProcessed
+                                                                  , producedMaterial
+                                                                  , cutOffGrade
+                                                                  , production);
+            
             // If there are 0 features then send NO_RESULTS message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(miningActivityResponse) == 0)
                 return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
-
+            
             return makeModelAndViewKML(convertToKml(miningActivityResponse, request, serviceUrl), miningActivityResponse);
 
         } catch (Exception e) {
@@ -297,15 +322,13 @@ public class EarthResourcesFilterController {
      * @return ModelAndView JSON response object
      */
     private ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob) {
-        final Map<String,String> data = new HashMap<String,String>() {{
-            put("kml", kmlBlob);
-            put("gml", gmlBlob);
-        }};
-
-        ModelMap model = new ModelMap() {{
-            put("success", true);
-            put("data", data);
-        }};
+        final Map<String,String> data = new HashMap<String,String>();
+        data.put("kml", kmlBlob);
+        data.put("gml", gmlBlob);
+        
+        ModelMap model = new ModelMap();
+        model.put("success", true);
+        model.put("data", data);
 
         return new JSONModelAndView(model);
     }
@@ -318,11 +341,10 @@ public class EarthResourcesFilterController {
      * @return
      */
     private ModelAndView makeModelAndViewFailure(final String message) {
-        ModelMap model = new ModelMap() {{
-            put("success", false);
-            put("msg", message);
-        }};
-
+        ModelMap model = new ModelMap();
+        model.put("success", false);
+        model.put("msg", message);                      
+  
         return new JSONModelAndView(model);
     }
     
