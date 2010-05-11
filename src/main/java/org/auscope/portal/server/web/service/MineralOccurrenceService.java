@@ -1,6 +1,5 @@
 package org.auscope.portal.server.web.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -9,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.auscope.portal.mineraloccurrence.Commodity;
-import org.auscope.portal.mineraloccurrence.CommodityFilter;
 import org.auscope.portal.mineraloccurrence.Mine;
 import org.auscope.portal.mineraloccurrence.MineFilter;
 import org.auscope.portal.mineraloccurrence.MineralOccurrenceFilter;
@@ -129,40 +127,7 @@ public class MineralOccurrenceService {
         return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
     }
 
-    
-    /**
-     * Returns commodities based on a given service and commodityName
-     *
-     * If commodityName is an empty strings a GetALL query will be run
-     *
-     * @param serviceURL
-     * @param commodityName
-     * @return
-     */
-    public Collection<Commodity> getCommodity(String serviceURL, String commodityName) throws Exception {
-        //httpclient method
-        HttpMethodBase method = null;
-
-        // If we don't have a name, then just get all of them
-        if (commodityName.equals("")) {
-            method = methodMaker.makeMethod(serviceURL, "er:Commodity", "");
-        } else {
-            // Create the filter to append to the url
-            CommodityFilter commodityFilter = new CommodityFilter(commodityName);
-            log.debug(serviceURL + "\n" + commodityFilter.getFilterString());
-            
-            //create a GetFeature request with filter constraints on a query
-            method = methodMaker.makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString());
-        }
-
-        //call the service, and get all the commodities
-        String commodityResponse = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-
-        //parse the commodities and return them
-        return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
-    }
-
-    
+        
     /**
      * Given a list of parameters, call a service and get the Mineral Occurrence GML
      * @param serviceURL
@@ -177,7 +142,7 @@ public class MineralOccurrenceService {
      * @return
      */
     public String getMineralOccurrenceGML( String serviceURL,
-                                           String commodityName,
+                                           Collection<Commodity> commodities, // String commodityName,
                                            String measureType,
                                            String minOreAmount,
                                            String minOreAmountUOM,
@@ -185,23 +150,6 @@ public class MineralOccurrenceService {
                                            String minCommodityAmountUOM,
                                            String cutOffGrade,
                                            String cutOffGradeUOM) throws Exception {
-
-        Collection<Commodity> commodities = new ArrayList<Commodity>();        
-
-        // If user selected commodity name, then get commodity' URIs
-        // as we need it for Min Occ query to narrow down search results
-        if (!commodityName.isEmpty()) {
-
-            commodities = this.getCommodity(serviceURL, commodityName);
-              
-            // Can't continue if there are no commodities; Return valid response
-            if (commodities.size() == 0)
-                return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                       "<wfs:FeatureCollection numberOfFeatures=\"0\"" +
-                       "    xsi:schemaLocation=\"http://www.opengis.net/wfs\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\">" +
-                       "    <gml:featureMembers/>" +
-                       "</wfs:FeatureCollection>";
-        }                        
             
         MineralOccurrenceFilter mineralOccurrenceFilter 
             = new MineralOccurrenceFilter( commodities,
@@ -231,12 +179,11 @@ public class MineralOccurrenceService {
                                         String producedMaterial,
                                         String cutOffGrade,
                                         String production) throws Exception {
-        if (mines.size() == 0)
-                return "";
-        
+
         //create the filter
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
-        log.debug(serviceURL + "\n" + miningActivityFilter.getFilterString());
+
+        log.debug("Mining Activity query... \n url:" + serviceURL + "\n" + miningActivityFilter.getFilterString());
         
         //create the method
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterString());
