@@ -10,12 +10,12 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
  * User: Michael Stegherr
  * Date: 27/03/2009
- * Time: 5:13:06 PM
  * @version $Id$
  */
 public class Commodity {
@@ -30,6 +30,22 @@ public class Commodity {
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
     }
 
+    public String getName() {
+        String result = "";
+        try {
+            XPathExpression expr = xPath.compile("gml:name");
+            NodeList list = (NodeList)expr.evaluate(commodityNode, XPathConstants.NODESET);
+            for (int i = 0; i < list.getLength(); i++) {
+                if (list.item(i).getAttributes().getNamedItem("codeSpace").getNodeValue().compareTo("http://www.ietf.org/rfc/rfc2141") == 0) {
+                    result = list.item(i).getTextContent();
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            return "";
+        }
+    }    
+    
     public String getCommodityName() throws XPathExpressionException {
         
         try {
@@ -41,6 +57,17 @@ public class Commodity {
         }
     }
 
+    public String getCommodityImportance() throws XPathExpressionException {
+        
+        try {
+            XPathExpression expr = xPath.compile("er:commodityImportance");
+            Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
+            return result.getTextContent();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+    
     public String getSource() {
 
         try {
@@ -49,18 +76,6 @@ public class Commodity {
             String search  = "urn:cgi";
             String s = result.getAttributes().getNamedItem("xlink:href").getTextContent();
             return s.substring(s.indexOf(search));
-        } catch (Exception e) {
-            return "";
-        }
-    }
-    
-    
-    public String getCommodityImportance() throws XPathExpressionException {
-        
-        try {
-            XPathExpression expr = xPath.compile("er:commodityImportance");
-            Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
-            return result.getTextContent();
         } catch (Exception e) {
             return "";
         }

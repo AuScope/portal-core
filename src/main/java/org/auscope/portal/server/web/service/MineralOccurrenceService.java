@@ -147,9 +147,8 @@ public class MineralOccurrenceService {
                                            String minOreAmount,
                                            String minOreAmountUOM,
                                            String minCommodityAmount,
-                                           String minCommodityAmountUOM,
-                                           String cutOffGrade,
-                                           String cutOffGradeUOM) throws Exception {
+                                           String minCommodityAmountUOM 
+                                         ) throws Exception {
             
         MineralOccurrenceFilter mineralOccurrenceFilter 
             = new MineralOccurrenceFilter( commodities,
@@ -157,9 +156,7 @@ public class MineralOccurrenceService {
                                            minOreAmount,
                                            minOreAmountUOM,
                                            minCommodityAmount,
-                                           minCommodityAmountUOM,
-                                           cutOffGrade,
-                                           cutOffGradeUOM);
+                                           minCommodityAmountUOM );
 
         log.debug("\n" + serviceURL + "\n" + mineralOccurrenceFilter.getFilterString());
         

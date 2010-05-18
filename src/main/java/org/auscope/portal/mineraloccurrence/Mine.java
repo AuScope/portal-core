@@ -11,9 +11,14 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+
 
 /**
  * This class is a wrapper for er:Mine XML feature  
@@ -21,7 +26,9 @@ import org.xml.sax.SAXException;
  * @version $Id$
  */
 public class Mine {
-    //private Document mineDocument;
+    
+    protected final Log log = LogFactory.getLog(getClass());
+ // private Document mineDocument;
     private Node mineNode;
     private XPath xPath;
 
@@ -74,6 +81,7 @@ public class Mine {
                 j = s.indexOf(search);
                 if (j!=-1)
                     result.add(s.substring(j));
+                    //log.debug((i+1) + " : " + s.substring(j));
             }
 
             return result;
@@ -92,7 +100,7 @@ public class Mine {
             NodeList nodes = (NodeList) relatedNodes;
             
             for (int i = 0; i < nodes.getLength(); i++) {
-                System.out.println(nodes.item(i).getNodeValue());
+                log.debug(i + " : " + nodes.item(i).getNodeValue());
                 result.add(nodes.item(i).getNodeValue());
             }
 

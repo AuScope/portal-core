@@ -139,31 +139,27 @@ public class EarthResourcesFilterController {
      * @param minOreAmountUOM
      * @param minCommodityAmount
      * @param minCommodityAmountUOM
-     * @param cutOffGrade
-     * @param cutOffGradeUOM
      * @param request                the HTTP client request
      * 
      * @return a WFS response converted into KML
      */
     @RequestMapping("/doMineralOccurrenceFilter.do")
     public ModelAndView doMineralOccurrenceFilter(
-            @RequestParam("serviceUrl")            String serviceUrl,
-            @RequestParam("commodityName")         String commodityName,
-            @RequestParam("measureType")           String measureType,
-            @RequestParam("minOreAmount")          String minOreAmount,
-            @RequestParam("minOreAmountUOM")       String minOreAmountUOM,
-            @RequestParam("minCommodityAmount")    String minCommodityAmount,
-            @RequestParam("minCommodityAmountUOM") String minCommodityAmountUOM,
-            @RequestParam("cutOffGrade")           String cutOffGrade,
-            @RequestParam("cutOffGradeUOM")        String cutOffGradeUOM,
-            HttpServletRequest request) 
+        @RequestParam(value="serviceUrl",            required=false) String serviceUrl,
+        @RequestParam(value="commodityName",         required=false) String commodityName,
+        @RequestParam(value="measureType",           required=false) String measureType,
+        @RequestParam(value="minOreAmount",          required=false) String minOreAmount,
+        @RequestParam(value="minOreAmountUOM",       required=false) String minOreAmountUOM,
+        @RequestParam(value="minCommodityAmount",    required=false) String minCommodityAmount,
+        @RequestParam(value="minCommodityAmountUOM", required=false) String minCommodityAmountUOM,
+        HttpServletRequest request) 
     {
         try {
             Collection<Commodity> commodities = new ArrayList<Commodity>();
             
             if (!commodityName.equals("")) {
                 commodities = this.commodityService.get(serviceUrl, commodityName);
-                
+
                 // If there are 0 features then send nice message to the user
                 if (commodities.size() == 0)
                     return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
@@ -178,9 +174,7 @@ public class EarthResourcesFilterController {
                                                         minOreAmount,
                                                         minOreAmountUOM,
                                                         minCommodityAmount,
-                                                        minCommodityAmountUOM,
-                                                        cutOffGrade,
-                                                        cutOffGradeUOM);
+                                                        minCommodityAmountUOM );
 
             // If there are 0 features then send NO_RESULTS message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)

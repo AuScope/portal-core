@@ -1,6 +1,5 @@
 package org.auscope.portal.mineraloccurrence;
 
-import org.auscope.portal.server.web.service.CommodityService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
 import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
@@ -29,7 +28,7 @@ public class TestMineralOccurrenceServiceClient {
     private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
     private HttpClient mockHttpClient;
-    private CommodityService commodityService;
+    //private CommodityService commodityService;
 
     private IWFSGetFeatureMethodMaker methodMaker;
 
@@ -45,7 +44,7 @@ public class TestMineralOccurrenceServiceClient {
         this.httpServiceCaller = context.mock(HttpServiceCaller.class);
         this.mineralOccurrenceService = new MineralOccurrenceService(this.httpServiceCaller, this.mineralOccurrencesResponseHandler, this.methodMaker);
         this.mockHttpClient = context.mock(HttpClient.class);
-        this.commodityService = context.mock(CommodityService.class);
+        //this.commodityService = context.mock(CommodityService.class);
     }
 
     /**
@@ -168,8 +167,6 @@ public class TestMineralOccurrenceServiceClient {
         final String minOreAmountUOM = "";
         final String minCommodityAmount = "";
         final String minCommodityAmountUOM = "";
-        final String cutOffGrade = "";
-        final String cutOffGradeUOM = "";
 
         final CommodityFilter commodityFilter = new CommodityFilter(commodityName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
@@ -188,9 +185,7 @@ public class TestMineralOccurrenceServiceClient {
                                            minOreAmount,
                                            minOreAmountUOM,
                                            minCommodityAmount,
-                                           minCommodityAmountUOM,
-                                           cutOffGrade,
-                                           cutOffGradeUOM );
+                                           minCommodityAmountUOM );
 
         context.checking(new Expectations() {{           
            
@@ -215,9 +210,7 @@ public class TestMineralOccurrenceServiceClient {
                                                               minOreAmount,
                                                               minCommodityAmountUOM,
                                                               minCommodityAmount,
-                                                              minCommodityAmountUOM,
-                                                              cutOffGrade,
-                                                              cutOffGradeUOM);
+                                                              minCommodityAmountUOM );
     }
     
     

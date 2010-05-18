@@ -35,7 +35,7 @@ public class TestMineralOccurrenceFilter {
         }});
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(commodities, "", "", "", "", "", "", "");
+            new MineralOccurrenceFilter(commodities, "", "", "", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replaceAll("\n", "").replaceAll("\\s+", ""),
@@ -52,7 +52,7 @@ public class TestMineralOccurrenceFilter {
         }});
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(commodities, "Any", "1234567", "urn:ogc:def:uom:UCUM:t", "", "", "", "");
+            new MineralOccurrenceFilter(commodities, "Any", "1234567", "urn:ogc:def:uom:UCUM:t", "", "");
 
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\s+", ""),
@@ -62,7 +62,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testReserveMinimumOreAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Reserve", "2000000", "urn:ogc:def:uom:UCUM:t", "", "", "", "");
+            new MineralOccurrenceFilter(null, "Reserve", "2000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
@@ -72,7 +72,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testAnyMinimumOreAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Any", "1000000", "urn:ogc:def:uom:UCUM:t", "", "", "", "");
+            new MineralOccurrenceFilter(null, "Any", "1000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
@@ -82,7 +82,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testResourceMinimumCommodityAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Resource", "", "", "6000000", "urn:ogc:def:uom:UCUM:t", "", "");
+            new MineralOccurrenceFilter(null, "Resource", "", "", "6000000", "urn:ogc:def:uom:UCUM:t");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
@@ -93,7 +93,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testAnyMinimumCommodityAmount() throws IOException {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "ANY-Stuff", "", "", "7000000", "urn:ogc:def:uom:UCUM:t", "", "");
+            new MineralOccurrenceFilter(null, "ANY-Stuff", "", "", "7000000", "urn:ogc:def:uom:UCUM:t");
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumCommodityAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
@@ -101,16 +101,6 @@ public class TestMineralOccurrenceFilter {
     }
 
     
-    @Test
-    public void testAnyCutOffGrade() throws IOException {
-        MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Any", "", "", "", "", "1000", "urn:ogc:def:uom:UCUM:t");
-        
-        Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedCutOffGrade.xml").replaceAll("\n", "").replaceAll("\\s+", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\s+", ""));
-    }
-
     //TODO: to be reimplemented when the data model (mineraloccurrence ml) complies to this feature
 
 /*
