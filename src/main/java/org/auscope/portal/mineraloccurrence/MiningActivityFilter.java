@@ -57,12 +57,7 @@ public class MiningActivityFilter implements IFilter {
         StringBuffer filterExpression  = new StringBuffer();
         
 
-        filterClause.append("<ogc:Filter xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\"\n");
-        filterClause.append("            xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n");
-        filterClause.append("            xmlns:ogc=\"http://www.opengis.net/ogc\"\n");
-        filterClause.append("            xmlns:gml=\"http://www.opengis.net/gml\"\n");
-        filterClause.append("            xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n");
-        filterClause.append("            xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
+        filterClause.append("<ogc:Filter>\n");
 
         if (manyParameters)
             filterExpression.append("  <ogc:And>\n");
@@ -160,7 +155,7 @@ public class MiningActivityFilter implements IFilter {
         // returning an empty string. In this case GetFeature request will be
         // sent without ogc:Filter clause
         if (filterExpression.length() != 0)  {
-            filterExpression.append("</ogc:Filter>");
+            filterExpression.append("</ogc:Filter>\n");
             result = filterClause.append(filterExpression).toString();
         }
         

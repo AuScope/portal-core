@@ -4,12 +4,19 @@ import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * User: Mathew Wyatt
  * 
  * @version $Id$
  */
 public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
+    
+    /** Log object for this class. */
+    protected final Log log = LogFactory.getLog(getClass());
+
     
     /**
      * Creates a PostMethod given the following parameters
@@ -30,6 +37,17 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
 
         PostMethod httpMethod = new PostMethod(serviceURL);
 
+        StringBuilder sb = new StringBuilder();
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+        sb.append("<wfs:GetFeature xmlns:wfs=\"http://www.opengis.net/wfs\"\n");
+        sb.append("                xmlns:ogc=\"http://www.opengis.net/ogc\"\n");
+        sb.append("                xmlns:gml=\"http://www.opengis.net/gml\"\n");        
+        sb.append("                version=\"1.1.0\" maxFeatures=\"200\">\n");
+        sb.append("    <wfs:Query typeName=\""+featureType+"\">\n");
+        sb.append(filterString);
+        sb.append("    </wfs:Query>\n");
+        sb.append("</wfs:GetFeature>");
+        
         // TODO: remove the er namespace and have it passed in as a parameter
         String postString = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\" maxFeatures=\"200\">\n" +
@@ -38,8 +56,10 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
                 "    </wfs:Query>" +
                 "</wfs:GetFeature>";
  
+        log.debug("Get Feature Query:\n" + sb.toString());
+        
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
-        httpMethod.setRequestEntity(new StringRequestEntity(postString,null,null));
+        httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(),null,null));
 
         return httpMethod;
     }
