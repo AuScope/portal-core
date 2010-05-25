@@ -28,6 +28,7 @@ public class MineralOccurrenceFilter implements IFilter {
     private String minCommodityAmount;
     private String minCommodityAmountUOM;
     private int paramsCount;
+    private String filterStr;
 
     /**
      * C'tor
@@ -47,15 +48,23 @@ public class MineralOccurrenceFilter implements IFilter {
         
         this.measureType           = getMeasureType(measureType);
         this.paramsCount           = getParameterCount();
+        this.filterStr             = makeFilter();
     }
 
+    /**
+     * Returns WFS MineralOccurence filter query string 
+     * @return Filter query string for sending as a POST request
+     */
+    public String getFilterString() {
+        return this.filterStr;
+    }
     
     /**
      * Constructs WFS MineralOccurence filter query string based 
      * on user parameters.
      * @return Filter query string for sending as a POST request
      */
-    public String getFilterString() {        
+    private String makeFilter() {        
         
         int commoditiesCount = commodityOccurrences.size();        
         log.debug("Number of commodities: " + commoditiesCount);
@@ -168,8 +177,8 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private void addPropertyIsEqualTo(StringBuilder sb, String property, String value) {
         sb.append("        <ogc:PropertyIsEqualTo>\n");
-        sb.append("            <ogc:PropertyName>"+ property +"</ogc:PropertyName>\n");            
-        sb.append("            <ogc:Literal>" + value + "</ogc:Literal>\n");
+        sb.append("          <ogc:PropertyName>"+ property +"</ogc:PropertyName>\n");            
+        sb.append("          <ogc:Literal>" + value + "</ogc:Literal>\n");
         sb.append("        </ogc:PropertyIsEqualTo>\n");                       
     }
     
@@ -179,8 +188,8 @@ public class MineralOccurrenceFilter implements IFilter {
      */
     private void addPropertyIsLike(StringBuilder sb, String property, String value) {        
         sb.append("        <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"#\" escapeChar=\"!\">\n");
-        sb.append("            <ogc:PropertyName>"+ property +"</ogc:PropertyName>\n");            
-        sb.append("            <ogc:Literal>"+ value +"</ogc:Literal>\n");
+        sb.append("          <ogc:PropertyName>"+ property +"</ogc:PropertyName>\n");            
+        sb.append("          <ogc:Literal>"+ value +"</ogc:Literal>\n");
         sb.append("        </ogc:PropertyIsLike>\n");        
     }
     
@@ -192,37 +201,38 @@ public class MineralOccurrenceFilter implements IFilter {
         StringBuilder sb = new StringBuilder();
         
         sb.append("        <ogc:PropertyIsEqualTo>\n");
-        sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href</ogc:PropertyName>\n");            
-        sb.append("            <ogc:Literal>" + commodity.getName() + "</ogc:Literal>\n");
+        sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href</ogc:PropertyName>\n");            
+        sb.append("          <ogc:Literal>" + commodity.getName() + "</ogc:Literal>\n");
         sb.append("        </ogc:PropertyIsEqualTo>\n");
         
         if (!this.minOreAmount.isEmpty()) {
             sb.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            sb.append("            <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n");
+            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            sb.append("          <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n");
             sb.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");                
         }
         if (!this.minOreAmountUOM.isEmpty()) {
             sb.append("        <ogc:PropertyIsEqualTo>\n");
-            sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
-            sb.append("            <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n");
+            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
+            sb.append("          <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n");
             sb.append("        </ogc:PropertyIsEqualTo>\n");                
         }
         if (!this.minCommodityAmount.isEmpty()) {
             sb.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            sb.append("            <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
+            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            sb.append("          <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
             sb.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");                
         }
         if (!this.minCommodityAmountUOM.isEmpty()) {
             sb.append("        <ogc:PropertyIsEqualTo>\n");
-            sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
-            sb.append("            <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n");
+            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
+            sb.append("          <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n");
             sb.append("        </ogc:PropertyIsEqualTo>\n");
         }        
         addOperatorAND(sb);
         iBuffer.append(sb);
     }
+    
     
     /*
      * Appends amount search parameters entered by user
@@ -231,26 +241,26 @@ public class MineralOccurrenceFilter implements IFilter {
         StringBuilder sb = new StringBuilder(); 
         if (!this.minOreAmount.isEmpty()) {
             sb.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            sb.append("            <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n");
+            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            sb.append("          <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n");
             sb.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");                
         }
         if (!this.minOreAmountUOM.isEmpty()) {
             sb.append("        <ogc:PropertyIsEqualTo>\n");
-            sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
-            sb.append("            <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n");
+            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
+            sb.append("          <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n");
             sb.append("        </ogc:PropertyIsEqualTo>\n");                
         }
         if (!this.minCommodityAmount.isEmpty()) {
             sb.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            sb.append("            <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
+            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            sb.append("          <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
             sb.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");                
         }
         if (!this.minCommodityAmountUOM.isEmpty()) {
             sb.append("        <ogc:PropertyIsEqualTo>\n");
-            sb.append("            <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
-            sb.append("            <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n");
+            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
+            sb.append("          <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n");
             sb.append("        </ogc:PropertyIsEqualTo>\n");
         }        
         if (this.paramsCount > 1)
@@ -264,8 +274,8 @@ public class MineralOccurrenceFilter implements IFilter {
      * Embrace given string with <ogc:Filter> </ogc:Filter> tags
      */ 
     private void addExpressionFILTER(StringBuilder sb) {
-        sb.insert(0,"<ogc:Filter>\n");
-        sb.append("</ogc:Filter>\n");
+        sb.insert(0,"    <ogc:Filter>\n");
+        sb.append("    </ogc:Filter>\n");
     }    
     
     
@@ -273,8 +283,8 @@ public class MineralOccurrenceFilter implements IFilter {
      * Embrace given string with <ogc:Or> </ogc:Or> logical operator tags
      */
     private void addOperatorAND(StringBuilder sb) {
-        sb.insert(0,"    <ogc:And>\n");
-        sb.append("    </ogc:And>\n");
+        sb.insert(0,"      <ogc:And>\n");
+        sb.append("      </ogc:And>\n");
     }    
 
     
@@ -282,8 +292,8 @@ public class MineralOccurrenceFilter implements IFilter {
      * Embrace given string with <ogc:Or> </ogc:Or> logical operator tags
      */
     private void addOperatorOR(StringBuilder sb) {
-        sb.insert(0,"    <ogc:Or>\n");
-        sb.append("    </ogc:Or>\n");
+        sb.insert(0,"      <ogc:Or>\n");
+        sb.append("      </ogc:Or>\n");
     }
 
     

@@ -14,8 +14,8 @@ import org.auscope.portal.mineraloccurrence.MineralOccurrenceFilter;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.mineraloccurrence.MiningActivityFilter;
 import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
-import org.auscope.portal.server.web.WFSGetFeatureMethodMakerPOST;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,16 +38,21 @@ public class MineralOccurrenceService {
 
     
     // ----------------------------------------------------------- Constructors
-    
+
+/*
     public MineralOccurrenceService() {
+log.info(".......default C'tor");
         this.httpServiceCaller = new HttpServiceCaller();
         this.mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
         this.methodMaker = new WFSGetFeatureMethodMakerPOST();
     }
-
-    public MineralOccurrenceService(HttpServiceCaller httpServiceCaller, MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler, IWFSGetFeatureMethodMaker methodMaker) {
+*/
+    @Autowired
+    public MineralOccurrenceService( HttpServiceCaller httpServiceCaller,                                      
+                                     MineralOccurrencesResponseHandler respHandler, 
+                                     IWFSGetFeatureMethodMaker methodMaker ) {
         this.httpServiceCaller = httpServiceCaller;
-        this.mineralOccurrencesResponseHandler = mineralOccurrencesResponseHandler;
+        this.mineralOccurrencesResponseHandler = respHandler;
         this.methodMaker = methodMaker;
     }
 
@@ -184,7 +189,7 @@ public class MineralOccurrenceService {
         
         //create the method
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterString());
-
+log.debug("After methodMaker.makeMethod");
         //run dat query
         return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
     }

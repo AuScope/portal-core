@@ -57,10 +57,10 @@ public class MiningActivityFilter implements IFilter {
         StringBuffer filterExpression  = new StringBuffer();
         
 
-        filterClause.append("<ogc:Filter>\n");
+        filterClause.append("    <ogc:Filter>\n");
 
         if (manyParameters)
-            filterExpression.append("  <ogc:And>\n");
+            filterExpression.append("      <ogc:And>\n");
 
         int associatedMinesCount = this.associatedMines.size();
         log.debug("Number of associated mines: " + associatedMinesCount);
@@ -72,30 +72,30 @@ public class MiningActivityFilter implements IFilter {
             log.debug("___Number of related activities: " + relatedActivitiesCount);
             
             if (relatedActivitiesCount == 1 ) {
-                filterExpression.append("    <ogc:PropertyIsEqualTo>\n" +
-                                        "      <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
-                                        "      <ogc:Literal>" + this.associatedMines.get(0).getRelatedActivities().get(0) + "</ogc:Literal>\n" +
-                                        "    </ogc:PropertyIsEqualTo>\n");                
+                filterExpression.append("        <ogc:PropertyIsEqualTo>\n");
+                filterExpression.append("          <ogc:PropertyName>gml:name</ogc:PropertyName>\n");
+                filterExpression.append("          <ogc:Literal>" + this.associatedMines.get(0).getRelatedActivities().get(0) + "</ogc:Literal>\n");
+                filterExpression.append("        </ogc:PropertyIsEqualTo>\n");                
             }
             // One mine but more then one mining activity, need ogc:Or's
             else if (relatedActivitiesCount > 1 ) {
-                filterExpression.append("  <ogc:Or>\n");
+                filterExpression.append("      <ogc:Or>\n");
                 
                 for (String s : this.associatedMines.get(0).getRelatedActivities()) {
 
-                    filterExpression.append("    <ogc:PropertyIsEqualTo>\n" +
-                                            "      <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
-                                            "      <ogc:Literal>" + s + "</ogc:Literal>\n" +
-                                            "    </ogc:PropertyIsEqualTo>\n");
+                    filterExpression.append("        <ogc:PropertyIsEqualTo>\n");
+                    filterExpression.append("          <ogc:PropertyName>gml:name</ogc:PropertyName>\n");
+                    filterExpression.append("          <ogc:Literal>" + s + "</ogc:Literal>\n");
+                    filterExpression.append("        </ogc:PropertyIsEqualTo>\n");
                     
                 }               
-                filterExpression.append("  </ogc:Or>\n");
+                filterExpression.append("      </ogc:Or>\n");
             }
             
         // For two and more mines we need ogc:Or's
         } else if (associatedMinesCount > 1) {
             
-            filterExpression.append("  <ogc:Or>\n");
+            filterExpression.append("      <ogc:Or>\n");
             int z = 0;
             for (Mine mine : this.associatedMines) {
 
@@ -108,54 +108,60 @@ public class MiningActivityFilter implements IFilter {
                 for (String s : mine.getRelatedActivities()) {
                     log.debug("___" + (++y) + " : " + s);
                     
-                    filterExpression.append("    <ogc:PropertyIsEqualTo>\n" +
-                                            "      <ogc:PropertyName>gml:name</ogc:PropertyName>\n" +
-                                            "      <ogc:Literal>" + s + "</ogc:Literal>\n" +
-                                            "    </ogc:PropertyIsEqualTo>\n");
+                    filterExpression.append("        <ogc:PropertyIsEqualTo>\n");
+                    filterExpression.append("          <ogc:PropertyName>gml:name</ogc:PropertyName>\n");
+                    filterExpression.append("          <ogc:Literal>" + s + "</ogc:Literal>\n");
+                    filterExpression.append("        </ogc:PropertyIsEqualTo>\n");
                 }
             }
             
-            filterExpression.append("  </ogc:Or>\n");            
+            filterExpression.append("      </ogc:Or>\n");            
         }
 
-        if(!this.startDate.equals(""))
-            filterExpression.append("    <ogc:PropertyIsGreaterThan>\n" +
-                                    "      <ogc:PropertyName>er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition</ogc:PropertyName>\n" +
-                                    "      <ogc:Literal>"+ this.startDate +"</ogc:Literal>\n" +
-                                    "    </ogc:PropertyIsGreaterThan>\n");
-        if(!this.endDate.equals(""))
-            filterExpression.append("    <ogc:PropertyIsLessThan>\n" +
-                                    "      <ogc:PropertyName>er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition</ogc:PropertyName>\n" +
-                                    "      <ogc:Literal>"+this.endDate+"</ogc:Literal>\n" +
-                                    "    </ogc:PropertyIsLessThan>\n");
-        if(!this.oreProcessed.equals(""))
-            filterExpression.append("    <ogc:PropertyIsGreaterThan>\n" +
-                                    "      <ogc:PropertyName>er:oreProcessed/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                                    "      <ogc:Literal>"+this.oreProcessed+"</ogc:Literal>\n" +
-                                    "    </ogc:PropertyIsGreaterThan>");            
-        if(!this.producedMaterial.equals(""))
-            filterExpression.append("    <ogc:PropertyIsEqualTo>\n" +
-                                    "      <ogc:PropertyName>er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value</ogc:PropertyName>\n" +
-                                    "      <ogc:Literal>"+this.producedMaterial+"</ogc:Literal>\n" +
-                                    "    </ogc:PropertyIsEqualTo>\n");
-        if(!this.cutOffGrade.equals(""))
-            filterExpression.append("    <ogc:PropertyIsGreaterThan>\n" +
-                                    "      <ogc:PropertyName>er:producedMaterial/er:Product/er:grade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                                    "      <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n" +
-                                    "    </ogc:PropertyIsGreaterThan>");
-        if(!this.production.equals(""))
-            filterExpression.append("    <ogc:PropertyIsGreaterThan>\n" +
-                                    "      <ogc:PropertyName>er:producedMaterial/er:Product/er:production/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n" +
-                                    "      <ogc:Literal>"+this.production+"</ogc:Literal>\n" +
-                                    "    </ogc:PropertyIsGreaterThan>\n");
+        if(!this.startDate.equals("")) {
+            filterExpression.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
+            filterExpression.append("          <ogc:PropertyName>er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition</ogc:PropertyName>\n");
+            filterExpression.append("          <ogc:Literal>"+ this.startDate +"</ogc:Literal>\n");
+            filterExpression.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");
+        }
+        if(!this.endDate.equals("")) {
+            filterExpression.append("        <ogc:PropertyIsLessThanOrEqualTo>\n");
+            filterExpression.append("          <ogc:PropertyName>er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition</ogc:PropertyName>\n");
+            filterExpression.append("          <ogc:Literal>"+this.endDate+"</ogc:Literal>\n");
+            filterExpression.append("        </ogc:PropertyIsLessThanOrEqualTo>\n");
+        }
+        if(!this.oreProcessed.equals("")) {
+            filterExpression.append("        <ogc:PropertyIsGreaterThan>\n");
+            filterExpression.append("          <ogc:PropertyName>er:oreProcessed/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            filterExpression.append("          <ogc:Literal>"+this.oreProcessed+"</ogc:Literal>\n");
+            filterExpression.append("        </ogc:PropertyIsGreaterThan>");
+        }
+        if(!this.producedMaterial.equals("")) {
+            filterExpression.append("        <ogc:PropertyIsEqualTo>\n");
+            filterExpression.append("          <ogc:PropertyName>er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value</ogc:PropertyName>\n");
+            filterExpression.append("          <ogc:Literal>"+this.producedMaterial+"</ogc:Literal>\n");
+            filterExpression.append("        </ogc:PropertyIsEqualTo>\n");
+        }
+        if(!this.cutOffGrade.equals("")) {
+            filterExpression.append("        <ogc:PropertyIsGreaterThan>\n");
+            filterExpression.append("          <ogc:PropertyName>er:producedMaterial/er:Product/er:grade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            filterExpression.append("          <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n");
+            filterExpression.append("        </ogc:PropertyIsGreaterThan>");
+        }
+        if(!this.production.equals("")) {
+            filterExpression.append("        <ogc:PropertyIsGreaterThan>\n");
+            filterExpression.append("          <ogc:PropertyName>er:producedMaterial/er:Product/er:production/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
+            filterExpression.append("          <ogc:Literal>"+this.production+"</ogc:Literal>\n");
+            filterExpression.append("        </ogc:PropertyIsGreaterThan>\n");
+        }
         if(manyParameters)
-            filterExpression.append("  </ogc:And>\n");
+            filterExpression.append("      </ogc:And>\n");
 
         // If there are no query parameters and the query sting is empty, we are 
         // returning an empty string. In this case GetFeature request will be
         // sent without ogc:Filter clause
         if (filterExpression.length() != 0)  {
-            filterExpression.append("</ogc:Filter>\n");
+            filterExpression.append("    </ogc:Filter>\n");
             result = filterClause.append(filterExpression).toString();
         }
         

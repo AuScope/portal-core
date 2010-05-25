@@ -3,6 +3,7 @@ package org.auscope.portal.server.web.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -300,6 +301,10 @@ public class EarthResourcesFilterController {
         if(e instanceof ConnectTimeoutException) {
             return this.makeModelAndViewFailure(ErrorMessages.OPERATION_TIMOUT);
         }
+        
+        if(e instanceof SocketTimeoutException) {
+            return this.makeModelAndViewFailure(ErrorMessages.OPERATION_TIMOUT);
+        }        
 
         // An error we don't specifically handle or expect
         return makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);

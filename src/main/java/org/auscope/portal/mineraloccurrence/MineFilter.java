@@ -7,7 +7,7 @@ package org.auscope.portal.mineraloccurrence;
  * @version $Id$
  */
 public class MineFilter implements IFilter {
-    private String mineName;
+    private String filterStr;
 
     /**
      * Given a mine name, this object will build a filter 
@@ -15,22 +15,20 @@ public class MineFilter implements IFilter {
      *
      * @param mineName the main name
      */
-    public MineFilter(String mineName) {
-        this.mineName = mineName;
+    public MineFilter(String mineName) {        
+        StringBuilder sb = new StringBuilder();        
+        sb.append("    <ogc:Filter>\n");
+        sb.append("      <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"#\" escapeChar=\"!\">\n");
+        sb.append("        <ogc:PropertyName>er:mineName/er:MineName/er:mineName</ogc:PropertyName>\n");
+        sb.append("        <ogc:Literal>" + mineName + "</ogc:Literal>\n");        
+        sb.append("      </ogc:PropertyIsLike>\n");        
+        sb.append("    </ogc:Filter>\n");                
+        this.filterStr = sb.toString();
     }
 
 
-    public String getFilterString() {
-        StringBuilder sb = new StringBuilder();
-        
-        sb.append("        <ogc:Filter>\n");
-        sb.append("            <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"#\" escapeChar=\"!\">\n");
-        sb.append("                <ogc:PropertyName>er:mineName/er:MineName/er:mineName</ogc:PropertyName>\n");
-        sb.append("                <ogc:Literal>" + mineName + "</ogc:Literal>\n");        
-        sb.append("            </ogc:PropertyIsLike>\n");        
-        sb.append("        </ogc:Filter>\n");        
-        
-        return sb.toString();
+    public String getFilterString() {        
+        return this.filterStr;
     }
     
 }

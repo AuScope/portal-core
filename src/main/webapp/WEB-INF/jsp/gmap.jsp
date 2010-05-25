@@ -37,7 +37,6 @@
              
       <script type="text/javascript">
          var VOCAB_SERVICE_URL = "${vocabServiceUrl}"; 
-         var NVCL_WEB_SERVICE_IP = "${nvclWebServiceIP}";
       </script>     
       
       <jsp:include page="/jsimports.htm"/>
