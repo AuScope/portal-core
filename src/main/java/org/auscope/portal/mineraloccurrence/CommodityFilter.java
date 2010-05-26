@@ -27,10 +27,10 @@ public class CommodityFilter implements IFilter {
             queryString.append("    <ogc:And>\n");
 
         if(!this.commodityName.equals(""))
-            queryString.append("    <ogc:PropertyIsEqualTo>\n" +
-                               "      <ogc:PropertyName>er:commodityName</ogc:PropertyName>\n" +
-                               "      <ogc:Literal>"+this.commodityName+"</ogc:Literal>\n" +
-                               "    </ogc:PropertyIsEqualTo>");
+            queryString.append("      <ogc:PropertyIsEqualTo>\n" +
+                               "        <ogc:PropertyName>er:commodityName</ogc:PropertyName>\n" +
+                               "        <ogc:Literal>"+this.commodityName+"</ogc:Literal>\n" +
+                               "      </ogc:PropertyIsEqualTo>\n");
 
         if(checkMany())
             queryString.append("    </ogc:And>\n");

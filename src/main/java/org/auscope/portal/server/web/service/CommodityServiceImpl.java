@@ -5,12 +5,15 @@ import java.util.Collection;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.auscope.portal.mineraloccurrence.Commodity;
 import org.auscope.portal.mineraloccurrence.CommodityFilter;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
-import org.auscope.portal.server.web.WFSGetFeatureMethodMakerPOST;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 /**
  * Concrete implementation of the CommodityService interface.
@@ -35,10 +38,13 @@ public class CommodityServiceImpl implements CommodityService{
     
     // ----------------------------------------------------------- Constructors
     
-    public CommodityServiceImpl() {
-        this.httpServiceCaller = new HttpServiceCaller();
-        this.mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
-        this.methodMaker = new WFSGetFeatureMethodMakerPOST();
+    @Autowired
+    public CommodityServiceImpl( HttpServiceCaller httpServiceCaller,
+                                 MineralOccurrencesResponseHandler respHandler, 
+                                 IWFSGetFeatureMethodMaker methodMaker ) {
+        this.httpServiceCaller = httpServiceCaller;
+        this.mineralOccurrencesResponseHandler = respHandler;
+        this.methodMaker = methodMaker;
     }
     
     
