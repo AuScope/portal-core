@@ -883,6 +883,17 @@ Ext.onReady(function() {
         gMapClickController(map, overlay, latlng, activeLayersStore);
     });
 
+    GEvent.addListener(map, "mousemove", function(latlng){
+        var latStr = "<b>Long:</b> " + latlng.lng().toFixed(6) 
+                   + "&nbsp&nbsp&nbsp&nbsp"
+                   + "<b>Lat:</b> " + latlng.lat().toFixed(6);  
+    	document.getElementById("latlng").innerHTML = latStr;
+    });
+
+    GEvent.addListener(map, "mouseout", function(latlng){
+        document.getElementById("latlng").innerHTML = "";
+    });     
+    
     new Ext.LoadMask(tabsPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});
     //new Ext.LoadMask(complexFeaturesPanel.el, {msg: 'Please Wait...', store: complexFeaturesStore});
     //new Ext.LoadMask(wmsLayersPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});

@@ -18,4 +18,6 @@
             <li ><a href="login.html">Login<span></span></a></li>
          </ul>
       </div>
+      
+      <span id="latlng" class="input-text"></span>
    </div>
