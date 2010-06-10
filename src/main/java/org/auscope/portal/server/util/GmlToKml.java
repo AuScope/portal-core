@@ -67,7 +67,8 @@ public class GmlToKml {
          log.error(tce);
       } catch (TransformerException e) {
          log.error("Failed to transform kml file: " + e);
-      }     
+      }
+      log.debug("GML output: \n" + sw.toString());
       return sw.toString();
    }
 
