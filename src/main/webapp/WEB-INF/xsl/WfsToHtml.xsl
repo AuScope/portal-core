@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" 
+<xsl:stylesheet version="1.0"
+                xmlns="http://www.w3.org/1999/xhtml" 
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" 
                 xmlns:fo="http://www.w3.org/1999/XSL/Format" 
                 xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" 
                 xmlns:xlink="http://www.w3.org/1999/xlink" 
                 xmlns:gml="http://www.opengis.net/gml" 
-                xmlns:wfs="http://www.opengis.net/wfs">
+                xmlns:wfs="http://www.opengis.net/wfs"
+                exclude-result-prefixes="er gml wfs fo gsml xlink">
     <xsl:output method="html" indent="yes"/>
     
     <!-- External Parameters -->
@@ -16,7 +18,12 @@
 
     
     <xsl:template match="/">
-        <html>
+    <!-- 
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    -->
+    
+        <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
             <head>
                 <style type="text/css">
                     body {
@@ -36,33 +43,44 @@
                         color: #15428B;
                     }
                     tr.border {
-                        border-top: 1px solid #ddecfe;
+                        /*border-top: 1px solid #ddecfe;*/
+                        /*border-top: 1px solid #4682B4;*/
+                        /*border-top: 1px solid #1E90FF;*/                        
                     }
                     td {
-                        padding:0px 5px;                    
+                        padding:1px 5px;
+                        vertical-align:text-top;
+                        border-top: 1px solid #4682B4                   
                     }
                     td.row_header {
                         font-weight: bold;
-                        color: #15428B;
+                        color: #15428B;                        
                     }
                     td.col_header {
                         font-weight: bold;
-                        border-top: 1px solid #ddecfe;
                     }                        
                     td.cell_header {
                         text-align: right;
                         color: #15428B;
                         font-weight: bold;
-                    }                    
+                    }
+                    td.no_border {
+                        border-top: none;                    
+                    }                 
                 </style>
-                
-                <meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type"/>
-
                 <title>AuScope Portal Project</title>
+                <!-- 
+                <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
+                -->
+                <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+                                
+
                 <meta content="Jarek Sanders" name="author"/>
             </head>
             <body>
-                <img alt="" src="/img/img-auscope-banner.gif" style="border: 0px solid;"/>
+                <div>
+                    <img alt="" src="/img/img-auscope-banner.gif" style="border: 0px solid;" />
+                </div>
                 <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMember/er:MineralOccurrence | er:MineralOccurrence"/>
                 <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMember/er:Mine | er:Mine"/>
                 <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMember/er:MiningActivity | er:MiningActivity"/>
@@ -78,11 +96,11 @@
         <table border="0">        
             <tbody>
                 <tr class="border">
-                    <td colspan="4" rowspan="1" style="color: #FF6600">
-                        <STRONG>EarthResourceML - MiningActivity</STRONG>
+                    <td colspan="3" rowspan="1" style="color: #FF6600">
+                        <B>EarthResourceML - MiningActivity</B>
                     </td> 
-                    <td style="text-align: right" >
-                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">xml</a>                        
+                    <td colspan="2">
+                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">View as EarthResourceML</a>                        
                     </td>
                 </tr>
                 <!-- Mining Activity Type -->
@@ -192,11 +210,11 @@
         <table>        
             <tbody>
                 <tr class="border">
-                    <td colspan="4" rowspan="1" style="vertical-align: top; color: #FF6600">
-                        <STRONG>EarthResourceML - Mine</STRONG>
+                    <td colspan="3" rowspan="1" style="vertical-align: top; color: #FF6600">
+                        <B>EarthResourceML - Mine</B>
                     </td>
-                    <td style="text-align: right" >
-                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">xml</a>                        
+                    <td colspan="2">
+                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">View as EarthResourceML</a>                        
                     </td>
                 </tr>
                 <!-- Mine Name -->
@@ -315,10 +333,10 @@
             <tbody>
                 <tr class="border">
                     <td colspan="3" rowspan="1" style="vertical-align: top; color: #FF6600">
-                        <STRONG>EarthResourceML - Commodity</STRONG>
+                        <B>EarthResourceML - Commodity</B>
                     </td>
-                    <td style="text-align: right" >
-                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">xml</a>                        
+                    <td colspan="2">
+                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">View as EarthResourceML</a>                        
                     </td>
                 </tr>
                 <!-- Commodity -->
@@ -356,11 +374,9 @@
         <table>        
             <tbody>
                 <tr class="border">
-                    <td colspan="4" rowspan="1" style="vertical-align: top; color: #FF6600">
-                        <STRONG>EarthResourceML - MineralOccurrence</STRONG>
-                    </td>
-                    <td style="text-align: right" >
-                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">xml</a>                        
+                    <td colspan="3" rowspan="1" style="vertical-align: top; color: #FF6600; font-weight:bold" >EarthResourceML - MineralOccurrence</td>
+                    <td colspan="2">
+                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">View as EarthResourceML</a>                        
                     </td>
                 </tr>
                 <!-- Type -->
@@ -660,8 +676,9 @@
        <xsl:if test="./er:resourceExtraction">
                 <tr class="border">
                     <td class="row_header">Associated Mining Activity</td>
+                    <td>&#160;</td>
                     <td class="row_header">Id:</td>
-                    <td colspan="3">
+                    <td colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={./er:resourceExtraction/@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;"><xsl:value-of select="substring-after(./er:resourceExtraction/@xlink:href,'=')"/></a>
                     </td>
                 </tr>
@@ -670,8 +687,9 @@
        <xsl:if test="./er:parent">
                 <tr class="border">
                     <td class="row_header">Parent Earth Resources</td>
+                    <td>&#160;</td>
                     <td class="row_header">Id:</td>
-                    <td colspan="3">
+                    <td colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={./er:parent/@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;"><xsl:value-of select="substring-after(./er:parent/@xlink:href,'=')"/></a>
                     </td>
                 </tr>
@@ -680,8 +698,9 @@
        <xsl:if test="./er:child">
                 <tr class="border">
                     <td class="row_header">Child Earth Resources</td>
+                    <td>&#160;</td>
                     <td class="row_header">Id:</td>
-                    <td colspan="3">
+                    <td colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={./er:child/@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;"><xsl:value-of select="substring-after(./er:child/@xlink:href,'=')"/></a>
                     </td>
                 </tr>                 

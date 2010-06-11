@@ -2,6 +2,7 @@ package org.auscope.portal.server.web.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,6 +32,8 @@ public class WFSPopupController {
     
     /** Log object for this class. */
     protected final Log log = LogFactory.getLog(getClass());
+    public static final String DOCTYPE =
+        "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \n\t \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
     
     
     // ----------------------------------------------------- Instance variables
@@ -61,9 +64,16 @@ public class WFSPopupController {
         try {
             String responseFromCall = serviceCaller.callHttpUrlGET(new URL(url));
             InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/WfsToHtml.xsl");
+            /*
+            response.setContentType("text/html; charset=UTF-8");
             response.getWriter().println( gmlToKml.convert(responseFromCall, inXSLT, url));
+            */
+            response.setContentType("text/html; charset=utf-8");
+            PrintWriter out = response.getWriter();
+            out.println(DOCTYPE);
+            out.println(gmlToKml.convert(responseFromCall, inXSLT, url));                                   
         } catch (IOException ex) {
-            log.error("geologicUnitPopup: ", ex);
+            log.error("wfsFeaturePopup: ", ex);
         }
     }
     
