@@ -64,10 +64,6 @@ public class WFSPopupController {
         try {
             String responseFromCall = serviceCaller.callHttpUrlGET(new URL(url));
             InputStream inXSLT = request.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/WfsToHtml.xsl");
-            /*
-            response.setContentType("text/html; charset=UTF-8");
-            response.getWriter().println( gmlToKml.convert(responseFromCall, inXSLT, url));
-            */
             response.setContentType("text/html; charset=utf-8");
             PrintWriter out = response.getWriter();
             out.println(DOCTYPE);
