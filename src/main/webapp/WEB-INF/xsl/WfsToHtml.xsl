@@ -101,7 +101,8 @@
         <table>        
             <tbody>
                 <tr>
-                    <td class="caption" colspan="3" rowspan="1">EarthResourceML - MiningActivity</td> 
+                    <td class="caption" colspan="2" rowspan="1">EarthResourceML - MiningActivity</td>
+                    <td>&#160;</td> 
                     <td colspan="2" ALIGN="right"><b>View As: </b><a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>                        
                     </td>
                 </tr>
@@ -323,7 +324,7 @@
     <!-- TEMPLATE FOR TRANSLATING Commodity -->
     <!-- =============================================================== -->
     <xsl:template match="er:Commodity">
-        <table>        
+        <table border="1">        
             <tbody>
                 <tr>
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - Commodity</td>
@@ -380,7 +381,7 @@
         <table>        
             <tbody>
                 <tr>
-                    <td class="caption" colspan="3" rowspan="1">EarthResourceML - MineralOccurrence</td>
+                    <td class="caption" colspan="2" rowspan="1">EarthResourceML - MineralOccurrence</td>
                     <td>&#160;</td>
                     <td colspan="2" ALIGN="right"><b>View As: </b>
                         <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>                        
@@ -572,7 +573,11 @@
                     <td></td>                                            
                     <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:material/gsml:RockMaterial/gsml:lithology"/></td>
                     <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:earthResourceMaterialRole"/></td>
-                    <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:proportion/gsml:CGI_NumericValue/gsml:principalValue"/></td>
+                    <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:proportion/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
+                        <xsl:call-template name="convert-escaped-percentage">
+                            <xsl:with-param name="value" select="substring-after(./er:composition/er:EarthResourceMaterial/er:proportion/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/>
+                        </xsl:call-template>
+                    </td>
                     <td></td>
                 </tr>
        </xsl:if>                
@@ -636,8 +641,16 @@
                 <tr>
                     <td></td>
                     <td><xsl:value-of select="./er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
-                    <td><xsl:value-of select="./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
-                    <td><xsl:value-of select="./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
+                    <td><xsl:value-of select="./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
+                        <xsl:call-template name="convert-escaped-percentage">
+                            <xsl:with-param name="value" select="substring-after(./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/>
+                        </xsl:call-template>
+                    </td>
+                    <td><xsl:value-of select="./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
+                        <xsl:call-template name="convert-escaped-percentage">
+                            <xsl:with-param name="value" select="substring-after(./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/>
+                        </xsl:call-template>
+                    </td>
                     <td><xsl:value-of select="./er:CommodityMeasure/er:commodityOfInterest/er:commodityImportance"/></td>
                 </tr>
             </xsl:for-each>                                  
@@ -683,8 +696,16 @@
                 <tr>
                     <td></td>
                     <td><xsl:value-of select="./er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
-                    <td><xsl:value-of select="./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
-                    <td><xsl:value-of select="./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
+                    <td><xsl:value-of select="./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
+                        <xsl:call-template name="convert-escaped-percentage">
+                            <xsl:with-param name="value" select="substring-after(./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/>
+                        </xsl:call-template>
+                    </td>                    
+                    <td><xsl:value-of select="./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
+                        <xsl:call-template name="convert-escaped-percentage">
+                            <xsl:with-param name="value" select="substring-after(./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/>
+                        </xsl:call-template>
+                    </td>
                     <td><xsl:value-of select="./er:CommodityMeasure/er:commodityOfInterest/er:commodityImportance"/></td>
                 </tr>
             </xsl:for-each>
@@ -751,6 +772,25 @@
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+
+
+    <!-- ================================================================= -->
+    <!--    THIS FUNCTION CHECKS IF GIVEN STRING CONTAINS %25 ESCAPE       --> 
+    <!--    SEQUENCE. IF IT DOES, IT RETURNS UN-ESCAPED % CHARACTER        -->
+    <!--    OTHERWISE RETURNS BACK UNMODIFIED INPUT STRING                 -->
+    <!--    PARAM: value                                                   -->
+    <!-- ================================================================= -->
+    <xsl:template name="convert-escaped-percentage">
+        <xsl:param name="value"/>
+        <xsl:choose>
+            <xsl:when test="$value and contains($value,'%25')">
+                <xsl:value-of select="'%'"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$value"/>
+            </xsl:otherwise>
+        </xsl:choose>      
+   </xsl:template>
     
 </xsl:stylesheet>
         
