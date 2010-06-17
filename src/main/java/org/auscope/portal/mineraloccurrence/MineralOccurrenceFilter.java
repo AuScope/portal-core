@@ -79,9 +79,9 @@ public class MineralOccurrenceFilter implements IFilter {
         // Case 2. Commodities Only Query
         else if ( (this.measureType == MeasureTypes.NONE) && (commoditiesCount > 0 ) ) {
             for( Commodity commodity : commodityOccurrences ) {
-                addPropertyIsLike( queryString,
-                                   "er:commodityDescription/@xlink:href",
-                                   commodity.getName() );
+                addPropertyIsEqualTo( queryString,
+                                      "er:commodityDescription/@xlink:href",
+                                      commodity.getName() );
             }                    
 
             if (commoditiesCount > 1)
