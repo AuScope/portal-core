@@ -154,12 +154,12 @@
          <Placemark>
             <name><xsl:value-of select="@gml:id"/></name>
             <description>
-               <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
-               <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'/wfsFeaturePopup.do?url='"/><xsl:value-of select="$mineNameHrefLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/><![CDATA[</a>]]>
-               <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>
-               <![CDATA[</td></tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/>
-               <![CDATA[</td></tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/>
-               <![CDATA[</td></tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./er:activityType"/>            
+               <![CDATA[<table border="1" cellspacing="1" cellpadding="3" width="100%" bgcolor="#EAF0F8">
+               <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'/wfsFeaturePopup.do?url='"/><xsl:value-of select="$mineNameHrefLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/><![CDATA[</a></td>]]>
+               <![CDATA[</tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/><![CDATA[</td>]]>
+               <![CDATA[</tr><tr><td>Acitivity Start Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition"/><![CDATA[</td>]]>
+               <![CDATA[</tr><tr><td>Acitivity End Date</td><td>]]><xsl:value-of select="./er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition"/><![CDATA[</td>]]>
+               <![CDATA[</tr><tr><td>Activity Type</td><td>]]><xsl:value-of select="./er:activityType"/><![CDATA[</td></tr>]]>
                <xsl:call-template name="displayUrnResolverLinkWithoutHTTP">
                   <xsl:with-param name="tableRowLabel" select=" 'Associated Mine' "/>
                   <xsl:with-param name="tableRowValue" select="./er:associatedMine/@xlink:href"/>
@@ -167,13 +167,12 @@
                <xsl:call-template name="displayUrnResolverLinkWithoutHTTP">
                   <xsl:with-param name="tableRowLabel" select=" 'Deposit' "/>
                   <xsl:with-param name="tableRowValue" select="./er:deposit/@xlink:href"/>
-               </xsl:call-template>               
-               <![CDATA[</td></tr><tr><td>Product</td><td>]]><xsl:value-of select="./er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value"/>
-               <xsl:apply-templates select="./er:producedMaterial/er:Product/er:sourceCommodity"/>
-               <![CDATA[</td></tr></table>]]>
+               </xsl:call-template>
+               <![CDATA[<tr><td>Product</td><td>]]><xsl:value-of select="./er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value"/><![CDATA[</td>]]>
+               <xsl:apply-templates select="./er:producedMaterial/er:Product/er:sourceCommodity"/><![CDATA[</table>]]>
             </description>
             
-            <xsl:apply-templates select="./er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point"/>            
+            <xsl:apply-templates select="./er:occurrence/er:MiningFeatureOccurrence/er:location/gml:Point"/>
          </Placemark>
       </xsl:if>
    </xsl:template>
@@ -225,15 +224,11 @@
          <name><xsl:value-of select="$resource_id"/></name>
          <description>
             <![CDATA[<table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
-            <tr><td>Id</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'/wfsFeaturePopup.do?url='"/><xsl:value-of select="$idHrefLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a>]]>
-            <![CDATA[</td></tr><tr><td>Type</td><td>]]><xsl:value-of select="./er:type"/>
-            <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./er:classification/er:MineralDepositModel/er:mineralDepositGroup"/>
-            <!-- commodity and ore amount is currently not required
-            <![CDATA[</td></tr><tr><td>Commodity Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>
-            <![CDATA[</td></tr><tr><td>Commodity Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:measureDetails/mo:CommodityMeasure/mo:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue"/>           
-            <![CDATA[</td></tr><tr><td>Ore Amount: Resource</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Resource/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/>
-            <![CDATA[</td></tr><tr><td>Ore Amount: Reserve</td><td>]]><xsl:value-of select="./mo:oreAmount/mo:Reserve/mo:ore/gsml:CGI_NumericValue/gsml:principalValue"/> -->
-            <xsl:apply-templates select="./er:commodityDescription"/><![CDATA[</td></tr></table>]]>
+               <tr><td>Id</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'/wfsFeaturePopup.do?url='"/><xsl:value-of select="$idHrefLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a></td>]]>
+            <![CDATA[</tr><tr><td>Type</td><td>]]><xsl:value-of select="./er:type"/>
+            <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./er:classification/er:MineralDepositModel/er:mineralDepositGroup"/><![CDATA[</td></tr>]]>
+            <xsl:apply-templates select="./er:commodityDescription"/>
+            <![CDATA[</table>]]>
          </description>
          
          <xsl:apply-templates select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>
@@ -244,7 +239,6 @@
    <!-- TEMPLATE FOR Commodity Description | Source Commodity -->
    <!-- ================================================================= -->
    <xsl:template match="er:commodityDescription | er:sourceCommodity">
-   
       <xsl:call-template name="displayUrnResolverLinkWithoutHTTP">
          <xsl:with-param name="tableRowLabel" select=" 'Commodity Description' "/>
          <xsl:with-param name="tableRowValue" select="@xlink:href"/>
@@ -609,10 +603,8 @@
    <xsl:template name="displayUrnResolverLinkWithoutHTTP">
       <xsl:param name="tableRowLabel"/>
       <xsl:param name="tableRowValue"/>
-      <!-- 
-      <![CDATA[</td></tr><tr><td>]]><xsl:value-of select="$tableRowLabel"/><![CDATA[</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="$uriResolverURL"/><xsl:value-of select="$tableRowValue"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=800');w.focus();return false;">]]><xsl:value-of select="$tableRowValue"/><![CDATA[</a>]]>
-      -->
-      <![CDATA[</td></tr><tr><td>]]><xsl:value-of select="$tableRowLabel"/><![CDATA[</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'/wfsFeaturePopup.do?url='"/><xsl:value-of select="$tableRowValue"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="substring-after($tableRowValue,'=')"/><![CDATA[</a>]]>      
+      <![CDATA[<tr><td>]]><xsl:value-of select="$tableRowLabel"/>
+      <![CDATA[</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'/wfsFeaturePopup.do?url='"/><xsl:value-of select="$tableRowValue"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="substring-after($tableRowValue,'=')"/><![CDATA[</a></td></tr>]]>
    </xsl:template>
 
 
