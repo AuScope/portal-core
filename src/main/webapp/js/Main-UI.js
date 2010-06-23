@@ -86,7 +86,7 @@ Ext.onReady(function() {
         reader: new Ext.data.ArrayReader({}, [
             {   name: 'title'           },
             {   name: 'description'     },
-            {   name: 'contactOrg'     },
+            {   name: 'contactOrg'      },
             {   name: 'proxyURL'        },
             {   name: 'serviceType'     },
             {   name: 'id'              },
@@ -161,6 +161,95 @@ Ext.onReady(function() {
 
     });
 
+
+    var customLayersStore = new Ext.data.Store({
+        proxy: new Ext.data.HttpProxy({url: '/getCustomLayers.do'}),
+        //baseParams : {service_URL : 'fullName' }, // one parameter, column, which is set to ‘fullNname’
+        baseParams : { service_URL : '' },
+        reader: new Ext.data.ArrayReader({}, [
+            {   name: 'title'           },
+            {   name: 'description'     },
+            {   name: 'contactOrg'      },
+            {   name: 'proxyURL'        },
+            {   name: 'serviceType'     },
+            {   name: 'id'              },
+            {   name: 'typeName'        },
+            {   name: 'serviceURLs'     },
+            {   name: 'layerVisible'    },
+            {   name: 'loadingStatus'   },
+            {   name: 'dataSourceImage' },
+            {   name: 'opacity'         }
+        ]),
+        groupField:'contactOrg',
+        sortInfo: {field:'title', direction:'ASC'}        
+    });
+
+
+    //----------- Search Panel
+    var customLayersPanel = new Ext.grid.GridPanel({
+        stripeRows       : true,
+        autoExpandColumn : 'title',
+        plugins          : [ wmsLayersRowExpander ],
+        viewConfig       : {scrollOffset: 0, forceFit:true},
+        title            : 'Custom Layers',
+        region           :'north',
+        split            : true,
+        height           : 160,
+        //width: 80,
+        autoScroll       : true,
+        store            : customLayersStore,
+        loadMask         : true,
+        columns: [
+            wmsLayersRowExpander,
+            {
+                id:'title',
+                header: "Title",
+                sortable: true,
+                dataIndex: 'title'
+            },{
+                id:'contactOrg',
+                header: "Provider",
+                width: 160,
+                sortable: true,
+                dataIndex: 'contactOrg',
+                hidden:true
+            }                    
+        ],
+        tbar: [
+            '<span style="color:#15428B; font-weight:bold">Enter WMS Url: </span>', 
+            ' ',
+            new Ext.ux.form.SearchTwinTriggerField({
+                store: customLayersStore,
+                width:260,
+                name : 'STTField',
+                emptyText : 'http://'
+            })
+        ],
+        bbar: [{
+            text:'Add Layer to Map',
+            tooltip:'Add Layer to Map',
+            iconCls:'add',
+            pressed: true,
+            region :'south',
+            handler: function() {
+                var recordToAdd = customLayersPanel.getSelectionModel().getSelected();
+
+                //Only add if the record isn't already there
+                if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {                
+                    //add to active layers (At the top of the Z-order)
+                    activeLayersStore.insert(0, [recordToAdd]);
+                    
+                    //invoke this layer as being checked
+                    activeLayerCheckHandler(customLayersPanel.getSelectionModel().getSelected(), true);
+                }
+
+                //set this record to selected
+                activeLayersPanel.getSelectionModel().selectRecords([recordToAdd], false);
+            }
+        }]
+    });    
+    
+       
     var filterButton = new Ext.Button({
         text     :'Apply Filter >>',
         tooltip  :'Apply Filter',
@@ -393,10 +482,9 @@ Ext.onReady(function() {
         tileLayer.opacity = record.get('opacity');
 
         //TODO: remove code specific to feature types and styles specific to GSV
-        if (record.get('typeName') == 'gsmlGeologicUnit')
+        if (record.get('typeName') == 'gsmlGeologicUnit') {
             tileLayer.styles = 'ColorByLithology';
-        //if (record.get('id') == '7')
-        //    tileLayer.styles = '7';
+        }
 
         record.tileOverlay = new GTileLayerOverlay(tileLayer);
 
@@ -766,7 +854,8 @@ Ext.onReady(function() {
         //autosize:true,
         items:[
             complexFeaturesPanel,
-            wmsLayersPanel
+            wmsLayersPanel,
+            customLayersPanel
         ]
     });
 
