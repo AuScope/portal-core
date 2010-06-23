@@ -1,0 +1,175 @@
+package org.auscope.portal.server.domain.ows;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import org.xml.sax.InputSource;
+
+/**
+ * This class represents response to GetCapabilites query
+ *  
+ * @author JarekSanders
+ * @version $Id$
+ */
+public class GetCapabilitiesRecord {
+    
+    // -------------------------------------------------------------- Constants    
+    
+    protected final Log log = LogFactory.getLog(getClass());
+    
+    
+    // ----------------------------------------------------- Instance Variables
+    
+    private String serviceType = "";
+    private String organisation = "";
+    private String url = "";
+    private ArrayList<GetCapabilitiesWMSLayerRecord> layers;
+    
+    // ----------------------------------------------------------- Constructors
+
+    /**
+     * C'tor
+     * @param inXml GetCapabilites string response
+     */
+    public GetCapabilitiesRecord(String inXml) {
+        try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();            
+            InputSource inputSource = new InputSource(new StringReader(inXml));
+            Document doc = builder.parse(inputSource);
+        
+            getService(xPath, doc);
+            getContactOrg(xPath, doc);
+            getGetMapUrl(xPath, doc);
+            
+            if (isWMS())
+                getWMSLayers(xPath, doc);
+        
+        } catch (Exception e) {
+            log.error("GetCapabilitiesRecord xml parsing error: " + e.getMessage());
+        }        
+    }
+    
+
+    // ------------------------------------------ Attribute Setters and Getters
+    
+    public boolean isWFS() {
+        return this.serviceType.equals("wfs");
+    }
+    
+    public boolean isWMS() {
+        return this.serviceType.equals("wms");
+    }
+
+    public String getServiceType() {
+        return this.serviceType;
+    }
+    
+    public String getOrganisation() {
+        return this.organisation;
+    }
+    
+    public String getUrl() {
+        return this.url;
+    }
+    
+    public ArrayList<GetCapabilitiesWMSLayerRecord> getLayers() {
+        return this.layers;        
+    }
+    
+    
+    // ------------------------------------------------------ Protected Methods
+    
+    private void getService(XPath xPath, Document doc) {
+        String extractServiceExpression = "/WMT_MS_Capabilities/Service/Name";
+        try {
+            Node tempNode = (Node)xPath.evaluate( extractServiceExpression
+                                                , doc
+                                                , XPathConstants.NODE);
+            
+            final String service = tempNode != null ? tempNode.getTextContent() : "";
+            
+            if (service.equals("OGC:WMS")) {
+                this.serviceType = "wms";
+            } else if (service.equals("OGC:WFS")) {
+                this.serviceType = "wfs";                
+            }
+            
+        } catch (XPathExpressionException e) {
+            log.error("GetCapabilities get service xml parsing error: " + e.getMessage());            
+        }
+    }
+
+    private void getContactOrg(XPath xPath, Document doc) {
+        String extractOrganisationExpression 
+            = "/WMT_MS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactOrganization";
+        
+        try {
+            Node tempNode = (Node)xPath.evaluate( extractOrganisationExpression
+                                                , doc
+                                                , XPathConstants.NODE);
+            
+            this.organisation = tempNode != null ? tempNode.getTextContent() : "";
+                        
+        } catch (XPathExpressionException e) {
+            log.error("GetCapabilities get organisation xml parsing error: " + e.getMessage());            
+        }
+    }
+
+    private void getGetMapUrl(XPath xPath, Document doc) {
+        String extractUrlExpression 
+            = "/WMT_MS_Capabilities/Service/OnlineResource";
+        
+        try {
+            Element elem = (Element)xPath.evaluate( extractUrlExpression
+                                                  , doc
+                                                  , XPathConstants.NODE);
+            
+            this.url = elem.getAttribute("xlink:href");
+            
+        } catch (XPathExpressionException e) {
+            log.error("GetCapabilities GetMapUrl xml parsing error: " + e.getMessage());            
+        }
+    }    
+    
+    private void getWMSLayers(XPath xPath, Document doc) {
+        String extractLayerExpression 
+            = "/WMT_MS_Capabilities/Capability/Layer/Layer";
+        
+        try {
+            NodeList nodes = (NodeList)xPath.evaluate( extractLayerExpression
+                                                     , doc
+                                                     , XPathConstants.NODESET );
+            
+            log.debug("Number of layers retrieved from GeoCapabilities: " + nodes.getLength());
+
+            layers = new ArrayList<GetCapabilitiesWMSLayerRecord>();
+            
+            for(int i=0; i<nodes.getLength(); i++ ) {
+                layers.add( new GetCapabilitiesWMSLayerRecord(nodes.item(i)) );
+                log.debug("WMS layer " + (i+1) + " : " + layers.get(i).toString());            
+            }
+            
+        } catch (XPathExpressionException e) {
+            log.error("GetCapabilities - getWMSLayers xml parsing error: " + e.getMessage());            
+        }
+    }
+    
+}
+
