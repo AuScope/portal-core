@@ -95,7 +95,7 @@ public class GetCapabilitiesController {
             JSONArray serviceURLs = new JSONArray();
             
             // Service url
-            serviceURLs.add(capabilitiesRec.getUrl() + "?SERVICE=WMS&");
+            serviceURLs.add(capabilitiesRec.getUrl());
             
             tableRow.add(serviceURLs);
 

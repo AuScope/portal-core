@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0"
-                xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" 
-                xmlns:fo="http://www.w3.org/1999/XSL/Format" 
-                xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" 
-                xmlns:xlink="http://www.w3.org/1999/xlink" 
-                xmlns:gml="http://www.opengis.net/gml" 
+                xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
+                xmlns:fo="http://www.w3.org/1999/XSL/Format"
+                xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xmlns:gml="http://www.opengis.net/gml"
                 xmlns:wfs="http://www.opengis.net/wfs"
                 exclude-result-prefixes="er gml wfs fo gsml xlink">
     <xsl:output method="html" indent="yes"/>
@@ -34,7 +34,7 @@
                         border-collapse:collapse;
                         font-family: Arial;
                         font-size:small;
-                        width:100%;                         
+                        width:100%;
                     }
                     th {
                         /*border-top: 1px solid #C1DAD7;*/
@@ -45,11 +45,11 @@
                     tr.border {
                         /*border-top: 1px solid #ddecfe;*/
                         /*border-top: 1px solid #4682B4;*/
-                        /*border-top: 1px solid #1E90FF;*/                        
+                        /*border-top: 1px solid #1E90FF;*/
                     }
                     td {
                         padding:1px 5px;
-                        vertical-align:text-top;                   
+                        vertical-align:text-top;
                     }
                     td.caption {
                         font-weight: bold;
@@ -61,24 +61,24 @@
                         color: #15428B;
                     }
                     td.row {
-                        border-top: 1px solid #4682B4;                        
-                    }                    
+                        border-top: 1px solid #4682B4;
+                    }
                     td.col {
-                    }                        
+                    }
                     td.col_header {
                         color: Black;
                         font-weight: bold;
                     }
                     td.no_border {
-                        border-top: none;                    
-                    }                 
+                        border-top: none;
+                    }
                 </style>
                 <title>AuScope Portal Project</title>
                 <!-- 
                 <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
                 -->
                 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-                                
+                
 
                 <meta content="Jarek Sanders" name="author"/>
             </head>
@@ -98,11 +98,11 @@
     <!-- TEMPLATE FOR TRANSLATING Mining Activity -->
     <!-- =============================================================== -->
     <xsl:template match="er:MiningActivity">
-        <table>        
+        <table>
             <tbody>
                 <tr>
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - MiningActivity</td>
-                    <td>&#160;</td> 
+                    <td>&#160;</td>
                     <td colspan="2" ALIGN="right"><b>View As: </b><a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>                        
                     </td>
                 </tr>
@@ -151,7 +151,7 @@
             <xsl:choose>
                 <xsl:when test="position()=1">
                 <tr>
-                    <td class="row">&#160;</td>                
+                    <td class="row">&#160;</td>
                     <td class="row">&#160;</td>
                     <td class="row col_header">Production Amount</td>
                     <td class="row col_header">Recovery %</td>
@@ -163,8 +163,8 @@
                     <td><xsl:value-of select="./er:Product/er:production"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:Product/er:production/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                     <td><xsl:value-of select="./er:Product/er:recovery"/></td>
                     <td><xsl:value-of select="./er:Product/er:grade"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:Product/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>                          
-                </tr>                
-                </xsl:when>                    
+                </tr>
+                </xsl:when>
                 <xsl:otherwise>
                 <tr>
                     <td>&#160;</td>
@@ -172,14 +172,14 @@
                     <td class="row"><xsl:value-of select="./er:Product/er:production"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:Product/er:production/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                     <td class="row"><xsl:value-of select="./er:Product/er:recovery"/></td>
                     <td class="row"><xsl:value-of select="./er:Product/er:grade"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:Product/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
-                </tr>                
+                </tr>
                 </xsl:otherwise>
-            </xsl:choose>            
+            </xsl:choose>
         </xsl:for-each>
                 <!-- Raw Material -->
         <xsl:if test="./er:composition">
                 <tr>
-                    <td class="row header">Raw Material</td>                
+                    <td class="row header">Raw Material</td>
                     <td class="row col_header">Lithology</td>
                     <td class="row col_header">Role</td>
                     <td class="row col_header">Proportion</td>
@@ -195,7 +195,7 @@
         </xsl:if>
                 <!-- Associated Earth Resources -->
                 <tr>
-                    <td class="row header">Associated Earth Resources</td>                
+                    <td class="row header">Associated Earth Resources</td>
                     <td class="row">&#160;</td>
                     <td class="row header">Earth Resource Id:</td>
                     <td class="row" colspan="2">
@@ -203,14 +203,14 @@
                     </td>
                 </tr>
             </tbody>
-        </table>        
+        </table>
     </xsl:template>
 
 
     <!-- TEMPLATE FOR TRANSLATING Mine -->
     <!-- =============================================================== -->
     <xsl:template match="er:Mine">
-        <table>        
+        <table>
             <tbody>
                 <tr>
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - Mine</td>
@@ -234,17 +234,17 @@
                     <td class="row header">Alternative Mine Name</td>
                     <td class="row"><xsl:value-of select="./er:mineName/text()"/></td>
                     <td class="row" colspan="3">&#160;</td>
-                </tr>                
-                </xsl:when>                    
+                </tr>
+                </xsl:when>
                 <xsl:otherwise>
                 <tr>
                     <td></td>
                     <td><xsl:value-of select="./er:mineName/text()"/></td>
                     <td colspan="3">&#160;</td>
-                </tr>                
+                </tr>
                 </xsl:otherwise>
-            </xsl:choose>            
-        </xsl:for-each>                
+            </xsl:choose>
+        </xsl:for-each>
                 <!-- Status -->
                 <tr>
                     <td class="row header">Status</td>
@@ -287,10 +287,10 @@
                     <td class="row" colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
                     </td>
-                </tr>                
+                </tr>
                 </xsl:otherwise>
-            </xsl:choose>            
-        </xsl:for-each>                    
+            </xsl:choose>
+        </xsl:for-each>
                 <!-- Related Mine -->
         <xsl:for-each select="./er:relatedMine">
             <xsl:choose>
@@ -302,7 +302,7 @@
                     <td class="row" colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
                     </td>
-                </tr>    
+                </tr>
                 </xsl:when> 
                 <xsl:otherwise>
                 <tr>
@@ -312,10 +312,10 @@
                     <td class="row" colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
                     </td>
-                </tr>                
+                </tr>
                 </xsl:otherwise>
-            </xsl:choose>            
-        </xsl:for-each>                
+            </xsl:choose>
+        </xsl:for-each>
             </tbody>
         </table>
     </xsl:template>
@@ -324,7 +324,7 @@
     <!-- TEMPLATE FOR TRANSLATING Commodity -->
     <!-- =============================================================== -->
     <xsl:template match="er:Commodity">
-        <table border="1">        
+        <table>
             <tbody>
                 <tr>
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - Commodity</td>
@@ -356,7 +356,7 @@
                     <td class="row" colspan="1">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
                     </td>
-                </tr>    
+                </tr>
                 </xsl:when> 
                 <xsl:otherwise>
                 <tr>
@@ -366,19 +366,19 @@
                     <td class="row" colspan="1">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
                     </td>
-                </tr>                
+                </tr>
                 </xsl:otherwise>
-            </xsl:choose>            
+            </xsl:choose>
         </xsl:for-each>
             </tbody>
-        </table>        
+        </table>
     </xsl:template>
 
 
     <!-- TEMPLATE FOR TRANSLATING Mineral Occurrence -->
-    <!-- =============================================================== -->        
+    <!-- =============================================================== -->
     <xsl:template match="er:MineralOccurrence">
-        <table>        
+        <table>
             <tbody>
                 <tr>
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - MineralOccurrence</td>
@@ -395,7 +395,7 @@
                     <td class="row" colspan="2"><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/></td>
                 </tr>
                 <!-- Mineral Occurrence Name -->
-        <xsl:for-each select="./gml:name[not(@codeSpace='http://www.ietf.org/rfc/rfc2141')]">                
+        <xsl:for-each select="./gml:name[not(@codeSpace='http://www.ietf.org/rfc/rfc2141')]">
             <xsl:choose>
                 <xsl:when test="position()=1">
                 <tr>
@@ -405,7 +405,7 @@
                     <td class="row">&#160;</td>
                     <td class="row">&#160;</td>
                 </tr>
-                </xsl:when>                    
+                </xsl:when>
                 <xsl:otherwise>
                 <tr>
                     <td>&#160;</td>
@@ -415,8 +415,8 @@
                     <td>&#160;</td>
                 </tr>
                 </xsl:otherwise>
-            </xsl:choose>            
-        </xsl:for-each>                                         
+            </xsl:choose>
+        </xsl:for-each>
                 <!-- Description -->
         <xsl:if test="gml:description">
                 <tr>
@@ -436,8 +436,8 @@
                     <td class="row" colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>      
                     </td>
-                </tr>                
-                </xsl:when>                    
+                </tr>
+                </xsl:when>
                 <xsl:otherwise>
                 <tr>
                     <td>&#160;</td>
@@ -446,11 +446,11 @@
                     <td class="row" colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>      
                     </td>
-                </tr>                
+                </tr>
                 </xsl:otherwise>
-            </xsl:choose>            
-        </xsl:for-each>                
-                <!-- Observation Method -->                
+            </xsl:choose>
+        </xsl:for-each>
+                <!-- Observation Method -->
                 <tr>
                     <td class="row header">Observation Method</td>
                     <td class="row"><xsl:value-of select="./gsml:observationMethod/gsml:CGI_TermValue/gsml:value"/></td>
@@ -465,7 +465,7 @@
                     <td class="row col_header">Depth</td>
                     <td class="row col_header">Length</td>
                     <td class="row col_header">Width</td>
-                </tr>                
+                </tr>
                 <tr>
                     <td></td>                                                        
                     <td><xsl:value-of select="./er:dimension/er:EarthResourceDimension/er:area/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:dimension/er:EarthResourceDimension/er:area/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
@@ -473,9 +473,9 @@
                     <td><xsl:value-of select="./er:dimension/er:EarthResourceDimension/er:length/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:dimension/er:EarthResourceDimension/er:length/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                     <td><xsl:value-of select="./er:dimension/er:EarthResourceDimension/er:width/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:dimension/er:EarthResourceDimension/er:width/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>                    
                 </tr>
-       </xsl:if>                
+       </xsl:if>
                 <!-- Appearance -->
-       <xsl:if test="./er:form | ./er:expression | ./er:shape">                                
+       <xsl:if test="./er:form | ./er:expression | ./er:shape">
                 <tr>
                     <td class="row header">Appearance</td>
                     <td class="row col_header">Form</td>
@@ -484,15 +484,15 @@
                     <td class="row col_header">&#160;</td>
                 </tr>
                 <tr>
-                    <td></td>                                                        
+                    <td></td>
                     <td><xsl:value-of select="./er:form/gsml:CGI_TermValue/gsml:value"/></td>
                     <td><xsl:value-of select="./er:expression/gsml:CGI_TermValue/gsml:value"/></td>
                     <td><xsl:value-of select="./er:shape/gsml:CGI_TermValue/gsml:value"/></td>
-                    <td></td>                    
+                    <td></td>
                 </tr>
-       </xsl:if>                
-                <!-- Linear Orientation -->                
-       <xsl:if test="./er:linearOrientation">                
+       </xsl:if>
+                <!-- Linear Orientation -->
+       <xsl:if test="./er:linearOrientation">
                 <tr>
                     <td class="row header">Linear Orientation</td>
                     <td class="row col_header">Plunge</td>
@@ -501,15 +501,15 @@
                     <td class="row col_header">&#160;</td>
                 </tr>
                 <tr>
-                    <td></td>                                                        
+                    <td></td>
                     <td><xsl:value-of select="./er:linearOrientation/gsml:CGI_LinearOrientation/gsml:plungeValue"/></td>
                     <td><xsl:value-of select="./er:linearOrientation/gsml:CGI_LinearOrientation/gsml:trend"/></td>
                     <td></td>
-                    <td></td>                    
+                    <td></td>
                 </tr>
-       </xsl:if>                
+       </xsl:if>
                 <!-- Planar Orientation -->
-       <xsl:if test="./er:planarOrientation">                                
+       <xsl:if test="./er:planarOrientation">
                 <tr>
                     <td class="row header">Planar Orientation</td>
                     <td class="row col_header">Convention</td>
@@ -524,9 +524,9 @@
                     <td><xsl:value-of select="./er:planarOrientation/gsml:CGI_PlanarOrientation/gsml:dip/gsml:CGI_NumericValue/gsml:principalValue"/></td>
                     <td></td>
                 </tr>
-       </xsl:if>                
-                <!-- Classification -->      
-       <xsl:if test="./er:classification">                          
+       </xsl:if>
+                <!-- Classification -->
+       <xsl:if test="./er:classification">
                 <tr>
                     <td class="row header">Classification</td>
                     <td class="row col_header">Deposit Group</td>
@@ -541,9 +541,9 @@
                     <td><xsl:value-of select="./er:classification/er:MineralDepositModel/er:mineralDepositType"/></td>
                     <td></td>
                 </tr>
-       </xsl:if>                
+       </xsl:if>
                 <!-- Supergene Modification -->
-       <xsl:if test="./er:supergeneModification">                
+       <xsl:if test="./er:supergeneModification">
                 <tr>
                     <td class="row header">Supergene Modification</td>
                     <td class="col_header">Lithology</td>
@@ -559,18 +559,18 @@
                     <td><xsl:value-of select="./er:supergeneModification/er:SupergeneProcesses/er:depth/gsml:CGI_Numeric/gsml:CGI_NumericValue/gsml:principalValue"/></td>                                        
                     <td></td>
                 </tr>
-       </xsl:if>                
+       </xsl:if>
                 <!-- Composition -->
-       <xsl:if test="./er:composition">                                
+       <xsl:if test="./er:composition">
                 <tr>
                     <td class="row header">Composition</td>
                     <td class="row col_header">Lithology</td>
                     <td class="row col_header">Role</td>
                     <td class="row col_header">Proportion</td>
-                    <td class="row col_header"></td>                    
+                    <td class="row col_header"></td>
                 </tr>
-                <tr>                
-                    <td></td>                                            
+                <tr>
+                    <td></td>
                     <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:material/gsml:RockMaterial/gsml:lithology"/></td>
                     <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:earthResourceMaterialRole"/></td>
                     <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:proportion/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
@@ -582,17 +582,17 @@
                 </tr>
        </xsl:if>                
                 <!-- Geological History -->
-       <xsl:if test="./gsml:preferredAge/gsml:GeologicEvent">                                
+       <xsl:if test="./gsml:preferredAge/gsml:GeologicEvent">
                 <tr>
                     <td class="row header">Geological History</td>
                     <td class="row col_header">Age</td>
                     <td class="row col_header">Process</td>
                     <td class="row col_header">Environment</td>
-                    <td class="row col_header"></td>                    
+                    <td class="row col_header"></td>
                 </tr>
             <xsl:for-each select="./gsml:preferredAge/gsml:GeologicEvent">
-                <tr>                
-                    <td></td>                                            
+                <tr>
+                    <td></td>
                     <td><xsl:value-of select="./gsml:eventAge/gsml:CGI_NumericValue/gsml:principalValue"/></td>
                     <td><xsl:value-of select="./gsml:eventProcess/gsml:CGI_TermValue/gsml:value"/></td>
                     <td><xsl:value-of select="./gsml:eventEnvironment/gsml:CGI_TermValue/gsml:value"/></td>
@@ -653,7 +653,7 @@
                     </td>
                     <td><xsl:value-of select="./er:CommodityMeasure/er:commodityOfInterest/er:commodityImportance"/></td>
                 </tr>
-            </xsl:for-each>                                  
+            </xsl:for-each>
         </xsl:for-each>
                 <!-- Resources -->
         <xsl:for-each select="./er:oreAmount/er:Resource">
@@ -679,19 +679,19 @@
                                         <xsl:with-param name="substr" select="':'" />
                                     </xsl:call-template>
                                 </xsl:otherwise>
-                            </xsl:choose>                                                 
+                            </xsl:choose>
                         </td>
                         <td class="row header">Id:</td>
                         <td class="row" colspan="2">
                             <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={./er:CommodityMeasure/er:commodityOfInterest/@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(.//er:CommodityMeasure/er:commodityOfInterest/@xlink:href,'=')"/></a>
                         </td>
-                    </tr>             
+                    </tr>
                 <tr>
                     <td></td>
                     <td class="row col_header">Commodity Amount</td>
                     <td class="row col_header">Cut-off Grade</td>
                     <td class="row col_header">Grade</td>
-                    <td class="row col_header">Importance</td>       
+                    <td class="row col_header">Importance</td>
                 </tr>
                 <tr>
                     <td></td>
@@ -700,7 +700,7 @@
                         <xsl:call-template name="convert-escaped-percentage">
                             <xsl:with-param name="value" select="substring-after(./er:CommodityMeasure/er:cutOffGrade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/>
                         </xsl:call-template>
-                    </td>                    
+                    </td>
                     <td><xsl:value-of select="./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
                         <xsl:call-template name="convert-escaped-percentage">
                             <xsl:with-param name="value" select="substring-after(./er:CommodityMeasure/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/>
@@ -741,10 +741,10 @@
                     <td class="row" colspan="2">
                         <a href="#" onclick="var w=window.open('/wfsFeaturePopup.do?url={./er:child/@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(./er:child/@xlink:href,'=')"/></a>
                     </td>
-                </tr>                 
+                </tr>
        </xsl:if>
             </tbody>
-        </table>                                  
+        </table>
     </xsl:template>
 
     
@@ -789,8 +789,7 @@
             <xsl:otherwise>
                 <xsl:value-of select="$value"/>
             </xsl:otherwise>
-        </xsl:choose>      
+        </xsl:choose>
    </xsl:template>
-    
+   
 </xsl:stylesheet>
-        

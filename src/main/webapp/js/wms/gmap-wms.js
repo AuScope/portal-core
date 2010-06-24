@@ -124,7 +124,7 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
    var url = this.baseURL;
    
    var last_char = url.charAt(url.length - 1);
-   if ((last_char != "?") || (last_char != "&")) {
+   if ((last_char !== "?") && (last_char !== "&")) {
       if (url.indexOf('?') == -1)
          url += "?";
       else

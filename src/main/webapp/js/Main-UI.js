@@ -65,7 +65,7 @@ Ext.onReady(function() {
                 var recordToAdd = complexFeaturesPanel.getSelectionModel().getSelected();
 
                 //Only add if the record isn't already there
-                if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {                
+                if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {
                     //add to active layers (At the top of the Z-order)
                     activeLayersStore.insert(0, [recordToAdd]);
                     
@@ -181,15 +181,18 @@ Ext.onReady(function() {
             {   name: 'opacity'         }
         ]),
         groupField:'contactOrg',
-        sortInfo: {field:'title', direction:'ASC'}        
+        sortInfo: {field:'title', direction:'ASC'}
     });
 
-
+    var customLayersRowExpander = new Ext.grid.RowExpander({
+        tpl : new Ext.Template('<p>{description}</p><br>')
+    });
+    
     //----------- Search Panel
     var customLayersPanel = new Ext.grid.GridPanel({
         stripeRows       : true,
         autoExpandColumn : 'title',
-        plugins          : [ wmsLayersRowExpander ],
+        plugins          : [ customLayersRowExpander ],
         viewConfig       : {scrollOffset: 0, forceFit:true},
         title            : 'Custom Layers',
         region           :'north',
@@ -200,7 +203,7 @@ Ext.onReady(function() {
         store            : customLayersStore,
         loadMask         : true,
         columns: [
-            wmsLayersRowExpander,
+            customLayersRowExpander,
             {
                 id:'title',
                 header: "Title",
@@ -213,10 +216,10 @@ Ext.onReady(function() {
                 sortable: true,
                 dataIndex: 'contactOrg',
                 hidden:true
-            }                    
+            }
         ],
         tbar: [
-            '<span style="color:#15428B; font-weight:bold">Enter WMS Url: </span>', 
+            '<span style="color:#15428B; font-weight:bold">Enter WMS Url: </span>',
             ' ',
             new Ext.ux.form.SearchTwinTriggerField({
                 store: customLayersStore,
@@ -235,7 +238,7 @@ Ext.onReady(function() {
                 var recordToAdd = customLayersPanel.getSelectionModel().getSelected();
 
                 //Only add if the record isn't already there
-                if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {                
+                if (activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {
                     //add to active layers (At the top of the Z-order)
                     activeLayersStore.insert(0, [recordToAdd]);
                     
@@ -247,9 +250,9 @@ Ext.onReady(function() {
                 activeLayersPanel.getSelectionModel().selectRecords([recordToAdd], false);
             }
         }]
-    });    
+    });
     
-       
+    
     var filterButton = new Ext.Button({
         text     :'Apply Filter >>',
         tooltip  :'Apply Filter',
@@ -323,7 +326,7 @@ Ext.onReady(function() {
     /**
      *@param forceApplyFilter (Optional) if set AND isChecked is set AND this function has a filter panel, it will force the current filter to be loaded
      */
-    var activeLayerCheckHandler = function(record, isChecked, forceApplyFilter) {        
+    var activeLayerCheckHandler = function(record, isChecked, forceApplyFilter) {
         //set the record to be selected if checked
         activeLayersPanel.getSelectionModel().selectRecords([record], false);
 
@@ -742,11 +745,17 @@ Ext.onReady(function() {
                                            map.getBounds().getNorthEast().lat();
 
                             var url = serviceUrls[i];
-
-                            if (url.length > 0 && url[url.length - 1] != '?')
-                                url += '?';
-                            
-                            url += "&REQUEST=GetMap";
+                                                          
+                            var last_char = url.charAt(url.length - 1);
+                            if ((last_char !== "?") && (last_char !== "&")) {
+                                if (url.indexOf('?') == -1) {
+                                    url += "?";
+                                } else {
+                                    url += "&";
+                                }
+                            }
+                             
+                            url += "REQUEST=GetMap";
                             url += "&SERVICE=WMS";
                             url += "&VERSION=1.1.0";
                             url += "&LAYERS=" + record.get('typeName');
@@ -973,15 +982,15 @@ Ext.onReady(function() {
     });
 
     GEvent.addListener(map, "mousemove", function(latlng){
-        var latStr = "<b>Long:</b> " + latlng.lng().toFixed(6) 
+        var latStr = "<b>Long:</b> " + latlng.lng().toFixed(6)
                    + "&nbsp&nbsp&nbsp&nbsp"
-                   + "<b>Lat:</b> " + latlng.lat().toFixed(6);  
+                   + "<b>Lat:</b> " + latlng.lat().toFixed(6);
     	document.getElementById("latlng").innerHTML = latStr;
     });
 
     GEvent.addListener(map, "mouseout", function(latlng){
         document.getElementById("latlng").innerHTML = "";
-    });     
+    });
     
     new Ext.LoadMask(tabsPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});
     //new Ext.LoadMask(complexFeaturesPanel.el, {msg: 'Please Wait...', store: complexFeaturesStore});

@@ -58,8 +58,11 @@ public class GetCapabilitiesRecord {
             getContactOrg(xPath, doc);
             getGetMapUrl(xPath, doc);
             
-            if (isWMS())
+            if (isWMS()) {
                 getWMSLayers(xPath, doc);
+            } else {
+                log.info("Adding custom WFSs is not yet implimented");
+            }
         
         } catch (Exception e) {
             log.error("GetCapabilitiesRecord xml parsing error: " + e.getMessage());
@@ -97,18 +100,30 @@ public class GetCapabilitiesRecord {
     // ------------------------------------------------------ Protected Methods
     
     private void getService(XPath xPath, Document doc) {
-        String extractServiceExpression = "/WMT_MS_Capabilities/Service/Name";
         try {
+            /* Commented out this code as some services do not follow the
+             * OGC WMS standard ie. <Name> element does not contain "OGC:WMS"
+            String extractServiceExpression = "/WMT_MS_Capabilities/Service/Name";            
             Node tempNode = (Node)xPath.evaluate( extractServiceExpression
                                                 , doc
-                                                , XPathConstants.NODE);
-            
+                                                , XPathConstants.NODE);            
             final String service = tempNode != null ? tempNode.getTextContent() : "";
             
             if (service.equals("OGC:WMS")) {
                 this.serviceType = "wms";
             } else if (service.equals("OGC:WFS")) {
                 this.serviceType = "wfs";                
+            }*/
+            
+            // The only other way to figure out if the input comes from WMS 
+            // is to check for <WMT_MS_Capabilities> node
+            // ASSUMPTION: <WMT_MS_Capabilities> = WMS
+            
+            int elemCount 
+                = Integer.parseInt((String) xPath.evaluate("count(/WMT_MS_Capabilities)", doc));
+            
+            if( elemCount != 0) {
+                this.serviceType = "wms";
             }
             
         } catch (XPathExpressionException e) {
