@@ -26,7 +26,40 @@ import java.io.UnsupportedEncodingException;
 @Repository
 public class MineralOccurrencesResponseHandler {
 
-    public List<Mine> getMines(String mineResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    /**
+     * Checks a parsed document for an error response, throws an exception if any have been returned
+     * (Otherwise returns
+     * @param doc
+     * @param xPath
+     * @throws Exception
+     */
+    private void checkForErrors(Document doc, XPath xPath) throws Exception {
+        
+        //Check for an exception response
+        XPathExpression exceptionTestExpr = xPath.compile("/ows:ExceptionReport/ows:Exception");
+        NodeList exceptionNodes = (NodeList)exceptionTestExpr.evaluate(doc, XPathConstants.NODESET);
+        if (exceptionNodes.getLength() > 0) {
+            Node exceptionNode = exceptionNodes.item(0);
+            
+            XPathExpression exceptionCodeExpr = xPath.compile("@exceptionCode");
+            XPathExpression exceptionTextExpr = xPath.compile("ows:ExceptionText");
+            
+            Node exceptionTextNode = (Node)exceptionTextExpr.evaluate(exceptionNode, XPathConstants.NODE);
+            String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]" : exceptionTextNode.getTextContent();
+            String exceptionCode = (String)exceptionCodeExpr.evaluate(exceptionNode, XPathConstants.STRING);
+            
+            throw new Exception(String.format("Code='%1$s' Message='%2$s'", exceptionCode ,exceptionText));
+        }
+        
+        //Check for a root wfs response element
+        XPathExpression rootWfsExpr = xPath.compile("/wfs:FeatureCollection");
+        NodeList wfsNodes = (NodeList)rootWfsExpr.evaluate(doc, XPathConstants.NODESET);
+        if (wfsNodes.getLength() == 0) {
+            throw new Exception("No root <wfs:FeatureCollection> in response");
+        }
+    }
+    
+    public List<Mine> getMines(String mineResponse) throws Exception {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
         DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -36,6 +69,9 @@ public class MineralOccurrencesResponseHandler {
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
+        //Do some rudimentary error testing
+        checkForErrors(mineDocument,xPath);
+        
         // To death we are hastening, let us refrain from sinning ... never forget this too! ;-) 
         XPathExpression expr = xPath.compile("/wfs:FeatureCollection/gml:featureMember/er:Mine | /wfs:FeatureCollection/gml:featureMembers/er:Mine");
         NodeList mineNodes = (NodeList)expr.evaluate(mineDocument, XPathConstants.NODESET);
@@ -48,7 +84,7 @@ public class MineralOccurrencesResponseHandler {
         return mines;
     }
 
-    public Collection<Commodity> getCommodities(String commodityResponse) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+    public Collection<Commodity> getCommodities(String commodityResponse) throws Exception {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
         DocumentBuilder builder = domFactory.newDocumentBuilder();
@@ -58,6 +94,9 @@ public class MineralOccurrencesResponseHandler {
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
+        //Do some rudimentary error testing
+        checkForErrors(commodityDocument,xPath);
+        
         XPathExpression expr = xPath.compile("//er:Commodity");
         NodeList commodityNodes = (NodeList)expr.evaluate(commodityDocument, XPathConstants.NODESET);
         ArrayList<Commodity> commodities = new ArrayList<Commodity>();
@@ -69,7 +108,7 @@ public class MineralOccurrencesResponseHandler {
         return commodities;
     }
 
-    public int getNumberOfFeatures(String mineralOccurrenceResponse) throws ParserConfigurationException, UnsupportedEncodingException, SAXException, IOException {
+    public int getNumberOfFeatures(String mineralOccurrenceResponse) throws Exception {
 
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
@@ -79,6 +118,9 @@ public class MineralOccurrencesResponseHandler {
         XPathFactory factory = XPathFactory.newInstance();
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+        
+        //Do some rudimentary error testing
+        checkForErrors(mineralOccurrenceDocument,xPath);
         
         try {
             XPathExpression expr = xPath.compile("/wfs:FeatureCollection");
