@@ -66,12 +66,23 @@ public class DownloadController {
 
             logger.info("Calling service: " + serviceUrls[i]);
 
-            String responseString 
-               = serviceCaller.getMethodResponseAsString(method, client);
+            //Our request may fail (due to timeout or otherwise)
+            String responseString = null;
+            JSONObject jsonObject = null;
+            try {
+                responseString = serviceCaller.getMethodResponseAsString(method, client);
+                
+                logger.info("Response: " + responseString);
 
-            logger.info("Response: " + responseString);
-
-            JSONObject jsonObject = JSONObject.fromObject( responseString );
+                jsonObject = JSONObject.fromObject( responseString );
+            } catch (Exception ex) {
+                //Replace a failure exception with a JSONObject representing that exception
+                logger.error(ex, ex);
+                jsonObject = new JSONObject();
+                jsonObject.put("msg", ex.getMessage());
+                jsonObject.put("success", false);
+                responseString = ex.toString();
+            }
 
             //Extract our data (if it exists)
             byte[] gmlBytes = new byte[] {}; //The error response is an empty array
