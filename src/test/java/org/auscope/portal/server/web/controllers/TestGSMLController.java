@@ -4,7 +4,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -55,6 +58,21 @@ public class TestGSMLController {
      * Mock response
      */
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
+    
+    /**
+     * Mock request
+     */
+    private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
+    
+    /**
+     * Mock session
+     */
+    private HttpSession mockHttpSession = context.mock(HttpSession.class);
+    
+    /**
+     * Mock session
+     */
+    private ServletContext mockServletContext = context.mock(ServletContext.class);
 
     @Before
     public void setup() {
@@ -74,9 +92,13 @@ public class TestGSMLController {
             oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
+            
+            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
+            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
+            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestAllFeatures("fake", "fake", null);
+        ModelAndView modelAndView = gsmlController.requestAllFeatures("fake", "fake", mockHttpRequest);
 
         //check that the kml blob has been put ont he model
         modelAndView.getModel().get("data").equals(kmlBlob);
