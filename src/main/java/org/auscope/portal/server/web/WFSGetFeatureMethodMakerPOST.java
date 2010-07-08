@@ -19,16 +19,30 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
     /** Log object for this class. */
     protected final Log log = LogFactory.getLog(getClass());
 
+    /**
+     * Creates a PostMethod given the following parameters
+     * @param serviceURL - required, exception thrown if not provided
+     * @param featureType - required, exception thrown if not provided
+     * @param filterString - optional
+     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
+     * @return
+     * @throws Exception if service URL or featureType is not provided
+     */
+    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
+        return makeMethod(serviceURL, featureType, filterString, maxFeatures, null);
+    }
     
     /**
      * Creates a PostMethod given the following parameters
      * @param serviceURL - required, exception thrown if not provided
      * @param featureType - required, exception thrown if not provided
      * @param filterString - optional
+     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
+     * @param srsName - Can be null or empty
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString) throws Exception {
+    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) throws Exception {
 
         // Make sure the required parameters are given
         if (featureType == null || featureType.equals(""))
@@ -46,8 +60,13 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
         sb.append("                xmlns:ogc=\"http://www.opengis.net/ogc\"\n");
         sb.append("                xmlns:gml=\"http://www.opengis.net/gml\"\n");
         sb.append("                xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\"\n");
-        sb.append("                maxFeatures=\"200\">\n");
-        sb.append("  <wfs:Query typeName=\""+featureType+"\">\n");
+        if (maxFeatures > 0)
+            sb.append("                maxFeatures=\"" + Integer.toString(maxFeatures) + "\"");
+        sb.append(">\n");
+        sb.append("  <wfs:Query typeName=\""+featureType+"\"");
+        if (srsName != null && ! srsName.isEmpty())
+            sb.append(" srsName=\"" + srsName + "\"");
+        sb.append(">\n");
         sb.append(filterString);
         sb.append("  </wfs:Query>\n");
         sb.append("</wfs:GetFeature>");
@@ -60,4 +79,5 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
 
         return httpMethod;
     }
+
 }

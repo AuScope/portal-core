@@ -63,7 +63,7 @@ public class TestMineralOccurrenceServiceClient {
         final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Mine", ""); will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(serviceURL, "er:Mine", "", 0); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockMineResponse));
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
@@ -91,7 +91,7 @@ public class TestMineralOccurrenceServiceClient {
         final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Mine", mineFilter.getFilterString()); will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(serviceURL, "er:Mine", mineFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockMineResponse));
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
@@ -190,7 +190,7 @@ public class TestMineralOccurrenceServiceClient {
         context.checking(new Expectations() {{           
            
             // This is the get commodities part
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString()); will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
             oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(commodities));
@@ -199,7 +199,7 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (mockCommodity).getSource(); will(returnValue("dudURI"));
             
             //the mineral occurrence query part
-            oneOf (methodMaker).makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterString()); will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
         }});
@@ -271,7 +271,7 @@ public class TestMineralOccurrenceServiceClient {
 
         context.checking(new Expectations() {{
             ignoring(mockMine);
-            oneOf (methodMaker).makeMethod(with(""), with("er:MiningActivity"), with(any(String.class)));will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(with(""), with("er:MiningActivity"), with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
         }});

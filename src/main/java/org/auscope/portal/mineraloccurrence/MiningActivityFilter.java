@@ -1,5 +1,6 @@
 package org.auscope.portal.mineraloccurrence;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Id$
  */
-public class MiningActivityFilter implements IFilter {
+public class MiningActivityFilter extends AbstractFilter {
     private List<Mine> associatedMines;
     private String startDate;
     private String endDate;
@@ -17,7 +18,6 @@ public class MiningActivityFilter implements IFilter {
     private String producedMaterial;
     private String cutOffGrade;
     private String production;
-    private boolean manyParameters;
     
     // -------------------------------------------------------------- Constants
     
@@ -41,162 +41,68 @@ public class MiningActivityFilter implements IFilter {
         this.producedMaterial = producedMaterial;
         this.cutOffGrade = cutOffGrade;
         this.production = production;
-        this.manyParameters = getParameterIndicator();
     }
 
     // --------------------------------------------------------- Public Methods
     
-    /**
-     * Build the query string based on given properties
-     * @return the query string
-     */
-    public String getFilterString() { // TODO: this sucks! use geotools api to build queries...
+    @Override
+    public String getFilterStringAllRecords() {
+        return this.generateFilter(this.generateFilterFragment());
+    }
+
+    @Override
+    public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
         
-        String result = "";
-        StringBuffer filterClause = new StringBuffer();
-        StringBuffer filterExpression  = new StringBuffer();
-        
-
-        filterClause.append("    <ogc:Filter>\n");
-
-        if (manyParameters)
-            filterExpression.append("      <ogc:And>\n");
-
-        int associatedMinesCount = this.associatedMines.size();
-        log.debug("Number of associated mines: " + associatedMinesCount);
-        
-        // One mine, we don't need ogc:Or's
-        if (associatedMinesCount == 1 ) {
-
-            int relatedActivitiesCount = this.associatedMines.get(0).getRelatedActivities().size();
-            log.debug("___Number of related activities: " + relatedActivitiesCount);
-            
-            if (relatedActivitiesCount == 1 ) {
-                filterExpression.append("        <ogc:PropertyIsEqualTo>\n");
-                filterExpression.append("          <ogc:PropertyName>gml:name</ogc:PropertyName>\n");
-                filterExpression.append("          <ogc:Literal>" + this.associatedMines.get(0).getRelatedActivities().get(0) + "</ogc:Literal>\n");
-                filterExpression.append("        </ogc:PropertyIsEqualTo>\n");                
-            }
-            // One mine but more then one mining activity, need ogc:Or's
-            else if (relatedActivitiesCount > 1 ) {
-                filterExpression.append("      <ogc:Or>\n");
-                
-                for (String s : this.associatedMines.get(0).getRelatedActivities()) {
-
-                    filterExpression.append("        <ogc:PropertyIsEqualTo>\n");
-                    filterExpression.append("          <ogc:PropertyName>gml:name</ogc:PropertyName>\n");
-                    filterExpression.append("          <ogc:Literal>" + s + "</ogc:Literal>\n");
-                    filterExpression.append("        </ogc:PropertyIsEqualTo>\n");
-                    
-                }               
-                filterExpression.append("      </ogc:Or>\n");
-            }
-            
-        // For two and more mines we need ogc:Or's
-        } else if (associatedMinesCount > 1) {
-            
-            filterExpression.append("      <ogc:Or>\n");
-            int z = 0;
-            for (Mine mine : this.associatedMines) {
-
-                log.debug((++z) + " : " + mine.getMineNameURI());
-
-                int relActCount = mine.getRelatedActivities().size();
-                log.debug("___Number of mine related activities: " + relActCount);
-
-                int y = 0;
-                for (String s : mine.getRelatedActivities()) {
-                    log.debug("___" + (++y) + " : " + s);
-                    
-                    filterExpression.append("        <ogc:PropertyIsEqualTo>\n");
-                    filterExpression.append("          <ogc:PropertyName>gml:name</ogc:PropertyName>\n");
-                    filterExpression.append("          <ogc:Literal>" + s + "</ogc:Literal>\n");
-                    filterExpression.append("        </ogc:PropertyIsEqualTo>\n");
-                }
-            }
-            
-            filterExpression.append("      </ogc:Or>\n");            
-        }
-
-        if(!this.startDate.equals("")) {
-            filterExpression.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            filterExpression.append("          <ogc:PropertyName>er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition</ogc:PropertyName>\n");
-            filterExpression.append("          <ogc:Literal>"+ this.startDate +"</ogc:Literal>\n");
-            filterExpression.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");
-        }
-        if(!this.endDate.equals("")) {
-            filterExpression.append("        <ogc:PropertyIsLessThanOrEqualTo>\n");
-            filterExpression.append("          <ogc:PropertyName>er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition</ogc:PropertyName>\n");
-            filterExpression.append("          <ogc:Literal>"+this.endDate+"</ogc:Literal>\n");
-            filterExpression.append("        </ogc:PropertyIsLessThanOrEqualTo>\n");
-        }
-        if(!this.oreProcessed.equals("")) {
-            filterExpression.append("        <ogc:PropertyIsGreaterThan>\n");
-            filterExpression.append("          <ogc:PropertyName>er:oreProcessed/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            filterExpression.append("          <ogc:Literal>"+this.oreProcessed+"</ogc:Literal>\n");
-            filterExpression.append("        </ogc:PropertyIsGreaterThan>");
-        }
-        if(!this.producedMaterial.equals("")) {
-            filterExpression.append("        <ogc:PropertyIsEqualTo>\n");
-            filterExpression.append("          <ogc:PropertyName>er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value</ogc:PropertyName>\n");
-            filterExpression.append("          <ogc:Literal>"+this.producedMaterial+"</ogc:Literal>\n");
-            filterExpression.append("        </ogc:PropertyIsEqualTo>\n");
-        }
-        if(!this.cutOffGrade.equals("")) {
-            filterExpression.append("        <ogc:PropertyIsGreaterThan>\n");
-            filterExpression.append("          <ogc:PropertyName>er:producedMaterial/er:Product/er:grade/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            filterExpression.append("          <ogc:Literal>"+this.cutOffGrade+"</ogc:Literal>\n");
-            filterExpression.append("        </ogc:PropertyIsGreaterThan>");
-        }
-        if(!this.production.equals("")) {
-            filterExpression.append("        <ogc:PropertyIsGreaterThan>\n");
-            filterExpression.append("          <ogc:PropertyName>er:producedMaterial/er:Product/er:production/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            filterExpression.append("          <ogc:Literal>"+this.production+"</ogc:Literal>\n");
-            filterExpression.append("        </ogc:PropertyIsGreaterThan>\n");
-        }
-        if(manyParameters)
-            filterExpression.append("      </ogc:And>\n");
-
-        // If there are no query parameters and the query sting is empty, we are 
-        // returning an empty string. In this case GetFeature request will be
-        // sent without ogc:Filter clause
-        if (filterExpression.length() != 0)  {
-            filterExpression.append("    </ogc:Filter>\n");
-            result = filterClause.append(filterExpression).toString();
-        }
-        
-        return result;
+        return this.generateFilter(
+                this.generateAndComparisonFragment(
+                        this.generateBboxFragment(bbox, "er:occurrence/er:MiningFeatureOccurrence/er:location"), 
+                        this.generateFilterFragment()));
     }
 
     
     // -------------------------------------------------------- Private Methods
-    
-    /*
-     * Checks if more than one query parameter have a value.   
-     * @return <tt>true</tt> if more than one parameter is found
-     */
-    private boolean getParameterIndicator() {
-        int howManyHaveaValue = 0;
+    private String generateFilterFragment() {
+        List<String> mineFragments = new ArrayList<String>();
+        List<String> parameterFragments = new ArrayList<String>();
+        
+        int z = 0;
+        for (Mine mine : this.associatedMines) {
 
-        if(this.associatedMines.size() >= 1)
-            howManyHaveaValue++;
-        if(!this.startDate.equals(""))
-            howManyHaveaValue++;
-        if(!this.endDate.equals(""))
-            howManyHaveaValue++;
-        if(!this.oreProcessed.equals(""))
-            howManyHaveaValue++;
-        if(!this.producedMaterial.equals(""))
-            howManyHaveaValue++;
-        if(!this.cutOffGrade.equals(""))
-            howManyHaveaValue++;
-        if(!this.production.equals(""))
-            howManyHaveaValue++;
+            log.debug((++z) + " : " + mine.getMineNameURI());
 
-        if(howManyHaveaValue >= 2)
-            return true;
+            int relActCount = mine.getRelatedActivities().size();
+            log.debug("___Number of mine related activities: " + relActCount);
 
-        return false;
+            int y = 0;
+            for (String s : mine.getRelatedActivities()) {
+                log.debug("___" + (++y) + " : " + s);
+                
+                mineFragments.add(this.generatePropertyIsEqualToFragment("gml:name", s));
+            }
+        }
+ 
+        if(this.startDate.length() > 0)
+            parameterFragments.add(this.generatePropertyIsGreaterThanOrEqualTo("er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition", this.startDate));
+        
+        if(this.endDate.length() > 0)
+            parameterFragments.add(this.generatePropertyIsGreaterThanOrEqualTo("er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition", this.endDate));
+        
+        if(this.oreProcessed.length() > 0)
+            parameterFragments.add(this.generatePropertyIsGreaterThan("er:oreProcessed/gsml:CGI_NumericValue/gsml:principalValue", this.oreProcessed));
+        
+        if(this.producedMaterial.length() > 0)
+            parameterFragments.add(this.generatePropertyIsEqualToFragment("er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value", this.producedMaterial));
+        
+        if(this.cutOffGrade.length() > 0)
+            parameterFragments.add(this.generatePropertyIsGreaterThan("er:producedMaterial/er:Product/er:grade/gsml:CGI_NumericValue/gsml:principalValue", this.cutOffGrade));
+        
+        if(this.production.length() > 0)
+            parameterFragments.add(this.generatePropertyIsGreaterThan("er:producedMaterial/er:Product/er:production/gsml:CGI_NumericValue/gsml:principalValue", this.production));
+        
+        return this.generateAndComparisonFragment(
+                this.generateOrComparisonFragment(mineFragments.toArray(new String[mineFragments.size()])),
+                this.generateAndComparisonFragment(parameterFragments.toArray(new String[parameterFragments.size()])));
     }
 
+    
 }

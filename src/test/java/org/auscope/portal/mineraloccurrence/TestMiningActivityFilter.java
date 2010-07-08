@@ -38,7 +38,7 @@ public class TestMiningActivityFilter {
         }});
 
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(this.mockMineList, "", "", "", "", "", "");
-        Assert.assertEquals(Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMine.xml").replace("\n", "").replace(" ", ""), miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
+        Assert.assertEquals(Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMine.xml").replace("\n", "").replace(" ", ""), miningActivityFilter.getFilterStringAllRecords().replace("\n", "").replace(" ", ""));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class TestMiningActivityFilter {
         }});
 
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "", "", "");
-        Assert.assertEquals(Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRange.xml").replace("\n", "").replace(" ", ""), miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
+        Assert.assertEquals(Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRange.xml").replace("\n", "").replace(" ", ""), miningActivityFilter.getFilterStringAllRecords().replace("\n", "").replace(" ", ""));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class TestMiningActivityFilter {
         
         Assert.assertEquals(
                 Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRangeOre.xml").replace("\n", "").replace(" ", ""),
-                miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
+                miningActivityFilter.getFilterStringAllRecords().replace("\n", "").replace(" ", ""));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class TestMiningActivityFilter {
         
         Assert.assertEquals(
                 Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRangeProducedMaterial.xml").replace("\n", "").replace(" ", ""),
-                miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
+                miningActivityFilter.getFilterStringAllRecords().replace("\n", "").replace(" ", ""));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class TestMiningActivityFilter {
         
         Assert.assertEquals(
                 Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRangeCutOffGrade.xml").replace("\n", "").replace(" ", ""),
-                miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
+                miningActivityFilter.getFilterStringAllRecords().replace("\n", "").replace(" ", ""));
     }
 
     @Test
@@ -104,7 +104,7 @@ public class TestMiningActivityFilter {
         
         Assert.assertEquals(
                 Util.loadXML("src/test/resources/GetMiningActivity-AssociatedMineDateRangeProduction.xml").replace("\n", "").replace(" ", ""),
-                miningActivityFilter.getFilterString().replace("\n", "").replace(" ", ""));
+                miningActivityFilter.getFilterStringAllRecords().replace("\n", "").replace(" ", ""));
     }
 
 }

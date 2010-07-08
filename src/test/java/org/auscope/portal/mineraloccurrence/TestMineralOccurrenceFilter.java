@@ -39,7 +39,7 @@ public class TestMineralOccurrenceFilter {
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithTwoSpecifiedNames.xml").replaceAll("\n", "").replaceAll("\\s+", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\s+", ""));
+            mineralOccurrenceFilter.getFilterStringAllRecords().replaceAll("\n", "").replaceAll("\\s+", ""));
     }
     
     @Test
@@ -56,7 +56,7 @@ public class TestMineralOccurrenceFilter {
 
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedNameAndMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\s+", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\s+", ""));
+            mineralOccurrenceFilter.getFilterStringAllRecords().replaceAll("\n", "").replaceAll("\\s+", ""));
     }
     
     @Test
@@ -66,7 +66,7 @@ public class TestMineralOccurrenceFilter {
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedReserveMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
+            mineralOccurrenceFilter.getFilterStringAllRecords().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class TestMineralOccurrenceFilter {
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumOreAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
+            mineralOccurrenceFilter.getFilterStringAllRecords().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
     @Test
@@ -86,7 +86,7 @@ public class TestMineralOccurrenceFilter {
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedResourceMinimumCommodityAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
+            mineralOccurrenceFilter.getFilterStringAllRecords().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
 
@@ -97,7 +97,7 @@ public class TestMineralOccurrenceFilter {
         
         Assert.assertEquals(Util.loadXML(
             "src/test/resources/GetMineralOccurrencesWithSpecifiedMinimumCommodityAmount.xml").replaceAll("\n", "").replaceAll("\\W", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
+            mineralOccurrenceFilter.getFilterStringAllRecords().replaceAll("\n", "").replaceAll("\\W", ""));
     }
 
     

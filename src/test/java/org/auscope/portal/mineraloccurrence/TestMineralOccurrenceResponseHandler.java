@@ -19,7 +19,7 @@ public class TestMineralOccurrenceResponseHandler {
     MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
 
     @Test
-    public void testHandleMineResponse() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+    public void testHandleMineResponse() throws Exception {
         File mineGetFeatureResponse = new File("src/test/resources/mineGetFeatureResponse.xml");
         BufferedReader reader = new BufferedReader( new FileReader(mineGetFeatureResponse) );
         StringBuffer mineGetFeatureResponseXML = new StringBuffer();
@@ -38,7 +38,7 @@ public class TestMineralOccurrenceResponseHandler {
     }
 
     @Test
-    public void testHandleCommodityResponse() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+    public void testHandleCommodityResponse() throws Exception {
         File commodityGetFeatureResponse = new File("src/test/resources/commodityGetFeatureResponse.xml");
         BufferedReader reader = new BufferedReader( new FileReader(commodityGetFeatureResponse) );
         StringBuffer commodityGetFeatureResponseXML = new StringBuffer();
@@ -58,7 +58,7 @@ public class TestMineralOccurrenceResponseHandler {
     }
     
     @Test
-    public void testGetNumberOfFeaturesTwo() throws IOException, ParserConfigurationException, SAXException {
+    public void testGetNumberOfFeaturesTwo() throws Exception {
         File commodityGetFeatureResponse = new File("src/test/resources/commodityGetFeatureResponse.xml");
         BufferedReader reader = new BufferedReader( new FileReader(commodityGetFeatureResponse) );
         StringBuffer commodityGetFeatureResponseXML = new StringBuffer();
@@ -76,7 +76,7 @@ public class TestMineralOccurrenceResponseHandler {
     }
 
     @Test
-    public void testGetNumberOfFeaturesZero() throws IOException, ParserConfigurationException, SAXException {
+    public void testGetNumberOfFeaturesZero() throws Exception {
         File getFeatureResponse = new File("src/test/resources/mineralOccurrenceNoFeaturesResponse.xml");
         BufferedReader reader = new BufferedReader( new FileReader(getFeatureResponse) );
         StringBuffer getFeatureResponseXML = new StringBuffer();

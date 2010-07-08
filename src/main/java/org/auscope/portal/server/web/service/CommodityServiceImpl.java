@@ -8,6 +8,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.auscope.portal.mineraloccurrence.Commodity;
 import org.auscope.portal.mineraloccurrence.CommodityFilter;
+import org.auscope.portal.mineraloccurrence.FilterBoundingBox;
+import org.auscope.portal.mineraloccurrence.IFilter;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
 
@@ -50,32 +52,46 @@ public class CommodityServiceImpl implements CommodityService{
     
     // ------------------------------------------- Property Setters and Getters
     
-    public Collection<Commodity> get(String serviceURL, String commodityName) 
+    
+    
+    private Collection<Commodity> get(String serviceURL, String commodityName, FilterBoundingBox bbox, int maxFeatures) 
     throws Exception {
-        
         HttpMethodBase method = null;
+         
+        CommodityFilter commodityFilter = new CommodityFilter(commodityName);
+        String filterString = null;
+        String srsName = null;
         
-        // If we don't have a name, then just get all of them
-        if (commodityName.equals("")) {
-            method = methodMaker.makeMethod(serviceURL, "er:Commodity", "");
+        if (bbox != null) {
+            filterString = commodityFilter.getFilterStringBoundingBox(bbox);
+            srsName = bbox.getBboxSrs();
         } else {
-            // Create the filter to append to the url
-            CommodityFilter commodityFilter = new CommodityFilter(commodityName);
-            log.debug(serviceURL + "\n" + commodityFilter.getFilterString());
-            
-            //create a GetFeature request with filter constraints on a query
-            method = methodMaker.makeMethod ( serviceURL
-                                            , "er:Commodity"
-                                            , commodityFilter.getFilterString());
+            filterString = commodityFilter.getFilterStringAllRecords();
         }
+        
+        method = methodMaker.makeMethod(serviceURL, "er:Commodity", filterString, maxFeatures, srsName);
+                                
 
         // Call the service, and get all the commodities
         String commodityResponse = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        
-        log.debug("................Commodity response");
-        log.debug(commodityResponse);
 
-        //parse the commodities and return them                
-        return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
+        //parse the commodities and return them             
+        try {
+            return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
+        } catch (Exception ex) {
+            log.error(ex);
+            log.debug(String.format("Error Args - serviceUrl='%1$s' commodityName='%2$s' bbox='%3$s' maxFeatures=%4$d", serviceURL, commodityName, bbox, maxFeatures), ex);
+            log.trace(String.format("filterString='%1$s'", filterString));
+            throw ex;
+        }
+    }
+    
+    public Collection<Commodity> getAll(String serviceURL, String commodityName)
+            throws Exception {
+        return get(serviceURL, commodityName, null, 0);
+    }
+
+    public Collection<Commodity> getVisible(String serviceURL, String commodityName, FilterBoundingBox bbox) throws Exception {
+        return get(serviceURL, commodityName, bbox, IWFSGetFeatureMethodMaker.MAX_FEATURES_TO_VISUALIZE);
     }
 }

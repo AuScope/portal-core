@@ -252,6 +252,35 @@ Ext.onReady(function() {
         }]
     });
     
+    //Returns an object
+    //{
+    //    bboxSrs : 'EPSG:4326'
+    //    lowerCornerPoints : [numbers]
+    //    upperCornerPoints : [numbers]
+    //}
+    var fetchVisibleMapBounds = function(gMapInstance) {
+    	var mapBounds = gMapInstance.getBounds();
+		var sw = mapBounds.getSouthWest();
+		var ne = mapBounds.getNorthEast();
+		var center = mapBounds.getCenter();
+		
+		var adjustedSWLng = sw.lng(); 
+		var adjustedNELng = ne.lng();
+		
+		//this is so we can fetch data when our bbox is crossing the anti meridian
+		//Otherwise our bbox wraps around the WRONG side of the planet
+		if (adjustedSWLng <= 0 && adjustedNELng >= 0 || 
+			adjustedSWLng >= 0 && adjustedNELng <= 0) {
+			adjustedSWLng = (sw.lng() < 0) ? (180 - sw.lng()) : sw.lng();
+			adjustedNELng = (ne.lng() < 0) ? (180 - ne.lng()) : ne.lng();
+		}
+		
+		return {
+				bboxSrs : 'EPSG:4326',
+				lowerCornerPoints : [Math.min(adjustedSWLng, adjustedNELng), Math.min(sw.lat(), ne.lat())],
+				upperCornerPoints : [Math.max(adjustedSWLng, adjustedNELng), Math.max(sw.lat(), ne.lat())]
+		};
+    };
     
     var filterButton = new Ext.Button({
         text     :'Apply Filter >>',
@@ -422,7 +451,15 @@ Ext.onReady(function() {
         //set the status as loading for this record
         selectedRecord.set('loadingStatus', '<img src="js/external/extjs/resources/images/default/grid/loading.gif">');
 
-        var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + selectedRecord.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
+        var filterParameters = '';
+        if (filterPanel.getLayout().activeItem == filterPanel.getComponent(0)) {
+        	filterParameters = "&typeName=" + selectedRecord.get('typeName'); 
+        } else {
+        	filterParameters = filterPanel.getLayout().activeItem.getForm().getValues(true);
+        	
+        	// Uncomment this to add bbox support AUS-1597 
+        	//filterParameters += '&bbox=' + Ext.util.JSON.encode(fetchVisibleMapBounds(map));
+        }
         
         for (var i = 0; i < serviceURLs.length; i++) {
             handleQuery(serviceURLs[i], selectedRecord, proxyURL, iconUrl, markerManager, filterParameters, function() {

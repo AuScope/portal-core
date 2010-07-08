@@ -25,6 +25,7 @@ public class MineralOccurrenceNamespaceContext implements NamespaceContext {
         map.put("gsml", "urn:cgi:xmlns:CGI:GeoSciML:2.0");
         map.put("xsi", "http://www.w3.org/2001/XMLSchema-instance");
         map.put("gml", "http://www.opengis.net/gml");    
+        map.put("ows", "http://www.opengis.net/ows");
 };
 
     public String getNamespaceURI(String s) {

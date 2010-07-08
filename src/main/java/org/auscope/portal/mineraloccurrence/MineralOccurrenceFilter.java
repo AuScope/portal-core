@@ -1,7 +1,9 @@
 package org.auscope.portal.mineraloccurrence;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Jarek Sanders
  * @version $Id$
  */
-public class MineralOccurrenceFilter implements IFilter {
+public class MineralOccurrenceFilter extends AbstractFilter {
  
     // TODO: Include ENDOWMENT when GeoServers accept this element 
     //       (...you may just just put it b/w RESERVE and RESOURCE) 
@@ -51,12 +53,17 @@ public class MineralOccurrenceFilter implements IFilter {
         this.filterStr             = makeFilter();
     }
 
-    /**
-     * Returns WFS MineralOccurence filter query string 
-     * @return Filter query string for sending as a POST request
-     */
-    public String getFilterString() {
-        return this.filterStr;
+    @Override
+    public String getFilterStringAllRecords() {
+        return this.generateFilter(filterStr);
+    }
+
+    @Override
+    public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
+        return this.generateFilter(
+                this.generateAndComparisonFragment(
+                        this.generateBboxFragment(bbox, "gsml:occurrence/gsml:MappedFeature/gsml:shape"), 
+                        this.filterStr));
     }
     
     /**
@@ -69,25 +76,22 @@ public class MineralOccurrenceFilter implements IFilter {
         int commoditiesCount = commodityOccurrences.size();        
         log.debug("Number of commodities: " + commoditiesCount);
 
-        StringBuilder queryString = new StringBuilder();
+        
         
         // Case 1. Get All Query
         if ( (this.measureType == MeasureTypes.NONE) && commodityOccurrences.isEmpty()) {
-            queryString.setLength(0);
+            return "";
         }
         
         // Case 2. Commodities Only Query
         else if ( (this.measureType == MeasureTypes.NONE) && (commoditiesCount > 0 ) ) {
+            List<String> fragmentList = new ArrayList<String>();
+            
             for( Commodity commodity : commodityOccurrences ) {
-                addPropertyIsEqualTo( queryString,
-                                      "er:commodityDescription/@xlink:href",
-                                      commodity.getName() );
+                fragmentList.add(this.generatePropertyIsEqualToFragment("er:commodityDescription/@xlink:href", commodity.getName()));
             }                    
 
-            if (commoditiesCount > 1)
-                addOperatorOR(queryString);
-
-            addExpressionFILTER(queryString);
+            return this.generateOrComparisonFragment(fragmentList.toArray(new String[fragmentList.size()]));
         }
 
         // Case 3. Amount Only Query
@@ -96,206 +100,122 @@ public class MineralOccurrenceFilter implements IFilter {
             // Single measure
             if (this.measureType != MeasureTypes.ANY) {
                 if (paramsCount == 0) {
-                    addPropertyIsLike( queryString,
-                                       "er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href",
-                                       "*" );
+                    return this.generatePropertyIsLikeFragment("er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", "*");
                 } else if(paramsCount > 0) {
-                    addParameters( queryString, getMeasureTypeTag(this.measureType) );
+                    return this.generateParametersFragment(getMeasureTypeTag(this.measureType));
+                } else {
+                    return "";
                 }
-                addExpressionFILTER(queryString);
             } 
             // Multiple measures - ANY 
             else if (this.measureType == MeasureTypes.ANY) {
+                List<String> fragments = new ArrayList<String>();
+                
                 if (paramsCount == 0) {  
                     for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
-                        addPropertyIsLike( queryString,
-                                           "er:oreAmount/"+ getMeasureTypeTag(measure) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href",
-                                           "*" );
+                        fragments.add(this.generatePropertyIsLikeFragment("er:oreAmount/"+ getMeasureTypeTag(measure) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", "*"));
                     }
                 } else if(paramsCount > 0) {  
-                    for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) { 
-                        addParameters(queryString, getMeasureTypeTag(measure));
+                    for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
+                        fragments.add(this.generateParametersFragment(getMeasureTypeTag(measure)));
                     }
                 }
-                addOperatorOR(queryString);
-                addExpressionFILTER(queryString);                
+                
+                return this.generateOrComparisonFragment(fragments.toArray(new String[fragments.size()]));                
             }
         }
         
         // Case 4. Commodity + Amount Query
         else if ( (this.measureType != MeasureTypes.NONE) && !commodityOccurrences.isEmpty() ) {
+            
             // Single Measure
             if (this.measureType != MeasureTypes.ANY) {
+                List<String> fragments = new ArrayList<String>();
+                
                 if (this.paramsCount == 0) {
                     for( Commodity commodity : commodityOccurrences ) {
-                        addPropertyIsEqualTo( queryString,
-                                              "er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href",
-                                              commodity.getName() );
+                        fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", commodity.getName()));
                     }
                 } else if (this.paramsCount > 0) {
                     for( Commodity commodity : commodityOccurrences ) {
-                        addCommodityAndParameters( queryString,
-                                                   commodity,
-                                                   getMeasureTypeTag(this.measureType));
+                        fragments.add(this.generateCommodityAndParametersFragment(commodity,getMeasureTypeTag(this.measureType)));
                     }
                 }
-                if (commoditiesCount > 1)
-                    addOperatorOR(queryString);
                 
-                addExpressionFILTER(queryString);                                
+                return this.generateOrComparisonFragment(fragments.toArray(new String[fragments.size()]));                              
             }
             // Multiple Measures - ANY 
             else if (this.measureType == MeasureTypes.ANY) {
+                List<String> fragments = new ArrayList<String>();
                 if (this.paramsCount == 0) {
                     for( Commodity commodity : commodityOccurrences ) {
                         for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
-                            addPropertyIsEqualTo( queryString,
-                                                  "er:oreAmount/"+getMeasureTypeTag(measure)+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href",            
-                                                  commodity.getName() );
+                            fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+getMeasureTypeTag(measure)+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", commodity.getName()));
                         }
                     }
                 } else if (this.paramsCount > 0) {
                     for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
                         for( Commodity commodity : commodityOccurrences ) {
-                            addCommodityAndParameters( queryString,
-                                                       commodity,
-                                                       getMeasureTypeTag(measure));
+                            fragments.add(this.generateCommodityAndParametersFragment(commodity, getMeasureTypeTag(measure)));
                         }
                     }
                 }
-                addOperatorOR(queryString);
-                addExpressionFILTER(queryString);
+
+                return this.generateOrComparisonFragment(fragments.toArray(new String[fragments.size()]));
             }            
         }                
         
-        return queryString.toString();
-    }
-    
-    
-    /*
-     * Appends ogc:PropertyIsEqualTo comparison statement 
-     */
-    private void addPropertyIsEqualTo(StringBuilder sb, String property, String value) {
-        sb.append("        <ogc:PropertyIsEqualTo>\n");
-        sb.append("          <ogc:PropertyName>"+ property +"</ogc:PropertyName>\n");            
-        sb.append("          <ogc:Literal>" + value + "</ogc:Literal>\n");
-        sb.append("        </ogc:PropertyIsEqualTo>\n");                       
-    }
-    
-    
-    /*
-     * Appends ogc:PropertyIsLike comparison statement 
-     */
-    private void addPropertyIsLike(StringBuilder sb, String property, String value) {        
-        sb.append("        <ogc:PropertyIsLike wildCard=\"*\" singleChar=\"#\" escapeChar=\"!\">\n");
-        sb.append("          <ogc:PropertyName>"+ property +"</ogc:PropertyName>\n");            
-        sb.append("          <ogc:Literal>"+ value +"</ogc:Literal>\n");
-        sb.append("        </ogc:PropertyIsLike>\n");        
+        return "";
     }
     
     
     /*
      * Appends search commodity and amount parameters entered by user 
      */
-    private void addCommodityAndParameters(StringBuilder iBuffer, Commodity commodity,  String measure) {
-        StringBuilder sb = new StringBuilder();
+    private String generateCommodityAndParametersFragment(Commodity commodity,  String measure) {
+        List<String> fragments = new ArrayList<String>();
         
-        sb.append("        <ogc:PropertyIsEqualTo>\n");
-        sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href</ogc:PropertyName>\n");            
-        sb.append("          <ogc:Literal>" + commodity.getName() + "</ogc:Literal>\n");
-        sb.append("        </ogc:PropertyIsEqualTo>\n");
+        fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", commodity.getName()));
         
         if (!this.minOreAmount.isEmpty()) {
-            sb.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            sb.append("          <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n");
-            sb.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");                
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue", this.minOreAmount));
         }
         if (!this.minOreAmountUOM.isEmpty()) {
-            sb.append("        <ogc:PropertyIsEqualTo>\n");
-            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
-            sb.append("          <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n");
-            sb.append("        </ogc:PropertyIsEqualTo>\n");                
+            fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom", this.minOreAmountUOM));
         }
         if (!this.minCommodityAmount.isEmpty()) {
-            sb.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            sb.append("          <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
-            sb.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");                
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue", this.minCommodityAmount));
         }
         if (!this.minCommodityAmountUOM.isEmpty()) {
-            sb.append("        <ogc:PropertyIsEqualTo>\n");
-            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
-            sb.append("          <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n");
-            sb.append("        </ogc:PropertyIsEqualTo>\n");
-        }        
-        addOperatorAND(sb);
-        iBuffer.append(sb);
-    }
-    
-    
-    /*
-     * Appends amount search parameters entered by user
-     */
-    private void addParameters(StringBuilder iBuffer, String measure) {
-        StringBuilder sb = new StringBuilder(); 
-        if (!this.minOreAmount.isEmpty()) {
-            sb.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            sb.append("          <ogc:Literal>"+this.minOreAmount+"</ogc:Literal>\n");
-            sb.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");                
-        }
-        if (!this.minOreAmountUOM.isEmpty()) {
-            sb.append("        <ogc:PropertyIsEqualTo>\n");
-            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
-            sb.append("          <ogc:Literal>"+this.minOreAmountUOM+"</ogc:Literal>\n");
-            sb.append("        </ogc:PropertyIsEqualTo>\n");                
-        }
-        if (!this.minCommodityAmount.isEmpty()) {
-            sb.append("        <ogc:PropertyIsGreaterThanOrEqualTo>\n");
-            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>\n");
-            sb.append("          <ogc:Literal>"+this.minCommodityAmount+"</ogc:Literal>\n");
-            sb.append("        </ogc:PropertyIsGreaterThanOrEqualTo>\n");                
-        }
-        if (!this.minCommodityAmountUOM.isEmpty()) {
-            sb.append("        <ogc:PropertyIsEqualTo>\n");
-            sb.append("          <ogc:PropertyName>er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom</ogc:PropertyName>\n");
-            sb.append("          <ogc:Literal>"+this.minCommodityAmountUOM+"</ogc:Literal>\n");
-            sb.append("        </ogc:PropertyIsEqualTo>\n");
-        }        
-        if (this.paramsCount > 1)
-            addOperatorAND(sb);
+            fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom", this.minCommodityAmountUOM));
+        }   
         
-        iBuffer.append(sb);
+        return this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
     }
     
     
     /*
-     * Embrace given string with <ogc:Filter> </ogc:Filter> tags
-     */ 
-    private void addExpressionFILTER(StringBuilder sb) {
-        sb.insert(0,"    <ogc:Filter>\n");
-        sb.append("    </ogc:Filter>\n");
-    }    
-    
-    
-    /*
-     * Embrace given string with <ogc:Or> </ogc:Or> logical operator tags
+     * Generates a large <ogc:And> fragment consisiting of all the parameters specified
      */
-    private void addOperatorAND(StringBuilder sb) {
-        sb.insert(0,"      <ogc:And>\n");
-        sb.append("      </ogc:And>\n");
-    }    
-
-    
-    /*
-     * Embrace given string with <ogc:Or> </ogc:Or> logical operator tags
-     */
-    private void addOperatorOR(StringBuilder sb) {
-        sb.insert(0,"      <ogc:Or>\n");
-        sb.append("      </ogc:Or>\n");
+    private String generateParametersFragment(String measure) {
+        List<String> fragments = new ArrayList<String>();
+        
+        if (!this.minOreAmount.isEmpty()) {
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue", this.minOreAmount));
+        }
+        if (!this.minOreAmountUOM.isEmpty()) {
+            fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom", this.minOreAmountUOM));                
+        }
+        if (!this.minCommodityAmount.isEmpty()) {
+            fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue", this.minCommodityAmount));
+        }
+        if (!this.minCommodityAmountUOM.isEmpty()) {
+            fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityAmount/gsml:CGI_NumericValue/gsml:principalValue/@uom", this.minCommodityAmountUOM));
+        }        
+        
+        return this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
     }
-
+    
     
     /*
      * Converts measure type string displayed in combobox into respective 
@@ -350,4 +270,6 @@ public class MineralOccurrenceFilter implements IFilter {
             default        : return ""; // Shouldn't go here
         }
     }
+
+    
 }

@@ -28,7 +28,7 @@ public class TestMineFilter {
     @Test
     public void testWithAMineName() throws IOException {
         MineFilter mineFilter = new MineFilter("Dominion Copper Mine");
-        Assert.assertEquals(Util.loadXML("src/test/resources/GetMineWithSpecifiedName.xml").replace("\n", "").replace(" ", ""), mineFilter.getFilterString().replace("\n", "").replace(" ", ""));
+        Assert.assertEquals(Util.loadXML("src/test/resources/GetMineWithSpecifiedName.xml").replace("\n", "").replace(" ", ""), mineFilter.getFilterStringAllRecords().replace("\n", "").replace(" ", ""));
     }
 
 }

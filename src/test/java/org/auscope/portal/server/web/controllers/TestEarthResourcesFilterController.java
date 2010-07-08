@@ -73,7 +73,7 @@ public class TestEarthResourcesFilterController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
         }});
         
-        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName,  mockHttpRequest);
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null,  mockHttpRequest);
         
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
@@ -106,7 +106,7 @@ public class TestEarthResourcesFilterController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
         }});
         
-        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, "",  mockHttpRequest);
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, "", null,  mockHttpRequest);
         
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
@@ -143,7 +143,7 @@ public class TestEarthResourcesFilterController {
         }});
 
         //call with updateCSWRecords dud url
-        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName,  mockHttpRequest);
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null,  mockHttpRequest);
 
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);

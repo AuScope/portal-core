@@ -15,11 +15,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import net.sf.json.JSONObject;
+
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.auscope.portal.mineraloccurrence.Commodity;
+import org.auscope.portal.mineraloccurrence.FilterBoundingBox;
 import org.auscope.portal.mineraloccurrence.Mine;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.util.GmlToKml;
@@ -91,7 +94,28 @@ public class EarthResourcesFilterController {
     // ------------------------------------------- Property Setters and Getters   
     
     /**
+     * Convenience method to parse a bbox. Returns null if the parsing fails
+     */
+    private FilterBoundingBox attemptParseBbox(String json) {
+        FilterBoundingBox bbox = null;
+        try {
+            if (json != null) {
+                JSONObject obj = JSONObject.fromObject(json);
+                bbox = FilterBoundingBox.parseFromJSON(obj);
+                log.debug("bbox=" + bbox.toString());
+            } else {
+                log.debug("Skipping parsing of bbox, it hasn't been received");
+            }
+        } catch (Exception ex) {
+            log.warn("Couldnt parse bounding box filter (Invalid Values): " + ex);
+        }
+        
+        return bbox;
+    }
+    
+    /**
      * Handles the Earth Resource Mine filter queries.
+     * (If the bbox elements are specified, they will limit the output response to 200 records implicitly)
      *
      * @param serviceUrl the url of the service to query
      * @param mineName   the name of the mine to query for
@@ -102,17 +126,27 @@ public class EarthResourcesFilterController {
     public ModelAndView doMineFilter(
             @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("mineName") String mineName,
+            @RequestParam(required=false, value="bbox") String bboxJson,
             HttpServletRequest request) {
 
+        //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
+        //This will in turn limit the number of points returned to 200
+        FilterBoundingBox bbox = attemptParseBbox(bboxJson);
+        
         try {
             String gmlBlob;
 
             if (mineName.equals(ALL_MINES)) {//get all mines 
-
-                gmlBlob = this.mineralOccurrenceService.getAllMinesGML(serviceUrl);
+                if (bbox == null)
+                    gmlBlob = this.mineralOccurrenceService.getAllMinesGML(serviceUrl);
+                else
+                    gmlBlob = this.mineralOccurrenceService.getAllVisibleMinesGML(serviceUrl, bbox);
+            } else {
+                if (bbox == null)
+                    gmlBlob = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName);
+                else
+                    gmlBlob = this.mineralOccurrenceService.getVisibleMineWithSpecifiedNameGML(serviceUrl, mineName, bbox);
             }
-            else
-                gmlBlob = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName);
 
             String kmlBlob =  convertToKml(gmlBlob, request, serviceUrl);
             //log.debug(kmlBlob);
@@ -120,12 +154,13 @@ public class EarthResourcesFilterController {
             //This failure test should be made a little bit more robust
             //And should probably try to extract an error message
             if (kmlBlob == null || kmlBlob.length() == 0) {
+                log.error(String.format("Transform failed serviceUrl='%1$s' gmlBlob='%2$s'",serviceUrl, gmlBlob));
             	return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED);
             } else {
             	return makeModelAndViewKML(kmlBlob, gmlBlob);
             }
         } catch (Exception e) {
-            return this.handleExceptionResponse(e);
+            return this.handleExceptionResponse(e, serviceUrl);
         }
     }
 
@@ -153,13 +188,20 @@ public class EarthResourcesFilterController {
         @RequestParam(value="minOreAmountUOM",       required=false) String minOreAmountUOM,
         @RequestParam(value="minCommodityAmount",    required=false) String minCommodityAmount,
         @RequestParam(value="minCommodityAmountUOM", required=false) String minCommodityAmountUOM,
+        @RequestParam(required=false, value="bbox") String bboxJson,
         HttpServletRequest request) 
     {
+        //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
+        //This will in turn limit the number of points returned to 200
+        FilterBoundingBox bbox = attemptParseBbox(bboxJson);
+        
         try {
             Collection<Commodity> commodities = new ArrayList<Commodity>();
             
             if (!commodityName.equals("")) {
-                commodities = this.commodityService.get(serviceUrl, commodityName);
+                
+                //We intentionally don't perform a bbox filter here (The bbox filtering will occur later)
+                commodities = this.commodityService.getAll(serviceUrl, commodityName);
 
                 // If there are 0 features then send nice message to the user
                 if (commodities.size() == 0)
@@ -167,15 +209,29 @@ public class EarthResourcesFilterController {
             }                        
 
             //get the mineral occurrences
-            String mineralOccurrenceResponse 
-                = this.mineralOccurrenceService.getMineralOccurrenceGML
-                                                      ( serviceUrl,
-                                                        commodities, //commodityName,
-                                                        measureType,
-                                                        minOreAmount,
-                                                        minOreAmountUOM,
-                                                        minCommodityAmount,
-                                                        minCommodityAmountUOM );
+            String mineralOccurrenceResponse = null;
+            if (bbox == null) {
+                mineralOccurrenceResponse 
+                    = this.mineralOccurrenceService.getMineralOccurrenceGML ( 
+                            serviceUrl,
+                            commodities, //commodityName,
+                            measureType,
+                            minOreAmount,
+                            minOreAmountUOM,
+                            minCommodityAmount,
+                            minCommodityAmountUOM );
+            } else {
+                mineralOccurrenceResponse 
+                    = this.mineralOccurrenceService.getVisibleMineralOccurrenceGML ( 
+                            serviceUrl,
+                            commodities, //commodityName,
+                            measureType,
+                            minOreAmount,
+                            minOreAmountUOM,
+                            minCommodityAmount,
+                            minCommodityAmountUOM,
+                            bbox);
+            }
 
             // If there are 0 features then send NO_RESULTS message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(mineralOccurrenceResponse) == 0)
@@ -185,7 +241,7 @@ public class EarthResourcesFilterController {
             return makeModelAndViewKML(convertToKml(mineralOccurrenceResponse, request, serviceUrl), mineralOccurrenceResponse);
 
         } catch (Exception e) {
-            return this.handleExceptionResponse(e);
+            return this.handleExceptionResponse(e, serviceUrl);
         }
     }
     
@@ -215,13 +271,19 @@ public class EarthResourcesFilterController {
             @RequestParam("producedMaterial") String producedMaterial,
             @RequestParam("cutOffGrade")      String cutOffGrade,
             @RequestParam("production")       String production,
+            @RequestParam(required=false, value="bbox") String bboxJson,
             HttpServletRequest request) 
     throws IOException, SAXException, XPathExpressionException, ParserConfigurationException 
     {
+        //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
+        //This will in turn limit the number of points returned to 200
+        FilterBoundingBox bbox = attemptParseBbox(bboxJson);
+        
         try {
             List<Mine> mines = new ArrayList<Mine>();   
            
             if (!mineName.equals("")) {
+                //We intentionally do not bbox filter here, the bbox will happen during the main response 
                 mines = this.mineralOccurrenceService.getMineWithSpecifiedName
                                                                     ( serviceUrl
                                                                     , mineName);
@@ -232,15 +294,29 @@ public class EarthResourcesFilterController {
             }
 
             // Get the mining activities
-            String miningActivityResponse = 
-                this.mineralOccurrenceService.getMiningActivityGML( serviceUrl
-                                                                  , mines
-                                                                  , startDate
-                                                                  , endDate
-                                                                  , oreProcessed
-                                                                  , producedMaterial
-                                                                  , cutOffGrade
-                                                                  , production);
+            String miningActivityResponse = null;
+            if (bbox == null) {
+                miningActivityResponse = 
+                    this.mineralOccurrenceService.getMiningActivityGML( serviceUrl
+                                                                      , mines
+                                                                      , startDate
+                                                                      , endDate
+                                                                      , oreProcessed
+                                                                      , producedMaterial
+                                                                      , cutOffGrade
+                                                                      , production);
+            } else {
+                miningActivityResponse = 
+                    this.mineralOccurrenceService.getVisibleMiningActivityGML( serviceUrl
+                                                                      , mines
+                                                                      , startDate
+                                                                      , endDate
+                                                                      , oreProcessed
+                                                                      , producedMaterial
+                                                                      , cutOffGrade
+                                                                      , production
+                                                                      , bbox);
+            }
             
             // If there are 0 features then send NO_RESULTS message to the user
             if (mineralOccurrencesResponseHandler.getNumberOfFeatures(miningActivityResponse) == 0)
@@ -249,7 +325,7 @@ public class EarthResourcesFilterController {
             return makeModelAndViewKML(convertToKml(miningActivityResponse, request, serviceUrl), miningActivityResponse);
 
         } catch (Exception e) {
-            return this.handleExceptionResponse(e);
+            return this.handleExceptionResponse(e, serviceUrl);
         }
     }
 
@@ -274,12 +350,13 @@ public class EarthResourcesFilterController {
             // This failure test should be more robust,
             // it should try to extract an error message
             if (kmlBlob == null || kmlBlob.length() == 0) {
+                log.error(String.format("Transform failed serviceUrl='%1$s' gmlBlob='%2$s'",serviceUrl, gmlBlob));
                 return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED);
             } else {
                 return makeModelAndViewKML(kmlBlob, gmlBlob);
             }
         } catch (Exception e) {
-            return this.handleExceptionResponse(e);
+            return this.handleExceptionResponse(e, serviceUrl);
         }
     }    
     
@@ -288,9 +365,9 @@ public class EarthResourcesFilterController {
      * @param exception
      * @return ModelAndView object with error message 
      */
-    public ModelAndView handleExceptionResponse(Exception e) {
+    public ModelAndView handleExceptionResponse(Exception e, String serviceUrl) {
 
-        log.error(e);
+        log.error(String.format("Exception! serviceUrl='%1$s'", serviceUrl),e);
 
         // Service down or host down
         if(e instanceof ConnectException || e instanceof UnknownHostException) {

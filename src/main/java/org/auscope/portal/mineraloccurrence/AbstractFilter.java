@@ -1,0 +1,303 @@
+package org.auscope.portal.mineraloccurrence;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Represents a partial implementation of the IFilter interface with protected
+ * helper methods to aid in building some common filters
+ * 
+ * TODO: This whole concept of String concatenation filters has been inherited from
+ *       the original portal (it's not very correct and subject to errors).
+ *       Use the geotools Library ogc:Filter module to generate the strings for us
+ * 
+ * @author VOT002
+ *
+ */
+public abstract class AbstractFilter implements IFilter {
+    
+    /**
+     * returns a ogc:Filter string fragment that can be embedded in
+     * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     * 
+     * The filter will return true if the specified propertyName geometry lies within the specified bounding box bounds
+     * @param bboxSrs
+     * @param lowerCornerPoints
+     * @param upperCornerPoints
+     * @param propertyXpath
+     * @return
+     */
+   protected String generateBboxFragment(FilterBoundingBox bbox, String propertyXpath) {
+       //Curse the lack of String.Join
+       StringBuilder lowerCorner = new StringBuilder();
+       StringBuilder upperCorner = new StringBuilder();
+       for (double d : bbox.getLowerCornerPoints()) {
+           lowerCorner.append(Double.toString(d));
+           lowerCorner.append(" ");
+       }
+       for (double d : bbox.getUpperCornerPoints()) {
+           upperCorner.append(Double.toString(d));
+           upperCorner.append(" ");
+       }
+       
+       
+       StringBuilder sb = new StringBuilder();
+       
+       sb.append("<ogc:Not>");
+       sb.append("<ogc:Disjoint>");
+       sb.append("<ogc:PropertyName>" + propertyXpath + "</ogc:PropertyName>");
+       sb.append("<gml:Envelope srsName=\"" + bbox.getBboxSrs() + "\">");
+       sb.append("<gml:lowerCorner>" + lowerCorner + "</gml:lowerCorner>");
+       sb.append("<gml:upperCorner>" + upperCorner +"</gml:upperCorner>");
+       sb.append("</gml:Envelope>"); 
+       sb.append("</ogc:Disjoint>");
+       sb.append("</ogc:Not>");
+       
+       return sb.toString();
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a string property against a literal (using * as wild, # for single and ! for escape).
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @return
+    */
+   protected String generatePropertyIsLikeFragment(String propertyName, String literal) {
+       return generatePropertyIsLikeFragment(propertyName, literal, '*', '#', '!');
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a string property against a literal
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @param wildCard The wildcard character
+    * @param singleChar The wildcard (single match) character
+    * @param escapeChar The escape character for wildcard characters
+    * @return
+    */
+   protected String generatePropertyIsLikeFragment(String propertyName, String literal, char wildCard, char singleChar, char escapeChar ) {
+       HashMap<String, String> attributes = new HashMap<String, String>();
+       attributes.put("wildCard", Character.toString(wildCard));
+       attributes.put("singleChar", Character.toString(singleChar));
+       attributes.put("escapeChar", Character.toString(escapeChar));
+       
+       return generatePropertyComparisonFragment("ogc:PropertyIsLike", attributes, propertyName, literal);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare whether a property equals literal 
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @param wildCard The wildcard character
+    * @param singleChar The wildcard (single match) character
+    * @param escapeChar The escape character for wildcard characters
+    * @return
+    */
+   protected String generatePropertyIsEqualToFragment(String propertyName, String literal) {
+       return generatePropertyBinaryComparisonFragment("ogc:PropertyIsEqualTo", propertyName, literal);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will test if a numerical property is greater than or equal to the literal
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @param wildCard The wildcard character
+    * @param singleChar The wildcard (single match) character
+    * @param escapeChar The escape character for wildcard characters
+    * @return
+    */
+   protected String generatePropertyIsGreaterThanOrEqualTo(String propertyName, String literal) {
+       return generatePropertyBinaryComparisonFragment("ogc:PropertyIsGreaterThanOrEqualTo", propertyName, literal);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a property against a literal to see if they mismatch
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @param wildCard The wildcard character
+    * @param singleChar The wildcard (single match) character
+    * @param escapeChar The escape character for wildcard characters
+    * @return
+    */
+   protected String generatePropertyIsNotEqualTo(String propertyName, String literal) {
+       return generatePropertyBinaryComparisonFragment("ogc:PropertyIsNotEqualTo", propertyName, literal);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a numeric property to see if it is less than a literal
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @param wildCard The wildcard character
+    * @param singleChar The wildcard (single match) character
+    * @param escapeChar The escape character for wildcard characters
+    * @return
+    */
+   protected String generatePropertyIsLessThan(String propertyName, String literal) {
+       return generatePropertyBinaryComparisonFragment("ogc:PropertyIsLessThan", propertyName, literal);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a numeric property to see if it is greater than a literal
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @param wildCard The wildcard character
+    * @param singleChar The wildcard (single match) character
+    * @param escapeChar The escape character for wildcard characters
+    * @return
+    */
+   protected String generatePropertyIsGreaterThan(String propertyName, String literal) {
+       return generatePropertyBinaryComparisonFragment("ogc:PropertyIsGreaterThan", propertyName, literal);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a numeric property to see if it is greater than or equal to a literal
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @param wildCard The wildcard character
+    * @param singleChar The wildcard (single match) character
+    * @param escapeChar The escape character for wildcard characters
+    * @return
+    */
+   protected String generatePropertyIsLessThanOrEqualTo(String propertyName, String literal) {
+       return generatePropertyBinaryComparisonFragment("ogc:PropertyIsLessThanOrEqualTo", propertyName, literal);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a property to see if it is null
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against (can include wildcards)
+    * @param wildCard The wildcard character
+    * @param singleChar The wildcard (single match) character
+    * @param escapeChar The escape character for wildcard characters
+    * @return
+    */
+   protected String generatePropertyIsNull(String propertyName) {
+       return generatePropertyUnaryComparisonFragment("ogc:PropertyIsNull", propertyName);
+   }
+  
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a variable number of filters using a logical AND comparison
+    * @param fragment1 a filter fragment
+    * @param fragment2 a filter fragment
+    * @return
+    */
+   protected String generateAndComparisonFragment(String... fragments) {
+       return generateLogicalFragment("ogc:And",2, fragments);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare a variable number of filters using a logical OR comparison
+    * @param fragment1 a filter fragment
+    * @param fragment2 a filter fragment
+    * @return
+    */
+   protected String generateOrComparisonFragment(String... fragments) {
+       return generateLogicalFragment("ogc:Or",2, fragments);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will logical NOT the fragments result
+    * @param fragment a filter fragment
+    * @return
+    */
+   protected String generateNotComparisonFragment(String fragment) {
+       return generateLogicalFragment("ogc:Not",1, fragment);
+   }
+   
+   /**
+    * 
+    * @param filterContents A single filter fragment or an And/Or/Not element
+    * @return
+    */
+   protected String generateFilter(String filterContents) {
+       
+       return generateLogicalFragment("ogc:Filter",1,filterContents);
+   }
+   
+   private String generateLogicalFragment(String logicalComparison,int minParams, String... fragments) {
+       StringBuilder sb = new StringBuilder();
+       
+       int nonEmptyFragmentCount = 0;
+       for (String fragment : fragments) {
+           if (fragment != null && !fragment.isEmpty()) {
+               nonEmptyFragmentCount++;
+           }
+       }
+       
+       if (nonEmptyFragmentCount >= minParams)
+           sb.append(String.format("<%1$s>", logicalComparison));
+       
+       for (String fragment : fragments) {
+           sb.append(fragment);
+       }
+       
+       if (nonEmptyFragmentCount >= minParams)
+           sb.append(String.format("</%1$s>", logicalComparison));
+       
+       return sb.toString();
+   }
+   
+   private String generatePropertyUnaryComparisonFragment(String comparison, String propertyName) {
+       return generatePropertyComparisonFragment(comparison, null, propertyName, null);
+   }
+   
+   private String generatePropertyBinaryComparisonFragment(String comparison, String propertyName, String literal) {
+       return generatePropertyComparisonFragment(comparison, null, propertyName, literal);
+   }
+   
+   private String generatePropertyComparisonFragment(String comparison, Map<String, String> attributes, String propertyName, String literal) {
+       StringBuilder sb = new StringBuilder();
+       
+       if (attributes == null)
+           sb.append(String.format("<%1$s>", comparison));
+       else {
+           sb.append(String.format("<%1$s ", comparison));
+           for (String attName : attributes.keySet()) {
+               sb.append(String.format("%1$s=\"%2$s\" ", attName, attributes.get(attName)));
+           }
+           sb.append(">");
+       }
+       sb.append(String.format("<ogc:PropertyName>%1$s</ogc:PropertyName>", propertyName));
+       if (literal != null)
+           sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", literal));
+       sb.append(String.format("</%1$s>", comparison));
+       
+       return sb.toString();
+   }
+}

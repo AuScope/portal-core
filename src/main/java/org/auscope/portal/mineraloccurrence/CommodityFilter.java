@@ -6,54 +6,27 @@ package org.auscope.portal.mineraloccurrence;
  * Time: 1:59:02 PM
  * @version $Id$
  */
-public class CommodityFilter implements IFilter {
+public class CommodityFilter extends AbstractFilter {
 
-    private String commodityName;
+    private String filterFragment;
 
     public CommodityFilter(String commodityName) {
-        this.commodityName  = commodityName;
+        if (commodityName.length() > 0) 
+            this.filterFragment = this.generatePropertyIsEqualToFragment("er:commodityName", commodityName);
+        else
+            this.filterFragment = "";
+    }
+
+    
+    public String getFilterStringAllRecords() {
+        return this.generateFilter(filterFragment);
+    }
+
+    public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
+        return this.generateFilter(
+                this.generateAndComparisonFragment(
+                        this.generateBboxFragment(bbox, "er:occurrence/er:MiningFeatureOccurrence/er:location"), 
+                        this.filterFragment));
     }
     
-    /**
-     * Build the query string based on given properties
-     * @return String for sending in a POST request
-     */
-    public String getFilterString() {
-        StringBuffer queryString = new StringBuffer();
-
-        queryString.append("    <ogc:Filter>\n");
-
-        if(checkMany())
-            queryString.append("    <ogc:And>\n");
-
-        if(!this.commodityName.equals(""))
-            queryString.append("      <ogc:PropertyIsEqualTo>\n" +
-                               "        <ogc:PropertyName>er:commodityName</ogc:PropertyName>\n" +
-                               "        <ogc:Literal>"+this.commodityName+"</ogc:Literal>\n" +
-                               "      </ogc:PropertyIsEqualTo>\n");
-
-        if(checkMany())
-            queryString.append("    </ogc:And>\n");
-
-        queryString.append("    </ogc:Filter>\n");
-
-        return queryString.toString();
-    }
-    
-
-    /**
-     * Checks if more than one query parameter have a value.
-     * @return true, if more than one parameter is found
-     */
-    private boolean checkMany() {
-        int howManyHaveaValue = 0;
-
-        if(!this.commodityName.equals(""))
-            howManyHaveaValue++;
-
-        if(howManyHaveaValue >= 2)
-            return true;
-
-        return false;
-    }
 }
