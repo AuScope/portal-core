@@ -85,7 +85,7 @@ public class MiningActivityFilter extends AbstractFilter {
             parameterFragments.add(this.generatePropertyIsGreaterThanOrEqualTo("er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition", this.startDate));
         
         if(this.endDate.length() > 0)
-            parameterFragments.add(this.generatePropertyIsGreaterThanOrEqualTo("er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition", this.endDate));
+            parameterFragments.add(this.generatePropertyIsLessThanOrEqualTo("er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition", this.endDate));
         
         if(this.oreProcessed.length() > 0)
             parameterFragments.add(this.generatePropertyIsGreaterThan("er:oreProcessed/gsml:CGI_NumericValue/gsml:principalValue", this.oreProcessed));
