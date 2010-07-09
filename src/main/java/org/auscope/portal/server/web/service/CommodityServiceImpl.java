@@ -86,12 +86,12 @@ public class CommodityServiceImpl implements CommodityService{
         }
     }
     
-    public Collection<Commodity> getAll(String serviceURL, String commodityName)
+    public Collection<Commodity> getAll(String serviceURL, String commodityName, int maxFeatures)
             throws Exception {
-        return get(serviceURL, commodityName, null, 0);
+        return get(serviceURL, commodityName, null, maxFeatures);
     }
 
-    public Collection<Commodity> getVisible(String serviceURL, String commodityName, FilterBoundingBox bbox) throws Exception {
-        return get(serviceURL, commodityName, bbox, IWFSGetFeatureMethodMaker.MAX_FEATURES_TO_VISUALIZE);
+    public Collection<Commodity> getVisible(String serviceURL, String commodityName, FilterBoundingBox bbox, int maxFeatures) throws Exception {
+        return get(serviceURL, commodityName, bbox, maxFeatures);
     }
 }

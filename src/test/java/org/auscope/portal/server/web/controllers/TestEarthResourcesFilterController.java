@@ -65,7 +65,7 @@ public class TestEarthResourcesFilterController {
         final StringWriter jsonResponse = new StringWriter();
         
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName);will(returnValue(xmlErrorResponse));
+            oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(xmlErrorResponse));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
             
             //check that the correct response is getting output
@@ -73,7 +73,7 @@ public class TestEarthResourcesFilterController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
         }});
         
-        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null,  mockHttpRequest);
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null, 0,  mockHttpRequest);
         
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
@@ -98,7 +98,7 @@ public class TestEarthResourcesFilterController {
         final StringWriter jsonResponse = new StringWriter();
         
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL);will(returnValue(xmlErrorResponse));
+            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(xmlErrorResponse));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
             
             //check that the correct response is getting output
@@ -106,7 +106,7 @@ public class TestEarthResourcesFilterController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
         }});
         
-        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, "", null,  mockHttpRequest);
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, "", null, 0,  mockHttpRequest);
         
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
@@ -134,7 +134,7 @@ public class TestEarthResourcesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL);will(returnValue(expectedGML));
+            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(expectedGML));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
@@ -143,7 +143,7 @@ public class TestEarthResourcesFilterController {
         }});
 
         //call with updateCSWRecords dud url
-        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null,  mockHttpRequest);
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null, 0,  mockHttpRequest);
 
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
+import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.view.JSONModelAndView;
 import org.auscope.portal.server.util.GmlToKml;
@@ -35,12 +36,15 @@ public class GSMLController {
     protected final Log logger = LogFactory.getLog(getClass().getName());
     private HttpServiceCaller serviceCaller;
     private GmlToKml gmlToKml;
+    private IWFSGetFeatureMethodMaker methodMaker;
 
     @Autowired
     public GSMLController(HttpServiceCaller serviceCaller,
-                          GmlToKml gmlToKml) {
+                          GmlToKml gmlToKml,
+                          IWFSGetFeatureMethodMaker methodMaker) {
         this.serviceCaller = serviceCaller;
         this.gmlToKml = gmlToKml;
+        this.methodMaker = methodMaker;
     }
 
     /**
@@ -56,23 +60,12 @@ public class GSMLController {
     @RequestMapping("/getAllFeatures.do")
     public ModelAndView requestAllFeatures(@RequestParam("serviceUrl") final String serviceUrl,
                                            @RequestParam("typeName") final String featureType,
+                                           @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
                                            HttpServletRequest request) throws Exception {
 
-        String gmlResponse = 
-            serviceCaller.getMethodResponseAsString(new ICSWMethodMaker() {
-                public HttpMethodBase makeMethod() {
-                    GetMethod method = new GetMethod(serviceUrl);
-    
-                    //set all of the parameters
-                    NameValuePair request = new NameValuePair("request", "GetFeature");
-                    NameValuePair elementSet = new NameValuePair("typeName", featureType);
-    
-                    //attach them to the method
-                    method.setQueryString(new NameValuePair[]{request, elementSet});
-    
-                    return method;
-                }
-            }.makeMethod(), serviceCaller.getHttpClient());
+        
+        String gmlResponse = serviceCaller.getMethodResponseAsString(methodMaker.makeMethod(serviceUrl, featureType, "", maxFeatures), 
+                                                                     serviceCaller.getHttpClient());
 
         return makeModelAndViewKML(convertToKml(gmlResponse, request, serviceUrl), gmlResponse);
     }

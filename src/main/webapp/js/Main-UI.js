@@ -460,6 +460,7 @@ Ext.onReady(function() {
         	// Uncomment this to add bbox support AUS-1597 
         	//filterParameters += '&bbox=' + Ext.util.JSON.encode(fetchVisibleMapBounds(map));
         }
+        filterParameters += '&maxFeatures=200'; // limit our feature request to 200 so we don't overwhelm the browser
         
         for (var i = 0; i < serviceURLs.length; i++) {
             handleQuery(serviceURLs[i], selectedRecord, proxyURL, iconUrl, markerManager, filterParameters, function() {

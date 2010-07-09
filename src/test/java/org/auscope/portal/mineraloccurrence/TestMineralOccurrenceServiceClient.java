@@ -69,7 +69,7 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
         }});
 
-        List<Mine> mines = this.mineralOccurrenceService.getAllMines(serviceURL);
+        List<Mine> mines = this.mineralOccurrenceService.getAllMines(serviceURL, 0);
         Assert.assertEquals(mockMines, mines);
     }
 
@@ -97,7 +97,7 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
         }});
 
-        List<Mine> mines = this.mineralOccurrenceService.getMineWithSpecifiedName(serviceURL, mineName);
+        List<Mine> mines = this.mineralOccurrenceService.getMineWithSpecifiedName(serviceURL, mineName, 0);
         Assert.assertEquals(mockMines, mines);
     }
 
@@ -210,7 +210,8 @@ public class TestMineralOccurrenceServiceClient {
                                                               minOreAmount,
                                                               minCommodityAmountUOM,
                                                               minCommodityAmount,
-                                                              minCommodityAmountUOM );
+                                                              minCommodityAmountUOM,
+                                                              0);
     }
     
     
@@ -276,7 +277,7 @@ public class TestMineralOccurrenceServiceClient {
             oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
         }});
 
-        this.mineralOccurrenceService.getMiningActivityGML("", mockMineList, "", "", "", "", "", "");
+        this.mineralOccurrenceService.getMiningActivityGML("", mockMineList, "", "", "", "", "", "", 0);
 
     }
 

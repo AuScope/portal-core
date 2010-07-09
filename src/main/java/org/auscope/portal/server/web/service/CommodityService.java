@@ -19,7 +19,7 @@ public interface CommodityService {
      * @return
      * @throws Exception
      */
-    public Collection<Commodity> getAll(String serviceURL, String commodityName) throws Exception;
+    public Collection<Commodity> getAll(String serviceURL, String commodityName, int maxFeatures) throws Exception;
     
     /**
      * Will return (maximum 200) features in the specified bounding box
@@ -31,5 +31,5 @@ public interface CommodityService {
      * @return
      * @throws Exception
      */
-    public Collection<Commodity> getVisible(String serviceURL, String commodityName, FilterBoundingBox bbox) throws Exception;
+    public Collection<Commodity> getVisible(String serviceURL, String commodityName, FilterBoundingBox bbox, int maxFeatures) throws Exception;
 }

@@ -57,7 +57,7 @@ import org.xml.sax.SAXException;
  */
 @Controller
 public class EarthResourcesFilterController {
-
+    
     // -------------------------------------------------------------- Constants
     
     /** Log object for this class. */
@@ -127,6 +127,7 @@ public class EarthResourcesFilterController {
             @RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("mineName") String mineName,
             @RequestParam(required=false, value="bbox") String bboxJson,
+            @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures, 
             HttpServletRequest request) {
 
         //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
@@ -138,14 +139,14 @@ public class EarthResourcesFilterController {
 
             if (mineName.equals(ALL_MINES)) {//get all mines 
                 if (bbox == null)
-                    gmlBlob = this.mineralOccurrenceService.getAllMinesGML(serviceUrl);
+                    gmlBlob = this.mineralOccurrenceService.getAllMinesGML(serviceUrl, maxFeatures);
                 else
-                    gmlBlob = this.mineralOccurrenceService.getAllVisibleMinesGML(serviceUrl, bbox);
+                    gmlBlob = this.mineralOccurrenceService.getAllVisibleMinesGML(serviceUrl, bbox, maxFeatures);
             } else {
                 if (bbox == null)
-                    gmlBlob = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName);
+                    gmlBlob = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName, maxFeatures);
                 else
-                    gmlBlob = this.mineralOccurrenceService.getVisibleMineWithSpecifiedNameGML(serviceUrl, mineName, bbox);
+                    gmlBlob = this.mineralOccurrenceService.getVisibleMineWithSpecifiedNameGML(serviceUrl, mineName, bbox, maxFeatures);
             }
 
             String kmlBlob =  convertToKml(gmlBlob, request, serviceUrl);
@@ -189,6 +190,7 @@ public class EarthResourcesFilterController {
         @RequestParam(value="minCommodityAmount",    required=false) String minCommodityAmount,
         @RequestParam(value="minCommodityAmountUOM", required=false) String minCommodityAmountUOM,
         @RequestParam(required=false, value="bbox") String bboxJson,
+        @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
         HttpServletRequest request) 
     {
         //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
@@ -201,7 +203,7 @@ public class EarthResourcesFilterController {
             if (!commodityName.equals("")) {
                 
                 //We intentionally don't perform a bbox filter here (The bbox filtering will occur later)
-                commodities = this.commodityService.getAll(serviceUrl, commodityName);
+                commodities = this.commodityService.getAll(serviceUrl, commodityName, 0);
 
                 // If there are 0 features then send nice message to the user
                 if (commodities.size() == 0)
@@ -219,7 +221,8 @@ public class EarthResourcesFilterController {
                             minOreAmount,
                             minOreAmountUOM,
                             minCommodityAmount,
-                            minCommodityAmountUOM );
+                            minCommodityAmountUOM,
+                            maxFeatures);
             } else {
                 mineralOccurrenceResponse 
                     = this.mineralOccurrenceService.getVisibleMineralOccurrenceGML ( 
@@ -230,7 +233,8 @@ public class EarthResourcesFilterController {
                             minOreAmountUOM,
                             minCommodityAmount,
                             minCommodityAmountUOM,
-                            bbox);
+                            bbox,
+                            maxFeatures);
             }
 
             // If there are 0 features then send NO_RESULTS message to the user
@@ -272,6 +276,7 @@ public class EarthResourcesFilterController {
             @RequestParam("cutOffGrade")      String cutOffGrade,
             @RequestParam("production")       String production,
             @RequestParam(required=false, value="bbox") String bboxJson,
+            @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
             HttpServletRequest request) 
     throws IOException, SAXException, XPathExpressionException, ParserConfigurationException 
     {
@@ -286,7 +291,8 @@ public class EarthResourcesFilterController {
                 //We intentionally do not bbox filter here, the bbox will happen during the main response 
                 mines = this.mineralOccurrenceService.getMineWithSpecifiedName
                                                                     ( serviceUrl
-                                                                    , mineName);
+                                                                    , mineName
+                                                                    , maxFeatures);
                 
                 // If there are 0 features then send nice message to the user
                 if (mines.size() == 0)
@@ -304,7 +310,8 @@ public class EarthResourcesFilterController {
                                                                       , oreProcessed
                                                                       , producedMaterial
                                                                       , cutOffGrade
-                                                                      , production);
+                                                                      , production
+                                                                      , maxFeatures);
             } else {
                 miningActivityResponse = 
                     this.mineralOccurrenceService.getVisibleMiningActivityGML( serviceUrl
@@ -315,7 +322,8 @@ public class EarthResourcesFilterController {
                                                                       , producedMaterial
                                                                       , cutOffGrade
                                                                       , production
-                                                                      , bbox);
+                                                                      , bbox
+                                                                      , maxFeatures);
             }
             
             // If there are 0 features then send NO_RESULTS message to the user
@@ -340,9 +348,10 @@ public class EarthResourcesFilterController {
      */
     @RequestMapping("/doNvclFilter.do")
     public ModelAndView doNvclFilter( @RequestParam("serviceUrl") String serviceUrl,
+                                      @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
                                       HttpServletRequest request) {
         try {
-            String gmlBlob = this.nvclService.getAllBoreholes(serviceUrl);
+            String gmlBlob = this.nvclService.getAllBoreholes(serviceUrl, maxFeatures);
 
             String kmlBlob = convertToKml(gmlBlob, request, serviceUrl);
             //log.debug(kmlBlob);

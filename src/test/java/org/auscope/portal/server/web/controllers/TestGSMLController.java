@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 
 import org.auscope.portal.server.util.GmlToKml;
+import org.auscope.portal.server.web.WFSGetFeatureMethodMakerPOST;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 
 import org.jmock.Expectations;
@@ -73,10 +74,12 @@ public class TestGSMLController {
      * Mock session
      */
     private ServletContext mockServletContext = context.mock(ServletContext.class);
+    
+    private WFSGetFeatureMethodMakerPOST wfsGetFeatureMethodMakerPOST = context.mock(WFSGetFeatureMethodMakerPOST.class); 
 
     @Before
     public void setup() {
-        gsmlController = new GSMLController(httpServiceCaller, gmlToKml);
+        gsmlController = new GSMLController(httpServiceCaller, gmlToKml, wfsGetFeatureMethodMakerPOST);
     }
 
     /**
@@ -98,7 +101,7 @@ public class TestGSMLController {
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestAllFeatures("fake", "fake", mockHttpRequest);
+        ModelAndView modelAndView = gsmlController.requestAllFeatures("fake", "fake", 0, mockHttpRequest);
 
         //check that the kml blob has been put ont he model
         modelAndView.getModel().get("data").equals(kmlBlob);
