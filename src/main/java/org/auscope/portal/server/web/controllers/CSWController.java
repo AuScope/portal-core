@@ -91,6 +91,7 @@ public class CSWController {
             CSWRecord[] records = cswService.getWFSRecordsForTypename(knownType.getFeatureTypeName());
             String servicesDescription = "Institutions: ";
             JSONArray serviceURLs = new JSONArray();
+            JSONArray bboxes = new JSONArray();
 
             //if there are no services available for this feature type then don't show it in the portal
             if(records.length == 0) {                
@@ -102,6 +103,9 @@ public class CSWController {
                 serviceURLs.add(record.getServiceUrl());
                 servicesDescription += record.getContactOrganisation() + ", ";
                 contactOrgs.add(record.getContactOrganisation());
+
+                if (record.getCSWGeographicElement() != null)
+                    bboxes.add(record.getCSWGeographicElement());
                 //serviceURLs.add("http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services");
                 //serviceURLs.add("http://auscope-services.arrc.csiro.au/deegree-wfs/services");
             }
@@ -133,6 +137,8 @@ public class CSWController {
             tableRow.add(knownType.getIconUrl());
 
             tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/page_code.png'></a>");
+
+            tableRow.add(bboxes);
 
             dataItems.add(tableRow);
         }
@@ -204,6 +210,12 @@ public class CSWController {
             tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'></a>");
             
             tableRow.add("1.0");
+            
+            JSONArray bboxes = new JSONArray();
+            if (record.getCSWGeographicElement() != null)
+                bboxes.add(record.getCSWGeographicElement());
+            
+            tableRow.add(bboxes);
 
             dataItems.add(tableRow);
         }
