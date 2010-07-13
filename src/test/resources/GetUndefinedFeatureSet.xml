@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is for testing the generic simple features parser, essentially this a renamed NVCL output -->
+<wfs:FeatureCollection numberOfFeatures="8" timeStamp="2010-01-12T16:17:33.307+11:00" xsi:schemaLocation="urn:cgi:xmlns:CGI:GeoSciML:2.0 http://nvclwebservices.vm.csiro.au:80/geoserver/wfs?service=WFS&amp;version=1.1.0&amp;request=DescribeFeatureType&amp;typeName=gsml%3ABorehole http://www.opengis.net/wfs http://nvclwebservices.vm.csiro.au:80/geoserver/schemas/wfs/1.1.0/wfs.xsd" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:om="http://www.opengis.net/om/1.0" xmlns:ows="http://www.opengis.net/ows" xmlns:wfs="http://www.opengis.net/wfs">
+	<gml:featureMembers>
+		<gsml:UndefinedType gml:id="WTB5">
+			<gml:name>urn:cgi:feature:Borehole:WTB5</gml:name>
+			<gsml:collarLocation>
+				<gsml:UndefinedTypeCollar gml:id="BoreholeCollarID:BOREHOLE.WTB5">
+					<gsml:location>
+						<gml:Point axisLabels="Geodetic latitude Geodetic longitude" srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4283" uomLabels="degree_angle degree_angle">
+							<gml:pos>-28.4139 121.142</gml:pos>
+						</gml:Point>
+					</gsml:location>
+				</gsml:UndefinedTypeCollar>
+			</gsml:collarLocation>
+			<gsml:indexData>
+				<gsml:UndefinedTypeDetails>
+					<gsml:dateOfDrilling>2004-09-17</gsml:dateOfDrilling>
+					<gsml:drillingMethod>diamond core</gsml:drillingMethod>
+					<gsml:inclinationType>vertical</gsml:inclinationType>
+					<gsml:coredInterval>
+						<gml:Envelope>
+							<gml:lowerCorner>106.0</gml:lowerCorner>
+							<gml:upperCorner>249.0</gml:upperCorner>
+						</gml:Envelope>
+					</gsml:coredInterval>
+					<gsml:coreCustodian xlink:href="urn:cgi:party:CSIRONR"/>
+				</gsml:UndefinedTypeDetails>
+			</gsml:indexData>
+		</gsml:UndefinedType>
+		<gsml:UndefinedType gml:id="BUGD049">
+			<gml:name>urn:cgi:feature:Borehole:BUGD049</gml:name>
+			<gsml:collarLocation>
+				<gsml:UndefinedTypeCollar gml:id="BoreholeCollarID:BOREHOLE.BUGD049">
+					<gsml:location>
+						<gml:Point axisLabels="Geodetic latitude Geodetic longitude" srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4283" uomLabels="degree_angle degree_angle">
+							<gml:pos>-30.5278 121.058</gml:pos>
+						</gml:Point>
+					</gsml:location>
+				</gsml:UndefinedTypeCollar>
+			</gsml:collarLocation>
+			<gsml:indexData>
+				<gsml:UndefinedTypeDetails>
+					<gsml:dateOfDrilling>2007-05-28</gsml:dateOfDrilling>
+					<gsml:drillingMethod>diamond core</gsml:drillingMethod>
+					<gsml:inclinationType>vertical</gsml:inclinationType>
+					<gsml:coredInterval>
+						<gml:Envelope>
+							<gml:lowerCorner>0.0</gml:lowerCorner>
+							<gml:upperCorner>200.0</gml:upperCorner>
+						</gml:Envelope>
+					</gsml:coredInterval>
+					<gsml:coreCustodian xlink:href="urn:cgi:party:CSIRONR"/>
+				</gsml:UndefinedTypeDetails>
+			</gsml:indexData>
+		</gsml:UndefinedType>
+		<gsml:UndefinedType gml:id="GSDD006">
+			<gml:name>urn:cgi:feature:Borehole:GSDD006</gml:name>
+			<gsml:collarLocation>
+				<gsml:UndefinedTypeCollar gml:id="BoreholeCollarID:BOREHOLE.GSDD006">
+					<gsml:location>
+						<gml:Point axisLabels="Geodetic latitude Geodetic longitude" srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4283" uomLabels="degree_angle degree_angle">
+							<gml:pos>-30.0897 121.02</gml:pos>
+						</gml:Point>
+					</gsml:location>
+				</gsml:UndefinedTypeCollar>
+			</gsml:collarLocation>
+			<gsml:indexData>
+				<gsml:UndefinedTypeDetails>
+					<gsml:dateOfDrilling>2004-09-10</gsml:dateOfDrilling>
+					<gsml:drillingMethod>diamond core</gsml:drillingMethod>
+					<gsml:inclinationType>vertical</gsml:inclinationType>
+					<gsml:coredInterval>
+						<gml:Envelope>
+							<gml:lowerCorner>0.0</gml:lowerCorner>
+							<gml:upperCorner>70.0</gml:upperCorner>
+						</gml:Envelope>
+					</gsml:coredInterval>
+					<gsml:coreCustodian xlink:href="urn:cgi:party:CSIRONR"/>
+				</gsml:UndefinedTypeDetails>
+			</gsml:indexData>
+		</gsml:UndefinedType>
+		<gsml:UndefinedType gml:id="QGCD690">
+			<gml:name>urn:cgi:feature:Borehole:QGCD690</gml:name>
+			<gsml:collarLocation>
+				<gsml:UndefinedTypeCollar gml:id="BoreholeCollarID:BOREHOLE.QGCD690">
+					<gsml:location>
+						<gml:Point axisLabels="Geodetic latitude Geodetic longitude" srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4283" uomLabels="degree_angle degree_angle">
+							<gml:pos>-30.5286 121.232</gml:pos>
+						</gml:Point>
+					</gsml:location>
+				</gsml:UndefinedTypeCollar>
+			</gsml:collarLocation>
+			<gsml:indexData>
+				<gsml:UndefinedTypeDetails>
+					<gsml:dateOfDrilling>2007-08-03</gsml:dateOfDrilling>
+					<gsml:drillingMethod>diamond core</gsml:drillingMethod>
+					<gsml:inclinationType>vertical</gsml:inclinationType>
+					<gsml:coredInterval>
+						<gml:Envelope>
+							<gml:lowerCorner>0.0</gml:lowerCorner>
+							<gml:upperCorner>101.0</gml:upperCorner>
+						</gml:Envelope>
+					</gsml:coredInterval>
+					<gsml:coreCustodian xlink:href="urn:cgi:party:CSIRONR"/>
+				</gsml:UndefinedTypeDetails>
+			</gsml:indexData>
+		</gsml:UndefinedType>
+		<gsml:UndefinedType gml:id="KDU1354">
+			<gml:name>urn:cgi:feature:Borehole:KDU1354</gml:name>
+			<gsml:collarLocation>
+				<gsml:UndefinedTypeCollar gml:id="BoreholeCollarID:BOREHOLE.KDU1354">
+					<gsml:location>
+						<gml:Point axisLabels="Geodetic latitude Geodetic longitude" srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4283" uomLabels="degree_angle degree_angle">
+							<gml:pos>-30.6059 121.581</gml:pos>
+						</gml:Point>
+					</gsml:location>
+				</gsml:UndefinedTypeCollar>
+			</gsml:collarLocation>
+			<gsml:indexData>
+				<gsml:UndefinedTypeDetails>
+					<gsml:dateOfDrilling>2007-08-10</gsml:dateOfDrilling>
+					<gsml:drillingMethod>diamond core</gsml:drillingMethod>
+					<gsml:inclinationType>vertical</gsml:inclinationType>
+					<gsml:coredInterval>
+						<gml:Envelope>
+							<gml:lowerCorner>0.0</gml:lowerCorner>
+							<gml:upperCorner>207.0</gml:upperCorner>
+						</gml:Envelope>
+					</gsml:coredInterval>
+					<gsml:coreCustodian xlink:href="urn:cgi:party:CSIRONR"/>
+				</gsml:UndefinedTypeDetails>
+			</gsml:indexData>
+		</gsml:UndefinedType>
+		<gsml:UndefinedType gml:id="EBSAE6">
+			<gml:name>urn:cgi:feature:Borehole:EBSAE6</gml:name>
+			<gsml:collarLocation>
+				<gsml:UndefinedTypeCollar gml:id="BoreholeCollarID:BOREHOLE.EBSAE6">
+					<gsml:location>
+						<gml:Point axisLabels="Geodetic latitude Geodetic longitude" srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4283" uomLabels="degree_angle degree_angle">
+							<gml:pos>-31.1104 137.149</gml:pos>
+						</gml:Point>
+					</gsml:location>
+				</gsml:UndefinedTypeCollar>
+			</gsml:collarLocation>
+			<gsml:indexData>
+				<gsml:UndefinedTypeDetails>
+					<gsml:dateOfDrilling>2007-12-04</gsml:dateOfDrilling>
+					<gsml:drillingMethod>diamond core</gsml:drillingMethod>
+					<gsml:inclinationType>vertical</gsml:inclinationType>
+					<gsml:coredInterval>
+						<gml:Envelope>
+							<gml:lowerCorner>309.0</gml:lowerCorner>
+							<gml:upperCorner>1200.0</gml:upperCorner>
+						</gml:Envelope>
+					</gsml:coredInterval>
+					<gsml:coreCustodian xlink:href="urn:cgi:party:CSIRONR"/>
+				</gsml:UndefinedTypeDetails>
+			</gsml:indexData>
+		</gsml:UndefinedType>
+		<gsml:UndefinedType gml:id="MJ021">
+			<gml:name>urn:cgi:feature:Borehole:MJ021</gml:name>
+			<gsml:collarLocation>
+				<gsml:UndefinedTypeCollar gml:id="BoreholeCollarID:BOREHOLE.MJ021">
+					<gsml:location>
+						<gml:Point axisLabels="Geodetic latitude Geodetic longitude" srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4283" uomLabels="degree_angle degree_angle">
+							<gml:pos>-41.904 145.562</gml:pos>
+						</gml:Point>
+					</gsml:location>
+				</gsml:UndefinedTypeCollar>
+			</gsml:collarLocation>
+			<gsml:indexData>
+				<gsml:UndefinedTypeDetails>
+					<gsml:dateOfDrilling>2007-09-30</gsml:dateOfDrilling>
+					<gsml:drillingMethod>diamond core</gsml:drillingMethod>
+					<gsml:inclinationType>vertical</gsml:inclinationType>
+					<gsml:coredInterval>
+						<gml:Envelope>
+							<gml:lowerCorner>698.0</gml:lowerCorner>
+							<gml:upperCorner>1098.0</gml:upperCorner>
+						</gml:Envelope>
+					</gsml:coredInterval>
+					<gsml:coreCustodian xlink:href="urn:cgi:party:CSIRONR"/>
+				</gsml:UndefinedTypeDetails>
+			</gsml:indexData>
+		</gsml:UndefinedType>
+		<gsml:UndefinedType gml:id="UDD1420">
+			<gml:name>urn:cgi:feature:Borehole:UDD1420</gml:name>
+			<gsml:collarLocation>
+				<gsml:UndefinedTypeCollar gml:id="BoreholeCollarID:BOREHOLE.UDD1420">
+					<gsml:location>
+						<gml:Point axisLabels="Geodetic latitude Geodetic longitude" srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4283" uomLabels="degree_angle degree_angle">
+							<gml:pos>-25.0 119.0</gml:pos>
+						</gml:Point>
+					</gsml:location>
+				</gsml:UndefinedTypeCollar>
+			</gsml:collarLocation>
+			<gsml:indexData>
+				<gsml:UndefinedTypeDetails>
+					<gsml:dateOfDrilling>2008-02-26</gsml:dateOfDrilling>
+					<gsml:drillingMethod>diamond core</gsml:drillingMethod>
+					<gsml:inclinationType>vertical</gsml:inclinationType>
+					<gsml:coredInterval>
+						<gml:Envelope>
+							<gml:lowerCorner>130.0</gml:lowerCorner>
+							<gml:upperCorner>143.0</gml:upperCorner>
+						</gml:Envelope>
+					</gsml:coredInterval>
+					<gsml:coreCustodian xlink:href="urn:cgi:party:CSIRONR"/>
+				</gsml:UndefinedTypeDetails>
+			</gsml:indexData>
+		</gsml:UndefinedType>
+	</gml:featureMembers>
+</wfs:FeatureCollection>

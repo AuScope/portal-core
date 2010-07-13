@@ -42,6 +42,16 @@ public class MenuController {
    }
    */
    
+   @RequestMapping("/genericparser.html")
+   public ModelAndView genericParser() {
+	   String googleKey = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
+	   
+	   ModelAndView mav = new ModelAndView("genericparser");
+	      mav.addObject("googleKey", googleKey);
+	      
+	   return mav;
+   }
+   
    @RequestMapping("/gmap.html")
    public ModelAndView gmap() {
       String googleKey 

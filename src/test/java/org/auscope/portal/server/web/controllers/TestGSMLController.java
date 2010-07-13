@@ -26,6 +26,11 @@ import org.junit.Test;
 
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Map;
 /**
  * User: Mathew Wyatt
  * Date: 27/08/2009
@@ -96,6 +101,8 @@ public class TestGSMLController {
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
             
+            oneOf(wfsGetFeatureMethodMakerPOST).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
+            
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
@@ -106,6 +113,29 @@ public class TestGSMLController {
         //check that the kml blob has been put ont he model
         modelAndView.getModel().get("data").equals(kmlBlob);
         modelAndView.getModel().get("success").equals(true);
+    }
+    
+    @Test
+    public void testRequestFeature() throws Exception {
+        final String kmlBlob = "kmlBlob";
+        
+
+        context.checking(new Expectations() {{
+            oneOf(httpServiceCaller).getHttpClient();
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
+
+            oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));will(returnValue(kmlBlob));
+            
+            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
+            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
+            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+        }});
+
+        ModelAndView modelAndView = gsmlController.requestFeature("fake","fake", "fake",mockHttpRequest);
+
+        //check that the kml blob has been put ont he model
+        Assert.assertEquals(kmlBlob, ((Map)modelAndView.getModel().get("data")).get("kml"));
+        Assert.assertTrue(modelAndView.getModel().get("success").equals(true));
     }
 
     /**
