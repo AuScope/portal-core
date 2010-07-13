@@ -7,6 +7,7 @@ var theglobalexml;
 Ext.onReady(function() {
     var map;
     var formFactory = new FormFactory();
+    var searchBarThreshold = 6; //how many records do we need to have before we show a search bar
 
     //-----------Complex Features Panel Configurations
 
@@ -76,8 +77,19 @@ Ext.onReady(function() {
                 //set this record to selected
                 activeLayersPanel.getSelectionModel().selectRecords([recordToAdd], false);
             }
-        }]
+        }],
+        
+        tbar: [
+               'Search: ', ' ',
+               new Ext.ux.form.ClientSearchField({
+                   store: complexFeaturesStore,
+                   width:200,
+                   id:'search-complex',
+                   fieldName:'title'
+               })
+           ]
     });
+        
 
     //----------- WMS Layers Panel Configurations
 
@@ -157,7 +169,16 @@ Ext.onReady(function() {
         view: new Ext.grid.GroupingView({
             forceFit:true,
             groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
-        })
+        }),
+        tbar: [
+               'Search: ', ' ',
+               new Ext.ux.form.ClientSearchField({
+                   store: wmsLayersStore,
+                   width:200,
+                   id:'search-wms-panel',
+                   fieldName:'title'
+               })
+           ]
 
     });
 
@@ -904,7 +925,7 @@ Ext.onReady(function() {
         activeTab: 0,
         region:'north',
         split: true,
-        //height: '200',
+        height: 215,
         autoScroll: true,
         //autosize:true,
         items:[
@@ -1042,7 +1063,18 @@ Ext.onReady(function() {
     //new Ext.LoadMask(complexFeaturesPanel.el, {msg: 'Please Wait...', store: complexFeaturesStore});
     //new Ext.LoadMask(wmsLayersPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});
 
-    complexFeaturesStore.load();
-    wmsLayersStore.load();
+  //This handler is for hiding the search bars upon record load 
+    var storeLoadFinishHandler = function (store, records, options) {
+    	if (records.length < searchBarThreshold) {
+    		options.toolbar.hide();
+    		options.parentPanel.doLayout(false,true);
+    	}
+    };
+    
+    complexFeaturesStore.on('load',storeLoadFinishHandler);
+    wmsLayersStore.on('load',storeLoadFinishHandler);
+    
+    complexFeaturesStore.load({toolbar:complexFeaturesPanel.getTopToolbar(), parentPanel:complexFeaturesPanel});
+    wmsLayersStore.load({toolbar:wmsLayersPanel.getTopToolbar(), parentPanel:wmsLayersPanel});
     
 });
