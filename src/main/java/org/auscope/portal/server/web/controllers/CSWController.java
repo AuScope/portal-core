@@ -222,4 +222,78 @@ public class CSWController {
         log.debug(dataItems.toString());
         return new JSONModelAndView(dataItems);
     }
+    
+    /**
+     * Gets all WCS data records from a CSW service, and then creats a JSON response for the WCS layers list in the portal
+     *
+     * Returns a JSON response with a data structure like so
+     *
+     * [
+     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]],
+     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]]
+     * ]
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/getWCSLayers.do")
+    public ModelAndView getWCSLayers() throws Exception {
+        //update the records if need be
+        cswService.updateRecordsInBackground();
+
+        //the main holder for the items
+        JSONArray dataItems = new JSONArray();
+
+        CSWRecord[] records = cswService.getWCSRecords();
+
+        for(CSWRecord record : records) {
+            //Add the mineral occurrence
+            JSONArray tableRow = new JSONArray();
+
+            //add the name of the layer/feature type
+            tableRow.add(record.getServiceName());
+
+            //add the abstract text to be shown as updateCSWRecords description
+            tableRow.add(record.getDataIdentificationAbstract());
+            
+            //Add the contact organisation
+            String org = record.getContactOrganisation();
+            if (org == null || org.length() == 0)
+                org = "Unknown";
+            tableRow.add(org);
+
+            //wcs dont need updateCSWRecords proxy url
+            tableRow.add("");
+
+            //add the type: wfs or wms or wcs
+            tableRow.add("wcs");
+
+            //TODO: add updateCSWRecords proper unique id
+            tableRow.add(record.hashCode());
+
+            //add the featureType name (in case of updateCSWRecords WMS feature)
+            tableRow.add(record.getOnlineResourceName());
+
+            JSONArray serviceURLs = new JSONArray();
+
+            serviceURLs.add(record.getServiceUrl());
+
+            tableRow.add(serviceURLs);
+
+            tableRow.element(true);
+            tableRow.add("<img src='js/external/extjs/resources/images/default/grid/done.gif'>");
+
+            tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'></a>");
+            
+            JSONArray bboxes = new JSONArray();
+            if (record.getCSWGeographicElement() != null)
+                bboxes.add(record.getCSWGeographicElement());
+            
+            tableRow.add(bboxes);
+
+            dataItems.add(tableRow);
+        }
+        log.debug(dataItems.toString());
+        return new JSONModelAndView(dataItems);
+    }
 }

@@ -212,7 +212,7 @@ public abstract class AbstractFilter implements IFilter {
     * @return
     */
    protected String generateAndComparisonFragment(String... fragments) {
-       return generateLogicalFragment("ogc:And",2, fragments);
+       return generateLogicalFragment("ogc:And",2, null, fragments);
    }
    
    /**
@@ -225,7 +225,7 @@ public abstract class AbstractFilter implements IFilter {
     * @return
     */
    protected String generateOrComparisonFragment(String... fragments) {
-       return generateLogicalFragment("ogc:Or",2, fragments);
+       return generateLogicalFragment("ogc:Or",2, null, fragments);
    }
    
    /**
@@ -237,7 +237,17 @@ public abstract class AbstractFilter implements IFilter {
     * @return
     */
    protected String generateNotComparisonFragment(String fragment) {
-       return generateLogicalFragment("ogc:Not",1, fragment);
+       return generateLogicalFragment("ogc:Not",1, null, fragment);
+   }
+   
+   /**
+    * 
+    * @param filterContents A single filter fragment or an And/Or/Not element
+    * @return
+    */
+   protected String generateFilter(String filterContents, Map<String, String> attributes) {
+       
+       return generateLogicalFragment("ogc:Filter",1, attributes,filterContents);
    }
    
    /**
@@ -247,10 +257,10 @@ public abstract class AbstractFilter implements IFilter {
     */
    protected String generateFilter(String filterContents) {
        
-       return generateLogicalFragment("ogc:Filter",1,filterContents);
+       return generateLogicalFragment("ogc:Filter",1, null,filterContents);
    }
    
-   private String generateLogicalFragment(String logicalComparison,int minParams, String... fragments) {
+   private String generateLogicalFragment(String logicalComparison,int minParams, Map<String, String> attributes, String... fragments) {
        StringBuilder sb = new StringBuilder();
        
        int nonEmptyFragmentCount = 0;
@@ -260,8 +270,17 @@ public abstract class AbstractFilter implements IFilter {
            }
        }
        
-       if (nonEmptyFragmentCount >= minParams)
-           sb.append(String.format("<%1$s>", logicalComparison));
+       if (nonEmptyFragmentCount >= minParams) {
+           if (attributes == null)
+               sb.append(String.format("<%1$s>", logicalComparison));
+           else {
+               sb.append(String.format("<%1$s ", logicalComparison));
+               for (String attName : attributes.keySet()) {
+                   sb.append(String.format("%1$s=\"%2$s\" ", attName, attributes.get(attName)));
+               }
+               sb.append(">");
+           }
+       }
        
        for (String fragment : fragments) {
            sb.append(fragment);

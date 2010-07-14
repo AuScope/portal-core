@@ -147,6 +147,27 @@ public class CSWService {
 
         return wfsRecords.toArray(new CSWRecord[wfsRecords.size()]);
     }
+    
+
+    /**
+     * Returns only WCS data records
+     * @return
+     * @throws Exception
+     */
+    public CSWRecord[] getWCSRecords() throws Exception {
+        CSWRecord[] records = getDataRecords();
+
+         ArrayList<CSWRecord> wfsRecords = new ArrayList<CSWRecord>();
+
+        for(CSWRecord rec : records) {
+            if(rec.getOnlineResourceProtocol() != null)
+                if(rec.getOnlineResourceProtocol().contains("WCS") && !rec.getServiceUrl().equals("")) {
+                    wfsRecords.add(rec);
+                }
+        }
+
+        return wfsRecords.toArray(new CSWRecord[wfsRecords.size()]);
+    }
 
     /**
      * Returns only WFS data records

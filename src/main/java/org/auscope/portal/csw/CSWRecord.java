@@ -73,7 +73,8 @@ public class CSWRecord {
         	tempNode = (Node)xPath.evaluate(onlineResourceProtocolExpression, onlineNode, XPathConstants.NODE);
         	String recordTypeString = (tempNode == null || tempNode.getTextContent() == null) ? "" : tempNode.getTextContent().toLowerCase();   
         	if (recordTypeString.contains("wms") ||
-        		recordTypeString.contains("wfs")) {
+        		recordTypeString.contains("wfs") || 
+        		recordTypeString.contains("wcs")) {
         
         		tempNode = (Node)xPath.evaluate(onlineResourceProtocolExpression, onlineNode, XPathConstants.NODE);
                 onlineResourceProtocol = tempNode != null ? tempNode.getTextContent() : "";

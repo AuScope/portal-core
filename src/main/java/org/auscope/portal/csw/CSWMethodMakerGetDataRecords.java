@@ -28,13 +28,7 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
     public HttpMethodBase makeMethod() {
         GetMethod method = new GetMethod(this.serviceURL);
 
-        String filterString =
-            "<Filter xmlns=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\">" +
-                "<PropertyIsLike wildCard=\"%\" singleChar=\"_\" escapeChar=\"\\\">" +
-                    "<PropertyName>AnyText</PropertyName>" +
-                    "<Literal>%</Literal>" +
-                "</PropertyIsLike>" +
-            "</Filter>";
+        String filterString = new CSWGetDataRecordsFilter().getFilterStringAllRecords();
         
         //set all of the parameters
         NameValuePair service    = new NameValuePair("service", "CSW");
