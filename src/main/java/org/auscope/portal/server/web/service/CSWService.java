@@ -1,6 +1,8 @@
 package org.auscope.portal.server.web.service;
 
 import java.util.ArrayList;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,9 +37,16 @@ public class CSWService {
     private String serviceUrl;
     private CSWThreadExecutor executor;        
     private Util util;
-    private long lastUpdated = 0;
+    private volatile long lastUpdated = 0;
     private static final int UPDATE_INTERVAL = 300000;
+    
+    /*
+     * This is used to prevent multiple updates running concurrently
+     * (Any updates that trigger when an update is already running will be ignored)
+     */
+    private final Lock lock = new ReentrantLock();
 
+    
     @Autowired
     public CSWService(CSWThreadExecutor executor,
                       HttpServiceCaller serviceCaller,
@@ -76,17 +85,29 @@ public class CSWService {
      * Updates the cached data records from the CSW service.
      */
     public void updateCSWRecords() {
+        //If an update is already running, don't bother continuing
+        if (!lock.tryLock()) {
+            log.trace("Update is already running - update skipped");
+            return;
+        }
+        
+        log.trace("Update Starting");
+        
         try {
+            
             ICSWMethodMaker getRecordsMethod = new CSWMethodMakerGetDataRecords(serviceUrl);
-            log.debug("....................................................");
+            
             log.debug(getRecordsMethod.makeMethod().getQueryString());
             Document document = util.buildDomFromString(serviceCaller.getMethodResponseAsString(getRecordsMethod.makeMethod(), serviceCaller.getHttpClient()));
 
             CSWRecord[] tempRecords = new CSWGetRecordResponse(document).getCSWRecords();
-
+            
             setDatarecords(tempRecords);
         } catch (Exception e) {
-            log.error(e);
+            log.error("Error parsing CSW record list",e);
+        } finally {
+            lock.unlock();
+            log.trace("Update completed");
         }
     }
 
