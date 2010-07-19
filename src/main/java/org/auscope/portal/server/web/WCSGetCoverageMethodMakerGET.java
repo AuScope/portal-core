@@ -20,7 +20,7 @@ public class WCSGetCoverageMethodMakerGET implements
     private final Log logger = LogFactory.getLog(getClass());
     
     private HttpMethodBase makeMethod(String serviceURL, String layerName,
-            WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight, int outputResX, int outputResY, String inputCrs,
+            WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight, double outputResX, double outputResY, String inputCrs,
             CSWGeographicBoundingBox bbox, String timeConstraint) throws Exception {
         GetMethod httpMethod = new GetMethod(serviceURL);
         
@@ -37,8 +37,10 @@ public class WCSGetCoverageMethodMakerGET implements
         if (outputResX == 0 && outputResY == 0 && 
                 outputWidth == 0 && outputHeight == 0) 
             throw new IllegalArgumentException("One of outputResX/outputResY or outputWidth/outputHeight");
-        if (bbox==null && timeConstraint ==null)
+        if (bbox==null && (timeConstraint == null || timeConstraint.isEmpty()))
             throw new IllegalArgumentException("You must specify at least one bbox or time constraint");
+        if (inputCrs==null || inputCrs.isEmpty())
+            throw new IllegalArgumentException("You must specify an inputCrs");
         
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         
@@ -55,11 +57,18 @@ public class WCSGetCoverageMethodMakerGET implements
         case NetCDF:
             params.add(new NameValuePair("format", "NetCDF"));
             break;
+        case GeoTIFF_Float:
+            params.add(new NameValuePair("format", "GeoTIFF_Float"));
+            break;
         default:
             throw new IllegalArgumentException(String.format("format '%1$s' not supported", format.toString()));
         }
         
-        if (inputCrs != null) {
+        if (outputCrs != null && !outputCrs.isEmpty()) {
+            params.add(new NameValuePair("response_crs", outputCrs));
+        }
+        
+        if (inputCrs != null && !inputCrs.isEmpty()) {
             params.add(new NameValuePair("crs", inputCrs));
         }
         
@@ -72,7 +81,7 @@ public class WCSGetCoverageMethodMakerGET implements
                             bbox.getNorthBoundLatitude())));
         }
         
-        if (timeConstraint != null) {
+        if (timeConstraint != null && !timeConstraint.isEmpty()) {
             params.add(new NameValuePair("time", timeConstraint));
         }
         
@@ -85,11 +94,11 @@ public class WCSGetCoverageMethodMakerGET implements
         }
         
         if (outputResX > 0) {
-            params.add(new NameValuePair("resx", Integer.toString(outputResX)));
+            params.add(new NameValuePair("resx", Double.toString(outputResX)));
         }
         
         if (outputResY > 0) {
-            params.add(new NameValuePair("resy", Integer.toString(outputResY)));
+            params.add(new NameValuePair("resy", Double.toString(outputResY)));
         }
         
         httpMethod.setQueryString(params.toArray(new NameValuePair[params.size()]));
@@ -101,15 +110,15 @@ public class WCSGetCoverageMethodMakerGET implements
 
     public HttpMethodBase makeMethod(String serviceURL, String layerName,
             WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight,
-            int outputResX, int outputResY, String inputCrs, CSWGeographicBoundingBox bbox) throws Exception {
+            double outputResX, double outputResY, String inputCrs, CSWGeographicBoundingBox bbox) throws Exception {
         return makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY,inputCrs,bbox,null);
     }
 
     @Override
     public HttpMethodBase makeMethod(String serviceURL, String layerName,
             WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight,
-            int outputResX, int outputResY, String timeConstraint) throws Exception {
-        return makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY,null,null,timeConstraint);
+            double outputResX, double outputResY,String inputCrs, String timeConstraint) throws Exception {
+        return makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY,inputCrs,null,timeConstraint);
     }
 
 }

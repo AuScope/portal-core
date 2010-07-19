@@ -7,8 +7,10 @@ public interface IWCSGetCoverageMethodMaker {
     
     public enum WCSDownloadFormat {
         GeoTIFF,
-        NetCDF
+        NetCDF,
+        GeoTIFF_Float
     }
+    
     
     /**
      * Returns a method that makes a GetCoverage request for a given time constraint
@@ -22,12 +24,12 @@ public interface IWCSGetCoverageMethodMaker {
      * @param outputResX When requesting a georectified grid coverage, this requests a subset with a specific spatial resolution (or set to 0 if N/A)
      * @param outputResY When requesting a georectified grid coverage, this requests a subset with a specific spatial resolution (or set to 0 if N/A)
      * @param bbox The BBOX that will constrain the WCS output
-     * @param inputCrs [Optional] The coordinate reference system to use with the bounding box
+     * @param inputCrs The coordinate reference system to use with the bounding box
      * @param outputCrs [Optional] The coordinate reference system the output will be defined with
      * @return
      * @throws Exception
      */
-    public HttpMethodBase makeMethod(String serviceURL, String layerName, WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight, int outputResX, int outputResY, String inputCrs, CSWGeographicBoundingBox bbox) throws Exception;
+    public HttpMethodBase makeMethod(String serviceURL, String layerName, WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight, double outputResX, double outputResY, String inputCrs, CSWGeographicBoundingBox bbox) throws Exception;
     
     /**
      * Returns a method that makes a GetCoverage request for a given time constraint
@@ -41,11 +43,12 @@ public interface IWCSGetCoverageMethodMaker {
      * @param outputResX When requesting a georectified grid coverage, this requests a subset with a specific spatial resolution (or set to 0 if N/A)
      * @param outputResY When requesting a georectified grid coverage, this requests a subset with a specific spatial resolution (or set to 0 if N/A)
      * @param timeConstraint The time constraint used to fetch the output data
+     * @param inputCrs The coordinate reference system to use with the bounding box
      * @param outputCrs [Optional] The coordinate reference system the output will be defined with
      * @return
      * @throws Exception
      */
-    public HttpMethodBase makeMethod(String serviceURL, String layerName, WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight, int outputResX, int outputResY, String timeConstraint) throws Exception;
+    public HttpMethodBase makeMethod(String serviceURL, String layerName, WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight, double outputResX, double outputResY, String inputCrs, String timeConstraint) throws Exception;
 }
 
 

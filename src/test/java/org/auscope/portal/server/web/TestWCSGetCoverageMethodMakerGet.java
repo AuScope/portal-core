@@ -52,7 +52,7 @@ public class TestWCSGetCoverageMethodMakerGet {
     
     @Test
     public void testTime() throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 1, 2, 0, 0, "thetimeis");
+        HttpMethodBase method = methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 1, 2, 0, 0, "foo", "thetimeis");
         
         Assert.assertNotNull(method);
         
@@ -61,6 +61,32 @@ public class TestWCSGetCoverageMethodMakerGet {
         Assert.assertFalse(queryString.isEmpty());
         
         Assert.assertTrue(queryString.contains("time=thetimeis"));
+    }
+    
+    private void runOptionTest(String notToContain,String serviceURL, String layerName,
+            WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight,
+            int outputResX, int outputResY, String inputCrs, String timeConstraint) throws Exception {
+        
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY, inputCrs, timeConstraint);
+        Assert.assertNotNull(method);
+        
+        String queryString = method.getQueryString();
+        Assert.assertNotNull(queryString);
+        Assert.assertFalse(queryString.isEmpty());
+        
+        Assert.assertFalse(queryString.contains(notToContain));
+    }
+    
+    @Test
+    public void testOptionalArguments() throws Exception {
+        //Testing optional output crs
+        runOptionTest("response_crs", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 1, 2, 0, 0,"incrs", "time");
+        
+        //Testing width /height
+        runOptionTest("resx", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 1, 2, 0, 0,"incrs", "time");
+        runOptionTest("resy", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 1, 2, 0, 0,"incrs", "time");
+        runOptionTest("width", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 0, 0, 1, 2,"incrs", "time");
+        runOptionTest("height", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 0, 0, 1, 2,"incrs", "time");
     }
     
     @Test
@@ -96,7 +122,7 @@ public class TestWCSGetCoverageMethodMakerGet {
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 1, 2, 3, 5, "foo", null);
+            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 1, 2, 3, 5, "foo",(String) null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
     }

@@ -108,7 +108,7 @@ public class TestWCSController {
          }});
         
         WCSController controller = new WCSController(mockServiceCaller, mockMethodMaker, mockHostConfigurer);
-        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", outputWidth, outputHeight, outputResX, outputResY, outputCrs, "on", inputCrs, northBoundLat, southBoundLat, eastBoundLng, westBoundLng, null, null, null, mockResponse);
+        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, outputWidth, outputHeight, outputResX, outputResY, outputCrs, northBoundLat, southBoundLat, eastBoundLng, westBoundLng, null, null, mockResponse);
         
         ZipInputStream zip = outStream.getZipInputStream();
         ZipEntry ze = zip.getNextEntry();
@@ -131,8 +131,8 @@ public class TestWCSController {
         final String inputCrs = "inputCrs";
         final int outputWidth = 0;
         final int outputHeight = 0;
-        final int outputResX = 2;
-        final int outputResY = 2;
+        final double outputResX = 2.9;
+        final double outputResY = 2.2;
         final double northBoundLat = 0.1;
         final double southBoundLat = -0.2;
         final double eastBoundLng = 0.3;
@@ -149,7 +149,8 @@ public class TestWCSController {
                     with(any(Integer.class)), 
                     with(any(Integer.class)), 
                     with(any(Integer.class)), 
-                    with(any(Integer.class)), 
+                    with(any(Integer.class)),
+                    with(any(String.class)),
                     with(any(String.class)));will(returnValue(mockMethod));
             
             //There MUST be a call to release connection
@@ -167,7 +168,7 @@ public class TestWCSController {
          }});
         
         WCSController controller = new WCSController(mockServiceCaller, mockMethodMaker, mockHostConfigurer);
-        controller.downloadWCSAsZip(serviceUrl, layerName, "NetCDF", outputWidth, outputHeight, outputResX, outputResY, outputCrs, null, inputCrs, 0, 0, 0, 0,"on", "2010-10-1", "23:12:11", mockResponse);
+        controller.downloadWCSAsZip(serviceUrl, layerName, "NetCDF", inputCrs, outputWidth, outputHeight, outputResX, outputResY, outputCrs, 0.0, 0.0, 0.0, 0.0, "2010-10-1", "23:12:11", mockResponse);
         
         ZipInputStream zip = outStream.getZipInputStream();
         ZipEntry ze = zip.getNextEntry();
