@@ -69,7 +69,12 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
 	if (genericParserClickHandler(map,overlay,latlng,activeLayersStore))
 		return;
 	
-    if (overlay instanceof GMarker) {
+	//Try to see if its a WCS layer
+	if (overlay && overlay.parentRecord && overlay.parentRecord.get('serviceType') == 'wcs') {
+		var infoWindow = new GenericWCSInfoWindow(map, overlay, overlay.wcsUrl, overlay.layerName, overlay.parentRecord.get('bboxes'));
+		infoWindow.showInfoWindow();
+	//Otherwise it could be a WFS marker
+	} if (overlay instanceof GMarker) {
         if (overlay.typeName == "gsml:Borehole") {
             new NvclInfoWindow(map,overlay).show();
         }
@@ -79,10 +84,12 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
         else if (overlay.description != null) {
             overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
         }
+    //Otherwise it could be a WFS polygon
     } else if (overlay instanceof GPolygon) {
     	if (overlay.description != null) {
     		map.openInfoWindowHtml(overlay.getVertex(0),overlay.description);
     	}
+    //Otherwise we test each of our WMS layers to see a click will affect them
     } else {
     	//If the user clicks on an info window, we will still get click events, lets ignore these
     	if (latlng == null || latlng == undefined)
