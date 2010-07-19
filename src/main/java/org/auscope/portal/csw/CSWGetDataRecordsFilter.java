@@ -5,8 +5,6 @@ import java.util.HashMap;
 import org.auscope.portal.mineraloccurrence.AbstractFilter;
 import org.auscope.portal.mineraloccurrence.FilterBoundingBox;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Represents a OGC:Filter that will fetch all WFS, WMS and WCS records from a CSW
  * @author VOT002
@@ -41,7 +39,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     @Override
     public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
-        throw new NotImplementedException();
+        return null;
     }
     
 }
