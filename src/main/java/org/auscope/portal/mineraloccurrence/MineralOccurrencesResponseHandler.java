@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import org.auscope.portal.server.domain.ows.OWSExceptionParser;
 import org.springframework.stereotype.Repository;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,38 +27,6 @@ import java.io.UnsupportedEncodingException;
 @Repository
 public class MineralOccurrencesResponseHandler {
 
-    /**
-     * Checks a parsed document for an error response, throws an exception if any have been returned
-     * (Otherwise returns
-     * @param doc
-     * @param xPath
-     * @throws Exception
-     */
-    private void checkForErrors(Document doc, XPath xPath) throws Exception {
-        
-        //Check for an exception response
-        XPathExpression exceptionTestExpr = xPath.compile("/ows:ExceptionReport/ows:Exception");
-        NodeList exceptionNodes = (NodeList)exceptionTestExpr.evaluate(doc, XPathConstants.NODESET);
-        if (exceptionNodes.getLength() > 0) {
-            Node exceptionNode = exceptionNodes.item(0);
-            
-            XPathExpression exceptionCodeExpr = xPath.compile("@exceptionCode");
-            XPathExpression exceptionTextExpr = xPath.compile("ows:ExceptionText");
-            
-            Node exceptionTextNode = (Node)exceptionTextExpr.evaluate(exceptionNode, XPathConstants.NODE);
-            String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]" : exceptionTextNode.getTextContent();
-            String exceptionCode = (String)exceptionCodeExpr.evaluate(exceptionNode, XPathConstants.STRING);
-            
-            throw new Exception(String.format("Code='%1$s' Message='%2$s'", exceptionCode ,exceptionText));
-        }
-        
-        //Check for a root wfs response element
-        XPathExpression rootWfsExpr = xPath.compile("/wfs:FeatureCollection");
-        NodeList wfsNodes = (NodeList)rootWfsExpr.evaluate(doc, XPathConstants.NODESET);
-        if (wfsNodes.getLength() == 0) {
-            throw new Exception("No root <wfs:FeatureCollection> in response");
-        }
-    }
     
     public List<Mine> getMines(String mineResponse) throws Exception {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
@@ -70,7 +39,7 @@ public class MineralOccurrencesResponseHandler {
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
         //Do some rudimentary error testing
-        checkForErrors(mineDocument,xPath);
+        OWSExceptionParser.checkForExceptionResponse(mineDocument);
         
         // To death we are hastening, let us refrain from sinning ... never forget this too! ;-) 
         XPathExpression expr = xPath.compile("/wfs:FeatureCollection/gml:featureMember/er:Mine | /wfs:FeatureCollection/gml:featureMembers/er:Mine");
@@ -95,7 +64,7 @@ public class MineralOccurrencesResponseHandler {
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
         //Do some rudimentary error testing
-        checkForErrors(commodityDocument,xPath);
+        OWSExceptionParser.checkForExceptionResponse(commodityDocument);
         
         XPathExpression expr = xPath.compile("//er:Commodity");
         NodeList commodityNodes = (NodeList)expr.evaluate(commodityDocument, XPathConstants.NODESET);
@@ -120,7 +89,7 @@ public class MineralOccurrencesResponseHandler {
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
         
         //Do some rudimentary error testing
-        checkForErrors(mineralOccurrenceDocument,xPath);
+        OWSExceptionParser.checkForExceptionResponse(mineralOccurrenceDocument);
         
         try {
             XPathExpression expr = xPath.compile("/wfs:FeatureCollection");
