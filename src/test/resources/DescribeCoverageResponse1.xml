@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CoverageDescription xmlns="http://www.opengis.net/wcs" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.0.0">
+  <CoverageOffering>
+    <description>description1</description>
+    <name>name1</name>
+    <label>label1</label>
+    <lonLatEnvelope srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+      <gml:pos>0.0 -89.4375</gml:pos>
+
+      <gml:pos>358.875 89.4375</gml:pos>
+      <gml:timePosition>2005-05-10T00:00:00Z</gml:timePosition>
+      <gml:timePosition>2005-05-10T00:00:00Z</gml:timePosition>
+    </lonLatEnvelope>
+    <domainSet>
+      <spatialDomain>
+        <gml:Envelope srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+          <gml:pos dimension="2">0.0 -89.4375</gml:pos>
+          <gml:pos dimension="2">358.875 89.4375</gml:pos>
+        </gml:Envelope>
+        <EnvelopeWithTimePeriod srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+
+          <gml:pos dimension="2">0.0 -89.4375</gml:pos>
+          <gml:pos dimension="2">358.875 89.4375</gml:pos>
+          <gml:timePosition>2005-05-10T00:00:00Z</gml:timePosition>
+          <gml:timePosition>2005-05-10T00:00:00Z</gml:timePosition>
+        </EnvelopeWithTimePeriod>
+        <gml:RectifiedGrid srsName="OGC:CRS84" dimension="3">
+          <gml:limits>
+
+            <gml:GridEnvelope>
+              <gml:low>0 0 0</gml:low>
+              <gml:high>319 159 26</gml:high>
+            </gml:GridEnvelope>
+          </gml:limits>
+          <gml:axisName>x</gml:axisName>
+          <gml:axisName>y</gml:axisName>
+
+          <gml:axisName>z</gml:axisName>
+          <gml:origin>
+            <gml:pos>0.0 -89.4375 100.0</gml:pos>
+          </gml:origin>
+          <gml:offsetVector>1.125 0.0 0.0</gml:offsetVector>
+          <gml:offsetVector>0.0 1.125 0.0</gml:offsetVector>
+          <gml:offsetVector>0.0 0.0 33.333334115835335</gml:offsetVector>
+
+        </gml:RectifiedGrid>
+      </spatialDomain>
+      <temporalDomain>
+        <gml:timePosition>2005-05-10T12:34:56Z</gml:timePosition>
+        <gml:timePosition>2006-05-10T12:34:56Z</gml:timePosition>
+      </temporalDomain>
+    </domainSet>
+    <rangeSet>
+      <RangeSet>
+        <description>rsdescription1</description>
+        <name>rsname1</name>
+        <label>rslabel1</label>
+        <axisDescription>
+          <AxisDescription>
+            <name>adname1</name>
+            <label>adlabel1</label>
+
+            <values>
+              <singleValue>100.0</singleValue>
+              <singleValue>133.33</singleValue>
+              <singleValue>166.66</singleValue>
+              <singleValue>200.0</singleValue>
+              <singleValue>233.33</singleValue>
+
+              <singleValue>266.66</singleValue>
+              <singleValue>300.0</singleValue>
+              <singleValue>333.33</singleValue>
+              <singleValue>366.66</singleValue>
+              <singleValue>400.0</singleValue>
+              <singleValue>433.33</singleValue>
+
+              <singleValue>466.66</singleValue>
+              <singleValue>500.0</singleValue>
+              <singleValue>533.33</singleValue>
+              <singleValue>566.66</singleValue>
+              <singleValue>600.0</singleValue>
+              <singleValue>633.33</singleValue>
+
+              <singleValue>666.66</singleValue>
+              <singleValue>700.0</singleValue>
+              <singleValue>733.33</singleValue>
+              <singleValue>766.66</singleValue>
+              <singleValue>800.0</singleValue>
+              <singleValue>833.33</singleValue>
+
+              <singleValue>866.66</singleValue>
+              <singleValue>900.0</singleValue>
+              <singleValue>933.33</singleValue>
+              <singleValue>966.66</singleValue>
+            </values>
+          </AxisDescription>
+        </axisDescription>
+
+      </RangeSet>
+    </rangeSet>
+    <supportedCRSs>
+      <requestCRSs>OGC:CRS84</requestCRSs>
+      <responseCRSs>EPSG:4326</responseCRSs>
+    </supportedCRSs>
+    <supportedFormats>
+      <formats>GeoTIFF</formats>
+
+      <formats>GeoTIFF_Float</formats>
+      <formats>NetCDF3</formats>
+    </supportedFormats>
+    <supportedInterpolations>
+      <interpolationMethod>none</interpolationMethod>
+    </supportedInterpolations>
+  </CoverageOffering>
+
+</CoverageDescription>
+

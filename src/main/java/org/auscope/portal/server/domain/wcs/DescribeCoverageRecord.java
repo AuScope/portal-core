@@ -107,7 +107,7 @@ public class DescribeCoverageRecord implements Serializable {
             supportedInterpolations[i] = getTextContentOrEmptyString(tempNodeList.item(i));
         }
         
-        tempNodeList = (NodeList)xPath.evaluate("wcs:supportedInterpolations/wcs:nativeCRSs", node, XPathConstants.NODESET);
+        tempNodeList = (NodeList)xPath.evaluate("wcs:supportedCRSs/wcs:nativeCRSs", node, XPathConstants.NODESET);
         nativeCRSs = new String[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             nativeCRSs[i] = getTextContentOrEmptyString(tempNodeList.item(i));
