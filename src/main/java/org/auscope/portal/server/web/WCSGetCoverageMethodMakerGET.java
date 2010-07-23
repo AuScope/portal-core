@@ -2,6 +2,7 @@ package org.auscope.portal.server.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NameValuePair;
@@ -19,9 +20,9 @@ public class WCSGetCoverageMethodMakerGET implements
 
     private final Log logger = LogFactory.getLog(getClass());
     
-    private HttpMethodBase makeMethod(String serviceURL, String layerName,
-            WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight, double outputResX, double outputResY, String inputCrs,
-            CSWGeographicBoundingBox bbox, String timeConstraint) throws Exception {
+    public HttpMethodBase makeMethod(String serviceURL, String layerName,
+            String format, String outputCrs, int outputWidth, int outputHeight, double outputResX, double outputResY, String inputCrs,
+            CSWGeographicBoundingBox bbox, String timeConstraint, Map<String, String> customParams) throws Exception {
         GetMethod httpMethod = new GetMethod(serviceURL);
         
         //Do some simple error checking to align with WCS standard
@@ -45,24 +46,10 @@ public class WCSGetCoverageMethodMakerGET implements
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         
         params.add(new NameValuePair("service", "WCS"));
-        params.add(new NameValuePair("service", "WCS"));
         params.add(new NameValuePair("version", "1.0.0"));
         params.add(new NameValuePair("request", "GetCoverage"));
         params.add(new NameValuePair("coverage", layerName));
-        
-        switch (format) {
-        case GeoTIFF:
-            params.add(new NameValuePair("format", "GeoTIFF"));
-            break;
-        case NetCDF:
-            params.add(new NameValuePair("format", "NetCDF"));
-            break;
-        case GeoTIFF_Float:
-            params.add(new NameValuePair("format", "GeoTIFF_Float"));
-            break;
-        default:
-            throw new IllegalArgumentException(String.format("format '%1$s' not supported", format.toString()));
-        }
+        params.add(new NameValuePair("format", format));
         
         if (outputCrs != null && !outputCrs.isEmpty()) {
             params.add(new NameValuePair("response_crs", outputCrs));
@@ -101,24 +88,16 @@ public class WCSGetCoverageMethodMakerGET implements
             params.add(new NameValuePair("resy", Double.toString(outputResY)));
         }
         
+        if (customParams != null) {
+            for (String key : customParams.keySet()) {
+                params.add(new NameValuePair(key, customParams.get(key).toString()));
+            }
+        }
+        
         httpMethod.setQueryString(params.toArray(new NameValuePair[params.size()]));
         
         logger.debug(String.format("url='%1$s' query='%2$s'", serviceURL, httpMethod.getQueryString()));
         
         return httpMethod;
     }
-
-    public HttpMethodBase makeMethod(String serviceURL, String layerName,
-            WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight,
-            double outputResX, double outputResY, String inputCrs, CSWGeographicBoundingBox bbox) throws Exception {
-        return makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY,inputCrs,bbox,null);
-    }
-
-    @Override
-    public HttpMethodBase makeMethod(String serviceURL, String layerName,
-            WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight,
-            double outputResX, double outputResY,String inputCrs, String timeConstraint) throws Exception {
-        return makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY,inputCrs,null,timeConstraint);
-    }
-
 }

@@ -1130,6 +1130,41 @@ Ext.onReady(function() {
 
                         openWindowWithPost("downloadGMLAsZip.do?", 'WFS_Layer_Download_'+new Date().getTime(), keys, values);
                     }
+                } else if (serviceType == 'wcs') {
+                	
+                	//Lets open the generic wcs download handler
+                	//Unfortunately to do this we need to get a description of the coverage
+                	Ext.Ajax.request({
+                    	url			: '/describeCoverage.do',
+                    	timeout		: 180000,
+                    	scope		: record,
+                    	params		: {
+                    		serviceUrl 		: record.get('serviceURLs')[0],
+                			layerName		: record.get('typeName')
+                    	},
+                    	//This gets called if the server returns an error
+                    	failure		: function(response, options) {
+                    		Ext.MessageBox.alert('Error', 'Error (' + response.status + '): ' + response.statusText);
+                    	},
+                    	//This gets called if the server returned HTTP 200 (the actual response object could still be bad though)
+                    	success	: function(response, options) {
+                    		var responseObj = Ext.util.JSON.decode(response.responseText);
+                    		
+                    		//Generate an error / success fragment to display to the user
+                    		if (responseObj.success && responseObj.records && responseObj.records.length > 0) {
+                    			var record = responseObj.records[0]; //We only ever check the first record because only 1 should be returned
+                    			
+                    			showWCSDownload(this.get('serviceURLs')[0], this.get('typeName'), record);
+                    		} else {
+                    			if (responseObj.success) {
+                    				Ext.MessageBox.alert('Error', 'No records returned from \'' + this.get('serviceURLs')[0] + '\'');
+                    			} else {
+                    				Ext.MessageBox.alert('Error', 'Error whilst communicating with \'' + this.get('serviceURLs')[0] + '\' : ' + responseObj.errorMsg);
+                    			}
+                    		}
+                    	
+                    	}
+                	});
                 }
             }
         }

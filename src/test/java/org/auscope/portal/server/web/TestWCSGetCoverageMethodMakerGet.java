@@ -1,11 +1,13 @@
 package org.auscope.portal.server.web;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.server.web.IWCSGetCoverageMethodMaker.WCSDownloadFormat;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -38,7 +40,7 @@ public class TestWCSGetCoverageMethodMakerGet {
     
     @Test
     public void testBbox() throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 1, 2, 0, 0, "myCrs", mockBbox);
+        HttpMethodBase method = methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 1, 2, 0, 0, "myCrs", mockBbox, null, null);
         
         Assert.assertNotNull(method);
         
@@ -52,7 +54,7 @@ public class TestWCSGetCoverageMethodMakerGet {
     
     @Test
     public void testTime() throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 1, 2, 0, 0, "foo", "thetimeis");
+        HttpMethodBase method = methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 1, 1, 0, 0, "myCrs", mockBbox, "thetimeis", null);
         
         Assert.assertNotNull(method);
         
@@ -63,66 +65,70 @@ public class TestWCSGetCoverageMethodMakerGet {
         Assert.assertTrue(queryString.contains("time=thetimeis"));
     }
     
-    private void runOptionTest(String notToContain,String serviceURL, String layerName,
-            WCSDownloadFormat format, String outputCrs, int outputWidth, int outputHeight,
-            int outputResX, int outputResY, String inputCrs, String timeConstraint) throws Exception {
+    private void runOptionTest(String notToContain, String mustContain,String serviceURL, String layerName,
+            String format, String outputCrs, int outputWidth, int outputHeight,
+            int outputResX, int outputResY, String inputCrs,CSWGeographicBoundingBox bbox, String timeConstraint, 
+            Map<String, String> customParams) throws Exception {
         
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY, inputCrs, timeConstraint);
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY, inputCrs, bbox, timeConstraint, customParams);
         Assert.assertNotNull(method);
         
         String queryString = method.getQueryString();
         Assert.assertNotNull(queryString);
         Assert.assertFalse(queryString.isEmpty());
         
-        Assert.assertFalse(queryString.contains(notToContain));
+        if (notToContain != null) 
+            Assert.assertFalse(queryString.contains(notToContain));
+        
+        if (mustContain != null)
+            Assert.assertTrue(queryString.contains(mustContain));
     }
     
     @Test
     public void testOptionalArguments() throws Exception {
+        
+        Map<String, String> customParams = new HashMap<String, String>();
+        customParams.put("param1", "param1value");
+        customParams.put("param2", "param2value");
+        
         //Testing optional output crs
-        runOptionTest("response_crs", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 1, 2, 0, 0,"incrs", "time");
+        runOptionTest("response_crs", null, "foo", "foo", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", null);
         
         //Testing width /height
-        runOptionTest("resx", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 1, 2, 0, 0,"incrs", "time");
-        runOptionTest("resy", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 1, 2, 0, 0,"incrs", "time");
-        runOptionTest("width", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 0, 0, 1, 2,"incrs", "time");
-        runOptionTest("height", "foo", "foo", WCSDownloadFormat.GeoTIFF, "", 0, 0, 1, 2,"incrs", "time");
+        runOptionTest("resx", "width", "foo", "foo", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", customParams);
+        runOptionTest("resy", "height", "foo", "foo", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", null);
+        runOptionTest("width", "resx", "foo", "foo", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
+        runOptionTest("height", "resy", "foo", "foo", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", null);
+        
+        //Testing custom params
+        runOptionTest(null, "param1=param1value", "foo", "foo", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
+        runOptionTest(null, "param2=param2value", "foo", "foo", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
     }
     
     @Test
     public void testBadArguments() throws Exception {
         try {
-            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 0, 0, 0, 0, "foo", mockBbox);
+            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 0, 0, 0, "foo", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 5, 6, 7, 8, "foo", mockBbox);
+            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 5, 0, 0, 0, "foo", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 5, 0, 0, 0, "foo", mockBbox);
+            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 5, 0, 0, "foo", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 0, 5, 0, 0, "foo", mockBbox);
+            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 0, 5, 0, "foo", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 0, 0, 5, 0, "foo", mockBbox);
-            Assert.fail();
-        } catch (IllegalArgumentException ex) { }
-        
-        try {
-            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 0, 0, 0, 5, "foo", mockBbox);
-            Assert.fail();
-        } catch (IllegalArgumentException ex) { }
-        
-        try {
-            methodMaker.makeMethod("foo", "foo", WCSDownloadFormat.GeoTIFF, "foo", 1, 2, 3, 5, "foo",(String) null);
+            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 0, 0, 5, "foo", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
     }
