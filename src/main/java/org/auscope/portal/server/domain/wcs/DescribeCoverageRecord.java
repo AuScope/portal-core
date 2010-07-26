@@ -31,7 +31,7 @@ import org.w3c.dom.NodeList;
  */
 public class DescribeCoverageRecord implements Serializable {
     
-    private final Log logger = LogFactory.getLog(OWSExceptionParser.class);
+    private final Log logger = LogFactory.getLog(DescribeCoverageRecord.class);
     
     private String description;
     private String name;
