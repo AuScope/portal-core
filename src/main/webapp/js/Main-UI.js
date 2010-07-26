@@ -9,8 +9,19 @@ Ext.onReady(function() {
     var formFactory = new FormFactory();
     var searchBarThreshold = 6; //how many records do we need to have before we show a search bar
 
+    //Converts an array of BBox records into an actual BBox object array
+    var convertBboxList = function(v, record) {
+        for (var i = 0; i < v.length; i++) {
+            v[i] = new BBox(v[i].northBoundLatitude,
+            		v[i].southBoundLatitude,
+            		v[i].eastBoundLongitude,
+            		v[i].westBoundLongitude);
+        }
+            
+        return v;
+    };
+    
     //-----------Complex Features Panel Configurations
-
     var complexFeaturesStore = new Ext.data.Store({
         proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: '/getComplexFeatures.do', timeout:180000})),
         reader: new Ext.data.ArrayReader({}, [
@@ -27,7 +38,7 @@ Ext.onReady(function() {
             {   name: 'iconImgSrc'      },
             {   name: 'iconUrl'         },
             {   name: 'dataSourceImage' },
-            {   name: 'bboxes'			}
+            {   name: 'bboxes', convert : convertBboxList}
         ]),
         sortInfo: {field:'title', direction:'ASC'}
     });
@@ -52,8 +63,7 @@ Ext.onReady(function() {
     		bbox = bboxList[i];
     		
     		//A bbox that covers the entire planet is not useful
-    		meaningful =!(bbox.eastBoundLongitude == 180 && bbox.northBoundLatitude == 90 &&
-    				bbox.southBoundLatitude == -90 && bbox.westBoundLongitude == -180);
+    		meaningful =!bbox.isGlobal();
     	}
     	
     	return meaningful;
@@ -173,7 +183,7 @@ Ext.onReady(function() {
             {   name: 'loadingStatus'   },
             {   name: 'dataSourceImage' },
             {   name: 'opacity'         },
-            {   name: 'bboxes'          }
+            {   name: 'bboxes', convert : convertBboxList}
         ]),
         groupField:'contactOrg',
         sortInfo: {field:'title', direction:'ASC'}
@@ -287,7 +297,7 @@ Ext.onReady(function() {
             {   name: 'layerVisible'    },
             {   name: 'loadingStatus'   },
             {   name: 'dataSourceImage' },
-            {   name: 'bboxes'          }
+            {   name: 'bboxes', convert : convertBboxList}
         ]),
         groupField:'contactOrg',
         sortInfo: {field:'title', direction:'ASC'}
@@ -691,12 +701,14 @@ Ext.onReady(function() {
         if (!selectedRecord.tileOverlay)
         	selectedRecord.tileOverlay = new OverlayManager(map);
         
-        var polygon = bboxToPolygon(bboxList[0],'#GG0000', undefined, 0.7,'#FF0000', 0.6);
-        polygon.layerName = selectedRecord.get('typeName');
-        polygon.wcsUrl = serviceUrl;
-        polygon.parentRecord = selectedRecord;
-        
-        selectedRecord.tileOverlay.addOverlay(polygon);
+        var polygonList = bboxToPolygon(bboxList[0],'#FF0000', 0, 0.7,'#FF0000', 0.6);
+        for (var i = 0; i < polygonList.length; i++) {
+        	polygonList[i].layerName = selectedRecord.get('typeName');
+        	polygonList[i].wcsUrl = serviceUrl;
+        	polygonList[i].parentRecord = selectedRecord;
+	        
+	        selectedRecord.tileOverlay.addOverlay(polygonList[i]);
+        }
     };
 
     var wfsHandler = function(selectedRecord) {
@@ -887,14 +899,14 @@ Ext.onReady(function() {
 
                     if (record.get('serviceType') == 'wfs') {
                         if (record.tileOverlay instanceof OverlayManager) { 
-                        	record.tileOverlay.clearOverlays;
+                        	record.tileOverlay.clearOverlays();
                         }
                     } else if (record.get('serviceType') == 'wms') {
                         //remove from the map
                         map.removeOverlay(record.tileOverlay);
                     } else if (record.get('serviceType') == 'wcs') {
                         if (record.tileOverlay instanceof OverlayManager) { 
-                        	record.tileOverlay.clearOverlays;
+                        	record.tileOverlay.clearOverlays();
                         }
                     }
                     //remove from the map
@@ -1368,39 +1380,65 @@ Ext.onReady(function() {
     //new Ext.LoadMask(complexFeaturesPanel.el, {msg: 'Please Wait...', store: complexFeaturesStore});
     //new Ext.LoadMask(wmsLayersPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});
 
-  //This handler is for hiding the search bars upon record load 
-    /*var storeLoadFinishHandler = function (store, records, options) {
-    	if (records.length < searchBarThreshold) {
-    		options.toolbar.hide();
-    		options.parentPanel.doLayout(false,true);
+    complexFeaturesStore.load();
+    wmsLayersStore.load();
+    wcsLayersStore.load();
+    
+    //@param bbox The bounding box to split
+    //@param okBboxList The list of boxes that the split boxes will be appended to
+    var splitBboxes = function(bbox, okBboxList) {
+
+    	//SPLIT CASE 1: Polygon crossing meridian
+    	if (bbox.westBoundLongitude < 0 && bbox.eastBoundLongitude > 0) {
+    		var splits = bbox.splitAt(0); 
+    		for (var i = 0; i < splits.length; i++) {
+    			splitBboxes(splits[i], okBboxList);
+    		}
+    		return okBboxList;
     	}
+    	
+    	//SPLIT CASE 2: Polygon crossing anti meridian
+    	if (bbox.westBoundLongitude < 0 && bbox.eastBoundLongitude > 0) {
+    		var splits = bbox.splitAt(-180); 
+    		for (var i = 0; i < splits.length; i++) {
+    			splitBboxes(splits[i], okBboxList);
+    		}
+    		return okBboxList;
+    	}
+    	
+    	//SPLIT CASE 3: Polygon is too wide (Gmap can't handle click events for wide polygons)
+    	if (Math.abs(bbox.westBoundLongitude - bbox.eastBoundLongitude) > 60) {
+    		var splits = bbox.splitAt((bbox.westBoundLongitude + bbox.eastBoundLongitude) / 2); 
+    		for (var i = 0; i < splits.length; i++) {
+    			splitBboxes(splits[i], okBboxList);
+    		}
+    		return okBboxList;
+    	}
+    	
+    	//OTHERWISE - bounding box is OK to render
+    	okBboxList.push(bbox);
+    	return okBboxList; 
     };
     
-    complexFeaturesStore.on('load',storeLoadFinishHandler);
-    wmsLayersStore.on('load',storeLoadFinishHandler);*/
-    
-    complexFeaturesStore.load({toolbar:complexFeaturesPanel.getTopToolbar(), parentPanel:complexFeaturesPanel});
-    wmsLayersStore.load({toolbar:wmsLayersPanel.getTopToolbar(), parentPanel:wmsLayersPanel});
-    wcsLayersStore.load({toolbar:wcsLayersPanel.getTopToolbar(), parentPanel:wcsLayersPanel});
-    
-    //Converts a portal bbox into a GMap Polygon
+    //Converts a portal bbox into an array of GMap Polygon's
+    //Normally a single polygon is returned but if the polygon wraps around the antimeridian, it will be split
+    //into 2 polygons
     var bboxToPolygon = function(bbox, strokeColor, strokeWeight, strokeOpacity, fillColor, fillOpacity, opts) {
-    	var ne = new GLatLng(bbox.northBoundLatitude, bbox.eastBoundLongitude);
-	    var se = new GLatLng(bbox.southBoundLatitude, bbox.eastBoundLongitude);
-	    var sw = new GLatLng(bbox.southBoundLatitude, bbox.westBoundLongitude);
-	    var nw = new GLatLng(bbox.northBoundLatitude, bbox.westBoundLongitude);
-	    
-	    //this is so we can fetch data when our bbox is crossing the anti meridian
-		//Otherwise our bbox wraps around the WRONG side of the planet (a bit hacky).
-	    /*if (sw.lng() <= 0 && ne.lng() >= 0 || 
-			sw.lng() >= 0 && ne.lng() <= 0) {
-			sw = new GLatLng(sw.lat(), (sw.lng() < 0) ? (180 - sw.lng()) : sw.lng());
-			nw = new GLatLng(nw.lat(), (nw.lng() < 0) ? (180 - nw.lng()) : nw.lng());
-			ne = new GLatLng(ne.lat(), (ne.lng() < 0) ? (180 - ne.lng()) : ne.lng());
-			se = new GLatLng(se.lat(), (se.lng() < 0) ? (180 - se.lng()) : se.lng());
-		}*/
-	    
-	    return new GPolygon([sw, nw, ne, se], strokeColor, strokeWeight, strokeOpacity, fillColor, fillOpacity, opts);
+    	
+    	var splits = splitBboxes(bbox, []);
+    	var result = [];
+    	
+    	for (var i = 0; i < splits.length; i++) {
+    		var splitBbox = splits[i];
+    		var ne = new GLatLng(splitBbox.northBoundLatitude, splitBbox.eastBoundLongitude);
+    	    var se = new GLatLng(splitBbox.southBoundLatitude, splitBbox.eastBoundLongitude);
+    	    var sw = new GLatLng(splitBbox.southBoundLatitude, splitBbox.westBoundLongitude);
+    	    var nw = new GLatLng(splitBbox.northBoundLatitude, splitBbox.westBoundLongitude);
+    	    
+    	    result.push(new GPolygon([sw, nw, ne, se, sw], strokeColor, strokeWeight, strokeOpacity, fillColor, fillOpacity, opts));
+    	}
+    	
+    	return result;
     };
     
     //Generates a bounding box polygon and puts it on the map for the given record
@@ -1425,11 +1463,13 @@ Ext.onReady(function() {
     	record.bboxOverlayManager = overlayManager;
     	
     	for (var i = 0; i < bboxes.length; i++) {    	    
-    	    var polygon = bboxToPolygon(bboxes[i],'#00GG00', undefined, 0.7,'#00FF00', 0.6);
-    	    polygon.description = 'bbox';
-    	    polygon.title = 'bbox';
+    	    var polygonList = bboxToPolygon(bboxes[i],'00FF00', 0, 0.7,'#00FF00', 0.6);
     	    
-    	    record.bboxOverlayManager.addOverlay(polygon);
+    	    for (var j = 0; j < polygonList.length; j++) {
+    	    	polygonList[j].description = 'bbox';
+    	    	polygonList[j].title = 'bbox';
+    	    	record.bboxOverlayManager.addOverlay(polygonList[j]);
+    	    }
     	}
     	
     	record.bboxOverlayManager.markerManager.refresh();
