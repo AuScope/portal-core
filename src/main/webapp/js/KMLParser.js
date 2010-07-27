@@ -111,7 +111,7 @@ KMLParser.prototype.makeMarkers = function(icon, markerHandler) {
         	}
             
             //Parse any lineStrings
-            for (var j = 0; i < lineStringList.length; j++) {
+            for (var j = 0; j < lineStringList.length; j++) {
             	mapItem = this.parseLineString(name, description, lineStringList[j]);
                 if (mapItem == null)
                     return;
