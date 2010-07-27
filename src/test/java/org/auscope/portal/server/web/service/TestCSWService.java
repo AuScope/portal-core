@@ -1,5 +1,12 @@
 package org.auscope.portal.server.web.service;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 
@@ -8,11 +15,15 @@ import org.auscope.portal.server.util.Util;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.api.Action;
+import org.jmock.api.Invocation;
+import org.jmock.lib.action.ReturnValueAction;
 import org.jmock.lib.legacy.ClassImposteriser;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.Description;
 
 /**
  * User: Mathew Wyatt
@@ -76,6 +87,91 @@ public class TestCSWService {
 
         this.cswService.updateRecordsInBackground();
     }
+    
+    /**
+     * A simple extension on ReturnValue that adds a delay before the object is returned
+     * @author vot002
+     *
+     */
+    private static class DelayedReturnValueAction extends ReturnValueAction {
+        private long delayMs;
+        public DelayedReturnValueAction(long delayMs, Object returnValue) {
+            super(returnValue);
+            this.delayMs = delayMs;
+        }
+        
+        @Override
+        public Object invoke(Invocation i) throws Throwable {
+            Thread.sleep(delayMs);
+            return super.invoke(i);
+        }
+    }
+    
+    private static Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
+        return new DelayedReturnValueAction(msDelay, returnValue);
+    }
+    
+    /**
+     * Success if only a single update is able to run at any given time (Subsequent updates are terminated)
+     * @throws Exception
+     */
+    @Test
+    public void testSingleUpdate() throws Exception {
+        final long delay = 1000;
+        final String cswResponse = "foo"; 
+        
+        context.checking(new Expectations() {{
+            //Cant use oneOf as JUnit can't handle exceptions on other threads (see note below)
+            //oneOf(httpServiceCaller).getHttpClient();
+            //oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(delayReturnValue(delay, cswResponse));
+            
+            allowing(httpServiceCaller).getHttpClient();
+            allowing(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(delayReturnValue(delay, cswResponse));
+        }});
+        
+        final CSWService service = this.cswService;
+        
+        Runnable r = new Runnable() {
+            public void run() {
+                service.updateCSWRecords();
+            }
+        };
+        
+        Calendar start = Calendar.getInstance();
+        
+        //Only one of these threads should actually make a service call
+        //otherwise our expectations will fail
+        UncaughtExceptionHandler eh = new UncaughtExceptionHandler() {
+            
+            public void uncaughtException(Thread t, Throwable e) {
+                Assert.fail(e.toString());
+            }
+        };
+        Thread[] threadList = new Thread[5];
+        Thread.setDefaultUncaughtExceptionHandler(eh);
+        for (int i = 0; i < threadList.length; i++) {
+            threadList[i] = new Thread(r);
+            threadList[i].setUncaughtExceptionHandler(eh);
+            threadList[i].start();
+        }
+        
+        //Wait for each thread to terminate (we expect the first
+        //thread will wait for the full delay whilst all other threads
+        //should return immediately)
+        //
+        //NOTE - JUnit won't pickup the Mock Object exceptions on the other threads
+        //     - Workaround - We still work on the assumption that only a single
+        //                    Thread will delay and all others will return immediately
+        //                    So we just measure the time and as long as it is less than
+        //                    threadList.length * delay we are OK 
+        for (Thread t : threadList) {
+            t.join();
+        }
+        
+        Calendar finish = Calendar.getInstance();
+        long totalTime = finish.getTimeInMillis() - start.getTimeInMillis();
+        Assert.assertTrue("Test took too long, assuming other threads are NOT returning immediately", totalTime < (delay * 2));
+    }
 
     /**
      * Test that the function is able to actually load CSW records
@@ -92,8 +188,8 @@ public class TestCSWService {
 
         this.cswService.updateCSWRecords();
 
-        //in the response we loaded from the text file it contains 53 records
-        Assert.assertEquals(53, this.cswService.getDataRecords().length);
+        //in the response we loaded from the text file it contains 55 records
+        Assert.assertEquals(55, this.cswService.getDataRecords().length);
     }
 
     /**
@@ -120,6 +216,19 @@ public class TestCSWService {
 
         //in the response we loaded from the text file it contains 41 WFS records
         Assert.assertEquals(41, this.cswService.getWFSRecords().length);
+    }
+    
+    /**
+     * Test we return WCS records only
+     * @throws Exception
+     */
+    @Test
+    public void testGetWCSRecords() throws Exception {
+        //make sure the data records are populated
+        testUpdateCSWRecords();
+
+        //in the response we loaded from the text file it contains 2 WCS records
+        Assert.assertEquals(2, this.cswService.getWCSRecords().length);
     }
 
     /**

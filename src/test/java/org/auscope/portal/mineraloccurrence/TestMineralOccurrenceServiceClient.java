@@ -177,6 +177,7 @@ public class TestMineralOccurrenceServiceClient {
         context.checking(new Expectations() {{
             //this comes from my instantiation of the MineralOccurrenceFilter
             oneOf (mockCommodity).getSource(); will(returnValue("dudURI"));
+            allowing(mockCommodity).getName();will(returnValue(commodityName));
         }});
         
         final MineralOccurrenceFilter mineralOccurrenceFilter 

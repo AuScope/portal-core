@@ -17,6 +17,18 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     double southBoundLatitude;
     double northBoundLatitude;
     
+    public CSWGeographicBoundingBox() {
+        
+    }
+    
+    public CSWGeographicBoundingBox(double westBoundLongitude,
+            double eastBoundLongitude, double southBoundLatitude,
+            double northBoundLatitude) {
+        this.westBoundLongitude = westBoundLongitude;
+        this.eastBoundLongitude = eastBoundLongitude;
+        this.southBoundLatitude = southBoundLatitude;
+        this.northBoundLatitude = northBoundLatitude;
+    }
     public double getWestBoundLongitude() {
         return westBoundLongitude;
     }

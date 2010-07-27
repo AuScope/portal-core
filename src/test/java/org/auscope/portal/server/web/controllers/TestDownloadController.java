@@ -97,18 +97,16 @@ public class TestDownloadController {
 
         // Check that the zip file contains the correct data
         ZipInputStream in = servletOutputStream.getZipInputStream();
-        while (in.available() != 0) {
-            ByteArrayOutputStream fout = new ByteArrayOutputStream();
-            for (int c = in.read(); c != -1; c = in.read()) {
-                fout.write(c);
-            }
-            in.closeEntry();
-            fout.close();
-
-            //should only have one entery with the gml data in it
-            Assert.assertEquals(new String(dummyGml.getBytes()), new String(fout.toByteArray()));
-            
-        }
+        ZipEntry ze = in.getNextEntry();
+        
+        Assert.assertNotNull(ze);
+        Assert.assertTrue(ze.getName().endsWith(".xml"));
+        
+        byte[] uncompressedData = new byte[dummyGml.getBytes().length];
+        int dataRead = in.read(uncompressedData);
+        
+        Assert.assertEquals(dummyGml.getBytes().length, dataRead);
+        Assert.assertArrayEquals(dummyGml.getBytes(), uncompressedData);
         
         in.close();
     }

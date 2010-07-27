@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 
 import junit.framework.Assert;
@@ -27,7 +28,7 @@ public class TestHttpServiceCaller {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
     private HttpClient mockHttpClient;
-
+    private PortalPropertyPlaceholderConfigurer mockPropPlaceholder;
     private IWFSGetFeatureMethodMaker methodMaker;
 
     private HttpServiceCaller httpServiceCaller;
@@ -38,8 +39,10 @@ public class TestHttpServiceCaller {
     @Before
     public void setup() {
         mockHttpClient = context.mock(HttpClient.class);
+        mockPropPlaceholder = context.mock(PortalPropertyPlaceholderConfigurer.class);
         httpServiceCaller = new HttpServiceCaller();
         methodMaker = new WFSGetFeatureMethodMakerPOST();
+        httpServiceCaller.setHostConfigurer(mockPropPlaceholder);
     }
 
     /**
@@ -60,24 +63,15 @@ public class TestHttpServiceCaller {
         ByteArrayOutputStream thePost = new ByteArrayOutputStream();
         method.getRequestEntity().writeRequest(new BufferedOutputStream(thePost));
 
-        Assert.assertEquals(expectedPost, thePost.toString());
-
-        /*// Create updateCSWRecords method instance.
-        GetMethod method2 = new GetMethod(SERVICE_URL);
-
-        //set all of the parameters
-        NameValuePair service = new NameValuePair("service", "WFS");
-        NameValuePair version = new NameValuePair("version", "1.1.0");
-        NameValuePair request = new NameValuePair("request", "GetFeature");
-        NameValuePair typeName = new NameValuePair("typeName", FEATURE_TYPE);
-        NameValuePair filter = new NameValuePair("filter", FILTER_STRING);
-        NameValuePair maxFeatures = new NameValuePair("maxFeatures", "10");
-
-        //attach them to the method
-        method2.setQueryString(new NameValuePair[]{service, version, request, typeName, filter, maxFeatures});
-
-
-        Assert.assertEquals(method2.getURI(), method.getURI());*/
+        //Assert.assertEquals(expectedPost, thePost.toString());
+        String out = thePost.toString();
+        Assert.assertTrue("Bad WFS namespace", out.contains("xmlns:wfs=\"http://www.opengis.net/wfs\""));
+        Assert.assertTrue("Bad OGC namespace", out.contains("xmlns:ogc=\"http://www.opengis.net/ogc\""));
+        Assert.assertTrue("Bad GML namespace", out.contains("xmlns:gml=\"http://www.opengis.net/gml\""));
+        Assert.assertTrue("Bad ER namespace", out.contains("xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\""));
+        Assert.assertFalse("Feature count should NOT be included", out.contains("maxFeatures"));
+        Assert.assertTrue("typename not specified", out.contains("wfs:Query typeName=\"" + FEATURE_TYPE + "\""));
+        Assert.assertTrue("missing FILTER", out.contains(FILTER_STRING));
     }
 
     /**
@@ -112,6 +106,8 @@ public class TestHttpServiceCaller {
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_OK));
             oneOf (method).getResponseBodyAsString(); will(returnValue(returnString));
             oneOf (method).releaseConnection();
+            
+            allowing(mockPropPlaceholder).resolvePlaceholder(with(any(String.class)));will(returnValue("1"));
         }});
 
         String response = httpServiceCaller.getMethodResponseAsString(method, mockHttpClient);
@@ -126,12 +122,14 @@ public class TestHttpServiceCaller {
     @Test (expected = Exception.class)
     public void testCallMethodError() throws Exception {
         final HttpMethodBase method = context.mock(HttpMethodBase.class);
-
+        
         context.checking(new Expectations() {{
             oneOf (mockHttpClient).setHttpConnectionManager(with(any(HttpConnectionManager.class)));
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));
             oneOf (method).getStatusLine();//logger
             oneOf (method).getStatusLine();//exception
+            
+            allowing(mockPropPlaceholder).resolvePlaceholder(with(any(String.class)));will(returnValue("1"));
         }});
 
         httpServiceCaller.getMethodResponseAsString(method, mockHttpClient);
