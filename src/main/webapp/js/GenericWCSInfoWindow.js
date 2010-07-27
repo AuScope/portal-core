@@ -54,6 +54,16 @@ function getWCSInfoWindowDownloadParameters() {
 			if (axisConstraints[i].type === 'singleValue') {
 				var checkBoxGrp = Ext.getCmp(axisConstraints[i].checkBoxId);
 				
+				//This is for radio group selection
+				var selection = checkBoxGrp.getValue();
+				if (selection && !selection.disabled) {
+					var constraintName = checkBoxGrp.initialConfig.constraintName;
+					var constraintValue = selection.initialConfig.inputValue;
+					
+					customParams += '&customParamValue=' + escape(constraintName + '=' + constraintValue);
+				}
+				
+				/* This is for checkbox group selection
 				var selections = checkBoxGrp.getValue();
 				
 				for (var j = 0; selections && j < selections.length; j++) {
@@ -63,7 +73,7 @@ function getWCSInfoWindowDownloadParameters() {
 						
 						customParams += '&customParamValue=' + escape(constraintName + '=' + constraintValue);
 					}
-				}
+				}*/
 			} else if (axisConstraints[i].type === 'interval') {
 				//TODO: Intervals
 			}
@@ -119,10 +129,13 @@ function showWCSDownload(serviceUrl, layerName, rec) {
 	//Add a proper date time method to each temporal domain element
 	for (var i = 0; i < rec.temporalDomain.length; i++) {
 		if (rec.temporalDomain[i].type === 'timePosition') {
-			rec.temporalDomain[i].timePosition = new Date(rec.temporalDomain[i].timePosition.time);
+			if (rec.temporalDomain[i].timePosition.time) 
+				rec.temporalDomain[i].timePosition = new Date(rec.temporalDomain[i].timePosition.time);
 		} else if (rec.temporalDomain[i].type === 'timePeriod') {
-			rec.temporalDomain[i].beginPosition = new Date(rec.temporalDomain[i].beginPosition.time);
-			rec.temporalDomain[i].endPosition = new Date(rec.temporalDomain[i].endPosition.time);
+			if (rec.temporalDomain[i].beginPosition.time)
+				rec.temporalDomain[i].beginPosition = new Date(rec.temporalDomain[i].beginPosition.time);
+			if (rec.temporalDomain[i].endPosition.time)
+				rec.temporalDomain[i].endPosition = new Date(rec.temporalDomain[i].endPosition.time);
 		}
 	}
 	
@@ -258,7 +271,7 @@ function showWCSDownload(serviceUrl, layerName, rec) {
 	        items:{
 	            // Use the default, automatic layout to distribute the controls evenly
 	            // across a single row
-	            xtype: 'checkboxgroup',
+	            xtype: 'radiogroup',
 	            fieldLabel: 'Time Positions',
 	            columns: 1,
 	            items: checkBoxList
@@ -346,16 +359,18 @@ function showWCSDownload(serviceUrl, layerName, rec) {
     			if (constraint.values[0].type === 'singleValue') {
     				constraint.componentId = 'axis-constraint-' + i;
     				constraint.type = 'singleValue';
+    				constraint.checkBoxName = 'axis-constraint-' + i;
     				constraint.checkBoxId = 'axis-constraint-' + i + '-chkboxgrp';
     				
     				var checkBoxList = [];
     		    	
-    		    	for (var i = 0; i < constraint.values.length; i++) {
+    		    	for (var j = 0; j < constraint.values.length; j++) {
     		    		checkBoxList.push({
-    		    			boxLabel 	: constraint.values[i].value,
-    		    			name		: 'timePosition',
-    		    			inputValue	: constraint.values[i].value,
-    		    			submitValue : false
+    		    			id			: constraint.checkBoxName + '-' + j,
+    		    			boxLabel 	: constraint.values[j].value,
+    		    			name		: constraint.checkBoxName,
+    		    			inputValue	: constraint.values[j].value//,
+    		    			//submitValue : false // Can't use submitValue: false with radio's (it breaks them)
     		    		});
     		    	}
     		    	
@@ -384,11 +399,12 @@ function showWCSDownload(serviceUrl, layerName, rec) {
     			            // Use the default, automatic layout to distribute the controls evenly
     			            // across a single row
     			        	id				: constraint.checkBoxId,
-    			            xtype			: 'checkboxgroup',
+    			            xtype			: 'radiogroup',
     			            constraintName 	: constraint.name,
     			            fieldLabel		: constraint.label,
     			            columns			: 3,
-    			            items			: checkBoxList
+    			            items			: checkBoxList,
+    			            submitValue 	: false
     			        }
     			    }));
     				
@@ -639,7 +655,6 @@ function showWCSDownload(serviceUrl, layerName, rec) {
         			}
         	
         			var downloadUrl = './downloadWCSAsZip.do?' + getWCSInfoWindowDownloadParameters();
-        			alert(downloadUrl); //bacon
         			downloadFile(downloadUrl);
                 }
         }]
