@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,13 +47,47 @@ public class TestCSWRecord {
     @Test
     public void testGetServiceUrl() throws XPathExpressionException {
         
+        CSWOnlineResource[] resources = this.records[4].getOnlineResourcesByType(OnlineResourceType.WFS);
+        Assert.assertEquals(1, resources.length);
         Assert.assertEquals(
                 "http://auscope-services-test.arrc.csiro.au/deegree-wfs/services?",
-                this.records[4].getServiceUrl());
+                resources[0].getLinkage().toString());
         
+        resources = this.records[7].getOnlineResourcesByType(OnlineResourceType.WFS);
+        Assert.assertEquals(1, resources.length);
         Assert.assertEquals(
                 "http://auscope-services-test.arrc.csiro.au/nvcl/wfs?",
-                this.records[7].getServiceUrl());
+                resources[0].getLinkage().toString());
+    }
+    
+    @Test
+    public void testMultipleOnlineResources() throws Exception {
+        CSWOnlineResource[] resources = this.records[54].getOnlineResources();
+        Assert.assertEquals(2, resources.length);
+        
+        resources = this.records[54].getOnlineResourcesByType(OnlineResourceType.WCS);
+        Assert.assertEquals(1, resources.length);
+        Assert.assertEquals("http://apacsrv6/thredds/wcs/galeon/ocean.nc", resources[0].getLinkage().toString());
+        
+        resources = this.records[54].getOnlineResourcesByType(OnlineResourceType.WMS);
+        Assert.assertEquals(1, resources.length);
+        Assert.assertEquals("http://apacsrv6/thredds/wms/galeon/ocean.nc", resources[0].getLinkage().toString());
+        
+        resources = this.records[54].getOnlineResourcesByType();
+        Assert.assertEquals(0, resources.length);
+        resources = this.records[54].getOnlineResourcesByType(OnlineResourceType.WCS, OnlineResourceType.WMS);
+        Assert.assertEquals(2, resources.length);
+        resources = this.records[54].getOnlineResourcesByType(OnlineResourceType.WCS, OnlineResourceType.WMS, OnlineResourceType.WFS);
+        Assert.assertEquals(2, resources.length);
+        resources = this.records[54].getOnlineResourcesByType(OnlineResourceType.Unsupported);
+        Assert.assertEquals(0, resources.length);
+        
+        Assert.assertTrue(this.records[54].containsAnyOnlineResource(OnlineResourceType.WCS));
+        Assert.assertTrue(this.records[54].containsAnyOnlineResource(OnlineResourceType.WMS));
+        Assert.assertTrue(this.records[54].containsAnyOnlineResource(OnlineResourceType.WCS, OnlineResourceType.WMS));
+        Assert.assertTrue(this.records[54].containsAnyOnlineResource(OnlineResourceType.WCS, OnlineResourceType.WMS, OnlineResourceType.WFS));
+        Assert.assertFalse(this.records[54].containsAnyOnlineResource(OnlineResourceType.WFS));
+        Assert.assertFalse(this.records[54].containsAnyOnlineResource(OnlineResourceType.WFS, OnlineResourceType.Unsupported));
     }
 
 }

@@ -2,6 +2,7 @@ package org.auscope.portal.server.web.controllers;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -12,7 +13,9 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.auscope.portal.csw.CSWGeographicBoundingBox;
+import org.auscope.portal.csw.CSWOnlineResource;
 import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.KnownFeatureTypeDefinition;
 import org.auscope.portal.server.web.service.CSWService;
@@ -103,8 +106,10 @@ public class TestCSWController {
         final Iterator<KnownFeatureTypeDefinition> mockIterator = context.mock(Iterator.class);
         final StringWriter actualJSONResponse = new StringWriter();
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
+        final String onlineResourceName = "name";
+        final CSWOnlineResource mockResource = context.mock(CSWOnlineResource.class);
         final CSWGeographicBoundingBox geographicResponse = new CSWGeographicBoundingBox(1,2,3,4);
-        final String serviceUrl = "serviceEweAreEll";
+        final String serviceUrl = "http://www.service.url";
 
         context.checking(new Expectations() {{
             oneOf(cswService).updateRecordsInBackground();
@@ -113,7 +118,10 @@ public class TestCSWController {
             oneOf(mockIterator).next();will(returnValue(def));
             oneOf(cswService).getWFSRecordsForTypename(def.getFeatureTypeName());will(returnValue(new CSWRecord[]{mockRecord}));
 
-            allowing(mockRecord).getServiceUrl();will(returnValue(serviceUrl));
+            allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.WFS);will(returnValue(new CSWOnlineResource[] {mockResource}));
+            allowing(mockResource).getName();will(returnValue(onlineResourceName));
+            allowing(mockResource).getLinkage();will(returnValue(new URL(serviceUrl)));
+            
             allowing(mockRecord).getCSWGeographicElement();will(returnValue(geographicResponse));
             allowing(mockRecord).getContactOrganisation();will(returnValue(orgName));
 
@@ -192,6 +200,7 @@ public class TestCSWController {
     public void testGetWMSLayers() throws Exception {
         final String orgName = "testOrg";
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
+        final CSWOnlineResource mockResource = context.mock(CSWOnlineResource.class);
         final StringWriter actualJSONResponse = new StringWriter();
         final String serviceName = "foobar";
         final String dataAbstract = "harharh";
@@ -205,8 +214,9 @@ public class TestCSWController {
 
             allowing(mockRecord).getServiceName();will(returnValue(serviceName));
             allowing(mockRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
-            allowing(mockRecord).getOnlineResourceName();will(returnValue(name));
-            allowing(mockRecord).getServiceUrl();will(returnValue(serviceUrl));
+            allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.WMS);will(returnValue(new CSWOnlineResource[] {mockResource}));
+            allowing(mockResource).getName();will(returnValue(name));
+            allowing(mockResource).getLinkage();will(returnValue(new URL(serviceUrl)));
             allowing(mockRecord).getContactOrganisation();will(returnValue(orgName));
             allowing(mockRecord).getCSWGeographicElement();will(returnValue(geographicResponse));
 
@@ -248,6 +258,7 @@ public class TestCSWController {
     public void testGetWCSLayers() throws Exception {
         final String orgName = "tesatOrg";
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
+        final CSWOnlineResource mockResource = context.mock(CSWOnlineResource.class);
         final StringWriter actualJSONResponse = new StringWriter();
         final String serviceName = "foo2bar";
         final String dataAbstract = "ha4rharh";
@@ -261,8 +272,9 @@ public class TestCSWController {
 
             allowing(mockRecord).getServiceName();will(returnValue(serviceName));
             allowing(mockRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
-            allowing(mockRecord).getOnlineResourceName();will(returnValue(name));
-            allowing(mockRecord).getServiceUrl();will(returnValue(serviceUrl));
+            allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.WCS);will(returnValue(new CSWOnlineResource[] {mockResource}));
+            allowing(mockResource).getName();will(returnValue(name));
+            allowing(mockResource).getLinkage();will(returnValue(new URL(serviceUrl)));
             allowing(mockRecord).getContactOrganisation();will(returnValue(orgName));
             allowing(mockRecord).getCSWGeographicElement();will(returnValue(geographicResponse));
 

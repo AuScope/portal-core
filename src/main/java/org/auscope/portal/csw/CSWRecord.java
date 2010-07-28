@@ -1,5 +1,12 @@
 package org.auscope.portal.csw;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.server.domain.wcs.DescribeCoverageRecord;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -15,13 +22,11 @@ import javax.xml.xpath.XPathExpressionException;
  */
 //TODO: refactor into data and service records
 public class CSWRecord {
-	//removed this link as it was not used and contained a massive chunk of memory 
-    //private Node recordNode; 
+
+    private static final Log logger = LogFactory.getLog(CSWRecord.class);
+    
     private String serviceName;
-    private String serviceUrl;
-    private String onlineResourceName;
-    private String onlineResourceDescription;
-    private String onlineResourceProtocol;
+    private CSWOnlineResource[] onlineResources;
     private String contactOrganisation;
     private String fileIdentifier;
     private String recordInfoUrl;
@@ -56,41 +61,18 @@ public class CSWRecord {
         fileIdentifier = tempNode != null ? tempNode.getTextContent() : "";
         
         //There can be multiple gmd:onLine elements (which contain a number of fields we want), take the first one that can be treated as WMS/WFS
-        String onlineTransfersExpression = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine";
-        String serviceUrlExpression = "gmd:CI_OnlineResource/gmd:linkage/gmd:URL";
-        String onlineResourceProtocolExpression = "gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString";
-        String onlineResourceNameExpression = "gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
-        String onlineResourceDescriptionExpression = "gmd:CI_OnlineResource/gmd:description/gco:CharacterString";
-        serviceUrl = "";
-        onlineResourceProtocol = "";
-        onlineResourceName = "";
-        onlineResourceDescription  = "";
+        String onlineTransfersExpression = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource";
         tempNodeList = (NodeList)xPath.evaluate(onlineTransfersExpression, node, XPathConstants.NODESET);
+        List<CSWOnlineResource> resources = new ArrayList<CSWOnlineResource>();
         for (int i = 0; i < tempNodeList.getLength(); i++) {
-        	Node onlineNode = tempNodeList.item(i);
-        	
-        	//The current (bad) strategy is to find the first onlineResourceProtocol that contains the text "wms" or "wfs" 
-        	tempNode = (Node)xPath.evaluate(onlineResourceProtocolExpression, onlineNode, XPathConstants.NODE);
-        	String recordTypeString = (tempNode == null || tempNode.getTextContent() == null) ? "" : tempNode.getTextContent().toLowerCase();   
-        	if (recordTypeString.contains("wms") ||
-        		recordTypeString.contains("wfs") || 
-        		recordTypeString.contains("wcs")) {
-        
-        		tempNode = (Node)xPath.evaluate(onlineResourceProtocolExpression, onlineNode, XPathConstants.NODE);
-                onlineResourceProtocol = tempNode != null ? tempNode.getTextContent() : "";
-                
-                tempNode = (Node)xPath.evaluate(onlineResourceNameExpression, onlineNode, XPathConstants.NODE);
-                onlineResourceName = tempNode != null ? tempNode.getTextContent() : "";
-
-                tempNode = (Node)xPath.evaluate(onlineResourceDescriptionExpression, onlineNode, XPathConstants.NODE);
-                onlineResourceDescription = tempNode != null ? tempNode.getTextContent() : "";
-                
-                tempNode = (Node)xPath.evaluate(serviceUrlExpression, onlineNode, XPathConstants.NODE);
-                serviceUrl = tempNode != null ? tempNode.getTextContent() : "";
-                
-                break;
+        	try {
+        	    Node onlineNode = tempNodeList.item(i);
+        	    resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, xPath));
+        	} catch (IllegalArgumentException ex) {
+        	    logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",serviceName, ex));
         	}
         }
+        onlineResources = resources.toArray(new CSWOnlineResource[resources.size()]);
         
         //Parse our bounding box (if it exists). If it's unparsable, don't worry and just continue
         String bboxExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
@@ -117,46 +99,17 @@ public class CSWRecord {
     public String getServiceName() {
         return serviceName;
     }
-
-    public String getServiceUrl() {
-        return serviceUrl;
+    
+    public CSWOnlineResource[] getOnlineResources() {
+        return onlineResources;
     }
-
-    public String getOnlineResourceName() {
-        return onlineResourceName;
-    }
-
-    public String getOnlineResourceDescription() {
-        return onlineResourceDescription;
-    }
-
-    public String getOnlineResourceProtocol() {
-        return onlineResourceProtocol;
-    }
-
+    
     public String getContactOrganisation() {
         return contactOrganisation;
     }
 
     public String getDataIdentificationAbstract() {
         return dataIdentificationAbstract;
-    }
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer();
-        buf.append(serviceName);
-        buf.append(",");
-        buf.append(serviceUrl);
-        buf.append(",");
-        buf.append(onlineResourceName);
-        buf.append(",");
-        buf.append(onlineResourceDescription);
-        buf.append(",");
-        buf.append(onlineResourceProtocol);
-        buf.append(",");
-        buf.append(dataIdentificationAbstract);
-        buf.append(",");
-        return buf.toString(); 
     }
 
     /**
@@ -173,5 +126,60 @@ public class CSWRecord {
      */
     public CSWGeographicElement getCSWGeographicElement() {
         return cswGeographicElement;
+    }
+    
+    @Override
+    public String toString() {
+        return "CSWRecord [contactOrganisation=" + contactOrganisation
+                + ", cswGeographicElement=" + cswGeographicElement
+                + ", dataIdentificationAbstract=" + dataIdentificationAbstract
+                + ", fileIdentifier=" + fileIdentifier + ", onlineResources="
+                + Arrays.toString(onlineResources) + ", recordInfoUrl="
+                + recordInfoUrl + ", serviceName=" + serviceName + "]";
+    }
+
+    /**
+     * Returns a filtered list of online resource protocols that match at least one of the specified types
+     * 
+     * @param types The list of types you want to filter by
+     * @return
+     */
+    public CSWOnlineResource[] getOnlineResourcesByType(CSWOnlineResource.OnlineResourceType... types) {
+        List <CSWOnlineResource> result = new ArrayList<CSWOnlineResource>();
+        
+        for (CSWOnlineResource r : onlineResources) {
+            boolean matching = false;
+            CSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
+            for (CSWOnlineResource.OnlineResourceType type : types) {
+                if (typeToMatch == type) {
+                    matching = true;
+                    break;
+                }
+            }
+            
+            if (matching) {
+                result.add(r);
+            }
+        }
+        
+        return result.toArray(new CSWOnlineResource[result.size()]);
+    }
+    
+    /**
+     * Returns true if this CSW Record contains at least 1 onlineResource with ANY of the specified types
+     * @param types
+     * @return
+     */
+    public boolean containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType... types) {
+        for (CSWOnlineResource r : onlineResources) {
+            CSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
+            for (CSWOnlineResource.OnlineResourceType type : types) {
+                if (typeToMatch == type) {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
     }
 }

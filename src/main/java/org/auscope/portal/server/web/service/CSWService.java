@@ -1,6 +1,8 @@
 package org.auscope.portal.server.web.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -9,9 +11,11 @@ import org.apache.commons.logging.LogFactory;
 
 import org.auscope.portal.csw.CSWGetRecordResponse;
 import org.auscope.portal.csw.CSWMethodMakerGetDataRecords;
+import org.auscope.portal.csw.CSWOnlineResource;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.csw.CSWThreadExecutor;
 import org.auscope.portal.csw.ICSWMethodMaker;
+import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
 
 import org.auscope.portal.server.util.Util;
 
@@ -134,18 +138,7 @@ public class CSWService {
      * @throws Exception
      */
     public CSWRecord[] getWMSRecords() throws Exception {
-        CSWRecord[] records = getDataRecords();
-
-         ArrayList<CSWRecord> wfsRecords = new ArrayList<CSWRecord>();
-
-        for(CSWRecord rec : records) {
-            if(rec.getOnlineResourceProtocol() != null)
-                if(rec.getOnlineResourceProtocol().contains("WMS") && !rec.getServiceUrl().equals("")) {
-                    wfsRecords.add(rec);
-                }
-        }
-
-        return wfsRecords.toArray(new CSWRecord[wfsRecords.size()]);
+        return getFilteredDataRecords(OnlineResourceType.WMS);
     }
     
 
@@ -155,18 +148,7 @@ public class CSWService {
      * @throws Exception
      */
     public CSWRecord[] getWCSRecords() throws Exception {
-        CSWRecord[] records = getDataRecords();
-
-         ArrayList<CSWRecord> wfsRecords = new ArrayList<CSWRecord>();
-
-        for(CSWRecord rec : records) {
-            if(rec.getOnlineResourceProtocol() != null)
-                if(rec.getOnlineResourceProtocol().contains("WCS") && !rec.getServiceUrl().equals("")) {
-                    wfsRecords.add(rec);
-                }
-        }
-
-        return wfsRecords.toArray(new CSWRecord[wfsRecords.size()]);
+        return getFilteredDataRecords(OnlineResourceType.WCS);
     }
 
     /**
@@ -175,18 +157,7 @@ public class CSWService {
      * @throws Exception
      */
     public CSWRecord[] getWFSRecords() throws Exception {
-        CSWRecord[] records = getDataRecords();
-
-        ArrayList<CSWRecord> wfsRecords = new ArrayList<CSWRecord>();
-
-        for(CSWRecord rec : records) {
-            if(rec.getOnlineResourceProtocol() != null)
-                if(rec.getOnlineResourceProtocol().contains("WFS") && !rec.getServiceUrl().equals("")) {
-                    wfsRecords.add(rec);
-                }
-        }
-
-        return wfsRecords.toArray(new CSWRecord[wfsRecords.size()]);
+        return getFilteredDataRecords(OnlineResourceType.WFS);
     }
 
     /**
@@ -197,18 +168,39 @@ public class CSWService {
      */
     public CSWRecord[] getWFSRecordsForTypename(String featureTypeName) throws Exception {
         CSWRecord[] records = getDataRecords();
-        ArrayList<CSWRecord> wfsRecords = new ArrayList<CSWRecord>();
-
-        for(CSWRecord rec : records) {
-            if(rec.getOnlineResourceProtocol() != null)
-                if (rec.getOnlineResourceProtocol().contains("WFS") && 
-                    !rec.getServiceUrl().equals("") && 
-                    featureTypeName.equals(rec.getOnlineResourceName())) 
-                {
-                    wfsRecords.add(rec);
+        List<CSWRecord> filteredRecords = new ArrayList<CSWRecord>();
+        
+        for (CSWRecord rec : records) {
+            CSWOnlineResource[] wfsResources = rec.getOnlineResourcesByType(OnlineResourceType.WFS);
+            
+            for (CSWOnlineResource res : wfsResources) {
+                if (res.getName().equals(featureTypeName)) {
+                    filteredRecords.add(rec);
+                    break;
                 }
+            }
         }
-
-        return wfsRecords.toArray(new CSWRecord[wfsRecords.size()]);
+        
+        return filteredRecords.toArray(new CSWRecord[filteredRecords.size()]);
+    }
+    
+    
+    /**
+     * Gets all records thta have at least one of the specifed types as an online resource
+     * @param types
+     * @return
+     * @throws Exception
+     */
+    private CSWRecord[] getFilteredDataRecords(CSWOnlineResource.OnlineResourceType... types) throws Exception {
+        CSWRecord[] records = getDataRecords();
+        List<CSWRecord> filteredRecords = new ArrayList<CSWRecord>();
+        
+        for (CSWRecord rec : records) {
+            if (rec.containsAnyOnlineResource(types)) {
+                filteredRecords.add(rec);
+            }
+        }
+        
+        return filteredRecords.toArray(new CSWRecord[filteredRecords.size()]);
     }
 }

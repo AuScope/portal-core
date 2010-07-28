@@ -15122,6 +15122,23 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                   </gmd:description>
                 </gmd:CI_OnlineResource>
               </gmd:onLine>
+              <gmd:onLine>
+                <gmd:CI_OnlineResource>
+                  <gmd:linkage>
+                    <gmd:URL>http://apacsrv6/thredds/wms/galeon/ocean.nc</gmd:URL>
+                  </gmd:linkage>
+
+                  <gmd:protocol>
+                    <gco:CharacterString>OGC:WMS-1.1.1-http-get-map</gco:CharacterString>
+                  </gmd:protocol>
+                  <gmd:name>
+                    <gco:CharacterString>sea_dir_sfc</gco:CharacterString>
+                  </gmd:name>
+                  <gmd:description>
+                     <gco:CharacterString>WMS representation of coverage</gco:CharacterString>
+                  </gmd:description>
+                </gmd:CI_OnlineResource>
+              </gmd:onLine>
             </gmd:MD_DigitalTransferOptions>
 
           </gmd:transferOptions>

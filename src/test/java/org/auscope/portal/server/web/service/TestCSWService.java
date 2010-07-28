@@ -201,8 +201,8 @@ public class TestCSWService {
         //make sure the data records are populated
         testUpdateCSWRecords();
 
-        //in the response we loaded from the text file it contains 6 WMS records
-        Assert.assertEquals(6, this.cswService.getWMSRecords().length);
+        //in the response we loaded from the text file it contains 6 WMS records and one WCS record with a WMS reference
+        Assert.assertEquals(7, this.cswService.getWMSRecords().length);
     }
 
     /**
