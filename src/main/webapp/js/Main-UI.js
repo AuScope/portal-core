@@ -1477,7 +1477,7 @@ Ext.onReady(function() {
     	//Make the bbox disappear after a short while 
     	if (!record.bboxOverlayClearTask) {
 	    	record.bboxOverlayClearTask = new Ext.util.DelayedTask(function(){
-	    		hideRecordBoundingBox(grid, rowIndex, colIndex, e);
+	    		hideRecordBoundingBox(record);
 	    	});
     	}
 
@@ -1485,8 +1485,8 @@ Ext.onReady(function() {
     };
     
     //Hides a bounding box polygon
-    var hideRecordBoundingBox = function (grid, rowIndex, colIndex, e) {
-    	var record = grid.getStore().getAt(rowIndex); 
+    var hideRecordBoundingBox = function (record) {
+    	//var record = grid.getStore().getAt(rowIndex); 
     		
         if (record.bboxOverlayManager) {
         	record.bboxOverlayManager.clearOverlays();
