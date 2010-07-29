@@ -141,21 +141,26 @@ public class VocabController {
     		tempNode = (Node)xPath.evaluate(extractScopeExpression, doc, XPathConstants.NODE);
     		final String scopeNoteString = tempNode != null ? tempNode.getTextContent() : "";
     		
-    		return CreateScalarQueryModel(true,response, scopeNoteString, labelString);
+    		String extractDefinitionExpression = "/RDF/Concept/definition";
+            tempNode = (Node)xPath.evaluate(extractDefinitionExpression, doc, XPathConstants.NODE);
+            final String definitionString = tempNode != null ? tempNode.getTextContent() : "";
+    		
+    		return CreateScalarQueryModel(true,response, scopeNoteString, labelString, definitionString);
     	} catch (Exception ex) {
     		//On error, just return failure JSON (and the response string if any)
     		log.error("getVocabQuery ERROR: " + ex.getMessage());
     	
-    		return CreateScalarQueryModel(false,response, "", "");
+    		return CreateScalarQueryModel(false,response, "", "", "");
     	}
     }
     
     private JSONModelAndView CreateScalarQueryModel
-            (final boolean success, final String data, final String scopeNote, final String label) {
+            (final boolean success, final String data, final String scopeNote, final String label, final String definition) {
     	ModelMap map = new ModelMap();
     	map.put("success", success);
     	map.put("data", data);
     	map.put("scopeNote", scopeNote);
+    	map.put("definition", definition);
     	map.put("label", label);
         
         return new JSONModelAndView(map);

@@ -349,7 +349,12 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
                         }
                           
                         //Update tool tip
-                        tip.body.dom.innerHTML = response.scopeNote;
+                        if (response.definition && response.definition.length > 0)
+                        	tip.body.dom.innerHTML = response.definition;
+                        else if (response.scopeNote && response.scopeNote.length > 0)
+                        	tip.body.dom.innerHTML = response.scopeNote;
+                        else
+                        	tip.body.dom.innerHTML = 'N/A';
                       });
                 }
             }
