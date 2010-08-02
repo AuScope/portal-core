@@ -30,7 +30,10 @@ Ext.ux.form.ClientSearchField = Ext.extend(Ext.form.TwinTriggerField, {
         if(this.hasSearch){
         	this.store.clearFilter(false);
             this.triggers[0].hide();
+			this.triggers[1].show();
             this.hasSearch = false;
+			this.setDisabled(false);
+            this.setValue('');
             
         }
     },
