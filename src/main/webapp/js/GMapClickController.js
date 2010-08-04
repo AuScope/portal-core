@@ -117,8 +117,12 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
                         if (isDataThere(response)) {
                             if (isHtmlPage(response)) {
                                 var openWindow = window.open('','mywindow'+i);
-                                openWindow.document.write(response);
-                                openWindow.document.close();
+                                if (openWindow) {
+                                    openWindow.document.write(response);
+                                    openWindow.document.close();
+                                } else {
+                                	alert('Couldn\'t open popup window containing WMS information. Please disable any popup blockers and try again');
+                                }
                             } else {
                                 map.openInfoWindowHtml(latlng, response, {autoScroll:true});
                             }
