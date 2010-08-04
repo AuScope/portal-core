@@ -56,8 +56,8 @@ public class HttpServiceCaller {
         //release the connection
         method.releaseConnection();
 
-        log.debug("XML response from server:");
-        log.debug("\n" + response);
+        log.trace("XML response from server:");
+        log.trace("\n" + response);
         
         //return it
         return response;
@@ -121,9 +121,11 @@ public class HttpServiceCaller {
             throw e;
         }
 
-        log.info("BODY_TIMEOUT : " + BODY_TIMEOUT);
-        log.info("SOCK_TIMEOUT : " + SOCK_TIMEOUT);
-        log.info("CONN_TIMEOUT : " + CONN_TIMEOUT);
+        log.trace("BODY_TIMEOUT : " + BODY_TIMEOUT);
+        log.trace("SOCK_TIMEOUT : " + SOCK_TIMEOUT);
+        log.trace("CONN_TIMEOUT : " + CONN_TIMEOUT);
+        
+        log.debug("method=" + method.getURI());
         
         // Period of time in milliseconds to wait for a content body 
         // sent in response to HEAD method from a non-compliant server.
