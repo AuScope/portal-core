@@ -10,12 +10,12 @@
  * @param serviceUrl The URL of the remote service that will serve up WCS data
  * @param layerName The name of the layer (which will be used in all requests to serviceUrl). 
  */
-function GenericWCSInfoWindow (map, overlay, serviceUrl, layerName, defaultBboxList) {
+function GenericWCSInfoWindow (map, overlay, serviceUrl, layerName, openDapURLs) {
     this.map = map;
     this.overlay = overlay;
     this.serviceUrl = serviceUrl;
     this.layerName = layerName;
-    this.defaultBboxList = defaultBboxList;
+    this.openDapURLs = openDapURLs;
 }
 
 //Instance variables
@@ -23,7 +23,7 @@ GenericWCSInfoWindow.prototype.map = null;
 GenericWCSInfoWindow.prototype.overlay = null;
 GenericWCSInfoWindow.prototype.serviceUrl = null;
 GenericWCSInfoWindow.prototype.layerName = null;
-GenericWCSInfoWindow.prototype.defaultBboxList = null;
+GenericWCSInfoWindow.prototype.openDapURLs = null;
 
 //gets the parameter string to submit to a controller 
 function getWCSInfoWindowDownloadParameters() {
@@ -559,6 +559,7 @@ function showWCSDownload(serviceUrl, layerName, rec) {
             mode            : 'local',
             store           : requestCRSStore,
             typeAhead       : true,
+            triggerAction   : 'all',
             displayField    : 'crs',
             anchor          : '-50',
             valueField      : 'crs'        
@@ -570,6 +571,7 @@ function showWCSDownload(serviceUrl, layerName, rec) {
             labelAlign      : 'right',
             forceSelection  : true,
             mode            : 'local',
+            triggerAction   : 'all',
             store           : downloadFormatStore,
             typeAhead       : true,
             allowBlank		: false,
@@ -585,6 +587,7 @@ function showWCSDownload(serviceUrl, layerName, rec) {
             emptyText       : '',
             forceSelection  : true,
             mode            : 'local',
+            triggerAction   : 'all',
             store           : responseCRSStore,
             typeAhead       : true,
             displayField    : 'crs',
@@ -665,10 +668,6 @@ function showWCSDownload(serviceUrl, layerName, rec) {
 
 //Instance methods
 GenericWCSInfoWindow.prototype.showInfoWindow = function() {
-    
-    var bbox = null;
-    if (this.defaultBboxList && this.defaultBboxList.length > 0)
-        bbox = this.defaultBboxList[0];
     
     var loadingFragment = '';
     loadingFragment += '<div style="padding:20px;" >' + 
@@ -757,6 +756,8 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
     			htmlFragment += generateRowFragmentFromArray('SupportedFormats', record.supportedFormats, 1);
     			htmlFragment += generateRowFragmentFromArray('SupportedInterpolation', record.supportedInterpolations, 1);
     			htmlFragment += generateRowFragmentFromArray('NativeCRS\'s\'', record.nativeCRSs, 5);
+    			if (this.openDapURLs.length > 0)
+    				htmlFragment += generateRowFragmentFromArray('OPeNDAP URLs', this.openDapURLs, 5);
     			htmlFragment += generateRowFragmentFromArray('SpatialDomain', record.spatialDomain,1, function(item) {
     				var s = '';
     				if (item.type === 'Envelope' || item.type === 'EnvelopeWithTimePeriod') {
@@ -805,8 +806,13 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
     					            '\'' + this.serviceUrl +'\',' + 
     					            '\''+ this.layerName + '\',' +
     					            'RECORD' +
-    					            ');">' +
-    					        '</div>';
+    					            ');">';
+        		if (this.openDapURLs.length > 0) {
+        			htmlFragment += '<input type="button" id="downloadOpendapBtn"  value="Download (OPeNDAP)" onclick="showOPeNDAPDownload('+ 
+		            				'\'' + this.openDapURLs[0] +'\'' + 
+		            				');">';
+        		}
+        		htmlFragment +=	'</div>';
     			
     		} else {
     			if (responseObj.success) {

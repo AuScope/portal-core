@@ -294,6 +294,7 @@ Ext.onReady(function() {
             {   name: 'id'              },
             {   name: 'typeName'        },
             {   name: 'serviceURLs'     },
+            {   name: 'openDapURLs'     },
             {   name: 'layerVisible'    },
             {   name: 'loadingStatus'   },
             {   name: 'dataSourceImage' },
@@ -1262,7 +1263,7 @@ Ext.onReady(function() {
         split:true,
         //margins: '100 0 0 0',
         margins:'100 0 0 3',
-        width: 350,
+        width: 380,
         items:[tabsPanel , activeLayersPanel, filterPanel]
     };
 

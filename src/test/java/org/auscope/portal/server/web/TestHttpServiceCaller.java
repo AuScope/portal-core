@@ -106,7 +106,7 @@ public class TestHttpServiceCaller {
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_OK));
             oneOf (method).getResponseBodyAsString(); will(returnValue(returnString));
             oneOf (method).releaseConnection();
-            
+            allowing(method).getURI();will(returnValue(null));
             allowing(mockPropPlaceholder).resolvePlaceholder(with(any(String.class)));will(returnValue("1"));
         }});
 
@@ -128,7 +128,7 @@ public class TestHttpServiceCaller {
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));
             oneOf (method).getStatusLine();//logger
             oneOf (method).getStatusLine();//exception
-            
+            allowing(method).getURI();will(returnValue(null));
             allowing(mockPropPlaceholder).resolvePlaceholder(with(any(String.class)));will(returnValue("1"));
         }});
 

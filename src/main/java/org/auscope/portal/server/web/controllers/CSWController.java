@@ -230,13 +230,13 @@ public class CSWController {
     }
     
     /**
-     * Gets all WCS data records from a CSW service, and then creats a JSON response for the WCS layers list in the portal
+     * Gets all WCS data records from a CSW service, and then creates a JSON response for the WCS layers list in the portal
      *
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]],
-     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]]
+     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], [openDapUrls] , checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]],
+     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], [openDapUrls] , checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]]
      * ]
      *
      * @return
@@ -282,10 +282,15 @@ public class CSWController {
                 tableRow.add(wcsResource.getName());
     
                 JSONArray serviceURLs = new JSONArray();
-    
                 serviceURLs.add(wcsResource.getLinkage().toString());
-    
                 tableRow.add(serviceURLs);
+                
+                //This is currently a hack so we can piggy back open DAP onto WCS
+                JSONArray openDapURLs = new JSONArray();
+                for (CSWOnlineResource openDapResource : record.getOnlineResourcesByType(OnlineResourceType.OpenDAP)) {
+                    openDapURLs.add(openDapResource.getLinkage().toString());
+                }
+                tableRow.add(openDapURLs);
     
                 tableRow.element(true);
                 tableRow.add("<img src='js/external/extjs/resources/images/default/grid/done.gif'>");

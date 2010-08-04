@@ -30,7 +30,11 @@ public abstract class CSWOnlineResource {
         /**
          * OGC Web Feature Service
          */
-        WFS
+        WFS,
+        /**
+         * OpenDAP
+         */
+        OpenDAP
     }
     
     /**
@@ -70,9 +74,15 @@ public abstract class CSWOnlineResource {
             return OnlineResourceType.WMS;
         } else if (lowerProtocol.contains("wcs")) {
             return OnlineResourceType.WCS;
-        } else if (lowerProtocol.contains("wcs")) {
-            return OnlineResourceType.WCS;
-        } 
+        } else if (lowerProtocol.contains("www:link-1.0-http--link")) {
+            //Dap is currently hacked in
+            String name = getName();
+            if (name != null) {
+                if (name.equals("HACK-OPENDAP")) {
+                    return OnlineResourceType.OpenDAP;
+                }
+            }
+        }
         
         return OnlineResourceType.Unsupported;
     }

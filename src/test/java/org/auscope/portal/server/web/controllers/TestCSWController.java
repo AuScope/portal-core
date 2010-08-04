@@ -273,6 +273,7 @@ public class TestCSWController {
             allowing(mockRecord).getServiceName();will(returnValue(serviceName));
             allowing(mockRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
             allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.WCS);will(returnValue(new CSWOnlineResource[] {mockResource}));
+            allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.OpenDAP);will(returnValue(new CSWOnlineResource[] {}));
             allowing(mockResource).getName();will(returnValue(name));
             allowing(mockResource).getLinkage();will(returnValue(new URL(serviceUrl)));
             allowing(mockRecord).getContactOrganisation();will(returnValue(orgName));
@@ -292,6 +293,7 @@ public class TestCSWController {
                 mockRecord.hashCode(),
                 name,
                 JSONArray.fromObject(new String[] {serviceUrl}),
+                JSONArray.fromObject(new String[] {}),
                 true,
                 "<img src='js/external/extjs/resources/images/default/grid/done.gif'>",
                 "<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'></a>",
