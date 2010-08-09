@@ -31,14 +31,11 @@
       <![endif]-->
                   
       <!-- Google Maps imports -->
-      <script src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=${googleKey}" type="text/javascript"></script>
+      <script src="http://maps.google.com/maps?file=api&amp;v=2.X&amp;key=${googleKey}" type="text/javascript"></script>
       <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js"
              type="text/javascript"></script>
              
-      <script type="text/javascript">
-         var VOCAB_SERVICE_URL = "${vocabServiceUrl}"; 
-      </script>     
-      
+     
       <jsp:include page="/jsimports.htm"/>
    </head>
 
