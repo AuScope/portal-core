@@ -1,5 +1,7 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.awt.Dimension;
+import java.awt.Point;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
@@ -102,7 +104,7 @@ public class TestCSWController {
     @Test
     public void testGetComplexFeatures() throws Exception {
         final String orgName = "testOrg";
-        final KnownFeatureTypeDefinition def = new KnownFeatureTypeDefinition("0", "1", "2", "3", "4");
+        final KnownFeatureTypeDefinition def = new KnownFeatureTypeDefinition("0", "1", "2", "3", "4", new Point(1, 2), new Dimension(3, 4));
         final Iterator<KnownFeatureTypeDefinition> mockIterator = context.mock(Iterator.class);
         final StringWriter actualJSONResponse = new StringWriter();
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
@@ -132,6 +134,12 @@ public class TestCSWController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
 
+        JSONObject expectedIconAnchor = new JSONObject();
+        expectedIconAnchor.put("x", 1);
+        expectedIconAnchor.put("y", 2);
+        JSONObject expectedIconSize = new JSONObject();
+        expectedIconSize.put("width", 3);
+        expectedIconSize.put("height", 4);
         
         final Object[] expectedJSONResponse = new Object[] {
                 "1",
@@ -147,7 +155,9 @@ public class TestCSWController {
                 "<img width='16' heigh='16' src='4'>",
                 "4",
                 "<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/page_code.png'></a>",
-                JSONArray.fromObject(new Object[] {geographicResponse})
+                JSONArray.fromObject(new Object[] {geographicResponse}),
+                expectedIconAnchor,
+                expectedIconSize
         };
         
         ModelAndView modelAndView = cswController.getComplexFeatures();

@@ -20,7 +20,7 @@
 
     <bean id="knownTypes" class="java.util.ArrayList">
         <constructor-arg>
-            <list>
+            <list>                 		
                 <ref bean="knownTypeMine" />
                 <ref bean="knownTypeMineralOccurrence" />
                 <ref bean="knownTypeMiningActivity" />
@@ -29,14 +29,26 @@
             </list>
         </constructor-arg>
     </bean>
-
+   
    <bean id="knownTypeMine" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
        <constructor-arg index="0" value="er:Mine"/>
        <constructor-arg index="1" value="Earth Resource Mine"/>
        <constructor-arg index="2" value=""/>
        <constructor-arg index="3" value="/doMineFilter.do"/>
        <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"/>
-   </bean>
+       <constructor-arg index="5">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="6">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+    </bean>
 
     <bean id="knownTypeMineralOccurrence" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
        <constructor-arg index="0" value="er:MineralOccurrence"/>
@@ -44,7 +56,19 @@
        <constructor-arg index="2" value=""/>
        <constructor-arg index="3" value="/doMineralOccurrenceFilter.do"/>
        <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/purple-blank.png"/>
-   </bean>
+       <constructor-arg index="5">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="6">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+    </bean>
 
     <bean id="knownTypeMiningActivity" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
        <constructor-arg index="0" value="er:MiningActivity"/>
@@ -52,7 +76,19 @@
        <constructor-arg index="2" value=""/>
        <constructor-arg index="3" value="/doMiningActivityFilter.do"/>
        <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"/>
-   </bean>
+       <constructor-arg index="5">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="6">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+    </bean>
 
     <bean id="knownTypeBorehole" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
        <constructor-arg index="0" value="gsml:Borehole"/>
@@ -60,6 +96,18 @@
        <constructor-arg index="2" value=""/>
        <constructor-arg index="3" value="/doNvclFilter.do"/>
        <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
+       <constructor-arg index="5">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="6">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
    </bean>
 
     <bean id="knownTypeGeodesy" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
@@ -68,6 +116,18 @@
        <constructor-arg index="2" value=""/>
        <constructor-arg index="3" value="/getAllFeatures.do"/>
        <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/wht-blank.png"/>
+       <constructor-arg index="5">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="6">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
    </bean>
 
 </beans>

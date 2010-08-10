@@ -3,6 +3,7 @@ package org.auscope.portal.server.web.controllers;
 import java.util.ArrayList;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -61,8 +62,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage],
-     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage]
+     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, iconAnchorOffset, iconSize],
+     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, iconAnchorOffset, iconSize]
      * ]
      *
      * @return
@@ -142,7 +143,24 @@ public class CSWController {
             tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/page_code.png'></a>");
 
             tableRow.add(bboxes);
+            
+            if(knownType.getIconAnchor() != null) {
+            	JSONObject obj = new JSONObject();
+            	obj.put("x", knownType.getIconAnchor().x);
+            	obj.put("y", knownType.getIconAnchor().y);
+                tableRow.add(obj);
+            } else {
+            	tableRow.add(null);
+            }
 
+            if(knownType.getIconSize() != null) {
+            	JSONObject obj = new JSONObject();
+            	obj.put("width", knownType.getIconSize().width);
+            	obj.put("height", knownType.getIconSize().height);
+                tableRow.add(obj);
+            } else {
+            	tableRow.add(null);
+            }
             dataItems.add(tableRow);
         }
         

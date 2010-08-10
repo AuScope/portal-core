@@ -38,7 +38,9 @@ Ext.onReady(function() {
             {   name: 'iconImgSrc'      },
             {   name: 'iconUrl'         },
             {   name: 'dataSourceImage' },
-            {   name: 'bboxes', convert : convertBboxList}
+            {   name: 'bboxes', convert : convertBboxList},
+            {	name: 'iconAnchor'		},
+            {   name: 'iconSize'        }
         ]),
         sortInfo: {field:'title', direction:'ASC'}
     });
@@ -765,8 +767,18 @@ Ext.onReady(function() {
             if (responseCode == 200) {
                 var jsonResponse = eval('(' + data + ')');
                 if (jsonResponse.success) {
-                    var icon = new GIcon(G_DEFAULT_ICON, iconUrl);
-                    icon.iconSize = new GSize(32, 32);
+
+                	var icon = new GIcon(G_DEFAULT_ICON, iconUrl);   
+                	
+                	var iconSize = selectedRecord.get('iconSize');
+                	if(iconSize) {
+                        icon.iconSize = new GSize(iconSize.width, iconSize.height);
+                	}
+
+                	var iconAnchor = selectedRecord.get('iconAnchor');
+                    if(iconAnchor) {
+                    	icon.iconAnchor = new GPoint(iconAnchor.x, iconAnchor.y);
+                    }
                     
                     //Parse our KML
                     var parser = new KMLParser(jsonResponse.data.kml);
