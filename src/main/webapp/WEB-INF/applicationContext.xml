@@ -43,6 +43,12 @@
            </bean>
        </constructor-arg>
        <constructor-arg index="6">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="7">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>
@@ -63,6 +69,12 @@
            </bean>
        </constructor-arg>
        <constructor-arg index="6">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="7">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>
@@ -83,6 +95,12 @@
            </bean>
        </constructor-arg>
        <constructor-arg index="6">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="7">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>
@@ -103,6 +121,12 @@
            </bean>
        </constructor-arg>
        <constructor-arg index="6">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>       
+       <constructor-arg index="7">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>
@@ -123,6 +147,12 @@
            </bean>
        </constructor-arg>
        <constructor-arg index="6">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>       
+       <constructor-arg index="7">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>

@@ -104,7 +104,7 @@ public class TestCSWController {
     @Test
     public void testGetComplexFeatures() throws Exception {
         final String orgName = "testOrg";
-        final KnownFeatureTypeDefinition def = new KnownFeatureTypeDefinition("0", "1", "2", "3", "4", new Point(1, 2), new Dimension(3, 4));
+        final KnownFeatureTypeDefinition def = new KnownFeatureTypeDefinition("0", "1", "2", "3", "4", new Point(1, 2),  new Point(1, 2), new Dimension(3, 4));
         final Iterator<KnownFeatureTypeDefinition> mockIterator = context.mock(Iterator.class);
         final StringWriter actualJSONResponse = new StringWriter();
         final CSWRecord mockRecord = context.mock(CSWRecord.class);
@@ -137,6 +137,9 @@ public class TestCSWController {
         JSONObject expectedIconAnchor = new JSONObject();
         expectedIconAnchor.put("x", 1);
         expectedIconAnchor.put("y", 2);
+        JSONObject expectedInfoWindowAnchor = new JSONObject();
+        expectedInfoWindowAnchor.put("x", 1);
+        expectedInfoWindowAnchor.put("y", 2);        
         JSONObject expectedIconSize = new JSONObject();
         expectedIconSize.put("width", 3);
         expectedIconSize.put("height", 4);
@@ -157,6 +160,7 @@ public class TestCSWController {
                 "<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/page_code.png'></a>",
                 JSONArray.fromObject(new Object[] {geographicResponse}),
                 expectedIconAnchor,
+                expectedInfoWindowAnchor,
                 expectedIconSize
         };
         

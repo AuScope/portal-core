@@ -40,6 +40,7 @@ Ext.onReady(function() {
             {   name: 'dataSourceImage' },
             {   name: 'bboxes', convert : convertBboxList},
             {	name: 'iconAnchor'		},
+            {	name: 'infoWindowAnchor'},
             {   name: 'iconSize'        }
         ]),
         sortInfo: {field:'title', direction:'ASC'}
@@ -779,7 +780,12 @@ Ext.onReady(function() {
                     if(iconAnchor) {
                     	icon.iconAnchor = new GPoint(iconAnchor.x, iconAnchor.y);
                     }
-                    
+
+                	var infoWindowAnchor = selectedRecord.get('infoWindowAnchor');
+                    if(infoWindowAnchor) {
+                    	icon.infoWindowAnchor = new GPoint(infoWindowAnchor.x, infoWindowAnchor.y);
+                    }
+
                     //Parse our KML
                     var parser = new KMLParser(jsonResponse.data.kml);
                     parser.makeMarkers(icon, function(marker) {

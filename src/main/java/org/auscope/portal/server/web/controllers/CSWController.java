@@ -62,8 +62,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, iconAnchorOffset, iconSize],
-     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, iconAnchorOffset, iconSize]
+     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, iconAnchorOffset, infoWindowAnchorOffset, iconSize],
+     * [title, description, [contactOrganisations], proxyURL, serviceType, id, typeName, [serviceURLs], checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, iconAnchorOffset, infoWindowAnchorOffset, iconSize]
      * ]
      *
      * @return
@@ -152,6 +152,15 @@ public class CSWController {
             } else {
             	tableRow.add(null);
             }
+            
+            if(knownType.getInfoWindowAnchor() != null) {
+            	JSONObject obj = new JSONObject();
+            	obj.put("x", knownType.getInfoWindowAnchor().x);
+            	obj.put("y", knownType.getInfoWindowAnchor().y);
+                tableRow.add(obj);
+            } else {
+            	tableRow.add(null);
+            }
 
             if(knownType.getIconSize() != null) {
             	JSONObject obj = new JSONObject();
@@ -161,6 +170,7 @@ public class CSWController {
             } else {
             	tableRow.add(null);
             }
+
             dataItems.add(tableRow);
         }
         
