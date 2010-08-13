@@ -786,6 +786,10 @@ Ext.onReady(function() {
                     	icon.infoWindowAnchor = new GPoint(infoWindowAnchor.x, infoWindowAnchor.y);
                     }
 
+                	//TODO: This is a hack to remove marker shadows. Eventually it should be 
+                    // put into an external config file or become a session-based preference.
+                	icon.shadow = null;
+                	
                     //Parse our KML
                     var parser = new KMLParser(jsonResponse.data.kml);
                     parser.makeMarkers(icon, function(marker) {
