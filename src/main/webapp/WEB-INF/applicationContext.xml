@@ -26,6 +26,7 @@
                 <ref bean="knownTypeMiningActivity" />
                 <ref bean="knownTypeBorehole" />
                 <ref bean="knownTypeGeodesy" />
+                <ref bean="knownTypeGeochron" />
             </list>
         </constructor-arg>
     </bean>
@@ -159,5 +160,31 @@
            </bean>
        </constructor-arg>
    </bean>
+   
+    <bean id="knownTypeGeochron" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
+       <constructor-arg index="0" value="Geochron:ragingspotgeochronology"/>
+       <constructor-arg index="1" value="Raging Spot Geochronology"/>
+       <constructor-arg index="2" value=""/>
+       <constructor-arg index="3" value="/getAllFeatures.do"/>
+       <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/red-blank.png"/>
+       <constructor-arg index="5">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg index="6">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>       
+       <constructor-arg index="7">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+   </bean>   
 
 </beans>
