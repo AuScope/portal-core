@@ -218,7 +218,7 @@ log.info(".......default C'tor");
      * @return
      */
     public String getMineralOccurrenceGML( String serviceURL,
-                                           Collection<Commodity> commodities, // String commodityName,
+                                           String commodityName,
                                            String measureType,
                                            String minOreAmount,
                                            String minOreAmountUOM,
@@ -227,7 +227,7 @@ log.info(".......default C'tor");
                                            int maxFeatures) throws Exception {
             
         MineralOccurrenceFilter mineralOccurrenceFilter 
-            = new MineralOccurrenceFilter( commodities,
+            = new MineralOccurrenceFilter( commodityName,
                                            measureType,
                                            minOreAmount,
                                            minOreAmountUOM,
@@ -261,7 +261,7 @@ log.info(".......default C'tor");
      * @return
      */
     public String getVisibleMineralOccurrenceGML( String serviceURL,
-                                           Collection<Commodity> commodities, // String commodityName,
+                                           String commodityName,
                                            String measureType,
                                            String minOreAmount,
                                            String minOreAmountUOM,
@@ -271,7 +271,7 @@ log.info(".......default C'tor");
                                            int maxFeatures) throws Exception {
             
         MineralOccurrenceFilter mineralOccurrenceFilter 
-            = new MineralOccurrenceFilter( commodities,
+            = new MineralOccurrenceFilter( commodityName,
                                            measureType,
                                            minOreAmount,
                                            minOreAmountUOM,

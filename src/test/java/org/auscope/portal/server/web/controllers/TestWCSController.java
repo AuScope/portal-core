@@ -345,4 +345,85 @@ public class TestWCSController {
         Assert.assertEquals(1, ((DescribeCoverageRecord[]) model.get("records")).length);
         Assert.assertNotNull(((DescribeCoverageRecord[]) model.get("records"))[0]);
     }
+    
+    private class TimeComparatorMethodInterceptor implements IWCSGetCoverageMethodMaker {
+
+    	private String expectedTimeString;
+    	
+    	public TimeComparatorMethodInterceptor(String expectedTimeString) {
+    		this.expectedTimeString = expectedTimeString;
+    	}
+    	
+		@Override
+		public HttpMethodBase makeMethod(String serviceURL, String layerName,
+				String format, String outputCrs, int outputWidth,
+				int outputHeight, double outputResX, double outputResY,
+				String inputCrs, CSWGeographicBoundingBox bbox,
+				String timeConstraint, Map<String, String> customParams)
+				throws Exception {
+			
+			Assert.assertEquals(expectedTimeString, timeConstraint);
+			
+			return mockGetMethodMaker.makeMethod(serviceURL, layerName,
+                    format, outputCrs, outputWidth, outputHeight,
+                    outputResX, outputResY, inputCrs, bbox, timeConstraint,
+                    customParams);
+		}
+    	
+    }
+    
+    @Test
+    public void testParseTimeZones() throws Exception {
+        final String serviceUrl = "serviceUrl";
+        final String layerName = "layerName";
+        final String format = "GeoTIFF";
+        final String outputCrs = "outputCrs";
+        final String inputCrs = "inputCrs";
+        final byte[] geotiffData = new byte[] {0,1,2};
+        
+        
+        //Test we can parse UTC
+        setupWCSDownloadAsZip(geotiffData);
+        String[] inputTimes = new String[] {"2010-01-02 11:22:33 UTC"};
+        IWCSGetCoverageMethodMaker methodInterceptor = new TimeComparatorMethodInterceptor("2010-01-02T11:22:33Z");
+        WCSController controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
+        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, 256, 256, 0, 0, outputCrs, 0, 0, 0, 0, inputTimes, null, null,null, null, mockResponse);
+       
+        //Test we can parse GMT
+        setupWCSDownloadAsZip(geotiffData);
+        inputTimes = new String[] {"2011-05-06 11:22:33 GMT"};
+        methodInterceptor = new TimeComparatorMethodInterceptor("2011-05-06T11:22:33Z");
+        controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
+        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, 256, 256, 0, 0, outputCrs, 0, 0, 0, 0, inputTimes, null, null,null, null, mockResponse);
+        
+        //Test we can parse another timezone
+        setupWCSDownloadAsZip(geotiffData);
+        inputTimes = new String[] {"2010-03-04 12:22:33 WST"};
+        methodInterceptor = new TimeComparatorMethodInterceptor("2010-03-04T04:22:33Z");
+        controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
+        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, 256, 256, 0, 0, outputCrs, 0, 0, 0, 0, inputTimes, null, null,null, null, mockResponse);
+        
+        //Test we can parse another timezone
+        setupWCSDownloadAsZip(geotiffData);
+        inputTimes = new String[] {"2010-03-04 12:22:33 -0500"};
+        methodInterceptor = new TimeComparatorMethodInterceptor("2010-03-04T17:22:33Z");
+        controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
+        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, 256, 256, 0, 0, outputCrs, 0, 0, 0, 0, inputTimes, null, null,null, null, mockResponse);
+        
+        //Test we can parse another timezone (Using from, to)
+        setupWCSDownloadAsZip(geotiffData);
+        String startTime = "2010-03-04 12:22:33 +0500";
+        String endTime = "2011-04-05 01:55:44 UTC";
+        methodInterceptor = new TimeComparatorMethodInterceptor("2010-03-04T07:22:33Z/2011-04-05T01:55:44Z");
+        controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
+        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, 256, 256, 0, 0, outputCrs, 0, 0, 0, 0, null,startTime, endTime,null, null, mockResponse);
+        
+        setupWCSDownloadAsZip(geotiffData);
+        startTime = "2010-09-14 12:22:33 GMT";
+        endTime = "2011-04-05 01:55:44 -0901";
+        methodInterceptor = new TimeComparatorMethodInterceptor("2010-09-14T12:22:33Z/2011-04-05T10:56:44Z");
+        controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
+        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, 256, 256, 0, 0, outputCrs, 0, 0, 0, 0, null,startTime, endTime,null, null, mockResponse);
+        
+    }
 }

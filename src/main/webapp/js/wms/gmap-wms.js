@@ -133,7 +133,7 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
    
    url += "REQUEST=GetMap";
    url += "&SERVICE=WMS";
-   url += "&VERSION=1.1.0";
+   url += "&VERSION=1.1.1";
    if (this.layers)
       url += "&LAYERS=" + this.layers;
    url += "&STYLES="

@@ -60,11 +60,22 @@ public class WCSGetCoverageMethodMakerGET implements
         }
         
         if (bbox != null) {
+        	double adjustedWestLng = Math.min(bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude());
+        	double adjustedEastLng = Math.max(bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude());
+        	
+        	//this is so we can fetch data when our bbox is crossing the anti meridian
+			//Otherwise our bbox wraps around the WRONG side of the planet
+			if (adjustedWestLng <= 0 && adjustedEastLng >= 0 || 
+				adjustedWestLng >= 0 && adjustedEastLng <= 0) {
+				adjustedWestLng = (bbox.getWestBoundLongitude() < 0) ? (180 - bbox.getWestBoundLongitude()) : bbox.getWestBoundLongitude();
+				adjustedEastLng = (bbox.getEastBoundLongitude() < 0) ? (180 - bbox.getEastBoundLongitude()) : bbox.getEastBoundLongitude();
+			}
+        	
             params.add(new NameValuePair("bbox", 
                     String.format("%1$f,%2$f,%3$f,%4$f", 
-                            bbox.getEastBoundLongitude(), 
+                    		Math.min(adjustedWestLng, adjustedEastLng), 
                             bbox.getSouthBoundLatitude(), 
-                            bbox.getWestBoundLongitude(), 
+                            Math.max(adjustedWestLng, adjustedEastLng), 
                             bbox.getNorthBoundLatitude())));
         }
         

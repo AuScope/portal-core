@@ -22,14 +22,24 @@ function getOPeNDAPParameters() {
 			var fromField = component.get(0);
 			var toField = component.get(1);
 			
-			return {
+			var obj = {
 				type		: component.initialConfig.variableType,
 				name 		: component.initialConfig.name,
-				valueBounds : {
+			};
+			
+			if (component.initialConfig.usingDimensionBounds) {
+				obj['dimensionBounds'] = {
 					from		: parseFloat(fromField.value),
 					to			: parseFloat(toField.value)
-				}
-			};
+				};
+			} else {
+				obj['valueBounds'] = {
+						from		: parseFloat(fromField.value),
+						to			: parseFloat(toField.value)
+				};
+			}
+			
+			return obj;
 		} else if (component.initialConfig.variableType === 'grid') {
 			var childAxes = [];
 			for (var i = 0; i < frm.items.getCount(); i++) {
@@ -75,7 +85,7 @@ function getOPeNDAPParameters() {
  * Shows the OPeNDAP Download window customised for the specified serviceUrl
  * @return
  */
-function showOPeNDAPDownload(opendapUrl) {
+function showOPeNDAPDownload(opendapUrl, variableName) {
 	
 	Ext.QuickTips.init();
 	
@@ -165,7 +175,6 @@ function showOPeNDAPDownload(opendapUrl) {
 	
 	var win = new Ext.Window({
         id              : 'opendapDownloadWindow',        
-        autoScroll      : true,
         border          : true,        
         layout          : 'fit',
         resizable       : true,
@@ -176,20 +185,27 @@ function showOPeNDAPDownload(opendapUrl) {
         height          : 600,
         width           : 500,
         items:[{
-            // Bounding form
-            id      :'opendapDownloadFrm',
-            xtype   :'form',
-            layout  :'form',
-            frame   : true,
-            autoHeight : true,
-            
-            // these are applied to columns
-            defaults:{
-                xtype: 'fieldset', layout: 'form'
-            },
-            
-            // fieldsets
-            items   : fieldSetsToDisplay
+        		xtype 		: 'panel',
+        		id			: 'blah-blah-bacon',
+        		layout 		: 'fit',
+        		autoScroll  : true,
+        		bodyStyle	: 'background-color: transparent;',
+        		items 		: [{
+		            // Bounding form
+		            id      :'opendapDownloadFrm',
+		            xtype   :'form',
+		            layout  :'form',
+		            frame   : true,
+		            autoHeight : true,
+		            
+		            // these are applied to columns
+		            defaults:{
+		                xtype: 'fieldset', layout: 'form'
+		            },
+		            
+		            // fieldsets
+		            items   : fieldSetsToDisplay
+		       }]
         }],
         buttons:[{
                 xtype: 'button',
@@ -214,26 +230,43 @@ function showOPeNDAPDownload(opendapUrl) {
     //Recursively generates a field set for a given variable
 	var generateVariableFieldSet = function(variable) {
 		if (variable.type === 'axis') {
+			var bounds;
+			var title;
+			var usingDimensionBounds;
+			
+			if (variable.valueBounds) {
+				bounds = variable.valueBounds;
+				title = variable.name + '[' + bounds.from + ', ' + bounds.to + ']' + ' - ' + variable.units;
+				usingDimensionBounds = false;
+			} else {
+				bounds = variable.dimensionBounds;
+				title = variable.name + '[' + bounds.from + ', ' + bounds.to + ']';
+				usingDimensionBounds = true;
+			}
+			
 			return {
 				xtype		: 'fieldset',
 				name		: variable.name,
 				variableType: variable.type,
-				title		: (variable.name + '[' + variable.valueBounds.from + ', ' + variable.valueBounds.to + ']' + ' - ' + variable.units),
+				title		: title,
+				usingDimensionBounds : usingDimensionBounds,
 				items		: [{
 					xtype		: 'numberfield',
 					fieldLabel	: 'From',
 					allowBlank	: false,
-					value		: variable.valueBounds.from,
-					minValue	: variable.valueBounds.from,
-					maxValue	: variable.valueBounds.to,
+					value		: bounds.from,
+					minValue	: bounds.from,
+					maxValue	: bounds.to,
+					allowDecimals : !usingDimensionBounds,
 					anchor		: '-50'
 				}, {
 					xtype		: 'numberfield',
 					fieldLabel	: 'To',
 					allowBlank	: false,
-					value		: variable.valueBounds.to,
-					minValue	: variable.valueBounds.from,
-					maxValue	: variable.valueBounds.to,
+					value		: bounds.to,
+					minValue	: bounds.from,
+					maxValue	: bounds.to,
+					allowDecimals : !usingDimensionBounds,
 					anchor		: '-50'
 				}]
 			};
@@ -244,12 +277,26 @@ function showOPeNDAPDownload(opendapUrl) {
 			}
 			
 			return {
-				xtype		: 'fieldset',
-				title		: variable.name + ' - ' + variable.units,
-				name		: variable.name,
-				//disabled	: true,
-				variableType: variable.type,
-				items		: items
+				xtype			: 'fieldset',
+				title			: variable.name + ' - ' + variable.units,
+				name			: variable.name,
+				variableType	: variable.type,
+				checkboxToggle 	: true,
+				items			: items,
+				listeners		: {
+		            expand 		: {
+		                scope: this,
+		                fn : function(panel, anim) {
+					    	setFieldSetDisabled(panel, false);
+					    }
+					},
+					collapse : {
+						scope: this,
+						fn : function(panel, anim) {
+					        setFieldSetDisabled(panel, true);
+					    }
+		            }
+		        }
 			};
 		}
 		
@@ -260,70 +307,13 @@ function showOPeNDAPDownload(opendapUrl) {
 	//to the specified FormPanel
     var variableListToForm = function (frm, responseObj) {
     	
-    	//Our selection model handles adding/removing constraints
-    	var cbSm = new Ext.grid.CheckboxSelectionModel({
-    		listeners		: {
-    			rowdeselect		: function(sm, rowIndex, record) {
-    				var fldSet = Ext.getCmp(record.get('componentId'));
-    				if (fldSet) {
-    					setFieldSetDisabled(fldSet, true);
-    					fldSet.setVisible(false);
-    				}
-    				frm.doLayout();
-    			},
-    			rowselect		: function(sm, rowIndex, record) {
-    				var variableFldSet = Ext.getCmp(record.get('componentId'));
-    				if (variableFldSet) {
-    					setFieldSetDisabled(variableFldSet, false);
-    					variableFldSet.setVisible(true);
-    				} else {
-	    				var variable = sm.grid.initialConfig.responseObj.variables[rowIndex];
-	    				var variableFldSet = generateVariableFieldSet(variable);
-	    				
-	    				//Configure the ID so it can be referenced later
-	    				variableFldSet.id = variable.name + '-fldset';
-	    				record.set('componentId', variableFldSet.id);
-	    				
-	    				frm.add(variableFldSet);
-    				}
-    				frm.doLayout();
-    			}
-    		}
-    	});
+    	if (!responseObj || !responseObj.variables)
+    		return;
     	
-    	//This will parse our response object (the variables inside of it)
-    	var variableStore = new Ext.data.JsonStore({
-            data   			: responseObj,
-            root			: 'variables',
-            idProperty		: 'name',
-            fields			: ['type', 'name', 'dataType', 'units']
-        });
-    	
-    	//This will house our store in a grid with checkboxes
-    	var checkBoxGrid = new Ext.grid.GridPanel({
-    		sm 				: cbSm,
-    		responseObj		: responseObj,		//store this for reference by selection model
-    		store			: variableStore,
-    		autoExpandColumn: 'variable-name-col',
-    		height			: 100,
-    		columns			: [cbSm,{
-    			id				: 'variable-name-col',
-                header			: "Name",  
-                dataIndex		: 'name', 
-                sortable		: true, 
-                hidden			: false
-            }]
-    	});
-    	
-    	//This will wrap our grid with a nice border and title
-    	var selectionBoxFieldSet = new Ext.form.FieldSet({
-    		title			: 'Available Constraints',
-    		id				: 'available-constraints-fldset',
-    		items			: [checkBoxGrid],
-    		autoHeight		: true
-    	});
-    	
-    	frm.add(selectionBoxFieldSet);
+    	for (var i = 0; i < responseObj.variables.length; i++) {
+    		var variableFldSet = generateVariableFieldSet(responseObj.variables[i]);
+    		frm.add(variableFldSet);
+    	}
     	frm.doLayout();
     };
     
@@ -364,7 +354,8 @@ function showOPeNDAPDownload(opendapUrl) {
     		failVariableDownload('Error (' + response.status + '): ' + response.statusText);
     	},
     	params	: {
-    		opendapUrl : opendapUrl
+    		opendapUrl : opendapUrl,
+    		variableName : variableName
     	}
     });
 }

@@ -1,5 +1,6 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import net.sf.json.JSONArray;
@@ -30,7 +31,21 @@ public class CSWController {
     protected final Log log = LogFactory.getLog(getClass());
     private CSWService cswService;
     private ArrayList<KnownFeatureTypeDefinition> knownTypes;
-
+    
+    /**
+     * This generates a JSON serializable representation of the CSWOnlineResource class that can be communicated with the view
+     */
+    private static JSONObject jsonSerializeCSWOnlineResource(CSWOnlineResource res) {
+    	JSONObject obj = new JSONObject();
+    	
+    	obj.put("url", res.getLinkage().toString());
+    	obj.put("onlineResourceType", res.getType().name());
+    	obj.put("name", res.getName());
+    	obj.put("description", res.getDescription().toString());
+    	
+    	return obj;
+    }
+    
     /**
      * Construct
      * @param
@@ -263,8 +278,8 @@ public class CSWController {
      * Returns a JSON response with a data structure like so
      *
      * [
-     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], [openDapUrls] , checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]],
-     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], [openDapUrls] , checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]]
+     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], [openDapUrls], [wmsUrls], opacity , checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]],
+     * [title, description, contactOrganisation, proxyURL, serviceType, id, typeName, [serviceURLs], [openDapUrls], [wmsUrls], opacity , checked, statusImage, markerIconHtml, markerIconUrl, dataSourceImage, [bboxes]]
      * ]
      *
      * @return
@@ -316,9 +331,18 @@ public class CSWController {
                 //This is currently a hack so we can piggy back open DAP onto WCS
                 JSONArray openDapURLs = new JSONArray();
                 for (CSWOnlineResource openDapResource : record.getOnlineResourcesByType(OnlineResourceType.OpenDAP)) {
-                    openDapURLs.add(openDapResource.getLinkage().toString());
+                    openDapURLs.add(jsonSerializeCSWOnlineResource(openDapResource));
                 }
                 tableRow.add(openDapURLs);
+                
+                //There may be a WMS associated with this WCS
+                JSONArray wmsURLs = new JSONArray();
+                for (CSWOnlineResource wmsResource : record.getOnlineResourcesByType(OnlineResourceType.WMS)) {
+                	wmsURLs.add(jsonSerializeCSWOnlineResource(wmsResource));
+                }
+                tableRow.add(wmsURLs);
+                
+                tableRow.add(1.0);
     
                 tableRow.element(true);
                 tableRow.add("<img src='js/external/extjs/resources/images/default/grid/done.gif'>");

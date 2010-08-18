@@ -91,7 +91,8 @@ public class OPeNDAPController {
      * @return
      */
     @RequestMapping("/opendapGetVariables.do")
-    public ModelAndView getVariables(@RequestParam("opendapUrl") final String opendapUrl) throws Exception {
+    public ModelAndView getVariables(@RequestParam("opendapUrl") final String opendapUrl,
+    								 @RequestParam(required=false, value="variableName") final String variableName) throws Exception {
         
         //Open our connection
         NetcdfDataset ds = null;
@@ -105,7 +106,7 @@ public class OPeNDAPController {
         
         //Attempt to parse our response
         try {
-            ViewVariable[] vars = ViewVariableFactory.fromNetCDFDataset(ds);
+            ViewVariable[] vars = ViewVariableFactory.fromNetCDFDataset(ds, variableName);
             return generateResponse(true, null, vars);
         } catch (Exception ex) {
             log.error(String.format("Error parsing from '%1$s'", opendapUrl), ex);

@@ -16,6 +16,7 @@ import net.sf.json.JSONObject;
 
 import org.auscope.portal.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.csw.CSWOnlineResource;
+import org.auscope.portal.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
@@ -278,16 +279,32 @@ public class TestCSWController {
         final String dataAbstract = "ha4rharh";
         final String name = "resN4ame";
         final String serviceUrl = "http://fake2.com";
+        final CSWOnlineResource mockOpenDapResource = context.mock(CSWOnlineResourceImpl.class, "openDapResource");
+        final CSWOnlineResource mockWmsResource = context.mock(CSWOnlineResourceImpl.class, "wmsResource");
         final CSWGeographicBoundingBox geographicResponse = new CSWGeographicBoundingBox(6.2,3.4,1.0,8);
+        
 
         context.checking(new Expectations() {{
             oneOf(cswService).updateRecordsInBackground();
             oneOf(cswService).getWCSRecords();will(returnValue(new CSWRecord[]{mockRecord}));
+            
+            allowing(mockOpenDapResource).getDescription();will(returnValue("od-desc"));
+            allowing(mockOpenDapResource).getLinkage();will(returnValue(new URL("http://opendap.com")));
+            allowing(mockOpenDapResource).getName();will(returnValue("od-name"));
+            allowing(mockOpenDapResource).getProtocol();will(returnValue("od-protocol"));
+            allowing(mockOpenDapResource).getType();will(returnValue(OnlineResourceType.OpenDAP));
+            
+            allowing(mockWmsResource).getDescription();will(returnValue("wms-desc"));
+            allowing(mockWmsResource).getLinkage();will(returnValue(new URL("http://wms.com")));
+            allowing(mockWmsResource).getName();will(returnValue("wms-name"));
+            allowing(mockWmsResource).getProtocol();will(returnValue("wms-protocol"));
+            allowing(mockWmsResource).getType();will(returnValue(OnlineResourceType.WMS));
 
             allowing(mockRecord).getServiceName();will(returnValue(serviceName));
             allowing(mockRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
             allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.WCS);will(returnValue(new CSWOnlineResource[] {mockResource}));
-            allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.OpenDAP);will(returnValue(new CSWOnlineResource[] {}));
+            allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.OpenDAP);will(returnValue(new CSWOnlineResource[] {mockOpenDapResource}));
+            allowing(mockRecord).getOnlineResourcesByType(OnlineResourceType.WMS);will(returnValue(new CSWOnlineResource[] {mockWmsResource}));
             allowing(mockResource).getName();will(returnValue(name));
             allowing(mockResource).getLinkage();will(returnValue(new URL(serviceUrl)));
             allowing(mockRecord).getContactOrganisation();will(returnValue(orgName));
@@ -298,6 +315,18 @@ public class TestCSWController {
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
         
+        JSONObject jsonOpenDapResource = new JSONObject();
+        jsonOpenDapResource.put("url", "http://opendap.com");
+        jsonOpenDapResource.put("name", "od-name");
+        jsonOpenDapResource.put("onlineResourceType", OnlineResourceType.OpenDAP.name());
+        jsonOpenDapResource.put("description", "od-desc");
+        
+        JSONObject jsonWMSResource = new JSONObject();
+        jsonWMSResource.put("url", "http://wms.com");
+        jsonWMSResource.put("name", "wms-name");
+        jsonWMSResource.put("onlineResourceType", OnlineResourceType.WMS.name());
+        jsonWMSResource.put("description", "wms-desc");
+        
         final Object[] expectedJSONResponse = new Object[] {
                 serviceName,
                 dataAbstract,
@@ -307,7 +336,9 @@ public class TestCSWController {
                 mockRecord.hashCode(),
                 name,
                 JSONArray.fromObject(new String[] {serviceUrl}),
-                JSONArray.fromObject(new String[] {}),
+                JSONArray.fromObject(jsonOpenDapResource),
+                JSONArray.fromObject(jsonWMSResource),
+                1,
                 true,
                 "<img src='js/external/extjs/resources/images/default/grid/done.gif'>",
                 "<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'></a>",

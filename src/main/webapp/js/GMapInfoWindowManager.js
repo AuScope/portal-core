@@ -14,7 +14,7 @@ GMapInfoWindowManager.prototype.map = null;
  * windowLocation - either a GMarker or a GLatLng which is where the window will be opened from
  * content - A HTML string representing the content of the window OR a array of GInfoWindowTab
  * infoWindowOpts - [Optional] an instance of GInfoWindowOptions that will be passed to the new window
- * initFunction - [Optional] function(map, location, initFunctionParam) a function that will be called with initFunctionParam
+ * initFunction - [Optional] function(map, location, initFunctionParam) a function that will be called with initFunctionParam when the window opens
  * initFunctionParam - [Optional] will be passed as a parameter to initFunction
  * 
  */

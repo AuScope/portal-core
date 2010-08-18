@@ -23,7 +23,7 @@ public class MineralOccurrenceFilter extends AbstractFilter {
     /** Log object for this class. */
     protected final Log log = LogFactory.getLog(getClass());
     
-    private Collection<Commodity> commodityOccurrences;
+    private String commodityName;
     private MeasureTypes measureType;
     private String minOreAmount;
     private String minOreAmountUOM;
@@ -35,14 +35,14 @@ public class MineralOccurrenceFilter extends AbstractFilter {
     /**
      * C'tor
      */
-    public MineralOccurrenceFilter( Collection<Commodity> commodities,
+    public MineralOccurrenceFilter( String commodityName,
                                     String measureType,
                                     String minOreAmount,
                                     String minOreAmountUOM,
                                     String minCommodityAmount,
                                     String minCommodityAmountUOM ) 
     {    
-        this.commodityOccurrences  = commodities;
+        this.commodityName         = commodityName == null ? "" : commodityName;
         this.minOreAmount          = minOreAmount;
         this.minOreAmountUOM       = minOreAmountUOM;
         this.minCommodityAmount    = minCommodityAmount;
@@ -73,34 +73,23 @@ public class MineralOccurrenceFilter extends AbstractFilter {
      */
     private String makeFilter() {        
         
-        int commoditiesCount = commodityOccurrences.size();        
-        log.debug("Number of commodities: " + commoditiesCount);
-
-        
-        
         // Case 1. Get All Query
-        if ( (this.measureType == MeasureTypes.NONE) && commodityOccurrences.isEmpty()) {
+        if ( (this.measureType == MeasureTypes.NONE) && commodityName.isEmpty()) {
             return "";
         }
         
         // Case 2. Commodities Only Query
-        else if ( (this.measureType == MeasureTypes.NONE) && (commoditiesCount > 0 ) ) {
-            List<String> fragmentList = new ArrayList<String>();
-            
-            for( Commodity commodity : commodityOccurrences ) {
-                fragmentList.add(this.generatePropertyIsEqualToFragment("er:commodityDescription/@xlink:href", commodity.getName()));
-            }                    
-
-            return this.generateOrComparisonFragment(fragmentList.toArray(new String[fragmentList.size()]));
+        else if ( (this.measureType == MeasureTypes.NONE) && (!commodityName.isEmpty()) ) {
+            return this.generatePropertyIsEqualToFragment("er:commodityDescription/er:Commodity/er:commodityName", commodityName);
         }
 
         // Case 3. Amount Only Query
-        else if ( (this.measureType != MeasureTypes.NONE) && commodityOccurrences.isEmpty() ) {
+        else if ( (this.measureType != MeasureTypes.NONE) && commodityName.isEmpty() ) {
             
             // Single measure
             if (this.measureType != MeasureTypes.ANY) {
                 if (paramsCount == 0) {
-                    return this.generatePropertyIsLikeFragment("er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", "*");
+                    return this.generatePropertyIsLikeFragment("er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/er:Commodity/er:commodityName", "*");
                 } else if(paramsCount > 0) {
                     return this.generateParametersFragment(getMeasureTypeTag(this.measureType));
                 } else {
@@ -113,7 +102,7 @@ public class MineralOccurrenceFilter extends AbstractFilter {
                 
                 if (paramsCount == 0) {  
                     for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
-                        fragments.add(this.generatePropertyIsLikeFragment("er:oreAmount/"+ getMeasureTypeTag(measure) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", "*"));
+                        fragments.add(this.generatePropertyIsLikeFragment("er:oreAmount/"+ getMeasureTypeTag(measure) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/er:Commodity/er:commodityName", "*"));
                     }
                 } else if(paramsCount > 0) {  
                     for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
@@ -126,41 +115,29 @@ public class MineralOccurrenceFilter extends AbstractFilter {
         }
         
         // Case 4. Commodity + Amount Query
-        else if ( (this.measureType != MeasureTypes.NONE) && !commodityOccurrences.isEmpty() ) {
+        else if ( (this.measureType != MeasureTypes.NONE) && !commodityName.isEmpty() ) {
             
             // Single Measure
             if (this.measureType != MeasureTypes.ANY) {
-                List<String> fragments = new ArrayList<String>();
-                
                 if (this.paramsCount == 0) {
-                    for( Commodity commodity : commodityOccurrences ) {
-                        fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", commodity.getName()));
-                    }
-                } else if (this.paramsCount > 0) {
-                    for( Commodity commodity : commodityOccurrences ) {
-                        fragments.add(this.generateCommodityAndParametersFragment(commodity,getMeasureTypeTag(this.measureType)));
-                    }
+                    return this.generatePropertyIsEqualToFragment("er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/er:Commodity/er:commodityName", commodityName);
+                } else {
+                    return this.generateCommodityAndParametersFragment(commodityName,getMeasureTypeTag(this.measureType));
                 }
-                
-                return this.generateOrComparisonFragment(fragments.toArray(new String[fragments.size()]));                              
             }
             // Multiple Measures - ANY 
             else if (this.measureType == MeasureTypes.ANY) {
                 List<String> fragments = new ArrayList<String>();
                 if (this.paramsCount == 0) {
-                    for( Commodity commodity : commodityOccurrences ) {
-                        for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
-                            fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+getMeasureTypeTag(measure)+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", commodity.getName()));
-                        }
+                    for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
+                        fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+getMeasureTypeTag(measure)+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/er:Commodity/er:commodityName", commodityName));
                     }
                 } else if (this.paramsCount > 0) {
                     for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
-                        for( Commodity commodity : commodityOccurrences ) {
-                            fragments.add(this.generateCommodityAndParametersFragment(commodity, getMeasureTypeTag(measure)));
-                        }
+                        fragments.add(this.generateCommodityAndParametersFragment(commodityName, getMeasureTypeTag(measure)));
                     }
                 }
-
+                
                 return this.generateOrComparisonFragment(fragments.toArray(new String[fragments.size()]));
             }            
         }                
@@ -172,10 +149,10 @@ public class MineralOccurrenceFilter extends AbstractFilter {
     /*
      * Appends search commodity and amount parameters entered by user 
      */
-    private String generateCommodityAndParametersFragment(Commodity commodity,  String measure) {
+    private String generateCommodityAndParametersFragment(String commodityName,  String measure) {
         List<String> fragments = new ArrayList<String>();
         
-        fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/@xlink:href", commodity.getName()));
+        fragments.add(this.generatePropertyIsEqualToFragment("er:oreAmount/"+measure+"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/er:Commodity/er:commodityName", commodityName));
         
         if (!this.minOreAmount.isEmpty()) {
             fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("er:oreAmount/"+measure+"/er:ore/gsml:CGI_NumericValue/gsml:principalValue", this.minOreAmount));

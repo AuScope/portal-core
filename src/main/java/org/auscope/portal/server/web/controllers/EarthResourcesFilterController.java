@@ -198,17 +198,6 @@ public class EarthResourcesFilterController {
         FilterBoundingBox bbox = attemptParseBbox(bboxJson);
         
         try {
-            Collection<Commodity> commodities = new ArrayList<Commodity>();
-            
-            if (!commodityName.equals("")) {
-                
-                //We intentionally don't perform a bbox filter here (The bbox filtering will occur later)
-                commodities = this.commodityService.getAll(serviceUrl, commodityName, 0);
-
-                // If there are 0 features then send nice message to the user
-                if (commodities.size() == 0)
-                    return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
-            }                        
 
             //get the mineral occurrences
             String mineralOccurrenceResponse = null;
@@ -216,7 +205,7 @@ public class EarthResourcesFilterController {
                 mineralOccurrenceResponse 
                     = this.mineralOccurrenceService.getMineralOccurrenceGML ( 
                             serviceUrl,
-                            commodities, //commodityName,
+                            commodityName, 
                             measureType,
                             minOreAmount,
                             minOreAmountUOM,
@@ -227,7 +216,7 @@ public class EarthResourcesFilterController {
                 mineralOccurrenceResponse 
                     = this.mineralOccurrenceService.getVisibleMineralOccurrenceGML ( 
                             serviceUrl,
-                            commodities, //commodityName,
+                            commodityName,
                             measureType,
                             minOreAmount,
                             minOreAmountUOM,

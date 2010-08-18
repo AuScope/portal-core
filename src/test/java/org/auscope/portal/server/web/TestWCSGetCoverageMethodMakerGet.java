@@ -2,11 +2,13 @@ package org.auscope.portal.server.web;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.servlet.http.HttpSession;
 
 import org.junit.Before;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.NameValuePair;
 import org.auscope.portal.csw.CSWGeographicBoundingBox;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -22,7 +24,9 @@ public class TestWCSGetCoverageMethodMakerGet {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
     
-    private CSWGeographicBoundingBox mockBbox = context.mock(CSWGeographicBoundingBox.class);
+    private CSWGeographicBoundingBox mockBbox = context.mock(CSWGeographicBoundingBox.class, "simpleBbox");
+    private CSWGeographicBoundingBox mockAntiMeridianBbox = context.mock(CSWGeographicBoundingBox.class, "amBbox");
+    private CSWGeographicBoundingBox mockMeridianBbox = context.mock(CSWGeographicBoundingBox.class, "mBox");
     
     private WCSGetCoverageMethodMakerGET methodMaker;
     
@@ -35,6 +39,16 @@ public class TestWCSGetCoverageMethodMakerGet {
            allowing(mockBbox).getWestBoundLongitude();will(returnValue((double)2));
            allowing(mockBbox).getSouthBoundLatitude();will(returnValue((double)3));
            allowing(mockBbox).getNorthBoundLatitude();will(returnValue((double)4));
+           
+           allowing(mockAntiMeridianBbox).getEastBoundLongitude();will(returnValue((double)1));
+           allowing(mockAntiMeridianBbox).getWestBoundLongitude();will(returnValue((double)-145));
+           allowing(mockAntiMeridianBbox).getSouthBoundLatitude();will(returnValue((double)-50));
+           allowing(mockAntiMeridianBbox).getNorthBoundLatitude();will(returnValue((double)60));
+           
+           allowing(mockMeridianBbox).getEastBoundLongitude();will(returnValue((double)77));
+           allowing(mockMeridianBbox).getWestBoundLongitude();will(returnValue((double)-56));
+           allowing(mockMeridianBbox).getSouthBoundLatitude();will(returnValue((double)-50));
+           allowing(mockMeridianBbox).getNorthBoundLatitude();will(returnValue((double)60));
         }});
     }
     
@@ -131,6 +145,58 @@ public class TestWCSGetCoverageMethodMakerGet {
             methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 0, 0, 5, "foo", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
+    }
+    
+    private void compareBboxesInQuery(String queryString, double expectedNorth, double expectedSouth, double expectedEast, double expectedWest) {
+    	Scanner sc = new Scanner(queryString);
+    	
+    	//Extract our param list as a list of doubles
+        String bboxParams = sc.findInLine("&bbox=.*?&");
+        bboxParams = bboxParams.split("=")[1];
+        bboxParams = bboxParams.replace("&", "");
+        sc = new Scanner(bboxParams).useDelimiter("%2C");
+        
+        Assert.assertTrue(sc.hasNextDouble());
+        double minx = sc.nextDouble();
+        Assert.assertTrue(sc.hasNextDouble());
+        double miny = sc.nextDouble();
+        Assert.assertTrue(sc.hasNextDouble());
+        double maxx = sc.nextDouble();
+        Assert.assertTrue(sc.hasNextDouble());
+        double maxy = sc.nextDouble();
+        
+        Assert.assertEquals(expectedNorth, maxy, 0.01);
+        Assert.assertEquals(expectedSouth, miny, 0.01);
+        
+        Assert.assertEquals(expectedWest, minx, 0.01);
+        Assert.assertEquals(expectedEast, maxx, 0.01);
+    }
+    
+    /**
+     * This test case is to ensure we correctly map North, South, East, West ordinates to a bounding box defined
+     * ambiguously as MINX-MAXX and MINY-MAXY 
+     * @throws Exception
+     */
+    @Test
+    public void testBboxMeridians() throws Exception {
+    	HttpMethodBase method = methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 1, 2, 0, 0, "myCrs", mockAntiMeridianBbox, null, null);
+    	
+    	String queryString = method.getQueryString();
+        Assert.assertNotNull(queryString);
+        Assert.assertFalse(queryString.isEmpty());
+        
+        //Because this crosses the anti meridian we adjust longitude from [-180, 180] to [0, 360] to remove ambiguity 
+        //about which way the bbox will wrap around the earth
+        compareBboxesInQuery(queryString, 60, -50, 325, 1);
+        
+        method = methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 1, 2, 0, 0, "myCrs", mockMeridianBbox, null, null);
+    	queryString = method.getQueryString();
+        Assert.assertNotNull(queryString);
+        Assert.assertFalse(queryString.isEmpty());
+        
+        //Because this crosses the meridian we adjust longitude from [-180, 180] to [0, 360] to remove ambiguity 
+        //about which way the bbox will wrap around the earth
+        compareBboxesInQuery(queryString, 60, -50, 236, 77);
     }
     
 }

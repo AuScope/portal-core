@@ -171,17 +171,9 @@ public class TestMineralOccurrenceServiceClient {
         final CommodityFilter commodityFilter = new CommodityFilter(commodityName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockCommodityResponse = new String();
-        final Commodity mockCommodity = context.mock(Commodity.class);
-        final Collection<Commodity> commodities = Arrays.asList(mockCommodity);
-           
-        context.checking(new Expectations() {{
-            //this comes from my instantiation of the MineralOccurrenceFilter
-            oneOf (mockCommodity).getSource(); will(returnValue("dudURI"));
-            allowing(mockCommodity).getName();will(returnValue(commodityName));
-        }});
         
         final MineralOccurrenceFilter mineralOccurrenceFilter 
-            = new MineralOccurrenceFilter( commodities,
+            = new MineralOccurrenceFilter( commodityName,
                                            measureType,
                                            minOreAmount,
                                            minOreAmountUOM,
@@ -194,10 +186,6 @@ public class TestMineralOccurrenceServiceClient {
             oneOf (methodMaker).makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
-            oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(commodities));
-
-            oneOf (mockCommodity).getSource(); will(returnValue("dudURI"));
-            oneOf (mockCommodity).getSource(); will(returnValue("dudURI"));
             
             //the mineral occurrence query part
             oneOf (methodMaker).makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
@@ -206,7 +194,7 @@ public class TestMineralOccurrenceServiceClient {
         }});
 
         this.mineralOccurrenceService.getMineralOccurrenceGML(serviceURL,
-                                                              commodities, //commodityName,
+                                                              commodityName,
                                                               measureType,
                                                               minOreAmount,
                                                               minCommodityAmountUOM,

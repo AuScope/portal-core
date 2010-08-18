@@ -71,7 +71,7 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
 	
 	//Try to see if its a WCS layer
 	if (overlay && overlay.parentRecord && overlay.parentRecord.get('serviceType') == 'wcs') {
-		var infoWindow = new GenericWCSInfoWindow(map, overlay, overlay.wcsUrl, overlay.layerName, overlay.parentRecord.get('openDapURLs'));
+		var infoWindow = new GenericWCSInfoWindow(map, overlay, overlay.wcsUrl, overlay.layerName, overlay.parentRecord.get('openDapURLs'), overlay.parentRecord.get('wmsURLs'));
 		infoWindow.showInfoWindow();
 	//Otherwise it could be a WFS marker
 	} if (overlay instanceof GMarker) {

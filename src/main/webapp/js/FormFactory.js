@@ -21,6 +21,13 @@ FormFactory.prototype.getFilterForm = function(record, map) {
 
     if (record.get('serviceType') == 'wms') {
         return new WMSLayerFilterForm(record, map);
+    } else if (record.get('serviceType') == 'wcs') {
+    	//If we have a WMS component to our WCS we may want to specify the opacity
+    	if (record.get('wmsURLs').length > 0) {
+    		return new WMSLayerFilterForm(record, map);
+    	} else {
+    		return null;
+    	}
     } else {
         switch (record.get('typeName')) {
             case 'er:Mine': return new MineFilterForm(record.get('id'), record.get('serviceURLs')[0]); break;

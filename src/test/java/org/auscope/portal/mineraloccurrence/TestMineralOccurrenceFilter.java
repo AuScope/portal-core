@@ -37,41 +37,15 @@ public class TestMineralOccurrenceFilter {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
     
-    @Test
-    public void testWithTwoNames() throws Exception {
-        final Commodity commodity1 = context.mock(Commodity.class);
-        final Commodity commodity2 = context.mock(Commodity.class, "commodity2");
-        final Collection<Commodity> commodities = Arrays.asList(commodity1, commodity2);
-        
-        context.checking(new Expectations() {{
-            oneOf (commodity1).getName(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361169"));
-            oneOf (commodity2).getName(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361179"));
-        }});
-        
-        MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(commodities, "", "", "", "", "");
-        
-        String filter = mineralOccurrenceFilter.getFilterStringAllRecords();
-        
-        //Ensure our names both get included in output
-        FilterTestUtilities.runNodeSetValueCheck(FilterTestUtilities.parsefilterStringXML(filter), "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", 
-                new String[] {"urn:cgi:feature:GSV:MineralOccurrence:361169", "urn:cgi:feature:GSV:MineralOccurrence:361179"});
-        
-    }
     
    
     
     @Test
     public void testWithNameAndMinimumOreAmount() throws Exception {
-        final Commodity commodity1 = context.mock(Commodity.class);
-        final Collection<Commodity> commodities = Arrays.asList(commodity1);
-
-        context.checking(new Expectations() {{
-            allowing(commodity1).getName(); will(returnValue("urn:cgi:feature:GSV:MineralOccurrence:361179"));
-        }});
+        final String commodityName = "urn:cgi:feature:GSV:MineralOccurrence:361179";
         
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(commodities, "Any", "1234567", "urn:ogc:def:uom:UCUM:t", "", "");
+            new MineralOccurrenceFilter(commodityName, "Any", "1234567", "urn:ogc:def:uom:UCUM:t", "", "");
 
         String filter = mineralOccurrenceFilter.getFilterStringAllRecords();
                 
@@ -79,13 +53,13 @@ public class TestMineralOccurrenceFilter {
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
         
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"1234567"}, 2);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"urn:cgi:feature:GSV:MineralOccurrence:361179", "urn:ogc:def:uom:UCUM:t"}, 4);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {commodityName, "urn:ogc:def:uom:UCUM:t"}, 4);
     }
     
     @Test
     public void testReserveMinimumOreAmount() throws Exception {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(new ArrayList<Commodity>(), "Reserve", "2000000", "urn:ogc:def:uom:UCUM:t", "", "");
+            new MineralOccurrenceFilter("", "Reserve", "2000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         String filter = mineralOccurrenceFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
@@ -96,7 +70,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testAnyMinimumOreAmount() throws Exception {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(new ArrayList<Commodity>(), "Any", "1000000", "urn:ogc:def:uom:UCUM:t", "", "");
+            new MineralOccurrenceFilter("", "Any", "1000000", "urn:ogc:def:uom:UCUM:t", "", "");
         
         String filter = mineralOccurrenceFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
@@ -108,7 +82,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testResourceMinimumCommodityAmount() throws Exception {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(new ArrayList<Commodity>(), "Resource", "", "", "6000000", "urn:ogc:def:uom:UCUM:t");
+            new MineralOccurrenceFilter("", "Resource", "", "", "6000000", "urn:ogc:def:uom:UCUM:t");
         
         String filter = mineralOccurrenceFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
@@ -120,7 +94,7 @@ public class TestMineralOccurrenceFilter {
     @Test
     public void testAnyMinimumCommodityAmount() throws Exception {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(new ArrayList<Commodity>(), "Any", "", "", "7000000", "urn:ogc:def:uom:UCUM:t");
+            new MineralOccurrenceFilter("", "Any", "", "", "7000000", "urn:ogc:def:uom:UCUM:t");
         
         String filter = mineralOccurrenceFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);

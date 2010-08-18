@@ -77,8 +77,10 @@ public class WCSController {
                                  final String timePeriodTo,
                                  final String timePeriodResolution) throws ParseException {
         String timeString = null;
-        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss 'GMT'");                
+        DateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");                
         DateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        
+        outputFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         
         //We will receive a list of time positions
         if (timePositions != null && timePositions.length > 0) {
@@ -86,9 +88,6 @@ public class WCSController {
             
             for (String s : timePositions) {
                 if (s != null && !s.isEmpty()) {
-                    
-                    inputFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-                    outputFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
                     
                     Date d = inputFormat.parse(s);
                     if (sb.length() > 0)
