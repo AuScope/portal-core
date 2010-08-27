@@ -97,7 +97,7 @@ Ext.onReady(function() {
         autoExpandColumn : 'title',
         plugins          : [ complexFeaturesRowExpander ],
         viewConfig       : {scrollOffset: 0, forceFit:true},
-        title            : 'Feature Layers',
+        title            : 'Featured Layers',
         region           :'north',
         split            : true,
         height           : 160,
