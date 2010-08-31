@@ -155,8 +155,19 @@ Ext.onReady(function() {
 
         // Load our xml document
         var xmlString = jsonResponse.data.gml;
-        var parser = new DOMParser();
-        var xmlDocument = parser.parseFromString(xmlString, "text/xml");
+        
+        var xmlDocument;
+        if(window.DOMParser) {
+        	//browser supports DOMParser
+            var parser = new DOMParser();
+            xmlDocument = parser.parseFromString(xmlString, "text/xml");
+        } else if(window.ActiveXObject) {
+        	//IE
+        	xmlDocument = new ActiveXObject("Microsoft.XMLDOM");
+        	xmlDocument.async="false";
+        	xmlDocument.loadXML(xmlString);
+        }
+        
 
         // We got a valid (but empty response) ignore it
         if (!doesResponseContainsData(xmlDocument.documentElement)) {
