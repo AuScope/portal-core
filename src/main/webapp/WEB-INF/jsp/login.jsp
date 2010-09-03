@@ -10,7 +10,7 @@
    <STYLE type="text/css">
       H2 { text-align: center}
       #nav-example-03 a {
-         background: url( "/img/navigation.gif" ) -200px -38px no-repeat;
+         background: url( "img/navigation.gif" ) -200px -38px no-repeat;
       }
    </STYLE>
 </head>

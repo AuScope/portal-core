@@ -35,6 +35,11 @@
       <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js"
              type="text/javascript"></script>
              
+      <script type="text/javascript">
+         var VOCAB_SERVICE_URL = "${vocabServiceUrl}"; 
+         var NVCL_WEB_SERVICE_IP = "${nvclWebServiceIP}";
+         var WEB_CONTEXT = '<%= request.getContextPath() %>';
+      </script>     
      
       <jsp:include page="/jsimports.htm"/>
    </head>

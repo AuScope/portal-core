@@ -18,7 +18,7 @@
  	</head>
 	<body onLoad="downloadImage();">
 		<div id="div_plotted_images" overflow="auto">
-			<img id="plotted_images" src="../img/nvcl/loading_plots.gif">
+			<img id="plotted_images" src="img/nvcl/loading_plots.gif">
 		</div>
 	</body>
 </html>

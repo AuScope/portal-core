@@ -118,7 +118,7 @@ function initialize(pMapContainer) {
 * NOTE: This function is not used ...?
 */
 function getCapabilities() {
-    //var proxy = "/restproxy?";
+
     // NVCL Get Capabilities url
   var url = "" //"http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetCapabilities&version=1.0.0";
 

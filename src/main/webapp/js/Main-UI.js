@@ -25,7 +25,7 @@ Ext.onReady(function() {
     
     //-----------Complex Features Panel Configurations
     var complexFeaturesStore = new Ext.data.Store({
-        proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: '/getComplexFeatures.do', timeout:180000})),
+        proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: 'getComplexFeatures.do', timeout:180000})),
         reader: new Ext.data.ArrayReader({}, [
             {   name: 'title'           },
             {   name: 'description'     },
@@ -147,6 +147,7 @@ Ext.onReady(function() {
                     activeLayerCheckHandler(complexFeaturesPanel.getSelectionModel().getSelected(), true);
                 }
                 
+                
                 //set this record to selected
                 activeLayersPanel.getSelectionModel().selectRecords([recordToAdd], false);
             }
@@ -174,7 +175,7 @@ Ext.onReady(function() {
     //----------- WMS Layers Panel Configurations
 
     var wmsLayersStore = new Ext.data.GroupingStore({
-        proxy: new Ext.data.HttpProxy({url: '/getWMSLayers.do'}),
+        proxy: new Ext.data.HttpProxy({url: 'getWMSLayers.do'}),
         reader: new Ext.data.ArrayReader({}, [
             {   name: 'title'           },
             {   name: 'description'     },
@@ -1191,7 +1192,7 @@ Ext.onReady(function() {
                         for (i = 0; i < serviceUrls.length; i++) {
                             //urlsParameter += "serviceUrls=" + serviceUrls[i] + filterParameters.replace('&', '%26') + '&';
                             keys[i] = 'serviceUrls';
-                            values[i] =  window.location.protocol + "//" + window.location.host + record.get('proxyURL') + "?" + filterParameters + "&serviceUrl=" + serviceUrls[i];
+                            values[i] =  window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + record.get('proxyURL') + "?" + filterParameters + "&serviceUrl=" + serviceUrls[i];
                         }
 
                         openWindowWithPost("downloadGMLAsZip.do?", 'WFS_Layer_Download_'+new Date().getTime(), keys, values);

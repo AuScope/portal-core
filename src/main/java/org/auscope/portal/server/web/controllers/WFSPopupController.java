@@ -54,7 +54,7 @@ public class WFSPopupController {
     
     // --------------------------------------------------------- Public Methods
     
-    @RequestMapping("/wfsFeaturePopup.do")
+    @RequestMapping("wfsFeaturePopup.do")
     public void wfsFeaturePopup( HttpServletRequest request,
                                  HttpServletResponse response ) 
     throws IOException {

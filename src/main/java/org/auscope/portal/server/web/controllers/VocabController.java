@@ -208,7 +208,7 @@ public class VocabController {
      * 
      * @param
      */        
-    @RequestMapping("/getAllCommodities.do")
+    @RequestMapping("getAllCommodities.do")
     public ModelAndView getAllCommodities() throws Exception {
 
         String response = ""; 

@@ -7,7 +7,7 @@ MineFilterForm = function(id, serviceUrl) {
     /*
     var mineNamesStore = new Ext.data.Store({
         baseParams: {serviceUrl: serviceUrl},
-        proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: '/getMineNames.do', timeout:180000})),
+        proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: 'getMineNames.do', timeout:180000})),
         reader: new Ext.data.JsonReader({
             root:'data'
         }, [{name:'mineDisplayName', mapping:'mineDisplayName'}])
