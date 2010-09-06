@@ -22,9 +22,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.auscope.portal.mineraloccurrence.Commodity;
-import org.auscope.portal.mineraloccurrence.FilterBoundingBox;
 import org.auscope.portal.mineraloccurrence.Mine;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
+import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
@@ -93,25 +93,6 @@ public class EarthResourcesFilterController {
 
     // ------------------------------------------- Property Setters and Getters   
     
-    /**
-     * Convenience method to parse a bbox. Returns null if the parsing fails
-     */
-    private FilterBoundingBox attemptParseBbox(String json) {
-        FilterBoundingBox bbox = null;
-        try {
-            if (json != null) {
-                JSONObject obj = JSONObject.fromObject(json);
-                bbox = FilterBoundingBox.parseFromJSON(obj);
-                log.debug("bbox=" + bbox.toString());
-            } else {
-                log.debug("Skipping parsing of bbox, it hasn't been received");
-            }
-        } catch (Exception ex) {
-            log.warn("Couldnt parse bounding box filter (Invalid Values): " + ex);
-        }
-        
-        return bbox;
-    }
     
     /**
      * Handles the Earth Resource Mine filter queries.
@@ -132,7 +113,7 @@ public class EarthResourcesFilterController {
 
         //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
         //This will in turn limit the number of points returned to 200
-        FilterBoundingBox bbox = attemptParseBbox(bboxJson);
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
         
         try {
             String gmlBlob;
@@ -195,7 +176,7 @@ public class EarthResourcesFilterController {
     {
         //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
         //This will in turn limit the number of points returned to 200
-        FilterBoundingBox bbox = attemptParseBbox(bboxJson);
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
         
         try {
 
@@ -271,7 +252,7 @@ public class EarthResourcesFilterController {
     {
         //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
         //This will in turn limit the number of points returned to 200
-        FilterBoundingBox bbox = attemptParseBbox(bboxJson);
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
         
         try {
             List<Mine> mines = new ArrayList<Mine>();   

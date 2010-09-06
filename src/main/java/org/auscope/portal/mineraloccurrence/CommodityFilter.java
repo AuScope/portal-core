@@ -1,5 +1,8 @@
 package org.auscope.portal.mineraloccurrence;
 
+import org.auscope.portal.server.domain.filter.AbstractFilter;
+import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+
 /**
  * User: Michael Stegherr
  * Date: 23/03/2009

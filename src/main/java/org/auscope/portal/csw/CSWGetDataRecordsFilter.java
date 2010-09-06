@@ -2,8 +2,8 @@ package org.auscope.portal.csw;
 
 import java.util.HashMap;
 
-import org.auscope.portal.mineraloccurrence.AbstractFilter;
-import org.auscope.portal.mineraloccurrence.FilterBoundingBox;
+import org.auscope.portal.server.domain.filter.AbstractFilter;
+import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 
 /**
  * Represents a OGC:Filter that will fetch all WFS, WMS and WCS records from a CSW

@@ -1,7 +1,8 @@
-package org.auscope.portal.mineraloccurrence;
+package org.auscope.portal.server.domain.filter;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Represents a partial implementation of the IFilter interface with protected
@@ -43,7 +44,7 @@ public abstract class AbstractFilter implements IFilter {
        
        StringBuilder sb = new StringBuilder();
        
-       sb.append("<ogc:Not>");
+       /*sb.append("<ogc:Not>");
        sb.append("<ogc:Disjoint>");
        sb.append("<ogc:PropertyName>" + propertyXpath + "</ogc:PropertyName>");
        sb.append("<gml:Envelope srsName=\"" + bbox.getBboxSrs() + "\">");
@@ -51,7 +52,18 @@ public abstract class AbstractFilter implements IFilter {
        sb.append("<gml:upperCorner>" + upperCorner +"</gml:upperCorner>");
        sb.append("</gml:Envelope>"); 
        sb.append("</ogc:Disjoint>");
-       sb.append("</ogc:Not>");
+       sb.append("</ogc:Not>");*/
+       
+       sb.append("<ogc:BBOX>");
+       if (propertyXpath != null && !propertyXpath.isEmpty()) {
+           sb.append("<ogc:PropertyName>" + propertyXpath + "</ogc:PropertyName>");
+       }
+       sb.append("<gml:Envelope srsName=\"" + bbox.getBboxSrs() + "\">");
+       sb.append("<gml:lowerCorner>" + lowerCorner + "</gml:lowerCorner>");
+       sb.append("<gml:upperCorner>" + upperCorner +"</gml:upperCorner>");
+       sb.append("</gml:Envelope>"); 
+       sb.append("</ogc:BBOX>");
+       
        
        return sb.toString();
    }

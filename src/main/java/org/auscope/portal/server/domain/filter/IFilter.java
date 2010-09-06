@@ -1,9 +1,9 @@
-package org.auscope.portal.mineraloccurrence;
+package org.auscope.portal.server.domain.filter;
+
 
 /**
- * User: Mathew Wyatt
- * Date: 23/03/2009
- * Time: 1:58:36 PM
+ * an interface for an ogc:Filter class to implement. Implementors must support filtering
+ * via a bounding box (on top of whatever filtering they provide nromally). 
  */
 public interface IFilter {
 

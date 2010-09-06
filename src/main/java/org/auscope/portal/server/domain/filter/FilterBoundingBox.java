@@ -1,7 +1,10 @@
-package org.auscope.portal.mineraloccurrence;
+package org.auscope.portal.server.domain.filter;
 
 import java.io.Serializable;
 import java.util.Arrays;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -11,6 +14,9 @@ import net.sf.json.JSONObject;
  * @author VOT002
  */
 public class FilterBoundingBox implements Serializable {
+    
+    protected static final Log log = LogFactory.getLog(FilterBoundingBox.class);
+    
     private String bboxSrs;
     private double[] lowerCornerPoints;
     private double[] upperCornerPoints;
@@ -77,5 +83,25 @@ public class FilterBoundingBox implements Serializable {
         }
          
         return result;
+    }
+    
+    /**
+     * Convenience method to parse a bbox from a JSON string. Returns null if the parsing fails
+     */
+    public static FilterBoundingBox attemptParseFromJSON(String json) {
+        FilterBoundingBox bbox = null;
+        try {
+            if (json != null) {
+                JSONObject obj = JSONObject.fromObject(json);
+                bbox = FilterBoundingBox.parseFromJSON(obj);
+                log.debug("bbox=" + bbox.toString());
+            } else {
+                log.debug("No bbox string, null will be returned");
+            }
+        } catch (Exception ex) {
+            log.warn("Couldnt parse bounding box filter (Invalid Values): " + ex);
+        }
+        
+        return bbox;
     }
 }

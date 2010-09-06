@@ -3,7 +3,7 @@ package org.auscope.portal.server.web.service;
 import java.util.Collection;
 
 import org.auscope.portal.mineraloccurrence.Commodity;
-import org.auscope.portal.mineraloccurrence.FilterBoundingBox;
+import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 
 /**
  * Service for operations on Commodity objects.
