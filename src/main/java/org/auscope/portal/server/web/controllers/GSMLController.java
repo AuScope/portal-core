@@ -9,6 +9,10 @@ import org.springframework.ui.ModelMap;
 import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.view.JSONModelAndView;
+import org.auscope.portal.server.domain.filter.AbstractFilter;
+import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.filter.IFilter;
+import org.auscope.portal.server.domain.filter.SimpleBBoxFilter;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.csw.ICSWMethodMaker;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -38,15 +42,19 @@ public class GSMLController {
     private HttpServiceCaller serviceCaller;
     private GmlToKml gmlToKml;
     private IWFSGetFeatureMethodMaker methodMaker;
+    private IFilter filter;
 
     @Autowired
     public GSMLController(HttpServiceCaller serviceCaller,
                           GmlToKml gmlToKml,
-                          IWFSGetFeatureMethodMaker methodMaker) {
+                          IWFSGetFeatureMethodMaker methodMaker,
+                          IFilter filter) {
         this.serviceCaller = serviceCaller;
         this.gmlToKml = gmlToKml;
         this.methodMaker = methodMaker;
+        this.filter = filter;
     }
+    
 
     /**
      * Given a service Url and a feature type this will query for all of the features, then convert them into KML,
@@ -61,11 +69,21 @@ public class GSMLController {
     @RequestMapping("/getAllFeatures.do")
     public ModelAndView requestAllFeatures(@RequestParam("serviceUrl") final String serviceUrl,
                                            @RequestParam("typeName") final String featureType,
+                                           @RequestParam(required=false, value="bbox") final String bboxJSONString,
                                            @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
                                            HttpServletRequest request) throws Exception {
 
         
-        String gmlResponse = serviceCaller.getMethodResponseAsString(methodMaker.makeMethod(serviceUrl, featureType, "", maxFeatures), 
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
+        String filterString;
+        
+        if (bbox == null) {
+            filterString = filter.getFilterStringAllRecords();
+        } else {
+            filterString = filter.getFilterStringBoundingBox(bbox);
+        }
+        
+        String gmlResponse = serviceCaller.getMethodResponseAsString(methodMaker.makeMethod(serviceUrl, featureType, filterString, maxFeatures), 
                                                                      serviceCaller.getHttpClient());
 
         return makeModelAndViewKML(convertToKml(gmlResponse, request, serviceUrl), gmlResponse);

@@ -319,9 +319,13 @@ public class EarthResourcesFilterController {
     @RequestMapping("/doNvclFilter.do")
     public ModelAndView doNvclFilter( @RequestParam("serviceUrl") String serviceUrl,
                                       @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
+                                      @RequestParam(required=false, value="bbox") String bboxJson,
                                       HttpServletRequest request) {
+        
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
+        
         try {
-            String gmlBlob = this.nvclService.getAllBoreholes(serviceUrl, maxFeatures);
+            String gmlBlob = this.nvclService.getAllBoreholes(serviceUrl, maxFeatures, bbox);
 
             String kmlBlob = convertToKml(gmlBlob, request, serviceUrl);
             //log.debug(kmlBlob);

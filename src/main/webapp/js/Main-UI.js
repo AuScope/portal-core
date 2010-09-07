@@ -537,7 +537,7 @@ Ext.onReady(function() {
 		}
 		
 		return {
-				bboxSrs : 'EPSG:4326',
+				bboxSrs : 'http://www.opengis.net/gml/srs/epsg.xml#4326',
 				lowerCornerPoints : [Math.min(adjustedSWLng, adjustedNELng), Math.min(sw.lat(), ne.lat())],
 				upperCornerPoints : [Math.max(adjustedSWLng, adjustedNELng), Math.max(sw.lat(), ne.lat())]
 		};
@@ -784,11 +784,10 @@ Ext.onReady(function() {
         	filterParameters = "&typeName=" + selectedRecord.get('typeName'); 
         } else {
         	filterParameters = filterPanel.getLayout().activeItem.getForm().getValues(true);
-        	
-        	// Uncomment this to add bbox support AUS-1597 
-        	//filterParameters += '&bbox=' + Ext.util.JSON.encode(fetchVisibleMapBounds(map));
         }
         filterParameters += '&maxFeatures=200'; // limit our feature request to 200 so we don't overwhelm the browser
+        // This line activates bbox support AUS-1597 
+    	filterParameters += '&bbox=' + escape(Ext.util.JSON.encode(fetchVisibleMapBounds(map)));
         
         for (var i = 0; i < serviceURLs.length; i++) {
             handleQuery(serviceURLs[i], selectedRecord, proxyURL, iconUrl, overlayManager, filterParameters, function() {
