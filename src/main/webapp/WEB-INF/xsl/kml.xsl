@@ -185,43 +185,6 @@
    </xsl:template>
    
    
-   <!-- TEMPLATE FOR TRANSLATING Mineral Occurrences -->
-   <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/er:MineralOccurrence | gml:featureMembers/er:MineralOccurrence" priority="100">
-   
-      <xsl:variable name="coordinates">
-         <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
-      </xsl:variable>
-      <xsl:variable name="resource_id">
-         <xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
-      </xsl:variable>
-
-      <xsl:variable name="idHrefLink">
-         <xsl:call-template name="createHrefLink">
-         <xsl:with-param name="thisGmlName" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
-         <xsl:with-param name="specification" select="./gsml:occurrence/gsml:MappedFeature/gsml:specification/@xlink:href"/>
-         <xsl:with-param name="candidate1" select="''"/>
-         <xsl:with-param name="candidate2">
-            <xsl:value-of select="$serviceURL"/><![CDATA[service=WFS&version=1.1.0&request=GetFeature&typename=er:MineralOccurrence&featureid=]]><xsl:value-of select="@gml:id"/></xsl:with-param>
-         </xsl:call-template>
-      </xsl:variable>
-
-      <Placemark>
-         <name><xsl:value-of select="$resource_id"/></name>
-         <description>
-            <![CDATA[<table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
-               <tr><td>Id</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'wfsFeaturePopup.do?url='"/><xsl:value-of select="$idHrefLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a></td>]]>
-            <![CDATA[</tr><tr><td>Type</td><td>]]><xsl:value-of select="./er:type"/>
-            <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./er:classification/er:MineralDepositModel/er:mineralDepositGroup"/><![CDATA[</td></tr>]]>
-            <xsl:apply-templates select="./er:commodityDescription"/>
-            <![CDATA[</table>]]>
-         </description>
-         
-         <xsl:apply-templates select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>
-      </Placemark>
-   </xsl:template>
-   
-   
    <!-- TEMPLATE FOR Commodity Description | Source Commodity -->
    <!-- ================================================================= -->
    <xsl:template match="er:commodityDescription | er:sourceCommodity">
@@ -298,21 +261,41 @@
    </xsl:template>
    
    
-   <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE -->
+   <!-- TEMPLATE FOR TRANSLATING MAPPED FEATURE - 
+   Mineral Occurence is requested via Mapped Feature (so the geometry can be extracted) -->
    <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/gsml:MappedFeature" priority="100">
+   <xsl:template match="gml:featureMember/gsml:MappedFeature | gml:featureMembers/gsml:MappedFeature" priority="100">
+
+      <xsl:variable name="coordinates">
+         <xsl:value-of select="./gsml:shape/gml:Point"/>
+      </xsl:variable>
+      <xsl:variable name="resource_id">
+         <xsl:value-of select="./gsml:specification/er:MineralOccurrence/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
+      </xsl:variable>
+
+      <xsl:variable name="idHrefLink">
+         <xsl:call-template name="createHrefLink">
+         <xsl:with-param name="thisGmlName" select="./gsml:specification/er:MineralOccurrence/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/>
+         <xsl:with-param name="specification" select="./gsml:specification/er:MineralOccurrence/er:commodityDescription[1]/er:Commodity/er:source/@xlink:href"/>
+         <xsl:with-param name="candidate1" select="''"/>
+         <xsl:with-param name="candidate2">
+            <xsl:value-of select="$serviceURL"/><![CDATA[service=WFS&version=1.1.0&request=GetFeature&typename=er:MineralOccurrence&featureid=]]><xsl:value-of select="./gsml:specification/er:MineralOccurrence/@gml:id"/>
+         </xsl:with-param>
+         </xsl:call-template>
+      </xsl:variable>
 
       <Placemark>
-         <name><xsl:value-of select="@gml:id"/></name>
+         <name><xsl:value-of select="$resource_id"/></name>
          <description>
-            <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
-            <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name"/>
-            <![CDATA[</td></tr><tr><td>Description</td><td>]]><xsl:value-of select="./gml:description"/>            
-            <![CDATA[</td></tr></table>]]>
+            <![CDATA[<table border="3" cellspacing="1" cellpadding="2" height="100%" bgcolor="#EAF0F8">
+               <tr><td>Id</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'/wfsFeaturePopup.do?url='"/><xsl:value-of select="$idHrefLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="$resource_id"/><![CDATA[</a></td>]]>
+            <![CDATA[</tr><tr><td>Type</td><td>]]><xsl:value-of select="./gsml:specification/er:MineralOccurrence/er:type"/>
+            <![CDATA[</td></tr><tr><td>Mineral Deposit Group</td><td>]]><xsl:value-of select="./gsml:specification/er:MineralOccurrence/er:classification/er:MineralDepositModel/er:mineralDepositGroup"/><![CDATA[</td></tr>]]>
+            <xsl:apply-templates select="./gsml:specification/er:MineralOccurrence/er:commodityDescription"/>
+            <![CDATA[</table>]]>
          </description>
-
-         <xsl:apply-templates select="gsml:shape"/>
          
+         <xsl:apply-templates select="./gsml:shape/gml:Point"/>
       </Placemark>
    </xsl:template>
    
@@ -470,6 +453,11 @@
          
          <coordinates>
             <xsl:choose>
+            	<xsl:when test="starts-with(@srsName,'http://www.opengis.net/gml/srs/epsg.xml#4283')">
+                  <xsl:call-template name="parseLatLongCoord">
+                     <xsl:with-param name="coordinates" select="$coordinates"/>
+                  </xsl:call-template>
+               </xsl:when>
                <xsl:when test="starts-with(@srsName,'EPSG')">
                   <xsl:call-template name="parseLongLatCoord">
                      <xsl:with-param name="coordinates" select="$coordinates"/>

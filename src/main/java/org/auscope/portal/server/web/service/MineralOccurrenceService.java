@@ -240,7 +240,7 @@ log.info(".......default C'tor");
         log.debug("\n" + serviceURL + "\n" + mineralOccurrenceFilter.getFilterStringAllRecords());
         
         //create the method
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterStringAllRecords(), maxFeatures);
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), maxFeatures);
 
         //run the dam query
         return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
@@ -283,7 +283,7 @@ log.info(".......default C'tor");
         
         
         //create the method
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
 
         //run the dam query
         return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());

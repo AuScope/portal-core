@@ -181,14 +181,8 @@ public class TestMineralOccurrenceServiceClient {
                                            minCommodityAmountUOM );
 
         context.checking(new Expectations() {{           
-           
-            // This is the get commodities part
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
-            
             //the mineral occurrence query part
-            oneOf (methodMaker).makeMethod(serviceURL, "er:MineralOccurrence", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
         }});
