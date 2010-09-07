@@ -1004,7 +1004,23 @@ Ext.onReady(function() {
                 width: 18,
                 sortable: false,
                 dataIndex: 'iconImgSrc',
-                align: 'center'
+                align: 'center',
+                renderer: function(value, metaData, record) {
+            		var serviceType = record.get('serviceType');
+            		var showKey = false;
+            		
+            		if (serviceType === 'wms') {
+            			showKey = true;
+            		} else if (serviceType === 'wcs') {
+            			showKey = record.get('wmsURLs').length > 0;
+            		}
+            		
+            		if (showKey) {
+            			return '<img width="16" height="16" src="img/key.png">';
+            		}
+            		
+            		return value;
+            	}
             },
             {
                 id:'loadingStatus',
@@ -1065,9 +1081,25 @@ Ext.onReady(function() {
             //get the actual data record
             var theRow = activeLayersPanel.getView().findRow(row);
             var record = activeLayersPanel.getStore().getAt(theRow.rowIndex);
+            var serviceType = record.get('serviceType');
 
+            //This is for the key/legend column
+            if (col.cellIndex == '1') {
+            	if (serviceType === 'wms' || (serviceType === 'wcs' && record.get('wmsURLs').length > 0)) {
+	                activeLayersToolTip = new Ext.ToolTip({
+	                    target: e.target ,
+	                    autoHide : true,
+	                    html: 'Show the key/legend for this layer' ,
+	                    anchor: 'bottom',
+	                    trackMouse: true,
+	                    showDelay:60,
+	                    autoHeight:true,
+	                    autoWidth: true
+	                });
+            	}
+            }
             //this is the status icon column
-            if (col.cellIndex == '2') {
+            else if (col.cellIndex == '2') {
                 var html = 'No status has been recorded.';
 
                 if (record.responseTooltip != null)
@@ -1087,7 +1119,6 @@ Ext.onReady(function() {
             }
             //this is the column for download link icons
             else if (col.cellIndex == '5') {
-                var serviceType = record.get('serviceType');
                 //var html = 'Download layer data.';
 
                 /*if (serviceType == 'wms') { //if a WMS
@@ -1129,10 +1160,45 @@ Ext.onReady(function() {
             var theRow = activeLayersPanel.getView().findRow(row);
             var record = activeLayersPanel.getStore().getAt(theRow.rowIndex);
             
+            var serviceType = record.get('serviceType');
+            var serviceUrls = record.get('serviceURLs');
+            var typeName    = record.get('typeName');
+            
+            //This is the marker key column
+            if (col.cellIndex == '1') {
+            	//For WMS, we request the Legend and display it
+            	if (serviceType === 'wms' || (serviceType === 'wcs' && record.get('wmsURLs').length > 0)) {
+            		var url = '';
+            		
+            		if (serviceType === 'wms') {
+            			url = new LegendManager(serviceUrls[0], typeName).generateImageUrl();
+            		} else {
+            			var wmsUrl = record.get('wmsURLs')[0];
+            			url = new LegendManager(wmsUrl.url, wmsUrl.name).generateImageUrl();
+            		}
+            		
+            		var html = '<a target="_blank" href="' + url + '">';
+            		html += '<img alt="Loading legend..." src="' + url + '"/>';
+            		html += '</a>';
+            		
+            		win = new Ext.Window({
+            			title		: 'Legend: ' + typeName,
+                        layout		: 'fit',
+                        width		: 400,
+                        height		: 300,
+
+                        items: [{
+                        	xtype 	: 'panel',
+                        	html	: html,
+                        	autoScroll	: true
+                        }]
+                    });
+
+            		win.show(this);
+            	}
+            }
             //this is the column for download link icons
-            if (col.cellIndex == '5') {
-            	var serviceType = record.get('serviceType');
-                var serviceUrls = record.get('serviceURLs');
+            else if (col.cellIndex == '5') {
                 var keys = [serviceUrls.length];
                 var values = [serviceUrls.length];
                 
@@ -1160,7 +1226,7 @@ Ext.onReady(function() {
                             url += "REQUEST=GetMap";
                             url += "&SERVICE=WMS";
                             url += "&VERSION=1.1.0";
-                            url += "&LAYERS=" + record.get('typeName');
+                            url += "&LAYERS=" + typeName;
                             if (this.styles)
                                 url += "&STYLES=" + this.styles;
                             else
