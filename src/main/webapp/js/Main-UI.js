@@ -1168,33 +1168,47 @@ Ext.onReady(function() {
             if (col.cellIndex == '1') {
             	//For WMS, we request the Legend and display it
             	if (serviceType === 'wms' || (serviceType === 'wcs' && record.get('wmsURLs').length > 0)) {
-            		var url = '';
             		
-            		if (serviceType === 'wms') {
-            			url = new LegendManager(serviceUrls[0], typeName).generateImageUrl();
-            		} else {
-            			var wmsUrl = record.get('wmsURLs')[0];
-            			url = new LegendManager(wmsUrl.url, wmsUrl.name).generateImageUrl();
+            		//Only show the legend window if it's not current visible
+            		var win = record.legendWindow;
+            		if (!win || (win && !win.isVisible())) {
+	            		var url = '';
+	            		
+	            		if (serviceType === 'wms') {
+	            			url = new LegendManager(serviceUrls[0], typeName).generateImageUrl();
+	            		} else {
+	            			var wmsUrl = record.get('wmsURLs')[0];
+	            			url = new LegendManager(wmsUrl.url, wmsUrl.name).generateImageUrl();
+	            		}
+	            		
+	            		var html = '<a target="_blank" href="' + url + '">';
+	            		html += '<img alt="Loading legend..." src="' + url + '"/>';
+	            		html += '</a>';
+	            		
+	            		win = new Ext.Window({
+	            			title		: 'Legend: ' + typeName,
+	                        layout		: 'fit',
+	                        width		: 200,
+	                        height		: 300,
+	
+	                        items: [{
+	                        	xtype 	: 'panel',
+	                        	html	: html,
+	                        	autoScroll	: true
+	                        }]
+	                    });
+	
+	            		//Save our window reference so we can tell if its already been open
+	            		//(Using record.set('legendWindow', win) causes a stack overflow.)
+	            		record.legendWindow = win;
+	            		
+	            		win.show(this);
+            		} else if (win){
+            			//The window is already open
+            			win.toFront();
+            			win.center();
+            			win.focus();
             		}
-            		
-            		var html = '<a target="_blank" href="' + url + '">';
-            		html += '<img alt="Loading legend..." src="' + url + '"/>';
-            		html += '</a>';
-            		
-            		win = new Ext.Window({
-            			title		: 'Legend: ' + typeName,
-                        layout		: 'fit',
-                        width		: 400,
-                        height		: 300,
-
-                        items: [{
-                        	xtype 	: 'panel',
-                        	html	: html,
-                        	autoScroll	: true
-                        }]
-                    });
-
-            		win.show(this);
             	}
             }
             //this is the column for download link icons
