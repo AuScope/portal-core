@@ -116,9 +116,9 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
                 var typeName = record.get('typeName');
                 
                 if(typeName.substring(0, typeName.indexOf(":")) == "gt") {
-                	handleGeotransectWmsRecord(url, activeLayersStore, map, latlng);
+                	handleGeotransectWmsRecord(url, record, map, latlng);
                 } else {    
-                	handleGenericWmsRecord(url, map, latlng);
+                	handleGenericWmsRecord(url, i, map, latlng);
             	}
                 
             }
@@ -135,18 +135,18 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
  * @param map
  * @param latlng
  */
-function handleGeotransectWmsRecord(url, activeLayersStore, map, latlng) {
+function handleGeotransectWmsRecord(url, record, map, latlng) {
 	
 	url += "&INFO_FORMAT=application/vnd.ogc.gml";
 	
-    GDownloadUrl(url, function(response, responseCode) {
-        if (responseCode == 200) {
-            if (isGmlDataThere(response)) {                                  
-            	//
-            	var geotransectRecord = null;
+    Ext.Ajax.request({
+    	url: url,
+    	timeout		: 180000,
+    	success: function(response, options) {
+            if (isGmlDataThere(response.responseText)) {                                  
             	
             	//Parse the response
-				var XmlDoc = GXml.parse(response);
+				var XmlDoc = GXml.parse(response.responseText);
 				if (g_IsIE) {
 				  XmlDoc.setProperty("SelectionLanguage", "XPath");
             	}
@@ -161,54 +161,34 @@ function handleGeotransectWmsRecord(url, activeLayersStore, map, latlng) {
             			schemaLoc.indexOf(' ', schemaLoc.indexOf("typeName")+9));
             	//Browser may have replaced certain characters
             	reqTypeName = reqTypeName.replace("%3A", ":");
-            	
-            	//Retrieve the matching record to pass to GeotransectsInfoWindow
-            	//TODO: There may be a better way to do this, involving using Extjs AJAX
-            	// rather than GDownloadUrl, that allows access to the iteration record
-            	// when executing the callback.
-            	var j = 0;
-                while (geotransectRecord == null && 
-                		j < activeLayersStore.getCount()) {
-                    var rec = activeLayersPanel.getStore().getAt(j);
-                    if(reqTypeName == rec.get('typeName')) {
-                    	geotransectRecord = rec;
-                    }
-                    j++;
-                }
-            		                               
-                if(geotransectRecord != null) {
-                    //Extract the line Id from the XML
-                	var line = rootNode.getElementsByTagName("gt:LINE");
-                    var lineId = "";
-                    if(line != null && line.length > 0) {
-                	    if(document.all) { //IE
-                	        lineId = line[0].text;
-                	    } else {
-                	    	lineId = line[0].textContent;
-                	    }
 
-                	    if(lineId.indexOf("cdp") == 0) {
-                	    	lineId = lineId.substring(3, lineId.length);
-                	    }
-                	    
-                    	new GeotransectsInfoWindow(latlng, map, lineId, geotransectRecord).show();                                
-                    } else {
-                    	//alert("Remote server returned an unsupported response.");
-                    }
+                //Extract the line Id from the XML
+            	var line = rootNode.getElementsByTagName("gt:LINE");
+                var lineId = "";
+                if(line != null && line.length > 0) {
+            	    if(document.all) { //IE
+            	        lineId = line[0].text;
+            	    } else {
+            	    	lineId = line[0].textContent;
+            	    }
+
+            	    if(lineId.indexOf("cdp") == 0) {
+            	    	lineId = lineId.substring(3, lineId.length);
+            	    }
+            	    
+                	new GeotransectsInfoWindow(latlng, map, lineId, this).show();                                
                 } else {
-                	alert("Remote server returned an unsupported response.");
-                }                           
+                	//alert("Remote server returned an unsupported response.");
+                }
+                         
             }
-        } else if(responseCode == -1) {
-            alert("Data request timed out. Please try later.");
-        } else if ((responseCode >= 400) & (responseCode < 500)){
-            alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
-        } else if ((responseCode >= 500) & (responseCode <= 506)){
-            alert('Requested service not available, not implemented or internal service error. Error code is: ' + responseCode);
-        } else {
-            alert('Remote server returned error code: ' + responseCode);
-        }
+    	}.createDelegate(record),
+    	failure: function(response, options) {
+    		Ext.Msg.alert('Error requesting data', 'Error (' + 
+    				response.status + '): ' + response.statusText);
+    	}
     });
+
 }
 /**
  * Request html data from the url and open an info window to present the data.
@@ -217,7 +197,7 @@ function handleGeotransectWmsRecord(url, activeLayersStore, map, latlng) {
  * @param map
  * @param latlng
  */
-function handleGenericWmsRecord(url, map, latlng) {
+function handleGenericWmsRecord(url, i, map, latlng) {
 
  	url += "&INFO_FORMAT=text/html";
  	
