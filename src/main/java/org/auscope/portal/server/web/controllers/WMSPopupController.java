@@ -38,7 +38,8 @@ public class WMSPopupController {
                             @RequestParam("y") String y,
                             @RequestParam("BBOX") String bbox, 
                             @RequestParam("WIDTH") String width,
-                            @RequestParam("HEIGHT") String height) throws IOException 
+                            @RequestParam("HEIGHT") String height,
+                            @RequestParam("INFO_FORMAT") String infoFormat) throws IOException 
    {   
       String AMP = "&";
       String url = wms_url;
@@ -54,7 +55,7 @@ public class WMSPopupController {
       url += "&VERSION=1.1.0";
       url += "&BBOX=" + bbox;
       url += "&X=" + x + "&Y=" + y;
-      url += "&INFO_FORMAT=text/html";
+      url += "&INFO_FORMAT=" + infoFormat;
       url += "&QUERY_LAYERS=" + query_layers;
       url += "&FEATURE_COUNT=50";
       url += "&SRS=EPSG:4326";
