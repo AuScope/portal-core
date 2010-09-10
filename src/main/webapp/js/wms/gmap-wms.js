@@ -64,7 +64,7 @@ function GWMSTileLayer(map, copyrights,  minResolution,  maxResolution) {
    this.opacity = 1.0;
    
    // Google Maps Zoom level at which we switch from Mercator to Lat/Long.
-	// this.mercZoomLevel = 15; 
+	this.mercZoomLevel = 4; 
 }
 
 GWMSTileLayer.prototype = new GTileLayer(new GCopyrightCollection(), 0, 0);
@@ -98,27 +98,26 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
 	var proj = mapType.getProjection();
 	var tileSize = mapType.getTileSize();
 
-	var upperLeftPix = new GPoint(point.x * tileSize, (point.y+1) * tileSize);
-	var lowerRightPix = new GPoint((point.x+1) * tileSize, point.y * tileSize);
-	var upperLeft = proj.fromPixelToLatLng(upperLeftPix, zoom);
-   var lowerRight = proj.fromPixelToLatLng(lowerRightPix, zoom);
+	var lowerLeftPix = new GPoint(point.x * tileSize, (point.y+1) * tileSize);
+	var upperRightPix = new GPoint((point.x+1) * tileSize, point.y * tileSize);
+	var upperRight = proj.fromPixelToLatLng(upperRightPix, zoom);
+	var lowerLeft = proj.fromPixelToLatLng(lowerLeftPix, zoom);
    
-   /*if (this.mercZoomLevel != 0 && zoom < this.mercZoomLevel) {
-      var boundBox = this.dd2MercMetersLng(upperLeft.lng()) + "," +
-                     this.dd2MercMetersLat(upperLeft.lat()) + "," +
-                     this.dd2MercMetersLng(lowerRight.lng()) + "," +
-                     this.dd2MercMetersLat(lowerRight.lat());
+   if (this.mercZoomLevel != 0 && zoom < this.mercZoomLevel) {
+      var boundBox = this.dd2MercMetersLng(lowerLeft.lng()) + "," +
+                     this.dd2MercMetersLat(lowerLeft.lat()) + "," +
+                     this.dd2MercMetersLng(upperRight.lng()) + "," +
+                     this.dd2MercMetersLat(upperRight.lat());
 		// Change for GeoServer - 41001 is mercator and installed by default.
-      var srs = "EPSG:3395";
-   } else {*/
-   
-   var boundBox = upperLeft.lng() + "," +
-                  upperLeft.lat() + "," +
-                  lowerRight.lng() + "," +
-                  lowerRight.lat();
+      var srs = "EPSG:41001";
+   } else {
+       var boundBox = lowerLeft.lng() + "," +
+                      lowerLeft.lat() + "," +
+                      upperRight.lng() + "," +
+                      upperRight.lat();
                   
-   var srs = "EPSG:4326";
-	//}
+       var srs = "EPSG:4326";
+	}
 
    // Build GetMap request URL
    var url = this.baseURL;
