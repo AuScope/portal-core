@@ -178,7 +178,7 @@ function handleGeotransectWmsRecord(url, record, map, latlng) {
             	    
                 	new GeotransectsInfoWindow(latlng, map, lineId, this).show();                                
                 } else {
-                	//alert("Remote server returned an unsupported response.");
+                	alert("Remote server returned an unsupported response.");
                 }
                          
             }

@@ -37,13 +37,15 @@ GeotransectsInfoWindow.prototype = {
 	'show': function() {
 		//Open our window with the basic info displayed
 		this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, 
+				"<div style='min-width:400; min-height:300;'>" +
 				"<table border=\"1\" cellspacing=\"1\" width=\"100%\" bgcolor=\"#EAF0F8\">" 
 				+"<tr><td><pre style=\"white-space:pre-wrap;white-space:-moz-pre-wrap;" +
 						"white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;" +
-						"overflow:auto;\">" 
+						"width:99%;overflow:auto;\">" 
 				+ this.description 
 				+ "</pre></td></tr>" 
-				+"</table>");
+				+"</table>" +
+			    "</div>");
 		
 		//The following initialisation is required as the tabs later added asynchronously 
 		//may end up being added in the wrong order (2 before 1 exists) resulting in errors
@@ -51,11 +53,13 @@ GeotransectsInfoWindow.prototype = {
 		this.tabsArray[1] = new GInfoWindowTab(this.TAB_2, "");
 		this.tabsArray[2] = new GInfoWindowTab(this.TAB_3, "");
 		
-        this.map.openInfoWindowTabs(this.latlng, this.tabsArray, 
-        		{maxWidth:800, maxHeight:500, autoScroll:true});
+		var me = this;		
 
-        //And update it with the downloaded data as it arrives
-        this.retrieveDatasets(); 
+        this.map.openInfoWindowTabs(this.latlng, this.tabsArray, 
+        		{maxWidth:800, maxHeight:300, autoScroll:true,
+        	onOpenFn:function(){
+                me.retrieveDatasets(); 
+        	}});
 	},
 
 	'retrieveDatasets' : function() {
@@ -138,7 +142,7 @@ GeotransectsInfoWindow.prototype = {
     	//Create new tab
         this.tabsArray[tabI] = new GInfoWindowTab(label, sHtml);
 		
-        // Add new tab to pop-up window
+        //Add new tab to pop-up window
         this.map.updateInfoWindow(this.tabsArray);  
 	}
 	
