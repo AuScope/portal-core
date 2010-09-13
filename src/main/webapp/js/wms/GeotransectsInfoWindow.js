@@ -22,6 +22,8 @@ function GeotransectsInfoWindow(iLatlng, iMap, iLineId, iRecord) {
         var str = url.slice( ("http://").length);   
         return 'http://' + str.slice(0,str.indexOf("/"));
     })(this.record.get('serviceURLs')[0]);  
+    
+    this.mask = new Ext.LoadMask(Ext.get('center_region'), {msg:"Please wait..."});
 }
 
 GeotransectsInfoWindow.prototype = {
@@ -60,10 +62,14 @@ GeotransectsInfoWindow.prototype = {
         	onOpenFn:function(){
                 me.retrieveDatasets(); 
         	}});
+
 	},
 
 	'retrieveDatasets' : function() {
 	
+		this.map.getInfoWindow().hide();
+        this.mask.show();  
+        
 		//request data urls - seismic section data
 	    var url = this.geoServerUrl;    
         url += this.GETSEISMICSECTIONS;
@@ -79,7 +85,7 @@ GeotransectsInfoWindow.prototype = {
 	},
 	
 	'requestData' : function(url, tabI, label) {
-		var me = this;
+		var me = this;   
 		
         Ext.Ajax.request({
         	url: 'requestGeotransectsData.do',
@@ -91,10 +97,12 @@ GeotransectsInfoWindow.prototype = {
         		var responseObj = Ext.util.JSON.decode(Ext.util.JSON.decode(response.responseText).json);
        			
         		//Generate an error / success fragment to display to the user
-                if (!responseObj.result.success) {
+                if (!responseObj.result.success) {                  
+                    this.mask.hide();  
         			Ext.Msg.alert('Error downloading data', 'There was an error whilst communicating with ' + url);
         			return;
-        		} else if (responseObj.items.length == 0) {
+        		} else if (responseObj.items.length == 0) {       	        
+        	        this.mask.hide();  
         			Ext.Msg.alert('Error downloading data', 'The URL ' + url + ' returned no parsable records');
         			return;
         		}
@@ -105,9 +113,11 @@ GeotransectsInfoWindow.prototype = {
             		values[i] = responseObj.items[i].url;
             	}
             	
-            	me.addDataTab(values, tabI, label);       		      
+            	me.addDataTab(values, tabI, label);     
+            	
         	},
-        	failure: function(response, options) {
+        	failure: function(response, options) {   
+                this.mask.hide();  
         		Ext.Msg.alert('Error requesting data', 'Error (' + response.status + '): ' + response.statusText);
         	}
         });
@@ -144,6 +154,9 @@ GeotransectsInfoWindow.prototype = {
 		
         //Add new tab to pop-up window
         this.map.updateInfoWindow(this.tabsArray);  
+        
+        this.mask.hide();  
+		this.map.getInfoWindow().show();
 	}
 	
 };
