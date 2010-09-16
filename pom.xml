@@ -102,13 +102,15 @@
                     -->
                     <scanIntervalSeconds>9999</scanIntervalSeconds>
                     <contextPath>/</contextPath>
+<!-- Dont disable unit tests....
                     <systemProperties>
                         <systemProperty>
                             <name>maven.test.skip</name>
                             <value>true</value>
                         </systemProperty>
                     </systemProperties>
-                </configuration>
+-->
+				</configuration>
             </plugin>
         </plugins>
     </build>

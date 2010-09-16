@@ -6,7 +6,7 @@ IF "%1" == "-r" GOTO RUN
 GOTO END
 
 :BUILD
-call mvn -Dmaven.test.skip=true package
+call mvn package
 GOTO END
 
 :RUN
@@ -14,6 +14,5 @@ mvn jetty:run
 GOTO END
 
 :BUILD_RUN
-call mvn -Dmaven.test.skip=true package jetty:run
-REM call mvn jetty:run-war
+call mvn jetty:run
 :END
