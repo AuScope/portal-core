@@ -1,6 +1,7 @@
 package org.auscope.portal.server.web.service;
 
 import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.logging.Log;
@@ -58,7 +59,6 @@ public class HttpServiceCaller {
 
         log.trace("XML response from server:");
         log.trace("\n" + response);
-        
         //return it
         return response;
     }
@@ -126,6 +126,8 @@ public class HttpServiceCaller {
         log.trace("CONN_TIMEOUT : " + CONN_TIMEOUT);
         
         log.debug("method=" + method.getURI());
+        log.info("method=" + method.getURI());
+        
         
         // Period of time in milliseconds to wait for a content body 
         // sent in response to HEAD method from a non-compliant server.
@@ -199,7 +201,7 @@ public class HttpServiceCaller {
         String line;
         while((line = reader.readLine()) != null) {
             stringBuffer.append(line);
-        }
+        }        
         return stringBuffer.toString();
     }   
 }

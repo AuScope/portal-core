@@ -64,7 +64,7 @@ public class NvclService {
      * @return
      * @throws Exception
      */
-    public String getAllBoreholes(String serviceURL, int maxFeatures, FilterBoundingBox bbox) throws Exception {
+    public HttpMethodBase getAllBoreholes(String serviceURL, int maxFeatures, FilterBoundingBox bbox) throws Exception {
         String filterString;
         
         if (bbox == null) {
@@ -76,7 +76,8 @@ public class NvclService {
         // Create a GetFeature request with an empty filter - get all
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:Borehole", filterString, maxFeatures);
         // Call the service, and get all the boreholes
-        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
     
 }

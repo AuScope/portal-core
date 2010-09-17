@@ -10,7 +10,7 @@ Ext.onReady(function() {
     var map;
     var formFactory = new FormFactory();
     var searchBarThreshold = 6; //how many records do we need to have before we show a search bar
-
+    
     //Converts an array of BBox records into an actual BBox object array
     var convertBboxList = function(v, record) {
         for (var i = 0; i < v.length; i++) {
@@ -43,7 +43,8 @@ Ext.onReady(function() {
             {   name: 'bboxes', convert : convertBboxList},
             {	name: 'iconAnchor'		},
             {	name: 'infoWindowAnchor'},
-            {   name: 'iconSize'        }
+            {   name: 'iconSize'        },
+            {	name: 'featureString'	}
         ]),
         sortInfo: {field:'title', direction:'ASC'}
     });
@@ -407,7 +408,7 @@ Ext.onReady(function() {
     //------ Custom Layers
 
     var customLayersStore = new Ext.data.Store({
-        proxy: new Ext.data.HttpProxy({url: '/getCustomLayers.do'}),
+        proxy: new Ext.data.HttpProxy({url: 'getCustomLayers.do'}),
         //baseParams : {service_URL : 'fullName' }, // one parameter, column, which is set to ‘fullNname’
         baseParams : { service_URL : '' },
         reader: new Ext.data.ArrayReader({}, [
@@ -537,7 +538,7 @@ Ext.onReady(function() {
 		}
 		
 		return {
-				bboxSrs : 'http://www.opengis.net/gml/srs/epsg.xml#4326',
+				bboxSrs : 'EPSG:4326',
 				lowerCornerPoints : [Math.min(adjustedSWLng, adjustedNELng), Math.min(sw.lat(), ne.lat())],
 				upperCornerPoints : [Math.max(adjustedSWLng, adjustedNELng), Math.max(sw.lat(), ne.lat())]
 		};
@@ -588,7 +589,8 @@ Ext.onReady(function() {
             {   name: 'loadingStatus'   },
             {   name: 'iconImgSrc'      },
             {   name: 'iconUrl'         },
-            {   name: 'dataSourceImage' }
+            {   name: 'dataSourceImage' },
+            {   name: 'featureString' 	}
         ])
     });
 
@@ -764,12 +766,14 @@ Ext.onReady(function() {
         if (selectedRecord.tileOverlay instanceof OverlayManager) selectedRecord.tileOverlay.clearOverlays();
 
         //a response status holder
-        selectedRecord.responseTooltip = new ResponseTooltip();
-
+        selectedRecord.responseTooltip = new ResponseTooltip(); 
+        selectedRecord.debuggerData = new DebuggerData(); 
         var serviceURLs = selectedRecord.get('serviceURLs');
         var proxyURL = selectedRecord.get('proxyURL');
         var iconUrl = selectedRecord.get('iconUrl');
-
+        var featureString = selectedRecord.get('featureString');
+        var description = selectedRecord.get('description');
+        
         var finishedLoadingCounter = serviceURLs.length;
         // var markerOverlay = new MarkerOverlay();
 
@@ -784,10 +788,11 @@ Ext.onReady(function() {
         	filterParameters = "&typeName=" + selectedRecord.get('typeName'); 
         } else {
         	filterParameters = filterPanel.getLayout().activeItem.getForm().getValues(true);
+        	
+        	// Uncomment this to add bbox support AUS-1597 
+        	//filterParameters += '&bbox=' + Ext.util.JSON.encode(fetchVisibleMapBounds(map));
         }
         filterParameters += '&maxFeatures=200'; // limit our feature request to 200 so we don't overwhelm the browser
-        // This line activates bbox support AUS-1597 
-    	filterParameters += '&bbox=' + escape(Ext.util.JSON.encode(fetchVisibleMapBounds(map)));
         
         for (var i = 0; i < serviceURLs.length; i++) {
             handleQuery(serviceURLs[i], selectedRecord, proxyURL, iconUrl, overlayManager, filterParameters, function() {
@@ -804,11 +809,15 @@ Ext.onReady(function() {
 
     var handleQuery = function(serviceUrl, selectedRecord, proxyURL, iconUrl, overlayManager, filterParameters, finishedLoadingHandler) {
         selectedRecord.responseTooltip.addResponse(serviceUrl, "Loading...");
+        selectedRecord.debuggerData.addResponse(serviceUrl,"Loading...");
         GDownloadUrl(proxyURL + '?' + filterParameters + '&serviceUrl=' + serviceUrl, function(data, responseCode) {
             if (responseCode == 200) {
                 var jsonResponse = eval('(' + data + ')');
+                
                 if (jsonResponse.success) {
-
+                	//added for data response
+                	
+					
                 	var icon = new GIcon(G_DEFAULT_ICON, iconUrl);   
                 	
                 	var iconSize = selectedRecord.get('iconSize');
@@ -850,12 +859,19 @@ Ext.onReady(function() {
 
                     //store the gml for later download needs
                     selectedRecord.gml = jsonResponse.data.gml;
-
+                    //to check data response                   		
+                  
+                    var debugInfo = jsonResponse.debugInfo.info;
+					selectedRecord.debuggerData.addResponse(serviceUrl,debugInfo);
                     //store the status
                     selectedRecord.responseTooltip.addResponse(serviceUrl, (markers.length + overlays.length) + " records retrieved.");
                 } else {
                     //store the status
                     selectedRecord.responseTooltip.addResponse(serviceUrl, jsonResponse.msg);
+                    if(jsonResponse.debugInfo === undefined)
+                    	selectedRecord.debuggerData.addResponse(serviceUrl, jsonResponse.msg);
+                    else
+                    	selectedRecord.debuggerData.addResponse(serviceUrl, jsonResponse.msg +jsonResponse.debugInfo.info);
                 }
                 //markerOverlay.addList(markers);
             }else if(responseCode == -1) {
@@ -929,6 +945,7 @@ Ext.onReady(function() {
     var activeLayersPanelExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template('<p>{description}</p><br>')
     });
+    
 
     var activeLayersRemoveButton = {
                 text:'Remove Layer',
@@ -1026,8 +1043,10 @@ Ext.onReady(function() {
                 id:'loadingStatus',
                 header: "",
                 width: 25,
+                pressed: true,
                 sortable: false,
                 dataIndex: 'loadingStatus',
+                
                 align: 'center'
             },
             {
@@ -1163,6 +1182,7 @@ Ext.onReady(function() {
             var serviceType = record.get('serviceType');
             var serviceUrls = record.get('serviceURLs');
             var typeName    = record.get('typeName');
+            var featureType = record.get('featureString');          
             
             //This is the marker key column
             if (col.cellIndex == '1') {
@@ -1208,6 +1228,46 @@ Ext.onReady(function() {
             			win.toFront();
             			win.center();
             			win.focus();
+            		}
+            	}
+            }
+            //this is for clicking the loading icon
+            else if (col.cellIndex == '2') {
+            	if (serviceType == 'wfs'){
+	            	// create the window on the first click and reuse on subsequent clicks
+            		function gup( name )
+            		{
+            		  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+            		  var regexS = "[\\?&]"+name+"=([^&#]*)";
+            		  var regex = new RegExp( regexS );
+            		  var results = regex.exec( window.location.href );
+            		  if( results == null )
+            		    return "";
+            		  else
+            		    return results[1];
+            		}
+            		var frank_param = gup( 'debug' );
+            		if(frank_param == 1){
+		            	var debugHtml = 'Please generate a request to get the request query.';
+		            	
+		                if (record.debuggerData != null)
+		                	debugHtml = record.debuggerData.getHtml();
+			                            	
+			                var chkpanel =new Ext.Panel({
+			                	autoScroll	: true,    	                        	
+	                        	html	:	debugHtml
+	    	            	});
+			                var debugWin = new Ext.Window({
+		                	    title: 'Debugger: '+ typeName,
+		                	    layout:'fit',
+		                        width:500,
+		                        height:300,
+		                                                
+	                	            items: [
+	                	                    chkpanel
+	    	                        ]
+		                });
+		            	debugWin.show(this);
             		}
             	}
             }
@@ -1299,6 +1359,9 @@ Ext.onReady(function() {
         contextMenu.showAt(event.getXY());
     });
     
+   
+	
+    
     /**
      * Opens a new window to the specified URL and passes URL parameters like so keys[x]=values[x]
      *
@@ -1307,6 +1370,7 @@ Ext.onReady(function() {
      * @param {Array}  keys
      * @param {Array} values
      */
+    
     var openWindowWithPost = function(url, name, keys, values)
     {
         if (keys && values && (keys.length == values.length)) {
@@ -1628,8 +1692,6 @@ Ext.onReady(function() {
     	var layerCenter = layerBounds.getCenter();
     	map.panTo(layerCenter);
     	
-    	
-    	
     };
     
     complexFeaturesPanel.on("cellclick", showRecordBoundingBox, complexFeaturesPanel.on);
@@ -1639,5 +1701,6 @@ Ext.onReady(function() {
     complexFeaturesPanel.on("celldblclick", moveToBoundingBox, complexFeaturesPanel);
     wmsLayersPanel.on("celldblclick", moveToBoundingBox, wmsLayersPanel);
     wcsLayersPanel.on("celldblclick", moveToBoundingBox, wcsLayersPanel);
+    
     
 });

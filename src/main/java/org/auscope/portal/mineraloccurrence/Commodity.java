@@ -9,6 +9,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -19,12 +21,13 @@ import org.xml.sax.SAXException;
  * @version $Id$
  */
 public class Commodity {
+	protected final Log log = LogFactory.getLog(getClass());
     private Node commodityNode;
     private XPath xPath;
 
     public Commodity(Node commodityNode) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         this.commodityNode = commodityNode;
-
+        log.info("i m in commodity class" +this.commodityNode +"this was a commodity node");
         XPathFactory factory = XPathFactory.newInstance();
         xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
@@ -40,8 +43,10 @@ public class Commodity {
                     result = list.item(i).getTextContent();
                 }
             }
+            log.info("result in commodity is :" + result);
             return result;
         } catch (Exception e) {
+        	log.info("if its a error in commodity i will come over here");
             return "";
         }
     }    
@@ -51,6 +56,7 @@ public class Commodity {
         try {
             XPathExpression expr = xPath.compile("er:commodityName");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
+            log.info("commodity class to get text commodity name "+ result.getTextContent() +"was the content");
             return result.getTextContent();
         } catch (Exception e) {
             return "";
@@ -62,6 +68,7 @@ public class Commodity {
         try {
             XPathExpression expr = xPath.compile("er:commodityImportance");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
+            log.info("commodity class to getCommodityImportance"+ result.getTextContent() +"was the content");
             return result.getTextContent();
         } catch (Exception e) {
             return "";
@@ -75,6 +82,7 @@ public class Commodity {
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
             String search  = "urn:cgi";
             String s = result.getAttributes().getNamedItem("xlink:href").getTextContent();
+            log.info("commodity class to getSource"+ s.substring(s.indexOf(search)) +"was the content");
             return s.substring(s.indexOf(search));
         } catch (Exception e) {
             return "";

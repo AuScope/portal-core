@@ -183,8 +183,9 @@ public class TestMineralOccurrenceServiceClient {
         context.checking(new Expectations() {{           
             //the mineral occurrence query part
             oneOf (methodMaker).makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
+            
+            /*oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));*/
         }});
 
         this.mineralOccurrenceService.getMineralOccurrenceGML(serviceURL,

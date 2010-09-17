@@ -23,7 +23,6 @@ public class TestNvclService {
     private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
     private IWFSGetFeatureMethodMaker mockMethodMaker = context.mock(IWFSGetFeatureMethodMaker.class);
     
-    
     @Before
     public void setup() throws Exception {
         service = new NvclService();
@@ -48,8 +47,8 @@ public class TestNvclService {
             oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(responseString));
         }});
         
-        
-        String result = service.getAllBoreholes(serviceURL, maxFeatures, bbox);
+        HttpMethodBase method = service.getAllBoreholes(serviceURL, maxFeatures, bbox);
+        String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
         Assert.assertNotNull(result);
         Assert.assertEquals(responseString, result);
     }
@@ -69,8 +68,8 @@ public class TestNvclService {
             oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(responseString));
         }});
         
-        
-        String result = service.getAllBoreholes(serviceURL, maxFeatures, null);
+        HttpMethodBase method = service.getAllBoreholes(serviceURL, maxFeatures, null);
+        String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
         Assert.assertNotNull(result);
         Assert.assertEquals(responseString, result);
     }

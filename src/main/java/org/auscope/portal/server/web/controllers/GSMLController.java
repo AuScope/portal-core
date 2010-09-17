@@ -1,5 +1,7 @@
 package org.auscope.portal.server.web.controllers;
 
+import net.sf.json.JSONArray;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +20,9 @@ import org.auscope.portal.csw.ICSWMethodMaker;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,6 +80,8 @@ public class GSMLController {
 
         
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
+     
+        JSONArray requestInfo = new JSONArray();
         String filterString;
         
         if (bbox == null) {
@@ -82,11 +89,20 @@ public class GSMLController {
         } else {
             filterString = filter.getFilterStringBoundingBox(bbox);
         }
+        HttpMethodBase method = methodMaker.makeMethod(serviceUrl, featureType, filterString, maxFeatures);
+        RequestEntity ent;
+        String body = null;
+        if (method instanceof PostMethod) {
+        	ent = ((PostMethod) method).getRequestEntity();
+            body = ((StringRequestEntity) ent).getContent(); 
+        }
+        requestInfo.add(serviceUrl);
+        requestInfo.add(body);
         
-        String gmlResponse = serviceCaller.getMethodResponseAsString(methodMaker.makeMethod(serviceUrl, featureType, filterString, maxFeatures), 
+        String gmlResponse = serviceCaller.getMethodResponseAsString(method, 
                                                                      serviceCaller.getHttpClient());
 
-        return makeModelAndViewKML(convertToKml(gmlResponse, request, serviceUrl), gmlResponse);
+        return makeModelAndViewKML(convertToKml(gmlResponse, request, serviceUrl), gmlResponse, requestInfo);
     }
     
     /**
@@ -154,6 +170,25 @@ public class GSMLController {
         ModelMap model = new ModelMap();
         model.put("success", true);
         model.put("data", data);
+
+        return new JSONModelAndView(model);
+    }
+    //for debugger:
+    private ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob, JSONArray requestInfo) {
+    	
+    	
+    	final Map<String,String> data = new HashMap<String,String>();
+        data.put("kml", kmlBlob);
+        data.put("gml", gmlBlob);
+        
+        final Map<String,String> dataInfo = new HashMap<String,String>();
+        dataInfo.put("url",requestInfo.getString(0) );
+        dataInfo.put("info",requestInfo.getString(1) );
+        
+        ModelMap model = new ModelMap();
+        model.put("success", true);
+        model.put("data", data);
+        model.put("dataInfo", dataInfo);
 
         return new JSONModelAndView(model);
     }

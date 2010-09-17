@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -69,11 +72,11 @@ log.info(".......default C'tor");
      */
     public List<Mine> getAllMines(String serviceURL, int maxFeatures) throws Exception {
         //get the mines
-        String mineResponse = this.getAllMinesGML(serviceURL, maxFeatures);
+    	HttpMethodBase method = this.getAllMinesGML(serviceURL, maxFeatures);
+        String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
         //convert the response into a nice collection of Mine Nodes
         List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
-
         //send it back!
         return mines;
     }
@@ -88,11 +91,11 @@ log.info(".......default C'tor");
      */
     public List<Mine> getAllVisibleMines(String serviceURL, FilterBoundingBox bbox, int maxFeatures) throws Exception {
         //get the mines
-        String mineResponse = this.getAllVisibleMinesGML(serviceURL, bbox, maxFeatures);
+    	HttpMethodBase method = this.getAllVisibleMinesGML(serviceURL, bbox, maxFeatures);
+        String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
         //convert the response into a nice collection of Mine Nodes
-        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
-
+        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);        
         //send it back!
         return mines;
     }
@@ -106,7 +109,7 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public String getAllVisibleMinesGML(String serviceURL, FilterBoundingBox bbox, int maxFeatures) throws Exception {
+    public HttpMethodBase getAllVisibleMinesGML(String serviceURL, FilterBoundingBox bbox, int maxFeatures) throws Exception {
         MineFilter filter = new MineFilter("");
         
         log.debug("Mine query... url:" + serviceURL);
@@ -114,7 +117,8 @@ log.info(".......default C'tor");
         
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", filter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
         
-        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
     
     /**
@@ -123,19 +127,18 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public String getAllMinesGML(String serviceURL, int maxFeatures) throws Exception {
+    public HttpMethodBase getAllMinesGML(String serviceURL, int maxFeatures) throws Exception {
         MineFilter filter = new MineFilter("");
         
-        log.debug("Mine query... url:" + serviceURL);
+        log.debug("Mine query... url:" + serviceURL);        
         log.trace("Mine query... filter: " + filter.getFilterStringAllRecords());
         
         //create a GetFeature request with an empty filter - get all
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", filter.getFilterStringAllRecords(), maxFeatures);
-
-        
         
         //call the service, and get all the mines
-        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+       //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
 
     
@@ -147,8 +150,8 @@ log.info(".......default C'tor");
      */
     public List<Mine> getMineWithSpecifiedName(String serviceURL, String mineName, int maxFeatures) throws Exception {
         //get the mine
-        String mineResponse = this.getMineWithSpecifiedNameGML(serviceURL, mineName, maxFeatures);
-
+    	HttpMethodBase method = this.getMineWithSpecifiedNameGML(serviceURL, mineName, maxFeatures);
+    	String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
         //convert the response into a collection of Mine Nodes
         List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
 
@@ -165,18 +168,19 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public String getMineWithSpecifiedNameGML(String serviceURL, String mineName, int maxFeatures) throws Exception {
+    public HttpMethodBase getMineWithSpecifiedNameGML(String serviceURL, String mineName, int maxFeatures) throws Exception {
         //create a filter for the specified name
         MineFilter mineFilter = new MineFilter(mineName);
 
-        log.debug("Mine query... url:" + serviceURL);
+        log.debug("Mine query... url:" + serviceURL);        
         log.trace("Mine query... filter:" + mineFilter.getFilterStringAllRecords());
 
         //create a GetFeature request with filter constraints on a query
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", mineFilter.getFilterStringAllRecords(), maxFeatures);
 
         //call the service, and get all the mines
-        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
     
     /**
@@ -189,7 +193,7 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public String getVisibleMineWithSpecifiedNameGML(String serviceURL, String mineName, FilterBoundingBox bbox, int maxFeatures) throws Exception {
+    public HttpMethodBase getVisibleMineWithSpecifiedNameGML(String serviceURL, String mineName, FilterBoundingBox bbox, int maxFeatures) throws Exception {
         //create a filter for the specified name
         MineFilter mineFilter = new MineFilter(mineName);
 
@@ -198,9 +202,10 @@ log.info(".......default C'tor");
         
         //create a GetFeature request with filter constraints on a query
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", mineFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
-
+        
         //call the service, and get all the mines
-        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
 
         
@@ -217,7 +222,7 @@ log.info(".......default C'tor");
      * @param cutOffGradeUOM
      * @return
      */
-    public String getMineralOccurrenceGML( String serviceURL,
+    public HttpMethodBase  getMineralOccurrenceGML( String serviceURL,
                                            String commodityName,
                                            String measureType,
                                            String minOreAmount,
@@ -238,12 +243,12 @@ log.info(".......default C'tor");
         log.trace("Mineral Occurence query... filter:" + mineralOccurrenceFilter.getFilterStringAllRecords());
         
         log.debug("\n" + serviceURL + "\n" + mineralOccurrenceFilter.getFilterStringAllRecords());
-        
+       
         //create the method
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), maxFeatures);
-
-        //run the dam query
-        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), maxFeatures);      
+        
+        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
     
     /**
@@ -260,7 +265,7 @@ log.info(".......default C'tor");
      * @param cutOffGradeUOM
      * @return
      */
-    public String getVisibleMineralOccurrenceGML( String serviceURL,
+    public HttpMethodBase getVisibleMineralOccurrenceGML( String serviceURL,
                                            String commodityName,
                                            String measureType,
                                            String minOreAmount,
@@ -278,7 +283,7 @@ log.info(".......default C'tor");
                                            minCommodityAmount,
                                            minCommodityAmountUOM );
 
-        log.debug("Mineral Occurence query... url:" + serviceURL);
+        log.debug("Mineral Occurence query... url:" + serviceURL);        
         log.trace("Mineral Occurence query... filter:" + mineralOccurrenceFilter.getFilterStringBoundingBox(bbox));
         
         
@@ -286,11 +291,12 @@ log.info(".......default C'tor");
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
 
         //run the dam query
-        return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
 
     
-    public String getMiningActivityGML( String serviceURL,
+    public HttpMethodBase getMiningActivityGML( String serviceURL,
                                         List<Mine> mines,
                                         String startDate,
                                         String endDate,
@@ -310,10 +316,11 @@ log.info(".......default C'tor");
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterStringAllRecords(), maxFeatures);
         log.debug("After methodMaker.makeMethod");
         //run dat query
-        return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        //return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
     
-    public String getVisibleMiningActivityGML( String serviceURL,
+    public HttpMethodBase getVisibleMiningActivityGML( String serviceURL,
             List<Mine> mines,
             String startDate,
             String endDate,
@@ -335,6 +342,7 @@ log.info(".......default C'tor");
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
         
         //run dat query
-        return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        //return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
     }
 }

@@ -3,6 +3,9 @@ package org.auscope.portal.server.domain.filter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * Represents a partial implementation of the IFilter interface with protected
@@ -16,7 +19,7 @@ import java.util.Map;
  *
  */
 public abstract class AbstractFilter implements IFilter {
-    
+	protected final Log log = LogFactory.getLog(getClass());
     /**
      * returns a ogc:Filter string fragment that can be embedded in
      * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
@@ -300,7 +303,6 @@ public abstract class AbstractFilter implements IFilter {
        
        if (nonEmptyFragmentCount >= minParams)
            sb.append(String.format("</%1$s>", logicalComparison));
-       
        return sb.toString();
    }
    

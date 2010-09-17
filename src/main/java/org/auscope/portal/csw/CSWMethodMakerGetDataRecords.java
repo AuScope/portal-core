@@ -51,6 +51,7 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
                         + this.serviceURL + "?" + method.getQueryString();
         
         log.debug(queryStr);
+        //log.info("the string is :" + queryStr +"till here.");
 
         return method;
     }
