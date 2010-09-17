@@ -51,8 +51,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import org.xml.sax.SAXException;
 
-import com.sun.xml.internal.fastinfoset.util.StringArray;
-
 /**
  * Controller that handles all Earth Resource related requests
  * <p>
