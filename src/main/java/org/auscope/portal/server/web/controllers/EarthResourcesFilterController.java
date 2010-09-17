@@ -175,7 +175,6 @@ public class EarthResourcesFilterController {
             String kmlBlob =  convertToKml(gmlBlob, request, serviceUrl);
             
             //log.debug(kmlBlob);
-            log.info("i m in doMineFilter"); 
             //This failure test should be made a little bit more robust
             //And should probably try to extract an error message
             if (kmlBlob == null || kmlBlob.length() == 0) {
@@ -359,7 +358,6 @@ public class EarthResourcesFilterController {
                 miningActivityResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
                     
             }
-            log.info("i m in doMiningActivityFilter"); 
             /* getting the request string for debug window*/
             RequestEntity ent;
             String body = null;
@@ -416,11 +414,10 @@ public class EarthResourcesFilterController {
             requestInfo.add(body);
             
             //log.debug(kmlBlob);
-            log.info("i m in doNVCLFilter");    
             // This failure test should be more robust,
             // it should try to extract an error message
             if (kmlBlob == null || kmlBlob.length() == 0) {
-                log.error(String.format("Transform failed serviceUrl='%1$s' gmlBlob='%2$s'",serviceUrl, gmlBlob));
+                log.error(String.format("Transform failed serviceUrl='%1$s' gmlBlob='%2$s'", serviceUrl, gmlBlob));
                 return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED, requestInfo);
             } else {
                 return makeModelAndViewKML(kmlBlob, gmlBlob, requestInfo);

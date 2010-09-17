@@ -117,7 +117,6 @@ public class HttpServiceCaller {
             CONN_TIMEOUT = SECOND * Integer.parseInt(hostConfigurer.resolvePlaceholder("connection-establish.timeout"));
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
             throw e;
         }
 
@@ -126,7 +125,6 @@ public class HttpServiceCaller {
         log.trace("CONN_TIMEOUT : " + CONN_TIMEOUT);
         
         log.debug("method=" + method.getURI());
-        log.info("method=" + method.getURI());
         
         
         // Period of time in milliseconds to wait for a content body 

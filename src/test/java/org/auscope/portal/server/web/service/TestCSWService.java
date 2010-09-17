@@ -118,7 +118,7 @@ public class TestCSWService {
     @Test
     public void testSingleUpdate() throws Exception {
         final long delay = 1000;
-        final String cswResponse = "foo"; 
+        final String cswResponse = "<?xml version=\"1.0\"?><node>foo</node>"; 
         
         context.checking(new Expectations() {{
             //Cant use oneOf as JUnit can't handle exceptions on other threads (see note below)

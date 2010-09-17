@@ -73,8 +73,6 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
  
         log.debug("Service URL:\n\t" + serviceURL);
         log.debug("Get Feature Query:\n" + sb.toString());
-        log.info("Service URL:\n\t" + serviceURL + "\nends");
-        log.info("Get Feature Query:\n" + sb.toString() + "\nends");
         
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
         httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(),null,null));

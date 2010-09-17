@@ -57,14 +57,14 @@ public class DownloadController {
         //create the output stream
         ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
 
-        logger.info("No. of serviceUrls: " + serviceUrls.length);
+        logger.trace("No. of serviceUrls: " + serviceUrls.length);
 
         for(int i=0; i<serviceUrls.length; i++) {
 
             GetMethod method = new GetMethod(serviceUrls[i]);
             HttpClient client = serviceCaller.getHttpClient();
 
-            logger.info("Calling service: " + serviceUrls[i]);
+            logger.trace("Calling service: " + serviceUrls[i]);
 
             //Our request may fail (due to timeout or otherwise)
             String responseString = null;
@@ -72,7 +72,7 @@ public class DownloadController {
             try {
                 responseString = serviceCaller.getMethodResponseAsString(method, client);
                 
-                logger.info("Response: " + responseString);
+                logger.trace("Response: " + responseString);
 
                 jsonObject = JSONObject.fromObject( responseString );
             } catch (Exception ex) {
@@ -99,7 +99,7 @@ public class DownloadController {
             	}
             }
 
-            logger.info(gmlBytes.length);
+            logger.trace(gmlBytes.length);
 
             if(jsonObject.get("success").toString().equals("false")) {
             	//The server may have returned an error message, if so, lets include it in the filename
