@@ -50,8 +50,7 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
                         + " query sent to GeoNetwork: \n\t" 
                         + this.serviceURL + "?" + method.getQueryString();
         
-        log.debug(queryStr);
-        //log.info("the string is :" + queryStr +"till here.");
+        log.debug(queryStr);        
 
         return method;
     }

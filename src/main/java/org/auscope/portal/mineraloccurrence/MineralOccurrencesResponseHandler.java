@@ -51,8 +51,7 @@ public class MineralOccurrencesResponseHandler {
 
         for(int i=0; i < mineNodes.getLength(); i++) {
             mines.add(new Mine(mineNodes.item(i)));
-        }
-        //log.info("mines are : \n" + mines + "\ntill here");
+        }        
         return mines;
     }
 
@@ -76,7 +75,7 @@ public class MineralOccurrencesResponseHandler {
         for(int i=0; i < commodityNodes.getLength(); i++) {
             commodities.add(new Commodity(commodityNodes.item(i)));
         }
-        //log.info("commodities are :\n" + commodities + "\ntill here");
+        
         return commodities;
     }
 
@@ -96,8 +95,7 @@ public class MineralOccurrencesResponseHandler {
         
         try {
             XPathExpression expr = xPath.compile("/wfs:FeatureCollection");
-            Node result = (Node)expr.evaluate(mineralOccurrenceDocument, XPathConstants.NODE);
-            //log.info("no of feature expression is :\n" + Integer.parseInt(result.getAttributes().getNamedItem("numberOfFeatures").getTextContent()) + "\ntill here");
+            Node result = (Node)expr.evaluate(mineralOccurrenceDocument, XPathConstants.NODE);           
             return Integer.parseInt(result.getAttributes().getNamedItem("numberOfFeatures").getTextContent());
         } catch (Exception e) {
         	return 0;

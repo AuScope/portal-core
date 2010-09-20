@@ -1,5 +1,5 @@
 /**
- * Contains response information from service calls, and formats them in some pretty html for response data
+ * Contains response information from service calls, and formats them in some pretty html for debug window
  */
 DebuggerData = function() {
     this.responses = [];
@@ -10,8 +10,7 @@ DebuggerData.prototype.addResponse = function(url, statusDetail) {
 };
 
 DebuggerData.prototype.getHtml = function() {
-    /*if(this.responses.length == 0)
-        return 'No status has been recorded.';*/	
+   
     var htmlString = '<br/>' ;
 
     for(i in this.responses) {

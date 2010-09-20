@@ -858,8 +858,7 @@ Ext.onReady(function() {
                     overlayManager.markerManager.refresh();
 
                     //store the gml for later download needs
-                    selectedRecord.gml = jsonResponse.data.gml;
-                    //to check data response                   		
+                    selectedRecord.gml = jsonResponse.data.gml;                                      		
                   
                     var debugInfo = jsonResponse.debugInfo.info;
 					selectedRecord.debuggerData.addResponse(serviceUrl,debugInfo);
@@ -1234,7 +1233,7 @@ Ext.onReady(function() {
             //this is for clicking the loading icon
             else if (col.cellIndex == '2') {
             	if (serviceType == 'wfs'){
-	            	// create the window on the first click and reuse on subsequent clicks
+	            	//to get the value of variable used in url
             		function gup( name )
             		{
             		  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
@@ -1247,6 +1246,7 @@ Ext.onReady(function() {
             		    return results[1];
             		}
             		var frank_param = gup( 'debug' );
+            		//get the debug window if there is a debug variable with value 1
             		if(frank_param == 1){
 		            	var debugHtml = 'Please generate a request to get the request query.';
 		            	

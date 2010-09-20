@@ -32,9 +32,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         //This is a bit of a hack - unfortunately the NamespaceContext class is unsuitable here
         //as it contains no methods to iterate the contianted list of Namespaces
         HashMap<String, String> namespaces = new HashMap<String, String>();
-        namespaces.put("xmlns:ogc", "http://www.opengis.net/ogc");
-        //log.info("I am in CSWGetDataRecordsFilter");
-        //log.info("filter fragment" + this.generateFilterFragment() + "namespaces" + namespaces);
+        namespaces.put("xmlns:ogc", "http://www.opengis.net/ogc");        
         return this.generateFilter(this.generateFilterFragment(), namespaces);
     }
 
@@ -43,7 +41,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     @Override
     public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
-        //log.info("why do i need to come over this????");
+        
     	return null;
     }
     

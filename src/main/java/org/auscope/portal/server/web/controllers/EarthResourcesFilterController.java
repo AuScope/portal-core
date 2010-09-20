@@ -453,7 +453,8 @@ public class EarthResourcesFilterController {
         // An error we don't specifically handle or expect
         return makeModelAndViewFailure(ErrorMessages.FILTER_FAILED);
     } 
-    //copy of above
+    
+    
     public ModelAndView handleExceptionResponse(Exception e, String serviceUrl, JSONArray requestInfo) {
 
         log.error(String.format("Exception! serviceUrl='%1$s'", serviceUrl),e);

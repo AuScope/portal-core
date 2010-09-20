@@ -63,7 +63,6 @@ public class MineralOccurrenceFilter extends AbstractFilter {
 
     @Override
     public String getFilterStringAllRecords() {
-    	//log.info("filter string is:\n " + filterStr +"\n ends here");
         return this.generateFilter(filterStr);
     }
 
@@ -240,8 +239,7 @@ public class MineralOccurrenceFilter extends AbstractFilter {
         if ((this.minCommodityAmountUOM != null) && (!this.minCommodityAmountUOM.isEmpty())) 
             count++;                
         
-        log.debug("Returning count: " + count);    
-        //log.info("Returning count: " + count);
+        log.debug("Returning count: " + count);
         return count;
     }
 
