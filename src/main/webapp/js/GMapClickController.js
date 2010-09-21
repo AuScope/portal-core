@@ -69,7 +69,7 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
 		return;
 	
 	//Try to see if its a WCS layer
-	if (overlay && overlay.parentRecord && overlay.parentRecord.get('serviceType') == 'wcs') {
+	if (overlay && overlay.parentRecord && overlay.parentRecord.get && overlay.parentRecord.get('serviceType') == 'wcs') {
 		var infoWindow = new GenericWCSInfoWindow(map, overlay, overlay.wcsUrl, overlay.layerName, overlay.parentRecord.get('openDapURLs'), overlay.parentRecord.get('wmsURLs'));
 		infoWindow.showInfoWindow();
 	//Otherwise it could be a WFS marker
@@ -83,9 +83,11 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
         else if (overlay.description != null) {
             overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
         }
-    //Otherwise it could be a WFS polygon
+    //Otherwise it could be a WFS polygon or generic feature polygon
     } else if (overlay instanceof GPolygon) {
-    	if (overlay.description != null) {
+        if (overlay.typeName == "report") {
+    		new ReportsInfoWindow(map, overlay).show();
+    	} else if (overlay.description != null) {
     		map.openInfoWindowHtml(overlay.getVertex(0),overlay.description);
     	}
     //Otherwise we test each of our WMS layers to see a click will affect them

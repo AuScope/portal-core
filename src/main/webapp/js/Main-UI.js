@@ -22,6 +22,30 @@ Ext.onReady(function() {
             
         return v;
     };
+        
+    //Converts an array of generic records into a Generic Record object array
+    var convertGenericRecords = function(v, record) {
+  
+        for (var i = 0; i < v.length; i++) {
+            v[i] = new GenericRecord(
+            		v[i].title,
+            		v[i].description,
+            		v[i].contactOrg,
+            		v[i].proxyUrl,
+            		v[i].serviceType,
+            		v[i].id,
+            		v[i].typeName,
+            		v[i].serviceURLs,
+            		v[i].layerVisibleStatus,
+            		v[i].loadingStatus,
+            		v[i].dataSourceImage,
+            		v[i].opacity,
+            		v[i].bboxes,
+            		v[i].descriptiveKeywords);
+        }
+    
+        return v;
+    };
     
     //-----------Complex Features Panel Configurations
     var complexFeaturesStore = new Ext.data.Store({
@@ -405,6 +429,111 @@ Ext.onReady(function() {
 
     });
     
+    //----------- Generic Layers Panel Configurations
+
+    var genericFeaturesStore = new Ext.data.Store({
+        proxy: new Ext.data.HttpProxy({url: 'getGenericFeatures.do'}),
+  
+        reader: new Ext.data.ArrayReader({}, [
+            {	name: 'title'			},
+            {	name: 'description'		},
+            {	name: 'serviceType'		},
+            {	name: 'id'				},
+            {	name: 'typeName'		},
+            {	name: 'records', convert : convertGenericRecords},
+            {   name: 'loadingStatus'   }
+        ]),
+    	sortInfo: {field:'title', direction:'ASC'}
+    });  
+    
+    var genericFeaturesRowExpander = new Ext.grid.RowExpander({
+        tpl : new Ext.Template('<p>{description}</p><br>')
+    });
+
+    var genericFeaturesPanel = new Ext.grid.GridPanel({
+        stripeRows       : true,
+        autoExpandColumn : 'title',
+        plugins          : [ genericFeaturesRowExpander ],
+        viewConfig       : {scrollOffset: 0, forceFit:true},
+        title            : 'Generic Layers',
+        region           :'north',
+        split            : true,
+        height           : 160,
+        autoScroll       : true,
+        store            : genericFeaturesStore,
+        columns: [
+            genericFeaturesRowExpander,            
+            {
+                id:'title',
+                header: "Title",
+                sortable: true,
+                dataIndex: 'title'
+            },{
+            	id:'search',
+            	header: '',
+            	width: 45,
+            	dataIndex: 'bboxes',
+            	resizable: false,
+            	menuDisabled: true,
+            	sortable: false,
+            	fixed: true,
+            	renderer: function (value) {
+            		//Only show the icon if we have a meaningful bounding box 
+            		if (isBBoxListMeaningful(value))
+            			return '<img src="img/magglass.gif"/>';
+            		else
+            			return '';
+            	}
+            },{
+                id:'contactOrg',
+                header: "Provider",
+                width: 160,
+                sortable: true,
+                dataIndex: 'contactOrg',
+                hidden:true
+            }
+        ],
+        bbar: [{
+            text:'Add Layer to Map',
+            tooltip:'Add Layer to Map',
+            iconCls:'add',
+            pressed:true,
+            handler: function() {
+                var recordToAdd = genericFeaturesPanel.getSelectionModel().getSelected();
+
+                //Only add if the record isn't already there
+                if (recordToAdd && activeLayersStore.findExact("id",recordToAdd.get("id")) < 0) {                
+                    //add to active layers (At the top of the Z-order)
+                    activeLayersStore.insert(0, [recordToAdd]);
+                    
+                    //invoke this layer as being checked
+                    activeLayerCheckHandler(genericFeaturesPanel.getSelectionModel().getSelected(), true);
+                }
+
+                //set this record to selected
+                genericFeaturesPanel.getSelectionModel().selectRecords([recordToAdd], false);
+            }
+        }],
+        
+        tbar: [
+               'Search: ', ' ',
+               new Ext.ux.form.ClientSearchField({
+                   store: genericFeaturesStore,
+                   width:200,
+                   id:'search-generic-panel',
+                   fieldName:'title'
+               }), {
+            	   	xtype:'button',
+            	   	text:'Visible',
+            	   	handler:function() {
+            	   		var searchPanel = Ext.getCmp('search-generic-panel');
+            	   		searchPanel.runCustomFilter('<visible layers>', visibleRecordsFilter);
+               		}
+               }
+           ]
+
+    });
+    
     //------ Custom Layers
 
     var customLayersStore = new Ext.data.Store({
@@ -550,7 +679,13 @@ Ext.onReady(function() {
         disabled : true,
         handler  : function() {
             var selectedRecord = activeLayersPanel.getSelectionModel().getSelected();
-            wfsHandler(selectedRecord);
+            var serviceType = selectedRecord.get('serviceType');
+            
+            if(serviceType == "wfs") {
+            	wfsHandler(selectedRecord);
+            } else if(serviceType == "unknown" && selectedRecord.get('typeName') == "reports") {
+            	genericFeatureHandler(selectedRecord);
+            }
         }
     });
 
@@ -681,6 +816,19 @@ Ext.onReady(function() {
                 }
             	
                 wcsHandler(record);
+            } else if(record.get('serviceType') == 'unknown' && record.get('typeName') == 'reports') {
+                if (record.filterPanel != null) {
+                    filterPanel.add(record.filterPanel);
+                    filterPanel.getLayout().setActiveItem(record.get('id'));
+                    filterButton.enable();
+                    filterButton.toggle(true);
+                    filterPanel.doLayout();
+                } else {
+                    filterPanel.getLayout().setActiveItem(0);
+
+                	genericFeatureHandler(record);
+                }
+
             }
         } else {
             if (record.get('serviceType') == 'wfs') {
@@ -690,6 +838,8 @@ Ext.onReady(function() {
             } else if (record.get('serviceType') == 'wms') {
                 //remove from the map
                 map.removeOverlay(record.tileOverlay);
+            } else if (record.get('serviceType') == 'unknown' && record.get('typeName') == 'reports') {
+            	if (record.tileOverlay instanceof OverlayManager) record.tileOverlay.clearOverlays();
             }
 
             filterPanel.getLayout().setActiveItem(0);
@@ -888,6 +1038,82 @@ Ext.onReady(function() {
         });
     };
 
+    //TODO: Currently this handler only handles reports despite its name. As more generic
+    // features are added, this handler will need to be modified accordingly.
+	var genericFeatureHandler = function(selectedRecord) {
+		
+        if (selectedRecord.tileOverlay instanceof OverlayManager) selectedRecord.tileOverlay.clearOverlays();
+
+        if (selectedRecord.get('loadingStatus') == '<img src="js/external/extjs/resources/images/default/grid/loading.gif">') {
+            Ext.MessageBox.show({
+                title: 'Please wait',
+                msg: "There is an operation in process for this layer. Please wait until it is finished.",
+                buttons: Ext.MessageBox.OK,
+                animEl: 'mb9',
+                icon: Ext.MessageBox.INFO
+            });
+            return;
+        }
+        
+        //set the status as loading for this record
+        selectedRecord.set('loadingStatus', '<img src="js/external/extjs/resources/images/default/grid/loading.gif">');
+
+        
+        var reportTitleFilter = '';
+        if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
+        	var filterObj = filterPanel.getLayout().activeItem.getForm().getValues();
+        	reportTitleFilter = filterObj.title;
+        }
+        var regexp = /\*/;
+        if(reportTitleFilter != '') {
+        	var regexp = new RegExp(reportTitleFilter, "i");
+        }
+		
+		var records = selectedRecord.get('records');
+		if(!records || records.length == 0) {
+			selectedRecord.responseTooltip.addResponse(serviceUrl, 
+					'No records have been specified for this feature.');
+			return;
+		}
+
+	    var overlayManager = new OverlayManager(map);
+	    selectedRecord.tileOverlay = overlayManager;
+        selectedRecord.responseTooltip = new ResponseTooltip();
+	    
+		for(var i=0; i<records.length; i++) {
+		    
+			if(reportTitleFilter == '' || regexp.test(records[i].title)) {			
+				
+			    var bboxList = records[i].bboxes;
+			    if (!bboxList || bboxList.length == 0) {
+			    	selectedRecord.responseTooltip.addResponse(serviceUrl, 
+			    			'No bounding box has been specified for this feature: '+record[i].title);
+			    	return;
+			    }
+			    
+			    var polygonList = bboxToPolygon(bboxList[0],'#0003F9', 4, 0.75,'#0055FE', 0.4);
+			    
+			    //Add polygons (they may/may not be visible)
+			    for (var j = 0; j < polygonList.length; j++) {		    	
+				  
+			    	polygonList[j].layerName = records[i].typeName;
+			    	polygonList[j].url = records[i].serviceURLs;
+			    	polygonList[j].parentRecord = records[i];
+			        polygonList[j].title = records[i].title;
+			        polygonList[j].description = records[i].description;
+			        polygonList[j].typeName = records[i].typeName;
+			        polygonList[j].serviceURLs = records[i].serviceURLs;
+			        polygonList[j].keywords = records[i].descriptiveKeywords;
+			    	
+			        selectedRecord.tileOverlay.addOverlay(polygonList[j]);
+			    }
+			}
+		}    
+		
+        selectedRecord.set('loadingStatus', '<img src="js/external/extjs/resources/images/default/grid/done.gif">');
+
+	};
+    
     var wmsHandler = function(record) {
         var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
         tileLayer.baseURL = record.get('serviceURLs')[0];
@@ -922,7 +1148,9 @@ Ext.onReady(function() {
                 filterButton.disable();
             } else if (record.get('serviceType') == 'wcs') {
             	filterButton.disable();
-            }
+            } else if (record.get('serviceType') == 'unknown' && record.get('typeName') == 'reports') {
+                filterButton.enable();            	
+            }             	
 
         } else {
             //if this type doesnt need a filter panel then just show the default filter panel
@@ -975,6 +1203,10 @@ Ext.onReady(function() {
                         //remove from the map
                         map.removeOverlay(record.tileOverlay);
                     } else if (record.get('serviceType') == 'wcs') {
+                        if (record.tileOverlay instanceof OverlayManager) { 
+                        	record.tileOverlay.clearOverlays();
+                        }
+                    } else if(record.get('serviceType') == 'unknown' && record.get('typeName') == 'reports'){
                         if (record.tileOverlay instanceof OverlayManager) { 
                         	record.tileOverlay.clearOverlays();
                         }
@@ -1272,12 +1504,12 @@ Ext.onReady(function() {
             	}
             }
             //this is the column for download link icons
-            else if (col.cellIndex == '5') {
-                var keys = [serviceUrls.length];
-                var values = [serviceUrls.length];
-                
+            else if (col.cellIndex == '5') {               
                 if (serviceType == 'wms') { //if a WMS, open a new window calling the download controller
-                    if (serviceUrls.length >= 1) {
+                    var keys = [serviceUrls.length];
+                    var values = [serviceUrls.length];
+                    
+                	if (serviceUrls.length >= 1) {
 
                         for (i = 0; i < serviceUrls.length; i++) {
 
@@ -1324,7 +1556,9 @@ Ext.onReady(function() {
                     }
 
                 } else if (serviceType == 'wfs') {//if a WFS open a new window calling the download controller
-
+                    var keys = [serviceUrls.length];
+                    var values = [serviceUrls.length];
+                    
                     if (serviceUrls.length >= 1) {
                         var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + record.get('typeName') : filterPanel.getLayout().activeItem.getForm().getValues(true);
 
@@ -1337,8 +1571,13 @@ Ext.onReady(function() {
                         openWindowWithPost("downloadGMLAsZip.do?", 'WFS_Layer_Download_'+new Date().getTime(), keys, values);
                     }
                 } else if (serviceType == 'wcs') {
+                    var keys = [serviceUrls.length];
+                    var values = [serviceUrls.length];
+                    
                 	//Lets open the generic wcs download handler
                 	showWCSDownload(record.get('serviceURLs')[0], record.get('typeName'));
+                } else if (serviceType == 'unknown' && typeName == 'reports') {
+                	//TODO: reports download functionality. Not sure if required.
                 }
             }
         }
@@ -1409,11 +1648,13 @@ Ext.onReady(function() {
         split: true,
         height: 225,
         autoScroll: true,
+        enableTabScroll: true,
         //autosize:true,
         items:[
             complexFeaturesPanel,
             wmsLayersPanel,
             wcsLayersPanel,
+            genericFeaturesPanel,
             customLayersPanel
         ]
     });
@@ -1550,7 +1791,8 @@ Ext.onReady(function() {
 
     complexFeaturesStore.load();
     wmsLayersStore.load();
-    wcsLayersStore.load();
+    wcsLayersStore.load();   
+    genericFeaturesStore.load();
     
     //param bbox The bounding box to split
     //param okBboxList The list of boxes that the split boxes will be appended to
@@ -1697,10 +1939,12 @@ Ext.onReady(function() {
     complexFeaturesPanel.on("cellclick", showRecordBoundingBox, complexFeaturesPanel.on);
     wmsLayersPanel.on("cellclick", showRecordBoundingBox, wmsLayersPanel);
     wcsLayersPanel.on("cellclick", showRecordBoundingBox, wcsLayersPanel);
+    genericFeaturesPanel.on("cellclick", showRecordBoundingBox, genericFeaturesPanel.on);
     
     complexFeaturesPanel.on("celldblclick", moveToBoundingBox, complexFeaturesPanel);
     wmsLayersPanel.on("celldblclick", moveToBoundingBox, wmsLayersPanel);
     wcsLayersPanel.on("celldblclick", moveToBoundingBox, wcsLayersPanel);
+    genericFeaturesPanel.on("celldblclick", moveToBoundingBox, genericFeaturesPanel);
     
     
 });

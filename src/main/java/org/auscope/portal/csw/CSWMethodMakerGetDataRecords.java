@@ -27,9 +27,7 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
 
     public HttpMethodBase makeMethod() {
         GetMethod method = new GetMethod(this.serviceURL);
-
-        String filterString = new CSWGetDataRecordsFilter().getFilterStringAllRecords();
-        
+       
         //set all of the parameters
         NameValuePair service    = new NameValuePair("service", "CSW");
         NameValuePair version    = new NameValuePair("constraint_language_version", "1.1.0");
@@ -41,10 +39,9 @@ public class CSWMethodMakerGetDataRecords implements ICSWMethodMaker {
         NameValuePair resultType = new NameValuePair("resultType", "results");
         NameValuePair namespace  = new NameValuePair("namespace", "csw:http://www.opengis.net/cat/csw");
         NameValuePair elementSet = new NameValuePair("elementSetName", "full");
-        NameValuePair constraint = new NameValuePair("constraint", filterString);
 
         //attach them to the method
-        method.setQueryString(new NameValuePair[]{service, version, request, outputSchema, constraintLanguage, maxRecords, typeNames, resultType, namespace, elementSet, constraint});
+        method.setQueryString(new NameValuePair[]{service, version, request, outputSchema, constraintLanguage, maxRecords, typeNames, resultType, namespace, elementSet});
         
         String queryStr = method.getName() 
                         + " query sent to GeoNetwork: \n\t" 

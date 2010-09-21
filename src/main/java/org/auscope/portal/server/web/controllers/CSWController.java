@@ -1,6 +1,5 @@
 package org.auscope.portal.server.web.controllers;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import net.sf.json.JSONArray;
@@ -218,54 +217,56 @@ public class CSWController {
 
         for(CSWRecord record : records) {
             for (CSWOnlineResource wmsResource : record.getOnlineResourcesByType(OnlineResourceType.WMS)) {
-                
-                //Add the mineral occurrence
-                JSONArray tableRow = new JSONArray();
-    
-                //add the name of the layer/feature type
-                tableRow.add(record.getServiceName());
-    
-                //add the abstract text to be shown as updateCSWRecords description
-                tableRow.add(record.getDataIdentificationAbstract());
-                
-                //Add the contact organisation
-                String org = record.getContactOrganisation();
-                if (org == null || org.length() == 0)
-                	org = "Unknown";
-                tableRow.add(org);
-    
-                //wms dont need updateCSWRecords proxy url
-                tableRow.add("");
-    
-                //add the type: wfs or wms
-                tableRow.add("wms");
-    
-                //TODO: add updateCSWRecords proper unique id
-                tableRow.add(record.hashCode());
-    
-                //add the featureType name (in case of updateCSWRecords WMS feature))
-                tableRow.add(wmsResource.getName());
-    
-                JSONArray serviceURLs = new JSONArray();
-    
-                serviceURLs.add(wmsResource.getLinkage().toString());
-    
-                tableRow.add(serviceURLs);
-    
-                tableRow.element(true);
-                tableRow.add("<img src='js/external/extjs/resources/images/default/grid/done.gif'>");
-    
-                tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'></a>");
-                
-                tableRow.add("1.0");
-                
-                JSONArray bboxes = new JSONArray();
-                if (record.getCSWGeographicElement() != null)
-                    bboxes.add(record.getCSWGeographicElement());
-                
-                tableRow.add(bboxes);
-    
-                dataItems.add(tableRow);
+            	//TODO: TJ: This is a hack. linkage could previously never be null...
+                if(wmsResource.getLinkage() != null) {
+	                //Add the mineral occurrence
+	                JSONArray tableRow = new JSONArray();
+	    
+	                //add the name of the layer/feature type
+	                tableRow.add(record.getServiceName());
+	    
+	                //add the abstract text to be shown as updateCSWRecords description
+	                tableRow.add(record.getDataIdentificationAbstract());
+	                
+	                //Add the contact organisation
+	                String org = record.getContactOrganisation();
+	                if (org == null || org.length() == 0)
+	                	org = "Unknown";
+	                tableRow.add(org);
+	    
+	                //wms dont need updateCSWRecords proxy url
+	                tableRow.add("");
+	    
+	                //add the type: wfs or wms
+	                tableRow.add("wms");
+	    
+	                //TODO: add updateCSWRecords proper unique id
+	                tableRow.add(record.hashCode());
+	    
+	                //add the featureType name (in case of updateCSWRecords WMS feature))
+	                tableRow.add(wmsResource.getName());
+	    
+	                JSONArray serviceURLs = new JSONArray();
+	    
+	                serviceURLs.add(wmsResource.getLinkage().toString());
+	    
+	                tableRow.add(serviceURLs);
+	    
+	                tableRow.element(true);
+	                tableRow.add("<img src='js/external/extjs/resources/images/default/grid/done.gif'>");
+	    
+	                tableRow.add("<a href='http://portal.auscope.org' id='mylink' target='_blank'><img src='img/picture_link.png'></a>");
+	                
+	                tableRow.add("1.0");
+	                
+	                JSONArray bboxes = new JSONArray();
+	                if (record.getCSWGeographicElement() != null)
+	                    bboxes.add(record.getCSWGeographicElement());
+	                
+	                tableRow.add(bboxes);
+	    
+	                dataItems.add(tableRow);
+                }
             }
         }
         log.debug(dataItems.toString());
@@ -358,6 +359,84 @@ public class CSWController {
                 dataItems.add(tableRow);
             }
         }
+        log.debug(dataItems.toString());
+        return new JSONModelAndView(dataItems);
+    }
+    
+    //TODO: This currently only supports reports feature despite its name.
+    // Needs to be updated accordingly if more generic features are added.
+    @RequestMapping("/getGenericFeatures.do")
+    public ModelAndView getGenericFeatures() throws Exception {
+        //update the records if need be
+        cswService.updateRecordsInBackground();
+
+        //the main holder for the items
+        JSONArray dataItems = new JSONArray();
+
+        CSWRecord[] records = cswService.getDataRecords();
+        
+        //Group records by keywords - for now only extract 'Report' keyword and put records into single group
+        JSONArray reportRecords = new JSONArray();
+        for(CSWRecord record : records) {
+        	
+        	//Retrieve all "unsupported" online resources linked to the record
+        	CSWOnlineResource[] onlineResources =  record.getOnlineResourcesByType(OnlineResourceType.Unsupported);        	
+
+    		if(record.getServiceName() != null && !record.getServiceName().equals("")) {
+				if(record.containsKeyword("Report")) {
+					
+	                String org = record.getContactOrganisation();
+	                if (org == null || org.length() == 0) {
+	                    org = "Unknown";
+	                }
+					
+	                JSONArray serviceURLs = new JSONArray();   
+	                for(CSWOnlineResource onlineResource : onlineResources) {
+	                	if(onlineResource.getLinkage() != null) {
+	                		serviceURLs.add(onlineResource.getLinkage().toString());
+	                	}
+	                }
+	                
+	                JSONArray bboxes = new JSONArray();
+	                if (record.getCSWGeographicElement() != null)
+	                    bboxes.add(record.getCSWGeographicElement());
+	                
+	                JSONObject obj = new JSONObject();
+	                obj.put("title", record.getServiceName());
+	                obj.put("description", record.getDataIdentificationAbstract());
+	                obj.put("contactOrg:", org);
+	                obj.put("proxyUrl", "");
+	                obj.put("serviceType", "unknown");
+	                obj.put("id", record.hashCode());
+	                obj.put("typeName", "report");
+	                obj.put("serviceURLs", serviceURLs);
+	                obj.put("layerVisibleStatus", true);
+	                obj.put("bboxes", bboxes);
+	                obj.put("descriptiveKeywords", record.getDescriptiveKeywords());
+
+	                reportRecords.add(obj);
+				}
+    		}
+        }
+
+        //Add the feature
+        JSONArray tableRow = new JSONArray();
+        
+        //Add the title
+        tableRow.add("Reports");
+        
+        tableRow.add("Reports on the Map"); // description
+        tableRow.add("unknown");			// serviceType
+        tableRow.add(records.hashCode());	// id
+        tableRow.add("reports");			// typeName
+        
+        //Add the reportRecord
+        tableRow.add(reportRecords);
+        
+        tableRow.add("<img src='js/external/extjs/resources/images/default/grid/done.gif'>");
+        
+        dataItems.add(tableRow);
+
         log.debug(dataItems.toString());
         return new JSONModelAndView(dataItems);
     }
