@@ -166,7 +166,13 @@ function handleGeotransectWmsRecord(url, record, map, latlng) {
 
                 //Extract the line Id from the XML
             	var line = rootNode.getElementsByTagName("gt:LINE");
+            	if(line == null || line.length <= 0) { 
+            		//Chrome, Opera may not want the namespace prefix
+            		line = rootNode.getElementsByTagName("LINE");
+            	}
+            	
                 var lineId = "";
+
                 if(line != null && line.length > 0) {
             	    if(document.all) { //IE
             	        lineId = line[0].text;
