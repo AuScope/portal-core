@@ -15,12 +15,11 @@ function ReportsInfoWindow(iMap, iOverlay) {
 ReportsInfoWindow.prototype = {
 	    
 	'show': function() {
-		var sHtml = "<div style=\"padding-bottom:10px;\" >" 
+		var sHtml = "<div style=\"padding-bottom:30px;white-space:pre-wrap;white-space:-moz-pre-wrap;" +
+			"white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;" +
+			"width:99%;max-height:300px;overflow:auto;\">" 
 			+ "<table border=\"1\" cellspacing=\"1\" width=\"100%\" bgcolor=\"#EAF0F8\">" 
-			+ "<pre style=\"white-space:pre-wrap;white-space:-moz-pre-wrap;" +
-				"white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;" +
-				"width:99%;overflow:auto;\">"
-			+ "<tr><td>" 
+			+ "<tr><td>"
 			+ this.overlay.title
 			+ "</td></tr>"
 			+ "<tr><td>" 
@@ -36,11 +35,10 @@ ReportsInfoWindow.prototype = {
 			}
 		}
 			
-		sHtml += "</pre>"
-			+ "</table>"
+		sHtml += "</table>"
 			+ "</div>";
 
 		this.map.openInfoWindowHtml(this.overlay.getBounds().getCenter(), sHtml, 
-				{maxWidth:800, maxHeight:300, autoScroll:true});
+				{maxWidth:800, maxHeight:400, autoScroll:true});
 	}
 };
