@@ -62,7 +62,7 @@ var genericParserClickHandler = function (map, overlay, latlng, activeLayersStor
  * 
  * @version $Id$
  */
-var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
+var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLayersStore) {
 	
 	//Try to handle a generic parser layer click
 	if (genericParserClickHandler(map,overlay,latlng,activeLayersStore))
@@ -85,8 +85,28 @@ var gMapClickController = function(map, overlay, latlng, activeLayersStore) {
         }
     //Otherwise it could be a WFS polygon or generic feature polygon
     } else if (overlay instanceof GPolygon) {
-        if (overlay.typeName == "report") {
-    		new ReportsInfoWindow(map, overlay).show();
+    	
+        if (overlay.typeName == "report") {       	
+        	//Find the smallest polygon containing the clicked point
+        	var smallestPoly = overlay;
+        	
+            for (var i = 0; i < activeLayersStore.getCount(); i++) {
+                var record = activeLayersStore.getAt(i);
+
+                if (record.tileOverlay && 
+                		(record.get('serviceType') == 'unknown' && record.get('typeName') == 'reports')
+                	) {
+                	for(var j = 0; j < record.tileOverlay.overlayList.length; j++) {
+                		var reportOverlay = record.tileOverlay.overlayList[j];
+                		if(reportOverlay.Contains(overlayLatlng) && reportOverlay.Area() < overlay.Area()) {
+                			smallestPoly = reportOverlay;
+                		}
+                	}
+                }
+            }
+        	
+            new ReportsInfoWindow(map, smallestPoly).show();
+   
     	} else if (overlay.description != null) {
     		map.openInfoWindowHtml(overlay.getVertex(0),overlay.description);
     	}

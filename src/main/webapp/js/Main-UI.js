@@ -1065,20 +1065,23 @@ Ext.onReady(function() {
         	reportTitleFilter = filterObj.title;
         }
         var regexp = /\*/;
-        if(reportTitleFilter != '') {
+        if(reportTitleFilter != '' && /^\w+/.test(reportTitleFilter)) {
         	var regexp = new RegExp(reportTitleFilter, "i");
         }
 		
 		var records = selectedRecord.get('records');
+		
+        selectedRecord.responseTooltip = new ResponseTooltip();
+        
 		if(!records || records.length == 0) {
-			selectedRecord.responseTooltip.addResponse(serviceUrl, 
+			selectedRecord.responseTooltip.addResponse(
 					'No records have been specified for this feature.');
 			return;
 		}
 
 	    var overlayManager = new OverlayManager(map);
 	    selectedRecord.tileOverlay = overlayManager;
-        selectedRecord.responseTooltip = new ResponseTooltip();
+
 	    
 		for(var i=0; i<records.length; i++) {
 		    
@@ -1086,7 +1089,7 @@ Ext.onReady(function() {
 				
 			    var bboxList = records[i].bboxes;
 			    if (!bboxList || bboxList.length == 0) {
-			    	selectedRecord.responseTooltip.addResponse(serviceUrl, 
+			    	selectedRecord.responseTooltip.addResponse(records[i].serviceURLs, 
 			    			'No bounding box has been specified for this feature: '+record[i].title);
 			    	return;
 			    }
@@ -1105,6 +1108,8 @@ Ext.onReady(function() {
 			        polygonList[j].serviceURLs = records[i].serviceURLs;
 			        polygonList[j].keywords = records[i].descriptiveKeywords;
 			    	
+			        polygonList[j].tooltip = '<div class="tooltip"> <nobr>records[i].title</nobr> </div>';
+			        
 			        selectedRecord.tileOverlay.addOverlay(polygonList[j]);
 			    }
 			}
@@ -1770,8 +1775,8 @@ Ext.onReady(function() {
     //tree.on('checkchange', function(node, isChecked) { treeCheckChangeController(node, isChecked, map, statusBar, viewport, downloadUrls, filterPanel); });
 
     //when updateCSWRecords person clicks on updateCSWRecords marker then do something
-    GEvent.addListener(map, "click", function(overlay, latlng) {
-        gMapClickController(map, overlay, latlng, activeLayersStore);
+    GEvent.addListener(map, "click", function(overlay, latlng, overlayLatlng) {
+        gMapClickController(map, overlay, latlng, overlayLatlng, activeLayersStore);
     });
 
     GEvent.addListener(map, "mousemove", function(latlng){
