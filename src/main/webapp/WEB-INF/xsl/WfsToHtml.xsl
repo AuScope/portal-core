@@ -84,7 +84,7 @@
             </head>
             <body>
                 <div>
-                    <img alt="" src="/img/img-auscope-banner.gif" style="border: 0px solid;" />
+                    <img alt="" src="img/img-auscope-banner.gif" style="border: 0px solid;" />
                 </div>
                 <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMember/er:MineralOccurrence | er:MineralOccurrence"/>
                 <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMember/er:Mine | er:Mine"/>
