@@ -98,7 +98,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
                 	) {
                 	for(var j = 0; j < record.tileOverlay.overlayList.length; j++) {
                 		var reportOverlay = record.tileOverlay.overlayList[j];
-                		if(reportOverlay.Contains(overlayLatlng) && reportOverlay.Area() < overlay.Area()) {
+                		if(reportOverlay.Contains(overlayLatlng) && reportOverlay.Area() < smallestPoly.Area()) {
                 			smallestPoly = reportOverlay;
                 		}
                 	}
