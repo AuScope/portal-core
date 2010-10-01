@@ -181,14 +181,14 @@ public class GSMLController {
         data.put("kml", kmlBlob);
         data.put("gml", gmlBlob);
         
-        final Map<String,String> dataInfo = new HashMap<String,String>();
-        dataInfo.put("url",requestInfo.getString(0) );
-        dataInfo.put("info",requestInfo.getString(1) );
+        final Map<String,String> debugInfo = new HashMap<String,String>();
+        debugInfo.put("url",requestInfo.getString(0) );
+        debugInfo.put("info",requestInfo.getString(1) );
         
         ModelMap model = new ModelMap();
         model.put("success", true);
         model.put("data", data);
-        model.put("dataInfo", dataInfo);
+        model.put("debugInfo", debugInfo);
 
         return new JSONModelAndView(model);
     }
