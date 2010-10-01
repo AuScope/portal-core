@@ -100,7 +100,7 @@ public class TestViewKnownLayerFactory {
     	
     	ModelMap result = factory.toView(mockWFS);
     	
-    	TestViewUtility.assertModelMapsEqual(expectation,result);
+    	AssertViewUtility.assertModelMapsEqual(expectation,result);
     }
     
     /**
@@ -143,7 +143,7 @@ public class TestViewKnownLayerFactory {
     	
     	ModelMap result = factory.toView(mockWFS);
     	
-    	TestViewUtility.assertModelMapsEqual(expectation,result);
+    	AssertViewUtility.assertModelMapsEqual(expectation,result);
     }
     
     @Test
@@ -176,7 +176,7 @@ public class TestViewKnownLayerFactory {
         
         ModelMap result = factory.toView(mockWMS);
         
-        TestViewUtility.assertModelMapsEqual(expectation,result);
+        AssertViewUtility.assertModelMapsEqual(expectation,result);
     }
     
     @Test
@@ -206,6 +206,6 @@ public class TestViewKnownLayerFactory {
         
         ModelMap result = factory.toView(mockKeywords);
         
-        TestViewUtility.assertModelMapsEqual(expectation,result);
+        AssertViewUtility.assertModelMapsEqual(expectation,result);
     }
 }

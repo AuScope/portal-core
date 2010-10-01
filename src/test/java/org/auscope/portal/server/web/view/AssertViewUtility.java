@@ -10,7 +10,7 @@ import org.springframework.ui.ModelMap;
  * @author vot002
  *
  */
-public class TestViewUtility {
+public class AssertViewUtility {
 
 	private static void assertEqual(Object expected, Object actual) {
     	if (expected instanceof ModelMap) {

@@ -96,7 +96,7 @@ public class TestViewCSWRecordFactory {
     	
     	ModelMap result = factory.toView(mockCSWRecord);
     	
-    	TestViewUtility.assertModelMapsEqual(expectation,result);
+    	AssertViewUtility.assertModelMapsEqual(expectation,result);
     }
     
     @Test
@@ -162,6 +162,6 @@ public class TestViewCSWRecordFactory {
         
         ModelMap result = factory.toView(mockCSWRecord);
         
-        TestViewUtility.assertModelMapsEqual(expectation,result);
+        AssertViewUtility.assertModelMapsEqual(expectation,result);
     }
 }
