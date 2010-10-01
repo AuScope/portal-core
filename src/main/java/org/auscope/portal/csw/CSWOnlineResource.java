@@ -34,7 +34,12 @@ public abstract class CSWOnlineResource {
         /**
          * OpenDAP
          */
-        OpenDAP
+        OPeNDAP,
+        
+        /**
+         * A generic web link
+         */
+        WWW
     }
     
     /**
@@ -79,9 +84,11 @@ public abstract class CSWOnlineResource {
             String name = getDescription();
             if (name != null) {
                 if (name.equals("HACK-OPENDAP")) {
-                    return OnlineResourceType.OpenDAP;
+                    return OnlineResourceType.OPeNDAP;
                 }
             }
+            
+            return OnlineResourceType.WWW;
         }
         
         return OnlineResourceType.Unsupported;

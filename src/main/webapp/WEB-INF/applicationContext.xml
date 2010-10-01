@@ -18,6 +18,7 @@
       </property>
    </bean>
 
+    <!-- All elements must be of type org.auscope.portal.server.web.KnownLayer -->
     <bean id="knownTypes" class="java.util.ArrayList">
         <constructor-arg>
             <list>                 		
@@ -27,107 +28,109 @@
                 <ref bean="knownTypeBorehole" />
                 <ref bean="knownTypeGeodesy" />
                 <ref bean="knownTypeGeochron" />
+                <ref bean="knownTypeReports" />
+                <ref bean="knownTypeGeotransects" />
             </list>
         </constructor-arg>
     </bean>
    
-   <bean id="knownTypeMine" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
-       <constructor-arg index="0" value="er:Mine"/>
-       <constructor-arg index="1" value="Earth Resource Mine"/>
-       <constructor-arg index="2" value=""/>
-       <constructor-arg index="3" value="doMineFilter.do"/>
-       <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"/>
-       <constructor-arg index="5">
+   <bean id="knownTypeMine" class="org.auscope.portal.server.web.KnownLayerWFS">       
+       <constructor-arg name="featureTypeName" value="er:Mine"/>
+       <constructor-arg name="title" value="Earth Resource Mine"/>
+       <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:Mine"/>
+       <constructor-arg name="proxyUrl" value="doMineFilter.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"/>
+       <constructor-arg name="iconAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
-       <constructor-arg index="6">
-           <bean class="java.awt.Point">
-               <constructor-arg index="0" value="16"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-       <constructor-arg index="7">
-           <bean class="java.awt.Dimension">
-               <constructor-arg index="0" value="32"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-    </bean>
-
-    <bean id="knownTypeMineralOccurrence" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
-       <constructor-arg index="0" value="er:MineralOccurrence"/>
-       <constructor-arg index="1" value="Earth Resource Mineral Occurrence"/>
-       <constructor-arg index="2" value=""/>
-       <constructor-arg index="3" value="doMineralOccurrenceFilter.do"/>
-       <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/purple-blank.png"/>
-       <constructor-arg index="5">
-           <bean class="java.awt.Point">
-               <constructor-arg index="0" value="16"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-       <constructor-arg index="6">
-           <bean class="java.awt.Point">
-               <constructor-arg index="0" value="16"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-       <constructor-arg index="7">
-           <bean class="java.awt.Dimension">
-               <constructor-arg index="0" value="32"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-    </bean>
-
-    <bean id="knownTypeMiningActivity" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
-       <constructor-arg index="0" value="er:MiningActivity"/>
-       <constructor-arg index="1" value="Earth Resource Mining Activity"/>
-       <constructor-arg index="2" value=""/>
-       <constructor-arg index="3" value="doMiningActivityFilter.do"/>
-       <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"/>
-       <constructor-arg index="5">
-           <bean class="java.awt.Point">
-               <constructor-arg index="0" value="16"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-       <constructor-arg index="6">
-           <bean class="java.awt.Point">
-               <constructor-arg index="0" value="16"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-       <constructor-arg index="7">
-           <bean class="java.awt.Dimension">
-               <constructor-arg index="0" value="32"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-    </bean>
-
-    <bean id="knownTypeBorehole" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
-       <constructor-arg index="0" value="gsml:Borehole"/>
-       <constructor-arg index="1" value="National Virtual Core Library"/>
-       <constructor-arg index="2" value=""/>
-       <constructor-arg index="3" value="doNvclFilter.do"/>
-       <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
-       <constructor-arg index="5">
-           <bean class="java.awt.Point">
-               <constructor-arg index="0" value="16"/>
-               <constructor-arg index="1" value="32"/>
-           </bean>
-       </constructor-arg>
-       <constructor-arg index="6">
+       <constructor-arg name="infoWindowAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>       
-       <constructor-arg index="7">
+       <constructor-arg name="iconSize">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+    </bean>
+
+    <bean id="knownTypeMineralOccurrence" class="org.auscope.portal.server.web.KnownLayerWFS">
+       <constructor-arg name="featureTypeName" value="er:MineralOccurrence"/>
+       <constructor-arg name="title" value="Earth Resource Mineral Occurrence"/>
+       <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:MineralOccurence"/>
+       <constructor-arg name="proxyUrl" value="doMineralOccurrenceFilter.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/purple-blank.png"/>
+       <constructor-arg name="iconAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="infoWindowAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>       
+       <constructor-arg name="iconSize">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+    </bean>
+
+    <bean id="knownTypeMiningActivity" class="org.auscope.portal.server.web.KnownLayerWFS">
+       <constructor-arg name="featureTypeName" value="er:MiningActivity"/>
+       <constructor-arg name="title" value="Earth Resource Mining Activity"/>
+       <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:MiningActivity"/>
+       <constructor-arg name="proxyUrl" value="doMiningActivityFilter.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"/>
+       <constructor-arg name="iconAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="infoWindowAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>       
+       <constructor-arg name="iconSize">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+    </bean>
+
+    <bean id="knownTypeBorehole" class="org.auscope.portal.server.web.KnownLayerWFS">
+       <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
+       <constructor-arg name="title" value="National Virtual Core Library"/>
+       <constructor-arg name="description" value="A collection of services that implement the AuScope National Virtual Core Library v1 Profile for gsml:Borehole"/>
+       <constructor-arg name="proxyUrl" value="doNvclFilter.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
+       <constructor-arg name="iconAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="infoWindowAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>       
+       <constructor-arg name="iconSize">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>
@@ -135,25 +138,25 @@
        </constructor-arg>
    </bean>
 
-    <bean id="knownTypeGeodesy" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
-       <constructor-arg index="0" value="ngcp:GnssStation"/>
-       <constructor-arg index="1" value="Geodesy"/>
-       <constructor-arg index="2" value=""/>
-       <constructor-arg index="3" value="getAllFeatures.do"/>
-       <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/wht-blank.png"/>
-       <constructor-arg index="5">
+    <bean id="knownTypeGeodesy" class="org.auscope.portal.server.web.KnownLayerWFS">
+       <constructor-arg name="featureTypeName" value="ngcp:GnssStation"/>
+       <constructor-arg name="title" value="Geodesy"/>
+       <constructor-arg name="description" value=""/>
+       <constructor-arg name="proxyUrl" value="getAllFeatures.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/wht-blank.png"/>
+       <constructor-arg name="iconAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
-       <constructor-arg index="6">
+       <constructor-arg name="infoWindowAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>       
-       <constructor-arg index="7">
+       <constructor-arg name="iconSize">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>
@@ -161,30 +164,42 @@
        </constructor-arg>
    </bean>
    
-    <bean id="knownTypeGeochron" class="org.auscope.portal.server.web.KnownFeatureTypeDefinition">
-       <constructor-arg index="0" value="Geochron:geochronology"/>
-       <constructor-arg index="1" value="Geochronology"/>
-       <constructor-arg index="2" value=""/>
-       <constructor-arg index="3" value="getAllFeatures.do"/>
-       <constructor-arg index="4" value="http://maps.google.com/mapfiles/kml/paddle/red-blank.png"/>
-       <constructor-arg index="5">
+    <bean id="knownTypeGeochron" class="org.auscope.portal.server.web.KnownLayerWFS">
+       <constructor-arg name="featureTypeName" value="Geochron:geochronology"/>
+       <constructor-arg name="title" value="Geochronology"/>
+       <constructor-arg name="description" value=""/>
+       <constructor-arg name="proxyUrl" value="getAllFeatures.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/red-blank.png"/>
+       <constructor-arg name="iconAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
-       <constructor-arg index="6">
+       <constructor-arg name="infoWindowAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>       
-       <constructor-arg index="7">
+       <constructor-arg name="iconSize">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
-   </bean>   
+   </bean> 
+   
+   <bean id="knownTypeReports" class="org.auscope.portal.server.web.KnownLayerKeywords">
+       <constructor-arg name="title" value="Reports"/>
+       <constructor-arg name="description" value="A collection of scientific reports that have been spatially located"/>
+       <constructor-arg name="descriptiveKeyword" value="Report"/>
+   </bean>
+   
+   <bean id="knownTypeGeotransects" class="org.auscope.portal.server.web.KnownLayerWMS">
+       <constructor-arg name="title" value="Geotransects"/>
+       <constructor-arg name="description" value=""/>
+       <constructor-arg name="layerName" value="gt:Geotransects"/>
+   </bean>        
 
 </beans>

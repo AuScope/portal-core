@@ -5,23 +5,26 @@
  */
 
 /**
+ * cswRecord - CSWRecord - the CSW Record that is a parent to onlineResource
+ * onlineResource - Object - The online resource that was used to render this geotransect 
  * @constructor
  */
-function GeotransectsInfoWindow(iLatlng, iMap, iLineId, iRecord) {
+function GeotransectsInfoWindow(iLatlng, iMap, iLineId, iCSWRecord, iOnlineResource) {
     this.map = iMap; 
     this.latlng = iLatlng;
-    this.record = iRecord;
+    this.cswRecord = iCSWRecord;
+    this.onlineResource = iOnlineResource;
     this.tabsArray = [];   
     
     this.lineId = iLineId;
-    this.description = this.record.get('description');
+    this.description = this.cswRecord.getDataIdentificationAbstract();
     
     //Get the GeoServer's service Url, removing pathname and return only protocol with 
     //hostname eg.: http://server.com.au/nvcl/wfs --> http://server.com.au      
     this.geoServerUrl = (function(url) {        
         var str = url.slice( ("http://").length);   
         return 'http://' + str.slice(0,str.indexOf("/"));
-    })(this.record.get('serviceURLs')[0]);  
+    })(this.onlineResource.url);  
     
     this.mask = new Ext.LoadMask(Ext.get('center_region'), {msg:"Please wait..."});
 }

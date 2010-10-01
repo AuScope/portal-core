@@ -14,8 +14,6 @@
 	    <script type="text/javascript" src="js/XPathFixFirefox.js"></script>
 		<script type="text/javascript" src="js/external/extjs/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="js/external/extjs/ext-all.js"></script>
-		<script type="text/javascript" src="js/external/extjs/RowExpander.js"></script>
-		<script type="text/javascript" src="js/external/extjs/CheckColumn.js"></script>
 		<script src="http://maps.google.com/maps?file=api&amp;v=2.x&amp;key=${googleKey}" type="text/javascript"></script>
 		
 		

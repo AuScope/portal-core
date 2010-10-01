@@ -209,7 +209,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
           <srv:serviceTypeVersion>
             <gco:CharacterString>1.1.0</gco:CharacterString>
           </srv:serviceTypeVersion>
-          <srv:extent>
+          <gmd:extent>
 
             <gmd:EX_Extent>
               <gmd:geographicElement>
@@ -231,7 +231,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
 
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
@@ -493,7 +493,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
 
             <gco:CharacterString>1.1.0</gco:CharacterString>
           </srv:serviceTypeVersion>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -514,7 +514,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
 
@@ -715,7 +715,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
           <srv:serviceTypeVersion>
             <gco:CharacterString>1.1.0</gco:CharacterString>
           </srv:serviceTypeVersion>
-          <srv:extent>
+          <gmd:extent>
 
             <gmd:EX_Extent>
               <gmd:geographicElement>
@@ -737,7 +737,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
 
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
@@ -991,7 +991,7 @@ The site quality database contains statistical quantities for each site for each
               </gmd:type>
             </gmd:MD_Keywords>
           </srv:keywords>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -1012,7 +1012,7 @@ The site quality database contains statistical quantities for each site for each
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
 
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
@@ -1233,7 +1233,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
           <srv:serviceTypeVersion>
             <gco:CharacterString>1.1.0</gco:CharacterString>
           </srv:serviceTypeVersion>
-          <srv:extent>
+          <gmd:extent>
 
             <gmd:EX_Extent>
               <gmd:geographicElement>
@@ -1255,7 +1255,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
 
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
@@ -1508,7 +1508,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
 
             <gco:CharacterString>1.1.0</gco:CharacterString>
           </srv:serviceTypeVersion>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -1529,7 +1529,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
 
@@ -1796,7 +1796,7 @@ Mineral Occurrences from GSV's VicMine database.</gco:CharacterString>
             <gco:CharacterString>1.1.0</gco:CharacterString>
           </srv:serviceTypeVersion>
 
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -1817,7 +1817,7 @@ Mineral Occurrences from GSV's VicMine database.</gco:CharacterString>
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
@@ -2027,7 +2027,7 @@ Mineral Occurrences from GSV's VicMine database.</gco:CharacterString>
           <srv:serviceTypeVersion>
             <gco:CharacterString>1.1.0</gco:CharacterString>
           </srv:serviceTypeVersion>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
 
@@ -2049,7 +2049,7 @@ Mineral Occurrences from GSV's VicMine database.</gco:CharacterString>
               </gmd:geographicElement>
             </gmd:EX_Extent>
 
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
@@ -2284,7 +2284,7 @@ These sites provide the geodetic framework for the spatial data infrastructure i
           <srv:serviceTypeVersion>
             <gco:CharacterString>1.0.0</gco:CharacterString>
           </srv:serviceTypeVersion>
-          <srv:extent>
+          <gmd:extent>
 
             <gmd:EX_Extent>
               <gmd:geographicElement>
@@ -2306,7 +2306,7 @@ These sites provide the geodetic framework for the spatial data infrastructure i
 
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
@@ -2463,7 +2463,7 @@ These sites provide the geodetic framework for the spatial data infrastructure i
             </gmd:MD_StandardOrderProcess>
 
           </srv:accessProperties>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -2484,7 +2484,7 @@ These sites provide the geodetic framework for the spatial data infrastructure i
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
@@ -2865,7 +2865,7 @@ data.</gco:CharacterString>
               </gmd:fees>
             </gmd:MD_StandardOrderProcess>
           </srv:accessProperties>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -2886,7 +2886,7 @@ data.</gco:CharacterString>
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
 
           <srv:coupledResource>
             <srv:SV_CoupledResource>
@@ -5662,7 +5662,7 @@ data.</gco:CharacterString>
             </gmd:MD_StandardOrderProcess>
           </srv:accessProperties>
 
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -5683,7 +5683,7 @@ data.</gco:CharacterString>
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:coupledResource>
             <srv:SV_CoupledResource>
               <srv:operationName>
@@ -6532,7 +6532,7 @@ data.</gco:CharacterString>
               </gmd:fees>
             </gmd:MD_StandardOrderProcess>
           </srv:accessProperties>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
 
               <gmd:geographicElement>
@@ -6554,7 +6554,7 @@ data.</gco:CharacterString>
               </gmd:geographicElement>
 
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:coupledResource>
             <srv:SV_CoupledResource>
               <srv:operationName>
@@ -7371,7 +7371,7 @@ data.</gco:CharacterString>
             </gmd:MD_StandardOrderProcess>
 
           </srv:accessProperties>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -7392,7 +7392,7 @@ data.</gco:CharacterString>
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:coupledResource>
             <srv:SV_CoupledResource>
               <srv:operationName>
@@ -11853,7 +11853,7 @@ data.</gco:CharacterString>
               </gmd:fees>
             </gmd:MD_StandardOrderProcess>
           </srv:accessProperties>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -11874,7 +11874,7 @@ data.</gco:CharacterString>
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
 
           <srv:coupledResource>
             <srv:SV_CoupledResource>
@@ -13747,7 +13747,7 @@ data.</gco:CharacterString>
             </gmd:MD_StandardOrderProcess>
           </srv:accessProperties>
 
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -13768,7 +13768,7 @@ data.</gco:CharacterString>
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
           <srv:coupledResource>
             <srv:SV_CoupledResource>
               <srv:operationName>
@@ -14747,7 +14747,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
               </gmd:fees>
             </gmd:MD_StandardOrderProcess>
           </srv:accessProperties>
-          <srv:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -14768,7 +14768,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                 </gmd:EX_GeographicBoundingBox>
               </gmd:geographicElement>
             </gmd:EX_Extent>
-          </srv:extent>
+          </gmd:extent>
 
           <srv:couplingType>
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />

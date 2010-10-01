@@ -89,5 +89,21 @@ public class TestCSWRecord {
         Assert.assertFalse(this.records[54].containsAnyOnlineResource(OnlineResourceType.WFS));
         Assert.assertFalse(this.records[54].containsAnyOnlineResource(OnlineResourceType.WFS, OnlineResourceType.Unsupported));
     }
+    
+    @Test
+    public void testGeographicBoundingBoxParsing() throws Exception {
+    	CSWGeographicElement[] geoEls = this.records[0].getCSWGeographicElements();
+    	
+    	Assert.assertNotNull(geoEls);
+    	Assert.assertEquals(1, geoEls.length);
+    	Assert.assertTrue(geoEls[0] instanceof CSWGeographicBoundingBox);
+    	
+    	CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox)geoEls[0];
+    	
+    	Assert.assertEquals(145.00, bbox.getEastBoundLongitude(), 0.001);
+    	Assert.assertEquals(143.00, bbox.getWestBoundLongitude(), 0.001);
+    	Assert.assertEquals(-35.00, bbox.getNorthBoundLatitude(), 0.001);
+    	Assert.assertEquals(-39.00, bbox.getSouthBoundLatitude(), 0.001);
+    }
 
 }

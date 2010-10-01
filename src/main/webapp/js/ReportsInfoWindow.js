@@ -7,9 +7,10 @@
 /**
  * @constructor
  */
-function ReportsInfoWindow(iMap, iOverlay) {
+function ReportsInfoWindow(iMap, iOverlay, iCSWRecord) {
     this.map = iMap; 
     this.overlay = iOverlay;
+    this.cswRecord = iCSWRecord;
 }
 
 ReportsInfoWindow.prototype = {
@@ -20,20 +21,21 @@ ReportsInfoWindow.prototype = {
 			"width:99%;max-height:300px;overflow:auto;\">" 
 			+ "<table border=\"1\" cellspacing=\"1\" width=\"100%\" bgcolor=\"#EAF0F8\">" 
 			+ "<tr><td>"
-			+ this.overlay.title
+			+ this.cswRecord.getServiceName()
 			+ "</td></tr>"
 			+ "<tr><td>" 
-			+ this.overlay.description 
+			+ this.cswRecord.getDataIdentificationAbstract(); 
 			+ "</td></tr>";
 		
-		if(this.overlay.serviceURLs != null && this.overlay.serviceURLs.length > 0) {
-			for(var i=0; i<this.overlay.serviceURLs.length; i++) {
-				sHtml += "<tr><td>" 
-					+ "<a href='"	+ this.overlay.serviceURLs[i] + "' target='_blank'>" 
-						+ this.overlay.serviceURLs[i] + "</a>";
-					+ "</td></tr>";
-			}
+		var wwwLinks = this.cswRecord.getFilteredOnlineResources('WWW');
+		for(var i=0; i< wwwLinks.length; i++) {
+			sHtml += "<tr><td>" 
+				+ "<a href='"	+ wwwLinks[i].url + "' target='_blank'>" 
+				+ wwwLinks[i].name 
+				+ "</a>"
+				+ "</td></tr>";
 		}
+		
 			
 		sHtml += "</table>"
 			+ "</div>";

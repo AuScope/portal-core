@@ -4,7 +4,7 @@
  * @param {number} the id of this formpanel instance
  * @param {string} the service url for submit
  */
-MiningActivityFilterForm = function(id, serviceUrl) {
+MiningActivityFilterForm = function(id) {
     /*var mineNamesStore = new Ext.data.Store({
         baseParams: {serviceUrl: serviceUrl},
         proxy: new Ext.data.HttpProxy(new Ext.data.Connection({url: 'getMineNames.do', timeout:180000})),

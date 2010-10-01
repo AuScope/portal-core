@@ -3,7 +3,7 @@
  * @param {number} id of this formpanel instance
  * @param {string} the service url for submit
  */
-MineFilterForm = function(id, serviceUrl) {
+MineFilterForm = function(id) {
     /*
     var mineNamesStore = new Ext.data.Store({
         baseParams: {serviceUrl: serviceUrl},

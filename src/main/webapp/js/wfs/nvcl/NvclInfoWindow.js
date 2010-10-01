@@ -10,7 +10,7 @@
  * @param {GMap2}   iMap
  * @param {GMarker} iMarker
  */ 
-function NvclInfoWindow(iMap, iMarker) {
+function NvclInfoWindow(iMap, iMarker, wfsUrl) {
  
     this.Map = iMap;    
     this.Marker = iMarker;
@@ -24,7 +24,7 @@ function NvclInfoWindow(iMap, iMarker) {
                 "<img src=\"img/wait.gif\" style=\"padding-top:50px;\" />" +
             "</p>" +
         "</div>";                    
-    this.wfsServiceUrl = iMarker.wfsUrl; 
+    this.wfsServiceUrl = wfsUrl; 
     /**
      * iMarker.wfsUrl comes from GeoNetwork and represents GeoServer's service 
      * Url. From this Url we remove pathname and return only protocol with 
@@ -33,7 +33,7 @@ function NvclInfoWindow(iMap, iMarker) {
     this.geoServerUrl = (function(url) {        
         var str = url.slice( ("http://").length);   
         return 'http://' + str.slice(0,str.indexOf("/"));
-    })(iMarker.wfsUrl);
+    })(wfsUrl);
 }
 
 NvclInfoWindow.prototype = {

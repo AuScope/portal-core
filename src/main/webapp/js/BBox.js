@@ -35,6 +35,18 @@ BBox.prototype.clone = function() {
 };
 
 /**
+ * Combines this bounding box with the specified bbox by taking the maxima/minima of both bounding boxes.
+ * 
+ * The 'super' bounding box will be returned as a BBox
+ */
+BBox.prototype.combine = function(bbox) {
+	return new BBox(Math.max(this.northBoundLatitude, bbox.northBoundLatitude),
+					Math.min(this.southBoundLatitude, bbox.southBoundLatitude),
+					Math.max(this.eastBoundLongitude, bbox.eastBoundLongitude),
+					Math.min(this.westBoundLongitude, bbox.westBoundLongitude));
+};
+
+/**
  * Returns a list of BBox objects representing the bbox being split into 2 at the
  * specified latitude and longitudes (Will return 1,2 or 4 bbox objects)
  * @param longitude [Optional] The longitude to split at in the range [-180, 180)
@@ -88,4 +100,67 @@ BBox.prototype.splitAt = function(longitude, latitude) {
 	}
 	
 	return splits;
+};
+
+/**
+ * Recursively splits the specified bbox 
+ * 
+ * bbox : The bounding box to split
+ * resultList : A list that the results will be appended to
+ */
+BBox.prototype.internalSplitBboxes = function(bbox, resultList) {
+
+	//SPLIT CASE 1: Polygon crossing meridian
+	if (bbox.westBoundLongitude < 0 && bbox.eastBoundLongitude > 0) {
+		var splits = bbox.splitAt(0); 
+		for (var i = 0; i < splits.length; i++) {
+			this.internalSplitBboxes(splits[i], resultList);
+		}
+		return resultList;
+	}
+	
+	//SPLIT CASE 2: Polygon crossing anti meridian
+	if (bbox.westBoundLongitude < 0 && bbox.eastBoundLongitude > 0) {
+		var splits = bbox.splitAt(-180); 
+		for (var i = 0; i < splits.length; i++) {
+			this.internalSplitBboxes(splits[i], resultList);
+		}
+		return resultList;
+	}
+	
+	//SPLIT CASE 3: Polygon is too wide (Gmap can't handle click events for wide polygons)
+	if (Math.abs(bbox.westBoundLongitude - bbox.eastBoundLongitude) > 60) {
+		var splits = bbox.splitAt((bbox.westBoundLongitude + bbox.eastBoundLongitude) / 2); 
+		for (var i = 0; i < splits.length; i++) {
+			this.internalSplitBboxes(splits[i], resultList);
+		}
+		return resultList;
+	}
+	
+	//OTHERWISE - bounding box is OK to render
+	resultList.push(bbox);
+	return resultList; 
+};
+
+/**
+ * Converts a portal bbox into an array of GMap Polygon's
+ * 
+ * Normally a single polygon is returned but if the polygon wraps around the antimeridian, it will be split
+ * around the meridians.
+ */
+BBox.prototype.toGMapPolygon = function(strokeColor, strokeWeight, strokeOpacity, fillColor, fillOpacity, opts) {
+    var splits = this.internalSplitBboxes(this, []);
+    var result = [];
+    	
+    for (var i = 0; i < splits.length; i++) {
+    	var splitBbox = splits[i];
+    	var ne = new GLatLng(splitBbox.northBoundLatitude, splitBbox.eastBoundLongitude);
+        var se = new GLatLng(splitBbox.southBoundLatitude, splitBbox.eastBoundLongitude);
+        var sw = new GLatLng(splitBbox.southBoundLatitude, splitBbox.westBoundLongitude);
+        var nw = new GLatLng(splitBbox.northBoundLatitude, splitBbox.westBoundLongitude);
+    	    
+        result.push(new GPolygon([sw, nw, ne, se, sw], strokeColor, strokeWeight, strokeOpacity, fillColor, fillOpacity, opts));
+    }
+    	
+    return result;
 };

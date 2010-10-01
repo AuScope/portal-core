@@ -3,7 +3,7 @@
  * @param {number} id of this formpanel instance
  * @param {string} the service url for submit
  */
-ReportFilterForm = function(id, serviceUrl) {
+ReportFilterForm = function(id) {
     
     Ext.FormPanel.call(this, {
         id          : String.format('{0}',id),
