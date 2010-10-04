@@ -130,7 +130,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	                    var alr = activeLayersStore.getActiveLayerAt(i);
 	
 	                    //Only consider records that are part of this known layer grouping
-	                    if (alr.getParentKnownLayer() == parentKnownLayer) {
+	                    if (alr.getParentKnownLayer().getId() == parentKnownLayer.getId()) {
 	                    	var overlayManager = alr.getOverlayManager();
 	                    	
 	                        for(var j = 0; j < overlayManager.overlayList.length; j++) {
