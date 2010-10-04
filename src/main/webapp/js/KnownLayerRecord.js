@@ -15,6 +15,14 @@ KnownLayerRecord.prototype.internalGetStringField = function(fieldName) {
 	
 	return str;
 };
+KnownLayerRecord.prototype.internalGetBooleanField = function(fieldName) {
+	var b = this.internalRecord.get(fieldName);
+	if (b == null || b == undefined) {
+		return false;
+	}
+	
+	return b;
+};
 
 /**
  * Gets the type of this known layer.
@@ -37,6 +45,14 @@ KnownLayerRecord.prototype.getId = function() {
  */
 KnownLayerRecord.prototype.getFeatureTypeName = function() {
 	return this.internalGetStringField('featureTypeName');
+};
+
+/**
+ * Gets whether bounding box filtering should be disabled for this known layer. 
+ * Only valid if type=='KnownLayerWFS'
+ */
+KnownLayerRecord.prototype.getDisableBboxFiltering = function() {
+	return this.internalGetStringField('disableBboxFiltering');
 };
 
 /**

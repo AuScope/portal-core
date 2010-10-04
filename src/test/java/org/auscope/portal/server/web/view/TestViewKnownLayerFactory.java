@@ -39,6 +39,7 @@ public class TestViewKnownLayerFactory {
     	final String proxyUrl = "http://bob.xom";
     	final String iconUrl = "http://bob.xom.foo.bar";
     	final String id = "eyedee";
+    	final boolean disableBboxFiltering = false;
     	
     	final double anchorX = 0.1;
     	final double anchorY = 0.2;
@@ -64,6 +65,7 @@ public class TestViewKnownLayerFactory {
     	expectation.put("infoWindowAnchor", infoExpectation);
     	expectation.put("iconSize", sizeExpectation);
     	expectation.put("id", id);
+    	expectation.put("disableBboxFiltering", disableBboxFiltering);
     	
     	anchorExpectation.put("x", anchorX);
     	anchorExpectation.put("y", anchorY);
@@ -86,6 +88,7 @@ public class TestViewKnownLayerFactory {
     		oneOf(mockWFS).getIconAnchor();will(returnValue(mockP1));
     		oneOf(mockWFS).getInfoWindowAnchor();will(returnValue(mockP2));
     		oneOf(mockWFS).getIconSize();will(returnValue(mockD1));
+    		oneOf(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
     		
     		
     		oneOf(mockP1).getX();will(returnValue(anchorX));
@@ -117,6 +120,7 @@ public class TestViewKnownLayerFactory {
     	final String proxyUrl = "http://bob.xom";
     	final String iconUrl = "http://bob.xom.foo.bar";
     	final String id = "eyedee";
+    	final boolean disableBboxFiltering = true;
     	
     	final ModelMap expectation = new ModelMap();
     	
@@ -127,6 +131,7 @@ public class TestViewKnownLayerFactory {
     	expectation.put("proxyUrl", proxyUrl);
     	expectation.put("iconUrl", iconUrl);
     	expectation.put("id", id);
+    	expectation.put("disableBboxFiltering", disableBboxFiltering);
     	
     	context.checking(new Expectations() {{
     		
@@ -139,6 +144,7 @@ public class TestViewKnownLayerFactory {
     		oneOf(mockWFS).getIconAnchor();will(returnValue(null));
     		oneOf(mockWFS).getInfoWindowAnchor();will(returnValue(null));
     		oneOf(mockWFS).getIconSize();will(returnValue(null));
+    		oneOf(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
         }});
     	
     	ModelMap result = factory.toView(mockWFS);

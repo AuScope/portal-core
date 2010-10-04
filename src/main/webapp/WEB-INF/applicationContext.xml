@@ -118,6 +118,7 @@
        <constructor-arg name="description" value="A collection of services that implement the AuScope National Virtual Core Library v1 Profile for gsml:Borehole"/>
        <constructor-arg name="proxyUrl" value="doNvclFilter.do"/>
        <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
+       <constructor-arg name="disableBboxFiltering" value="true"/>
        <constructor-arg name="iconAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>

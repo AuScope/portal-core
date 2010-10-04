@@ -60,6 +60,8 @@ public class ViewKnownLayerFactory {
         obj.put("featureTypeName", k.getFeatureTypeName());
         obj.put("proxyUrl", k.getProxyUrl());
         obj.put("iconUrl", k.getIconUrl());
+        obj.put("disableBboxFiltering", k.getDisableBboxFiltering());
+        
         
         Point iconAnchor =  k.getIconAnchor(); 
         if (iconAnchor != null) {

@@ -599,6 +599,7 @@ Ext.onReady(function() {
         var cswRecords = activeLayerRecord.getCSWRecordsWithType('WFS');
         var iconUrl = activeLayerRecord.getIconUrl();
         var finishedLoadingCounter = cswRecords.length;
+        var parentKnownLayer = activeLayerRecord.getParentKnownLayer();
         
         //Begin loading from each service 
         activeLayerRecord.setIsLoading(true);
@@ -616,6 +617,9 @@ Ext.onReady(function() {
             filterParameters.maxFeatures=200; // limit our feature request to 200 so we don't overwhelm the browser
         	filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
         	filterParameters.serviceUrl = wfsOnlineResource.url;
+        	if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
+        		filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
+        	}
         	
             handleQuery(activeLayerRecord, cswRecords[i], wfsOnlineResource, filterParameters, function() {
                 //decrement the counter

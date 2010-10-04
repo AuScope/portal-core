@@ -15,6 +15,7 @@ public class KnownLayerWFS extends KnownLayer {
     private Point iconAnchor;
     private Point infoWindowAnchor;
     private Dimension iconSize;
+    private boolean disableBboxFiltering;
     
     /**
      * @param featureTypeName The feature type name used to identify members of this layer
@@ -31,6 +32,7 @@ public class KnownLayerWFS extends KnownLayer {
         this.description = description;
         this.proxyUrl = proxyUrl;
         this.iconUrl = iconUrl;
+        this.disableBboxFiltering = false;
     }
     
     /**
@@ -48,10 +50,31 @@ public class KnownLayerWFS extends KnownLayer {
     public KnownLayerWFS(String featureTypeName, String title, 
             String description, String proxyUrl, String iconUrl, Point iconAnchor,
             Point infoWindowAnchor, Dimension iconSize) {
+        this(featureTypeName, title, description, proxyUrl, iconUrl, iconAnchor, 
+             infoWindowAnchor, iconSize, false);
+    }    
+    
+    /**
+     * @param featureTypeName The feature type name used to identify members of this layer
+     * @param title The descriptive title of this layer
+     * @param description The extended description of this layer
+     * @param proxyUrl The URL that filter requests should be made through
+     * @param iconUrl The Icon that will be used to render this feature on the map 
+     * @param iconAnchor  The pixel coordinate relative to the top left corner of 
+     *  the icon image at which this icon is anchored to the map.
+     * @param infoWindowAnchor  The pixel coordinate relative to the top left corner of
+     *  the icon image at which the info window is anchored to the map.
+     * @param iconSize  The size of the icon in pixels
+     * @param disableBboxFiltering if true, the GUI will be instructed NOT to use to bounding box filters for this WFS collection
+     */
+    public KnownLayerWFS(String featureTypeName, String title, 
+            String description, String proxyUrl, String iconUrl, Point iconAnchor,
+            Point infoWindowAnchor, Dimension iconSize, boolean disableBboxFiltering) {
         this(featureTypeName, title, description, proxyUrl, iconUrl);
         this.iconAnchor = iconAnchor;
         this.infoWindowAnchor = infoWindowAnchor;
         this.iconSize = iconSize;
+        this.disableBboxFiltering = disableBboxFiltering;
     }    
 
     public String getFeatureTypeName() {
@@ -116,5 +139,15 @@ public class KnownLayerWFS extends KnownLayer {
         } else {
         return iconSize;
         }
+    }
+    
+    /**
+     * Gets whether bounding box filtering should be disabled for this collection
+     * of services
+     * 
+     * @return size in pixels of the icon.
+     */
+    public boolean getDisableBboxFiltering() {
+        return this.disableBboxFiltering;
     }
 }

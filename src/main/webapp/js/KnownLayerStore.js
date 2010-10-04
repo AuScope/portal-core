@@ -27,7 +27,8 @@ KnownLayerStore = function(url) {
 		    'iconUrl',
 		    'iconAnchor',
 		    'infoWindowAnchor',
-		    'iconSize'
+		    'iconSize',
+		    'disableBboxFiltering'
 		]
 	});
 };
