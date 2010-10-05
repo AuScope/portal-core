@@ -759,7 +759,11 @@ Ext.onReady(function() {
         	var filterPanelObj = activeLayerRecord.getFilterPanel();
         	
             //if filter panel already exists then show it
-            filterPanel.getLayout().setActiveItem(activeLayerRecord.getId());
+        	if (filterPanelObj && filterPanelObj.form) {
+        		filterPanel.getLayout().setActiveItem(activeLayerRecord.getId());
+        	} else {
+        		filterPanel.getLayout().setActiveItem(0);
+        	}
             
             if (filterPanelObj.supportsFiltering) {
             	filterButton.enable();
@@ -796,9 +800,15 @@ Ext.onReady(function() {
         //remove it from active layers
         activeLayersStore.removeActiveLayersRecord(activeLayerRecord);
     
-
         //set the filter panels active item to 0
         filterPanel.getLayout().setActiveItem(0);
+        
+        //Completely destroy the filter panel object as we no longer 
+        //have any use for it
+        var filterPanelObj = activeLayerRecord.getFilterPanel();
+        if (filterPanelObj && filterPanelObj.form) {
+        	filterPanelObj.form.destroy();
+        }
     };             
 
     this.activeLayersPanel = new ActiveLayersGridPanel('active-layers-panel', 
