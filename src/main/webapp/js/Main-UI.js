@@ -308,7 +308,7 @@ Ext.onReady(function() {
 		}
 		
 		return {
-				bboxSrs : 'urn:x-ogc:def:crs:EPSG:4326',
+				bboxSrs : 'EPSG:4326',
 				lowerCornerPoints : [Math.min(adjustedSWLng, adjustedNELng), Math.min(sw.lat(), ne.lat())],
 				upperCornerPoints : [Math.max(adjustedSWLng, adjustedNELng), Math.max(sw.lat(), ne.lat())]
 		};
