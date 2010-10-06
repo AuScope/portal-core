@@ -63,6 +63,13 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
  * @version $Id$
  */
 var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLayersStore) {
+
+	//If the reports popup menu is showing, destroy it.
+	var reportsMenu = Ext.getCmp('reportsMenu');
+	if(reportsMenu) {
+		reportsMenu.destroy();
+	}
+	
 	//An instance of ActiveLayersRecord
 	var parentActiveLayerRecord = null;
 	if (overlay && overlay.activeLayerRecord) {
@@ -123,25 +130,65 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	    if (parentKnownLayer && parentKnownLayer.getType() === 'KnownLayerKeywords') {
 	    	if (parentKnownLayer.getDescriptiveKeyword() === 'Report') {
 	    		if (overlay instanceof GPolygon) {
-		    		//Find the smallest polygon containing the clicked point
-	                var smallestPoly = overlay;
-	    
+		    
+	    			var selectedReports = [];
+	    			
 	                for (var i = 0; i < activeLayersStore.getCount(); i++) {
 	                    var alr = activeLayersStore.getActiveLayerAt(i);
 	
 	                    //Only consider records that are part of this known layer grouping
-	                    if (alr.getParentKnownLayer().getId() == parentKnownLayer.getId()) {
+	                    if (alr.getParentKnownLayer() != null && 
+	                    		alr.getParentKnownLayer().getId() == parentKnownLayer.getId()) {
+	                    	
 	                    	var overlayManager = alr.getOverlayManager();
 	                    	
 	                        for(var j = 0; j < overlayManager.overlayList.length; j++) {
+	                        	
 		                        var reportOverlay = overlayManager.overlayList[j];
-		                        if(reportOverlay.Contains(overlayLatlng) && reportOverlay.Area() < smallestPoly.Area()) {
-		                            smallestPoly = reportOverlay;
+		                        
+		                        //if this reportOverlay contains the clicked point, add it to the list
+		                        if(reportOverlay.Contains(overlayLatlng)) {
+		                        	
+		                        	var cswRecord = new CSWRecord(reportOverlay.cswRecord);
+			                    	var shortTitle = cswRecord.getServiceName();
+		                        	if(shortTitle.length > 40) {
+		                        		shortTitle = shortTitle.substr(0, 60) + "...";
+		                        	}
+		                        	
+		                        	selectedReports.push({
+		                				text: shortTitle,
+		                				handler: function(item, checked) {
+		                		            new ReportsInfoWindow(map, this.overlay, this.cswRecord).show();
+		                				}.createDelegate({overlay: reportOverlay, cswRecord: cswRecord})
+		                			});
 		                        }
 	                        }
 	                    }
-	                    var infoWindow = new ReportsInfoWindow(map, smallestPoly, parentCSWRecord);
-	                    infoWindow.show();
+	                    //if a single report has been selected show the info window
+	                    if(selectedReports.length == 1) {
+		                    var infoWindow = new ReportsInfoWindow(map, overlay, parentCSWRecord);
+		                    infoWindow.show();
+	                    } else if(selectedReports.length > 1) { //otherwise show the reports context menu	                        
+
+	                    	//TODO: Shouldn't need this here but for some unknown reason we do...
+	                    	//If the reports popup menu is showing, destroy it.
+	                    	var reportsMenu = Ext.getCmp('reportsMenu');
+	                    	if(reportsMenu) {
+	                    		reportsMenu.destroy();
+	                    	}
+	                    	
+	                    	reportsMenu = new Ext.menu.Menu({
+	                			id: 'reportsMenu',
+	                			style: '',
+	                			items: selectedReports,
+	                			renderTo: 'center_region',
+	                			showSeparator: false
+	                		});
+	                        
+	                		var pixel = map.fromLatLngToContainerPixel(overlayLatlng);
+	                		var container = Ext.getCmp('center_region');
+	                        reportsMenu.showAt([container.x + pixel.x, container.y + pixel.y]);	                    	
+	                    }
 	                }
                 }
 	    	}
