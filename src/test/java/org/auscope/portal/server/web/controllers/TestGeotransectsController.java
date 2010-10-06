@@ -35,7 +35,7 @@ public class TestGeotransectsController {
 	@Test
 	public void testRequestGeotransectsDataSuccess() throws Exception {
         final String serviceUrl = "http://fake.com/bob";
-        final String jsonResponse = "{\"items\":[{\"travelTime\":6,\"type\":\"migrated\",\"lineID\":\"cdp07GA_A1\"," +
+        final String jsonResponse = "{\"items\":[{\"travelTime\":6,\"type\":\"migrated\",\"lineID\":\"07GA_A1\"," +
         		"\"url\":\"http://files.ivec.org/grid-auscope/geotransects/07GA-A1/mig_07gaa1_6s_unbiasedxys.sgy\"}]," +
         		"\"result\":{\"code\":0,\"msg\":\"No error detected\",\"success\":true}}";
         

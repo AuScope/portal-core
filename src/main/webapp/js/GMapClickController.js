@@ -298,6 +298,16 @@ function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latl
             		line = rootNode.getElementsByTagName("LINE");
             	}
             	
+            	// Change to enable the SURV_LINE which is the key in the shapefile
+            	if(line == null || line.length <= 0) {
+            		line = rootNode.getElementsByTagName("gt:SURV_LINE");
+                	if(line == null || line.length <= 0) {
+                		line = rootNode.getElementsByTagName("SURV_LINE");
+                	}
+            	}
+            	
+            	
+            	
                 var lineId = "";
 
                 if(line != null && line.length > 0) {
