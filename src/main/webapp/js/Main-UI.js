@@ -476,10 +476,12 @@ Ext.onReady(function() {
         
         //Get the list of bounding box polygons
         var cswRecords = activeLayerRecord.getCSWRecords();
+        var numRecords = 0;
     	for (var i = 0; i < cswRecords.length; i++) {
     		if (reportTitleFilter === '' || regexp.test(cswRecords[i].getServiceName())) {
+    			numRecords++;
     			var geoEls = cswRecords[i].getGeographicElements();
-    			
+    			    			
     			for (var j = 0; j < geoEls.length; j++) {
     	    		var geoEl = geoEls[j];
     	    		if (geoEl instanceof BBox) {
@@ -495,6 +497,8 @@ Ext.onReady(function() {
     	    	}
     		}
     	}
+    	
+    	responseTooltip.addResponse("", numRecords + " records retrieved.");
     };
     
     //The WCS handler will create a representation of a coverage on the map for a given WCS record

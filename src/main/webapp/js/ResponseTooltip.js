@@ -16,8 +16,13 @@ ResponseTooltip.prototype.getHtml = function() {
     var htmlString = '<table border="0">' ;
 
     for(i in this.responses) {
-        if(!this.responses[i].toString().match('function'))
-            htmlString += '<tr><td>'+ i + ' - ' + this.responses[i] +'</td></tr>';
+        if(!this.responses[i].toString().match('function')) {
+        	if(i.length >= 1) {        	
+        		htmlString += '<tr><td>'+ i + ' - ' + this.responses[i] +'</td></tr>';
+        	} else {
+                htmlString += '<tr><td>'+ this.responses[i] +'</td></tr>';	
+        	}
+        }
     }
 
     htmlString += '</table>' ;

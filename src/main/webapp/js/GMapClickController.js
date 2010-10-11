@@ -151,7 +151,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 
 		                        	var cswRecord = new CSWRecord(reportOverlay.cswRecord);
 			                    	var shortTitle = cswRecord.getServiceName();
-		                        	if(shortTitle.length > 40) {
+		                        	if(shortTitle.length > 60) {
 		                        		shortTitle = shortTitle.substr(0, 60) + "...";
 		                        	}
 
@@ -179,15 +179,17 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 
 	                    	reportsMenu = new Ext.menu.Menu({
 	                			id: 'reportsMenu',
-	                			style: '',
-	                			items: selectedReports,
-	                			renderTo: 'center_region',
-	                			showSeparator: false
+	                			showSeparator: false,
+	                			boxMaxHeight: 200,
+	                			autoScroll: true,
+	                			enableScrolling: true,
+	                			items: selectedReports
 	                		});
 
 	                		var pixel = map.fromLatLngToContainerPixel(overlayLatlng);
 	                		var container = Ext.getCmp('center_region');
 	                        reportsMenu.showAt([container.x + pixel.x, container.y + pixel.y]);
+	                        reportsMenu.syncSize();
 	                    }
 	                }
                 }
