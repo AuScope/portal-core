@@ -2,12 +2,9 @@ package org.auscope.portal.server.web.service;
 
 import java.util.ArrayList;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 
 import org.auscope.portal.csw.CSWGetRecordResponse;
 import org.auscope.portal.csw.CSWMethodMakerGetDataRecords;
@@ -48,7 +45,6 @@ public class CSWService {
     	//These are cached for the run method
     	private HttpServiceCaller serviceCaller;
         private Util util;
-        private Logger logger;
         
         //This isn't perfect, but it does the job we need it to
         //This will stop multiple updates on different threads from running at the same time
@@ -59,7 +55,6 @@ public class CSWService {
     		this.cache = new CSWRecord[0];
     		this.serviceCaller = serviceCaller;
     		this.util = util;
-    		this.logger = Logger.getLogger(getClass());
     	}
     	
     	public synchronized void setCache(CSWRecord[] cache) {
@@ -109,7 +104,7 @@ public class CSWService {
                 this.setCache(tempRecords);
                
             } catch (Exception e) {
-                logger.error(e);
+                log.error(e);
             }
             finally {
             	//It is possible that another thread can startup before this thread exits completely
