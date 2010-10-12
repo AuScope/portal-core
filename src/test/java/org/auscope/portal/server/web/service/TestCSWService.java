@@ -3,9 +3,7 @@ package org.auscope.portal.server.web.service;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -23,7 +21,6 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.Description;
 
 /**
  * User: Mathew Wyatt
@@ -32,6 +29,15 @@ import org.junit.runner.Description;
  */
 public class TestCSWService {
 
+	//determines the size of the test + congestion
+	static final int CONCURRENT_THREADS_TO_RUN = 10;
+	
+	//These determine the correct numbers for a single read of the test file
+	static final int RECORD_COUNT_WMS = 7;
+	static final int RECORD_COUNT_WFS = 41;
+	static final int RECORD_COUNT_TOTAL = 55;
+	static final int RECORD_COUNT_ERMINE_RECORDS = 2;
+	
     /**
      * JMock context
      */
@@ -48,11 +54,11 @@ public class TestCSWService {
      * Mock httpService caller
      */
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
-
+    
     /**
-     * Mock thread executor
+     * Thread executor
      */
-    private CSWThreadExecutor threadExecutor = context.mock(CSWThreadExecutor.class);
+    private CSWThreadExecutor threadExecutor;
 
     /**
      * Mock Util
@@ -62,30 +68,16 @@ public class TestCSWService {
 
     @Before
     public void setup() throws Exception {
-       /* context.checking(new Expectations() {{
-            //constructor gets a host property
-            oneOf(propertyConfigurer).resolvePlaceholder(with(any(String.class)));
-
-            //check that the executor was called
-            oneOf(threadExecutor).execute(with(any(Runnable.class)));
-        }});*/
+    	
+    	this.threadExecutor = new CSWThreadExecutor();
+    	
+      	//Create our service list
+      	ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
+      	for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++){
+      		serviceUrlList.add(new CSWServiceItem("http://localhost"));
+      	}
         
-        this.cswService = new CSWService(threadExecutor, httpServiceCaller, util);
-        this.cswService.setServiceUrl("http://localhost");
-    }
-
-    //TODO: test when there are no data records and the time interval is less than 5 minutes, see cswService.updateRecordsInBackground() funtion for logic to test
-    /**
-     * Test that the thread is executed
-     * @throws Exception
-     */
-    @Test
-    public void testUpdateCSWRecordsInBackground() throws Exception {
-        context.checking(new Expectations() {{
-            oneOf(threadExecutor).execute(with(any(Runnable.class)));
-        }});
-
-        this.cswService.updateRecordsInBackground();
+        this.cswService = new CSWService(threadExecutor, httpServiceCaller, util, serviceUrlList);
     }
     
     /**
@@ -133,7 +125,11 @@ public class TestCSWService {
         
         Runnable r = new Runnable() {
             public void run() {
-                service.updateCSWRecords();
+            	try {
+            		service.updateRecordsInBackground();
+            	} catch(Exception e) {
+            		Assert.fail(e.toString());
+            	}
             }
         };
         
@@ -182,66 +178,32 @@ public class TestCSWService {
         final String docString = org.auscope.portal.Util.loadXML("src/test/resources/cswRecordResponse.xml");
 
         context.checking(new Expectations() {{
-            oneOf(httpServiceCaller).getHttpClient();
-            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(docString));
+            exactly(CONCURRENT_THREADS_TO_RUN).of(httpServiceCaller).getHttpClient();
+            exactly(CONCURRENT_THREADS_TO_RUN).of(httpServiceCaller).getMethodResponseAsString(with(
+            		any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(docString));            
         }});
 
-        this.cswService.updateCSWRecords();
+        //We call this twice to test that an update wont commence whilst
+        //an update for a service is already running (if it does it will trigger too many calls to getHttpClient
+        this.cswService.updateRecordsInBackground();
+        this.cswService.updateRecordsInBackground();
+        try {
+        	threadExecutor.getExecutorService().shutdown();
+        	threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
+        }
+        catch (Exception ex) {
+        	threadExecutor.getExecutorService().shutdownNow();
+        	Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
+        }
 
         //in the response we loaded from the text file it contains 55 records
-        Assert.assertEquals(55, this.cswService.getDataRecords().length);
+        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_TOTAL, 
+        		this.cswService.getAllRecords().length);
+        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_WMS, 
+        		this.cswService.getWMSRecords().length);
+        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_WFS, 
+        		this.cswService.getWFSRecords().length);
+        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_ERMINE_RECORDS, 
+        		this.cswService.getWCSRecords().length);
     }
-
-    /**
-     * Test we return WMS records only
-     * @throws Exception
-     */
-    @Test
-    public void testGetWMSRecords() throws Exception {
-        //make sure the data records are populated
-        testUpdateCSWRecords();
-
-        //in the response we loaded from the text file it contains 6 WMS records and one WCS record with a WMS reference
-        Assert.assertEquals(7, this.cswService.getWMSRecords().length);
-    }
-
-    /**
-     * Test we return WFS records only
-     * @throws Exception
-     */
-    @Test
-    public void testGetWFSRecords() throws Exception {
-        //make sure the data records are populated
-        testUpdateCSWRecords();
-
-        //in the response we loaded from the text file it contains 41 WFS records
-        Assert.assertEquals(41, this.cswService.getWFSRecords().length);
-    }
-    
-    /**
-     * Test we return WCS records only
-     * @throws Exception
-     */
-    @Test
-    public void testGetWCSRecords() throws Exception {
-        //make sure the data records are populated
-        testUpdateCSWRecords();
-
-        //in the response we loaded from the text file it contains 2 WCS records
-        Assert.assertEquals(2, this.cswService.getWCSRecords().length);
-    }
-
-    /**
-     * Test we get WFS recrods based on a feature typeName
-     * @throws Exception
-     */
-    @Test
-    public void testGetWFSRecordsForTypename() throws Exception {
-        //make sure the data records are populated
-        testUpdateCSWRecords();
-
-        //in the response we loaded from the text file it contains 2 er:Mine records
-        Assert.assertEquals(2, this.cswService.getWFSRecordsForTypename("er:Mine").length);
-    }
-
 }

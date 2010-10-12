@@ -64,7 +64,6 @@ public class TestCSWController {
 
         context.checking(new Expectations() {{
             oneOf(mockPropertyConfigurer).resolvePlaceholder(with(any(String.class)));will(returnValue(serviceUrl));
-            oneOf(mockCSWService).setServiceUrl(serviceUrl);
             oneOf(mockCSWService).updateRecordsInBackground();
         }});
 
@@ -82,7 +81,7 @@ public class TestCSWController {
     	
     	context.checking(new Expectations() {{
     		oneOf(mockCSWService).updateRecordsInBackground();
-    		oneOf(mockCSWService).getDataRecords();will(returnValue(new CSWRecord[] {mockCSWRecord1, mockCSWRecord2}));
+    		oneOf(mockCSWService).getAllRecords();will(returnValue(new CSWRecord[] {mockCSWRecord1, mockCSWRecord2}));
     		
     		oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord1);will(returnValue(viewCSWRecord1));
     		oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord2);will(returnValue(viewCSWRecord2));
@@ -146,7 +145,7 @@ public class TestCSWController {
     	
     	context.checking(new Expectations() {{
     		oneOf(mockCSWService).updateRecordsInBackground();
-    		oneOf(mockCSWService).getDataRecords();will(returnValue(new CSWRecord[] {mockCSWRecord1, mockCSWRecord2}));
+    		oneOf(mockCSWService).getAllRecords();will(returnValue(new CSWRecord[] {mockCSWRecord1, mockCSWRecord2}));
     		
     		oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord1);will(returnValue(viewCSWRecord1));
     		oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord2);will(throwException(new Exception()));

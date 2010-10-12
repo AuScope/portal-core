@@ -33,6 +33,40 @@
             </list>
         </constructor-arg>
     </bean>
+    
+    <bean id="cswServiceList" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+            	<ref bean="cswServiceItemAuscope" /> 
+                <ref bean="cswServiceItemMDU" />                
+            </list>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="googleMapIconUrls" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</value>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/ltblu-blank.png</value>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png</value>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/grn-blank.png</value>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/blu-blank.png</value>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/wht-blank.png</value>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</value>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/orange-blank.png</value>
+            	<value>http://maps.google.com/mapfiles/kml/paddle/purple-blank.png</value>
+            </list>
+        </constructor-arg>
+    </bean>
+    
+	<bean id="cswServiceItemAuscope" class="org.auscope.portal.server.web.service.CSWServiceItem">	
+		<constructor-arg index="0" value="http://auscope-portal-dev.arrc.csiro.au/geonetwork/srv/en/csw"/>
+	</bean>
+	
+	<bean id="cswServiceItemMDU" class="org.auscope.portal.server.web.service.CSWServiceItem">	
+		<constructor-arg index="0" value="http://mdu-data-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
+        <constructor-arg index="1" value="http://mdu-data-2.arrc.csiro.au/geonetwork/srv/en/metadata.show?uuid=%recordID%"/>
+	</bean>
    
    <bean id="knownTypeMine" class="org.auscope.portal.server.web.KnownLayerWFS">       
        <constructor-arg name="featureTypeName" value="er:Mine"/>
