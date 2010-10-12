@@ -27,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class MenuController {
-   
+
    protected final Log logger = LogFactory.getLog(getClass());
 
    @Autowired
@@ -41,27 +41,27 @@ public class MenuController {
       return new ModelAndView("home");
    }
    */
-   
+
    @RequestMapping("/genericparser.html")
    public ModelAndView genericParser() {
 	   String googleKey = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
-	   
+
 	   ModelAndView mav = new ModelAndView("genericparser");
 	      mav.addObject("googleKey", googleKey);
-	      
+
 	   return mav;
    }
-   
+
    @RequestMapping("/gmap.html")
    public ModelAndView gmap() {
-      String googleKey 
+      String googleKey
          = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
       String vocabServiceUrl
          = hostConfigurer.resolvePlaceholder("HOST.vocabService.url");
 
       logger.debug("googleKey: " + googleKey);
       logger.debug("vocabServiceUrl: " + vocabServiceUrl);
-      
+
       ModelAndView mav = new ModelAndView("gmap");
       mav.addObject("googleKey", googleKey);
       mav.addObject("vocabServiceUrl", vocabServiceUrl);
@@ -70,34 +70,31 @@ public class MenuController {
 
    @RequestMapping("/mosaic_image.html")
    public ModelAndView mosaic_image() {
-      String googleKey 
+      String googleKey
          = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
       logger.debug(googleKey);
 
       ModelAndView mav = new ModelAndView("mosaic_image");
-      mav.addObject("googleKey",googleKey);      
+      mav.addObject("googleKey",googleKey);
       return mav;
    }
-      
+
    @RequestMapping("/plotted_images.html")
    public ModelAndView plotted_images() {
-      String googleKey 
+      String googleKey
          = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
       logger.debug(googleKey);
 
       ModelAndView mav = new ModelAndView("plotted_images");
-      mav.addObject("googleKey",googleKey);      
+      mav.addObject("googleKey",googleKey);
       return mav;
    }
-      
-   @RequestMapping("/login.html")
-   public ModelAndView login(HttpServletRequest request) {
-      logger.debug("Shib-Identity-Provider : " + request.getHeader("Shib-Identity-Provider"));
 
-      //return new ModelAndView("login");
-      return new ModelAndView("redirect:/gmap.html");
+   @RequestMapping("/login.html")
+   public ModelAndView login() {
+      return new ModelAndView("login");
    }
-   
+
    @RequestMapping("/about.html")
    public ModelAndView about(HttpServletRequest request) {
 
@@ -118,7 +115,7 @@ public class MenuController {
             mav.addObject("builtBy", atts.getValue("Built-By"));
             mav.addObject("osName", atts.getValue("osName"));
             mav.addObject("osVersion", atts.getValue("osVersion"));
-                        
+
             mav.addObject("serverName", request.getServerName());
             mav.addObject("serverInfo", request.getSession().getServletContext().getServerInfo());
             mav.addObject("serverJavaVersion", System.getProperty("java.version"));
@@ -135,16 +132,5 @@ public class MenuController {
          e.printStackTrace();
       }
       return mav;
-   }
-   
-   @RequestMapping("/admin.html")
-   public ModelAndView admin() {
-      return new ModelAndView("admin");
-   }
-   
-   
-   @RequestMapping("/access_error.html")
-   public ModelAndView access_error() {
-      return new ModelAndView("access_error");
    }
 }
