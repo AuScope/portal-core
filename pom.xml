@@ -107,6 +107,25 @@
 					<wtpversion>2.0</wtpversion>
 				</configuration>
 			</plugin>
+    	  	<plugin>
+        		<groupId>net.alchim31.maven</groupId>
+		        <artifactId>yuicompressor-maven-plugin</artifactId>
+        		<configuration>
+					<excludes>
+				    	<!-- Exclude Ext JS -->
+				    	<exclude>js/external/**</exclude>
+					</excludes>
+                	<nosuffix>true</nosuffix>
+        		</configuration>
+		        <executions>
+        			<execution>
+            			<goals>
+		                    <goal>jslint</goal>
+              				<goal>compress</goal>
+            			</goals>
+          			</execution>
+        		</executions>
+	      	</plugin>
         </plugins>
     </build>
 
