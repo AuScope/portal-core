@@ -105,8 +105,8 @@ CSWRecordRenderer.prototype.internalRenderWMS = function(wms, parentCSWRecord) {
 CSWRecordRenderer.prototype.internalRenderWFS = function(wfs) {
 	var html = '<tr>';
 	
-	var getFeatureUrl = wfs.url + this.internalURLSeperator(wfs.url) + 'SERVICE=WFS&REQUEST=GetFeature&VERSION=1.0.0&maxFeatures=5&typeName=' + wfs.name;
-	var getCapUrl = wfs.url + this.internalURLSeperator(wfs.url) + 'SERVICE=WFS&REQUEST=GetCapabilities&VERSION=1.0.0';
+	var getFeatureUrl = wfs.url + this.internalURLSeperator(wfs.url) + 'SERVICE=WFS&REQUEST=GetFeature&VERSION=1.1.0&maxFeatures=5&typeName=' + wfs.name;
+	var getCapUrl = wfs.url + this.internalURLSeperator(wfs.url) + 'SERVICE=WFS&REQUEST=GetCapabilities&VERSION=1.1.0';
 	
 	html += '<td>';
 	html += '<a target="_blank" href="' + getCapUrl + '">' + wfs.name + '</a>';
