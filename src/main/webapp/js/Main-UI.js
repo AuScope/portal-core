@@ -370,7 +370,7 @@ Ext.onReady(function() {
         activeLayersPanel.getSelectionModel().selectRecords([activeLayerRecord.internalRecord], false);
 
         if (activeLayerRecord.getIsLoading()) {
-        	activeLayersPanel.setLayerVisible(!isChecked); //reverse selection
+        	activeLayerRecord.setLayerVisible(!isChecked); //reverse selection
             Ext.MessageBox.show({
                 title: 'Please wait',
                 msg: "There is an operation in process for this layer. Please wait until it is finished.",
