@@ -5,18 +5,18 @@
  * title 			: The title this grid panel will display
  * map   			: the GMap2 instance
  * knownFeatureTypeStore 	: an instance of KnownLayerStore that will be used to populate this panel
+ * cswRecordStore : an instance of CSWRecordStore - its contents will be used as lookups for layers in the KnownLayerStore
  * addLayerHandler	: function(KnownLayerRecord) This will be called when the user adds a layer. 
  * visibleLayerHandler: function(KnownLayerRecord) This will be called to filter every visible KnownLayerRecord 
  * showBoundsHandler: function(KnownLayerRecord) called when the user wants to see a brief highlight of the records bounds
  * moveToBoundsHandler: function(KnownLayerRecord) called when the user wants to find the location of the record bounds
  *                    
  */
-KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, addLayerHandler, visibleLayerHandler, showBoundsHandler, moveToBoundsHandler) {
+KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore, addLayerHandler, visibleLayerHandler, showBoundsHandler, moveToBoundsHandler) {
 	this.addLayerHandler = addLayerHandler;
 	
 	//This is so we can reference our search panel
 	var searchPanelId = id + '-search-panel';
-	
 	
 	var rowExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template('<p>{description} </p><br>')
@@ -42,6 +42,28 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, addLayerHandler
                 width: 80,
                 sortable: true,
                 dataIndex: 'title'
+            },{
+            	id : 'knownType',
+            	header : '',
+            	width: 18,
+            	dataIndex: 'styleName', //this isn't actually rendered in this column
+            	renderer: function(value, metadata, record) {
+            		var knownLayerRecord = new KnownLayerRecord(record);
+            		
+            		var linkedCSWRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
+            		
+            		for (var i = 0; i < linkedCSWRecords.length; i++) {
+            			var onlineResources = linkedCSWRecords[i].getOnlineResources();
+	            		for (var j = 0; j < onlineResources.length; j++) {
+	            			if (onlineResources[j].onlineResourceType == 'WCS' ||
+	            				onlineResources[j].onlineResourceType == 'WFS') {
+	            				return '<div style="text-align:center"><img src="img/binary.png" width="16" height="16" align="CENTER"/></div>';
+	            			}
+	            		}
+            		}
+            		
+            		return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
+            	}
             },{
             	id:'search',
             	header: '',
@@ -90,13 +112,30 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, addLayerHandler
         listeners: {
            	cellclick : function (grid, rowIndex, colIndex, e) {
                	var fieldName = grid.getColumnModel().getDataIndex(colIndex);
-               	if (fieldName !== 'proxyUrl') {
-               		return;
+               	var knownLayerRecord = grid.getStore().getKnownLayerAt(rowIndex);
+               	if (fieldName === 'proxyUrl') {
+               		e.stopEvent();
+                   	
+                   	showBoundsHandler(knownLayerRecord);
+               	} else if (fieldName === 'styleName') {
+               		e.stopEvent();
+               		var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
+            		var renderer = new CSWRecordRenderer(cswRecords);
+            		
+            		//Close an existing popup
+            		if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
+            			this.onlineResourcesPopup.close();
+            		}
+            		
+            		this.onlineResourcesPopup = new Ext.Window({
+                        title: 'Service Information for ' + knownLayerRecord.getTitle(),
+                        autoDestroy : true,
+                        html: renderer.renderOnlineResources(),
+                        autoHeight:true,
+                        autoWidth: true
+                    });
+            		this.onlineResourcesPopup.show(e.getTarget());
                	}
-               	
-               	e.stopEvent();
-               	
-               	showBoundsHandler(grid.getStore().getKnownLayerAt(rowIndex));
            	},
            	
            	celldblclick : function (grid, rowIndex, colIndex, e) {
@@ -109,7 +148,55 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, addLayerHandler
                	e.stopEvent();
                	
                	moveToBoundsHandler(grid.getStore().getKnownLayerAt(rowIndex));
-           	}
+           	},
+           	
+           	mouseover : function(e, t) {
+                e.stopEvent();
+
+                var row = e.getTarget('.x-grid3-row');
+                var col = e.getTarget('.x-grid3-col');
+
+                
+                //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
+                if (col != null && (!this.currentToolTip || !this.currentToolTip.isVisible())) {
+
+                    //get the actual data record
+                    var theRow = this.getView().findRow(row);
+                    var cswRecord = new CSWRecord(this.getStore().getAt(theRow.rowIndex));
+                    
+                    //This is for the 'record type' column
+                    if (col.cellIndex == '2') {
+                    	
+                    	
+                    	this.currentToolTip = new Ext.ToolTip({
+                            target: e.target ,
+                            title: 'Service Information',
+                            autoHide : true,
+                            html: 'Click for detailed information about the web services this layer utilises',
+                            anchor: 'bottom',
+                            trackMouse: true,
+                            showDelay:60,
+                            autoHeight:true,
+                            autoWidth: true
+                        });
+                    }
+                    //this is the status icon column
+                    else if (col.cellIndex == '3') {
+
+                        this.currentToolTip = new Ext.ToolTip({
+                            target: e.target ,
+                            title: 'Bounds Information',
+                            autoHide : true,
+                            html: 'Click to see the bounds of this layer',
+                            anchor: 'bottom',
+                            trackMouse: true,
+                            showDelay:60,
+                            autoHeight:true,
+                            autoWidth: true
+                        });
+                    }
+                }
+            }
         }
     });
 };

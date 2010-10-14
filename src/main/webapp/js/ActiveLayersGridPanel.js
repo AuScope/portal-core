@@ -105,8 +105,23 @@ ActiveLayersGridPanel = function(id, title, activeLayersStore, layerSelectionHan
                 header: "",
                 width: 20,
                 sortable: false,
-                dataIndex: 'downloadIconHtml',
-                align: 'center'
+                dataIndex: 'keyIconHtml', //this doesn't matter, its not used
+                align: 'center',
+                renderer: function(value, metaData, record) {
+            		var activeLayersRecord = new ActiveLayersRecord(record);
+            		
+            		var wfsRecords = activeLayersRecord.getCSWRecordsWithType('WFS');
+            		if (wfsRecords.length > 0) {
+            			return '<a href="http://portal.auscope.org" id="mylink" target="_blank"><img src="img/page_code.png"></a>';
+            		}
+            		
+            		var wcsRecords = activeLayersRecord.getCSWRecordsWithType('WCS');
+            		if (wcsRecords.length > 0) {
+            			return '<a href="http://portal.auscope.org" id="mylink" target="_blank"><img src="img/page_code.png"></a>';
+            		}
+            		
+            		return '<a href="http://portal.auscope.org" id="mylink" target="_blank"><img src="img/picture_link.png"></a>';
+            	}
             }
         ],
         bbar: [

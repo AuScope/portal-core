@@ -16,7 +16,6 @@ ActiveLayersStore = function() {
 			    {   name	: 'keyIconHtml'     },	//String: HTML that will appear under the 'key' column
 			    {   name	: 'isLoading' 		},	//boolean: Whether this layer is currently 'loading'
 			    {   name	: 'layerVisible'    },	//boolean: Whether the layer is currently visible
-			    {   name	: 'downloadIconHtml'},	//String: HTML that will appear under the 'download' column
 			    {   name	: 'opacity' 		}	//number: The layers opacity (if applicable) from [0, 1],
 		    ]
 		})
@@ -60,7 +59,6 @@ Ext.extend(ActiveLayersStore, Ext.data.Store, {
 			keyIconHtml	: keyIconHtml,
 			isLoading	: false,
 			layerVisible: true,
-			downloadIconHtml: '<a href="http://portal.auscope.org" id="mylink" target="_blank"><img src="img/picture_link.png"></a>',
 			opacity		: 1
 		});
 		
@@ -85,7 +83,6 @@ Ext.extend(ActiveLayersStore, Ext.data.Store, {
 			keyIconHtml	: '<img width="16" height="16" src="' + knownLayerRecord.getIconUrl() + '">',
 			isLoading	: false,
 			layerVisible: true,
-			downloadIconHtml: '<a href="http://portal.auscope.org" id="mylink" target="_blank"><img src="img/page_code.png"></a>',
 			opacity		: 1
 		});
 		

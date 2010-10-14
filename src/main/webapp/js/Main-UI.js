@@ -210,71 +210,46 @@ Ext.onReady(function() {
     var knownLayersPanel = new KnownLayerGridPanel('kft-layers-panel', 
 												    		'Featured Layers', 
 												    		knownLayersStore, 
+												    		cswRecordStore,
 												    		knownLayerAddHandler, 
 												    		visibleKnownLayersFilter, 
 												    		showBoundsKnownLayer, 
 												    		moveToBoundsKnownLayer);
         
-    //----------- Map Layers Panel Configurations (Drawn from CSWRecords that aren't a KnownLayer and are primarily a WMS)
-    var wmsLayersFilter = function(cswRecord) {
+    //----------- Map Layers Panel Configurations (Drawn from CSWRecords that aren't a KnownLayer)
+    var mapLayersFilter = function(cswRecord) {
+    	var serviceName = cswRecord.getServiceName();
+    	if (!serviceName || serviceName.length == 0) {
+    		return false;
+    	}
+    	
     	//doesnt show WFS's
-    	var onlineResources = cswRecord.getFilteredOnlineResources('WFS');
+    	/*var onlineResources = cswRecord.getFilteredOnlineResources('WFS');
     	if (onlineResources.length > 0) {
     		return false;
-    	}
+    	}*/
     	
-    	//doesn't show WCS's
-    	onlineResources = cswRecord.getFilteredOnlineResources('WCS');
-    	if (onlineResources.length > 0) {
+    	//If we don't have a WMS or WCS, dont include it
+    	/*var containsWms = cswRecord.getFilteredOnlineResources('WMS').length > 0;
+    	var containsWcs = cswRecord.getFilteredOnlineResources('WCS').length > 0;
+    	if (!containsWms && !containsWcs) {
     		return false;
-    	}
-    	
-    	//If we don't have a WMS, dont include it
-    	onlineResources = cswRecord.getFilteredOnlineResources('WMS');
-    	if (onlineResources.length == 0) {
-    		return false;
-    	}
+    	}*/
     	
     	//ensure its not referenced via KnownLayer
     	var knownLayers = getParentKnownLayers(cswRecord);
     	return knownLayers.length == 0;
     };
-    var wmsLayersPanel = new CSWRecordGridPanel('wms-layers-panel', 
+    var mapLayersPanel = new CSWRecordGridPanel('wms-layers-panel', 
 									    		'Map Layers', 
 									    		cswRecordStore, 
 									    		cswPanelAddHandler, 
-									    		wmsLayersFilter, 
+									    		mapLayersFilter, 
 									    		visibleCSWRecordFilter,
 									    		showBoundsCSWRecord, 
 									    		moveToBoundsCSWRecord);
         
     
-    //----------- Coverage Layers Panel Configurations (Drawn from CSWRecords that aren't a KnownLayer and are primarily a WCS)
-    var wcsLayersFilter = function(cswRecord) {
-    	//doesnt show WFS's
-    	var onlineResources = cswRecord.getFilteredOnlineResources('WFS');
-    	if (onlineResources.length > 0) {
-    		return false;
-    	}    	
-    	
-    	//must include show WCS's
-    	onlineResources = cswRecord.getFilteredOnlineResources('WCS');
-    	if (onlineResources.length == 0) {
-    		return false;
-    	}
-    	
-    	//ensure its not referenced via KnownLayer
-    	var knownLayers = getParentKnownLayers(cswRecord);
-    	return knownLayers.length == 0;
-    };
-    var wcsLayersPanel = new CSWRecordGridPanel('wcs-layers-panel', 
-									    		'Coverage Layers',  
-									    		cswRecordStore, 
-									    		cswPanelAddHandler, 
-									    		wcsLayersFilter,
-									    		visibleCSWRecordFilter,
-									    		showBoundsCSWRecord, 
-									    		moveToBoundsCSWRecord);
     
     //------ Custom Layers
     var customLayersPanel = new CustomLayersGridPanel('custom-layers-panel', 
@@ -649,8 +624,14 @@ Ext.onReady(function() {
 					
         var knownLayer = activeLayerRecord.getParentKnownLayer();
         
+        //If we don't have a proxy URL specified, use the generic 'getAllFeatures.do'
+        var url = activeLayerRecord.getProxyUrl();
+        if (!url) {
+        	url = 'getAllFeatures.do';
+        }
+        
         Ext.Ajax.request({
-        	url			: activeLayerRecord.getProxyUrl(),
+        	url			: url,
         	params		: filterParameters,
         	timeout		: 1000 * 60 * 20, //20 minute timeout
         	failure		: function(response) {
@@ -960,7 +941,7 @@ Ext.onReady(function() {
 	            		//Save our window reference so we can tell if its already been open
 	            		activeLayerRecord.setLegendWindow(win);
 	            		
-	            		win.show(this);
+	            		win.show(e.getTarget());
             		} else if (win){
             			//The window is already open
             			win.toFront();
@@ -1151,8 +1132,7 @@ Ext.onReady(function() {
         //autosize:true,
         items:[
             knownLayersPanel,
-            wmsLayersPanel,
-            wcsLayersPanel,
+            mapLayersPanel,
             customLayersPanel
         ]
     });
@@ -1167,7 +1147,7 @@ Ext.onReady(function() {
         split:true,
         //margins: '100 0 0 0',
         margins:'100 0 0 3',
-        width: 380,
+        width: 350,
         items:[tabsPanel , activeLayersPanel, filterPanel]
     };
 
@@ -1267,9 +1247,13 @@ Ext.onReady(function() {
     
     //new Ext.LoadMask(tabsPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});
     //new Ext.LoadMask(complexFeaturesPanel.el, {msg: 'Please Wait...', store: complexFeaturesStore});
-    //new Ext.LoadMask(wmsLayersPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});
+    //new Ext.LoadMask(mapLayersPanel.el, {msg: 'Please Wait...', store: wmsLayersStore});
     
-    cswRecordStore.load({});
+    //As there is a relationship between these two stores,
+    //We should refresh any GUI components whose view is dependent on these stores
+    cswRecordStore.load({callback : function() {
+    	knownLayersStore.fireEvent('datachanged');
+    }});
     knownLayersStore.load();
     
 });
