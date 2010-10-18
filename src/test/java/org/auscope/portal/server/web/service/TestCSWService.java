@@ -31,13 +31,13 @@ public class TestCSWService {
 
 	//determines the size of the test + congestion
 	static final int CONCURRENT_THREADS_TO_RUN = 10;
-	
+
 	//These determine the correct numbers for a single read of the test file
-	static final int RECORD_COUNT_WMS = 7;
-	static final int RECORD_COUNT_WFS = 41;
-	static final int RECORD_COUNT_TOTAL = 55;
+	static final int RECORD_COUNT_WMS = 2;
+	static final int RECORD_COUNT_WFS = 12;
+	static final int RECORD_COUNT_TOTAL = 15;
 	static final int RECORD_COUNT_ERMINE_RECORDS = 2;
-	
+
     /**
      * JMock context
      */
@@ -54,7 +54,7 @@ public class TestCSWService {
      * Mock httpService caller
      */
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
-    
+
     /**
      * Thread executor
      */
@@ -68,18 +68,18 @@ public class TestCSWService {
 
     @Before
     public void setup() throws Exception {
-    	
+
     	this.threadExecutor = new CSWThreadExecutor();
-    	
+
       	//Create our service list
       	ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
       	for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++){
       		serviceUrlList.add(new CSWServiceItem("http://localhost"));
       	}
-        
+
         this.cswService = new CSWService(threadExecutor, httpServiceCaller, util, serviceUrlList);
     }
-    
+
     /**
      * A simple extension on ReturnValue that adds a delay before the object is returned
      * @author vot002
@@ -91,18 +91,18 @@ public class TestCSWService {
             super(returnValue);
             this.delayMs = delayMs;
         }
-        
+
         @Override
         public Object invoke(Invocation i) throws Throwable {
             Thread.sleep(delayMs);
             return super.invoke(i);
         }
     }
-    
+
     private static Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
         return new DelayedReturnValueAction(msDelay, returnValue);
     }
-    
+
     /**
      * Success if only a single update is able to run at any given time (Subsequent updates are terminated)
      * @throws Exception
@@ -110,19 +110,19 @@ public class TestCSWService {
     @Test
     public void testSingleUpdate() throws Exception {
         final long delay = 1000;
-        final String cswResponse = "<?xml version=\"1.0\"?><node>foo</node>"; 
-        
+        final String cswResponse = "<?xml version=\"1.0\"?><node>foo</node>";
+
         context.checking(new Expectations() {{
             //Cant use oneOf as JUnit can't handle exceptions on other threads (see note below)
             //oneOf(httpServiceCaller).getHttpClient();
             //oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(delayReturnValue(delay, cswResponse));
-            
+
             allowing(httpServiceCaller).getHttpClient();
             allowing(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(delayReturnValue(delay, cswResponse));
         }});
-        
+
         final CSWService service = this.cswService;
-        
+
         Runnable r = new Runnable() {
             public void run() {
             	try {
@@ -132,13 +132,13 @@ public class TestCSWService {
             	}
             }
         };
-        
+
         Calendar start = Calendar.getInstance();
-        
+
         //Only one of these threads should actually make a service call
         //otherwise our expectations will fail
         UncaughtExceptionHandler eh = new UncaughtExceptionHandler() {
-            
+
             public void uncaughtException(Thread t, Throwable e) {
                 Assert.fail(e.toString());
             }
@@ -150,7 +150,7 @@ public class TestCSWService {
             threadList[i].setUncaughtExceptionHandler(eh);
             threadList[i].start();
         }
-        
+
         //Wait for each thread to terminate (we expect the first
         //thread will wait for the full delay whilst all other threads
         //should return immediately)
@@ -159,11 +159,11 @@ public class TestCSWService {
         //     - Workaround - We still work on the assumption that only a single
         //                    Thread will delay and all others will return immediately
         //                    So we just measure the time and as long as it is less than
-        //                    threadList.length * delay we are OK 
+        //                    threadList.length * delay we are OK
         for (Thread t : threadList) {
             t.join();
         }
-        
+
         Calendar finish = Calendar.getInstance();
         long totalTime = finish.getTimeInMillis() - start.getTimeInMillis();
         Assert.assertTrue("Test took too long, assuming other threads are NOT returning immediately", totalTime < (delay * 2));
@@ -180,7 +180,7 @@ public class TestCSWService {
         context.checking(new Expectations() {{
             exactly(CONCURRENT_THREADS_TO_RUN).of(httpServiceCaller).getHttpClient();
             exactly(CONCURRENT_THREADS_TO_RUN).of(httpServiceCaller).getMethodResponseAsString(with(
-            		any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(docString));            
+            		any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(docString));
         }});
 
         //We call this twice to test that an update wont commence whilst
@@ -197,13 +197,13 @@ public class TestCSWService {
         }
 
         //in the response we loaded from the text file it contains 55 records
-        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_TOTAL, 
+        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_TOTAL,
         		this.cswService.getAllRecords().length);
-        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_WMS, 
+        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_WMS,
         		this.cswService.getWMSRecords().length);
-        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_WFS, 
+        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_WFS,
         		this.cswService.getWFSRecords().length);
-        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_ERMINE_RECORDS, 
+        Assert.assertEquals(CONCURRENT_THREADS_TO_RUN * RECORD_COUNT_ERMINE_RECORDS,
         		this.cswService.getWCSRecords().length);
     }
 }

@@ -26,17 +26,17 @@ public class TestCSWGetRecordResponse {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc =
             builder.parse( "src/test/resources/cswRecordResponse.xml" );
-        
+
         this.recordResponse = new CSWGetRecordResponse(doc);
-        
+
     }
-    
+
     @Test
     public void testGetCSWRecords() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
-        
+
         CSWRecord[] recs = this.recordResponse.getCSWRecords();
-        
-        Assert.assertEquals(55, recs.length);
+
+        Assert.assertEquals(15, recs.length);
     }
 
 }

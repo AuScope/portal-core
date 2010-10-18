@@ -18,11 +18,11 @@ public class CSWController extends CSWRecordResponse {
 
     private CSWService cswService;
     private ViewCSWRecordFactory viewCSWRecordFactory;
-    
+
     public CSWController(ViewCSWRecordFactory viewCSWRecordFactory) {
     	this.viewCSWRecordFactory = viewCSWRecordFactory;
     }
-    
+
     /**
      * Constructor
      * @param
@@ -41,10 +41,10 @@ public class CSWController extends CSWRecordResponse {
             log.error(e);
         }
     }
-    
+
     /**
      * This controller method returns a representation of each and every CSWRecord from the internal cache
-     * @throws Exception 
+     * @throws Exception
      */
     @RequestMapping("/getCSWRecords.do")
     public ModelAndView getCSWRecords() {
@@ -54,13 +54,13 @@ public class CSWController extends CSWRecordResponse {
 			log.error("Error updating cache", ex);
 			return generateJSONResponse(false, "Error updating cache", null);
 		}
-    	
+
 		CSWRecord[] records = null;
 		try {
 			records = this.cswService.getAllRecords();
 		} catch (Exception e) {
 			log.error("error getting data records", e);
-			generateJSONResponse(false, "Error getting data records", null);
+			return generateJSONResponse(false, "Error getting data records", null);
 		}
 		return generateJSONResponse(this.viewCSWRecordFactory, records);
     }
