@@ -13,32 +13,32 @@
 			background: #EAF0F8;
 			text-align: center;
 		}
-		
+
 		#container {
 			margin-left: auto;
 			margin-right: auto;
 			width: 400px;
 		}
-	
+
 		a { color: #c75f3e; }
-				
+
 		#mytable {
 			width: 400px;
 			padding: 0;
 			margin: 0;
 		}
-		
+
 		caption {
 			padding: 0 0 10px 0;
-			width: 400px;	 
+			width: 400px;
 			font: italic bold 20px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 			text-align: center;
 		}
-		
+
 		th:first-child {
 			text-align: left;
 		}
-		
+
 		th {
 			font: bold 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 			/*color: #4f6b72;*/
@@ -53,14 +53,14 @@
 			/*background: #CAE8EA url(images/bg_header.jpg) no-repeat;*/
 			background: #C9DBF2
 		}
-				
+
 		th.nobg {
 			border-top: 0;
 			border-left: 0;
 			border-right: 1px solid #C1DAD7;
 			background: none;
 		}
-		
+
 		td {
 			border-right: 1px solid #C1DAD7;
 			border-bottom: 1px solid #C1DAD7;
@@ -68,13 +68,13 @@
 			padding: 6px 6px 6px 12px;
 			color: #4f6b72;
 		}
-		
+
 		td.alt {
 			background: #F5FAFA;
 			/*color: #797268;*/
 			color: #F39650;
 		}
-		
+
 		td.nobg {
 			border-top: 0;
 			border-left: 0;
@@ -82,14 +82,14 @@
 			border-bottom: 0;
 			background: none;
 		}
-		
+
 		th.spec {
 			border-left: 1px solid #C1DAD7;
 			border-top: 0;
 			background: #fff url(images/bullet1.gif) no-repeat;
 			font: bold 10px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 		}
-		
+
 		th.specalt {
 			border-left: 1px solid #C1DAD7;
 			border-top: 0;
@@ -102,7 +102,7 @@
     <script type="text/javascript">
 
     //<![CDATA[
-        
+
     function load() {
       //alert(window.location.host);
       //alert(${2+2});
@@ -114,9 +114,9 @@
     }
 
     //]]>
-    </script>	
+    </script>
   </head>
-  
+
   <body onload="load()">
     <div id="container">
       <table id="mytable" cellspacing="0" summary="The technical build specification">
@@ -130,7 +130,7 @@
           <td>${implementationVersion}</td>
         </tr>
         <tr>
-	       <th scope="row" class="specalt">Build</th>
+	       <th scope="row" class="specalt">Revision</th>
 	       <td class="alt">${implementationBuild}</td>
         </tr>
         <tr>
@@ -138,7 +138,7 @@
 	       <td>${buildDate}</td>
         </tr>
         <tr>
-	       <th scope="row" class="specalt">Build Jdk</th>
+	       <th scope="row" class="specalt">Build JDK</th>
 	       <td class="alt">${buildJdk}</td>
         </tr>
         <tr>

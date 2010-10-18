@@ -1,6 +1,6 @@
 var g_IsIE = !!(window.attachEvent && !window.opera);
 
-// check for XPath implementation 
+// check for XPath implementation
 // Implement selectNodes and selectSingleNode for firefox
 if (!g_IsIE && !Element.prototype.selectSingleNode)
 {
@@ -11,37 +11,37 @@ if (!g_IsIE && !Element.prototype.selectSingleNode)
 	}
 }
 
-// check for XPath implementation 
-if( document.implementation.hasFeature("XPath", "3.0") ) { 
-  // prototying the XMLDocument 
-  XMLDocument.prototype.selectNodes = function(cXPathString, xNode) { 
+// check for XPath implementation
+if( document.implementation.hasFeature("XPath", "3.0") ) {
+  // prototying the XMLDocument
+  XMLDocument.prototype.selectNodes = function(cXPathString, xNode) {
     if( !xNode ) { xNode = this; }
-    var oNSResolver = this.createNSResolver(this.documentElement) 
+    var oNSResolver = this.createNSResolver(this.documentElement)
     var aItems = this.evaluate(cXPathString, xNode, oNSResolver,
-    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null) 
+    XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
     var aResult = [];
-    for( var i = 0; i < aItems.snapshotLength; i++) { 
+    for( var i = 0; i < aItems.snapshotLength; i++) {
       aResult[i] = aItems.snapshotItem(i);
-    } 
+    }
     return aResult;
-  } 
+  }
 
-  // prototying the Element 
-  Element.prototype.selectNodes = function(cXPathString) { 
-    if(this.ownerDocument.selectNodes) { 
+  // prototying the Element
+  Element.prototype.selectNodes = function(cXPathString) {
+    if(this.ownerDocument.selectNodes) {
       return this.ownerDocument.selectNodes(cXPathString, this);
     } else {
       throw "For XML Elements Only";
-    } 
-  } 
-} 
+    }
+  }
+}
 
 //window.onresize = resizeMapDiv;
 
 /**
 * This function resizes the "map" div,
 * containing the google map,
-* according to the client's window size 
+* according to the client's window size
 */
 function resizeMapDiv() {
 
@@ -49,12 +49,12 @@ function resizeMapDiv() {
   var windowSize = getWindowSize();
   if(windowSize && windowSize.height && windowSize.width) {
     var mapDiv = document.getElementById("map");
-    
+
     // Set the map size accordingly.
     // Currently this percentage works well with all the portal headers etc.
     var width = windowSize.width * .75 ;
     var height = windowSize.height * .63;
-    
+
     // We don't want the height or width to be lower than certain pixels
     // This is to accomodate for the right controls
     // and bottom controls on the portlet
@@ -64,14 +64,14 @@ function resizeMapDiv() {
     if (width < 805) {
       width = 805;
     }
-    
+
     mapDiv.style.width =  width + 'px';
     mapDiv.style.height = height + 'px';
   }
 }
 
 /**
-* This function gets the cleint's window size 
+* This function gets the cleint's window size
 */
 function getWindowSize(){
   var e = new Object();
@@ -95,20 +95,6 @@ function getWindowSize(){
 */
 function initialize(pMapContainer) {
 
-  /*// Set the initial size of the "map" div
-  // according to the client's window
-  resizeMapDiv();
-
-  // Google Map initialized
-  goMap = new Map(pMapContainer);
-  
-  // Set the map type of the map to Satellite
-  goMap.moMap.setMapType(G_SATELLITE_MAP);
-
-  // Parse capabilities documents for different services.
-  getCapabilities();
-  
-  // addLayers();*/
 }
 
 /**
@@ -120,7 +106,7 @@ function initialize(pMapContainer) {
 function getCapabilities() {
 
     // NVCL Get Capabilities url
-  var url = "" //"http://auscope-portal.arrc.csiro.au/nvcl/wfs?request=GetCapabilities&version=1.0.0";
+  var url = "";
 
   GDownloadUrl(ProxyURL+url, function(pData, pResponseCode) {
     if (pResponseCode == 200) {
@@ -138,7 +124,7 @@ function getCapabilities() {
   });
 
   // Geodesy Get Capabilities url
-  var url = "" //"http://auscope-portal.arrc.csiro.au/geodesy/wfs?request=GetCapabilities";
+  var url = ""
   GDownloadUrl(ProxyURL+url, function(pData, pResponseCode) {
     if (pResponseCode == 200) {
       var xmlDoc = GXml.parse(pData);
@@ -154,24 +140,6 @@ function getCapabilities() {
     }
   });
 
-  /*
-  // GNSS Get Capabilities url
-  var url = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/gnss/proxy?request=GetCapabilities&version=1.0.0";
-  GDownloadUrl(url, function(pData, pResponseCode) {
-    if (pResponseCode == 200) {
-      var xmlDoc = GXml.parse(pData);
-      parseCapabilitiesDocument(xmlDoc);
-    }
-  });
-
-  // GNSS Get Capabilities url
-  var url = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/ga/sentinel/proxy?request=GetCapabilities&version=1.0.0";
-  GDownloadUrl(url, function(pData, pResponseCode) {
-    if (pResponseCode == 200) {
-      var xmlDoc = GXml.parse(pData);
-      parseCapabilitiesDocument(xmlDoc);
-    }
-  });    */
 }
 
 /**
@@ -180,13 +148,13 @@ function getCapabilities() {
 function parseCapabilitiesDocument(xmlDoc) {
   if (g_IsIE)
     xmlDoc.setProperty("SelectionLanguage", "XPath");
-  
+
   // Parse the XML for "stations" or "geodesy:stations"
   var rootNode = xmlDoc.documentElement;
 
-  if (!rootNode) 
+  if (!rootNode)
     return;
-  
+
   // Get wfs version implemented by this service
   var sWfsVersion = rootNode.getAttribute("version");
   if (sWfsVersion == "1.0.0") {
@@ -202,39 +170,39 @@ function parseCapabilitiesDocument(xmlDoc) {
 function parseCapabilitiesDocument1_1_0(rootNode) {
   if (g_IsIE)
     rootNode.setProperty("SelectionLanguage", "XPath");
-    
+
   var oServiceIdNode = rootNode.selectSingleNode("*[local-name() = 'ServiceIdentification']");
   if (!oServiceIdNode)
     return;
-    
+
   var sTitle = GXml.value(oServiceIdNode.selectSingleNode(".//*[local-name() = 'Title']"));
   var sDescription = GXml.value(oServiceIdNode.selectSingleNode(".//*[local-name() = 'Abstract']"));
-  
+
   // GetFeature node
   var oGetFeatureNode = rootNode.selectSingleNode(".//*[local-name() = 'Operation' and @name = 'GetFeature']");
   var sWfsNode = GXml.value(oGetFeatureNode.selectSingleNode(".//*[local-name() = 'Post']"));
-  
-  // FeatureType node 
+
+  // FeatureType node
   var aFeatureType = rootNode.selectNodes(".//*[local-name() = 'FeatureType']");
   var numFeatureTypes = aFeatureType.length;
   for (var i=0; i<numFeatureTypes; i++) {
     var oFeatureType = aFeatureType[i];
     var sFeatureType = GXml.value(oFeatureType.selectSingleNode(".//*[local-name() = 'Name']"));
-    
+
     if (!isRecognizedFeature(sFeatureType)) {
       continue;
     }
-        
+
     // Icons for the feature type
     // This should somehow come from the WFS - DescribeFeatureType maybe
-    var sIcon = gaFeatureTypeIconOn[sFeatureType];    
- 
+    var sIcon = gaFeatureTypeIconOn[sFeatureType];
+
     // TODO - Somehow we need to get the proxy for this service
     var sWfs = gaFeatureTypeProxy[sFeatureType];
-    
+
     var group = new StationGroup(sIcon, sTitle, sDescription, sWfs, sFeatureType);
     gaGroups[sFeatureType] = group;
-    
+
     var groupDiv = document.getElementById(gaFeatureTypeGroupSpace[sFeatureType]);
     groupDiv.appendChild(group.moHtmlBundle);
   }
@@ -246,40 +214,40 @@ function parseCapabilitiesDocument1_1_0(rootNode) {
 function parseCapabilitiesDocument1_0_0(rootNode) {
   if (g_IsIE)
     rootNode.setProperty("SelectionLanguage", "XPath");
-    
+
   var oServiceIdNode = rootNode.selectSingleNode("*[local-name() = 'Service']");
   if (!oServiceIdNode)
     return;
-    
+
   var sTitle = GXml.value(oServiceIdNode.selectSingleNode(".//*[local-name() = 'Title']"));
   var sDescription = GXml.value(oServiceIdNode.selectSingleNode(".//*[local-name() = 'Abstract']"));
-  
+
   // GetFeature node
   var oCapabilityNode = rootNode.selectSingleNode(".//*[local-name() = 'Capability']");
   var oGetFeatureNode = oCapabilityNode.selectSingleNode(".//*[local-name() = 'GetFeature']");
   var sWfsNode = GXml.value(oGetFeatureNode.selectSingleNode(".//*[local-name() = 'Post']"));
 
-  // FeatureType node 
+  // FeatureType node
   var aFeatureType = rootNode.selectNodes(".//*[local-name() = 'FeatureType']");
   var numFeatureTypes = aFeatureType.length;
   for (var i=0; i<numFeatureTypes; i++) {
     var oFeatureType = aFeatureType[i];
     var sFeatureType = GXml.value(oFeatureType.selectSingleNode(".//*[local-name() = 'Name']"));
-    
+
     if (!isRecognizedFeature(sFeatureType)) {
       continue;
     }
 
     // Icons for the feature type
     // This should somehow come from the WFS - DescribeFeatureType maybe
-    var sIcon = gaFeatureTypeIconOn[sFeatureType];   
- 
+    var sIcon = gaFeatureTypeIconOn[sFeatureType];
+
     // TODO - Somehow we need to get the proxy for this service
     var sWfs = gaFeatureTypeProxy[sFeatureType];
 
     var group = new StationGroup(sIcon, sTitle, sDescription, sWfs, sFeatureType);
     gaGroups[sFeatureType] = group;
-        
+
     //var groupDiv = document.getElementById(gaFeatureTypeGroupSpace[sFeatureType]);
     //groupDiv.appendChild(group.moHtmlBundle);
   }
@@ -297,7 +265,7 @@ function parseCapabilitiesDocument1_0_0(rootNode) {
 *        http://srb.ivec.org/gpsdata/08061/alic0610.08o.Z
 *     <dst:url>
 *   </dst:url_date>
-* </dst:data>  
+* </dst:data>
 */
 function getXmlTextForAllCheckedDataUrls() {
 
@@ -307,7 +275,7 @@ function getXmlTextForAllCheckedDataUrls() {
   var xmlNamespace = "dst";
   var xmlRoot = xmlNamespace + ":data";
 
-  
+
   var group;
   var num_stations;
   var station;
@@ -317,7 +285,7 @@ function getXmlTextForAllCheckedDataUrls() {
   var selected_urls = "";
   var date_str = "";
   xmlText += "<" + xmlRoot + ">";
-  
+
   // Loop over all groups in geodesy
   var group = gaGroups["geodesy:stations"];
   if (group) {
@@ -332,11 +300,11 @@ function getXmlTextForAllCheckedDataUrls() {
           // Loop over all months in the year
           for (var month_index=1; month_index<=12; month_index++) {
             month = gaMonths[month_index];
-            if (station.maStationDataForDate[year][month] 
+            if (station.maStationDataForDate[year][month]
                 && station.maStationDataForDate[year][month].length!=0) {
               // Loop over all dates for the month
               for (var date=1; date<=31; date++) {
-                if (station.maStationDataForDate[year][month][date] 
+                if (station.maStationDataForDate[year][month][date]
                     && station.maStationDataForDate[year][month][date].length!=0) {
                   // If data is avaialable for this date,
                   // look for the renix urls that had been "checked" by the user
@@ -351,7 +319,7 @@ function getXmlTextForAllCheckedDataUrls() {
   					}
                   }
                 }
-              } 
+              }
             }
           }
         }
@@ -382,7 +350,7 @@ function createXmlNodeForDateUrl (pDate, pUrl) {
 	xmlNode += pUrl;
 	xmlNode += "</" + xmlUrlNode + ">";
 	xmlNode += "</" + xmlPairNode + ">";
-	
+
 	return xmlNode;
 }
 
@@ -405,22 +373,22 @@ function addLayers() {
   tileCanada.myFormat='image/png';
   tileCanada.myBaseURL='http://gapwms.nbii.gov/wmsconnector/com.esri.wms.Esrimap?servicename=accipitridae';
   tileCanada.getTileUrl=CustomGetTileUrl;
-  
+
   var tileSwiss= new GTileLayer(new GCopyrightCollection(""),1,17);
   tileSwiss.myLayers='CHE_SGS_500k_GeologicalUnits,CHE_SGS_500k_TectonicUnits';
   tileSwiss.myFormat='image/png';
   tileSwiss.myBaseURL='http://prod.swisstopogeodata.ch/SGS_Geol_Tecto/wms?';
   tileSwiss.getTileUrl=CustomGetTileUrl;
-  
+
   var tileUK= new GTileLayer(new GCopyrightCollection(""),1,17);
   tileUK.myLayers='GBR_BGS_625k_BLT,GBR_BGS_625k_BLS';
   tileUK.myFormat='image/png';
   tileUK.myBaseURL='http://ogc.bgs.ac.uk/cgi-bin/BGS_Bedrock_and_Superficial_Geology/wms?';
   tileUK.getTileUrl=CustomGetTileUrl;
-  
+
   var layers=[G_SATELLITE_MAP.getTileLayers()[0], G_HYBRID_MAP.getTileLayers()[1], tileCanada, tileSwiss, tileUK];
   var custommap1 = new GMapType(layers, G_SATELLITE_MAP.getProjection(), "OneGeology", G_SATELLITE_MAP);
-  
+
   goMap.moMap.addMapType(custommap1);
 }
 function dd2MercMetersLng(p_lng) {
@@ -461,7 +429,7 @@ function CustomGetTileUrl(a,b,c) {
 
  var lBbox=lUL.x+","+lUL.y+","+lLR.x+","+lLR.y;
  var lSRS="EPSG:4326";
- 
+
  // dmr notes
  // change this to ensure some flexibility in version based on request from capabilities request
  //

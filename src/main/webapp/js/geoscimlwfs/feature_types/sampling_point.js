@@ -1,6 +1,6 @@
-/** 
+/**
 * @fileoverview This file declares the Class SamplingPoint.
-* An object of SamplingPoint will be maintained in GNSSMarker object. 
+* An object of SamplingPoint will be maintained in GNSSMarker object.
 */
 
 /**
@@ -12,7 +12,7 @@
 * @return A new {@link SamplingPoint}
 */
 function SamplingPoint(pSamplingPoint) {
-  this.parseXmlElement(pSamplingPoint); 
+  this.parseXmlElement(pSamplingPoint);
   return this;
 }
 
@@ -47,28 +47,29 @@ SamplingPoint.prototype.parseXmlElement = SamplingPoint_parseXmlElement;
 */
 function SamplingPoint_parseXmlElement(pSamplingPointNode) {
   var nodeSamplingPoint = pSamplingPointNode;
-  
-  if (g_IsIE)
+
+  if (g_IsIE) {
     nodeSamplingPoint.setProperty("SelectionLanguage", "XPath");
+  }
   /**
   * Sample XML fragment for updateCSWRecords station -
   *
   *	<gml:featureMembers>
   *	 <sa:SamplingPoint gml:id="stationno.19042">
-  *	  <gml:name>Yaragadee</gml:name> 
+  *	  <gml:name>Yaragadee</gml:name>
   *	   <sa:position>
   *	    <gml:Point srsName="EPSG:4326">
-  *	     <gml:pos>115.34697236 -29.04656024</gml:pos> 
+  *	     <gml:pos>115.34697236 -29.04656024</gml:pos>
   *	    </gml:Point>
   *	   </sa:position>
   *	 </sa:SamplingPoint>
   *	</gml:featureMembers>
   */
-	  
+
   var sId = null;
   var sName = null;
   var oLocation = null;
-	   
+
   sId = nodeSamplingPoint.getAttribute("gml:id");
   sName = GXml.value(nodeSamplingPoint.selectSingleNode("*[local-name() = 'name']"));
 
@@ -78,6 +79,6 @@ function SamplingPoint_parseXmlElement(pSamplingPointNode) {
   // Populate the arrays for the object.
   this.msId = sId;
   this.msName = sName;
-  this.moLocation = oLocation; 
+  this.moLocation = oLocation;
 }
 

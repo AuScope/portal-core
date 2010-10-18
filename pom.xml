@@ -6,14 +6,23 @@
     <artifactId>AuScope-Portal</artifactId>
     <packaging>war</packaging>
     <version>2.7.0</version>
-    <name>AuScope-Portal Maven Webapp</name>
-    <url>http://maven.apache.org</url>
+    <name>AuScope-Portal Webapp</name>
+    <description>AuScopes flagship demonstration tool</description>
+    <url>http://portal.auscope.org</url>
+    <ciManagement>
+    	<system>BuildBot</system>
+    	<url>http://geobuilder.arrc.csiro.au</url>
+    </ciManagement>
     <scm>
         <connection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</connection>
         <developerConnection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</developerConnection>
     </scm>
 
     <!-- Build Configuration -->
+    <organization>
+    	<name>AuScope</name>
+    	<url>http://www.auscope.org</url>
+    </organization>
     <build>
         <finalName>AuScope-Portal</finalName>
         <plugins>
@@ -386,11 +395,6 @@
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
             <version>3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.6</version>
         </dependency>
         <dependency>
             <groupId>xom</groupId>
