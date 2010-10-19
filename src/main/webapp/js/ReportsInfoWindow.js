@@ -29,9 +29,11 @@ ReportsInfoWindow.prototype = {
 		
 		var wwwLinks = this.cswRecord.getFilteredOnlineResources('WWW');
 		for(var i=0; i< wwwLinks.length; i++) {
+			var linkName = wwwLinks[i].name != null && wwwLinks[i].name != "" ? 
+					wwwLinks[i].name : wwwLinks[i].url;
 			sHtml += "<tr><td>" 
 				+ "<a href='"	+ wwwLinks[i].url + "' target='_blank'>" 
-				+ wwwLinks[i].name 
+				+ linkName
 				+ "</a>"
 				+ "</td></tr>";
 		}
@@ -40,7 +42,12 @@ ReportsInfoWindow.prototype = {
 		sHtml += "</table>"
 			+ "</div>";
 
-		this.map.openInfoWindowHtml(this.overlay.getBounds().getCenter(), sHtml, 
-				{maxWidth:800, maxHeight:400, autoScroll:true});
+		if (this.overlay instanceof GPolygon) {
+			this.map.openInfoWindowHtml(this.overlay.getBounds().getCenter(), sHtml, 
+					{maxWidth:800, maxHeight:400, autoScroll:true});
+		} else if (this.overlay instanceof GMarker) {
+			this.map.openInfoWindowHtml(this.overlay.getPoint(), sHtml, 
+					{maxWidth:800, maxHeight:400, autoScroll:true});
+		}
 	}
 };

@@ -438,6 +438,7 @@ Ext.onReady(function() {
 
         //Get the list of bounding box polygons
         var cswRecords = activeLayerRecord.getCSWRecords();
+        var knownLayer = activeLayerRecord.getParentKnownLayer();
         var numRecords = 0;
     	for (var i = 0; i < cswRecords.length; i++) {
     		if (reportTitleFilter === '' || regexp.test(cswRecords[i].getServiceName())) {
@@ -447,19 +448,48 @@ Ext.onReady(function() {
     			for (var j = 0; j < geoEls.length; j++) {
     	    		var geoEl = geoEls[j];
     	    		if (geoEl instanceof BBox) {
-    	    			var polygonList = geoEl.toGMapPolygon('#0003F9', 4, 0.75,'#0055FE', 0.4);
-
-    	        	    for (var k = 0; k < polygonList.length; k++) {
-    	        	    	polygonList[k].cswRecord = cswRecords[i].internalRecord;
-    	                	polygonList[k].activeLayerRecord = activeLayerRecord.internalRecord;
-
-    	        	    	overlayManager.addOverlay(polygonList[k]);
-    	        	    }
+    	    			if(geoEl.eastBoundLongitude == geoEl.westBoundLongitude &&
+    	    				geoEl.southBoundLatitude == geoEl.northBoundLatitude) {
+    	    				//We only have a point  	                    
+    	                    var point = new GLatLng(parseFloat(geoEl.southBoundLatitude),
+    	                    		parseFloat(geoEl.eastBoundLongitude));
+    	                      	                    
+    	                	var icon = new GIcon(G_DEFAULT_ICON, activeLayerRecord.getIconUrl());   
+    	                	icon.shadow = null;
+    	                	
+	                		var iconSize = knownLayer.getIconSize();
+	                		if (iconSize) {
+	                			icon.iconSize = new GSize(iconSize.width, iconSize.height);
+	                		}
+	                		
+	                		var iconAnchor = knownLayer.getIconAnchor();
+	                		if(iconAnchor) {
+	                        	icon.iconAnchor = new GPoint(iconAnchor.x, iconAnchor.y);
+	                        }
+    	                    
+    	                    var marker = new GMarker(point, {icon: icon});
+                            marker.activeLayerRecord = activeLayerRecord.internalRecord;
+                            marker.cswRecord = cswRecords[i].internalRecord;
+                            //marker.onlineResource = onlineResource;
+                            
+    	                    //Add our single point
+    	                    overlayManager.markerManager.addMarker(marker, 0);
+    	    		
+    	    			} else { //polygon
+	    	    			var polygonList = geoEl.toGMapPolygon('#0003F9', 4, 0.75,'#0055FE', 0.4);
+	    	        	    
+	    	        	    for (var k = 0; k < polygonList.length; k++) {
+	    	        	    	polygonList[k].cswRecord = cswRecords[i].internalRecord;
+	    	                	polygonList[k].activeLayerRecord = activeLayerRecord.internalRecord;
+	    	        	    	
+	    	        	    	overlayManager.addOverlay(polygonList[k]);
+	    	        	    }
+    	    			}
     	    		}
     	    	}
     		}
     	}
-
+        overlayManager.markerManager.refresh();
     	responseTooltip.addResponse("", numRecords + " records retrieved.");
     };
 

@@ -46,6 +46,17 @@ public class ViewKnownLayerFactory {
         obj.put("description",k.getDescription());
         obj.put("id", k.getId());
         obj.put("descriptiveKeyword", k.getDescriptiveKeyword());
+        obj.put("iconUrl", k.getIconUrl());
+        
+        Point iconAnchor =  k.getIconAnchor(); 
+        if (iconAnchor != null) {
+            obj.put("iconAnchor", toView(iconAnchor));
+        }
+        
+        Dimension iconSize = k.getIconSize();
+        if (iconSize != null) {
+            obj.put("iconSize", toView(iconSize));
+        }
         
         return obj;
 	}

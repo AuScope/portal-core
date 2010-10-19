@@ -192,6 +192,9 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	                        reportsMenu.syncSize();
 	                    }
 	                }
+                } else if (overlay instanceof GMarker) {
+                    var infoWindow = new ReportsInfoWindow(map, overlay, parentCSWRecord);
+                    infoWindow.show();
                 }
 	    	}
 	    	return;

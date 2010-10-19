@@ -193,6 +193,16 @@ public class TestViewKnownLayerFactory {
         final String description = "asb";
         final String descriptiveKeyword = "myKeyword";
         final String id = "eyedee";
+        final String iconUrl = "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png";
+        
+    	final double anchorX = 1.0;
+    	final double anchorY = 1.0;
+    	
+    	final double iconSizeWidth = 16;
+    	final double iconSizeHeight = 16;
+    	
+    	final ModelMap anchorExpectation = new ModelMap();
+    	final ModelMap sizeExpectation = new ModelMap();
         
         final ModelMap expectation = new ModelMap();
         
@@ -201,6 +211,14 @@ public class TestViewKnownLayerFactory {
         expectation.put("title", title);
         expectation.put("description", description);
         expectation.put("id", id);
+        expectation.put("iconUrl", iconUrl);
+    	expectation.put("iconAnchor", anchorExpectation);
+    	expectation.put("iconSize", sizeExpectation);
+        
+    	anchorExpectation.put("x", anchorX);
+    	anchorExpectation.put("y", anchorY);    	
+    	sizeExpectation.put("width", iconSizeWidth);
+    	sizeExpectation.put("height", iconSizeHeight);
         
         context.checking(new Expectations() {{
             
@@ -208,6 +226,15 @@ public class TestViewKnownLayerFactory {
             oneOf(mockKeywords).getTitle();will(returnValue(title));
             oneOf(mockKeywords).getDescription();will(returnValue(description));
             oneOf(mockKeywords).getDescriptiveKeyword();will(returnValue(descriptiveKeyword));
+            oneOf(mockKeywords).getIconUrl();will(returnValue(iconUrl));
+            oneOf(mockKeywords).getIconAnchor();will(returnValue(mockP1));
+            oneOf(mockKeywords).getIconSize();will(returnValue(mockD1));            
+            
+    		oneOf(mockP1).getX();will(returnValue(anchorX));
+    		oneOf(mockP1).getY();will(returnValue(anchorY));
+    				
+    		oneOf(mockD1).getWidth();will(returnValue(iconSizeWidth));
+    		oneOf(mockD1).getHeight();will(returnValue(iconSizeHeight));
         }});
         
         ModelMap result = factory.toView(mockKeywords);
