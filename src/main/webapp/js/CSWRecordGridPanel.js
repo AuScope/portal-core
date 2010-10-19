@@ -140,20 +140,13 @@ CSWRecordGridPanel = function(id, title, cswRecordStore, addLayerHandler, cswRec
 	            	showBoundsHandler(cswRecord);
             	} else if (fieldName === 'onlineResources') {
             		e.stopEvent();
-            		var renderer = new CSWRecordRenderer(cswRecord);
             		
             		//Close an existing popup
             		if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
             			this.onlineResourcesPopup.close();
             		}
             		
-            		this.onlineResourcesPopup = new Ext.Window({
-                        title: 'Service Information',
-                        autoDestroy : true,
-                        html: renderer.renderOnlineResources(),
-                        autoHeight:true,
-                        autoWidth: true
-                    });
+            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecord);
             		this.onlineResourcesPopup.show(e.getTarget());
             	}
             	

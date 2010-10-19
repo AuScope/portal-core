@@ -120,20 +120,13 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
                	} else if (fieldName === 'styleName') {
                		e.stopEvent();
                		var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
-            		var renderer = new CSWRecordRenderer(cswRecords);
             		
             		//Close an existing popup
             		if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
             			this.onlineResourcesPopup.close();
             		}
             		
-            		this.onlineResourcesPopup = new Ext.Window({
-                        title: 'Service Information for ' + knownLayerRecord.getTitle(),
-                        autoDestroy : true,
-                        html: renderer.renderOnlineResources(),
-                        autoHeight:true,
-                        autoWidth: true
-                    });
+            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords);
             		this.onlineResourcesPopup.show(e.getTarget());
                	}
            	},
