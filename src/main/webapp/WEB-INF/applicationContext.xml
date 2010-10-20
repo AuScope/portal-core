@@ -7,6 +7,10 @@
       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
    >
 
+    <!-- This is very important - it will selectively load our beans for the (machine specified) profile
+    or use the default profile if none is specified. See AUS-1932 -->
+    <import resource="profile-${AUSCOPE_PORTAL_PROFILE:portal-test}.xml" />
+
    <!-- Turn on HostPrecedingPropertyPlaceholderConfigurer -->
    <!-- http://jdwyah.blogspot.com/2006/12/updated-spring-configuration.html -->
    <bean id="propertyConfigurer" class="org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer">
@@ -16,56 +20,31 @@
          </list>
       </property>
    </bean>
+   
+   <bean id="connectionParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
+        <property name="connectionTimeout" value="900000"/> <!--  15 minutes -->
+        <property name="soTimeout" value="900000"/> <!--  15 minutes -->
+   </bean>
 
-    <!-- All elements must be of type org.auscope.portal.server.web.KnownLayer -->
-    <bean id="knownTypes" class="java.util.ArrayList">
-        <constructor-arg>
-            <list>
-                <ref bean="knownTypeMine" />
-                <ref bean="knownTypeMineralOccurrence" />
-                <ref bean="knownTypeMiningActivity" />
-                <ref bean="knownTypeBorehole" />
-                <ref bean="knownTypeGeodesy" />
-                <ref bean="knownTypeGeochron" />
-                <ref bean="knownTypeReports" />
-                <ref bean="knownTypeGeotransects" />
-            </list>
-        </constructor-arg>
+    <bean id="cswAuscopeDev" class="org.auscope.portal.server.web.service.CSWServiceItem">
+        <constructor-arg index="0" value="http://auscope-portal-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
     </bean>
 
-    <bean id="cswServiceList" class="java.util.ArrayList">
-        <constructor-arg>
-            <list>
-            	<ref bean="cswServiceItemAuscope" />
-                <ref bean="cswServiceItemMDU" />
-            </list>
-        </constructor-arg>
-    </bean>
-
-    <bean id="googleMapIconUrls" class="java.util.ArrayList">
-        <constructor-arg>
-            <list>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</value>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/ltblu-blank.png</value>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png</value>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/grn-blank.png</value>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/blu-blank.png</value>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/wht-blank.png</value>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/red-blank.png</value>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/orange-blank.png</value>
-            	<value>http://maps.google.com/mapfiles/kml/paddle/purple-blank.png</value>
-            </list>
-        </constructor-arg>
-    </bean>
-
-	<bean id="cswServiceItemAuscope" class="org.auscope.portal.server.web.service.CSWServiceItem">
-		<constructor-arg index="0" value="http://auscope-portal-dev.arrc.csiro.au/geonetwork/srv/en/csw"/>
+	<bean id="cswAuscopeTest" class="org.auscope.portal.server.web.service.CSWServiceItem">
+		<constructor-arg index="0" value="http://auscope-portal-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
 	</bean>
+	
+	<bean id="cswAuscopeProduction" class="org.auscope.portal.server.web.service.CSWServiceItem">
+        <constructor-arg index="0" value="http://portal.auscope.org/geonetwork/srv/en/csw"/>
+    </bean>
 
-	<bean id="cswServiceItemMDU" class="org.auscope.portal.server.web.service.CSWServiceItem">
+	<bean id="cswMDUTest" class="org.auscope.portal.server.web.service.CSWServiceItem">
 		<constructor-arg index="0" value="http://mdu-data-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
-        <constructor-arg index="1" value="http://mdu-data-2.arrc.csiro.au/geonetwork/srv/en/metadata.show?uuid=%recordID%"/>
 	</bean>
+	
+	<bean id="cswMDUProduction" class="org.auscope.portal.server.web.service.CSWServiceItem">
+        <constructor-arg index="0" value="http://mdu-data.arrc.csiro.au/geonetwork/srv/en/csw"/>
+    </bean>
 
    <bean id="knownTypeMine" class="org.auscope.portal.server.web.KnownLayerWFS">
        <constructor-arg name="featureTypeName" value="er:Mine"/>

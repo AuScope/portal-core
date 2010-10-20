@@ -10,6 +10,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 
@@ -28,7 +29,7 @@ public class TestHttpServiceCaller {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
     private HttpClient mockHttpClient;
-    private PortalPropertyPlaceholderConfigurer mockPropPlaceholder;
+    private HttpConnectionManagerParams mockParams;
     private IWFSGetFeatureMethodMaker methodMaker;
 
     private HttpServiceCaller httpServiceCaller;
@@ -39,10 +40,10 @@ public class TestHttpServiceCaller {
     @Before
     public void setup() {
         mockHttpClient = context.mock(HttpClient.class);
-        mockPropPlaceholder = context.mock(PortalPropertyPlaceholderConfigurer.class);
+        mockParams = context.mock(HttpConnectionManagerParams.class);
         httpServiceCaller = new HttpServiceCaller();
         methodMaker = new WFSGetFeatureMethodMakerPOST();
-        httpServiceCaller.setHostConfigurer(mockPropPlaceholder);
+        httpServiceCaller.setClientParams(mockParams);
     }
 
     /**
@@ -107,7 +108,6 @@ public class TestHttpServiceCaller {
             oneOf (method).getResponseBodyAsString(); will(returnValue(returnString));
             oneOf (method).releaseConnection();
             allowing(method).getURI();will(returnValue(null));
-            allowing(mockPropPlaceholder).resolvePlaceholder(with(any(String.class)));will(returnValue("1"));
         }});
 
         String response = httpServiceCaller.getMethodResponseAsString(method, mockHttpClient);
@@ -129,7 +129,7 @@ public class TestHttpServiceCaller {
             oneOf (method).getStatusLine();//logger
             oneOf (method).getStatusLine();//exception
             allowing(method).getURI();will(returnValue(null));
-            allowing(mockPropPlaceholder).resolvePlaceholder(with(any(String.class)));will(returnValue("1"));
+
         }});
 
         httpServiceCaller.getMethodResponseAsString(method, mockHttpClient);

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+    <!-- All elements must be of type org.auscope.portal.server.web.KnownLayer -->
+    <bean id="knownTypes" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <ref bean="knownTypeMine" />
+                <ref bean="knownTypeMineralOccurrence" />
+                <ref bean="knownTypeMiningActivity" />
+                <ref bean="knownTypeBorehole" />
+                <ref bean="knownTypeGeodesy" />
+                <ref bean="knownTypeReports" />
+                <ref bean="knownTypeGeotransects" />
+            </list>
+        </constructor-arg>
+    </bean>
+    
+    <bean id="cswServiceList" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <ref bean="cswAuscopeProduction" />
+                <ref bean="cswMDUProduction" />
+            </list>
+        </constructor-arg>
+    </bean>       
+
+</beans>

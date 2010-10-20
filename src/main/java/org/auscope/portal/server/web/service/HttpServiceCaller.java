@@ -30,12 +30,11 @@ import java.io.IOException;
 public class HttpServiceCaller {
     protected final Log log = LogFactory.getLog(getClass());
     
-    private PortalPropertyPlaceholderConfigurer hostConfigurer;
+    private HttpConnectionManagerParams clientParams;
 
-    @Autowired
-    @Qualifier(value = "propertyConfigurer")    
-    public void setHostConfigurer(PortalPropertyPlaceholderConfigurer hostConfig) {
-        this.hostConfigurer = hostConfig;
+    @Autowired    
+    public void setClientParams(HttpConnectionManagerParams clientParams) {
+        this.clientParams = clientParams;
     }    
     
     /**
@@ -103,40 +102,7 @@ public class HttpServiceCaller {
      */
     private void invokeTheMethod(HttpMethodBase method, HttpClient httpClient) throws Exception {
 
-        HttpConnectionManagerParams clientParams = new HttpConnectionManagerParams();
-
-        int SECOND = 1000;      // 1000 millisecond
-        
-        int BODY_TIMEOUT;
-        int SOCK_TIMEOUT;
-        int CONN_TIMEOUT;
-        
-        try {
-            BODY_TIMEOUT = SECOND * Integer.parseInt(hostConfigurer.resolvePlaceholder("wait-for-body-content.timeout"));        
-            SOCK_TIMEOUT = SECOND * Integer.parseInt(hostConfigurer.resolvePlaceholder("socket.timeout"));
-            CONN_TIMEOUT = SECOND * Integer.parseInt(hostConfigurer.resolvePlaceholder("connection-establish.timeout"));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw e;
-        }
-
-        log.trace("BODY_TIMEOUT : " + BODY_TIMEOUT);
-        log.trace("SOCK_TIMEOUT : " + SOCK_TIMEOUT);
-        log.trace("CONN_TIMEOUT : " + CONN_TIMEOUT);
-        
         log.debug("method=" + method.getURI());
-        
-        
-        // Period of time in milliseconds to wait for a content body 
-        // sent in response to HEAD method from a non-compliant server.
-        clientParams.setParameter( HttpMethodParams.HEAD_BODY_CHECK_TIMEOUT
-                                 , BODY_TIMEOUT);
-
-        // Default socket timeout in milliseconds which is the timeout for waiting for data
-        clientParams.setSoTimeout(SOCK_TIMEOUT);
-        
-        // Timeout until connection is etablished.
-        clientParams.setConnectionTimeout(CONN_TIMEOUT);
 
         //create the connection manager and add it to the client
         HttpConnectionManager man = new SimpleHttpConnectionManager();
