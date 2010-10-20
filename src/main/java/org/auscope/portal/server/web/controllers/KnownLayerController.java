@@ -7,6 +7,7 @@ import org.auscope.portal.server.web.KnownLayer;
 import org.auscope.portal.server.web.view.JSONModelAndView;
 import org.auscope.portal.server.web.view.ViewKnownLayerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,11 +21,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class KnownLayerController {
 
-	private List<KnownLayer> knownTypes;
+	private List knownTypes;
 	private ViewKnownLayerFactory viewFactory;
 	
 	@Autowired
-	public KnownLayerController(List<KnownLayer> knownTypes,
+	public KnownLayerController(@Qualifier("knownTypes") ArrayList knownTypes,
 			ViewKnownLayerFactory viewFactory) {
 		this.knownTypes = knownTypes;
 		this.viewFactory = viewFactory;
@@ -53,8 +54,8 @@ public class KnownLayerController {
 	public ModelAndView getKnownLayers() {
 		
 		List<ModelMap> viewRepresentations = new ArrayList<ModelMap>();
-		for (KnownLayer k : knownTypes) {
-			viewRepresentations.add(viewFactory.toView(k));
+		for (Object k : knownTypes) {
+			viewRepresentations.add(viewFactory.toView((KnownLayer) k));
 		}
 		
 		return generateResponse(true, "No errors", viewRepresentations);

@@ -28,20 +28,26 @@ public class TestKnownLayerController {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
     
+    private ArrayList knownLayerList;
     private KnownLayer mockDefn1 = context.mock(KnownLayer.class, "defn1");
     private KnownLayer mockDefn2 = context.mock(KnownLayer.class, "defn2");
 	private ViewKnownLayerFactory mockViewFactory = context.mock(ViewKnownLayerFactory.class);
 	private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
 	
+    
+    
     @Before
     public void setup() throws Exception {
-    	
+        knownLayerList = new ArrayList();
+        
+        knownLayerList.add(mockDefn1);
+        knownLayerList.add(mockDefn2);
     }
     
     @Test
     public void testGet_Success() throws Exception {
-    	KnownLayerController kftController = new KnownLayerController(Arrays.asList(mockDefn1, mockDefn2), mockViewFactory);
+    	KnownLayerController kftController = new KnownLayerController(knownLayerList, mockViewFactory);
     	final StringWriter actualJSONResponse = new StringWriter();
     	final ModelMap record1 = new ModelMap();
     	final ModelMap record2 = new ModelMap();
