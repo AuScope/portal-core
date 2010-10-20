@@ -52,6 +52,10 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
             		
             		var linkedCSWRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
             		
+            		if (linkedCSWRecords.length == 0) {
+            			return '<div style="text-align:center"><img src="img/cross.png" width="16" height="16" align="CENTER"/></div>';
+            		}
+            		
             		for (var i = 0; i < linkedCSWRecords.length; i++) {
             			var onlineResources = linkedCSWRecords[i].getOnlineResources();
 	            		for (var j = 0; j < onlineResources.length; j++) {
@@ -121,6 +125,11 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
                		e.stopEvent();
                		var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
             		
+               		//Can show service info if there are no linked records
+               		if (cswRecords.length == 0) {
+               			return;
+               		}
+               		
             		//Close an existing popup
             		if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
             			this.onlineResourcesPopup.close();
@@ -155,17 +164,21 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
 
                     //get the actual data record
                     var theRow = this.getView().findRow(row);
-                    var cswRecord = new CSWRecord(this.getStore().getAt(theRow.rowIndex));
+                    var knownLayerRecord = new KnownLayerRecord(this.getStore().getAt(theRow.rowIndex));
                     
                     //This is for the 'record type' column
                     if (col.cellIndex == '2') {
-                    	
+                    	var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
+                    	var text = 'Click for detailed information about the web services this layer utilises';
+                    	if (cswRecords.length == 0) {
+                    		text = 'This layer currently has no services that it can utilise. Please try reloading the page later.';
+                    	}
                     	
                     	this.currentToolTip = new Ext.ToolTip({
                             target: e.target ,
                             title: 'Service Information',
                             autoHide : true,
-                            html: 'Click for detailed information about the web services this layer utilises',
+                            html: text,
                             anchor: 'bottom',
                             trackMouse: true,
                             showDelay:60,
