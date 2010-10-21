@@ -34,7 +34,7 @@ FormFactory.prototype.internalGenerateResult = function(form, supportsFiltering)
  * }
  * 
  */
-FormFactory.prototype.getFilterForm = function(activeLayersRecord, map) {
+FormFactory.prototype.getFilterForm = function(activeLayersRecord, map, cswRecordStore) {
 
 	var cswRecords = activeLayersRecord.getCSWRecords();
 	
@@ -72,7 +72,7 @@ FormFactory.prototype.getFilterForm = function(activeLayersRecord, map) {
     	//Otherwise we may just have a boring old metadata record
     	if (parentKnownLayer && parentKnownLayer.getType() === 'KnownLayerKeywords') {
 	    	switch (parentKnownLayer.getDescriptiveKeyword()) {
-	    		case 'Report':return this.internalGenerateResult(new ReportFilterForm(id), true); break;
+	    		case 'Report':return this.internalGenerateResult(new ReportFilterForm(id, parentKnownLayer, cswRecordStore), true); break;
 	    		default: return this.internalGenerateResult(null, false); break;
 	    	}
     	}

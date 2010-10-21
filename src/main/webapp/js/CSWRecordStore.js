@@ -106,21 +106,27 @@ Ext.extend(CSWRecordStore, Ext.data.GroupingStore, {
 	},
 	
 	/**
-	 * Gets all records that have a specified online resource(s) that match
-	 * one of the specified filter parameters
-	 * type : [Optional] one of ['WCS', 'WFS', 'WMS', 'OPeNDAP']
-	 * name : [Optional] the online resource name to match
+	 * Gets all records that have a descriptive keyword that matches the specified
+	 * keyword(s).
 	 * 
 	 * Returns an array of CSWRecord objects
 	 */
-	getCSWRecordsByKeyword : function(keyword) {
+	getCSWRecordsByKeywords : function(keywords) {
 		
 		//Filter our results
 		var results = [];
 		CSWRecordStore.superclass.each.call(this, function(rec) {
-			var keywords = rec.get('descriptiveKeywords');
+			var descriptiveKeywords = rec.get('descriptiveKeywords');
 			
-			if (keywords.indexOf(keyword) >= 0) {
+			var containsKeywords = true;
+			for(var i=0; i<keywords.length; i++) {				 
+				if (descriptiveKeywords.indexOf(keywords[i]) < 0) {
+					containsKeywords = false;
+					break;
+				}
+			}
+			
+			if (containsKeywords) {
 				results.push(new CSWRecord(rec));
 			}
 			

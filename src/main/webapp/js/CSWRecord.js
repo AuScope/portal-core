@@ -184,3 +184,16 @@ CSWRecord.prototype.getBboxOverlayManager = function() {
 CSWRecord.prototype.setBboxOverlayManager = function(bboxOverlayManager) {
 	this.internalRecord.bboxOverlayManager = bboxOverlayManager;
 };
+
+/**
+ * Returns true if this record contains the given descriptive keyword, false otherwise.
+ */
+CSWRecord.prototype.containsKeyword = function(str) {
+	var descriptiveKeywords = this.internalGetArrayField('descriptiveKeywords');
+	for(var i=0; i<descriptiveKeywords.length; i++) {
+		if(descriptiveKeywords[i] == str) {
+			return true;
+		}
+	}
+	return false;
+}

@@ -375,7 +375,7 @@ Ext.onReady(function() {
 
             //Create our filter panel if we haven't already
             if (!filterPanelObj) {
-            	filterPanelObj = formFactory.getFilterForm(activeLayerRecord, map);
+            	filterPanelObj = formFactory.getFilterForm(activeLayerRecord, map, cswRecordStore);
             	activeLayerRecord.setFilterPanel(filterPanelObj);
             }
 
@@ -427,13 +427,17 @@ Ext.onReady(function() {
     	activeLayerRecord.setResponseToolTip(responseTooltip);
 
     	var reportTitleFilter = '';
-        if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
-        	var filterObj = filterPanel.getLayout().activeItem.getForm().getValues();
-        	reportTitleFilter = filterObj.title;
-        }
+        var keywordFilter = '';
+    	var filterObj = filterPanel.getLayout().activeItem.getForm().getValues();
+    	
+    	reportTitleFilter = filterObj.title;
         var regexp = /\*/;
         if(reportTitleFilter != '' && /^\w+/.test(reportTitleFilter)) {
         	var regexp = new RegExp(reportTitleFilter, "i");
+        }
+
+        if(filterObj.keyword != null) {
+        	keywordFilter = filterObj.keyword;
         }
 
         //Get the list of bounding box polygons
@@ -441,7 +445,8 @@ Ext.onReady(function() {
         var knownLayer = activeLayerRecord.getParentKnownLayer();
         var numRecords = 0;
     	for (var i = 0; i < cswRecords.length; i++) {
-    		if (reportTitleFilter === '' || regexp.test(cswRecords[i].getServiceName())) {
+    		if ((reportTitleFilter === '' || regexp.test(cswRecords[i].getServiceName()))
+    				&& (keywordFilter === '' || cswRecords[i].containsKeyword(keywordFilter))) {
     			numRecords++;
     			var geoEls = cswRecords[i].getGeographicElements();
 
@@ -490,6 +495,7 @@ Ext.onReady(function() {
     		}
     	}
         overlayManager.markerManager.refresh();
+
     	responseTooltip.addResponse("", numRecords + " records retrieved.");
     };
 

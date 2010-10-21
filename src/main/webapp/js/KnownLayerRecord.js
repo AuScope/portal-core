@@ -167,8 +167,64 @@ KnownLayerRecord.prototype.getLinkedCSWRecords = function(cswRecordStore) {
 		return cswRecordStore.getCSWRecordsByOnlineResource(layerName, null);
 	case 'KnownLayerKeywords':
 		var keyword = this.getDescriptiveKeyword();
-		return cswRecordStore.getCSWRecordsByKeyword(keyword);
+		return cswRecordStore.getCSWRecordsByKeywords([keyword]);
 	}
 	
 	return [];
+};
+
+/**
+ * Given a CSWRecordStore this function will return an array of CSWRecords that 
+ * this KnownLayerRecord is representing, containing the specified keyword.
+ * 
+ * TODO: This is currently only implemented for KnownLayerKeywords
+ */
+KnownLayerRecord.prototype.getLinkedCSWRecordsByKeywords = function(cswRecordStore, keywords) {
+	var type = this.getType();
+	
+	switch (this.getType()) {
+	case 'KnownLayerKeywords':
+		var keyword = this.getDescriptiveKeyword();
+		keywords.add(keyword);
+		return cswRecordStore.getCSWRecordsByKeywords(keywords);
+	}
+	
+	return [];
+};
+
+/**
+ * Given a CSWRecordStore this function will return an array of arrays
+ * containing unique keywords and the number of records containing each keyword.
+ * 
+ * If includeOwnKeyword is set to true the known layer's own keyword will be 
+ * included in the list returned, otherwise it will not be included in the list.
+ * 
+ * @returns {Array}
+ */
+KnownLayerRecord.prototype.getLinkedCSWRecordsKeywordCount = function(cswRecordStore, includeOwnKeyword) {
+	var keywords = new Array();
+	var temp = new Array();
+	var recs = cswRecordStore.getCSWRecordsByKeywords([this.getDescriptiveKeyword()]);
+	var ownKeyword = this.getDescriptiveKeyword();;
+	var k = 0;
+
+	for(var i=0; i< recs.length; i++) {
+		var descriptiveKeywords = recs[i].getDescriptiveKeywords();
+		
+		for(var j=0; j<descriptiveKeywords.length; j++) {
+			var matchIndex = temp.indexOf(descriptiveKeywords[j]);
+			
+			if(descriptiveKeywords[j] != ownKeyword || includeOwnKeyword) {
+				if(matchIndex < 0) {
+					keywords[k] = [descriptiveKeywords[j], 1];
+					temp[k] = descriptiveKeywords[j];
+					k++;
+				} else {
+					keywords[matchIndex][1]++;
+				}
+			}
+		}
+	}
+	
+	return keywords;
 };
