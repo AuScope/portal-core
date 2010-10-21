@@ -3,6 +3,7 @@ package org.auscope.portal.server.web.controllers;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.ConnectException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -243,6 +244,38 @@ public class TestEarthResourcesFilterController {
 
         //Ensure that we get a valid response
         testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(true), expectedGML, expectedKML);
+    }
+    
+    @Test
+    public void testRequestFailure() throws Exception {
+        final String serviceURL = "http://localhost?";
+        final String mineName = "mineName"; //to get all mines
+        final GetMethod mockMethod = context.mock(GetMethod.class);
+        final StringWriter actualJSONResponse = new StringWriter();
+
+        context.checking(new Expectations() {{
+            oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
+            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(throwException(new ConnectException()));
+
+            //check that the correct response is getting output
+            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            
+            allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
+            allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
+            allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+        }});
+
+        //call with updateCSWRecords dud url
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null, 0,  mockHttpRequest);
+
+        //calling the renderer will write the JSON to our mocks
+        modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
+
+        //Ensure that we get a valid response
+        testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(false), null, null);
+    
     }
     
 }

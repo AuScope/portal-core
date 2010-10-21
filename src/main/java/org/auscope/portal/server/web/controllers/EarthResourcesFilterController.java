@@ -534,16 +534,20 @@ public class EarthResourcesFilterController {
         return new JSONModelAndView(model);
     }
     
-    private ModelAndView makeModelAndViewFailure(final String message, JSONArray requestInfo) {    	
-    	final Map<String,String> debugInfo = new HashMap<String,String>();
-        debugInfo.put("url",requestInfo.getString(0) );
-        debugInfo.put("info",requestInfo.getString(1) );
-    	
+    private ModelAndView makeModelAndViewFailure(final String message, JSONArray requestInfo) {
     	ModelMap model = new ModelMap(); 
         
         model.put("success", false);
         model.put("msg", message); 
-        model.put("debugInfo", debugInfo);
+        
+        //Only add the request info if it has been specified
+        if (requestInfo != null && requestInfo.size() >= 2) {
+            final Map<String,String> debugInfo = new HashMap<String,String>();
+            debugInfo.put("url",requestInfo.getString(0) );
+            debugInfo.put("info",requestInfo.getString(1) );
+            
+            model.put("debugInfo", debugInfo);
+        }
         
         return new JSONModelAndView(model);
     }
