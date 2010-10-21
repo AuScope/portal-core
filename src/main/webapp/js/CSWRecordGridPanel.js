@@ -49,6 +49,7 @@ CSWRecordGridPanel = function(id, title, cswRecordStore, addLayerHandler, cswRec
         height           : 160,
         autoScroll       : true,
         store            : dsCopy,
+        originalStore    : cswRecordStore,
         columns: [
             rowExpander,
             {
@@ -227,7 +228,7 @@ Ext.extend(CSWRecordGridPanel, Ext.grid.GridPanel, {
 	 * @param store
 	 * @return
 	 */
-	internalOnDataChanged	: function(store) {
-		this.getStore().copyFrom(store, this.cswRecordFilter);
+	internalOnDataChanged	: function() {
+		this.getStore().copyFrom(this.initialConfig.originalStore, this.cswRecordFilter);
 	}
 });

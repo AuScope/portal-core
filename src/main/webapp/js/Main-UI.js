@@ -1265,6 +1265,8 @@ Ext.onReady(function() {
     cswRecordStore.load({callback : function() {
     	knownLayersStore.fireEvent('datachanged');
     }});
-    knownLayersStore.load();
+    knownLayersStore.load({callback : function() {
+    	cswRecordStore.fireEvent('datachanged');
+    }});
 
 });
