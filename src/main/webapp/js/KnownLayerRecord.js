@@ -177,7 +177,7 @@ KnownLayerRecord.prototype.getLinkedCSWRecords = function(cswRecordStore) {
  * Given a CSWRecordStore this function will return an array of CSWRecords that 
  * this KnownLayerRecord is representing, containing the specified keyword.
  * 
- * TODO: This is currently only implemented for KnownLayerKeywords
+ * Only valid if type=='KnownLayerKeywords'
  */
 KnownLayerRecord.prototype.getLinkedCSWRecordsByKeywords = function(cswRecordStore, keywords) {
 	var type = this.getType();
@@ -198,6 +198,8 @@ KnownLayerRecord.prototype.getLinkedCSWRecordsByKeywords = function(cswRecordSto
  * 
  * If includeOwnKeyword is set to true the known layer's own keyword will be 
  * included in the list returned, otherwise it will not be included in the list.
+ * 
+ * Only valid if type=='KnownLayerKeywords'
  * 
  * @returns {Array}
  */
@@ -227,4 +229,35 @@ KnownLayerRecord.prototype.getLinkedCSWRecordsKeywordCount = function(cswRecordS
 	}
 	
 	return keywords;
+};
+
+/**
+ * Given a CSWRecordStore this function will return an array of arrays
+ * containing unique resource providers and the number of records belong to
+ * each resource provider.
+ * 
+ * Only valid if type=='KnownLayerKeywords'
+ * 
+ * @returns {Array}
+ */
+KnownLayerRecord.prototype.getLinkedCSWRecordResourceProvidersCount = function(cswRecordStore) {	
+	var resourceProviders = new Array();
+	var temp = new Array();
+	var recs = cswRecordStore.getCSWRecordsByKeywords([this.getDescriptiveKeyword()]);
+	var k = 0;
+	
+	for(var i=0; i<recs.length; i++) {
+		var resourceProvider = recs[i].getResourceProvider();	
+		var matchIndex = temp.indexOf(resourceProvider);
+		
+		if(matchIndex < 0) {
+			resourceProviders[k] = [resourceProvider, 1];
+			temp[k] = resourceProvider;
+			k++;
+		} else {
+			resourceProviders[matchIndex][1]++;
+		}
+	}
+	
+	return resourceProviders;
 };

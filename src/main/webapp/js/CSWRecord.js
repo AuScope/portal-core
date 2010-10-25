@@ -39,6 +39,13 @@ CSWRecord.prototype.getContactOrganisation = function() {
 };
 
 /**
+ * Gets the resource provider as a String
+ */
+CSWRecord.prototype.getResourceProvider = function() {
+	return this.internalGetStringField('resourceProvider');
+};
+
+/**
  * Gets the file identifier as a String
  * @return
  */

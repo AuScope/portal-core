@@ -36,6 +36,35 @@ ReportFilterForm = function(id, knownLayerRecord, cswRecordStore) {
         autoScroll	   : true
     });
 	
+    var resourceProviders = knownLayerRecord.getLinkedCSWRecordResourceProvidersCount(cswRecordStore);
+    
+    var resourceProviderStore = new Ext.data.SimpleStore({
+        fields   : ['resourceProvider', 'count'],
+        sortInfo : {field:'resourceProvider',order:'ASC'},
+        data: resourceProviders,
+        reader : new Ext.data.ArrayReader({}, [
+            { name:'resourceProvider' },
+            { name:'count' }
+        ])
+    });
+    
+    var resourceProviderCombo = new Ext.form.ComboBox({
+        tpl: '<tpl for="."><div style="word-wrap" ext:qtip="{resourceProvider} - {count} record(s)" class="x-combo-list-item">{resourceProvider}</div></tpl>',
+        anchor         : '100%',
+        name           : 'resourceProvider',
+        hiddenName     : 'resourceProvider',  
+        fieldLabel     : 'Resource Provider',
+        labelAlign     : 'right',
+        forceSelection : true,
+        mode           : 'local',
+        store          : resourceProviderStore,
+        triggerAction  : 'all',
+        typeAhead      : true,
+        displayField   :'resourceProvider',
+        valueField     :'resourceProvider',
+        autoScroll	   : true
+    });
+    
     Ext.FormPanel.call(this, {
         id          : String.format('{0}',id),
         border      : false,
@@ -59,7 +88,8 @@ ReportFilterForm = function(id, knownLayerRecord, cswRecordStore) {
                 fieldLabel : 'Title',
                 name       : 'title'
             },
-            keywordCombo
+            keywordCombo,
+            resourceProviderCombo
             ]
         }]
     });

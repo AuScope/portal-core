@@ -428,6 +428,7 @@ Ext.onReady(function() {
 
     	var reportTitleFilter = '';
         var keywordFilter = '';
+        var resourceProviderFilter = '';
     	var filterObj = filterPanel.getLayout().activeItem.getForm().getValues();
     	
     	reportTitleFilter = filterObj.title;
@@ -440,13 +441,18 @@ Ext.onReady(function() {
         	keywordFilter = filterObj.keyword;
         }
 
+        if(filterObj.resourceProvider != null) {
+        	resourceProviderFilter = filterObj.resourceProvider;
+        }
+        
         //Get the list of bounding box polygons
         var cswRecords = activeLayerRecord.getCSWRecords();
         var knownLayer = activeLayerRecord.getParentKnownLayer();
         var numRecords = 0;
     	for (var i = 0; i < cswRecords.length; i++) {
     		if ((reportTitleFilter === '' || regexp.test(cswRecords[i].getServiceName()))
-    				&& (keywordFilter === '' || cswRecords[i].containsKeyword(keywordFilter))) {
+    				&& (keywordFilter === '' || cswRecords[i].containsKeyword(keywordFilter))
+    				&& (resourceProviderFilter === '' || cswRecords[i].getResourceProvider() == resourceProviderFilter)) {
     			numRecords++;
     			var geoEls = cswRecords[i].getGeographicElements();
 

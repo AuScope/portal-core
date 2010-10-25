@@ -36,6 +36,7 @@ CSWRecordStore = function(url) {
 			fields			: [
 			    'serviceName',
 			    'contactOrganisation',
+			    'resourceProvider',
 			    'fileIdentifier',
 			    'recordInfoUrl',
 			    'dataIdentificationAbstract',

@@ -32,6 +32,7 @@ public class TestViewCSWRecordFactory {
     	
     	final String serviceName = "sn";
     	final String contactOrg = "co";
+    	final String resourceProvider = "MDU";
     	final String fileId = "asb";
     	final String recordInfoUrl = "http://bob.xom";
     	final String dataAbstract = "assda";
@@ -54,6 +55,7 @@ public class TestViewCSWRecordFactory {
     	
     	expectation.put("serviceName", serviceName);
     	expectation.put("contactOrganisation", contactOrg);
+    	expectation.put("resourceProvider", resourceProvider);    	
     	expectation.put("fileIdentifier", fileId);
     	expectation.put("recordInfoUrl", recordInfoUrl);
     	expectation.put("dataIdentificationAbstract", dataAbstract);
@@ -76,6 +78,7 @@ public class TestViewCSWRecordFactory {
     	context.checking(new Expectations() {{
     		oneOf(mockCSWRecord).getServiceName();will(returnValue(serviceName));
     		oneOf(mockCSWRecord).getContactOrganisation();will(returnValue(contactOrg));
+    		oneOf(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
     		oneOf(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
     		oneOf(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
     		oneOf(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
@@ -105,6 +108,7 @@ public class TestViewCSWRecordFactory {
         
         final String serviceName = "sn";
         final String contactOrg = "co";
+        final String resourceProvider = "MDU";
         final String fileId = "asb";
         final String recordInfoUrl = "http://bob.xom";
         final String dataAbstract = "assda";
@@ -126,6 +130,7 @@ public class TestViewCSWRecordFactory {
         
         expectation.put("serviceName", serviceName);
         expectation.put("contactOrganisation", contactOrg);
+        expectation.put("resourceProvider", resourceProvider);
         expectation.put("fileIdentifier", fileId);
         expectation.put("recordInfoUrl", recordInfoUrl);
         expectation.put("dataIdentificationAbstract", dataAbstract);
@@ -142,6 +147,7 @@ public class TestViewCSWRecordFactory {
         context.checking(new Expectations() {{
             oneOf(mockCSWRecord).getServiceName();will(returnValue(serviceName));
             oneOf(mockCSWRecord).getContactOrganisation();will(returnValue(contactOrg));
+            oneOf(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
             oneOf(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
             oneOf(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
             oneOf(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));

@@ -30,6 +30,7 @@ public class ViewCSWRecordFactory {
 		
 		obj.put("serviceName", record.getServiceName());
 		obj.put("contactOrganisation", record.getContactOrganisation());
+		obj.put("resourceProvider", record.getResourceProvider());
 		obj.put("fileIdentifier", record.getFileIdentifier());
 		obj.put("recordInfoUrl", record.getRecordInfoUrl());
 		obj.put("dataIdentificationAbstract", record.getDataIdentificationAbstract());

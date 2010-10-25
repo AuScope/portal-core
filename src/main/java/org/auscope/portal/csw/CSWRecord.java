@@ -27,6 +27,7 @@ public class CSWRecord {
     private String serviceName;
     private CSWOnlineResource[] onlineResources;
     private String contactOrganisation;
+    private String resourceProvider;
     private String fileIdentifier;
     private String recordInfoUrl;
     private CSWGeographicElement[] cswGeographicElements;
@@ -34,8 +35,8 @@ public class CSWRecord {
     private String dataIdentificationAbstract;
 
 
-    public CSWRecord(String serviceName, String contactOrganisation, String fileIdentifier,
-			String recordInfoUrl, String dataIdentificationAbstract, 
+    public CSWRecord(String serviceName, String contactOrganisation,
+    		String fileIdentifier, String recordInfoUrl, String dataIdentificationAbstract, 
 			CSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements) {
     	this.serviceName = serviceName;
     	this.contactOrganisation = contactOrganisation;
@@ -51,6 +52,7 @@ public class CSWRecord {
 
         XPath xPath = XPathFactory.newInstance().newXPath();
         Node tempNode = null;
+        Node tempNode2 = null;
         NodeList tempNodeList1 = null;
         NodeList tempNodeList2 = null;
         xPath.setNamespaceContext(new CSWNamespaceContext());
@@ -67,6 +69,19 @@ public class CSWRecord {
         String contactOrganisationExpression = "gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString";
         tempNode = (Node)xPath.evaluate(contactOrganisationExpression, node, XPathConstants.NODE);
         contactOrganisation = tempNode != null ? tempNode.getTextContent() : "";
+        
+        String partyExpression =  "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty";
+        tempNodeList1 = (NodeList)xPath.evaluate(partyExpression, node, XPathConstants.NODESET);
+		for(int i=0; i<tempNodeList1.getLength(); i++) {
+    		Node party = tempNodeList1.item(i);
+			tempNode = (Node) xPath.evaluate("gmd:role/gmd:CI_RoleCode", party, XPathConstants.NODE);
+			if(tempNode.hasAttributes() &&
+					tempNode.getAttributes().getNamedItem("codeListValue").getNodeValue().equals("resourceProvider")) {
+				tempNode2 = (Node) xPath.evaluate("gmd:organisationName/gco:CharacterString", party, XPathConstants.NODE);
+				break;
+			}
+		}
+        resourceProvider = tempNode2 != null ? tempNode2.getTextContent() : "Unknown";        
 
         String fileIdentifierExpression = "gmd:fileIdentifier/gco:CharacterString";
         tempNode = (Node)xPath.evaluate(fileIdentifierExpression, node, XPathConstants.NODE);
@@ -153,6 +168,10 @@ public class CSWRecord {
         return contactOrganisation;
     }
 
+    public String getResourceProvider() {
+    	return resourceProvider;
+    }
+    
     public String getDataIdentificationAbstract() {
         return dataIdentificationAbstract;
     }
@@ -184,6 +203,7 @@ public class CSWRecord {
     @Override
 	public String toString() {
 		return "CSWRecord [contactOrganisation=" + contactOrganisation
+				+ ", resourceProvider=" + resourceProvider
 				+ ", cswGeographicElements="
 				+ Arrays.toString(cswGeographicElements)
 				+ ", dataIdentificationAbstract=" + dataIdentificationAbstract
