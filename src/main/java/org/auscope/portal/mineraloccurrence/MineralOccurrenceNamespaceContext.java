@@ -1,9 +1,10 @@
 package org.auscope.portal.mineraloccurrence;
 
-import javax.xml.namespace.NamespaceContext;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.namespace.NamespaceContext;
 
 /**
  * User: Mathew Wyatt

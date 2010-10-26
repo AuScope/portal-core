@@ -1,22 +1,15 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.json.JSONArray;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.ModelMap;
-import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
-import org.auscope.portal.server.web.view.JSONModelAndView;
-import org.auscope.portal.server.domain.filter.AbstractFilter;
-import org.auscope.portal.server.domain.filter.FilterBoundingBox;
-import org.auscope.portal.server.domain.filter.IFilter;
-import org.auscope.portal.server.domain.filter.SimpleBBoxFilter;
-import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.csw.ICSWMethodMaker;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -25,14 +18,19 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequest;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import org.auscope.portal.csw.ICSWMethodMaker;
+import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.filter.IFilter;
+import org.auscope.portal.server.util.GmlToKml;
+import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
+import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.web.view.JSONModelAndView;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Acts as a proxy to WFS's

@@ -17,20 +17,16 @@ import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
-import org.auscope.portal.server.web.service.CSWService;
 import org.auscope.portal.server.web.service.CommodityService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
 import org.auscope.portal.server.web.service.NvclService;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -46,12 +42,12 @@ public class TestEarthResourcesFilterController {
     private GmlToKml mockGmlToKml;
     private NvclService mockNvclService;
     private CommodityService mockCommodityService;
-    private HttpSession mockHttpSession;    
+    private HttpSession mockHttpSession;
     private ServletContext mockServletContext;
-    private HttpServiceCaller mockHttpServiceCaller;    
+    private HttpServiceCaller mockHttpServiceCaller;
     private HttpMethodBase httpMethodBase;
     private HttpClient mockHttpClient;
-    
+
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
@@ -61,40 +57,40 @@ public class TestEarthResourcesFilterController {
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.mineralOccurrenceService = context.mock(MineralOccurrenceService.class);
         this.mockGmlToKml = context.mock(GmlToKml.class);
-        this.mockNvclService = context.mock(NvclService.class);        
+        this.mockNvclService = context.mock(NvclService.class);
         this.mockHttpRequest = context.mock(HttpServletRequest.class);
         this.mockHttpResponse = context.mock(HttpServletResponse.class);
         this.mockCommodityService = context.mock(CommodityService.class);
-        this.mockHttpSession = context.mock(HttpSession.class);    
+        this.mockHttpSession = context.mock(HttpSession.class);
         this.mockServletContext = context.mock(ServletContext.class);
-        this.mockHttpServiceCaller = context.mock(HttpServiceCaller.class);   
+        this.mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
         this.httpMethodBase = context.mock(HttpMethodBase.class);
         this.mockHttpClient = context.mock(HttpClient.class);
         this.earthResourcesFilterController = new EarthResourcesFilterController(this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService,this.mockNvclService, this.mockGmlToKml, this.mockCommodityService, this.mockHttpServiceCaller);
     }
-    
+
     private void testJSONResponse(String json, Boolean success, String gml, String kml) {
         JSONObject obj = JSONObject.fromObject(json);
-        
+
         if (success != null) {
             Assert.assertEquals(success.booleanValue(), obj.get("success"));
         }
-        
+
         if (gml != null) {
             JSONObject data = (JSONObject) obj.get("data");
-            
+
             Assert.assertNotNull(data);
             Assert.assertEquals(gml, data.get("gml"));
         }
-        
+
         if (kml != null) {
             JSONObject data = (JSONObject) obj.get("data");
-            
+
             Assert.assertNotNull(data);
             Assert.assertEquals(kml, data.get("kml"));
         }
     }
-    
+
     /**
      * Test doing a mine filter and getting all mines
      * @throws Exception
@@ -103,36 +99,36 @@ public class TestEarthResourcesFilterController {
     public void testDoMineFilterSpecificError() throws Exception {
         final String mineName = "testMine";
         final String serviceURL = "http://testblah.com";
-        final String expectedKML = ""; 
+        final String expectedKML = "";
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String xmlErrorResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetMineError.xml");
         final StringWriter jsonResponse = new StringWriter();
-        
+
         context.checking(new Expectations() {{
             oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
-            
+
             //check that the correct response is getting output
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
-            
+
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
         }});
-        
+
         ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null, 0,  mockHttpRequest);
-        
+
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
-        
-        
+
+
         //Ensure that we get a response that says failure
         testJSONResponse(jsonResponse.toString(), new Boolean(false), null, null);
     }
-    
+
     /**
      * Test doing a mine filter and getting all mines
      * @throws Exception
@@ -144,31 +140,31 @@ public class TestEarthResourcesFilterController {
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String xmlErrorResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetMineError.xml");
         final StringWriter jsonResponse = new StringWriter();
-        
+
         context.checking(new Expectations() {{
             oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
             oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
-            
+
             //check that the correct response is getting output
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
-            
+
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
         }});
-        
+
         ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, "", null, 0,  mockHttpRequest);
-        
+
         //calling the renderer will write the JSON to our mocks
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
-        
+
         //Ensure that we get a response that says failure
         testJSONResponse(jsonResponse.toString(), new Boolean(false), null, null);
     }
-    
+
     /**
      * Test doing a mine filter and getting all mines
      * @throws Exception
@@ -191,7 +187,7 @@ public class TestEarthResourcesFilterController {
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
-            
+
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
@@ -206,7 +202,7 @@ public class TestEarthResourcesFilterController {
         //Ensure that we get a valid response
         testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(true), expectedGML, expectedKML);
     }
-    
+
     /**
      * Test doing a mine filter and getting all mines
      * @throws Exception
@@ -229,8 +225,8 @@ public class TestEarthResourcesFilterController {
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
-            
-            
+
+
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
@@ -245,7 +241,7 @@ public class TestEarthResourcesFilterController {
         //Ensure that we get a valid response
         testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(true), expectedGML, expectedKML);
     }
-    
+
     @Test
     public void testRequestFailure() throws Exception {
         final String serviceURL = "http://localhost?";
@@ -261,7 +257,7 @@ public class TestEarthResourcesFilterController {
             //check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
-            
+
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
@@ -275,7 +271,7 @@ public class TestEarthResourcesFilterController {
 
         //Ensure that we get a valid response
         testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(false), null, null);
-    
+
     }
-    
+
 }

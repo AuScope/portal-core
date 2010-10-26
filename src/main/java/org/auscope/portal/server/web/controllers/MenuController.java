@@ -1,9 +1,9 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.awt.Menu;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -11,9 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -90,9 +88,9 @@ public class MenuController {
       return mav;
    }
 
-   @RequestMapping("/login.html")
-   public ModelAndView login() {
-      return new ModelAndView("login");
+   @RequestMapping("/links.html")
+   public ModelAndView links() {
+      return new ModelAndView("links");
    }
 
    @RequestMapping("/about.html")

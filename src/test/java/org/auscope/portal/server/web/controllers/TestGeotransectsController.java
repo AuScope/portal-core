@@ -3,7 +3,6 @@ package org.auscope.portal.server.web.controllers;
 import java.util.Map;
 
 import junit.framework.Assert;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 

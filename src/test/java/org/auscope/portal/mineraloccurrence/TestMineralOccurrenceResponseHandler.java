@@ -1,14 +1,13 @@
 package org.auscope.portal.mineraloccurrence;
 
-import org.junit.Test;
-import org.xml.sax.SAXException;
-
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.Collection;
 
 import junit.framework.Assert;
+
+import org.junit.Test;
 
 /**
  * User: Mathew Wyatt
@@ -49,14 +48,14 @@ public class TestMineralOccurrenceResponseHandler {
         }
         reader.close();
 
-        Collection<Commodity> commodities = 
+        Collection<Commodity> commodities =
             mineralOccurrencesResponseHandler.getCommodities(commodityGetFeatureResponseXML.toString());
 
         Assert.assertEquals("There are 2 commodities", 2, commodities.size());
         Assert.assertEquals("The first one's name is Gold", "Gold", ((Commodity)commodities.toArray()[0]).getCommodityName());
         Assert.assertEquals("The second one's MineralOccurrence source is urn:cgi:feature:GSV:MineralOccurrence:361170", "urn:cgi:feature:GSV:MineralOccurrence:361170", ((Commodity)commodities.toArray()[1]).getSource());
     }
-    
+
     @Test
     public void testGetNumberOfFeaturesTwo() throws Exception {
         File commodityGetFeatureResponse = new File("src/test/resources/commodityGetFeatureResponse.xml");
@@ -71,7 +70,7 @@ public class TestMineralOccurrenceResponseHandler {
 
         int numberOfFeatures =
             mineralOccurrencesResponseHandler.getNumberOfFeatures(commodityGetFeatureResponseXML.toString());
-        
+
         Assert.assertEquals("There are 2 features", 2, numberOfFeatures);
     }
 
@@ -89,7 +88,7 @@ public class TestMineralOccurrenceResponseHandler {
 
         int numberOfFeatures =
             mineralOccurrencesResponseHandler.getNumberOfFeatures(getFeatureResponseXML.toString());
-        
+
         Assert.assertEquals("There are 0 features", 0, numberOfFeatures);
     }
 }

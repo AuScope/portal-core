@@ -1,19 +1,15 @@
 package org.auscope.portal.mineraloccurrence;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.auscope.portal.Util;
-import org.auscope.portal.server.domain.ogc.FilterTestUtilities;
-import org.jmock.Mockery;
-import org.jmock.Expectations;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.w3c.dom.Document;
-
-import junit.framework.Assert;
-
-import java.io.IOException;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
+
+import org.auscope.portal.server.domain.ogc.FilterTestUtilities;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
+import org.junit.Test;
+import org.w3c.dom.Document;
 
 /**
  * User: Mathew Wyatt
@@ -22,7 +18,7 @@ import java.util.Arrays;
  */
 public class TestMiningActivityFilter {
     private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);    
+        setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
     private Mine mockMine;
@@ -45,7 +41,7 @@ public class TestMiningActivityFilter {
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(this.mockMineList, "", "", "", "", "", "");
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 2);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1", "activity2"}, 2);
     }
@@ -61,10 +57,10 @@ public class TestMiningActivityFilter {
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "", "", "");
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1"}, 1);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
     }
@@ -79,16 +75,16 @@ public class TestMiningActivityFilter {
 
         MiningActivityFilter miningActivityFilter =
             new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "28", "", "", "");
-        
+
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1"}, 1);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThan/ogc:Literal", new String[] {"28"}, 1);
     }
 
@@ -102,13 +98,13 @@ public class TestMiningActivityFilter {
 
         MiningActivityFilter miningActivityFilter =
             new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "Gold", "", "");
-        
+
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name" , "er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value"}, 2);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1", "Gold"}, 2);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
     }
@@ -123,16 +119,16 @@ public class TestMiningActivityFilter {
 
         MiningActivityFilter miningActivityFilter =
             new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "", "10.14", "");
-        
+
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1"}, 1);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThan/ogc:Literal", new String[] {"10.14"}, 1);
     }
 
@@ -146,16 +142,16 @@ public class TestMiningActivityFilter {
 
         MiningActivityFilter miningActivityFilter =
             new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "", "", "1");
-        
+
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1"}, 1);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThan/ogc:Literal", new String[] {"1"}, 1);
     }
 

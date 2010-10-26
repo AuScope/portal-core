@@ -4,17 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.servlet.http.HttpSession;
-
-import org.junit.Before;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.NameValuePair;
 import org.auscope.portal.csw.CSWGeographicBoundingBox;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class TestWCSGetCoverageMethodMakerGet {
     /**

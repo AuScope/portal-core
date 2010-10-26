@@ -1,13 +1,12 @@
 package org.auscope.portal.mineraloccurrence;
 
-import org.junit.Test;
-import org.w3c.dom.Document;
-import org.auscope.portal.Util;
-import org.auscope.portal.server.domain.ogc.FilterTestUtilities;
+import java.io.IOException;
 
 import junit.framework.Assert;
 
-import java.io.IOException;
+import org.auscope.portal.server.domain.ogc.FilterTestUtilities;
+import org.junit.Test;
+import org.w3c.dom.Document;
 
 /**
  * User: Mathew Wyatt
@@ -22,7 +21,7 @@ public class TestMineFilter {
     @Test
     public void testWithNoMineName() throws IOException {
         MineFilter mineFilter = new MineFilter("");
-        
+
         String filter = mineFilter.getFilterStringAllRecords();
         Assert.assertEquals("", filter);
     }
@@ -33,10 +32,10 @@ public class TestMineFilter {
     @Test
     public void testWithAMineName() throws Exception {
         MineFilter mineFilter = new MineFilter("Dominion Copper Mine");
-        
+
         String filter = mineFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
-        
+
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", new String[] {"er:mineName/er:MineName/er:mineName"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal", new String[] {"Dominion Copper Mine"}, 1);
     }

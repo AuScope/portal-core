@@ -3,7 +3,6 @@ package org.auscope.portal.csw;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

@@ -1,22 +1,22 @@
 package org.auscope.portal.server.web;
 
-import org.junit.Test;
-import org.junit.Before;
-import org.jmock.Mockery;
-import org.jmock.Expectations;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 
 import junit.framework.Assert;
 
-import java.io.*;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by IntelliJ IDEA.
@@ -122,7 +122,7 @@ public class TestHttpServiceCaller {
     @Test (expected = Exception.class)
     public void testCallMethodError() throws Exception {
         final HttpMethodBase method = context.mock(HttpMethodBase.class);
-        
+
         context.checking(new Expectations() {{
             oneOf (mockHttpClient).setHttpConnectionManager(with(any(HttpConnectionManager.class)));
             oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));

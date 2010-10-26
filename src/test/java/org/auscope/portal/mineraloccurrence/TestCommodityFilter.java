@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
-//import org.auscope.portal.Util;   <-- Where is this class?
 import org.junit.Test;
 
 

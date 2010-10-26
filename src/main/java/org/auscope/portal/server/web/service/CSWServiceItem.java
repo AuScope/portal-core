@@ -1,6 +1,6 @@
 package org.auscope.portal.server.web.service;
 
-import java.util.*;
+import java.util.Collection;
 
 import javax.servlet.http.HttpServletRequest;
 

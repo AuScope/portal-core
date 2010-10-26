@@ -1,10 +1,11 @@
 package org.auscope.portal.csw;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.NamespaceContext;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
+
+import javax.xml.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
 
 /**
  * A simple implementation of <a

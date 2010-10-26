@@ -3,11 +3,11 @@ package org.auscope.portal.server.domain.filter;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This class is only temporary - it is intended to be overridden by the geotools ogc filter library

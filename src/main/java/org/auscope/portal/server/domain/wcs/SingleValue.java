@@ -1,8 +1,5 @@
 package org.auscope.portal.server.domain.wcs;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.TimeZone;
 
 import javax.xml.xpath.XPath;
 
@@ -17,12 +14,12 @@ public class SingleValue implements ValueEnumType {
 
     private String type;
     private String value;
-    
+
     public SingleValue(Node node, XPath xPath) throws Exception {
         type = node.getLocalName();
         value = node.getTextContent();
     }
-    
+
     public String getType() {
         return type;
     }

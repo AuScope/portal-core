@@ -1,21 +1,20 @@
 package org.auscope.portal.mineraloccurrence;
 
-import org.auscope.portal.server.web.service.HttpServiceCaller;
-import org.auscope.portal.server.web.service.MineralOccurrenceService;
-import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
-import org.junit.Before;
-import org.junit.Test;
-import org.jmock.Mockery;
-import org.jmock.Expectations;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.HttpClient;
-
-import java.util.Collection;
 import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
+import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.web.service.MineralOccurrenceService;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by IntelliJ IDEA.
@@ -126,7 +125,7 @@ public class TestMineralOccurrenceServiceClient {
         Assert.assertEquals(mockCommodities, commodities);
     }
     */
-    
+
     /**
      * Test the event that we provide a name
      * @throws Exception
@@ -153,7 +152,7 @@ public class TestMineralOccurrenceServiceClient {
         Assert.assertEquals(mockCommodities, commodities);
     }
     */
-    
+
     /**
      * Test for a valid query
      * @throws Exception
@@ -171,8 +170,8 @@ public class TestMineralOccurrenceServiceClient {
         final CommodityFilter commodityFilter = new CommodityFilter(commodityName);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final String mockCommodityResponse = new String();
-        
-        final MineralOccurrenceFilter mineralOccurrenceFilter 
+
+        final MineralOccurrenceFilter mineralOccurrenceFilter
             = new MineralOccurrenceFilter( commodityName,
                                            measureType,
                                            minOreAmount,
@@ -180,10 +179,10 @@ public class TestMineralOccurrenceServiceClient {
                                            minCommodityAmount,
                                            minCommodityAmountUOM );
 
-        context.checking(new Expectations() {{           
+        context.checking(new Expectations() {{
             //the mineral occurrence query part
             oneOf (methodMaker).makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
-            
+
             /*oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));*/
         }});
@@ -197,8 +196,8 @@ public class TestMineralOccurrenceServiceClient {
                                                               minCommodityAmountUOM,
                                                               0);
     }
-    
-    
+
+
     /**
      * Test for the case that we dont get any results, by mimicking the getCommodity query returning no results
      *
@@ -236,7 +235,7 @@ public class TestMineralOccurrenceServiceClient {
                                                                     minCommodityAmountUOM,
                                                                     cutOffGrade,
                                                                     cutOffGradeUOM);
-        
+
         final String expectedValue =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
             "<wfs:FeatureCollection numberOfFeatures=\"0\"" +
@@ -247,7 +246,7 @@ public class TestMineralOccurrenceServiceClient {
         Assert.assertEquals(expectedValue, returnValue);
     }
     */
-    
+
     @Test
     public void testGetMiningActivity() throws Exception {
         final Mine mockMine = context.mock(Mine.class);

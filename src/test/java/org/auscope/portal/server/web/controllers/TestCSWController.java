@@ -1,12 +1,7 @@
 package org.auscope.portal.server.web.controllers;
 
-import java.awt.Dimension;
-import java.awt.Point;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,13 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.csw.CSWOnlineResource;
-import org.auscope.portal.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.CSWRecord;
-import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.service.CSWService;
 import org.auscope.portal.server.web.view.ViewCSWRecordFactory;
@@ -55,7 +44,7 @@ public class TestCSWController {
     private ViewCSWRecordFactory mockViewCSWRecordFactory = context.mock(ViewCSWRecordFactory.class);
     private CSWRecord mockCSWRecord1 = context.mock(CSWRecord.class, "mockCSWRecord1");
     private CSWRecord mockCSWRecord2 = context.mock(CSWRecord.class, "mockCSWRecord2");
-    
+
     private CSWController cswController;
 
     @Before
@@ -69,103 +58,103 @@ public class TestCSWController {
 
         cswController = new CSWController(mockCSWService, mockViewCSWRecordFactory, mockPropertyConfigurer);
     }
-    
+
     @Test
     public void testGetRecordResponse_Success() throws Exception {
     	final StringWriter actualJSONResponse = new StringWriter();
     	final ModelMap viewCSWRecord1 = new ModelMap();
     	final ModelMap viewCSWRecord2 = new ModelMap();
-    	
+
     	viewCSWRecord1.put("rec1", "val1");
     	viewCSWRecord2.put("rec2", "val2");
-    	
+
     	context.checking(new Expectations() {{
     		oneOf(mockCSWService).updateRecordsInBackground();
     		oneOf(mockCSWService).getAllRecords();will(returnValue(new CSWRecord[] {mockCSWRecord1, mockCSWRecord2}));
-    		
+
     		oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord1);will(returnValue(viewCSWRecord1));
     		oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord2);will(returnValue(viewCSWRecord2));
-    		
+
     		//check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
-    	
+
     	//Run the method, get our response rendered as a JSONObject
     	ModelAndView mav = cswController.getCSWRecords();
     	mav.getView().render(mav.getModel(), mockHttpRequest, mockHttpResponse);
     	JSONObject jsonObj = JSONObject.fromObject(actualJSONResponse.toString());
-    	
+
     	//Check our response contains useful info...
     	Assert.assertEquals(true, jsonObj.getBoolean("success"));
     	JSONArray records = jsonObj.getJSONArray("records");
     	Assert.assertNotNull(records);
     	Assert.assertEquals(2, records.size());
-    	
+
     	JSONObject jsonRec1 = records.getJSONObject(0);
     	JSONObject jsonRec2 = records.getJSONObject(1);
-    	
+
     	Assert.assertEquals("val1", jsonRec1.get("rec1"));
     	Assert.assertEquals("val2", jsonRec2.get("rec2"));
     }
-    
+
     @Test
     public void testGetRecordResponse_UpdateError() throws Exception {
     	final StringWriter actualJSONResponse = new StringWriter();
-    	
+
     	context.checking(new Expectations() {{
     		oneOf(mockCSWService).updateRecordsInBackground();will(throwException(new Exception()));
-    		
+
     		//check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
-    	
+
     	//Run the method, get our response rendered as a JSONObject
     	ModelAndView mav = cswController.getCSWRecords();
     	mav.getView().render(mav.getModel(), mockHttpRequest, mockHttpResponse);
     	JSONObject jsonObj = JSONObject.fromObject(actualJSONResponse.toString());
-    	
+
     	//Check our response contains useful info...
     	Assert.assertEquals(false, jsonObj.getBoolean("success"));
     	JSONArray records = (JSONArray)jsonObj.get("records");
     	Assert.assertNotNull(records);
     	Assert.assertEquals(0, records.size());
     }
-    
-    
+
+
     @Test
     public void testGetRecordResponse_TransformError() throws Exception {
     	final StringWriter actualJSONResponse = new StringWriter();
     	final ModelMap viewCSWRecord1 = new ModelMap();
     	final ModelMap viewCSWRecord2 = new ModelMap();
-    	
+
     	viewCSWRecord1.put("rec1", "val1");
     	viewCSWRecord2.put("rec2", "val2");
-    	
+
     	context.checking(new Expectations() {{
     		oneOf(mockCSWService).updateRecordsInBackground();
     		oneOf(mockCSWService).getAllRecords();will(returnValue(new CSWRecord[] {mockCSWRecord1, mockCSWRecord2}));
-    		
+
     		oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord1);will(returnValue(viewCSWRecord1));
     		oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord2);will(throwException(new Exception()));
-    		
+
     		//check that the correct response is getting output
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
-    	
+
     	//Run the method, get our response rendered as a JSONObject
     	ModelAndView mav = cswController.getCSWRecords();
     	mav.getView().render(mav.getModel(), mockHttpRequest, mockHttpResponse);
     	JSONObject jsonObj = JSONObject.fromObject(actualJSONResponse.toString());
-    	
+
     	//Check our response contains useful info...
     	Assert.assertEquals(false, jsonObj.getBoolean("success"));
     	JSONArray records = (JSONArray)jsonObj.get("records");
         Assert.assertNotNull(records);
         Assert.assertEquals(0, records.size());
     }
-    
+
 
 }

@@ -1,13 +1,14 @@
 package org.auscope.portal.server.web.view;
 
-import org.springframework.web.servlet.view.AbstractView;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
 
-import net.sf.json.JSONSerializer;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONSerializer;
+
+import org.springframework.web.servlet.view.AbstractView;
 
 /**
  * User: Mathew Wyatt

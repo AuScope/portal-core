@@ -1,42 +1,45 @@
 package org.auscope.portal.server.web.service;
 
-import org.apache.commons.httpclient.*;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ConnectException;
+import java.net.URL;
+import java.net.UnknownHostException;
+
+import org.apache.commons.httpclient.ConnectTimeoutException;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpConnectionManager;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-
-import java.net.*;
-import java.io.BufferedReader;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.IOException;
 
 
 /**
  * Utility class used to call web service end points
- * 
+ *
  * @version $Id$
  */
 
 @Repository
 public class HttpServiceCaller {
     protected final Log log = LogFactory.getLog(getClass());
-    
+
     private HttpConnectionManagerParams clientParams;
 
-    @Autowired    
+    @Autowired
     public void setClientParams(HttpConnectionManagerParams clientParams) {
         this.clientParams = clientParams;
-    }    
-    
+    }
+
     /**
      * Makes a call to a http GetMethod and returns the response as a string
      *
@@ -61,10 +64,10 @@ public class HttpServiceCaller {
         //return it
         return response;
     }
-    
+
     /**
      * Invokes a method and returns the binary response as a stream
-     * 
+     *
      * WARNING - ensure you call method.releaseConnection() AFTER you have finished reading the input stream
      *
      * @return
@@ -132,7 +135,7 @@ public class HttpServiceCaller {
      * @return
      */
     public Header getResponseHeader(HttpMethodBase method, String header) {
-        return method.getResponseHeader(header);   
+        return method.getResponseHeader(header);
     }
 
     /**
@@ -140,9 +143,9 @@ public class HttpServiceCaller {
      * @return
      */
     public HttpClient getHttpClient() {
-        return new HttpClient();        
+        return new HttpClient();
     }
-    
+
     /**
      * Given a URL, call it, convert the response into a String and return
      * @param serviceUrl
@@ -152,7 +155,7 @@ public class HttpServiceCaller {
     public String callHttpUrlGET(URL serviceUrl) throws IOException {
         return responseToString(new BufferedInputStream(serviceUrl.openStream()));
     }
-    
+
     /**
      * Convert a Buffered stream into a String
      * @param stream
@@ -165,7 +168,7 @@ public class HttpServiceCaller {
         String line;
         while((line = reader.readLine()) != null) {
             stringBuffer.append(line);
-        }        
+        }
         return stringBuffer.toString();
-    }   
+    }
 }

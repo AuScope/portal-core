@@ -7,17 +7,14 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
-
 import org.auscope.portal.csw.CSWThreadExecutor;
 import org.auscope.portal.server.util.Util;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.api.Action;
 import org.jmock.api.Invocation;
 import org.jmock.lib.action.ReturnValueAction;
 import org.jmock.lib.legacy.ClassImposteriser;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

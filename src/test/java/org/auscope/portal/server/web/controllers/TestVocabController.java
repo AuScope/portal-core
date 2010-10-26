@@ -14,7 +14,9 @@ import org.auscope.portal.vocabs.VocabularyServiceResponseHandler;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
 

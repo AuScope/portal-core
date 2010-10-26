@@ -5,21 +5,17 @@ import java.util.ArrayList;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.auscope.portal.csw.CSWGetRecordResponse;
 import org.auscope.portal.csw.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.csw.CSWOnlineResource;
+import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.CSWRecord;
 import org.auscope.portal.csw.CSWThreadExecutor;
 import org.auscope.portal.csw.ICSWMethodMaker;
-import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
-
 import org.auscope.portal.server.util.Util;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import org.w3c.dom.Document;
 
 
