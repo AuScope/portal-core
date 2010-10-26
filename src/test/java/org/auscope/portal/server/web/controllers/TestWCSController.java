@@ -189,7 +189,7 @@ public class TestWCSController {
         };
 
         WCSController controller = new WCSController(mockServiceCaller, methodInterceptor , mockDescribeMethodMaker, mockHostConfigurer);
-        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, outputWidth, outputHeight, outputResX, outputResY, outputCrs, northBoundLat, southBoundLat, eastBoundLng, westBoundLng, timePositions, timePeriodFrom, timePeriodTo,timePeriodResolution, customParamValue , mockResponse);
+        controller.downloadWCSAsZip(serviceUrl, layerName, format, inputCrs, outputWidth, outputHeight, outputResX, outputResY, outputCrs, northBoundLat, southBoundLat, eastBoundLng, westBoundLng, timePositions, timePeriodFrom, timePeriodTo,timePeriodResolution, customParamValue , mockResponse);
     }
 
     @Test
@@ -239,7 +239,7 @@ public class TestWCSController {
         };
 
         WCSController controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
-        controller.downloadWCSAsZip(serviceUrl, layerName, "GeoTIFF", inputCrs, outputWidth, outputHeight, outputResX, outputResY, outputCrs, northBoundLat, southBoundLat, eastBoundLng, westBoundLng, timePositions, timePeriodFrom, timePeriodTo,timePeriodResolution, customParamValue , mockResponse);
+        controller.downloadWCSAsZip(serviceUrl, layerName, format, inputCrs, outputWidth, outputHeight, outputResX, outputResY, outputCrs, northBoundLat, southBoundLat, eastBoundLng, westBoundLng, timePositions, timePeriodFrom, timePeriodTo,timePeriodResolution, customParamValue , mockResponse);
 
         ZipInputStream zip = outStream.getZipInputStream();
         ZipEntry ze = zip.getNextEntry();
@@ -298,7 +298,7 @@ public class TestWCSController {
         };
 
         WCSController controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
-        controller.downloadWCSAsZip(serviceUrl, layerName, "NetCDF", inputCrs, outputWidth, outputHeight, outputResX, outputResY, outputCrs, northBoundLat, southBoundLat, eastBoundLng, westBoundLng, timePositions, timePeriodFrom, timePeriodTo,timePeriodResolution, customParams , mockResponse);
+        controller.downloadWCSAsZip(serviceUrl, layerName, format, inputCrs, outputWidth, outputHeight, outputResX, outputResY, outputCrs, northBoundLat, southBoundLat, eastBoundLng, westBoundLng, timePositions, timePeriodFrom, timePeriodTo,timePeriodResolution, customParams , mockResponse);
 
         ZipInputStream zip = outStream.getZipInputStream();
         ZipEntry ze = zip.getNextEntry();

@@ -1,3 +1,0 @@
-== TODO
-	- Add more verbose expectation error message
-	- Add mock naming scheme, e.g. myMock = control.createMock(ObjectToMock, "myMock"), like good mock object libraries do (rMock)
