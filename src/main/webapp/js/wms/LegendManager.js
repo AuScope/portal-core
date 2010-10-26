@@ -2,10 +2,10 @@
 /**
  * The LegendManager class is a utility class that helps in the generation
  * of WMS GetLegendGraphic Requests
- * 
+ *
  * url - The URL of the WMS service to query
  * layerName - the name of the layer whose legend you wish to fetch
- * styles - [Optional] value for the styles parameter 
+ * styles - [Optional] value for the styles parameter
  */
 function LegendManager(url, layerName, styles) {
 	this.url = url;
@@ -24,7 +24,7 @@ LegendManager.prototype.styles = null;
  */
 LegendManager.prototype.generateImageUrl = function() {
 	var url = this.url;
-	
+
 	var last_char = url.charAt(url.length - 1);
 	if ((last_char !== "?") && (last_char !== "&")) {
       if (url.indexOf('?') == -1)
@@ -32,7 +32,7 @@ LegendManager.prototype.generateImageUrl = function() {
       else
          url += "&";
 	}
-	
+
 	url += 'REQUEST=GetLegendGraphic';
 	url += '&SERVICE=WMS';
 	url += '&VERSION=1.1.1';
@@ -43,6 +43,6 @@ LegendManager.prototype.generateImageUrl = function() {
 	if (this.styles) {
 		url += '&STYLES=' + escape(this.styles);
 	}
-	
+
 	return url;
-}
+};

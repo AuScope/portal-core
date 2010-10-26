@@ -1,7 +1,7 @@
 
 
 /*
- * Is a combination of a MarkerManager with the added extension for generic overlays too 
+ * Is a combination of a MarkerManager with the added extension for generic overlays too
  */
 OverlayManager = function(map) {
 	this.overlayList = [];
@@ -21,7 +21,7 @@ OverlayManager.prototype.clearOverlays = function() {
 	}
 	this.overlayList = [];
 	this.markerManager.clearMarkers();
-}
+};
 
 /**
  * Adds a single overlay to the map and this instance
@@ -47,7 +47,7 @@ OverlayManager.prototype.updateZOrder = function(newZOrder) {
 }
 
 /**
- * Iterates through every WMS layer sets the opacity to the specified value 
+ * Iterates through every WMS layer sets the opacity to the specified value
  * @param newOpacity
  * @return
  */

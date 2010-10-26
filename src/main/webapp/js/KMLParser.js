@@ -22,7 +22,7 @@ KMLParser.prototype.generateCoordList = function(coordsAsString) {
     }
 
     return parsedCoordList;
-}
+};
 
 KMLParser.prototype.parseLineString = function(name, description, lineStringNode) {
 

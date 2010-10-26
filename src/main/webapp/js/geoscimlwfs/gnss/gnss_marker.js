@@ -1,6 +1,6 @@
-/** 
+/**
 * @fileoverview This file declares the Class GNSSMarker.
-* An array of objects of GNSSMarker will be maintained in StationGroup of gnss type. 
+* An array of objects of GNSSMarker will be maintained in StationGroup of gnss type.
 */
 
 /**
@@ -14,9 +14,9 @@
 */
 function GNSSMarker (pSamplingPointNode, psIcon) {
   this.moSamplingPoint = new SamplingPoint(pSamplingPointNode);
-  
+
   this.msSummaryHtml = "";
-  
+
   // Create updateCSWRecords GMarker object for each station using the location information for the same.
   var longitude = this.moSamplingPoint.moLocation.msLongitude;
   var latitude = this.moSamplingPoint.moLocation.msLatitude;
@@ -24,7 +24,7 @@ function GNSSMarker (pSamplingPointNode, psIcon) {
   var oMarkerIcon = new GIcon(goBaseIcon, psIcon);
   var oMarker = new GMarker(oPoint, oMarkerIcon);
   this.moMarker = oMarker;
-       
+
   // Add updateCSWRecords listener for updateCSWRecords click event on this marker
   GEvent.addListener(oMarker, "click", this.getMarkerClickedFn());
 }
@@ -63,16 +63,16 @@ function GNSSMarker_getMarkerClickedFn() {
   var gnssMarker = this;
   return function() {
     gnssMarker.markerClicked();
-  }
+  };
 }
 
 /**
-* The function called when the marker for this station is clicked.<br> 
-* This creates the html popup marker displaying station information.<br>  
+* The function called when the marker for this station is clicked.<br>
+* This creates the html popup marker displaying station information.<br>
 * It stores the html string in the member {@link #msSummaryHtml}.
-*/ 
+*/
 function GNSSMarker_markerClicked() {
-  
+
   var oGnssMarker = this;
   var oSamplingPoint = this.moSamplingPoint;
   var sId = oSamplingPoint.msId;
@@ -85,7 +85,7 @@ function GNSSMarker_markerClicked() {
   * The info window for updateCSWRecords marker contains information about the station
   */
   var summaryHtml = "";
-    
+
   // Create the html to be displayed in the popup window.
   // We create this html once and store it in the msSummaryHtml member of the object
   if (!this.msSummaryHtml)
@@ -105,12 +105,12 @@ function GNSSMarker_markerClicked() {
     summaryHtml += '<td bgcolor="#e9f1f1" width="70%" height="20px"><font color="black" size="1">&nbsp;'+ sLatitude +'&nbsp;,&nbsp;'+sLongitude+'</font></td></tr>';
     summaryHtml += '</table>';
     summaryHtml += '</td></tr></table>';
-    
+
     // Second row is for the ZoomIn nd ZoomOut links
     summaryHtml += '<br/><br/>';
     summaryHtml += '<a href="javascript:Map_zoomInAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom In</font></a>&nbsp;|&nbsp;';
     summaryHtml += '<a color="blue" href="javascript:Map_zoomOutAtPoint('+sLatitude+','+sLongitude+');"><font color="blue">Zoom Out</font></a>';
-    
+
     this.msSummaryHtml = summaryHtml;
   }
 

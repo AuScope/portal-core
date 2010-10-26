@@ -58,7 +58,7 @@
 
 // === A method for testing if a point is inside a polygon
 // === Returns true if poly contains point
-// === Algorithm shamelessly stolen from http://alienryderflex.com/polygon/ 
+// === Algorithm shamelessly stolen from http://alienryderflex.com/polygon/
 GPolygon.prototype.Contains = function(point) {
   var j=0;
   var oddNodes = false;
@@ -72,7 +72,7 @@ GPolygon.prototype.Contains = function(point) {
       if ( this.getVertex(i).lng() + (y - this.getVertex(i).lat())
       /  (this.getVertex(j).lat()-this.getVertex(i).lat())
       *  (this.getVertex(j).lng() - this.getVertex(i).lng())<x ) {
-        oddNodes = !oddNodes
+        oddNodes = !oddNodes;
       }
     }
   }
@@ -153,7 +153,7 @@ GPolygon.prototype.GetPointsAtDistance = function(metres) {
       var p2= this.getVertex(i);
       var m = (next-olddist)/(dist-olddist);
       points.push(new GLatLng( p1.lat() + (p2.lat()-p1.lat())*m, p1.lng() + (p2.lng()-p1.lng())*m));
-      next += metres;    
+      next += metres;
     }
   }
   return points;

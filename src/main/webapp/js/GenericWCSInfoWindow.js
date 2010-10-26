@@ -1,14 +1,14 @@
-/** 
+/**
 * @fileoverview This file declares the Class GenericWCSInfoWindow.
-* It will represent a popup information window for a single WCS layer 
+* It will represent a popup information window for a single WCS layer
 */
 
 /**
  * Creates a new instance of GenericWCSInfoWindow
- * 
+ *
  * @param overlay The overlay that you want to open the window on
  * @param serviceUrl The URL of the remote service that will serve up WCS data
- * @param layerName The name of the layer (which will be used in all requests to serviceUrl). 
+ * @param layerName The name of the layer (which will be used in all requests to serviceUrl).
  */
 function GenericWCSInfoWindow (map, overlay, serviceUrl, layerName, cswRecord) {
     this.map = map;
@@ -25,12 +25,12 @@ GenericWCSInfoWindow.prototype.serviceUrl = null;
 GenericWCSInfoWindow.prototype.layerName = null;
 GenericWCSInfoWindow.prototype.cswRecord = null;
 
-//gets the parameter string to submit to a controller 
+//gets the parameter string to submit to a controller
 function getWCSInfoWindowDownloadParameters() {
 	var win = Ext.getCmp('wcsDownloadFrm');
 	var params = win.getForm().getValues(true);
 	var customParams = '';
-	
+
 	//Custom handling for time periods
 	var dateFrom = Ext.getCmp('dateFrom');
 	var dateTo = Ext.getCmp('dateTo');
@@ -38,39 +38,39 @@ function getWCSInfoWindowDownloadParameters() {
 	var timeTo = Ext.getCmp('timeTo');
 	if (dateFrom && dateTo && timeFrom && timeTo) {
 		if (!dateFrom.disabled && !dateTo.disabled && !timeFrom.disabled && !timeTo.disabled) {
-			
+
 			var dateTimeFrom = dateFrom.getValue().format('Y-m-d') + ' ' + timeFrom.getValue();
 			var dateTimeTo = dateTo.getValue().format('Y-m-d') + ' ' + timeTo.getValue();
-			
+
 			customParams += '&timePeriodFrom=' + escape(dateTimeFrom);
 			customParams += '&timePeriodTo' + escape(dateTimeTo);
 		}
 	}
-	
+
 	//Get the custom parameter constraints
 	var axisConstraints = win.initialConfig.axisConstraints;
 	if (axisConstraints && axisConstraints.length > 0) {
 		for (var i = 0; i < axisConstraints.length; i++) {
 			if (axisConstraints[i].type === 'singleValue') {
 				var checkBoxGrp = Ext.getCmp(axisConstraints[i].checkBoxId);
-				
+
 				//This is for radio group selection
 				var selection = checkBoxGrp.getValue();
 				if (selection && !selection.disabled) {
 					var constraintName = checkBoxGrp.initialConfig.constraintName;
 					var constraintValue = selection.initialConfig.inputValue;
-					
+
 					customParams += '&customParamValue=' + escape(constraintName + '=' + constraintValue);
 				}
-				
+
 				/* This is for checkbox group selection
 				var selections = checkBoxGrp.getValue();
-				
+
 				for (var j = 0; selections && j < selections.length; j++) {
 					if (!selections[j].disabled) {
 						var constraintName = checkBoxGrp.initialConfig.constraintName;
 						var constraintValue = selections[j].initialConfig.inputValue;
-						
+
 						customParams += '&customParamValue=' + escape(constraintName + '=' + constraintValue);
 					}
 				}*/
@@ -79,7 +79,7 @@ function getWCSInfoWindowDownloadParameters() {
 			}
 		}
 	}
-	
+
 	return params + customParams;
 }
 
@@ -98,21 +98,21 @@ function validateWCSInfoWindow() {
 		Ext.Msg.alert('Invalid Fields','One or more fields are invalid');
 		return false;
 	}
-	
+
 	var usingTimePosition = timePositionFieldSet && !timePositionFieldSet.collapsed;
 	var usingTimePeriod = timePeriodFieldSet && !timePeriodFieldSet.collapsed;
 	var usingBbox = bboxFieldSet && !bboxFieldSet.collapsed;
-	
+
 	if (!usingBbox && !(usingTimePosition || usingTimePeriod)) {
 		Ext.Msg.alert('No Constraints', 'You must specify at least one spatial or temporal constraint');
 		return false;
 	}
-	
+
 	if (usingTimePosition && usingTimePeriod) {
 		Ext.Msg.alert('Too many temporal', 'You may only specify a single temporal constraint');
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -121,7 +121,7 @@ function validateWCSInfoWindow() {
 //Alternatively pass a GLatLng bounds as the north parameter
 function showWCSDownload(serviceUrl, layerName) {
 	var currentVisibleBounds = mapInfoWindowManager.map.getBounds();
-	
+
 	Ext.Ajax.request({
     	url			: 'describeCoverage.do',
     	timeout		: 180000,
@@ -136,7 +136,7 @@ function showWCSDownload(serviceUrl, layerName) {
     	//This gets called if the server returned HTTP 200 (the actual response object could still be bad though)
     	success	: function(response, options) {
     		var responseObj = Ext.util.JSON.decode(response.responseText);
-    		
+
     		//Generate an error / success fragment to display to the user
     		if (!responseObj.success) {
     			Ext.Msg.alert('Error Describing Coverage', 'There was an error whilst communicating with ' + serviceUrl);
@@ -145,18 +145,18 @@ function showWCSDownload(serviceUrl, layerName) {
     			Ext.Msg.alert('Error Describing Coverage', 'The URL ' + serviceUrl + ' returned no parsable DescribeCoverage records');
     			return;
     		}
-    		
+
     		//We only parse the first record (as there should only be 1)
     		var rec = responseObj.records[0];
 			var interpolationAllowed = rec.supportedInterpolations.length === 0 || rec.supportedInterpolations[0] !== 'none';
-		
+
 			if (!rec.temporalDomain) {
 				rec.temporalDomain = [];
 			}
 			if (!rec.spatialDomain) {
 				rec.spatialDomain = [];
 			}
-		
+
 			//Add a proper date time method to each temporal domain element
 			for (var i = 0; i < rec.temporalDomain.length; i++) {
 				if (rec.temporalDomain[i].type === 'timePosition') {
@@ -172,18 +172,18 @@ function showWCSDownload(serviceUrl, layerName) {
 					}
 				}
 			}
-			
+
 			//Preprocess our list of strings into a list of lists
 			for (var i = 0; i < rec.supportedRequestCRSs.length; i++)  {
 				rec.supportedRequestCRSs[i] = [rec.supportedRequestCRSs[i]];
 			}
-			for (var i = 0; i < rec.supportedResponseCRSs.length; i++) { 
+			for (var i = 0; i < rec.supportedResponseCRSs.length; i++) {
 				rec.supportedResponseCRSs[i] = [rec.supportedResponseCRSs[i]];
 			}
-			for (var i = 0; i < rec.supportedFormats.length; i++) { 
-				rec.supportedFormats[i] = [rec.supportedFormats[i]]; 
+			for (var i = 0; i < rec.supportedFormats.length; i++) {
+				rec.supportedFormats[i] = [rec.supportedFormats[i]];
 			}
-				
+
 		    //This list will be populate with each field set (in accordance to domains we have received)
 			var fieldSetsToDisplay = [{
 		        xtype   :'hidden',
@@ -194,22 +194,22 @@ function showWCSDownload(serviceUrl, layerName) {
 		        name    :'serviceUrl', //name of the field sent to the server
 		        value   : serviceUrl  //value of the field
 		    }];
-			
+
 		    //Completely disables a field set and stops its values from being selected by the "getValues" function
 		    //This function is recursive over fieldset objects
 		    var setFieldSetDisabled = function (fieldSet, disabled, depth) {
 		    	if (depth === undefined) {
 		    		depth = 0;
 		    	}
-		    	
+
 		    	//IE workaround
 		    	if (!Ext.isIE || depth !== 0) {
 		    	    fieldSet.setDisabled(disabled);
-		    	} 
-		    	
+		    	}
+
 		    	for (var i = 0; i < fieldSet.items.length; i++) {
 		    		var item = fieldSet.items.get(i);
-		    		
+
 		    		if (item.getXType() == 'fieldset') {
 		    			setFieldSetDisabled(item, disabled, depth + 1);
 		    		} else {
@@ -217,11 +217,11 @@ function showWCSDownload(serviceUrl, layerName) {
 		    		}
 		    	}
 		    };
-		    
-		    
+
+
 		    //Contains the fields for bbox selection
 		    if (rec.spatialDomain.length > 0) {
-			    fieldSetsToDisplay.push(new Ext.form.FieldSet({ 
+			    fieldSetsToDisplay.push(new Ext.form.FieldSet({
 			        id              : 'bboxFldSet',
 			        title           : 'Bounding box constraint',
 			        checkboxToggle  : true,
@@ -243,45 +243,45 @@ function showWCSDownload(serviceUrl, layerName) {
 			            }
 			        },
 			        items:[{
-			            id              : 'northBoundLatitude',                        
+			            id              : 'northBoundLatitude',
 			            xtype           : 'numberfield',
 			            fieldLabel      : 'Latitude (North)',
 			            value           : currentVisibleBounds.getNorthEast().lat().toString(),
 			            name            : 'northBoundLatitude',
 			            allowBlank      : false,
-			            anchor          : '-50'                                       
+			            anchor          : '-50'
 			        },{
-			            id              : 'southBoundLatitude',                        
+			            id              : 'southBoundLatitude',
 			            xtype           : 'numberfield',
 			            fieldLabel      : 'Latitude (South)',
 			            value           : currentVisibleBounds.getSouthWest().lat().toString(),
 			            name            : 'southBoundLatitude',
 			            allowBlank      : false,
-			            anchor          : '-50'                                       
+			            anchor          : '-50'
 			        },{
-			            id              : 'eastBoundLongitude',                        
+			            id              : 'eastBoundLongitude',
 			            xtype           : 'numberfield',
 			            fieldLabel      : 'Longitude (East)',
 			            value           : currentVisibleBounds.getNorthEast().lng().toString(),
 			            name            : 'eastBoundLongitude',
 			            allowBlank      : false,
-			            anchor          : '-50'                                       
+			            anchor          : '-50'
 			        },{
-			            id              : 'westBoundLongitude',                        
+			            id              : 'westBoundLongitude',
 			            xtype           : 'numberfield',
 			            fieldLabel      : 'Longitude (West)',
 			            value           : currentVisibleBounds.getSouthWest().lng().toString(),
 			            name            : 'westBoundLongitude',
 			            allowBlank      : false,
-			            anchor          : '-50'                                       
+			            anchor          : '-50'
 			        }]
 			    }));
 		    }
-		    
+
 		    //Contains the fields for temporal instance selection
 		    if (rec.temporalDomain.length > 0 && rec.temporalDomain[0].type === 'timePosition') {
 		    	var checkBoxList = [];
-		    	
+
 		    	for (var i = 0; i < rec.temporalDomain.length; i++) {
 		    		checkBoxList.push({
 		    			boxLabel 	: rec.temporalDomain[i].timePosition.format('Y-m-d H:i:s T'),
@@ -289,8 +289,8 @@ function showWCSDownload(serviceUrl, layerName) {
 		    			inputValue	: rec.temporalDomain[i].timePosition.format('Y-m-d H:i:s T') + 'GMT'
 		    		});
 		    	}
-		    	
-		    	fieldSetsToDisplay.push(new Ext.form.FieldSet({ 
+
+		    	fieldSetsToDisplay.push(new Ext.form.FieldSet({
 			        id              : 'timePositionFldSet',
 			        title           : 'Time Position Constraints',
 			        checkboxToggle  : true,
@@ -322,11 +322,11 @@ function showWCSDownload(serviceUrl, layerName) {
 			        }
 			    }));
 		    }
-		    
+
 		    //Contains the fields for temporal range selection
 		    //This will be hidden if there is no temporalRange in the temporalDomain
 		    if (rec.temporalDomain.length > 0 && rec.temporalDomain[0].type === 'timePeriod') {
-		    	fieldSetsToDisplay.push(new Ext.form.FieldSet({ 
+		    	fieldSetsToDisplay.push(new Ext.form.FieldSet({
 			        id              : 'timePeriodFldSet',
 			        title           : 'Time Period Constraints',
 			        checkboxToggle  : true,
@@ -348,7 +348,7 @@ function showWCSDownload(serviceUrl, layerName) {
 			            }
 			        },
 			        items:[{
-			            id              : 'dateFrom',                        
+			            id              : 'dateFrom',
 			            xtype           : 'datefield',
 			            fieldLabel      : 'Date From',
 			            name            : 'dateFrom',
@@ -358,45 +358,45 @@ function showWCSDownload(serviceUrl, layerName) {
 			            anchor          : '-50',
 			            submitValue		: false 		// We don't submit here as we perform some custom parsing for the query
 			        },{
-			            id              : 'timeFrom',                        
+			            id              : 'timeFrom',
 			            xtype           : 'timefield',
 			            fieldLabel      : 'Time From',
 			            name            : 'timeFrom',
 			            format          : 'H:i:s',
 			            allowBlank      : false,
 			            value			: rec.temporalDomain[0].beginPosition.format('H:i:s'),
-			            anchor          : '-50',                                       
+			            anchor          : '-50',
 			            submitValue		: false 		// We don't submit here as we perform some custom parsing for the query
 			        },{
-			            id              : 'dateTo',                        
+			            id              : 'dateTo',
 			            xtype           : 'datefield',
 			            fieldLabel      : 'Date To',
 			            name            : 'dateTo',
 			            format          : 'Y-m-d',
 			            allowBlank      : false,
 			            value			: rec.temporalDomain[0].endPosition,
-			            anchor          : '-50',                                       
-			            submitValue		: false 		// We don't submit here as we perform some custom parsing for the query                                   
+			            anchor          : '-50',
+			            submitValue		: false 		// We don't submit here as we perform some custom parsing for the query
 			        },{
-			            id              : 'timeTo',                        
+			            id              : 'timeTo',
 			            xtype           : 'timefield',
 			            fieldLabel      : 'Time To',
 			            name            : 'timeTo',
 			            format          : 'H:i:s',
 			            allowBlank      : false,
 			            value			: rec.temporalDomain[0].endPosition.format('H:i:s'),
-			            anchor          : '-50',                                       
-			            submitValue		: false 		// We don't submit here as we perform some custom parsing for the query                                   
+			            anchor          : '-50',
+			            submitValue		: false 		// We don't submit here as we perform some custom parsing for the query
 			        }]
 			    }));
 		    }
-		     
+
 		    //lets add our list (if any) of axis constraints that can be applied to the download
 		    var axisConstraints = [];
 		    if (rec.rangeSet.axisDescriptions && rec.rangeSet.axisDescriptions.length > 0) {
 		    	for (var i = 0; i < rec.rangeSet.axisDescriptions.length; i++) {
 		    		var constraint = rec.rangeSet.axisDescriptions[i];
-		    		
+
 		    		//if this constraint has a defined set of values, lets add it
 		    		if (constraint.values && constraint.values.length > 0) {
 		    			//Only support singleValue constraints for the moment
@@ -405,9 +405,9 @@ function showWCSDownload(serviceUrl, layerName) {
 		    				constraint.type = 'singleValue';
 		    				constraint.checkBoxName = 'axis-constraint-' + i;
 		    				constraint.checkBoxId = 'axis-constraint-' + i + '-chkboxgrp';
-		    				
+
 		    				var checkBoxList = [];
-		    		    	
+
 		    		    	for (var j = 0; j < constraint.values.length; j++) {
 		    		    		checkBoxList.push({
 		    		    			id			: constraint.checkBoxName + '-' + j,
@@ -417,8 +417,8 @@ function showWCSDownload(serviceUrl, layerName) {
 		    		    			//submitValue : false // Can't use submitValue: false with radio's (it breaks them)
 		    		    		});
 		    		    	}
-		    		    	
-		    		    	fieldSetsToDisplay.push(new Ext.form.FieldSet({ 
+
+		    		    	fieldSetsToDisplay.push(new Ext.form.FieldSet({
 		    			        id              : constraint.componentId,
 		    			        title           : 'Parameter \'' + constraint.label + '\' Constraints',
 		    			        checkboxToggle  : true,
@@ -451,13 +451,13 @@ function showWCSDownload(serviceUrl, layerName) {
 		    			            submitValue 	: false
 		    			        }
 		    			    }));
-		    				
+
 		    				axisConstraints.push(constraint);
 		    			}
 		    		}
 		    	}
 		    }
-		    
+
 		    fieldSetsToDisplay.push(new Ext.form.FieldSet({
 		        id				: 'outputDimSpec',
 		        title           : 'Output dimension specifications',
@@ -500,7 +500,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		        	hideLabel		: true,
 		        	hideBorders		: true,
 		        	items 			: [{
-		                id              : 'outputWidth',                        
+		                id              : 'outputWidth',
 		                xtype           : 'numberfield',
 		                fieldLabel      : 'Width',
 		                value           : '256',
@@ -510,7 +510,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		                allowDecimals   : false,
 		                allowNegative   : false
 		            },{
-		                id              : 'outputHeight',                        
+		                id              : 'outputHeight',
 		                xtype           : 'numberfield',
 		                fieldLabel      : 'Height',
 		                value           : '256',
@@ -518,7 +518,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		                anchor          : '-50',
 		                allowBlank      : false,
 		                allowDecimals   : false,
-		                allowNegative   : false                                  
+		                allowNegative   : false
 		            }]
 		        },{
 		        	id				: 'resolutionFieldSet',
@@ -528,7 +528,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		        	disabled		: true,
 		        	hidden			: true,
 		        	items 			: [{
-		            	id              : 'outputResX',                        
+		            	id              : 'outputResX',
 		                xtype           : 'numberfield',
 		                fieldLabel      : 'X Resolution',
 		                value           : '1',
@@ -538,7 +538,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		                disabled      	: true,
 		                allowNegative   : false
 		            },{
-		                id              : 'outputResY',                        
+		                id              : 'outputResY',
 		                xtype           : 'numberfield',
 		                fieldLabel      : 'Y Resolution',
 		                value           : '1',
@@ -550,20 +550,20 @@ function showWCSDownload(serviceUrl, layerName) {
 		            }]
 		        }]
 		    }));
-		     
+
 		    var downloadFormatStore = new Ext.data.ArrayStore({
 		    	fields : ['format'],
-		        data   : rec.supportedFormats             
+		        data   : rec.supportedFormats
 		    });
 		    var responseCRSStore = new Ext.data.ArrayStore({
 		    	fields : ['crs'],
-		        data   : rec.supportedResponseCRSs             
+		        data   : rec.supportedResponseCRSs
 		    });
 		    var requestCRSStore = new Ext.data.ArrayStore({
 		    	fields : ['crs'],
-		        data   : rec.supportedRequestCRSs             
+		        data   : rec.supportedRequestCRSs
 		    });
-		     
+
 		    var nativeCrsString = '';
 		    if (rec.nativeCRSs && rec.nativeCRSs.length > 0) {
 		    	for (var i = 0; i < rec.nativeCRSs.length; i++) {
@@ -573,7 +573,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		    		nativeCrsString += rec.nativeCRSs[i];
 		    	}
 		    }
-		    
+
 		     //Contains all "Global" download options
 		    fieldSetsToDisplay.push(new Ext.form.FieldSet({
 		        id              : 'downloadOptsFldSet',
@@ -590,8 +590,8 @@ function showWCSDownload(serviceUrl, layerName) {
 		        	disabled		: true,
 		        	anchor          : '-50',
 		        	submitValue		: false
-		        	
-		        	
+
+
 		        },{
 		            xtype			: 'combo',
 		            id              : 'inputCrs',
@@ -607,7 +607,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		            triggerAction   : 'all',
 		            displayField    : 'crs',
 		            anchor          : '-50',
-		            valueField      : 'crs'        
+		            valueField      : 'crs'
 		        },{
 		            xtype			: 'combo',
 		            id              : 'downloadFormat',
@@ -622,7 +622,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		            allowBlank		: false,
 		            displayField    : 'format',
 		            anchor          : '-50',
-		            valueField      : 'format'        
+		            valueField      : 'format'
 		        },{
 		            xtype			: 'combo',
 		            id              : 'outputCrs',
@@ -637,11 +637,11 @@ function showWCSDownload(serviceUrl, layerName) {
 		            typeAhead       : true,
 		            displayField    : 'crs',
 		            anchor          : '-50',
-		            valueField      : 'crs'        
+		            valueField      : 'crs'
 		        }]
 		    }));
-		    
-		    
+
+
 		    //downloads specified url.
 		    var downloadFile = function(url) {
 		        var body = Ext.getBody();
@@ -661,11 +661,11 @@ function showWCSDownload(serviceUrl, layerName) {
 		        form.dom.action = url;
 		        form.dom.submit();
 		    };
-		    
-		    // Dataset download window  
+
+		    // Dataset download window
 		    var win = new Ext.Window({
-		        id              : 'wcsDownloadWindow',        
-		        border          : true,        
+		        id              : 'wcsDownloadWindow',
+		        border          : true,
 		        //html          : iStr,
 		        layout          : 'fit',
 		        resizable       : true,
@@ -680,7 +680,7 @@ function showWCSDownload(serviceUrl, layerName) {
 		        	layout	: 'fit',
 		        	autoScroll : true,
 		        	bodyStyle	: 'background-color: transparent;',
-		            items : [{   
+		            items : [{
 			            // Bounding form
 			            id      :'wcsDownloadFrm',
 			            xtype   :'form',
@@ -689,12 +689,12 @@ function showWCSDownload(serviceUrl, layerName) {
 			            autoHeight : true,
 			            autoWidth	: true,
 			            axisConstraints : axisConstraints,	//This is stored here for later validation usage
-			            
+
 			            // these are applied to columns
 			            defaults:{
 			                xtype: 'fieldset', layout: 'form'
 			            },
-			            
+
 			            // fieldsets
 			            items   : fieldSetsToDisplay
 			        }],
@@ -702,19 +702,19 @@ function showWCSDownload(serviceUrl, layerName) {
 		                xtype: 'button',
 		                text: 'Download',
 		                handler: function() {
-		                    
+
 		        			if (!validateWCSInfoWindow()) {
 		        				return;
 		        			}
-		        	
+
 		        			var downloadUrl = './downloadWCSAsZip.do?' + getWCSInfoWindowDownloadParameters();
 		        			downloadFile(downloadUrl);
 		                }
 			        }]
-		        
+
 		        }]
 		    });
-		    
+
 		    win.show();
     	}
 	});
@@ -722,15 +722,15 @@ function showWCSDownload(serviceUrl, layerName) {
 
 //Instance methods
 GenericWCSInfoWindow.prototype.showInfoWindow = function() {
-    
+
 	//Start by opening with just some text that says "Loading..."
     var loadingFragment = '';
-    loadingFragment += '<div style="padding:20px;" >' + 
+    loadingFragment += '<div style="padding:20px;" >' +
                         	'<p>Loading...</p>' +
                         '</div>';
-    
+
     //This function will run when the popup window has initialised
-    var startLoading = function(map, location, opts) { 
+    var startLoading = function(map, location, opts) {
 	    Ext.Ajax.request({
 	    	url			: 'describeCoverage.do',
 	    	timeout		: 180000,
@@ -744,61 +744,61 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
 	    	//This gets called if the server returns an error
 	    	failure		: function(response, options) {
 	    		var errorFragment = '';
-	    		errorFragment += '<div style="padding:20px;" >' + 
+	    		errorFragment += '<div style="padding:20px;" >' +
 		            				'<p>Error (' + response.status + '): ' + response.statusText + '</p>' +
 		            			'</div>';
-	    		
+
 	    		var newTab = new GInfoWindowTab('', errorFragment);
 	    		options.map.updateInfoWindow([newTab]);
 	    	},
 	    	//This gets called if the server returned HTTP 200 (the actual response object could still be bad though)
 	    	success	: function(response, options) {
 	    		var responseObj = Ext.util.JSON.decode(response.responseText);
-	    		
+
 	    		var htmlFragment = '';
-	    		
+
 	    		htmlFragment += '<html>';
 				htmlFragment += '<body>';
-	    		
+
 	    		//Generate an error / success fragment to display to the user
 	    		if (responseObj.success && responseObj.records && responseObj.records.length > 0) {
 	    			var record = responseObj.records[0]; //We only ever check the first record because only 1 should be returned
-	    			
+
 	    			var generateRowFragment = function (col1, col2) {
 	    				return '<tr><td>' + col1 + '</td><td>' + col2 + '</td></tr>';
 	    			};
-	    			
+
 	    			var generateRowFragmentFromArray = function (col1, arr, colCount, contentFunc) {
-	    				if (!arr || arr.length === 0) { 
+	    				if (!arr || arr.length === 0) {
 	    					return '';
 	    				}
-	    				
+
 	    				if (!contentFunc) {
 	    					contentFunc = function (item) {
 	    						return item;
-	    					}
+	    					};
 	    				}
-	    				
+
 	    				if (!colCount) {
 	    					colCount = 1;
 	    				}
-	    				
+
 	    				var description = '';
 		    			for (var i = 0; i < arr.length; i++) {
 		    				var item = arr[i];
-		    				
+
 		    				if (i >= colCount && i % colCount === 0) {
 		    					description += '<br/>';
 		    				} else if (description.length > 0) {
 		    					description += ' ';
 		    				}
-		    				
+
 		    				description += contentFunc(arr[i]);
 		    			}
-	    				
+
 	    				return generateRowFragment(col1, description);
 	    			};
-	    			
+
 	    			//IE doesnt support max-width / max-height
 	    			//So lets fudge it using the IE specific 'expression'
 	    			if (Ext.isIE) {
@@ -819,7 +819,7 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
 	    			htmlFragment += generateRowFragmentFromArray('SupportedFormats', record.supportedFormats, 1);
 	    			htmlFragment += generateRowFragmentFromArray('SupportedInterpolation', record.supportedInterpolations, 1);
 	    			htmlFragment += generateRowFragmentFromArray('NativeCRS\'s\'', record.nativeCRSs, 5);
-	    			
+
 	    			var opendapResources = options.params.cswRecord.getFilteredOnlineResources('OPeNDAP');
 	    			if (opendapResources.length > 0) {
 	    				htmlFragment += generateRowFragmentFromArray('OPeNDAP URLs', opendapResources, 1, function(item) {
@@ -844,7 +844,7 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
 	    				} else {
 	    					s += item.type;
 	    				}
-	    				
+
 	    				return s;
 	    			});
 	    			htmlFragment += generateRowFragmentFromArray('TemporalDomain', record.temporalDomain, 1, function(item) {
@@ -868,44 +868,44 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
 	    			});
 	    			htmlFragment += '</table>';
 	    			htmlFragment += '</div>';
-	    			
+
 	    			//Add our "Download" button that when clicked will open up a download window
-	        		htmlFragment += '<div align="right">' + 
+	        		htmlFragment += '<div align="right">' +
 	    					            '<br/>' +
-	    					            '<input type="button" id="downloadWCSBtn"  value="Download" onclick="showWCSDownload('+ 
-	    					            '\'' + opts.serviceUrl +'\',' + 
+	    					            '<input type="button" id="downloadWCSBtn"  value="Download" onclick="showWCSDownload('+
+	    					            '\'' + opts.serviceUrl +'\',' +
 	    					            '\''+ opts.layerName + '\'' +
 	    					            ');"/>';
 	        		if (opendapResources.length > 0) {
-	        			htmlFragment += '<input type="button" id="downloadOpendapBtn"  value="Download (OPeNDAP)" onclick="showOPeNDAPDownload('+ 
+	        			htmlFragment += '<input type="button" id="downloadOpendapBtn"  value="Download (OPeNDAP)" onclick="showOPeNDAPDownload('+
 			            				'\'' + opendapResources[0].url +'\',' +
 			            				'\'' + opendapResources[0].name +'\'' +
 			            				');"/>';
 	        		}
 	        		htmlFragment +=	'</div>';
-	    			
+
 	    		} else {
 	    			if (responseObj.success) {
-	    				htmlFragment += '<div style="padding:20px;" >' + 
+	    				htmlFragment += '<div style="padding:20px;" >' +
 											'<p>No records returned from \'' + opts.serviceUrl + '\'</p>' +
 										'</div>';
 	    			} else {
-		    			htmlFragment += '<div style="padding:20px;" >' + 
+		    			htmlFragment += '<div style="padding:20px;" >' +
 											'<p>Error whilst communicating with \'' + opts.serviceUrl + '\' : ' + responseObj.errorMsg + '</p>' +
 						    			'</div>';
 	    			}
 	    		}
-	    		
+
 	    		htmlFragment += '</body>';
 				htmlFragment += '</html>';
-	    		
+
 	    		//Update the window with the information
 	    		var newTab = new GInfoWindowTab('', htmlFragment);
 	    		options.map.updateInfoWindow([newTab]);
 	    	}
 	    });
     };
-    
+
     //Get our info window manager to open the window and run our download when
     //it opens (there is the ever present possibility that the download will finish before the window opens which will cause the
     //the window to never update).
@@ -915,12 +915,12 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
     } else if (this.overlay instanceof GPolygon) {
         location = this.overlay.getBounds().getCenter();
     }
-    
+
     var opts = {
     	serviceUrl 		: this.serviceUrl,
     	layerName		: this.layerName,
     	cswRecord		: this.cswRecord
     };
-    
+
     mapInfoWindowManager.openInfoWindow(location, loadingFragment, undefined, startLoading, opts);
 };

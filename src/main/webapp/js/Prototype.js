@@ -33,7 +33,7 @@ var Prototype = {
   JSONFilter: /^\/\*-secure-([\s\S]*)\*\/\s*$/,
 
   emptyFunction: function() { },
-  K: function(x) { return x }
+  K: function(x) { return x; }
 };
 
 if (Prototype.Browser.MobileSafari)

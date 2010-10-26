@@ -326,7 +326,7 @@ function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latl
             	    	lineId = lineId.substring(3, lineId.length);
             	    }
 
-                	var infoWindow = new GeotransectsInfoWindow(latlng, map, lineId, options.cswRecord, options.wmsOnlineResource);
+                	var infoWindow = new GeotransectsInfoWindow(latlng, map, lineId, options.cswRecord, options.wmsOnlineResource, rootNode);
                 	infoWindow.show();
                 } else {
                 	alert("Remote server returned an unsupported response.");

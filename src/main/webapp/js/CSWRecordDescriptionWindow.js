@@ -2,7 +2,7 @@
 /**
  * The CSWRecordDescriptionWindow is a class that specialises Ext.Window into displaying
  * detailed information about a list of CSWRecords
- * 
+ *
  *  cswRecords - a CSWRecord or Array of CSWRecords
  */
 CSWRecordDescriptionWindow = function(cswRecords) {
@@ -13,13 +13,13 @@ CSWRecordDescriptionWindow = function(cswRecords) {
 			this.cswRecords = cswRecords;
 		}
 	}
-	
+
 	//Generate our flattened 'data items' list for rendering to the grid
 	var dataItems = [];
 	for (var i = 0; i < this.cswRecords.length; i++) {
 		var onlineResources = this.cswRecords[i].getOnlineResources();
 		for (var j = 0; j < onlineResources.length; j++) {
-			
+
 			//ensure we have a type we want to describe
 			switch (onlineResources[j].onlineResourceType) {
 			case 'WWW':
@@ -33,7 +33,7 @@ CSWRecordDescriptionWindow = function(cswRecords) {
 			default:
 				continue;//don't include anything else
 			}
-			
+
 			dataItems.push([
 			    onlineResources[j].name,
 			    onlineResources[j].description,
@@ -44,7 +44,7 @@ CSWRecordDescriptionWindow = function(cswRecords) {
 			]);
 		}
 	}
-	
+
 	//Create the internal store that this window will use for its grids
 	this.store = new Ext.data.GroupingStore({
 		autoDestroy		: true,
@@ -65,7 +65,7 @@ CSWRecordDescriptionWindow = function(cswRecords) {
 		}),
 		data : dataItems
 	});
-	
+
 	CSWRecordDescriptionWindow.superclass.constructor.call(this, {
         title: 'Service Information',
         autoDestroy : true,
@@ -131,11 +131,11 @@ CSWRecordDescriptionWindow = function(cswRecords) {
             	renderer: function(value, metadata, record) {
             		var onlineRes = value;
             		var cswRecord = this.cswRecords[record.get('cswRecordIndex')];
-            	
+
             		//We preview types differently
             		switch(record.get('type')) {
             		case 'WFS':
-            			var getFeatureUrl = onlineRes.url + this.internalURLSeperator(onlineRes.url) + 'SERVICE=WFS&REQUEST=GetFeature&VERSION=1.1.0&maxFeatures=5&typeName=' + onlineRes.name
+            			var getFeatureUrl = onlineRes.url + this.internalURLSeperator(onlineRes.url) + 'SERVICE=WFS&REQUEST=GetFeature&VERSION=1.1.0&maxFeatures=5&typeName=' + onlineRes.name;
             			return '<a target="_blank" href="' + getFeatureUrl + '"><p>First 5 features</p></a>';
             			break;
             		case 'WCS':
@@ -145,7 +145,7 @@ CSWRecordDescriptionWindow = function(cswRecords) {
             			//Form the WMS url
             			var getMapUrl = onlineRes.url + this.internalURLSeperator(onlineRes.url) + 'SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + onlineRes.name;
             			getMapUrl += '&SRS=EPSG:4326&FORMAT=image/png&STYLES=';
-            			
+
             			//To generate the url we will need to use the bounding box to make the request
             			//To avoid distortion, we also scale the width height independently
             			var geoEls = cswRecord.getGeographicElements();
@@ -154,31 +154,31 @@ CSWRecordDescriptionWindow = function(cswRecords) {
             				for (var i = 1; i < geoEls.length; i++) {
             					superBbox = superBbox.combine(geoEls[i]);
             				}
-            				
+
             				var superBboxStr = superBbox.westBoundLongitude + "," +
             									superBbox.southBoundLatitude + "," +
             									superBbox.eastBoundLongitude + "," +
             									superBbox.northBoundLatitude;
-            				
+
             				//Set our width to a constant and scale the height appropriately
-            				var heightRatio = (superBbox.northBoundLatitude - superBbox.southBoundLatitude) / 
+            				var heightRatio = (superBbox.northBoundLatitude - superBbox.southBoundLatitude) /
             							 	  (superBbox.eastBoundLongitude - superBbox.westBoundLongitude);
             				var width = 512;
             				var height = Math.floor(width * heightRatio);
-            				
+
             				getMapUrl += '&WIDTH=' + width;
             				getMapUrl += '&HEIGHT=' + height;
             				getMapUrl += '&BBOX=' + superBboxStr;
-            				
+
             				var thumbWidth = width;
             				var thumbHeight = height;
-            				
+
             				//Scale our thumbnail appropriately
             				if (thumbWidth > 128) {
             					thumbWidth = 128;
             					thumbHeight = thumbWidth * heightRatio;
             				}
-            				
+
             				return '<a target="_blank" href="' + getMapUrl + '"><img width="' + thumbWidth + '" height="' + thumbHeight + '" alt="Loading preview..." src="' + getMapUrl + '"/></a>';
             			}
             			return 'N/A';
@@ -202,7 +202,7 @@ CSWRecordDescriptionWindow = function(cswRecords) {
 	    			case 'WCS':
 	    				return 'OGC Web Coverage Service 1.0.0';
 	    			}
-	    			
+
 	    			return '';
             	}
             }]
@@ -222,11 +222,11 @@ Ext.extend(CSWRecordDescriptionWindow, Ext.Window, {
 	/**
 	 * Given a URL this will determine the correct character that can be appended
 	 * so that a number of URL parameters can also be appended
-	 * 
+	 *
 	 * See AUS-1931 for why this function should NOT exist
 	 */
 	'internalURLSeperator' : function(url) {
-		var lastChar = url[url.length - 1]; 
+		var lastChar = url[url.length - 1];
 		if (lastChar == '?') {
 			return '';
 		} else if (lastChar == '&') {

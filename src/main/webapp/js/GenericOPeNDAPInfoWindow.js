@@ -7,7 +7,7 @@ function validateOPeNDAPWindow() {
 		Ext.Msg.alert('Invalid Fields','One or more fields are invalid');
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -17,16 +17,16 @@ function getOPeNDAPParameters() {
 	var generateConstraints = function(component) {
 		if (!component)
 			return null;
-		
+
 		if (component.initialConfig.variableType === 'axis') {
 			var fromField = component.get(0);
 			var toField = component.get(1);
-			
+
 			var obj = {
 				type		: component.initialConfig.variableType,
-				name 		: component.initialConfig.name,
+				name 		: component.initialConfig.name
 			};
-			
+
 			if (component.initialConfig.usingDimensionBounds) {
 				obj['dimensionBounds'] = {
 					from		: parseFloat(fromField.value),
@@ -38,7 +38,7 @@ function getOPeNDAPParameters() {
 						to			: parseFloat(toField.value)
 				};
 			}
-			
+
 			return obj;
 		} else if (component.initialConfig.variableType === 'grid') {
 			var childAxes = [];
@@ -53,18 +53,18 @@ function getOPeNDAPParameters() {
 				axes 		: childAxes
 			};
 		}
-		
+
 		return null;
 	};
-	
+
 	var frm = Ext.getCmp('opendapDownloadFrm');
 	var params = '&opendapUrl=' + escape(Ext.getCmp('opendapUrl').value);
-	
+
 	//Generate constraints component
 	var variableConstraints = [];
 	for (var i = 0; i < frm.items.getCount(); i++) {
 		var component = frm.items.get(i);
-		
+
 		if (component && !component.disabled) {
 			var constraint = generateConstraints(component);
 			if (constraint)
@@ -74,10 +74,10 @@ function getOPeNDAPParameters() {
 	var constraintObj = {
 		constraints : variableConstraints
 	};
-	
+
 	params += '&constraints=' + escape(Ext.util.JSON.encode(constraintObj));
 	params += '&downloadFormat=' + escape(Ext.getCmp('opendap-format').value);
-	
+
 	return params;
 }
 
@@ -86,19 +86,19 @@ function getOPeNDAPParameters() {
  * @return
  */
 function showOPeNDAPDownload(opendapUrl, variableName) {
-	
+
 	Ext.QuickTips.init();
-	
+
 	var fieldSetsToDisplay = [];
-	
+
 	//Completely disables a field set and stops its values from being selected by the "getValues" function
     //This function is recursive over fieldset objects
     var setFieldSetDisabled = function (fieldSet, disabled) {
     	fieldSet.setDisabled(disabled);
-    	
+
     	for (var i = 0; i < fieldSet.items.length; i++) {
     		var item = fieldSet.items.get(i);
-    		
+
     		if (item.getXType() == 'fieldset') {
     			setFieldSetDisabled(item, disabled);
     		} else {
@@ -106,7 +106,7 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
     		}
     	}
     };
-	
+
 	var formatsStore = new Ext.data.SimpleStore({
         fields   : ['format'],
         proxy    : new Ext.data.HttpProxy({url: 'opendapGetSupportedFormats.do'}),
@@ -115,20 +115,20 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
         ])
     });
 	formatsStore.reload();
-	
-	
-	
+
+
+
 	fieldSetsToDisplay.push(new Ext.form.FieldSet({
         id				: 'openDapGlobalSpecs',
         title           : 'Required Information',
         items			: [{
-            id              : 'opendapUrl',                        
+            id              : 'opendapUrl',
             xtype           : 'textfield',
             fieldLabel      : 'URL',
             value           : opendapUrl,
             name            : 'opendapUrl',
             readOnly		: true,
-            anchor          : '-50'                                       
+            anchor          : '-50'
         },{
             xtype			: 'combo',
             id              : 'opendap-format',
@@ -144,16 +144,16 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
             triggerAction   : 'all',
             displayField    : 'format',
             anchor          : '-50',
-            valueField      : 'format'        
+            valueField      : 'format'
         }]
     }));
-	
+
 	fieldSetsToDisplay.push({
 		id				: 'opendap-label-loading',
 		xtype			: 'label',
 		text			: 'Loading...'
 	});
-	
+
 	var downloadFile = function(url) {
         var body = Ext.getBody();
         var frame = body.createChild({
@@ -172,10 +172,10 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
         form.dom.action = url;
         form.dom.submit();
     };
-	
+
 	var win = new Ext.Window({
-        id              : 'opendapDownloadWindow',        
-        border          : true,        
+        id              : 'opendapDownloadWindow',
+        border          : true,
         layout          : 'fit',
         resizable       : true,
         modal           : true,
@@ -197,12 +197,12 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
 		            layout  :'form',
 		            frame   : true,
 		            autoHeight : true,
-		            
+
 		            // these are applied to columns
 		            defaults:{
 		                xtype: 'fieldset', layout: 'form'
 		            },
-		            
+
 		            // fieldsets
 		            items   : fieldSetsToDisplay
 		       }]
@@ -213,27 +213,27 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
                 id: 'opendap-download-button',
                 disabled: true,		//will be enabled when variable download completes
                 handler: function() {
-                    
+
         			if (!validateOPeNDAPWindow()) {
         				return;
         			}
-        	
+
         			var downloadUrl = './opendapMakeRequest.do?' + getOPeNDAPParameters();
         			downloadFile(downloadUrl);
                 }
         }]
     });
-    
+
     win.show();
-    
-    
+
+
     //Recursively generates a field set for a given variable
 	var generateVariableFieldSet = function(variable) {
 		if (variable.type === 'axis') {
 			var bounds;
 			var title;
 			var usingDimensionBounds;
-			
+
 			if (variable.valueBounds) {
 				bounds = variable.valueBounds;
 				title = variable.name + '[' + bounds.from + ', ' + bounds.to + ']' + ' - ' + variable.units;
@@ -243,7 +243,7 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
 				title = variable.name + '[' + bounds.from + ', ' + bounds.to + ']';
 				usingDimensionBounds = true;
 			}
-			
+
 			return {
 				xtype		: 'fieldset',
 				name		: variable.name,
@@ -275,7 +275,7 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
 			for (var i = 0; i < variable.axes.length; i++) {
 				items.push(generateVariableFieldSet(variable.axes[i]));
 			}
-			
+
 			return {
 				xtype			: 'fieldset',
 				title			: variable.name + ' - ' + variable.units,
@@ -299,33 +299,33 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
 		        }
 			};
 		}
-		
+
 		throw ('Unable to parse type=' + variable.type);
 	};
-    
+
 	//Given a list of variables, this function will add the representation of those variable constraints
 	//to the specified FormPanel
     var variableListToForm = function (frm, responseObj) {
-    	
+
     	if (!responseObj || !responseObj.variables)
     		return;
-    	
+
     	for (var i = 0; i < responseObj.variables.length; i++) {
     		var variableFldSet = generateVariableFieldSet(responseObj.variables[i]);
     		frm.add(variableFldSet);
     	}
     	frm.doLayout();
     };
-    
+
     //Call this when a variable download fails
     var failVariableDownload = function(errorMessage) {
     	var label = Ext.getCmp('opendap-label-loading');
-    	
+
     	label.setText(errorMessage);
-    	
+
     	Ext.MessageBox.alert('Error', errorMessage);
     };
-    
+
     //Called if our variable download returns a response object
     var successVariableDownload = function(response, options) {
     	var responseObj = Ext.util.JSON.decode(response.responseText);
@@ -333,18 +333,18 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
     		failVariableDownload('Error: ' + responseObj.errorMsg);
     		return;
     	}
-    	
+
     	//Update our GUI
     	var label = Ext.getCmp('opendap-label-loading');
     	var button = Ext.getCmp('opendap-download-button');
     	button.setDisabled(false);
     	label.setVisible(false);
-    	
+
     	//Update our form with the downloaded variables
     	var frm = Ext.getCmp('opendapDownloadFrm');
     	variableListToForm(frm, responseObj);
     };
-    
+
     //Download our variable list - this will be used to generate our form parameters
     Ext.Ajax.request({
     	url		: 'opendapGetVariables.do',

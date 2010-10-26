@@ -14,7 +14,7 @@ var HTML_DIV_STATION_CONTROL = "stationcontrol";
 /**
 * Define the global constants.
 * DEFAULT_MAP_CENTRE - default centre for the map object
-* DEFAULT_MAP_ZOOM_LEVEL - default zoom level for the map object 
+* DEFAULT_MAP_ZOOM_LEVEL - default zoom level for the map object
 * IMAGES_DIR - relative location for images directory.
 *   This allows the images directory to be relocated. However the structure within the images
 *   directory should be maintained. This hardcoding (as seen later when assigning gaIcon) can be removed.
@@ -26,7 +26,7 @@ var DEFAULT_MAP_ZOOM_LEVEL = 5;
 var MAX_ZOOM_LEVEL = 18;
 var IMAGES_DIR = "img";
 
-/** 
+/**
 * gaYears
 *   Years for which we would display data urls
 * gaMonths
@@ -58,25 +58,25 @@ gaMonths[12] = "Dec";
 *   The current month.
 * gsCurrentDate
 *   The current date.
-* 
+*
 */
 var goToday = new Date();
 var gsCurrentYear = goToday.getFullYear();
 var gsCurrentMonth = goToday.getMonth();
 gsCurrentMonth = gaMonths[gsCurrentMonth+1];
 var gsCurrentDate = goToday.getDate();
-                                          
+
 
 
 /**
 * These arrays define the feature types which are recognized by the appliction
 * Everytime the application is modified to accept updateCSWRecords new feature type,
 * entries for the new feature type should be added to these arrays.
-* gaFeatureTypes: 
+* gaFeatureTypes:
 *   Array of recognized feature types
 *   The map interface will display feature types only if they belong to this array.
-* gaFeatureTypeIconOn: 
-*   Associative array of the icons 
+* gaFeatureTypeIconOn:
+*   Associative array of the icons
 *   Any changes to the groups (associated with updateCSWRecords category) should be reflected in this array.
 *   Addition of new categories should be reflected in this array.
 * gaCategoryHtmlDiv:
@@ -106,10 +106,6 @@ var ProxyURL = WEB_CONTEXT + "/restproxy?";
 var kmlProxyUrl = WEB_CONTEXT + "/xsltRestProxy.do?url=";
 
 var gaFeatureTypeProxy = new Array();
-//gaFeatureTypeProxy["gsml:Borehole"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/nvcl/proxy?";
-//gaFeatureTypeProxy["gsml:Borehole"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/nvcl/wfs?";
-//gaFeatureTypeProxy["geodesy:stations"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/geodesy/wfs?";//top.location.protocol + "//" + top.location.host + "/geodesyworkflow/geodesy/proxy?";
-//gaFeatureTypeProxy["sa:SamplingPoint"] = ProxyURL + "http://auscope-portal.arrc.csiro.au/gnss/wfs?";
 gaFeatureTypeProxy["Avhrr48to72Hours-1404"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/ga/sentinel/proxy?";
 gaFeatureTypeProxy["Modis48to72Hours-1604"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/ga/sentinel/proxy?";
 
@@ -140,5 +136,5 @@ var goMap;
 var goBaseIcon = new GIcon();
 goBaseIcon.iconSize = new GSize(14,13);
 goBaseIcon.iconAnchor = new GPoint(7,5);
-goBaseIcon.infoWindowAnchor = new GPoint(5,9); 
+goBaseIcon.infoWindowAnchor = new GPoint(5,9);
 

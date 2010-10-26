@@ -145,7 +145,7 @@ function DragZoomControl(opts_boxStyle, opts_other, opts_callbacks) {
   };
 
   for (var s in opts_other) {
-    this.globals.options[s] = opts_other[s]
+    this.globals.options[s] = opts_other[s];
   }
 
   // callbacks: buttonclick, dragstart, dragging, dragend, backbuttonclick

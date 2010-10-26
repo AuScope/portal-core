@@ -9,11 +9,12 @@
  * onlineResource - Object - The online resource that was used to render this geotransect
  * @constructor
  */
-function GeotransectsInfoWindow(iLatlng, iMap, iLineId, iCSWRecord, iOnlineResource) {
+function GeotransectsInfoWindow(iLatlng, iMap, iLineId, iCSWRecord, iOnlineResource, rootNode) {
     this.map = iMap;
     this.latlng = iLatlng;
     this.cswRecord = iCSWRecord;
     this.onlineResource = iOnlineResource;
+    this.cswRootNode = rootNode;
     this.tabsArray = [];
 
     this.lineId = iLineId;
@@ -156,7 +157,7 @@ GeotransectsInfoWindow.prototype = {
 		else {
 			sHtml += '<div style="padding-bottom:10px;" >' +
 			'No DataSets available.' +
-			'</div>'
+			'</div>';
 	        this.mask.hide();
 		}
 
