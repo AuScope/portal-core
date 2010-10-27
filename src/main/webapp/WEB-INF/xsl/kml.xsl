@@ -368,7 +368,7 @@
             <![CDATA[</td></tr><tr><td>Elevation (]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation/@uomLabels"/><![CDATA[)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation"/>
             <![CDATA[</td></tr><tr><td>Start Depth (m)</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner"/>
             <![CDATA[</td></tr><tr><td>End Depth (m)</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:upperCorner"/>
-            <![CDATA[</td></tr><tr><td>Core Custodian</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:href"/>
+            <![CDATA[</td></tr><tr><td>Core Custodian</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:title"/>
             <![CDATA[</td></tr><tr><td>Operator</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:driller/@xlink:title"/>
             <![CDATA[</td></tr><tr><td>Date of Drilling</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling"/>
             <![CDATA[</td></tr><tr><td>Drilling Method</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:drillingMethod"/>
