@@ -8,6 +8,7 @@
         width: 100%;
         height: 100px;
         background-color: #ffffff;
+        position:fixed;
     }
 
     #logo {
@@ -15,110 +16,23 @@
         width: 531px;
         height: 100px;
     }
-    
+
     #logo h1 {
         float: left;
         margin: 0;
         padding: 0;
         width: 531px;
     }
-    
+
     #logo h1 a {
         padding: 0;
         margin: 0;
         width: 531px;
         height: 100px;
         display: block;
-        background: url( "../img/img-auscope-banner.gif" ) no-repeat top left;	    
+        background: url( "../img/img-auscope-banner.gif" ) no-repeat top left;
     }
-        
+
     #logo h1 a span {
         display: none;
     }
-    
-    /*#menu {
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        height: 100px;
-        width: auto;
-    }
-
-    #login {
-        float: right;
-        padding-right: 30px;
-        padding-top: 10px;
-    }
-
-    img {
-        border: none;
-    }
-
-    #nav {
-        float: right;
-        padding-top: 0px;
-        padding-right: 40px;
-    }
-
-    #nav ul {
-        text-align: left;
-        padding: 0px;
-        margin: 0px;
-    }
-
-    #nav ul li {
-        display: inline;
-        padding: 0px;
-        margin: 0px;
-    }
-
-    #nav-example {
-        background: url( "../img/navigation.gif" ) no-repeat;
-        width: 300px;
-        height: 38px;
-        margin: 0;
-        padding: 0;
-        float: right;
-        padding-right: 40px;
-    }
-
-    #nav-example span {
-        display: none;
-    }
-
-    #nav-example li, #nav-example a {
-        height: 38px;
-        display: block;
-    }
-
-    #nav-example li {
-        float: left;
-        list-style: none;
-        display: inline;
-    }
-
-    #nav-example-01 {
-        width: 100px;
-    }
-
-    #nav-example-02 {
-        width: 100px;
-    }
-
-    #nav-example-03 {
-        width: 100px;
-    }
-
-    #nav-example-01 a:hover {
-        background: url( "../img/navigation.gif" ) 0px -38px no-repeat;
-    }
-
-    #nav-example-02 a:hover {
-        background: url( "../img/navigation.gif" ) -100px -38px no-repeat;
-    }
-
-    #nav-example-03 a:hover {
-        background: url( "../img/navigation.gif" ) -200px -38px no-repeat;
-    }
-*/
-   

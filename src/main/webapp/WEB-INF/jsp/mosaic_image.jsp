@@ -75,7 +75,7 @@
       </script>
     </head>
 	<body onLoad="downloadImage();">
-		<div id="div_mosaic_image" overflow="auto">
+		<div id="div_mosaic_image" style="overflow:auto;">
 		</div>
 	</body>
 </html>

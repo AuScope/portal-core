@@ -1,11 +1,10 @@
 #menu {
+	position:fixed;
 	overflow:hidden; /* wrap floats */
 	height:40px; /* trips haslayout, wrap floats IE */
 	list-style:none;
     top: 0px;
     right: 0px;
-	/*background:url(images/articles/menu.png) 0 0 repeat-x;*/
-/*	font:bold 16px/45px sans-serif;*/
 	font:bold 14px/40px sans-serif;
     float: right;
     padding-right: 30px;
