@@ -359,8 +359,14 @@
          <xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
       </xsl:variable>
       
+      <xsl:variable name="rawId">
+         <xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
+      </xsl:variable>
+      
+      <xsl:variable name="idTokens" select="tokenize($rawId, '/')"/>
+      
       <Placemark>
-         <name><xsl:value-of select="@gml:id"/></name>
+         <name><xsl:value-of select="$idTokens[last()]"/></name>
          <description>
             <![CDATA[<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">
             <tr><td>Borehole Name</td><td>]]><xsl:value-of select="./gml:name[@codeSpace!='http://www.ietf.org/rfc/rfc2616']"/>
@@ -369,8 +375,8 @@
             <![CDATA[</td></tr><tr><td>Start Depth (m)</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner"/>
             <![CDATA[</td></tr><tr><td>End Depth (m)</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:upperCorner"/>
             <![CDATA[</td></tr><tr><td>Core Custodian</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:title"/>
-            <![CDATA[</td></tr><tr><td>Operator</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:driller/@xlink:title"/>
-            <![CDATA[</td></tr><tr><td>Date of Drilling</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling"/>
+            <![CDATA[</td></tr><tr><td>Drilling Co.</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:driller/@xlink:title"/>
+            <![CDATA[</td></tr><tr><td>Drilling Date</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling"/>
             <![CDATA[</td></tr><tr><td>Drilling Method</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:drillingMethod"/>
             <![CDATA[</td></tr><tr><td>Inclination Type</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:inclinationType"/>
             <![CDATA[</td></tr><tr><td>Start Point</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:startPoint"/>
