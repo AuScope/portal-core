@@ -7,10 +7,6 @@
       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd"
    >
 
-    <!-- This is very important - it will selectively load our beans for the (machine specified) profile
-    or use the default profile if none is specified. See AUS-1932 -->
-    <import resource="profile-${AUSCOPE_PORTAL_PROFILE:portal-test}.xml" />
-
    <!-- Turn on HostPrecedingPropertyPlaceholderConfigurer -->
    <!-- http://jdwyah.blogspot.com/2006/12/updated-spring-configuration.html -->
    <bean id="propertyConfigurer" class="org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer">
@@ -27,7 +23,7 @@
    </bean>
 
     <bean id="cswAuscopeDev" class="org.auscope.portal.server.web.service.CSWServiceItem">
-        <constructor-arg index="0" value="http://auscope-portal-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
+        <constructor-arg index="0" value="http://auscope-portal-dev.arrc.csiro.au/geonetwork/srv/en/csw"/>
     </bean>
 
 	<bean id="cswAuscopeTest" class="org.auscope.portal.server.web.service.CSWServiceItem">
