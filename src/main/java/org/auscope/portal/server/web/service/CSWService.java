@@ -108,7 +108,7 @@ public class CSWService {
             	//and hammering an external resource, at this point all communications with the external
             	//source have finished.
             	this.updateInProgress = false;
-                log.trace("Update completed");
+                log.info("Update completed");
             }
     	}
     }
@@ -120,9 +120,7 @@ public class CSWService {
     private HttpServiceCaller serviceCaller;
     private CSWThreadExecutor executor;
     private Util util;
-    private static final int UPDATE_INTERVAL = 300000;
-    private static int FIRST_UPDATE_INTERVAL = 60000;
-    private boolean FIRST_UPDATE_COMPLETE = false;
+    private static final int UPDATE_INTERVAL = 600000;
 
     @Autowired
     public CSWService(CSWThreadExecutor executor,
@@ -151,14 +149,8 @@ public class CSWService {
 
             // Update the cache if it's not already updating
     		if (!currentCache.getUpdateInProgress()) {
-    			//First update is 60 seconds post load
-    			if ((FIRST_UPDATE_COMPLETE == false) && (System.currentTimeMillis() - currentCache.getLastTimeUpdated() > FIRST_UPDATE_INTERVAL)) {
-    				FIRST_UPDATE_COMPLETE=true;
-	            	currentCache.setUpdateInProgress(true);
-	                executor.execute(currentCache);
-    			}
-    			//Update cache each 5 mins.
-    			else if ((System.currentTimeMillis() - currentCache.getLastTimeUpdated() > UPDATE_INTERVAL)) {
+    			//Update cache each UPDATE_INTERVAL mins.
+    			if ((System.currentTimeMillis() - currentCache.getLastTimeUpdated() > UPDATE_INTERVAL)) {
 	            	currentCache.setUpdateInProgress(true);
 	                executor.execute(currentCache);
 	            }
