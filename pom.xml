@@ -60,7 +60,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <doCheck>true</doCheck>
+                    <doCheck>false</doCheck>
                     <doUpdate>false</doUpdate>
                     <timestampFormat>{0,date,dd-MM-yyyy HH:mm}</timestampFormat>
                 </configuration>
