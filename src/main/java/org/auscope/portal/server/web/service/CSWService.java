@@ -37,6 +37,7 @@ public class CSWService {
     	private CSWRecord[] cache;
     	private long lastTimeUpdated;
     	private CSWServiceItem serviceItem;
+    	private String lastCSWresponse;
 
     	//These are cached for the run method
     	private HttpServiceCaller serviceCaller;
@@ -53,8 +54,9 @@ public class CSWService {
     		this.util = util;
     	}
 
-    	public synchronized void setCache(CSWRecord[] cache) {
+    	public synchronized void setCache(CSWRecord[] cache, String lastCSWresponse) {
     		this.cache = cache;
+    		this.lastCSWresponse = lastCSWresponse;
     		this.lastTimeUpdated = System.currentTimeMillis();
     	}
 
@@ -66,6 +68,9 @@ public class CSWService {
     		return this.lastTimeUpdated;
     	}
 
+    	public synchronized String getlastCSWresponse() {
+    		return this.lastCSWresponse;
+    	}
     	public boolean getUpdateInProgress(){
     		return updateInProgress;
     	}
@@ -82,21 +87,30 @@ public class CSWService {
                 ICSWMethodMaker getRecordsMethod = new CSWMethodMakerGetDataRecords(this.serviceItem.getServiceUrl());
                 HttpClient newClient = serviceCaller.getHttpClient();
                 String methodResponse =  serviceCaller.getMethodResponseAsString(getRecordsMethod.makeMethod(), newClient);
-                Document document = util.buildDomFromString(methodResponse);
-                CSWRecord[] tempRecords = new CSWGetRecordResponse(document).getCSWRecords();
-                //These records should also have a link back to their provider
-                if (serviceItem.getRecordInformationUrl() != null && serviceItem.getRecordInformationUrl().length() > 0) {
-                    for (CSWRecord record : tempRecords) {
-                        if (record.getFileIdentifier() != null && record.getFileIdentifier().length() > 0) {
-                            String recordInfoUrl = serviceItem.getRecordInformationUrl().replace(
-                            		serviceItem.PLACEHOLDER_RECORD_ID, record.getFileIdentifier());
-                            record.setRecordInfoUrl(recordInfoUrl);
-                        }
-                    }
-                }
 
-                //This is where we need to avoid race conditions
-                this.setCache(tempRecords);
+                // TODO: Stupid CSW response are timestamped.
+                if (methodResponse.equals(this.getlastCSWresponse())) {
+                	throw new Exception(String.format("Cache identical - not rebuilding - '%1$s'"));
+                }
+                else {
+                	log.info(String.format("Update required for serviceName='%1$s'",this.serviceItem.getServiceUrl()));
+		            Document document = util.buildDomFromString(methodResponse);
+		            CSWRecord[] tempRecords = new CSWGetRecordResponse(document).getCSWRecords();
+		            //These records should also have a link back to their provider
+		            if (serviceItem.getRecordInformationUrl() != null && serviceItem.getRecordInformationUrl().length() > 0) {
+		                for (CSWRecord record : tempRecords) {
+		                    if (record.getFileIdentifier() != null && record.getFileIdentifier().length() > 0) {
+		                        String recordInfoUrl = serviceItem.getRecordInformationUrl().replace(
+		                        		serviceItem.PLACEHOLDER_RECORD_ID, record.getFileIdentifier());
+		                        record.setRecordInfoUrl(recordInfoUrl);
+		                    }
+		                }
+		            }
+
+		            //This is where we need to avoid race conditions
+		            this.setCache(tempRecords, methodResponse);
+		            log.info(String.format("Update completed for serviceName='%1$s'",this.serviceItem.getServiceUrl()));
+                }
 
             } catch (Exception e) {
                 log.error(e);
@@ -107,7 +121,6 @@ public class CSWService {
             	//and hammering an external resource, at this point all communications with the external
             	//source have finished.
             	this.updateInProgress = false;
-                log.info(String.format("Update completed for serviceName='%1$s'",this.serviceItem.getServiceUrl()));
             }
     	}
     }

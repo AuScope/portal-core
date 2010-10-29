@@ -238,7 +238,10 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 
 	                var url = "wmsMarkerPopup.do";
 	                url += "?WMS_URL=" + serviceUrl;
-	                url += "&lat=" + latlng.lat();
+	                if( serviceUrl.substr(-1) !== "&" ) {
+	                	url += '&';
+	                }
+	                url += "lat=" + latlng.lat();
 	                url += "&lng=" + latlng.lng();
 	                url += "&QUERY_LAYERS=" + typeName;
 	                url += "&x=" + TileUtl.getTilePoint().x;
