@@ -20,7 +20,6 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     double northBoundLatitude;
 
     public CSWGeographicBoundingBox() {
-
     }
 
     public CSWGeographicBoundingBox(double westBoundLongitude,
@@ -80,25 +79,25 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
 
         CSWGeographicBoundingBox bbox = new CSWGeographicBoundingBox();
 
-        Node tempNode = (Node)xPath.evaluate("gmd:westBoundLongitude/gco:Decimal", node, XPathConstants.NODE);
-        if (tempNode == null)
+        String tempString = (String) xPath.evaluate("gmd:westBoundLongitude/gco:Decimal", node, XPathConstants.STRING);
+        if (tempString.isEmpty())
             throw new Exception("westBoundLongitude DNE");
-        bbox.westBoundLongitude = Double.parseDouble(tempNode.getTextContent());
+        bbox.westBoundLongitude = Double.parseDouble(tempString);
 
-        tempNode = (Node)xPath.evaluate("gmd:eastBoundLongitude/gco:Decimal", node, XPathConstants.NODE);
-        if (tempNode == null)
+        tempString = (String) xPath.evaluate("gmd:eastBoundLongitude/gco:Decimal", node, XPathConstants.STRING);
+        if (tempString.isEmpty())
             throw new Exception("eastBoundLongitude DNE");
-        bbox.eastBoundLongitude = Double.parseDouble(tempNode.getTextContent());
+        bbox.eastBoundLongitude = Double.parseDouble(tempString);
 
-        tempNode = (Node)xPath.evaluate("gmd:southBoundLatitude/gco:Decimal", node, XPathConstants.NODE);
-        if (tempNode == null)
+        tempString = (String) xPath.evaluate("gmd:southBoundLatitude/gco:Decimal", node, XPathConstants.STRING);
+        if (tempString.isEmpty())
             throw new Exception("southBoundLatitude DNE");
-        bbox.southBoundLatitude = Double.parseDouble(tempNode.getTextContent());
+        bbox.southBoundLatitude = Double.parseDouble(tempString);
 
-        tempNode = (Node)xPath.evaluate("gmd:northBoundLatitude/gco:Decimal", node, XPathConstants.NODE);
-        if (tempNode == null)
+        tempString = (String) xPath.evaluate("gmd:northBoundLatitude/gco:Decimal", node, XPathConstants.STRING);
+        if (tempString.isEmpty())
             throw new Exception("northBoundLatitude DNE");
-        bbox.northBoundLatitude = Double.parseDouble(tempNode.getTextContent());
+        bbox.northBoundLatitude = Double.parseDouble(tempString);
 
         return bbox;
     }

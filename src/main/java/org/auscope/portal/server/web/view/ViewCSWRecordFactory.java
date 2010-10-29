@@ -35,22 +35,30 @@ public class ViewCSWRecordFactory {
 		obj.put("dataIdentificationAbstract", record.getDataIdentificationAbstract());
 
 		List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object> >();
-		for (CSWOnlineResource res : record.getOnlineResources()) {
-		    if (res.getLinkage() != null) {
-		        onlineResources.add(this.toView(res));
-		    }
+		if (record.getOnlineResources() != null) {
+			for (CSWOnlineResource res : record.getOnlineResources()) {
+			    if (res.getLinkage() != null) {
+			        onlineResources.add(this.toView(res));
+			    }
+			}
 		}
 		obj.put("onlineResources", onlineResources);
 
+
 		List<Map<String, Object> > geographicElements = new ArrayList<Map<String, Object> >();
-		for (CSWGeographicElement geo : record.getCSWGeographicElements()) {
-			geographicElements.add(this.toView(geo));
+		if (record.getCSWGeographicElements() != null) {
+			for (CSWGeographicElement geo : record.getCSWGeographicElements()) {
+				geographicElements.add(this.toView(geo));
+			}
 		}
 		obj.put("geographicElements", geographicElements);
 
+
 		List<String> descriptiveKeywords = new ArrayList<String>();
-		for (String s : record.getDescriptiveKeywords()) {
-		    descriptiveKeywords.add(s);
+		if (record.getDescriptiveKeywords() != null ) {
+			for (String s : record.getDescriptiveKeywords()) {
+			    descriptiveKeywords.add(s);
+			}
 		}
 		obj.put("descriptiveKeywords", descriptiveKeywords);
 
