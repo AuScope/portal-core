@@ -18,11 +18,11 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     double eastBoundLongitude;
     double southBoundLatitude;
     double northBoundLatitude;
-    
+
     public CSWGeographicBoundingBox() {
-        
+
     }
-    
+
     public CSWGeographicBoundingBox(double westBoundLongitude,
             double eastBoundLongitude, double southBoundLatitude,
             double northBoundLatitude) {
@@ -55,7 +55,7 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     public void setNorthBoundLatitude(double northBoundLatitude) {
         this.northBoundLatitude = northBoundLatitude;
     }
-    
+
     /**
      * Creates a bounding box by parsing a gmd:EX_GeographicBoundingBox node and its children
      * (Will use an instance of CSWNamespaceContext as the namespace to use in XPath extraction)
@@ -65,41 +65,41 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
     public static CSWGeographicBoundingBox fromGeographicBoundingBoxNode(Node node) throws Exception {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());
-        
+
         return fromGeographicBoundingBoxNode(node, xPath);
     }
-    
+
     /**
      * Creates a bounding box by parsing a gmd:EX_GeographicBoundingBox node and its children
-     * 
+     *
      * @param node should represent a gmd:EX_GeographicBoundingBox node
      * @param xpath will be used to extract elements from node
      * @return
      */
     public static CSWGeographicBoundingBox fromGeographicBoundingBoxNode(Node node, XPath xPath) throws Exception {
-        
+
         CSWGeographicBoundingBox bbox = new CSWGeographicBoundingBox();
-        
+
         Node tempNode = (Node)xPath.evaluate("gmd:westBoundLongitude/gco:Decimal", node, XPathConstants.NODE);
         if (tempNode == null)
             throw new Exception("westBoundLongitude DNE");
         bbox.westBoundLongitude = Double.parseDouble(tempNode.getTextContent());
-        
+
         tempNode = (Node)xPath.evaluate("gmd:eastBoundLongitude/gco:Decimal", node, XPathConstants.NODE);
         if (tempNode == null)
             throw new Exception("eastBoundLongitude DNE");
         bbox.eastBoundLongitude = Double.parseDouble(tempNode.getTextContent());
-        
+
         tempNode = (Node)xPath.evaluate("gmd:southBoundLatitude/gco:Decimal", node, XPathConstants.NODE);
         if (tempNode == null)
             throw new Exception("southBoundLatitude DNE");
         bbox.southBoundLatitude = Double.parseDouble(tempNode.getTextContent());
-        
+
         tempNode = (Node)xPath.evaluate("gmd:northBoundLatitude/gco:Decimal", node, XPathConstants.NODE);
         if (tempNode == null)
             throw new Exception("northBoundLatitude DNE");
         bbox.northBoundLatitude = Double.parseDouble(tempNode.getTextContent());
-        
+
         return bbox;
     }
 }

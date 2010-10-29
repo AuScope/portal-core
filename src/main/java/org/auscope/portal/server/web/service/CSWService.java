@@ -84,7 +84,6 @@ public class CSWService {
                 String methodResponse =  serviceCaller.getMethodResponseAsString(getRecordsMethod.makeMethod(), newClient);
                 Document document = util.buildDomFromString(methodResponse);
                 CSWRecord[] tempRecords = new CSWGetRecordResponse(document).getCSWRecords();
-
                 //These records should also have a link back to their provider
                 if (serviceItem.getRecordInformationUrl() != null && serviceItem.getRecordInformationUrl().length() > 0) {
                     for (CSWRecord record : tempRecords) {
@@ -108,7 +107,7 @@ public class CSWService {
             	//and hammering an external resource, at this point all communications with the external
             	//source have finished.
             	this.updateInProgress = false;
-                log.info("Update completed");
+                log.info(String.format("Update completed for serviceName='%1$s'",this.serviceItem.getServiceUrl()));
             }
     	}
     }

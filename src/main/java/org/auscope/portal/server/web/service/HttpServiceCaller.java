@@ -54,7 +54,9 @@ public class HttpServiceCaller {
         this.invokeTheMethod(method, httpClient);
 
         //get the reponse before we close the connection
-        String response = method.getResponseBodyAsString();
+        //String response = method.getResponseBodyAsString();
+
+        String response = responseToString(new BufferedInputStream(method.getResponseBodyAsStream()));
 
         //release the connection
         method.releaseConnection();

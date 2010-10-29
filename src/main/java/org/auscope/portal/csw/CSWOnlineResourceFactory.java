@@ -15,40 +15,38 @@ public abstract class CSWOnlineResourceFactory {
      * @param node Must be a <gmd:CI_OnlineResource> node
      * @param xPath Must be configured with CSWNamespaceContext
      * @return
-     * @throws XPathExpressionException 
+     * @throws XPathExpressionException
      * @throws Exception
      */
+
+	private static final String protocolXpath = "gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString";
+	private static final String nameXpath = "gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
+	private static final String descriptionXpath = "gmd:CI_OnlineResource/gmd:description/gco:CharacterString";
+	private static final String urlXpath = "gmd:CI_OnlineResource/gmd:linkage/gmd:URL";
+
+
     public static CSWOnlineResource parseFromNode(Node node, XPath xPath) throws XPathExpressionException {
-        Node temp = null;
-        Node urlNode = null;
-        URL url = null;
+        String urlString = null;
         String name = "";
         String description = "";
         String protocol = "";
-        
+        URL url = null;
+
     	try {
-            urlNode = (Node) xPath.evaluate("gmd:CI_OnlineResource/gmd:linkage/gmd:URL", node, XPathConstants.NODE);
-            if(urlNode != null) {
-            	url = new URL(urlNode.getTextContent());
+    		urlString = (String) xPath.evaluate(urlXpath, node, XPathConstants.STRING);
+            if(urlString != null) {
+            	url = new URL(urlString);
             }
     	} catch (MalformedURLException ex) {
     		//TODO: URLs may now be malformed but we don't want to stop processing because of it
     		// as we are now allowing for multiple URLs. Ignore for now.
     		//	throw new IllegalArgumentException(String.format("malformed url '%1$s'",temp.getTextContent()), ex);
-    	}        	
-        
-        temp = (Node) xPath.evaluate("gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString", node, XPathConstants.NODE);
-        if (temp != null)
-            protocol = temp.getTextContent();
-        
-        temp = (Node) xPath.evaluate("gmd:CI_OnlineResource/gmd:name/gco:CharacterString", node, XPathConstants.NODE);
-        if (temp != null)
-            name = temp.getTextContent();
-        
-        temp = (Node) xPath.evaluate("gmd:CI_OnlineResource/gmd:description/gco:CharacterString", node, XPathConstants.NODE);
-        if (temp != null)
-            description = temp.getTextContent();
-        
+    	}
+
+    	protocol = (String) xPath.evaluate(protocolXpath, node, XPathConstants.STRING);
+    	name = (String) xPath.evaluate(nameXpath, node, XPathConstants.STRING);
+        description = (String) xPath.evaluate(descriptionXpath, node, XPathConstants.STRING);
+
         return new CSWOnlineResourceImpl(url, protocol, name, description);
     }
 }
