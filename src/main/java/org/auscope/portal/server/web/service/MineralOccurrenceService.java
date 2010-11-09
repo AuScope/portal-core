@@ -108,32 +108,11 @@ log.info(".......default C'tor");
         log.debug("Mine query... url:" + serviceURL);
         log.trace("Mine query... filter:" + filter.getFilterStringBoundingBox(bbox));
 
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", filter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", filter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
 
         //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
         return method;
     }
-
-    /**
-     * Get all the mines from a given service url and return the response
-     * @param serviceURL
-     * @return
-     * @throws Exception
-     */
-    public HttpMethodBase getAllMinesGML(String serviceURL, int maxFeatures) throws Exception {
-        MineFilter filter = new MineFilter("");
-
-        log.debug("Mine query... url:" + serviceURL);
-        log.trace("Mine query... filter: " + filter.getFilterStringAllRecords());
-
-        //create a GetFeature request with an empty filter - get all
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", filter.getFilterStringAllRecords(), maxFeatures);
-
-        //call the service, and get all the mines
-       //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
-    }
-
 
     /**
      * Given a specific service and a mineName, get that mine from the service
@@ -152,6 +131,25 @@ log.info(".......default C'tor");
         return mines;
     }
 
+    /**
+     * Get all the mines from a given service url and return the response
+     * @param serviceURL
+     * @return
+     * @throws Exception
+     */
+    public HttpMethodBase getAllMinesGML(String serviceURL, int maxFeatures) throws Exception {
+        MineFilter filter = new MineFilter("");
+
+        log.debug("Mine query... url:" + serviceURL);
+        log.trace("Mine query... filter: " + filter.getFilterStringAllRecords());
+
+        //create a GetFeature request with an empty filter - get all
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", filter.getFilterStringAllRecords(), maxFeatures);
+
+        //call the service, and get all the mines
+       //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        return method;
+    }
 
     /**
      * Given a specific service and a mineName, get that mine from the service
@@ -169,7 +167,7 @@ log.info(".......default C'tor");
         log.trace("Mine query... filter:" + mineFilter.getFilterStringAllRecords());
 
         //create a GetFeature request with filter constraints on a query
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", mineFilter.getFilterStringAllRecords(), maxFeatures);
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", mineFilter.getFilterStringAllRecords(), maxFeatures);
 
         //call the service, and get all the mines
         //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
@@ -194,7 +192,7 @@ log.info(".......default C'tor");
         log.trace("Mine query... filter:" + mineFilter.getFilterStringBoundingBox(bbox));
 
         //create a GetFeature request with filter constraints on a query
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:Mine", mineFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", mineFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
 
         //call the service, and get all the mines
         //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());

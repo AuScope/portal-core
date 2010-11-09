@@ -159,9 +159,10 @@ public class EarthResourcesFilterController {
             requestInfo.add(serviceUrl);
             requestInfo.add(body);
 
-            String kmlBlob =  convertToKml(gmlBlob, request, serviceUrl);
+            String kmlBlob =  convertMineResponseToKml(gmlBlob, request, serviceUrl);
 
-            //log.debug(kmlBlob);
+            log.debug(kmlBlob);
+
             //This failure test should be made a little bit more robust
             //And should probably try to extract an error message
             if (kmlBlob == null || kmlBlob.length() == 0) {
@@ -205,12 +206,11 @@ public class EarthResourcesFilterController {
         @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
         HttpServletRequest request) throws Exception
     {
-        //The presence of a bounding box causes us to assume we will be using this GML for visualizing on a map
+        //The presence of a bounding box causes us to assume we will be using this GML for visualising on a map
         //This will in turn limit the number of points returned to 200
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
 
         JSONArray requestInfo = new JSONArray();
-
         try {
 
             //get the mineral occurrences
@@ -226,8 +226,6 @@ public class EarthResourcesFilterController {
                         minCommodityAmount,
                         minCommodityAmountUOM,
                         maxFeatures);
-            	mineralOccurrenceResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-
             } else {
                 method = this.mineralOccurrenceService.getVisibleMineralOccurrenceGML (
                             serviceUrl,
@@ -239,8 +237,10 @@ public class EarthResourcesFilterController {
                             minCommodityAmountUOM,
                             bbox,
                             maxFeatures);
-                mineralOccurrenceResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
             }
+
+            mineralOccurrenceResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+
             RequestEntity ent;
             String body = null;
             if (method instanceof PostMethod) {
@@ -540,6 +540,17 @@ public class EarthResourcesFilterController {
         return new JSONModelAndView(model);
     }
 
+    /**
+     * Assemble a call to convert GeoSciML into kml format
+     * @param geoXML
+     * @param httpRequest
+     * @param serviceUrl
+     */
+    private String convertMineResponseToKml(String geoXML, HttpServletRequest httpRequest, String serviceUrl) {
+        InputStream inXSLT = httpRequest.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/mine-kml.xslt");
+
+        return gmlToKml.convert(geoXML, inXSLT, serviceUrl);
+    }
 
     /**
      * Assemble a call to convert GeoSciML into kml format

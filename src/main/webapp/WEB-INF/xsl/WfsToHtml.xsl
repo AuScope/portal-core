@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0"
+<xsl:stylesheet version="2.0"
                 xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
@@ -10,19 +10,22 @@
                 xmlns:wfs="http://www.opengis.net/wfs"
                 exclude-result-prefixes="er gml wfs fo gsml xlink">
     <xsl:output method="html" indent="yes"/>
-    
+
     <!-- External Parameters -->
     <xsl:param name="serviceURL"/>
+    <xsl:param name="vocabserviceURL"/>
+    <xsl:param name="vocabservice-reponame"/>
+    <xsl:variable name="vocab-hard-coded-lookup" select="concat('http://auscope-services-test.arrc.csiro.au/vocab-service/query?repository=commodity_vocab','&amp;','id=','')"/>
 
     <!-- Global Variables -->
 
-    
+
     <xsl:template match="/">
-    <!-- 
+    <!--
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
     -->
-    
+
         <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
             <head>
                 <style type="text/css">
@@ -72,24 +75,19 @@
                     td.no_border {
                         border-top: none;
                     }
+                    
                 </style>
                 <title>AuScope Portal Project</title>
-                <!-- 
-                <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1" />
-                -->
                 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-                
-
-                <meta content="Jarek Sanders" name="author"/>
             </head>
             <body>
                 <div>
                     <img alt="" src="img/img-auscope-banner.gif" style="border: 0px solid;" />
                 </div>
-                <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMember/er:MineralOccurrence | er:MineralOccurrence"/>
-                <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMember/er:Mine | er:Mine"/>
-                <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMember/er:MiningActivity | er:MiningActivity"/>
-                <xsl:apply-templates select="er:Commodity"/>
+                <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMembers/er:MineralOccurrence | er:MineralOccurrence"/>
+                <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMembers/er:Mine | er:Mine"/>
+                <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMembers/er:MiningActivity | er:MiningActivity"/>
+                <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMembers/er:Commodity | er:Commodity"/>
             </body>
         </html>
     </xsl:template>
@@ -103,7 +101,7 @@
                 <tr>
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - MiningActivity</td>
                     <td>&#160;</td>
-                    <td colspan="2" ALIGN="right"><b>View As: </b><a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>                        
+                    <td colspan="2" ALIGN="right"><b>View As: </b><a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>
                     </td>
                 </tr>
                 <!-- Mining Activity Type -->
@@ -111,7 +109,7 @@
                     <td class="row header">Mining Activity Type</td>
                     <td class="row"><xsl:value-of select="./er:activityType"/></td>
                     <td class="row header">MiningActivity Id:</td>
-                    <td class="row" colspan="2"><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/></td>
+                    <td class="row" colspan="2"><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/></td>
                 </tr>
                 <!-- Start Date -->
                 <tr>
@@ -162,7 +160,7 @@
                     <td><xsl:value-of select="./er:Product/er:productName"/></td>
                     <td><xsl:value-of select="./er:Product/er:production"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:Product/er:production/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                     <td><xsl:value-of select="./er:Product/er:recovery"/></td>
-                    <td><xsl:value-of select="./er:Product/er:grade"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:Product/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>                          
+                    <td><xsl:value-of select="./er:Product/er:grade"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:Product/er:grade/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                 </tr>
                 </xsl:when>
                 <xsl:otherwise>
@@ -216,7 +214,7 @@
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - Mine</td>
                     <td>&#160;</td>
                     <td colspan="2" ALIGN="right"><b>View As: </b>
-                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>                        
+                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>
                     </td>
                 </tr>
                 <!-- Mine Name -->
@@ -224,7 +222,7 @@
                     <td class="row header">Mine Name</td>
                     <td class="row"><xsl:value-of select="./er:mineName/er:MineName[./er:isPreferred = true()]/er:mineName/text()"/></td>
                     <td class="row header">Mine Id:</td>
-                    <td class="row" colspan="2"><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/></td>
+                    <td class="row" colspan="2"><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/></td>
                 </tr>
                 <!-- Alternative Mine Name -->
         <xsl:for-each select="./er:mineName/er:MineName[./er:isPreferred = 'false']">
@@ -276,7 +274,7 @@
                     <td class="row header">Mining Activity Id:</td>
                     <td class="row" colspan="2">
                         <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
-                    </td>                                        
+                    </td>
                 </tr>
                 </xsl:when>
                 <xsl:otherwise>
@@ -303,7 +301,7 @@
                         <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
                     </td>
                 </tr>
-                </xsl:when> 
+                </xsl:when>
                 <xsl:otherwise>
                 <tr>
                     <td>&#160;</td>
@@ -324,21 +322,39 @@
     <!-- TEMPLATE FOR TRANSLATING Commodity -->
     <!-- =============================================================== -->
     <xsl:template match="er:Commodity">
+        <xsl:variable name="commodity_id" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
+        <xsl:variable name="commodity_name" select="./er:commodityName"/>
         <table>
             <tbody>
                 <tr>
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - Commodity</td>
                     <td>&#160;</td>
                     <td colspan="2" ALIGN="right"><b>View As: </b>
-                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>                        
+                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>
                     </td>
                 </tr>
                 <!-- Commodity -->
                 <tr>
                     <td class="row header">Commodity</td>
-                    <td class="row"><xsl:value-of select="er:commodityName"/></td>
+                    <td class="row">
+                        <xsl:call-template name="make-popup-url">
+                            <xsl:with-param name="friendly-name" select="$commodity_name"/>
+                            <xsl:with-param name="real-url" select="concat($vocab-hard-coded-lookup,$commodity_name)"/>
+                        </xsl:call-template>
+                    </td>
                     <td class="row header">Commodity Id:</td>
-                    <td class="row" colspan="1"><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/></td>
+                    <td class="row" colspan="1">
+                        <xsl:call-template name="make-wfspopup-url">
+                            <xsl:with-param name="friendly-name" select="$commodity_id"/>
+                            <xsl:with-param name="real-url" select="$commodity_id"/>
+                        </xsl:call-template>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row header">Local Name*</td>
+                    <td class="row"><xsl:value-of select="./gml:name[not(@codeSpace='http://www.ietf.org/rfc/rfc2616')]"/></td>
+                    <td class="row header">Local Group*</td>
+                    <td class="row" colspan="1"><xsl:value-of select="./er:commodityGroup[not(@codeSpace='http://www.ietf.org/rfc/rfc2616')]"/></td>
                 </tr>
                 <tr>
                     <td class="row header">Importance</td>
@@ -354,17 +370,23 @@
                     <td class="row">&#160;</td>
                     <td class="row header">Earth Resource Id:</td>
                     <td class="row" colspan="1">
-                        <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
+                        <xsl:call-template name="make-wfspopup-url">
+                            <xsl:with-param name="friendly-name" select="@xlink:href"/>
+                            <xsl:with-param name="real-url" select="@xlink:href"/>
+                        </xsl:call-template>
                     </td>
                 </tr>
-                </xsl:when> 
+                </xsl:when>
                 <xsl:otherwise>
                 <tr>
                     <td>&#160;</td>
                     <td>&#160;</td>
                     <td class="row header">Earth Resource Id:</td>
                     <td class="row" colspan="1">
-                        <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>
+                        <xsl:call-template name="make-wfspopup-url">
+                            <xsl:with-param name="friendly-name" select="@xlink:href"/>
+                            <xsl:with-param name="real-url" select="@xlink:href"/>
+                        </xsl:call-template>
                     </td>
                 </tr>
                 </xsl:otherwise>
@@ -378,13 +400,16 @@
     <!-- TEMPLATE FOR TRANSLATING Mineral Occurrence -->
     <!-- =============================================================== -->
     <xsl:template match="er:MineralOccurrence">
+        <xsl:variable name="minocc_id">
+            <xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
+        </xsl:variable>
         <table>
             <tbody>
                 <tr>
                     <td class="caption" colspan="2" rowspan="1">EarthResourceML - MineralOccurrence</td>
                     <td>&#160;</td>
                     <td colspan="2" ALIGN="right"><b>View As: </b>
-                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>                        
+                        <a href="#" onclick="var w=window.open('{$serviceURL}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">EarthResourceML</a>
                     </td>
                 </tr>
                 <!-- Type -->
@@ -392,10 +417,15 @@
                     <td class="row header">Type</td>
                     <td class="row"><xsl:value-of select="er:type"/></td>
                     <td class="row header">Id:</td>
-                    <td class="row" colspan="2"><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2141']"/></td>
+                    <td class="row" colspan="2">
+                        <xsl:call-template name="make-wfspopup-url">
+                            <xsl:with-param name="friendly-name" select="$minocc_id"/>
+                            <xsl:with-param name="real-url" select="$minocc_id"/>
+                        </xsl:call-template>
+                    </td>
                 </tr>
                 <!-- Mineral Occurrence Name -->
-        <xsl:for-each select="./gml:name[not(@codeSpace='http://www.ietf.org/rfc/rfc2141')]">
+        <xsl:for-each select="./gml:name[not(@codeSpace='http://www.ietf.org/rfc/rfc2616')]">
             <xsl:choose>
                 <xsl:when test="position()=1">
                 <tr>
@@ -426,25 +456,45 @@
         </xsl:if>
                 <!-- Commodity -->
         <xsl:for-each select="./er:commodityDescription">
-            <xsl:variable name="comm_description" select="@xlink:href"></xsl:variable>
+            <xsl:variable name="comm_description">
+                <xsl:value-of select="@xlink:href"/>
+            </xsl:variable>
+            <xsl:variable name="comm_name">
+                <xsl:value-of select="./er:Commodity/er:commodityName"/>
+            </xsl:variable>
+            <xsl:variable name="comm_url">
+                <xsl:value-of select="./er:Commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
+            </xsl:variable>
             <xsl:choose>
                 <xsl:when test="position()=1">
                 <tr>
                     <td class="row header">Commodity</td>
-                    <td class="row"><xsl:value-of select="./er:Commodity/er:commodityName"/></td>
+                    <td class="row"><xsl:call-template name="make-popup-url">
+                        <xsl:with-param name="friendly-name" select="$comm_name"/>
+                        <xsl:with-param name="real-url" select="concat($vocab-hard-coded-lookup,$comm_name)"/>
+                    </xsl:call-template></td>
                     <td class="row header">Id:</td>
                     <td class="row" colspan="2">
-                        <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>      
+                        <xsl:call-template name="make-wfspopup-url">
+                            <xsl:with-param name="friendly-name" select="$comm_url"/>
+                            <xsl:with-param name="real-url" select="$comm_url"/>
+                        </xsl:call-template>
                     </td>
                 </tr>
                 </xsl:when>
                 <xsl:otherwise>
                 <tr>
                     <td>&#160;</td>
-                    <td class="row"><xsl:value-of select="./er:Commodity/er:commodityName"/></td>
+                    <td class="row"><xsl:call-template name="make-popup-url">
+                        <xsl:with-param name="friendly-name" select="$comm_name"/>
+                        <xsl:with-param name="real-url" select="concat($vocab-hard-coded-lookup,$comm_name)"/>
+                    </xsl:call-template></td>
                     <td class="row header">Id:</td>
                     <td class="row" colspan="2">
-                        <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(@xlink:href,'=')"/></a>      
+                        <xsl:call-template name="make-wfspopup-url">
+                            <xsl:with-param name="friendly-name" select="$comm_url"/>
+                            <xsl:with-param name="real-url" select="$comm_url"/>
+                        </xsl:call-template>
                     </td>
                 </tr>
                 </xsl:otherwise>
@@ -458,7 +508,7 @@
                     <td class="row" colspan="2"><xsl:value-of select="./gsml:purpose"/></td>
                 </tr>
                  <!-- Dimension -->
-       <xsl:if test="./er:dimension">                                 
+       <xsl:if test="./er:dimension">
                 <tr>
                     <td class="row header">Dimension</td>
                     <td class="row col_header">Area</td>
@@ -467,11 +517,11 @@
                     <td class="row col_header">Width</td>
                 </tr>
                 <tr>
-                    <td></td>                                                        
+                    <td></td>
                     <td><xsl:value-of select="./er:dimension/er:EarthResourceDimension/er:area/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:dimension/er:EarthResourceDimension/er:area/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                     <td><xsl:value-of select="./er:dimension/er:EarthResourceDimension/er:depth/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:dimension/er:EarthResourceDimension/er:depth/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                     <td><xsl:value-of select="./er:dimension/er:EarthResourceDimension/er:length/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:dimension/er:EarthResourceDimension/er:length/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
-                    <td><xsl:value-of select="./er:dimension/er:EarthResourceDimension/er:width/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:dimension/er:EarthResourceDimension/er:width/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>                    
+                    <td><xsl:value-of select="./er:dimension/er:EarthResourceDimension/er:width/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:dimension/er:EarthResourceDimension/er:width/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                 </tr>
        </xsl:if>
                 <!-- Appearance -->
@@ -518,7 +568,7 @@
                     <td class="row col_header">&#160;</td>
                 </tr>
                 <tr>
-                    <td></td>                                                        
+                    <td></td>
                     <td><xsl:value-of select="./er:planarOrientation/gsml:CGI_PlanarOrientation/gsml:convention"/></td>
                     <td><xsl:value-of select="./er:planarOrientation/gsml:CGI_PlanarOrientation/gsml:azimuth/gsml:CGI_NumericValue/gsml:principalValue"/></td>
                     <td><xsl:value-of select="./er:planarOrientation/gsml:CGI_PlanarOrientation/gsml:dip/gsml:CGI_NumericValue/gsml:principalValue"/></td>
@@ -535,7 +585,7 @@
                     <td class="row col_header">&#160;</td>
                 </tr>
                 <tr>
-                    <td></td>                                            
+                    <td></td>
                     <td><xsl:value-of select="./er:classification/er:MineralDepositModel/er:mineralDepositGroup"/></td>
                     <td></td>
                     <td><xsl:value-of select="./er:classification/er:MineralDepositModel/er:mineralDepositType"/></td>
@@ -553,10 +603,10 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td></td>                                          
+                    <td></td>
                     <!-- <td><xsl:value-of select="./er:supergeneModification/er:SupergeneProcesses/er:material/gsml:lithology"/></td> -->
                     <td><xsl:value-of select="./er:supergeneModification/er:SupergeneProcesses/er:type/gsml:CGI_TermValue/gsml:value"/></td>
-                    <td><xsl:value-of select="./er:supergeneModification/er:SupergeneProcesses/er:depth/gsml:CGI_Numeric/gsml:CGI_NumericValue/gsml:principalValue"/></td>                                        
+                    <td><xsl:value-of select="./er:supergeneModification/er:SupergeneProcesses/er:depth/gsml:CGI_Numeric/gsml:CGI_NumericValue/gsml:principalValue"/></td>
                     <td></td>
                 </tr>
        </xsl:if>
@@ -580,7 +630,7 @@
                     </td>
                     <td></td>
                 </tr>
-       </xsl:if>                
+       </xsl:if>
                 <!-- Geological History -->
        <xsl:if test="./gsml:preferredAge/gsml:GeologicEvent">
                 <tr>
@@ -604,31 +654,30 @@
         <xsl:for-each select="./er:oreAmount/er:Reserve">
                 <tr>
                     <td class="row header">Reserves</td>
-                    <td class="row"><xsl:value-of select="./er:ore"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>                    
+                    <td class="row"><xsl:value-of select="./er:ore"/><xsl:value-of select="' '"/><xsl:value-of select="substring-after(./er:ore/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/></td>
                     <td class="row"><xsl:value-of select="./er:category"/></td>
                     <td class="row header">Date:</td>
                     <td class="row"><xsl:value-of select="./er:date"/></td>
                 </tr>
             <xsl:for-each select="./er:measureDetails">
-                <xsl:variable name="comm_description" select="/er:CommodityMeasure/er:commodityOfInterest/@xlink:href"></xsl:variable>
-                    <tr>
-                        <td class="col_header">Commodity</td>
-                        <td class="row">
-                            <xsl:choose>
-                                <xsl:when test="./er:CommodityMeasure/er:commodityOfInterest/er:commodity/er:commodityName">
-                                    <xsl:value-of select="./er:CommodityMeasure/er:commodityOfInterest/er:commodity/er:commodityName"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:call-template name="substring-after-last">
-                                        <xsl:with-param name="input" select="./er:CommodityMeasure/er:commodityOfInterest/@xlink:href" />
-                                        <xsl:with-param name="substr" select="':'" />
-                                    </xsl:call-template>
-                                </xsl:otherwise>
-                            </xsl:choose>
-                        </td>
-                        <td class="row header">Commodity Id:</td>
+                <xsl:variable name="comm_description" select="substring-after(./er:CommodityMeasure/er:commodityOfInterest/@xlink:href,'#')"></xsl:variable>
+                <xsl:variable name="comm_org_name" select="../../../er:commodityDescription/er:Commodity[@gml:id=concat($comm_description,'')]/gml:name[not(@codeSpace='http://www.ietf.org/rfc/rfc2616')]"></xsl:variable>
+                <xsl:variable name="comm_std_name" select="../../../er:commodityDescription/er:Commodity[@gml:id=concat($comm_description,'')]/er:commodityName[@codeSpace='urn:cgi:classifierScheme:GA:commodity']"></xsl:variable>
+                <xsl:variable name="comm_url" select="../../../er:commodityDescription/er:Commodity[@gml:id=concat($comm_description,'')]/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"></xsl:variable>
+                <tr>
+                    <td class="col_header" >Commodity:</td>
+                    <td class="row">
+                        <xsl:call-template name="make-popup-url">
+                            <xsl:with-param name="friendly-name" select="$comm_std_name"/>
+                            <xsl:with-param name="real-url" select="concat($vocab-hard-coded-lookup,$comm_std_name)"/>
+                        </xsl:call-template>
+                    </td>
+                    <td class="row header">Commodity Id:</td>
                         <td class="row" colspan="2">
-                            <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={./er:CommodityMeasure/er:commodityOfInterest/@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(.//er:CommodityMeasure/er:commodityOfInterest/@xlink:href,'=')"/></a>
+                            <xsl:call-template name="make-wfspopup-url">
+                                <xsl:with-param name="friendly-name" select="$comm_description"/>
+                                <xsl:with-param name="real-url" select="$comm_description"/>
+                            </xsl:call-template>
                         </td>
                     </tr>
                 <tr>
@@ -665,25 +714,24 @@
                     <td class="row"><xsl:value-of select="./er:date"/></td>
                 </tr>
             <xsl:for-each select="./er:measureDetails">
-                <xsl:variable name="comm_description" select="/er:CommodityMeasure/er:commodityOfInterest/@xlink:href"></xsl:variable>
+                <xsl:variable name="comm_description" select="substring-after(./er:CommodityMeasure/er:commodityOfInterest/@xlink:href,'#')"></xsl:variable>
+                <xsl:variable name="comm_org_name" select="../../../er:commodityDescription/er:Commodity[@gml:id=concat($comm_description,'')]/gml:name[not(@codeSpace='http://www.ietf.org/rfc/rfc2616')]"></xsl:variable>
+                <xsl:variable name="comm_std_name" select="../../../er:commodityDescription/er:Commodity[@gml:id=concat($comm_description,'')]/er:commodityName[@codeSpace='urn:cgi:classifierScheme:GA:commodity']"></xsl:variable>
+                <xsl:variable name="comm_url" select="../../../er:commodityDescription/er:Commodity[@gml:id=concat($comm_description,'')]/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"></xsl:variable>
                     <tr>
                         <td class="col_header" >Commodity:</td>
                         <td class="row">
-                            <xsl:choose>
-                                <xsl:when test="./er:CommodityMeasure/er:commodityOfInterest/er:commodity/er:commodityName">
-                                    <xsl:value-of select="./er:CommodityMeasure/er:commodityOfInterest/er:commodity/er:commodityName"/>
-                                </xsl:when>
-                                <xsl:otherwise>
-                                    <xsl:call-template name="substring-after-last">
-                                        <xsl:with-param name="input" select="./er:CommodityMeasure/er:commodityOfInterest/@xlink:href" />
-                                        <xsl:with-param name="substr" select="':'" />
-                                    </xsl:call-template>
-                                </xsl:otherwise>
-                            </xsl:choose>
+                            <xsl:call-template name="make-popup-url">
+                                <xsl:with-param name="friendly-name" select="$comm_std_name"/>
+                                <xsl:with-param name="real-url" select="concat($vocab-hard-coded-lookup,$comm_std_name)"/>
+                            </xsl:call-template>
                         </td>
                         <td class="row header">Id:</td>
                         <td class="row" colspan="2">
-                            <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={./er:CommodityMeasure/er:commodityOfInterest/@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(.//er:CommodityMeasure/er:commodityOfInterest/@xlink:href,'=')"/></a>
+                            <xsl:call-template name="make-wfspopup-url">
+                                <xsl:with-param name="friendly-name" select="$comm_url"/>
+                                <xsl:with-param name="real-url" select="$comm_url"/>
+                            </xsl:call-template>
                         </td>
                     </tr>
                 <tr>
@@ -747,7 +795,7 @@
         </table>
     </xsl:template>
 
-    
+
     <!-- ================================================================= -->
     <!--    FUNCTION TO GET STRING AFTER LAST OCCURRENCE OF A SUBSTR       -->
     <!--    PARAM: input - string to search within                         -->
@@ -756,10 +804,10 @@
     <xsl:template name="substring-after-last">
         <xsl:param name="input"/>
         <xsl:param name="substr"/>
-  
+
         <!-- Extract the string which comes after the first occurence -->
         <xsl:variable name="temp" select="substring-after($input,$substr)"/>
-  
+
         <xsl:choose>
             <xsl:when test="$substr and contains($temp,$substr)">
                 <xsl:call-template name="substring-after-last">
@@ -775,7 +823,7 @@
 
 
     <!-- ================================================================= -->
-    <!--    THIS FUNCTION CHECKS IF GIVEN STRING CONTAINS %25 ESCAPE       --> 
+    <!--    THIS FUNCTION CHECKS IF GIVEN STRING CONTAINS %25 ESCAPE       -->
     <!--    SEQUENCE. IF IT DOES, IT RETURNS UN-ESCAPED % CHARACTER        -->
     <!--    OTHERWISE RETURNS BACK UNMODIFIED INPUT STRING                 -->
     <!--    PARAM: value                                                   -->
@@ -790,6 +838,35 @@
                 <xsl:value-of select="$value"/>
             </xsl:otherwise>
         </xsl:choose>
-   </xsl:template>
-   
+    </xsl:template>
+    
+    
+    <!-- ================================================================= -->
+    <!--    This function creates a same window popup link                 -->
+    <!--    PARAM: friendly-name                                           -->
+    <!--    PARAM: real-url                                                -->
+    <!--    Returns something like this
+        <a href="#" onclick="var w=window.open('{real-url}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">friendly-name</a>
+        -->
+    <!-- ================================================================= -->
+    <xsl:template name="make-popup-url">
+        <xsl:param name="friendly-name"/>
+        <xsl:param name="real-url"/>
+        <a href="#" onclick="var w=window.open('{$real-url}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;"><xsl:value-of select="$friendly-name"/></a>
+    </xsl:template>
+
+    <!-- ================================================================= -->
+    <!--    This function creates a same window popup link                 -->
+    <!--    PARAM: friendly-name                                           -->
+    <!--    PARAM: real-url                                                -->
+    <!--    Returns something like this
+        <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={real-url}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;">friendly-name</a>
+    -->
+    <!-- ================================================================= -->
+    <xsl:template name="make-wfspopup-url">
+        <xsl:param name="friendly-name"/>
+        <xsl:param name="real-url"/>
+        <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={$real-url}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;"><xsl:value-of select="$friendly-name"/></a>
+    </xsl:template>
+
 </xsl:stylesheet>

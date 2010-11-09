@@ -90,7 +90,7 @@ public class TestMineralOccurrenceServiceClient {
         final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Mine", mineFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(serviceURL, "er:MiningFeatureOccurrence", mineFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockMineResponse));
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));

@@ -35,7 +35,7 @@ public class ViewCSWRecordFactory {
 		obj.put("dataIdentificationAbstract", record.getDataIdentificationAbstract());
 
 		List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object> >();
-		if (record.getOnlineResources() != null) {
+		if (record.getOnlineResources() != null ) {
 			for (CSWOnlineResource res : record.getOnlineResources()) {
 			    if (res.getLinkage() != null) {
 			        onlineResources.add(this.toView(res));

@@ -1,9 +1,12 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.csw.CSWGeographicElement;
 import org.auscope.portal.csw.CSWOnlineResource;
@@ -34,7 +37,7 @@ public class GetCapabilitiesController extends CSWRecordResponse {
 
     private GetCapabilitiesService capabilitiesService;
     private ViewCSWRecordFactory viewCSWRecordFactory;
-
+    protected final Log log = LogFactory.getLog(getClass());
 
     // ----------------------------------------------------------- Constructors
 
@@ -58,38 +61,49 @@ public class GetCapabilitiesController extends CSWRecordResponse {
     @RequestMapping("/getCustomLayers.do")
     public ModelAndView getCustomLayers( @RequestParam("service_URL") String service_url) throws Exception {
 
-        GetCapabilitiesRecord capabilitiesRec
-            = capabilitiesService.getWmsCapabilities(service_url);
+    	CSWRecord[] records;
+    	try {
+	        GetCapabilitiesRecord capabilitiesRec
+	            = capabilitiesService.getWmsCapabilities(service_url);
 
+	        List<CSWRecord> cswRecords = new ArrayList<CSWRecord>();
 
-        List<CSWRecord> cswRecords = new ArrayList<CSWRecord>();
+	        if (capabilitiesRec != null) {
+		        //Make a best effort of parsing a WMS into a CSWRecord
+		        for (GetCapabilitiesWMSLayerRecord rec : capabilitiesRec.getLayers()) {
+		        	String serviceName = rec.getTitle();
+		        	String contactOrg = capabilitiesRec.getOrganisation();
+		        	String fileId = "unique-id-" + rec.getName();
+		        	String recordInfoUrl = null;
+		        	String dataAbstract = rec.getAbstract();
+		        	CSWGeographicElement[] geoEls = null;
 
-        //Make a best effort of parsing a WMS into a CSWRecord
-        for (GetCapabilitiesWMSLayerRecord rec : capabilitiesRec.getLayers()) {
-        	String serviceName = rec.getTitle();
-        	String contactOrg = capabilitiesRec.getOrganisation();
-        	String fileId = "unique-id-" + rec.getName();
-        	String recordInfoUrl = null;
-        	String dataAbstract = rec.getAbstract();
-        	CSWGeographicElement[] geoEls = null;
+		        	CSWGeographicBoundingBox bbox = rec.getBoundingBox();
+		        	if (bbox != null) {
+		        		geoEls = new CSWGeographicElement[] {bbox};
+		        	}
 
-        	CSWGeographicBoundingBox bbox = rec.getBoundingBox();
-        	if (bbox != null) {
-        		geoEls = new CSWGeographicElement[] {bbox};
-        	}
+		        	CSWOnlineResource[] onlineResources = new CSWOnlineResource[1];
+		        	onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getUrl()),
+		        			"OGC:WMS-1.1.1-http-get-map",
+		        			rec.getName(),
+		        			rec.getTitle());
 
-        	CSWOnlineResource[] onlineResources = new CSWOnlineResource[1];
-        	onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getUrl()),
-        			"OGC:WMS-1.1.1-http-get-map",
-        			rec.getName(),
-        			rec.getTitle());
+		        	cswRecords.add(new CSWRecord(serviceName,contactOrg, fileId, recordInfoUrl, dataAbstract, onlineResources, geoEls ));
+		        }
+	        }
+	        //generate the same response from a getCSWRecords call
+	        records = cswRecords.toArray(new CSWRecord[cswRecords.size()]);
+    	}
+    	catch (MalformedURLException e) {
+    		log.debug(e.getMessage());
+    		return generateJSONResponse(false, "URL not well formed", null);
+    	}
+    	catch (Exception e) {
+    		log.debug(e.getMessage());
+    		return generateJSONResponse(false, "Unable to process request", null);
+    	}
 
-        	cswRecords.add(new CSWRecord(serviceName,contactOrg, fileId, recordInfoUrl, dataAbstract, onlineResources, geoEls ));
-        }
-
-        //generate the same response from a getCSWRecords call
-        CSWRecord[] records = cswRecords.toArray(new CSWRecord[cswRecords.size()]);
         return generateJSONResponse(viewCSWRecordFactory, records);
     }
-
 }

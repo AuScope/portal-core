@@ -32,13 +32,6 @@ public class MenuController {
    @Qualifier(value = "propertyConfigurer")
    private PortalPropertyPlaceholderConfigurer hostConfigurer;
 
-   /* Commented out, for the time being we are redirecting Home link to AuScope site
-   @RequestMapping("/home.html")
-   public ModelAndView menu() {
-      logger.info("menu controller started!");
-      return new ModelAndView("home");
-   }
-   */
 
    @RequestMapping("/genericparser.html")
    public ModelAndView genericParser() {

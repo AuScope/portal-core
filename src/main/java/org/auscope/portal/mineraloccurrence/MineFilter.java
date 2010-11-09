@@ -5,7 +5,7 @@ import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 
 /**
  * Class that represents ogc:Filter markup for er:mine queries
- * 
+ *
  * @author Mat Wyatt
  * @version $Id$
  */
@@ -15,7 +15,7 @@ public class MineFilter extends AbstractFilter {
     /**
      * Given a mine name, this object will build a filter to a wild card search
      * for mine names
-     * 
+     *
      * @param mineName
      *            the main name
      */
@@ -23,7 +23,7 @@ public class MineFilter extends AbstractFilter {
         if (mineName == null || mineName.isEmpty())
             this.filterFragment = "";
         else
-            this.filterFragment = this.generatePropertyIsLikeFragment("er:mineName/er:MineName/er:mineName", mineName);
+            this.filterFragment = this.generatePropertyIsLikeFragment("er:specification/er:Mine/er:mineName/er:MineName/er:mineName", mineName);
     }
 
     public String getFilterStringAllRecords() {
@@ -33,7 +33,7 @@ public class MineFilter extends AbstractFilter {
     public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
         return this.generateFilter(
                 this.generateAndComparisonFragment(
-                        this.generateBboxFragment(bbox, "er:occurrence/er:MiningFeatureOccurrence/er:location"), 
+                        this.generateBboxFragment(bbox, "er:location"),
                         this.filterFragment));
     }
 

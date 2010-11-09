@@ -13,8 +13,8 @@ MineralOccurrenceFilterForm = function(id) {
             ['KG', 'urn:ogc:def:uom:UCUM::kg'],
             ['UKN', 'urn:ogc:def:nil:OGC::missing']
         ];
-                    
-            // Those ones are not required but leaving them in case ...             
+
+            // Those ones are not required but leaving them in case ...
             //['CUB M/HA', 'urn:ogc:def:uom:UCUM::m3.har-1'],
             //['TONNE/M', 'urn:ogc:def:uom:UCUM::t.m-1'],
             //['TONNE/100M', 'urn:ogc:def:uom:UCUM::t.hm-1'],
@@ -45,10 +45,10 @@ MineralOccurrenceFilterForm = function(id) {
     //-----------Measure type
 
     var measureTypes =  [
-            ['None'],    
+            ['None'],
             ['Any'],
             ['Endowment'],
-            ['Reserve'],                        
+            ['Reserve'],
             ['Resource']
         ];
 
@@ -74,7 +74,7 @@ MineralOccurrenceFilterForm = function(id) {
         valueField     : 'type',
         //value          : 'Any'
         listeners      : {
-            select: { 
+            select: {
                 fn:function(combo, record, index) {
                     if (combo.getValue() === 'None') {
                         Ext.getCmp('minOreAmountTxtFld').disable();
@@ -86,13 +86,13 @@ MineralOccurrenceFilterForm = function(id) {
                         Ext.getCmp('minOreAmountTxtFld').enable();
                         Ext.getCmp('minCommodityAmountTxtFld').enable();
                         Ext.getCmp('minOreAmountUOMCmbBx').enable();
-                        Ext.getCmp('minCommodityAmountUOMCmbBx').enable();                        
-                    }                
-                } 
+                        Ext.getCmp('minCommodityAmountUOMCmbBx').enable();
+                    }
+                }
             }/*,
-            blur: { 
+            blur: {
                 fn:function(field) {
-                    alert('This is blur' + field.getValue());   
+                    alert('This is blur' + field.getValue());
                 }
             }*/
         }
@@ -109,9 +109,9 @@ MineralOccurrenceFilterForm = function(id) {
             { name:'label' }
         ])
     });
-    
+
     commodityStore.reload();
-    
+
     var commodityNameCombo = new Ext.form.ComboBox({
         tpl: '<tpl for="."><div ext:qtip="{label}" class="x-combo-list-item">{label}</div></tpl>',
         anchor         : '100%',
@@ -125,10 +125,11 @@ MineralOccurrenceFilterForm = function(id) {
         store          : commodityStore,
         triggerAction  : 'all',
         typeAhead      : true,
+        typeAheadDelay : 500,
         displayField   :'label',   /* change tpl field to this value as well! */
         valueField     :'urn'
     });
-    
+
     var minOreAmountUOMCombo = new Ext.form.ComboBox({
         tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
         anchor         : '100%',
@@ -146,10 +147,10 @@ MineralOccurrenceFilterForm = function(id) {
         typeAhead      : true,
         displayField   : 'unitLabel',
         valueField     : 'urn'
-        //value          : 'Any'        
-    });    
+        //value          : 'Any'
+    });
 
-    var minCommodityAmountUOMCombo = new Ext.form.ComboBox({  
+    var minCommodityAmountUOMCombo = new Ext.form.ComboBox({
         tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
         anchor         : '100%',
         id             : 'minCommodityAmountUOMCmbBx',
@@ -167,7 +168,7 @@ MineralOccurrenceFilterForm = function(id) {
         valueField     : 'urn'
         //value          : 'Any'
     });
-    
+
     var cutOffGradeUOMCombo = new Ext.form.ComboBox({
         tpl: '<tpl for="."><div ext:qtip="{unitLabel}" class="x-combo-list-item">{unitLabel}</div></tpl>',
         anchor: '100%',
@@ -185,12 +186,12 @@ MineralOccurrenceFilterForm = function(id) {
         valueField: 'urn',
         value: 'TONNE',
         hidden: true,
-        hideLabel: true        
+        hideLabel: true
     });
-    
-    
+
+
     //-----------Panel
-    
+
     Ext.FormPanel.call(this,{
         id          : String.format('{0}',id),
         border      : false,
@@ -198,7 +199,7 @@ MineralOccurrenceFilterForm = function(id) {
         hideMode    : 'offsets',
         //width       : '100%',
         labelAlign  : 'right',
-        //labelWidth  : 100,       
+        //labelWidth  : 100,
         timeout     : 180, /*should not time out before the server does*/
         bodyStyle   : 'padding:5px',
         autoHeight:    true,
@@ -214,13 +215,13 @@ MineralOccurrenceFilterForm = function(id) {
                 {
                     xtype      : 'fieldset',
                     title      : 'Amount',
-                    autoHeight: true,            
-                    items:[            
+                    autoHeight: true,
+                    items:[
                         measureTypeCombo,
                         {
                             xtype      : 'fieldset',
                             title      : 'Ore Amount',
-                            autoHeight: true,                                        
+                            autoHeight: true,
                             items:[
                                 {
                                     id         : 'minOreAmountTxtFld',
@@ -230,12 +231,12 @@ MineralOccurrenceFilterForm = function(id) {
                                     name       : 'minOreAmount',
                                     disabled   : true
                                 },
-                                minOreAmountUOMCombo                                            
+                                minOreAmountUOMCombo
                             ]
                         },{
                             xtype       : 'fieldset',
                             title       : 'Commodity Amount',
-                            autoHeight: true,            
+                            autoHeight: true,
                             items:[
                                 {
                                     id         : 'minCommodityAmountTxtFld',
@@ -249,15 +250,15 @@ MineralOccurrenceFilterForm = function(id) {
                             ]
                         }
                     ]
-                }/*,{                                              
+                }/*,{
                     anchor     : '100%',
                     xtype      : 'textfield',
                     fieldLabel : 'Cut Off Grade',
                     name       : 'cutOffGrade',
                     hidden     : true,
                     hideLabel  : true
-                },  
-                cutOffGradeUOMCombo */                        
+                },
+                cutOffGradeUOMCombo */
             ]
         }]
     });

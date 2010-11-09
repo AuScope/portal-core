@@ -461,38 +461,38 @@ Ext.onReady(function() {
     	    		if (geoEl instanceof BBox) {
     	    			if(geoEl.eastBoundLongitude == geoEl.westBoundLongitude &&
     	    				geoEl.southBoundLatitude == geoEl.northBoundLatitude) {
-    	    				//We only have a point  	                    
+    	    				//We only have a point
     	                    var point = new GLatLng(parseFloat(geoEl.southBoundLatitude),
     	                    		parseFloat(geoEl.eastBoundLongitude));
-    	                      	                    
-    	                	var icon = new GIcon(G_DEFAULT_ICON, activeLayerRecord.getIconUrl());   
+
+    	                	var icon = new GIcon(G_DEFAULT_ICON, activeLayerRecord.getIconUrl());
     	                	icon.shadow = null;
-    	                	
+
 	                		var iconSize = knownLayer.getIconSize();
 	                		if (iconSize) {
 	                			icon.iconSize = new GSize(iconSize.width, iconSize.height);
 	                		}
-	                		
+
 	                		var iconAnchor = knownLayer.getIconAnchor();
 	                		if(iconAnchor) {
 	                        	icon.iconAnchor = new GPoint(iconAnchor.x, iconAnchor.y);
 	                        }
-    	                    
+
     	                    var marker = new GMarker(point, {icon: icon});
                             marker.activeLayerRecord = activeLayerRecord.internalRecord;
                             marker.cswRecord = cswRecords[i].internalRecord;
                             //marker.onlineResource = onlineResource;
-                            
+
     	                    //Add our single point
     	                    overlayManager.markerManager.addMarker(marker, 0);
-    	    		
+
     	    			} else { //polygon
 	    	    			var polygonList = geoEl.toGMapPolygon('#0003F9', 4, 0.75,'#0055FE', 0.4);
-	    	        	    
+
 	    	        	    for (var k = 0; k < polygonList.length; k++) {
 	    	        	    	polygonList[k].cswRecord = cswRecords[i].internalRecord;
 	    	                	polygonList[k].activeLayerRecord = activeLayerRecord.internalRecord;
-	    	        	    	
+
 	    	        	    	overlayManager.addOverlay(polygonList[k]);
 	    	        	    }
     	    			}
@@ -993,9 +993,9 @@ Ext.onReady(function() {
             		else
             		    return results[1];
             	}
-            	var frank_param = gup( 'debug' );
+            	var filter_debugger_param = gup( 'debug' );
             	//get the debug window if there is a debug variable with value 1
-            	if(frank_param == 1){
+            	if(filter_debugger_param == 1 || filter_debugger_param == "on"){
 		           	var debugHtml = 'Please generate a request to get the request query.';
 
 		            if (activeLayerRecord.getDebuggerData()) {
@@ -1009,7 +1009,7 @@ Ext.onReady(function() {
 			        var debugWin = new Ext.Window({
 			        	title: 'WFS Debug Information',
 		               	layout:'fit',
-		                width:500,
+		               	width:500,
 		                height:300,
 
 	                    items: [chkpanel]
@@ -1017,7 +1017,6 @@ Ext.onReady(function() {
 
 		            debugWin.show(this);
             	}
-
             }
             //this is the column for download link icons
             else if (col.cellIndex == '5') {
