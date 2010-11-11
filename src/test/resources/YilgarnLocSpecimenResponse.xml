@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection numberOfFeatures="1" timeStamp="2010-11-11T10:14:09.616+08:00" xsi:schemaLocation="http://www.opengis.net/sampling/1.0 http://schemas.opengis.net/sampling/1.0.0/sampling.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd" xmlns:ogc="http://www.opengis.net/ogc" xmlns:omx="http://www.opengis.net/omx/1.0" xmlns:sa="http://www.opengis.net/sampling/1.0" xmlns:om="http://www.opengis.net/om/1.0" xmlns:swe="http://www.opengis.net/swe/1.0.1" xmlns:ansir="http://mdu-data.arrc.csiro.au/schema/urn:cgi:xmlns:DI4SMB:ansir:01" xmlns:wfs="http://www.opengis.net/wfs" xmlns:highp="urn:cgi:xmlns:DI4SMB:HighP:0.1" xmlns:topp="http://www.openplans.org/topp" xmlns:geonetwork="urn:cgi:xmlns:DI4SMB:geonetwork" xmlns:sml="http://www.opengis.net/sensorML/1.0.1" xmlns:ragingspot="http://mdu-data-2.arrc.csiro.au/schema/urn:cgi:xmlns:auscope:ragingspot" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" xmlns:ows="http://www.opengis.net/ows" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <gml:featureMembers>
+        <sa:LocatedSpecimen gml:id="locatedSpecimen_CSIRONo101504_4">
+            <sa:sampledFeature xlink:href="#CSIRONo_101504_4"/>
+            <sa:relatedObservation>
+                <om:Observation gml:id="serviceName1">
+                    <gml:description/>
+                    <om:samplingTime>
+                        <gml:TimeInstant>
+                            <gml:description>SamplingDate</gml:description>
+                            <gml:timePosition>2006-09-28 00:00:00.0</gml:timePosition>
+                        </gml:TimeInstant>
+                    </om:samplingTime>
+                    <om:procedure>
+                        <omx:ObservationProcess gml:id="quantityName1">
+                            <gml:description>MineralDescription1</gml:description>
+                            <sml:contact xlink:title="obsProcessContact1"/>
+                            <omx:method>obsProcessMethod1</omx:method>
+                            <omx:resultQuality/>
+                        </omx:ObservationProcess>
+                    </om:procedure>
+                    <om:observedProperty xlink:href="observedProperty"/>
+                    <om:featureOfInterest xlink:href="#CSIRONo101504_4"/>
+                    <om:result>
+                        <swe:Quantity>
+                            <swe:value>21.4</swe:value>
+                            <gml:name>quantityName1</gml:name>
+                            <swe:uom xlink:href="urn:ogc:def:uom:UCUM::%25"/>
+                            <swe:quality>
+                                <swe:Text/>
+                            </swe:quality>
+                        </swe:Quantity>
+                    </om:result>
+                </om:Observation>
+            </sa:relatedObservation>
+            <sa:materialClass/>
+            <sa:samplingTime>
+                <gml:TimeInstant>
+                    <gml:description>SamplingDate</gml:description>
+                    <gml:timePosition>2006-09-28 00:00:00.0</gml:timePosition>
+                </gml:TimeInstant>
+            </sa:samplingTime>
+            <sa:samplingLocation>
+                <gml:Point srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
+                    <gml:pos>-28.82249651 117.00220364</gml:pos>
+                </gml:Point>
+            </sa:samplingLocation>
+        </sa:LocatedSpecimen>
+    </gml:featureMembers>
+</wfs:FeatureCollection>

@@ -96,7 +96,7 @@ ActiveLayersGridPanel = function(id, title, activeLayersStore, layerSelectionHan
                 id:'title',
                 header: "Title",
                 width: 100,
-                sortable: true,
+                sortable: false,
                 dataIndex: 'title'
             },
             activeLayersPanelCheckColumn,

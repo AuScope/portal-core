@@ -26,7 +26,6 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
 		html += '&typeName=' + wfsTypeName;
 		html += '&featureId=' + gmlID;
 		html += '" width="600" height="350"/>';
-
 		if (overlay instanceof GMarker) {
 			overlay.openInfoWindowHtml(html);
 		} else {
@@ -51,7 +50,7 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
  * of the point that was clicked. If the user clicks on an overlay that
  * is clickable (such as a GMarker, GPolygon, GPolyline, or GInfoWindow),
  * the overlay argument contains the overlay object, while the
- * overlaylatlng argument contains the coordinates of the clicked
+ * 
  * overlay. In addition, a click event is then also fired on the overlay
  * itself.
  *
@@ -115,6 +114,17 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	            	var marker = new GeodesyMarker(wfsUrl, "geodesy:station_observations", overlay.title, overlay, overlay.description);
 	            	var clickFn = marker.getMarkerClickedFn();
 	            	clickFn();
+	            }
+	            else if (wfsTypeName == "gsml:GeologicUnit"){
+	            	var featureId;
+	            	var geochemParserString = 'featureId:';
+	            	if (overlay.description.indexOf(geochemParserString) == 0){
+	            		var indexOfSpace=overlay.description.indexOf('<');
+	            		featureId = overlay.description.substring(geochemParserString.length,indexOfSpace);
+	            	}	            	
+	            	var infoWindow = new YilgarnGeoInfoWindow(map,overlay,wfsUrl,featureId,wfsTypeName);
+	            	infoWindow.show();
+	            	
 	            }
 	            else if (overlay.description != null) {
 	                overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
@@ -203,12 +213,13 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	    //otherwise Handle for WCS services (if any)
 	    cswRecords = parentActiveLayerRecord.getCSWRecordsWithType('WCS');
 	    if (cswRecords.length != 0) {
+	    	
 	    	var infoWindow = new GenericWCSInfoWindow(map, overlay, parentOnlineResource.url, parentOnlineResource.name, parentCSWRecord);
 			infoWindow.showInfoWindow();
 			return;
 	    }
 	//Otherwise we test each of our WMS layers to see if a click will affect them
-	} else {
+	}else {
 		//If the user clicks on an info window, we will still get click events, lets ignore these
     	if (latlng == null || latlng == undefined) {
     		return;
@@ -220,7 +231,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 
 	        if (!alr.getLayerVisible()) {
 	        	continue;
-	        }
+	        }        
 
 	        //each linked WMS record must be tested
 	        var wmsCSWRecords = alr.getCSWRecordsWithType('WMS');

@@ -19,6 +19,7 @@
                 <ref bean="knownTypeGeochron" />
                 <ref bean="knownTypeReports" />
                 <ref bean="knownTypeGeotransects" />
+                <ref bean="knownTypeYilgarnGeochemistry"/>
             </list>
         </constructor-arg>
     </bean>

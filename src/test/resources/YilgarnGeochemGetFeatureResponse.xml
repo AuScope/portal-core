@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection xmlns:ogc="http://www.opengis.net/ogc" 
+     xmlns:omx="http://www.opengis.net/omx/1.0" 
+     xmlns:sa="http://www.opengis.net/sampling/1.0" 
+     xmlns:om="http://www.opengis.net/om/1.0" 
+     xmlns:swe="http://www.opengis.net/swe/1.0.1" 
+     xmlns:ansir="http://mdu-data.arrc.csiro.au/schema/urn:cgi:xmlns:DI4SMB:ansir:01" 
+     xmlns:wfs="http://www.opengis.net/wfs" 
+     xmlns:highp="urn:cgi:xmlns:DI4SMB:HighP:0.1" 
+     xmlns:topp="http://www.openplans.org/topp" 
+     xmlns:geonetwork="urn:cgi:xmlns:DI4SMB:geonetwork" 
+     xmlns:sml="http://www.opengis.net/sensorML/1.0.1" 
+     xmlns:ragingspot="http://mdu-data-2.arrc.csiro.au/schema/urn:cgi:xmlns:auscope:ragingspot" 
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" 
+     xmlns:ows="http://www.opengis.net/ows" 
+     xmlns:gml="http://www.opengis.net/gml" 
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     numberOfFeatures="2"
+     xsi:schemaLocation="urn:cgi:xmlns:CGI:GeoSciML:2.0 http://www.geosciml.org/geosciml/2.0/xsd/geosciml.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd" >
+    <gml:featureMembers>
+        <gsml:GeologicUnit gml:id="geologicUnit_CSIRONo101504_4">
+        <gml:name>Granite intrusions (syenite gy)</gml:name>
+        <gml:name>Granite</gml:name>
+        <gml:name codeSpace="http://www.cgi-iugs.org/uri">urn:cgi:feature:CSIRO:geologicUnit_CSIRONo101504_4</gml:name>
+
+        <gsml:observationMethod>
+            <gsml:CGI_TermValue>
+                <gsml:value codeSpace="urn:cgi:classifier:CGI:FeatureObservationMethod:200811">data_from_single_published_description</gsml:value>
+            </gsml:CGI_TermValue>
+        </gsml:observationMethod>
+            <gsml:purpose>instance</gsml:purpose>
+        <gsml:occurrence>
+            <gsml:MappedFeature gml:id="CSIRONo_101504_4">
+                <gml:description>TARGET SIGNATURE</gml:description>
+                <gsml:observationMethod>
+                    <gsml:CGI_TermValue>
+                        <gsml:value codeSpace="urn:cgi:classifier:CGI:MappedFeatureObservationMethod:200811">direct_observation</gsml:value>
+                    </gsml:CGI_TermValue>
+                </gsml:observationMethod>
+                <gsml:positionalAccuracy>
+                    <gsml:CGI_TermValue>
+                        <gsml:value codeSpace="http://urn.opengis.net"/>
+                    </gsml:CGI_TermValue>
+                </gsml:positionalAccuracy>
+                <gsml:samplingFrame/>
+                <gsml:specification/>
+                <gsml:shape>
+                    <gml:Point srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
+                        <gml:pos>117.00220364 -28.82249651</gml:pos>
+                    </gml:Point>
+                </gsml:shape>
+            </gsml:MappedFeature>
+        </gsml:occurrence>
+        <gsml:geologicUnitType xlink:href="urn:cgi:classifier:CGI:GeologicUnitType:200811:altered_unit"/>
+        <gsml:composition>
+            <gsml:CompositionPart>
+                <gsml:role codeSpace="urn:cgi:classifier:CGI:CompoundMaterialConstituentPartRole:200811">constituent_role_not_specified</gsml:role>
+                <gsml:lithology xlink:href="urn:cgi:classifier:CGI:SimpleLithology:200811:iron_rich_sediment"/>
+                <gsml:material>
+                    <gsml:RockMaterial>
+                        <gsml:purpose>instance</gsml:purpose>
+                        <gsml:consolidationDegree>
+                            <gsml:CGI_TermValue>
+                                <gsml:value codeSpace="urn:cgi:classifier:CGI:ConsolidationDegree:200811">consolidation_not_specified</gsml:value>
+                            </gsml:CGI_TermValue>
+                        </gsml:consolidationDegree>
+                        <gsml:lithology xlink:href="urn:cgi:classifier:CGI:SimpleLithology:200811:iron_rich_sediment"/>
+                    </gsml:RockMaterial>
+                </gsml:material>
+                <gsml:proportion>
+                    <gsml:CGI_TermValue>
+                        <gsml:value codeSpace="urn:cgi:classifier:CGI:ProportionTerm:200811">all</gsml:value>
+                    </gsml:CGI_TermValue>
+                </gsml:proportion>
+            </gsml:CompositionPart>
+        </gsml:composition>
+        <gsml:weatheringCharacter>
+            <gsml:WeatheringDescription>
+                <gsml:weatheringProduct>
+                    <gsml:RockMaterial>
+                        <gsml:purpose>instance</gsml:purpose>
+                        <gsml:consolidationDegree>
+                            <gsml:CGI_TermValue>
+                                <gsml:value codeSpace="urn:cgi:classifier:CGI:ConsolidationDegree:200811">consolidation_not_specified</gsml:value>
+                            </gsml:CGI_TermValue>
+                        </gsml:consolidationDegree>
+                        <gsml:lithology xlink:href="urn:cgi:classifier:CSIRO:WeatheringLithology:2010:lateritic_residuum"/>
+                    </gsml:RockMaterial>
+                </gsml:weatheringProduct>
+            </gsml:WeatheringDescription>
+        </gsml:weatheringCharacter>
+    </gsml:GeologicUnit>
+    
+    <gsml:GeologicUnit gml:id="geologicUnit_CSIRONo101862_1">
+        <gml:name>Granite intrusions (syenite gy)</gml:name>
+        <gml:name>Granite</gml:name>
+        <gml:name codeSpace="http://www.cgi-iugs.org/uri">urn:cgi:feature:CSIRO:geologicUnit_CSIRONo101862_1</gml:name>
+        <gsml:observationMethod>
+            <gsml:CGI_TermValue>
+                <gsml:value codeSpace="urn:cgi:classifier:CGI:FeatureObservationMethod:200811">data_from_single_published_description</gsml:value>
+            </gsml:CGI_TermValue>
+        </gsml:observationMethod>
+        <gsml:purpose>instance</gsml:purpose>
+        <gsml:occurrence>
+            <gsml:MappedFeature gml:id="CSIRONo_101862_1">
+                <gml:description/>
+                <gsml:observationMethod>
+                    <gsml:CGI_TermValue>
+                        <gsml:value codeSpace="urn:cgi:classifier:CGI:MappedFeatureObservationMethod:200811">direct_observation</gsml:value>
+                    </gsml:CGI_TermValue>
+                </gsml:observationMethod>
+                <gsml:positionalAccuracy>
+                    <gsml:CGI_TermValue>
+                        <gsml:value codeSpace="http://urn.opengis.net"/>
+                    </gsml:CGI_TermValue>
+                </gsml:positionalAccuracy>
+                <gsml:samplingFrame/>
+                <gsml:specification/>
+                <gsml:shape>
+                    <gml:Point srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">
+                        <gml:pos>118.232965311 -29.3729047746</gml:pos>
+                    </gml:Point>
+                </gsml:shape>
+            </gsml:MappedFeature>
+        </gsml:occurrence>
+        <gsml:geologicUnitType xlink:href="urn:cgi:classifier:CGI:GeologicUnitType:200811:altered_unit"/>
+        <gsml:composition>
+            <gsml:CompositionPart>
+                <gsml:role codeSpace="urn:cgi:classifier:CGI:CompoundMaterialConstituentPartRole:200811">constituent_role_not_specified</gsml:role>
+                <gsml:lithology xlink:href="urn:cgi:classifier:CGI:SimpleLithology:200811:iron_rich_sediment"/>
+                <gsml:material>
+                    <gsml:RockMaterial>
+                        <gsml:purpose>instance</gsml:purpose>
+                        <gsml:consolidationDegree>
+                            <gsml:CGI_TermValue>
+                                <gsml:value codeSpace="urn:cgi:classifier:CGI:ConsolidationDegree:200811">consolidation_not_specified</gsml:value>
+                            </gsml:CGI_TermValue>
+                        </gsml:consolidationDegree>
+                        <gsml:lithology xlink:href="urn:cgi:classifier:CGI:SimpleLithology:200811:iron_rich_sediment"/>
+                    </gsml:RockMaterial>
+                </gsml:material>
+                <gsml:proportion>
+                    <gsml:CGI_TermValue>
+                        <gsml:value codeSpace="urn:cgi:classifier:CGI:ProportionTerm:200811">all</gsml:value>
+                    </gsml:CGI_TermValue>
+                </gsml:proportion>
+            </gsml:CompositionPart>
+        </gsml:composition>
+        <gsml:weatheringCharacter>
+            <gsml:WeatheringDescription>
+                <gsml:weatheringProduct>
+                    <gsml:RockMaterial>
+                        <gsml:purpose>instance</gsml:purpose>
+                        <gsml:consolidationDegree>
+                            <gsml:CGI_TermValue>
+                                <gsml:value codeSpace="urn:cgi:classifier:CGI:ConsolidationDegree:200811">consolidation_not_specified</gsml:value>
+                            </gsml:CGI_TermValue>
+                        </gsml:consolidationDegree>
+                        <gsml:lithology xlink:href="urn:cgi:classifier:CSIRO:WeatheringLithology:2010:lateritic_residuum"/>
+                </gsml:RockMaterial>
+                </gsml:weatheringProduct>
+            </gsml:WeatheringDescription>
+        </gsml:weatheringCharacter>
+    </gsml:GeologicUnit>
+</gml:featureMembers>
+</wfs:FeatureCollection>

@@ -419,8 +419,39 @@
 	        </MultiGeometry>
         </Placemark>
 	</xsl:template>
+    
+    
 
+    <!-- TEMPLATE FOR TRANSLATING Yilgarn Geochemistry -->
+   <!-- ================================================================= -->
+   <xsl:template match="gml:featureMember/gsml:GeologicUnit | gml:featureMembers/gsml:GeologicUnit" priority="100">
 
+      <xsl:variable name="coordinates">
+         <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
+      </xsl:variable>
+     <Placemark>
+        <name><xsl:value-of select="@gml:id"/></name>
+        <description>
+           <xsl:text>featureId:</xsl:text><xsl:value-of select="@gml:id"/>
+           
+           <![CDATA[<table border="1" cellspacing="1" cellpadding="2" " width="100%" bgcolor="#EAF0F8">
+           <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name[@codeSpace='http://www.cgi-iugs.org/uri']"/><![CDATA[</td>]]>          
+           <![CDATA[</tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/><![CDATA[</td>]]>
+           <![CDATA[</tr><tr><td>CGI_TermValue</td><td>]]><xsl:value-of select="./gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace='urn:cgi:classifier:CGI:FeatureObservationMethod:200811']"/><![CDATA[</td>]]>
+           <![CDATA[</tr><tr><td>Purpose</td><td>]]><xsl:value-of select="./gsml:purpose"/><![CDATA[</td>]]>
+           <![CDATA[</tr><tr><td>Observation Method</td><td>]]><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace='urn:cgi:classifier:CGI:MappedFeatureObservationMethod:200811']"/><![CDATA[</td>]]>
+           <![CDATA[</tr><tr><td>Rock Material</td><td>]]><xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td>]]>
+           <![CDATA[</tr><tr><td>Proportion</td><td>]]><xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value[@codeSpace='urn:cgi:classifier:CGI:ProportionTerm:200811']"/><![CDATA[</td>]]>
+           <![CDATA[</tr><tr><td>Weathering Description</td><td>]]><xsl:value-of select="./gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td>]]>
+           <![CDATA[</td></tr></table>]]>
+        </description>
+        
+        <xsl:apply-templates select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>
+     </Placemark>
+   </xsl:template>
+   
+   
+   
    <!-- TEMPLATE FOR TRANSLATING GNSS -->
    <!-- ================================================================= -->
    <xsl:template match="gml:featureMembers/sa:SamplingPoint">

@@ -21,7 +21,7 @@
         <property name="connectionTimeout" value="900000"/> <!--  15 minutes -->
         <property name="soTimeout" value="900000"/> <!--  15 minutes -->
    </bean>
-
+   
     <bean id="cswAuscopeDev" class="org.auscope.portal.server.web.service.CSWServiceItem">
         <constructor-arg index="0" value="http://auscope-portal-dev.arrc.csiro.au/geonetwork/srv/en/csw"/>
     </bean>
@@ -218,6 +218,32 @@
            </bean>
        </constructor-arg>
               <constructor-arg name="iconSize">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+   </bean>
+   
+   <bean id="knownTypeYilgarnGeochemistry" class="org.auscope.portal.server.web.KnownLayerWFS">       
+       <constructor-arg name="featureTypeName" value="gsml:GeologicUnit"/>
+       <constructor-arg name="title" value="Yilgarn Geochemistry"/>       
+       <constructor-arg name="description" value="A collection of detailed information about all analytes that were detected at a specific location"/>       
+       <constructor-arg name="proxyUrl" value="doYilgarnGeochemistry.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/grn-blank.png"/>       
+       <constructor-arg name="iconAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="infoWindowAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="iconSize">
            <bean class="java.awt.Dimension">
                <constructor-arg index="0" value="32"/>
                <constructor-arg index="1" value="32"/>

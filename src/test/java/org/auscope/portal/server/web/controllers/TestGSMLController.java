@@ -10,8 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+
+
+import net.sf.json.JSONObject;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.gsml.GSMLResponseHandler;
+import org.auscope.portal.gsml.YilgarnGeochemistryFilter;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
 import org.auscope.portal.server.util.GmlToKml;
@@ -52,6 +58,8 @@ public class TestGSMLController {
      * The controller to test
      */
     private GSMLController gsmlController;
+    
+    GSMLResponseHandler gsmlResponseHandler;
 
     /**
      * Mock response
@@ -76,10 +84,32 @@ public class TestGSMLController {
     private WFSGetFeatureMethodMakerPOST wfsGetFeatureMethodMakerPOST = context.mock(WFSGetFeatureMethodMakerPOST.class);
 
     private IFilter mockFilter = context.mock(IFilter.class);
+    private YilgarnGeochemistryFilter mockGeochemFilter = context.mock(YilgarnGeochemistryFilter.class);
 
     @Before
     public void setup() {
-        gsmlController = new GSMLController(httpServiceCaller, gmlToKml, wfsGetFeatureMethodMakerPOST, mockFilter);
+        gsmlController = new GSMLController(httpServiceCaller, gmlToKml, wfsGetFeatureMethodMakerPOST, mockFilter, gsmlResponseHandler);
+    }
+    private void testJSONResponse(String json, Boolean success, String gml, String kml) {
+        JSONObject obj = JSONObject.fromObject(json);
+
+        if (success != null) {
+            Assert.assertEquals(success.booleanValue(), obj.get("success"));
+        }
+
+        if (gml != null) {
+            JSONObject data = (JSONObject) obj.get("data");
+
+            Assert.assertNotNull(data);
+            Assert.assertEquals(gml, data.get("gml"));
+        }
+
+        if (kml != null) {
+            JSONObject data = (JSONObject) obj.get("data");
+
+            Assert.assertNotNull(data);
+            Assert.assertEquals(kml, data.get("kml"));
+        }
     }
 
     /**
@@ -163,6 +193,70 @@ public class TestGSMLController {
         Assert.assertEquals(kmlBlob, ((Map)modelAndView.getModel().get("data")).get("kml"));
         Assert.assertTrue(modelAndView.getModel().get("success").equals(true));
     }
+    
+    /**
+     * Test doing geochemistry filter and getting all values
+     */
+    
+    @Test
+    public void testYilgarnGeochemistryFilter() throws Exception{
+    	final String kmlBlob = "kmlBlob";
+        final String filterString = "filterStr";
+        final String expectedGML = "<gml/>";
+        final StringWriter actualJSONResponse = new StringWriter();
+        
+        context.checking(new Expectations() {{
+        	oneOf(httpServiceCaller).getHttpClient();
+            oneOf (httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class))); will(returnValue(expectedGML));
+            
+            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            
+            oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
+            oneOf(wfsGetFeatureMethodMakerPOST).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
+            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
+            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
+            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+
+            oneOf(mockGeochemFilter).getFilterStringAllRecords(); will(returnValue(filterString));
+        }});
+        ModelAndView modelAndView = gsmlController.doYilgarnGeochemistryFilter("fake","fake", "fake", null, 0,mockHttpRequest);
+        
+        modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
+        
+        testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(true), expectedGML, kmlBlob);
+    }
+    
+    @Test
+    public void testYilgarnGeochemistryFilterInBbox() throws Exception{
+    	final String kmlBlob = "kmlBlob";
+        final String filterString = "filterStr";
+        final String bboxToParse = "{\"bboxSrs\":\"http://www.opengis.net/gml/srs/epsg.xml%234326\",\"lowerCornerPoints\":[-5,-6],\"upperCornerPoints\":[7,8]}";
+        final String expectedGML = "<gml/>";
+        final StringWriter actualJSONResponse = new StringWriter();
+        
+        context.checking(new Expectations() {{
+        	oneOf(httpServiceCaller).getHttpClient();
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(expectedGML));
+            
+            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            
+            oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
+            
+            oneOf(wfsGetFeatureMethodMakerPOST).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
+            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
+            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
+            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+
+            oneOf(mockGeochemFilter).getFilterStringAllRecords(); will(returnValue(filterString));
+        }});
+        ModelAndView modelAndView = gsmlController.doYilgarnGeochemistryFilter("fake","fake", "fake", bboxToParse, 0,mockHttpRequest);
+        
+        modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
+        
+        testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(true), expectedGML, kmlBlob);
+    }
 
     /**
      * Test that the gmltokml converter is called and the response put on the servlet response
@@ -186,4 +280,5 @@ public class TestGSMLController {
         if(kmlBlob.equals(responseString.getBuffer().toString()))
             Assert.assertTrue(true);
     }
+     
 }
