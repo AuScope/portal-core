@@ -18,72 +18,6 @@ function YilgarnGeoInfoWindow(iMap,iOverlay,iWfsUrl,iFeatureId,iWfsTypeName) {
     
    }
 
-YilgarnGeoInfoWindow.prototype =  {
-		'TAB_1' : "gswa Details",
-	    
-	    'TAB_2' : "sa Details",
-	'show': function(){
-		
-		var indexOfDes = this.overlayDes.indexOf('<');
-		var overlayDescription =this.overlayDes.substring(indexOfDes);
-		var htmlFragment ='';
-		htmlFragment += '<html>';
-		htmlFragment += '<body>';
-		if (Ext.isIE) {
-			htmlFragment += '<div style="';
-			htmlFragment += 'width: expression(!document.body ? &quot;auto&quot; : (document.body.clientWidth > 599 ? &quot;600px&quot; : &quot;auto&quot;) );';
-			htmlFragment += 'height: expression( this.scrollHeight > 549 ? &quot;550px&quot; : &quot;auto&quot; );';
-			htmlFragment += 'overflow: scroll;">';
-		} else {
-			htmlFragment += '<div style="max-width: 600px; max-height: 550px; overflow: scroll;">';
-		}
-		htmlFragment += overlayDescription;
-		htmlFragment += '</div>';
-								
-		htmlFragment += '<div align="right">' +
-        						'<br/>' +
-        						'<input type="button" id="downloadLocBtn"  value="DownloadLocSpec" onclick="locSpecDownload('+
-        						'\'' + this.wfsUrl +'\',' +
-        						'\'' + this.locSpecimenFeatureId.trim()+'\');"/>';
-		
-		htmlFragment += '<input type="button" id="LocSpecDetailsBtn"  value="LocSpecDetails" onclick="showLocSpecDetails('+
-							'\'' + this.wfsUrl +'\',' +
-							'\'' + this.locSpecTypeName +'\',' +
-							'\'' + this.locSpecimenFeatureId.trim()+'\');"/>';
-		htmlFragment +=	'</div>';
-		htmlFragment += '</body>';
-		htmlFragment += '</html>';
-		this.tabsArray.push(new GInfoWindowTab(this.TAB_1, htmlFragment));
-		this.overlay.openInfoWindowTabs(this.tabsArray);
-	}
-};
-
-function locSpecDownload(wfsUrl,locSpecimenFeatureId){
-	var key = 'serviceUrls';
-	var value=window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "doLocatedSpecimenFeature.do" + "?" + "serviceUrl=" + wfsUrl + "&typeName=" + "sa:LocatedSpecimen"
-	+"&featureId=" + locSpecimenFeatureId;
-	
-	var url = 'downloadLocSpecAsZip.do?';
-    url += '&' + key + '=' + escape(value);
-    
-	downloadFile(url);
-};
-downloadFile = function(url) {
-    var body = Ext.getBody();
-    var frame = body.createChild({
-        tag:'iframe',
-        id:'iframe',
-        name:'iframe'
-    });
-    var form = body.createChild({
-        tag:'form',
-        id:'form',
-        target:'iframe',
-        method:'POST'
-    });
-    form.dom.action = url;
-    form.dom.submit();
-};
 function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	Ext.Ajax.request( {
 	    url : 'doLocatedSpecimenFeature.do',
@@ -93,8 +27,19 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	        featureId : locSpecimenFeatureId
 	    },
 	    callingInstance : this,
+	    
+	    failure: function (response, options){
+	    	Ext.Msg.alert('Error Describing LocSpecimen Records', 'Error (' + response.status + '): ' + response.statusText);
+	    },
 	    success: function (response, options){
 	    	var jsonData = Ext.util.JSON.decode(response.responseText);
+	    	if (!jsonData.success) {
+    			Ext.Msg.alert('Error Describing LocSpecimen Records', 'There was an error whilst communicating with ' + wfsUrl);
+    			return;
+    		} else if (jsonData.records.length === 0) {
+    			Ext.Msg.alert('Error Describing LocSpecimen Records', 'The URL ' + wfsUrl + ' returned no parsable LocatedSpecimen records');
+    			return;
+    		}
 	    	var resultMessage = jsonData.result;
 	    	var locSpecName = jsonData.uniqueSpecName;
 	    	var records = jsonData.records;
@@ -208,22 +153,79 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	    		 
 	    	 });
 	    	 win.show(this);
-	    },
-	    
-	    failure: function (result, request){
 	    }
 	});
 	
 }
 
-YilgarnGeoInfoWindow.prototype.someFunction = function(){
+function locSpecDownload(wfsUrl,locSpecimenFeatureId){
+	var key = 'serviceUrls';
+	var value=window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "doLocatedSpecimenFeature.do" + "?" + "serviceUrl=" + wfsUrl + "&typeName=" + "sa:LocatedSpecimen"
+	+"&featureId=" + locSpecimenFeatureId;
 	
-	var mineralTypeStore = new Ext.data.SimpleStore({
-        fields : ['type'],
-        data   : mineralTypes
-    });
-	
+	var url = 'downloadLocSpecAsZip.do?';
+    url += '&' + key + '=' + escape(value);
+    
+	downloadFile(url);
 };
+
+downloadFile = function(url) {
+    var body = Ext.getBody();
+    var frame = body.createChild({
+        tag:'iframe',
+        id:'iframe',
+        name:'iframe'
+    });
+    var form = body.createChild({
+        tag:'form',
+        id:'form',
+        target:'iframe',
+        method:'POST'
+    });
+    form.dom.action = url;
+    form.dom.submit();
+};
+
+
+YilgarnGeoInfoWindow.prototype =  {
+	'show': function(){
+		
+		var indexOfDes = this.overlayDes.indexOf('<');
+		var overlayDescription =this.overlayDes.substring(indexOfDes);
+		var htmlFragment ='';
+		htmlFragment += '<html>';
+		htmlFragment += '<body>';
+		if (Ext.isIE) {
+			htmlFragment += '<div style="';
+			htmlFragment += 'width: expression(!document.body ? &quot;auto&quot; : (document.body.clientWidth > 599 ? &quot;600px&quot; : &quot;auto&quot;) );';
+			htmlFragment += 'height: expression( this.scrollHeight > 549 ? &quot;550px&quot; : &quot;auto&quot; );';
+			htmlFragment += 'overflow: scroll;">';
+		} else {
+			htmlFragment += '<div style="max-width: 600px; max-height: 550px; overflow: scroll;">';
+		}
+		htmlFragment += overlayDescription;
+		htmlFragment += '</div>';
+								
+		htmlFragment += '<div align="right">' +
+        						'<br/>' +
+        						'<input type="button" id="downloadLocBtn"  value="DownloadLocSpec" onclick="locSpecDownload('+
+        						'\'' + this.wfsUrl +'\',' +
+        						'\'' + this.locSpecimenFeatureId.trim()+'\');"/>';
+		
+		htmlFragment += '<input type="button" id="LocSpecDetailsBtn"  value="LocSpecDetails" onclick="showLocSpecDetails('+
+							'\'' + this.wfsUrl +'\',' +
+							'\'' + this.locSpecTypeName +'\',' +
+							'\'' + this.locSpecimenFeatureId.trim()+'\');"/>';
+		htmlFragment +=	'</div>';
+		htmlFragment += '</body>';
+		htmlFragment += '</html>';
+		this.overlay.openInfoWindowHtml(htmlFragment);
+	}
+};
+
+
+
+
 
 
 
