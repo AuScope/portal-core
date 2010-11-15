@@ -622,7 +622,7 @@ Ext.onReady(function() {
             } else {
             	filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
             }
-            filterParameters.maxFeatures=200; // limit our feature request to 200 so we don't overwhelm the browser
+            filterParameters.maxFeatures = MAX_FEATURES; // limit our feature request to 200 so we don't overwhelm the browser
         	filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
         	filterParameters.serviceUrl = wfsOnlineResource.url;
         	if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {

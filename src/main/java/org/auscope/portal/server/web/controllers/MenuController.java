@@ -49,13 +49,17 @@ public class MenuController {
          = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
       String vocabServiceUrl
          = hostConfigurer.resolvePlaceholder("HOST.vocabService.url");
+      String maxFeatureValue
+      	 = hostConfigurer.resolvePlaceholder("HOST.maxFeatures.value");
 
       logger.debug("googleKey: " + googleKey);
       logger.debug("vocabServiceUrl: " + vocabServiceUrl);
+      logger.debug("maxFeatureValue: " + maxFeatureValue);
 
       ModelAndView mav = new ModelAndView("gmap");
       mav.addObject("googleKey", googleKey);
       mav.addObject("vocabServiceUrl", vocabServiceUrl);
+      mav.addObject("maxFeatureValue", maxFeatureValue);
       return mav;
    }
 

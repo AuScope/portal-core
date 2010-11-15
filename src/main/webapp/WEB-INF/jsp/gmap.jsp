@@ -18,7 +18,9 @@
       <script type="text/javascript">
          var VOCAB_SERVICE_URL = "${vocabServiceUrl}";
          var NVCL_WEB_SERVICE_IP = "${nvclWebServiceIP}";
+         var MAX_FEATURES = "${maxFeatureValue}";
          var WEB_CONTEXT = '<%= request.getContextPath() %>';
+         
       </script>
 
       <%-- CSS imports - relative paths back to the webapp directory--%>

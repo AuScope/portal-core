@@ -74,7 +74,6 @@ public class EarthResourcesFilterController {
     private CSWService cswService;
 
 
-
     // ----------------------------------------------------------- Constructors
 
     @Autowired
@@ -127,7 +126,9 @@ public class EarthResourcesFilterController {
         JSONArray requestInfo = new JSONArray();
         try {
             String gmlBlob;
-            HttpMethodBase method;
+            HttpMethodBase method;      
+            
+            
             if (mineName.equals(ALL_MINES)) {//get all mines
                 if (bbox == null){
                 	method = this.mineralOccurrenceService.getAllMinesGML(serviceUrl, maxFeatures);
@@ -143,7 +144,7 @@ public class EarthResourcesFilterController {
                     gmlBlob = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
                 }
                 else{
-                	method = this.mineralOccurrenceService.getVisibleMineWithSpecifiedNameGML(serviceUrl, mineName, bbox, maxFeatures);
+                	method = this.mineralOccurrenceService.getVisibleMineWithSpecifiedNameGML(serviceUrl, mineName, maxFeatures, bbox);
                     gmlBlob = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
                 }
             }
@@ -209,12 +210,13 @@ public class EarthResourcesFilterController {
         //The presence of a bounding box causes us to assume we will be using this GML for visualising on a map
         //This will in turn limit the number of points returned to 200
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
-
+        
         JSONArray requestInfo = new JSONArray();
         try {
-
+        	
             //get the mineral occurrences
             String mineralOccurrenceResponse = null;
+                        
             HttpMethodBase method;
             if (bbox == null) {
             	method = this.mineralOccurrenceService.getMineralOccurrenceGML (
@@ -235,8 +237,8 @@ public class EarthResourcesFilterController {
                             minOreAmountUOM,
                             minCommodityAmount,
                             minCommodityAmountUOM,
-                            bbox,
-                            maxFeatures);
+                            maxFeatures,
+                            bbox);
             }
 
             mineralOccurrenceResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
@@ -340,8 +342,8 @@ public class EarthResourcesFilterController {
             																, producedMaterial
             																, cutOffGrade
             																, production
-            																, bbox
-            																, maxFeatures);
+            																, maxFeatures
+            																, bbox);
                 miningActivityResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
             }

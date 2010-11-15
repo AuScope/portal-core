@@ -108,7 +108,7 @@ log.info(".......default C'tor");
         log.debug("Mine query... url:" + serviceURL);
         log.trace("Mine query... filter:" + filter.getFilterStringBoundingBox(bbox));
 
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", filter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", filter.getFilterStringBoundingBox(bbox), maxFeatures,  bbox.getBboxSrs());
 
         //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
         return method;
@@ -142,7 +142,7 @@ log.info(".......default C'tor");
 
         log.debug("Mine query... url:" + serviceURL);
         log.trace("Mine query... filter: " + filter.getFilterStringAllRecords());
-
+        
         //create a GetFeature request with an empty filter - get all
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", filter.getFilterStringAllRecords(), maxFeatures);
 
@@ -184,7 +184,7 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public HttpMethodBase getVisibleMineWithSpecifiedNameGML(String serviceURL, String mineName, FilterBoundingBox bbox, int maxFeatures) throws Exception {
+    public HttpMethodBase getVisibleMineWithSpecifiedNameGML(String serviceURL, String mineName, int maxFeatures, FilterBoundingBox bbox) throws Exception {
         //create a filter for the specified name
         MineFilter mineFilter = new MineFilter(mineName);
 
@@ -220,7 +220,8 @@ log.info(".......default C'tor");
                                            String minOreAmountUOM,
                                            String minCommodityAmount,
                                            String minCommodityAmountUOM,
-                                           int maxFeatures) throws Exception {
+                                           int maxFeatures
+                                           ) throws Exception {
 
         MineralOccurrenceFilter mineralOccurrenceFilter
             = new MineralOccurrenceFilter( commodityName,
@@ -228,7 +229,8 @@ log.info(".......default C'tor");
                                            minOreAmount,
                                            minOreAmountUOM,
                                            minCommodityAmount,
-                                           minCommodityAmountUOM );
+                                           minCommodityAmountUOM
+                                           );
 
         log.debug("Mineral Occurence query... url:" + serviceURL);
         log.trace("Mineral Occurence query... filter:" + mineralOccurrenceFilter.getFilterStringAllRecords());
@@ -263,8 +265,10 @@ log.info(".......default C'tor");
                                            String minOreAmountUOM,
                                            String minCommodityAmount,
                                            String minCommodityAmountUOM,
-                                           FilterBoundingBox bbox,
-                                           int maxFeatures) throws Exception {
+                                           int maxFeatures,
+                                           FilterBoundingBox bbox
+                                           
+                                           ) throws Exception {
 
         MineralOccurrenceFilter mineralOccurrenceFilter
             = new MineralOccurrenceFilter( commodityName,
@@ -295,7 +299,8 @@ log.info(".......default C'tor");
                                         String producedMaterial,
                                         String cutOffGrade,
                                         String production,
-                                        int maxFeatures) throws Exception {
+                                        int maxFeatures
+                                        ) throws Exception {
 
         //create the filter
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
@@ -319,8 +324,9 @@ log.info(".......default C'tor");
             String producedMaterial,
             String cutOffGrade,
             String production,
-            FilterBoundingBox bbox,
-            int maxFeatures) throws Exception {
+            int maxFeatures,
+            FilterBoundingBox bbox
+            ) throws Exception {
 
         //create the filter
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);

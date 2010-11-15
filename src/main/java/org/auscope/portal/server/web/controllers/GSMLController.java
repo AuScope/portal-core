@@ -58,12 +58,14 @@ public class GSMLController {
     private IWFSGetFeatureMethodMaker methodMaker;
     private IFilter filter;
     private GSMLResponseHandler gsmlResponseHandler;
+    
     @Autowired
     public GSMLController(HttpServiceCaller serviceCaller,
                           GmlToKml gmlToKml,
                           IWFSGetFeatureMethodMaker methodMaker,
                           IFilter filter,
-                          GSMLResponseHandler gsmlResponseHandler) {
+                          GSMLResponseHandler gsmlResponseHandler
+                          ) {
         this.serviceCaller = serviceCaller;
         this.gmlToKml = gmlToKml;
         this.methodMaker = methodMaker;
@@ -137,6 +139,7 @@ public class GSMLController {
 	        } else {
 	            filterString = yilgarnGeochemistryFilter.getFilterStringBoundingBox(bbox);
 	        }
+	      
 	        HttpMethodBase method = methodMaker.makeMethod(serviceUrl, "gsml:GeologicUnit", filterString, maxFeatures);
 	        RequestEntity ent;
 	        String body = null;

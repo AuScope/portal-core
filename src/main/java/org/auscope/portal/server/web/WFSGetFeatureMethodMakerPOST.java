@@ -48,7 +48,7 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
 
         if (serviceURL == null || serviceURL.equals(""))
             throw new Exception("serviceURL parameter can not be null or empty.");
-
+        
         PostMethod httpMethod = new PostMethod(serviceURL);
 
         StringBuilder sb = new StringBuilder();
