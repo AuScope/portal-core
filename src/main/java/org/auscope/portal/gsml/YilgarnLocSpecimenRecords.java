@@ -25,7 +25,7 @@ import javax.xml.xpath.XPathFactory;
 public class YilgarnLocSpecimenRecords {
 	private static final Log logger = LogFactory.getLog(YilgarnLocSpecimenRecords.class);
 	String serviceName;
-	String dateAndTime;
+	String date;
 	String observedMineralName;
 	String observedMineralDescription;
 	String obsProcessContact;
@@ -46,7 +46,10 @@ public class YilgarnLocSpecimenRecords {
         
         String timeDateExpression = "om:Observation/om:samplingTime/gml:TimeInstant/gml:timePosition";
         tempNode = (Node)xPath.evaluate(timeDateExpression, node, XPathConstants.NODE);
-        dateAndTime = tempNode != null ? tempNode.getTextContent() : "";
+        String dateAndTime = tempNode != null ? tempNode.getTextContent() : "";
+        dateAndTime.replaceAll("^\\s+", "");
+        String[] dateTime = dateAndTime.split(" ");
+        date = dateTime[0];
         
         String ObservationProcessExpression = "om:Observation/om:procedure/omx:ObservationProcess/@gml:id";
         tempNode = (Node)xPath.evaluate(ObservationProcessExpression, node, XPathConstants.NODE);
@@ -85,9 +88,9 @@ public class YilgarnLocSpecimenRecords {
 	{
 		return serviceName;
 	}
-	public String getDateAndTime()
+	public String getDate()
 	{
-		return dateAndTime;
+		return date;
 	}
 	public String getObservedMineralName()
 	{

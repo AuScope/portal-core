@@ -77,14 +77,14 @@ public class YilgarnLocSpecimenController {
 	        }.makeMethod(), serviceCaller.getHttpClient());
 		}catch (Exception e){
 			logger.error("Error occured whilst communicating to remote service", e);
-			return generateJSONResponse(false, "Error occured whilst communicating to remote service: " + e.getMessage(), null, null);
+			return generateJSONResponse(false, "Error occured whilst communicating to remote service: " + e.getMessage(), null, null,null);
 		}
 		YilgarnLocSpecimenRecords[] records = null;
-		//String[] specName = null;
-		//String[] uniqueSpecName = null;
+		String[] specName = null;
+		String[] uniqueSpecName = null;
 		try{
 			records = YilgarnLocSpecimenRecords.parseRecords(gmlResponse);
-	        /*specName = new String[records.length];
+	        specName = new String[records.length];
 	        for (int j=0; j<records.length; j++){
 	        	specName[j] = records[j].getQuantityName();
 	        }
@@ -96,29 +96,31 @@ public class YilgarnLocSpecimenController {
 	        		continue;
 	        	specName[k++] = specName[i];
 	        }
-	        uniqueSpecName = new String[k];
-	        System.arraycopy(specName, 0, uniqueSpecName, 0, k);*/
+	        uniqueSpecName = new String[k+1];
+	        uniqueSpecName[0] = "All";
+	        System.arraycopy(specName, 0, uniqueSpecName, 1, k);
+	        
 
 		}
 		catch (Exception ex) {
             logger.warn("Error parsing request", ex);
-            return generateJSONResponse(false, "Error occured whilst parsing response: " + ex.getMessage(), null, null);
+            return generateJSONResponse(false, "Error occured whilst parsing response: " + ex.getMessage(), null, null,null);
 		}
 		
 		
 		//return generateJSONResponse(this.viewYilgarnLocSpecimenData, records); 
-		return generateJSONResponse(true, "No errors found",gmlResponse, records);
+		return generateJSONResponse(true, "No errors found",gmlResponse, records,uniqueSpecName);
     
     }
     
 
-    protected JSONModelAndView generateJSONResponse(boolean success, String errorMessage, final String gmlResponse, YilgarnLocSpecimenRecords[] records){
+    protected JSONModelAndView generateJSONResponse(boolean success, String errorMessage, final String gmlResponse, YilgarnLocSpecimenRecords[] records, String[] uniqueSpecName){
     	ModelMap response = new ModelMap();
         response.put("success", success);
         response.put("errorMsg", errorMessage);
         response.put("gmlResponse", gmlResponse);
         response.put("records", records);
-      //  response.put("uniqueSpecName", uniqueSpecName);
+        response.put("uniqueSpecName", uniqueSpecName);
         
         return new JSONModelAndView(response);
     }

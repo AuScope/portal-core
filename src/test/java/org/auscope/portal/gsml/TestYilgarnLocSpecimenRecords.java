@@ -18,7 +18,7 @@ public class TestYilgarnLocSpecimenRecords {
         YilgarnLocSpecimenRecords record = records[0];
         
         Assert.assertEquals("serviceName1", record.getServiceName());
-        Assert.assertEquals("2006-09-28 00:00:00.0", record.getDateAndTime());
+        Assert.assertEquals("2006-09-28", record.getDate());
         Assert.assertEquals("quantityName1", record.getObservedMineralName());
         Assert.assertEquals("MineralDescription1", record.getObservedMineralDescription());
         Assert.assertEquals("obsProcessContact1", record.getObsProcessContact());

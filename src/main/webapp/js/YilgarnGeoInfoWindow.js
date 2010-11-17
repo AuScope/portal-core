@@ -53,7 +53,7 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	    	for (var i = 0; i < records.length ; i++) {	    		
 	    		recordItems.push([
 	    			    records[i].serviceName,
-	    			    records[i].dateAndTime,
+	    			    records[i].date,
 	    			    records[i].observedMineralName,
 	    			    records[i].observedMineralDescription,
 	    			    records[i].obsProcessContact,
@@ -66,33 +66,33 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	    			]);
 	    		}
 	    	
-
+	    	var groupStore = new Ext.data.GroupingStore({
+	    		autoDestroy		: true,
+	    		groupField		: 'quantityName',
+	    		sortInfo		: {
+	    			field			: 'quantityName',
+	    			direction		: 'ASC'
+	    		},
+	    		reader : new Ext.data.ArrayReader({
+	    			fields : [
+	    			    'name',
+	    			    'date',
+	    			    'MineralName',
+	    			    'MineralDescription',
+	    			    'ProcessContact',
+	    			    'ProcessMethod',
+	    			    'Property',
+	    			    'quantityName',
+	    			    'quantityValue',
+	    			    'uom',
+	    			    'RecordIndex'
+	    			]
+	    		}),
+	    		data : recordItems
+	    	});
 	    	
 	    	var grid = new Ext.grid.GridPanel({
-	    		    store : new Ext.data.GroupingStore({
-		    		autoDestroy		: true,
-		    		groupField		: 'quantityName',
-		    		sortInfo		: {
-		    			field			: 'quantityName',
-		    			direction		: 'ASC'
-		    		},
-		    		reader : new Ext.data.ArrayReader({
-		    			fields : [
-		    			    'name',
-		    			    'date&time',
-		    			    'MineralName',
-		    			    'MineralDescription',
-		    			    'ProcessContact',
-		    			    'ProcessMethod',
-		    			    'Property',
-		    			    'quantityName',
-		    			    'quantityValue',
-		    			    'uom',
-		    			    'RecordIndex'
-		    			]
-		    		}),
-		    		data : recordItems
-		    	}),
+	    		    store : groupStore,
 		    	colModel:new Ext.grid.ColumnModel({
 		    		 defaults: {
 		             	sortable: true // columns are not sortable by default           
@@ -103,8 +103,8 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 		             dataIndex: 'name',
 		             width: 200
 		         },{
-		             header: 'date&time',
-		             dataIndex: 'date&time',
+		             header: 'date',
+		             dataIndex: 'date',
 		             width: 100
 		         },{
 		             header: 'MineralDescription',
@@ -134,6 +134,26 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 		    	        // custom grouping text template to display the number of items per group
 		    	        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
 		    	    }),
+		    	    tbar: [
+			               'Quantity Name: ',
+			               new Ext.form.ComboBox({
+			                   store: locSpecName,
+			                   width:200,
+			                   typeAhead: true,
+			                   forceSelection: true,
+			                   listeners:{
+			            	   		select : function(combo, record, index){
+			            	   			
+			            	   			var selectedMineral = record.get('field1'); //TODO change to a proper field name
+			            	   			if(selectedMineral == 'All'){
+			            	   				groupStore.filter('quantityName','', false, false);
+			            	   			}else
+			            	   			//do stuff
+			            	   			groupStore.filter('quantityName', selectedMineral, false, false);
+			               			}
+			               		}
+			               })
+			           ],
 		    	    frame:true,
 		    	    columnLines: true,
 		    	    iconCls:'icon-grid',
@@ -141,6 +161,7 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 		    	    height: 450
 		    	   
 	    	});
+	    	
 	    	
 	    	 var win = new Ext.Window({
 	    		

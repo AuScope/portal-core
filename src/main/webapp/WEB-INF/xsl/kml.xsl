@@ -490,8 +490,6 @@
            <![CDATA[<table border="1" cellspacing="1" cellpadding="2" " width="100%" bgcolor="#EAF0F8">
            <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name[@codeSpace='http://www.cgi-iugs.org/uri']"/><![CDATA[</td>]]>          
            <![CDATA[</tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/><![CDATA[</td>]]>
-           <![CDATA[</tr><tr><td>CGI_TermValue</td><td>]]><xsl:value-of select="./gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace='urn:cgi:classifier:CGI:FeatureObservationMethod:200811']"/><![CDATA[</td>]]>
-           <![CDATA[</tr><tr><td>Purpose</td><td>]]><xsl:value-of select="./gsml:purpose"/><![CDATA[</td>]]>
            <![CDATA[</tr><tr><td>Observation Method</td><td>]]><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace='urn:cgi:classifier:CGI:MappedFeatureObservationMethod:200811']"/><![CDATA[</td>]]>
            <![CDATA[</tr><tr><td>Rock Material</td><td>]]><xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td>]]>
            <![CDATA[</tr><tr><td>Proportion</td><td>]]><xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value[@codeSpace='urn:cgi:classifier:CGI:ProportionTerm:200811']"/><![CDATA[</td>]]>
