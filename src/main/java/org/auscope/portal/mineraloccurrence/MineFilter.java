@@ -20,10 +20,11 @@ public class MineFilter extends AbstractFilter {
      *            the main name
      */
     public MineFilter(String mineName) {
-        if (mineName == null || mineName.isEmpty())
-            this.filterFragment = "";
-        else
-            this.filterFragment = this.generatePropertyIsLikeFragment("er:specification/er:Mine/er:mineName/er:MineName/er:mineName", mineName);
+    	this.filterFragment = this.generatePropertyIsLikeFragment("er:specification/er:Mine/gml:name", "*");
+        if (mineName != null && mineName.length() > 0) {
+        	this.filterFragment = this.generateAndComparisonFragment(this.filterFragment,
+        		this.generatePropertyIsLikeFragment("er:specification/er:Mine/er:mineName/er:MineName/er:mineName", mineName));
+        }
     }
 
     public String getFilterStringAllRecords() {

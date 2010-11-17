@@ -292,7 +292,7 @@ log.info(".......default C'tor");
 
 
     public HttpMethodBase getMiningActivityGML( String serviceURL,
-                                        List<Mine> mines,
+                                        String mineName,
                                         String startDate,
                                         String endDate,
                                         String oreProcessed,
@@ -303,13 +303,13 @@ log.info(".......default C'tor");
                                         ) throws Exception {
 
         //create the filter
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineName, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         log.debug("Mining Activity query... url:" + serviceURL);
         log.trace("Mining Activity query... filter:" + miningActivityFilter.getFilterStringAllRecords());
 
         //create the method
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterStringAllRecords(), maxFeatures);
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", miningActivityFilter.getFilterStringAllRecords(), maxFeatures);
         log.debug("After methodMaker.makeMethod");
         //run dat query
         //return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
@@ -317,7 +317,7 @@ log.info(".......default C'tor");
     }
 
     public HttpMethodBase getVisibleMiningActivityGML( String serviceURL,
-            List<Mine> mines,
+            String mineName,
             String startDate,
             String endDate,
             String oreProcessed,
@@ -329,14 +329,14 @@ log.info(".......default C'tor");
             ) throws Exception {
 
         //create the filter
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mines, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(mineName, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production);
 
         log.debug("Mining Activity query... url:" + serviceURL);
         log.trace("Mining Activity query... filter:" + miningActivityFilter.getFilterStringBoundingBox(bbox));
 
 
         //create the method
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningActivity", miningActivityFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
+        HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", miningActivityFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
 
         //run dat query
         //return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());

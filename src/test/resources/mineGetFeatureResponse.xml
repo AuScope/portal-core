@@ -1,305 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wfs:FeatureCollection xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gmd="http://www.isotc211.org/2005/gmd"
-                       xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                       xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:wfs="http://www.opengis.net/wfs"
-                       xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                       xmlns:gml="http://www.opengis.net/gml" numberOfFeatures="2"
-                       xsi:schemaLocation="urn:cgi:xmlns:GGIC:MineralOccurrence:1.0 https://www.seegrid.csiro.au/subversion/xmml/GGIC/trunk/schema/MineralOccurrence/1.0.1/mineralOccurrence.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
-    <gml:boundedBy>
-        <gml:Envelope srsName="EPSG:4283">
-            <gml:pos srsDimension="2">147.10619 -37.63652</gml:pos>
-            <gml:pos srsDimension="2">147.52321 -37.33473</gml:pos>
-        </gml:Envelope>
-    </gml:boundedBy>
-    <gml:featureMember>
-        <er:Mine gml:id="mo.mine.361068">
-            <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">Good Hope</gml:name>
-            <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">Mitchell</gml:name>
-            <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">New Good Hope</gml:name>
-
-            <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">New Good Hope Tribute</gml:name>
-            <gml:name codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">
-                urn:cgi:feature:GSV:Mine:361068
-            </gml:name>
-            <gml:boundedBy>
-                <gml:Envelope srsName="EPSG:4283">
-                    <gml:pos srsDimension="2">147.10619 -37.33473</gml:pos>
-                    <gml:pos srsDimension="2">147.10619 -37.33473</gml:pos>
-                </gml:Envelope>
-            </gml:boundedBy>
-            <er:occurrence>
-                <er:MiningFeatureOccurrence gml:id="mo.miningfeatureoccurrence.361068">
-                    <gml:name codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">
-                        urn:cgi:feature:GSV:MiningFeatureOccurrence:361068
-                    </gml:name>
-                    <gml:boundedBy>
-
-                        <gml:Envelope srsName="EPSG:4283">
-                            <gml:pos srsDimension="2">147.10619 -37.33473</gml:pos>
-                            <gml:pos srsDimension="2">147.10619 -37.33473</gml:pos>
-                        </gml:Envelope>
-                    </gml:boundedBy>
-                    <er:observationMethod>
-                        <gsml:CGI_TermValue>
-                            <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
-                        </gsml:CGI_TermValue>
-                    </er:observationMethod>
-                    <er:positionalAccuracy>
-                        <gsml:CGI_NumericValue>
-                            <gsml:principalValue uom="urn:ogc:def:uom:UCUM:metre">5</gsml:principalValue>
-
-                        </gsml:CGI_NumericValue>
-                    </er:positionalAccuracy>
-                    <er:specification xlink:href="urn:cgi:feature:GSV:Mine:361068"/>
-                    <er:location>
-                        <gml:Point srsName="EPSG:4283">
-                            <gml:pos srsDimension="2">147.10619 -37.33473</gml:pos>
-                        </gml:Point>
-                    </er:location>
-                </er:MiningFeatureOccurrence>
-            </er:occurrence>
-            <er:startDate>
-                <gml:TimeInstant>
-                    <gml:timePosition>1865-01-01T00:00:00</gml:timePosition>
-                </gml:TimeInstant>
-            </er:startDate>
-
-            <er:endDate>
-                <gml:TimeInstant>
-                    <gml:timePosition>1914-12-31T00:00:00</gml:timePosition>
-                </gml:TimeInstant>
-            </er:endDate>
-            <er:mineName>
-                <er:MineName>
-                    <er:isPreferred>true</er:isPreferred>
-                    <er:mineName>Good Hope</er:mineName>
-                </er:MineName>
-            </er:mineName>
-            <er:mineName>
-                <er:MineName>
-                    <er:isPreferred>false</er:isPreferred>
-
-                    <er:mineName>Mitchell</er:mineName>
-                </er:MineName>
-            </er:mineName>
-            <er:mineName>
-                <er:MineName>
-                    <er:isPreferred>false</er:isPreferred>
-                    <er:mineName>New Good Hope</er:mineName>
-                </er:MineName>
-            </er:mineName>
-            <er:mineName>
-                <er:MineName>
-                    <er:isPreferred>false</er:isPreferred>
-                    <er:mineName>New Good Hope Tribute</er:mineName>
-
-                </er:MineName>
-            </er:mineName>
-            <er:mineName>
-                <er:MineName>
-                    <er:isPreferred>false</er:isPreferred>
-                    <er:mineName>New Good Hope Tribute</er:mineName>
-                </er:MineName>
-            </er:mineName>
-            <er:sourceReference>
-                <gmd:CI_Citation id="gmd.ci.citation.19900">
-                    <gmd:title>
-                        <gco:CharacterString>Notes on the geological structure of north Gippsland</gco:CharacterString>
-                    </gmd:title>
-                    <gmd:date>
-
-                        <gmd:CI_Date>
-                            <gmd:date>
-                                <gco:Date>1877</gco:Date>
-                            </gmd:date>
-                            <gmd:dateType>
-                                <gmd:CI_DateTypeCode codeList="CI_DateTypeCode" codeListValue="publication"/>
-                            </gmd:dateType>
-                        </gmd:CI_Date>
-                    </gmd:date>
-                </gmd:CI_Citation>
-            </er:sourceReference>
-            <er:sourceReference>
-                <gmd:CI_Citation id="gmd.ci.citation.20414">
-                    <gmd:title>
-                        <gco:CharacterString>Wonnangatta</gco:CharacterString>
-
-                    </gmd:title>
-                    <gmd:date>
-                        <gmd:CI_Date>
-                            <gmd:date>
-                                <gco:Date>1970</gco:Date>
-                            </gmd:date>
-                            <gmd:dateType>
-                                <gmd:CI_DateTypeCode codeList="CI_DateTypeCode" codeListValue="publication"/>
-                            </gmd:dateType>
-                        </gmd:CI_Date>
-                    </gmd:date>
-                </gmd:CI_Citation>
-            </er:sourceReference>
-            <er:status>unknown</er:status>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:83"/>
-
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:90"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:78"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27891"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:85"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27885"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27886"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:89"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:93"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:94"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:95"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:76"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27916"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:80"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:84"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27890"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:91"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:92"/>
-
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:98"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:100"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:81"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:82"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:75"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27887"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:27915"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:86"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:97"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:99"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361068:77"/>
-        </er:Mine>
-    </gml:featureMember>
-    <gml:featureMember>
-        <er:Mine gml:id="mo.mine.361102">
-            <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">New Sons of Freedom</gml:name>
-
-            <gml:name codeSpace="urn:cgi:classifierScheme:GSV:VicMineName">Sons of Freedom Reef</gml:name>
-            <gml:name codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">
-                urn:cgi:feature:GSV:Mine:361102
-            </gml:name>
-            <gml:boundedBy>
-                <gml:Envelope srsName="EPSG:4283">
-                    <gml:pos srsDimension="2">147.52321 -37.63652</gml:pos>
-                    <gml:pos srsDimension="2">147.52321 -37.63652</gml:pos>
-                </gml:Envelope>
-            </gml:boundedBy>
-            <er:occurrence>
-                <er:MiningFeatureOccurrence gml:id="mo.miningfeatureoccurrence.361102">
-                    <gml:name codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">
-                        urn:cgi:feature:GSV:MiningFeatureOccurrence:361102
-                    </gml:name>
-                    <gml:boundedBy>
-
-                        <gml:Envelope srsName="EPSG:4283">
-                            <gml:pos srsDimension="2">147.52321 -37.63652</gml:pos>
-                            <gml:pos srsDimension="2">147.52321 -37.63652</gml:pos>
-                        </gml:Envelope>
-                    </gml:boundedBy>
-                    <er:observationMethod>
-                        <gsml:CGI_TermValue>
-                            <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
-                        </gsml:CGI_TermValue>
-                    </er:observationMethod>
-                    <er:positionalAccuracy>
-                        <gsml:CGI_NumericValue>
-                            <gsml:principalValue uom="urn:ogc:def:uom:UCUM:metre">100</gsml:principalValue>
-
-                        </gsml:CGI_NumericValue>
-                    </er:positionalAccuracy>
-                    <er:specification xlink:href="urn:cgi:feature:GSV:Mine:361102"/>
-                    <er:location>
-                        <gml:Point srsName="EPSG:4283">
-                            <gml:pos srsDimension="2">147.52321 -37.63652</gml:pos>
-                        </gml:Point>
-                    </er:location>
-                </er:MiningFeatureOccurrence>
-            </er:occurrence>
-            <er:startDate>
-                <gml:TimeInstant>
-                    <gml:timePosition>1869-01-01T00:00:00</gml:timePosition>
-                </gml:TimeInstant>
-            </er:startDate>
-
-            <er:endDate>
-                <gml:TimeInstant>
-                    <gml:timePosition>1903-12-31T00:00:00</gml:timePosition>
-                </gml:TimeInstant>
-            </er:endDate>
-            <er:mineName>
-                <er:MineName>
-                    <er:isPreferred>false</er:isPreferred>
-                    <er:mineName>Sons of Freedom Reef</er:mineName>
-                </er:MineName>
-            </er:mineName>
-            <er:mineName>
-                <er:MineName>
-                    <er:isPreferred>false</er:isPreferred>
-
-                    <er:mineName>New Sons of Freedom</er:mineName>
-                </er:MineName>
-            </er:mineName>
-            <er:mineName>
-                <er:MineName>
-                    <er:isPreferred>true</er:isPreferred>
-                    <er:mineName>Sons of Freedom Reef</er:mineName>
-                </er:MineName>
-            </er:mineName>
-            <er:sourceReference>
-                <gmd:CI_Citation id="gmd.ci.citation.1592">
-                    <gmd:title>
-                        <gco:CharacterString>EL 243, County of Dargo, geological exploration. Report No 1
-                        </gco:CharacterString>
-
-                    </gmd:title>
-                    <gmd:date>
-                        <gmd:CI_Date>
-                            <gmd:date>
-                                <gco:Date>1971</gco:Date>
-                            </gmd:date>
-                            <gmd:dateType>
-                                <gmd:CI_DateTypeCode codeList="CI_DateTypeCode" codeListValue="publication"/>
-                            </gmd:dateType>
-                        </gmd:CI_Date>
-                    </gmd:date>
-                </gmd:CI_Citation>
-            </er:sourceReference>
-            <er:sourceReference>
-                <gmd:CI_Citation id="gmd.ci.citation.13140">
-                    <gmd:title>
-
-                        <gco:CharacterString>Parish of Bullumwaal</gco:CharacterString>
-                    </gmd:title>
-                    <gmd:date>
-                        <gmd:CI_Date>
-                            <gmd:date>
-                                <gco:Date>1895</gco:Date>
-                            </gmd:date>
-                            <gmd:dateType>
-                                <gmd:CI_DateTypeCode codeList="CI_DateTypeCode" codeListValue="publication"/>
-                            </gmd:dateType>
-                        </gmd:CI_Date>
-                    </gmd:date>
-                </gmd:CI_Citation>
-            </er:sourceReference>
-            <er:status>unknown</er:status>
-
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:142"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:151"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:154"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:143"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:144"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:145"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:150"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:152"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:146"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:155"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:148"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:147"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:149"/>
-            <er:relatedActivity xlink:href="urn:cgi:feature:GSV:MiningActivity:361102:153"/>
-        </er:Mine>
-    </gml:featureMember>
+<wfs:FeatureCollection numberOfFeatures="2" timeStamp="2010-11-16T08:07:22.597+08:00" xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ows="http://www.opengis.net/ows" xmlns:wfs="http://www.opengis.net/wfs">
+	<gml:featureMembers>
+		<er:MiningFeatureOccurrence gml:id="er.miningfeatureoccurrence.mine.95">
+			<gml:description>PITS EXTEND 3KMS ALONG CREEK</gml:description>
+			<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/miningfeatureoccurrence/mine/95</gml:name>
+			<er:observationMethod>
+				<gsml:CGI_TermValue>
+					<gsml:value codeSpace="urn:cgi:classifierScheme:PIRSA:ObservationMethod">(DISUSED) Map Plot</gsml:value>
+				</gsml:CGI_TermValue>
+			</er:observationMethod>
+			<er:positionalAccuracy>
+				<gsml:CGI_TermValue>
+					<gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC::missing</gsml:value>
+				</gsml:CGI_TermValue>
+			</er:positionalAccuracy>
+			<er:specification>
+				<er:Mine gml:id="er.mine.95">
+					<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/mine/95</gml:name>
+					<gml:name codeSpace="http://www.pir.sa.gov.au/minerals">WOOLDRIDGE CREEK WORKINGS</gml:name>
+					<er:occurrence xlink:href="http://services-test.auscope.org/resource/feature/pirsa/miningfeatureoccurrence/mine/95"/>
+					<er:mineName>
+						<er:MineName>
+							<er:isPreferred>true</er:isPreferred>
+							<er:mineName>WOOLDRIDGE CREEK WORKINGS</er:mineName>
+						</er:MineName>
+					</er:mineName>
+					<er:status>abandoned</er:status>
+					<er:relatedActivity>
+						<er:MiningActivity gml:id="er.miningactivity.4">
+							<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/miningactivity/4</gml:name>
+							<er:activityDuration>
+								<gml:TimePeriod>
+									<gml:begin xlink:href="urn:ogc:def:nil:OGC::missing"/>
+									<gml:end xlink:href="urn:ogc:def:nil:OGC::missing"/>
+								</gml:TimePeriod>
+							</er:activityDuration>
+							<er:activityType>unspecified</er:activityType>
+							<er:oreProcessed>
+								<gsml:CGI_NumericValue>
+									<gsml:principalValue uom="urn:ogc:def:uom:UCUM::t">103.0</gsml:principalValue>
+								</gsml:CGI_NumericValue>
+							</er:oreProcessed>
+							<er:associatedMine xlink:href="http://services-test.auscope.org/resource/feature/pirsa/mine/95"/>
+							<er:deposit xlink:href="http://services-test.auscope.org/resource/feature/pirsa/mineraloccurrence/95deposit"/>
+							<er:producedMaterial>
+								<er:Product gml:id="er.product.4">
+									<er:productName>
+										<gsml:CGI_TermValue>
+											<gsml:value codeSpace="http://www.pir.sa.gov.au/minerals">Celestite</gsml:value>
+										</gsml:CGI_TermValue>
+									</er:productName>
+									<er:sourceReference xlink:href="http://www.opengis.net/def/nil/OGC/0/unknown" xlink:title="Unknown"/>
+									<er:grade>
+										<gsml:CGI_NumericValue>
+											<gsml:principalValue uom="urn:ogc:def:nil:OGC::missing">0.0</gsml:principalValue>
+										</gsml:CGI_NumericValue>
+									</er:grade>
+									<er:production>
+										<gsml:CGI_NumericValue>
+											<gsml:principalValue uom="urn:ogc:def:uom:UCUM::t">103.0</gsml:principalValue>
+										</gsml:CGI_NumericValue>
+									</er:production>
+									<er:sourceCommodity xlink:href="urn:ogc:def:nil:OGC::missing"/>
+								</er:Product>
+							</er:producedMaterial>
+						</er:MiningActivity>
+					</er:relatedActivity>
+				</er:Mine>
+			</er:specification>
+			<er:location>
+				<gml:Point srsDimension="2">
+					<gml:pos>135.1068262 -27.3076358</gml:pos>
+				</gml:Point>
+			</er:location>
+		</er:MiningFeatureOccurrence>
+		<er:MiningFeatureOccurrence gml:id="er.miningfeatureoccurrence.mine.217">
+			<gml:description>urn:ogc:def:nil:OGC::missing</gml:description>
+			<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/miningfeatureoccurrence/mine/217</gml:name>
+			<er:observationMethod>
+				<gsml:CGI_TermValue>
+					<gsml:value codeSpace="urn:cgi:classifierScheme:PIRSA:ObservationMethod">Sourced from documents (PLANS, ENV, RB,etc)</gsml:value>
+				</gsml:CGI_TermValue>
+			</er:observationMethod>
+			<er:positionalAccuracy>
+				<gsml:CGI_NumericValue>
+					<gsml:principalValue uom="urn:ogc:def:nil:OGC::missing">100.0</gsml:principalValue>
+				</gsml:CGI_NumericValue>
+			</er:positionalAccuracy>
+			<er:specification>
+				<er:Mine gml:id="er.mine.217">
+					<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/mine/217</gml:name>
+					<gml:name codeSpace="http://www.pir.sa.gov.au/minerals">HALL MAGNESITE MINE</gml:name>
+					<er:occurrence xlink:href="http://services-test.auscope.org/resource/feature/pirsa/miningfeatureoccurrence/mine/217"/>
+					<er:mineName>
+						<er:MineName>
+							<er:isPreferred>true</er:isPreferred>
+							<er:mineName>HALL MAGNESITE MINE</er:mineName>
+						</er:MineName>
+					</er:mineName>
+					<er:status>abandoned</er:status>
+					<er:relatedActivity>
+						<er:MiningActivity gml:id="er.miningactivity.13">
+							<gml:name codeSpace="http://www.ietf.org/rfc/rfc2616">http://services-test.auscope.org/resource/feature/pirsa/miningactivity/13</gml:name>
+							<er:activityDuration>
+								<gml:TimePeriod>
+									<gml:begin xlink:href="urn:ogc:def:nil:OGC::missing"/>
+									<gml:end xlink:href="urn:ogc:def:nil:OGC::missing"/>
+								</gml:TimePeriod>
+							</er:activityDuration>
+							<er:activityType>unspecified</er:activityType>
+							<er:oreProcessed>
+								<gsml:CGI_NumericValue>
+									<gsml:principalValue uom="urn:ogc:def:uom:UCUM::t">279.413</gsml:principalValue>
+								</gsml:CGI_NumericValue>
+							</er:oreProcessed>
+							<er:associatedMine xlink:href="http://services-test.auscope.org/resource/feature/pirsa/mine/217"/>
+							<er:deposit xlink:href="http://services-test.auscope.org/resource/feature/pirsa/mineraloccurrence/217deposit"/>
+							<er:producedMaterial>
+								<er:Product gml:id="er.product.13">
+									<er:productName>
+										<gsml:CGI_TermValue>
+											<gsml:value codeSpace="http://www.pir.sa.gov.au/minerals">Magnesite</gsml:value>
+										</gsml:CGI_TermValue>
+									</er:productName>
+									<er:sourceReference xlink:href="http://www.opengis.net/def/nil/OGC/0/unknown" xlink:title="Unknown"/>
+									<er:grade>
+										<gsml:CGI_NumericValue>
+											<gsml:principalValue uom="urn:ogc:def:nil:OGC::missing">0.0</gsml:principalValue>
+										</gsml:CGI_NumericValue>
+									</er:grade>
+									<er:production>
+										<gsml:CGI_NumericValue>
+											<gsml:principalValue uom="urn:ogc:def:uom:UCUM::t">279.413</gsml:principalValue>
+										</gsml:CGI_NumericValue>
+									</er:production>
+									<er:sourceCommodity xlink:href="urn:ogc:def:nil:OGC::missing"/>
+								</er:Product>
+							</er:producedMaterial>
+						</er:MiningActivity>
+					</er:relatedActivity>
+				</er:Mine>
+			</er:specification>
+			<er:location>
+				<gml:Point srsDimension="2">
+					<gml:pos>135.8198574 -34.3511832</gml:pos>
+				</gml:Point>
+			</er:location>
+		</er:MiningFeatureOccurrence>
+	</gml:featureMembers>
 </wfs:FeatureCollection>
-

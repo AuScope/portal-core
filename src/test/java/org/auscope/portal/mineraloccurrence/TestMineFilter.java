@@ -23,7 +23,7 @@ public class TestMineFilter {
         MineFilter mineFilter = new MineFilter("");
 
         String filter = mineFilter.getFilterStringAllRecords();
-        Assert.assertEquals("", filter);
+        Assert.assertEquals("<ogc:Filter><ogc:PropertyIsLike escapeChar=\"!\" wildCard=\"*\" singleChar=\"#\" ><ogc:PropertyName>er:specification/er:Mine/gml:name</ogc:PropertyName><ogc:Literal>*</ogc:Literal></ogc:PropertyIsLike></ogc:Filter>", filter);
     }
 
     /**
@@ -36,8 +36,11 @@ public class TestMineFilter {
         String filter = mineFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", new String[] {"er:mineName/er:MineName/er:mineName"}, 1);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal", new String[] {"Dominion Copper Mine"}, 1);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", 
+        		new String[] {"er:specification/er:Mine/gml:name", "er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
+        		new String[] {"*", "Dominion Copper Mine"}, 2);
+        
     }
 
 }

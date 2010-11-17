@@ -60,9 +60,10 @@ public class TestMineralOccurrenceServiceClient {
         final String mockMineResponse = new String();
         @SuppressWarnings("unchecked")
         final List<Mine> mockMines = context.mock(List.class);
-
+        
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Mine", "", 0); will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(with(serviceURL), with("er:MiningFeatureOccurrence"), 
+            		with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockMineResponse));
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
@@ -255,12 +256,13 @@ public class TestMineralOccurrenceServiceClient {
 
         context.checking(new Expectations() {{
             ignoring(mockMine);
-            oneOf (methodMaker).makeMethod(with(""), with("er:MiningActivity"), with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(with(""), with("er:MiningFeatureOccurrence"), 
+            		with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
         }});
 
-        this.mineralOccurrenceService.getMiningActivityGML("", mockMineList, "", "", "", "", "", "", 0);
+        this.mineralOccurrenceService.getMiningActivityGML("", "", "", "", "", "", "", "", 0);
 
     }
 

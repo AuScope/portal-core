@@ -32,8 +32,8 @@ public class TestMineralOccurrenceResponseHandler {
         Collection<Mine> mines = mineralOccurrencesResponseHandler.getMines(mineGetFeatureResponseXML.toString());
 
         Assert.assertEquals("There are 2 mines", 2, mines.size());
-        Assert.assertEquals("The first one is Good Hope", "Good Hope", ((Mine)mines.toArray()[0]).getMineNamePreffered());
-        Assert.assertEquals("The second one is Sons of Freedom Reef", "Sons of Freedom Reef", ((Mine)mines.toArray()[1]).getMineNamePreffered());
+        Assert.assertEquals("The first mine is WOOLDRIDGE CREEK WORKINGS", "WOOLDRIDGE CREEK WORKINGS", ((Mine)mines.toArray()[0]).getMineNamePreffered());
+        Assert.assertEquals("The second mine is HALL MAGNESITE MINE", "HALL MAGNESITE MINE", ((Mine)mines.toArray()[1]).getMineNamePreffered());
     }
 
     @Test

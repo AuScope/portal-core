@@ -15,6 +15,7 @@ import org.auscope.portal.server.domain.filter.FilterBoundingBox;
  * @author Jarek Sanders
  * @version $Id$
  */
+@SuppressWarnings("deprecation")
 public class MineralOccurrenceFilter extends AbstractFilter {
 
     // TODO: Include ENDOWMENT when GeoServers accept this element

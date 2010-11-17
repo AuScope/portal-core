@@ -74,6 +74,7 @@ public class EarthResourcesFilterController {
     private CSWService cswService;
 
 
+
     // ----------------------------------------------------------- Constructors
 
     @Autowired
@@ -126,9 +127,7 @@ public class EarthResourcesFilterController {
         JSONArray requestInfo = new JSONArray();
         try {
             String gmlBlob;
-            HttpMethodBase method;      
-            
-            
+            HttpMethodBase method;
             if (mineName.equals(ALL_MINES)) {//get all mines
                 if (bbox == null){
                 	method = this.mineralOccurrenceService.getAllMinesGML(serviceUrl, maxFeatures);
@@ -162,8 +161,7 @@ public class EarthResourcesFilterController {
 
             String kmlBlob =  convertMineResponseToKml(gmlBlob, request, serviceUrl);
 
-            log.debug(kmlBlob);
-
+            //log.debug(kmlBlob);
             //This failure test should be made a little bit more robust
             //And should probably try to extract an error message
             if (kmlBlob == null || kmlBlob.length() == 0) {
@@ -210,13 +208,13 @@ public class EarthResourcesFilterController {
         //The presence of a bounding box causes us to assume we will be using this GML for visualising on a map
         //This will in turn limit the number of points returned to 200
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
-        
+
         JSONArray requestInfo = new JSONArray();
+
         try {
-        	
+
             //get the mineral occurrences
             String mineralOccurrenceResponse = null;
-                        
             HttpMethodBase method;
             if (bbox == null) {
             	method = this.mineralOccurrenceService.getMineralOccurrenceGML (
@@ -303,27 +301,12 @@ public class EarthResourcesFilterController {
 
         JSONArray requestInfo = new JSONArray();
         try {
-
-            List<Mine> mines = new ArrayList<Mine>();
-
-            if (!mineName.equals("")) {
-                //We intentionally do not bbox filter here, the bbox will happen during the main response
-                mines = this.mineralOccurrenceService.getMineWithSpecifiedName
-                                                                    ( serviceUrl
-                                                                    , mineName
-                                                                    , maxFeatures);
-
-                // If there are 0 features then send nice message to the user
-                if (mines.size() == 0)
-                    return makeModelAndViewFailure(ErrorMessages.NO_RESULTS);
-            }
-
             // Get the mining activities
             HttpMethodBase method = null;;
             String miningActivityResponse = null;
             if (bbox == null) {
             	method = this.mineralOccurrenceService.getMiningActivityGML( serviceUrl
-                        											, mines
+                        											, mineName
                         											, startDate
                         											, endDate
                         											, oreProcessed
@@ -335,7 +318,7 @@ public class EarthResourcesFilterController {
 
             } else {
             	method = this.mineralOccurrenceService.getVisibleMiningActivityGML( serviceUrl
-            																, mines
+            																, mineName
             																, startDate
             																, endDate
             																, oreProcessed
@@ -541,6 +524,7 @@ public class EarthResourcesFilterController {
 
         return new JSONModelAndView(model);
     }
+
 
     /**
      * Assemble a call to convert GeoSciML into kml format

@@ -32,18 +32,18 @@ public class TestMiningActivityFilter {
 
     @Test
     public void testAssociatedMine() throws Exception {
-        final List<String> activities = Arrays.asList("activity1", "activity2");
         context.checking(new Expectations() {{
             oneOf (mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing (mockMine).getRelatedActivities();will(returnValue(activities));
         }});
 
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(this.mockMineList, "", "", "", "", "", "");
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "", "", "", "", "", "");
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 2);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1", "activity2"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", 
+        		new String[] {"er:specification/er:Mine/er:relatedActivity/er:MiningActivity/gml:name", "er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal", 
+        		new String[] {"*", "urn:cgi:feature:GSV:Mine:361068"}, 2);
     }
 
     @Test
@@ -54,12 +54,14 @@ public class TestMiningActivityFilter {
             allowing (mockMine).getRelatedActivities();will(returnValue(activities));
         }});
 
-        MiningActivityFilter miningActivityFilter = new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "", "", "");
+        MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "", "");
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 1);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1"}, 1);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", 
+        		new String[] {"er:specification/er:Mine/er:relatedActivity/er:MiningActivity/gml:name", "er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
+        		new String[] {"*", "urn:cgi:feature:GSV:Mine:361068"}, 2);
 
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
@@ -74,13 +76,15 @@ public class TestMiningActivityFilter {
         }});
 
         MiningActivityFilter miningActivityFilter =
-            new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "28", "", "", "");
+            new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "28", "", "", "");
 
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 1);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1"}, 1);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", 
+        		new String[] {"er:specification/er:Mine/er:relatedActivity/er:MiningActivity/gml:name", "er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
+        		new String[] {"*", "urn:cgi:feature:GSV:Mine:361068"}, 2);
 
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
@@ -97,13 +101,19 @@ public class TestMiningActivityFilter {
         }});
 
         MiningActivityFilter miningActivityFilter =
-            new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "Gold", "", "");
+            new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "Gold", "", "");
 
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name" , "er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value"}, 2);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1", "Gold"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", 
+        		new String[] {"er:specification/er:Mine/er:relatedActivity/er:MiningActivity/gml:name", "er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
+        		new String[] {"*", "urn:cgi:feature:GSV:Mine:361068"}, 2);
+
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", 
+        		new String[] {"er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:producedMaterial/er:Product/er:productName/gsml:CGI_TermValue/gsml:value"}, 1);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"Gold"}, 1);
 
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
@@ -118,13 +128,15 @@ public class TestMiningActivityFilter {
         }});
 
         MiningActivityFilter miningActivityFilter =
-            new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "", "10.14", "");
+            new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "10.14", "");
 
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 1);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1"}, 1);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", 
+        		new String[] {"er:specification/er:Mine/er:relatedActivity/er:MiningActivity/gml:name", "er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
+        		new String[] {"*", "urn:cgi:feature:GSV:Mine:361068"}, 2);
 
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
@@ -141,13 +153,15 @@ public class TestMiningActivityFilter {
         }});
 
         MiningActivityFilter miningActivityFilter =
-            new MiningActivityFilter(this.mockMineList, "01/JAN/1870", "31/DEC/1885", "", "", "", "1");
+            new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "", "1");
 
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:PropertyName", new String[] {"gml:name"}, 1);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"activity1"}, 1);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", 
+        		new String[] {"er:specification/er:Mine/er:relatedActivity/er:MiningActivity/gml:name", "er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
+        		new String[] {"*", "urn:cgi:feature:GSV:Mine:361068"}, 2);
 
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal", new String[] {"01/JAN/1870"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLessThanOrEqualTo/ogc:Literal", new String[] {"31/DEC/1885"}, 1);
