@@ -148,7 +148,7 @@
 	      </xsl:variable>	      
 
 	      <xsl:variable name="minStartDate">
-	        <xsl:for-each select="./er:specification/er:MiningActivity/er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition">
+	        <xsl:for-each select="./er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition">
             <xsl:sort select="." data-type="text" order="ascending"/>
 	        <xsl:if test="position()=1">
 	      	  <xsl:value-of select="."/>
@@ -157,7 +157,7 @@
 	      </xsl:variable>
 	      
 	      <xsl:variable name="maxEndDate">
-	        <xsl:for-each select="./er:specification/er:MiningActivity/er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition">
+	        <xsl:for-each select="./er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition">
             <xsl:sort select="." data-type="text" order="descending"/>
 	        <xsl:if test="position()=1">
 	      	  <xsl:value-of select="."/>

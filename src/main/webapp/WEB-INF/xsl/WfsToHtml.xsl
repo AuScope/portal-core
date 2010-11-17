@@ -149,10 +149,10 @@
                 <!-- Commodity -->
                 <tr>
                     <td class="row header">Commodity</td>
-                    <td class="row"><xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/er:commodityName"/></td>
+                    <td class="row"><xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/er:commodityName"/></td>
                     <td class="row header">Commodity Id:</td>
                     <td class="row" colspan="2">
-                        <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={./er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="substring-after(./er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href,'=')"/></a>
+                        <a href="#" onclick="var w=window.open('wfsFeaturePopup.do?url={./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/></a>
                     </td>
                 </tr>
                 <!-- Product Name -->
