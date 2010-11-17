@@ -121,6 +121,7 @@ public class CSWService {
             	//and hammering an external resource, at this point all communications with the external
             	//source have finished.
             	this.updateInProgress = false;
+                log.info("Update completed for "+this.serviceItem.getServiceUrl());
             }
     	}
     }

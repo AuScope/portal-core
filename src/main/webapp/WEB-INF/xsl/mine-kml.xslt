@@ -66,12 +66,11 @@
 					<xsl:value-of select="$mineName"/>
 				</name>
 				<description><![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
-                    <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'wfsFeaturePopup.do?url='"/><xsl:value-of select="$mineNameHrefLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/><![CDATA[</a>]]>             
-                    <![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]>     
-					<xsl:value-of select="$mineName"/><![CDATA[</td></tr><tr><td>Location</td><td>]]>
-					<xsl:value-of select="$coordinates"/><![CDATA[</td></tr><tr><td>Status</td><td>]]>
-					<xsl:value-of select="./er:specification/er:Mine/er:status"
-					/><![CDATA[</td></tr></table>]]></description>
+               <tr><td>Name</td><td><a href="#" onclick="var w=window.open(']]><xsl:value-of select="'wfsFeaturePopup.do?url='"/><xsl:value-of select="$mineNameHrefLink"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="./er:specification/er:Mine/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/><![CDATA[</a>]]>
+					<![CDATA[</td></tr><tr><td>Preferred Name</td><td>]]><xsl:value-of select="$mineName"/>
+					<![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/>
+					<![CDATA[</td></tr><tr><td>Status</td><td>]]><xsl:value-of select="./er:specification/er:Mine/er:status"/>
+					<![CDATA[</td></tr></table>]]></description>
 
 				<xsl:apply-templates select="./descendant::gml:Point"/>
 			</Placemark>

@@ -43,7 +43,6 @@ public class MineralOccurrencesResponseHandler {
         //Do some rudimentary error testing
         OWSExceptionParser.checkForExceptionResponse(mineDocument);
 
-        // To death we are hastening, let us refrain from sinning ... never forget this too! ;-)
         XPathExpression expr = xPath.compile("/wfs:FeatureCollection/gml:featureMember/er:MiningFeatureOccurrence/er:specification/er:Mine | /wfs:FeatureCollection/gml:featureMembers/er:MiningFeatureOccurrence/er:specification/er:Mine");
         NodeList mineNodes = (NodeList)expr.evaluate(mineDocument, XPathConstants.NODESET);
         ArrayList<Mine> mines = new ArrayList<Mine>();
