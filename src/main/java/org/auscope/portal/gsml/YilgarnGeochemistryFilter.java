@@ -53,10 +53,10 @@ public class YilgarnGeochemistryFilter extends AbstractFilter{
         List<String> parameterFragments = new ArrayList<String>();
         
         if(this.rockLithology.length() > 0)
-            parameterFragments.add(this.generatePropertyIsGreaterThanOrEqualTo("gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href", this.rockLithology));
+            parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href", this.rockLithology));
         
         if(this.weatherLithology.length() > 0)
-            parameterFragments.add(this.generatePropertyIsGreaterThanOrEqualTo("gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href", this.weatherLithology));
+            parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href", this.weatherLithology));
         
         
         

@@ -58,6 +58,7 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
         sb.append("                xmlns:ogc=\"http://www.opengis.net/ogc\"\n");
         sb.append("                xmlns:gml=\"http://www.opengis.net/gml\"\n");
         sb.append("                xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\"\n");
+        sb.append("                xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n");
         if (maxFeatures > 0)
             sb.append("                maxFeatures=\"" + Integer.toString(maxFeatures) + "\"");
         sb.append(">\n");

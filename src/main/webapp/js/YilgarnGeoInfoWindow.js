@@ -19,6 +19,10 @@ function YilgarnGeoInfoWindow(iMap,iOverlay,iWfsUrl,iFeatureId,iWfsTypeName) {
    }
 
 function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
+	var myMask = new Ext.LoadMask(Ext.get('center_region'), {msg:"Please wait..." ,	removeMask: true});
+    myMask.show();   
+    
+    
 	Ext.Ajax.request( {
 	    url : 'doLocatedSpecimenFeature.do',
 	    params : {
@@ -29,9 +33,11 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	    callingInstance : this,
 	    
 	    failure: function (response, options){
+	    	myMask.hide();
 	    	Ext.Msg.alert('Error Describing LocSpecimen Records', 'Error (' + response.status + '): ' + response.statusText);
 	    },
 	    success: function (response, options){
+	    	myMask.hide();
 	    	var jsonData = Ext.util.JSON.decode(response.responseText);
 	    	if (!jsonData.success) {
     			Ext.Msg.alert('Error Describing LocSpecimen Records', 'There was an error whilst communicating with ' + wfsUrl);
@@ -229,7 +235,7 @@ YilgarnGeoInfoWindow.prototype =  {
 								
 		htmlFragment += '<div align="right">' +
         						'<br/>' +
-        						'<input type="button" id="downloadLocBtn"  value="DownloadLocSpec" onclick="locSpecDownload('+
+        						'<input type="button" id="downloadLocBtn" style = "visibility:visible;" value="DownloadLocSpec" onclick="locSpecDownload('+
         						'\'' + this.wfsUrl +'\',' +
         						'\'' + this.locSpecimenFeatureId.trim()+'\');"/>';
 		
