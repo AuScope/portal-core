@@ -285,7 +285,7 @@
    <!-- TEMPLATE FOR Commodity Description -->
    <!-- ================================================================= -->
    <xsl:template match="er:commodityDescription">
-      <![CDATA[<tr><td>]]>Commodity Description <![CDATA[</td>]]
+      <![CDATA[<tr><td>]]>Commodity Description <![CDATA[</td>]]>
       <![CDATA[<td>]]><xsl:call-template name="make-wfspopup-url">
          <xsl:with-param name="friendly-name" select="./er:Commodity/er:commodityName[@codeSpace='urn:cgi:classifierScheme:GA:commodity']/text()"/>
          <xsl:with-param name="real-url" select="./er:Commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']/text()"/>
