@@ -5,10 +5,6 @@ function YilgarnGeoInfoWindow(iMap,iOverlay,iWfsUrl,iFeatureId,iWfsTypeName) {
     this.featureId = iFeatureId;
     this.wfsTypeName = iWfsTypeName;
     this.overlayDes = iOverlay.description;
-    this.geoServiceURL = this.wfsUrl;
-    this.geoServiceURL += '&typeName=' + this.wfsTypeName;
-    this.geoServiceURL += '&featureId=' + this.featureId;
-    	
     this.geoFeaturePart = 'geologicUnit_';
     this.locFeaturePart = 'locatedSpecimen_';
     this.locSpecTypeName = 'sa:LocatedSpecimen';
@@ -49,12 +45,6 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	    	var resultMessage = jsonData.result;
 	    	var locSpecName = jsonData.uniqueSpecName;
 	    	var records = jsonData.records;
-	    	
-	    	/*var locSpecNameStore = new Ext.data.ArrayStore({
-		    	fields : ['loc'],
-		        data   : locSpecName
-		    });*/
-	    	
 	    	var recordItems = [];
 	    	for (var i = 0; i < records.length ; i++) {	    		
 	    		recordItems.push([
@@ -121,15 +111,15 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 		             dataIndex: 'ProcessContact',
 		             width: 100
 		         },{
-		             header: 'quantityName',
+		             header: 'AnalyteName',
 		             dataIndex: 'quantityName',
 		             width: 100
 		         },{
-		             header: 'quantityValue',
+		             header: 'Value',
 		             dataIndex: 'quantityValue',
 		             width: 100
 		         },{
-		             header: 'uom',
+		             header: 'Measuring Unit',
 		             dataIndex: 'uom',
 		             width: 100
 		         }]
@@ -141,7 +131,7 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 		    	        groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
 		    	    }),
 		    	    tbar: [
-			               'Quantity Name: ',
+			               'Select Analyte: ',
 			               new Ext.form.ComboBox({
 			                   store: locSpecName,
 			                   width:200,
@@ -185,13 +175,18 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	
 }
 
-function locSpecDownload(wfsUrl,locSpecimenFeatureId){
+function locSpecDownload(wfsUrl,locSpecimenFeatureId,locSpecTypeName, geoFeatureId, geoTypeName){
+	
 	var key = 'serviceUrls';
-	var value=window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "doLocatedSpecimenFeature.do" + "?" + "serviceUrl=" + wfsUrl + "&typeName=" + "sa:LocatedSpecimen"
+	var locSpecLink=window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "doLocatedSpecimenFeature.do" + "?" + "serviceUrl=" + wfsUrl + "&typeName=" + "sa:LocatedSpecimen"
 	+"&featureId=" + locSpecimenFeatureId;
 	
+	var geoLink = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "doYilgarnGeochemistryDownload.do" + "?" + "serviceUrl=" + wfsUrl + "&typeName=" + geoTypeName
+	+"&featureId=" + geoFeatureId;
+	
 	var url = 'downloadLocSpecAsZip.do?';
-    url += '&' + key + '=' + escape(value);
+    url += '&' + key + '=' + escape(locSpecLink);
+    url += '&' + key + '=' + escape(geoLink);
     
 	downloadFile(url);
 };
@@ -235,11 +230,14 @@ YilgarnGeoInfoWindow.prototype =  {
 								
 		htmlFragment += '<div align="right">' +
         						'<br/>' +
-        						'<input type="button" id="downloadLocBtn" style = "visibility:visible;" value="DownloadLocSpec" onclick="locSpecDownload('+
+        						'<input type="button" id="downloadLocBtn" style = "visibility:visible;" value="DownloadChemistry" onclick="locSpecDownload('+
         						'\'' + this.wfsUrl +'\',' +
-        						'\'' + this.locSpecimenFeatureId.trim()+'\');"/>';
+        						'\'' + this.locSpecimenFeatureId.trim()+'\',' +
+        						'\'' + this.locSpecTypeName +'\',' +
+        						'\'' + this.featureId.trim()+'\',' +
+        						'\'' + this.wfsTypeName+'\');"/>';
 		
-		htmlFragment += '<input type="button" id="LocSpecDetailsBtn"  value="LocSpecDetails" onclick="showLocSpecDetails('+
+		htmlFragment += '<input type="button" id="LocSpecDetailsBtn"  value="ChemistryDetails" onclick="showLocSpecDetails('+
 							'\'' + this.wfsUrl +'\',' +
 							'\'' + this.locSpecTypeName +'\',' +
 							'\'' + this.locSpecimenFeatureId.trim()+'\');"/>';

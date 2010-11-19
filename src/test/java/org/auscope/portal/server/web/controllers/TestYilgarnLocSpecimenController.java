@@ -59,7 +59,7 @@ public class TestYilgarnLocSpecimenController {
 	
 	
 	@Test	
-	public void TestLocatedSpecimenFeature() throws Exception{
+	public void testLocatedSpecimenFeature() throws Exception{
 	
 		final String serviceUrl = "http://fake.com/bob";
         final String layerName = "layer_name";
@@ -88,10 +88,34 @@ public class TestYilgarnLocSpecimenController {
 	}
 	
 	@Test
+	public void testYilgarnGeochemistryDownload()throws Exception{
+		final String serviceUrl = "http://fake.com/bob";
+        final String layerName = "layer_name";
+		final String featureId = "feature_id";
+		final String xmlResponse ="<gml/>";
+		
+		context.checking(new Expectations() {{
+            oneOf(httpServiceCaller).getHttpClient();
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(xmlResponse));
+            
+            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
+            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
+            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+        }});
+		
+		ModelAndView modelAndView = yilgarnLocSpecimenController.doYilgarnGeochemistryDownload( serviceUrl,layerName, featureId,mockHttpRequest);
+		
+		Assert.assertNotNull(modelAndView);
+        Map<String, Object> model = modelAndView.getModel();
+
+        Assert.assertEquals(true, model.get("success"));
+	}
+	
+	@Test
 	public void testDownloadLocSpecAsZip()throws Exception{
 		
 		final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
-        final String serviceUrls = "http://someUrl";
+        final String serviceUrls[] = {"http://someUrl"};
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\"" + dummyGml + "\"},\"success\":true}";
         
@@ -117,7 +141,14 @@ public class TestYilgarnLocSpecimenController {
         Assert.assertNotNull(ze);
         Assert.assertTrue(ze.getName().endsWith(".xml"));
         
-        in.close();
+        byte[] uncompressedData = new byte[dummyGml.getBytes().length];
+        int dataRead = in.read(uncompressedData);
+        
+        Assert.assertEquals(dummyGml.getBytes().length, dataRead);
+        Assert.assertArrayEquals(dummyGml.getBytes(), uncompressedData);
+        
+        in.close();     
+        
 	}
 	
 	
@@ -127,7 +158,7 @@ public class TestYilgarnLocSpecimenController {
     @Test
     public void testDownloadGMLAsZipWithError() throws Exception {
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
-        final String serviceUrls = "http://someUrl";
+        final String[] serviceUrls = {"http://someUrl"};
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\"" + dummyGml + "\"},\"success\":false}";
 
