@@ -36,11 +36,11 @@ public class TestMineFilter {
         String filter = mineFilter.getFilterStringAllRecords();
         Document doc = FilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName", 
-        		new String[] {"er:specification/er:Mine/gml:name", "er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 2);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName",
+        		new String[] {"er:specification/er:Mine/gml:name"}, 1);
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
-        		new String[] {"*", "Dominion Copper Mine"}, 2);
-        
+        		new String[] {"*", "Dominion Copper Mine"}, 1);
+
     }
 
 }
