@@ -20,13 +20,16 @@ public class MineFilter extends AbstractFilter {
      *            the main name
      */
     public MineFilter(String mineName) {
-    	// Check the NON-Feature Chained name - faster!
+        // Check the NON-Feature Chained name - faster!
         if (mineName != null && mineName.length() > 0) {
-        	this.filterFragment = this.generatePropertyIsLikeFragment("er:specification/er:Mine/gml:name", mineName);
+        	// Geoserver bug - cant search on duplicate attributes -
+        	// once resolved delete fragment and change to this: SISS-912
+        	// this.filterFragment = this.generatePropertyIsLikeFragment("er:specification/er:Mine/gml:name", mineName);
+            this.filterFragment = this.generatePropertyIsLikeFragment("er:specification/er:Mine/er:mineName/er:MineName/er:mineName", mineName);
         }
         // Ensure a MFO query always returns a type mine!
         else {
-        	this.filterFragment = this.generatePropertyIsLikeFragment("er:specification/er:Mine/gml:name", "*");
+            this.filterFragment = this.generatePropertyIsLikeFragment("er:specification/er:Mine/gml:name", "*");
         }
     }
 

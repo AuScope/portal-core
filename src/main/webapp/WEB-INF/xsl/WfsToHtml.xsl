@@ -824,13 +824,13 @@
         </table>
     </xsl:template>
     
-    
+
 
     <!-- TEMPLATE FOR TRANSLATING MiningFeatureOccurrence -->
     <!-- =============================================================== -->
     <xsl:template match="er:MiningFeatureOccurrence">
         <xsl:variable name="mfoID" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
-    
+
         <table>
             <colgroup span="1" width="15%"/>
             <colgroup span="1" width="25%"/>
@@ -838,7 +838,7 @@
             <colgroup span="1" width="35%"/>
             <tbody>
                 <tr>
-                    <td class="caption" colspan="3" rowspan="1">EarthResourceML - MiningFeatureOccurrence</td>          
+                    <td class="caption" colspan="3" rowspan="1">EarthResourceML - MiningFeatureOccurrence</td>
                     <td colspan="2" ALIGN="right"><b>View As: </b>
                         <xsl:call-template name="make-popup-url">
                             <xsl:with-param name="friendly-name" select="'EarthResourceML'"/>
@@ -846,7 +846,7 @@
                         </xsl:call-template>
                     </td>
                 </tr>
-                
+
                 <!-- MiningFeatureOccurrence Type -->
                 <tr>
                     <td class="row header">Mining Feature Occurrence Description:</td>
@@ -870,25 +870,25 @@
                     <td class="row" colspan="1">&#160;</td>
                 </tr>
             </tbody>
-        </table>&#160;  
-               
+        </table>&#160;
+
         <xsl:for-each select="./er:specification/er:Mine">
-            <p></p>        
+            <p></p>
             <table>
                 <tbody>
-                    <xsl:apply-templates select=". | er:Mine"/>  
+                    <xsl:apply-templates select=". | er:Mine"/>
                 </tbody>
-            </table>&#160;   
+            </table>&#160;
         </xsl:for-each>
-        
+
         <xsl:for-each select="./er:specification/er:Mine/er:relatedActivity/er:MiningActivity">
 		<p></p>
             <table>
                 <tbody>
-                    <xsl:apply-templates select=". | er:MiningActivity"/>    
+                    <xsl:apply-templates select=". | er:MiningActivity"/>
             	</tbody>
-            </table>&#160;      
-        </xsl:for-each>               
+            </table>&#160;
+        </xsl:for-each>
     </xsl:template>
 
     <!-- ================================================================= -->
