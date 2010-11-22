@@ -97,6 +97,8 @@
     <!-- TEMPLATE FOR TRANSLATING Mining Activity -->
     <!-- =============================================================== -->
     <xsl:template match="er:MiningActivity">
+        <xsl:variable name="miningActivityID" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
+    
         <table>
             <colgroup span="1" width="15%"/>
             <colgroup span="1" width="25%"/>
@@ -108,7 +110,7 @@
                     <td colspan="2" ALIGN="right"><b>View As: </b>
                         <xsl:call-template name="make-popup-url">
                             <xsl:with-param name="friendly-name" select="'EarthResourceML'"/>
-                            <xsl:with-param name="real-url" select="$serviceURL"/>
+                            <xsl:with-param name="real-url" select="$miningActivityID"/>
                         </xsl:call-template>
                     </td>
                 </tr>
@@ -118,8 +120,8 @@
                     <td class="row"><xsl:value-of select="./er:activityType"/></td>
                     <td class="row header">MiningActivity Id:</td>
                     <td class="row" colspan="2"><xsl:call-template name="make-wfspopup-url">
-                        <xsl:with-param name="friendly-name" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
-                        <xsl:with-param name="real-url" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
+                        <xsl:with-param name="friendly-name" select="$miningActivityID"/>
+                        <xsl:with-param name="real-url" select="$miningActivityID"/>
                     </xsl:call-template></td>
                 </tr>
                 <!-- Start Date -->
@@ -233,7 +235,7 @@
                     <td colspan="2" ALIGN="right"><b>View As: </b>
                         <xsl:call-template name="make-popup-url">
                             <xsl:with-param name="friendly-name" select="'EarthResourceML'"/>
-                            <xsl:with-param name="real-url" select="$serviceURL"/>
+                            <xsl:with-param name="real-url" select="$mineID"/>
                         </xsl:call-template>
                     </td>
                 </tr>
