@@ -250,5 +250,23 @@
            </bean>
        </constructor-arg>
    </bean>
+   
+   <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeERCommodity" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="er:Commodity"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeERMiningFeatureOccurence" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="er:MiningFeatureOccurrence"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeGSMLMappedFeature" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="gsml:MappedFeature"/>
+        <property name="hidden" value="true"/>
+    </bean>
 
 </beans>

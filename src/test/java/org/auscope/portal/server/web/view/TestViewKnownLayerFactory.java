@@ -39,6 +39,7 @@ public class TestViewKnownLayerFactory {
     	final String iconUrl = "http://bob.xom.foo.bar";
     	final String id = "eyedee";
     	final boolean disableBboxFiltering = false;
+    	final boolean hidden = false;
 
     	final double anchorX = 0.1;
     	final double anchorY = 0.2;
@@ -56,6 +57,7 @@ public class TestViewKnownLayerFactory {
 
     	expectation.put("type", "KnownLayerWFS");
     	expectation.put("featureTypeName", featureTypeName);
+    	expectation.put("hidden", hidden);
     	expectation.put("title", title);
     	expectation.put("description", description);
     	expectation.put("proxyUrl", proxyUrl);
@@ -78,26 +80,27 @@ public class TestViewKnownLayerFactory {
 
     	context.checking(new Expectations() {{
 
-    		oneOf(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
-    		oneOf(mockWFS).getId();will(returnValue(id));
-    		oneOf(mockWFS).getTitle();will(returnValue(title));
-    		oneOf(mockWFS).getDescription();will(returnValue(description));
-    		oneOf(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
-    		oneOf(mockWFS).getIconUrl();will(returnValue(iconUrl));
-    		oneOf(mockWFS).getIconAnchor();will(returnValue(mockP1));
-    		oneOf(mockWFS).getInfoWindowAnchor();will(returnValue(mockP2));
-    		oneOf(mockWFS).getIconSize();will(returnValue(mockD1));
-    		oneOf(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
+    		allowing(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
+    		allowing(mockWFS).getId();will(returnValue(id));
+    		allowing(mockWFS).getTitle();will(returnValue(title));
+    		allowing(mockWFS).getDescription();will(returnValue(description));
+    		allowing(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
+    		allowing(mockWFS).getIconUrl();will(returnValue(iconUrl));
+    		allowing(mockWFS).getIconAnchor();will(returnValue(mockP1));
+    		allowing(mockWFS).getInfoWindowAnchor();will(returnValue(mockP2));
+    		allowing(mockWFS).getIconSize();will(returnValue(mockD1));
+    		allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
+    		allowing(mockWFS).isHidden();will(returnValue(hidden));
 
 
-    		oneOf(mockP1).getX();will(returnValue(anchorX));
-    		oneOf(mockP1).getY();will(returnValue(anchorY));
+    		allowing(mockP1).getX();will(returnValue(anchorX));
+    		allowing(mockP1).getY();will(returnValue(anchorY));
 
-    		oneOf(mockP2).getX();will(returnValue(infoWindowAnchorX));
-    		oneOf(mockP2).getY();will(returnValue(infoWindowAnchorY));
+    		allowing(mockP2).getX();will(returnValue(infoWindowAnchorX));
+    		allowing(mockP2).getY();will(returnValue(infoWindowAnchorY));
 
-    		oneOf(mockD1).getWidth();will(returnValue(iconSizeWidth));
-    		oneOf(mockD1).getHeight();will(returnValue(iconSizeHeight));
+    		allowing(mockD1).getWidth();will(returnValue(iconSizeWidth));
+    		allowing(mockD1).getHeight();will(returnValue(iconSizeHeight));
         }});
 
     	ModelMap result = factory.toView(mockWFS);
@@ -120,10 +123,12 @@ public class TestViewKnownLayerFactory {
     	final String iconUrl = "http://bob.xom.foo.bar";
     	final String id = "eyedee";
     	final boolean disableBboxFiltering = true;
+    	final boolean hidden = true;
 
     	final ModelMap expectation = new ModelMap();
 
     	expectation.put("type", "KnownLayerWFS");
+    	expectation.put("hidden", hidden);
     	expectation.put("featureTypeName", featureTypeName);
     	expectation.put("title", title);
     	expectation.put("description", description);
@@ -134,16 +139,17 @@ public class TestViewKnownLayerFactory {
 
     	context.checking(new Expectations() {{
 
-    		oneOf(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
-    		oneOf(mockWFS).getId();will(returnValue(id));
-    		oneOf(mockWFS).getTitle();will(returnValue(title));
-    		oneOf(mockWFS).getDescription();will(returnValue(description));
-    		oneOf(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
-    		oneOf(mockWFS).getIconUrl();will(returnValue(iconUrl));
-    		oneOf(mockWFS).getIconAnchor();will(returnValue(null));
-    		oneOf(mockWFS).getInfoWindowAnchor();will(returnValue(null));
-    		oneOf(mockWFS).getIconSize();will(returnValue(null));
-    		oneOf(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
+    		allowing(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
+    		allowing(mockWFS).getId();will(returnValue(id));
+    		allowing(mockWFS).getTitle();will(returnValue(title));
+    		allowing(mockWFS).getDescription();will(returnValue(description));
+    		allowing(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
+    		allowing(mockWFS).getIconUrl();will(returnValue(iconUrl));
+    		allowing(mockWFS).getIconAnchor();will(returnValue(null));
+    		allowing(mockWFS).getInfoWindowAnchor();will(returnValue(null));
+    		allowing(mockWFS).getIconSize();will(returnValue(null));
+    		allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
+    		allowing(mockWFS).isHidden();will(returnValue(hidden));
         }});
 
     	ModelMap result = factory.toView(mockWFS);
@@ -160,10 +166,12 @@ public class TestViewKnownLayerFactory {
         final String description = "asb";
         final String styleName = "styleThatispretty";
         final String id = "eyedee";
+        final boolean hidden = false;
 
         final ModelMap expectation = new ModelMap();
 
         expectation.put("type", "KnownLayerWMS");
+        expectation.put("hidden", hidden);
         expectation.put("layerName", layerName);
         expectation.put("title", title);
         expectation.put("description", description);
@@ -172,11 +180,12 @@ public class TestViewKnownLayerFactory {
 
         context.checking(new Expectations() {{
 
-            oneOf(mockWMS).getId();will(returnValue(id));
-            oneOf(mockWMS).getLayerName();will(returnValue(layerName));
-            oneOf(mockWMS).getTitle();will(returnValue(title));
-            oneOf(mockWMS).getDescription();will(returnValue(description));
-            oneOf(mockWMS).getStyleName();will(returnValue(styleName));
+            allowing(mockWMS).getId();will(returnValue(id));
+            allowing(mockWMS).getLayerName();will(returnValue(layerName));
+            allowing(mockWMS).getTitle();will(returnValue(title));
+            allowing(mockWMS).getDescription();will(returnValue(description));
+            allowing(mockWMS).getStyleName();will(returnValue(styleName));
+            allowing(mockWMS).isHidden();will(returnValue(hidden));
         }});
 
         ModelMap result = factory.toView(mockWMS);
@@ -193,6 +202,7 @@ public class TestViewKnownLayerFactory {
         final String descriptiveKeyword = "myKeyword";
         final String id = "eyedee";
         final String iconUrl = "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png";
+        final boolean hidden = true;
 
     	final double anchorX = 1.0;
     	final double anchorY = 1.0;
@@ -206,6 +216,7 @@ public class TestViewKnownLayerFactory {
         final ModelMap expectation = new ModelMap();
 
         expectation.put("type", "KnownLayerKeywords");
+        expectation.put("hidden", hidden);
         expectation.put("descriptiveKeyword", descriptiveKeyword);
         expectation.put("title", title);
         expectation.put("description", description);
@@ -221,19 +232,20 @@ public class TestViewKnownLayerFactory {
 
         context.checking(new Expectations() {{
 
-            oneOf(mockKeywords).getId();will(returnValue(id));
-            oneOf(mockKeywords).getTitle();will(returnValue(title));
-            oneOf(mockKeywords).getDescription();will(returnValue(description));
-            oneOf(mockKeywords).getDescriptiveKeyword();will(returnValue(descriptiveKeyword));
-            oneOf(mockKeywords).getIconUrl();will(returnValue(iconUrl));
-            oneOf(mockKeywords).getIconAnchor();will(returnValue(mockP1));
-            oneOf(mockKeywords).getIconSize();will(returnValue(mockD1));
+            allowing(mockKeywords).getId();will(returnValue(id));
+            allowing(mockKeywords).getTitle();will(returnValue(title));
+            allowing(mockKeywords).getDescription();will(returnValue(description));
+            allowing(mockKeywords).getDescriptiveKeyword();will(returnValue(descriptiveKeyword));
+            allowing(mockKeywords).getIconUrl();will(returnValue(iconUrl));
+            allowing(mockKeywords).getIconAnchor();will(returnValue(mockP1));
+            allowing(mockKeywords).getIconSize();will(returnValue(mockD1));
+            allowing(mockKeywords).isHidden();will(returnValue(hidden));
 
-    		oneOf(mockP1).getX();will(returnValue(anchorX));
-    		oneOf(mockP1).getY();will(returnValue(anchorY));
+    		allowing(mockP1).getX();will(returnValue(anchorX));
+    		allowing(mockP1).getY();will(returnValue(anchorY));
 
-    		oneOf(mockD1).getWidth();will(returnValue(iconSizeWidth));
-    		oneOf(mockD1).getHeight();will(returnValue(iconSizeHeight));
+    		allowing(mockD1).getWidth();will(returnValue(iconSizeWidth));
+    		allowing(mockD1).getHeight();will(returnValue(iconSizeHeight));
         }});
 
         ModelMap result = factory.toView(mockKeywords);

@@ -11,8 +11,7 @@ public abstract class KnownLayer implements Serializable {
     protected String title;
     protected String description;
     protected String id;
-    
-    
+    protected boolean hidden;
     
     /**
      * @return the id
@@ -58,6 +57,20 @@ public abstract class KnownLayer implements Serializable {
      */
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    /**
+     * Get whether this layer should be hidden and not available for selection.
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Set whether this layer should by default be hidden and not available for selection. 
+     */
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
     
     

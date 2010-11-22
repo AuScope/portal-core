@@ -22,6 +22,10 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
         tpl : new Ext.Template('<p>{description} </p><br>')
     });
 	
+	var dsCopy = new KnownLayerStore();
+	knownFeatureTypeStore.on('datachanged', this.internalOnDataChanged, this);
+	dsCopy.copyFrom(knownFeatureTypeStore, this.knownLayerRecordFilter);
+	
 	KnownLayerGridPanel.superclass.constructor.call(this, {
         stripeRows       : true,
         autoExpandColumn : 'title',
@@ -33,7 +37,8 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
         height           : 160,
         //width: 80,
         autoScroll       : true,
-        store            : knownFeatureTypeStore,
+        store            : dsCopy,
+        originalStore    : knownFeatureTypeStore,
         columns: [
             rowExpander,
             {
@@ -210,10 +215,15 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
 KnownLayerGridPanel.prototype.addLayerHandler = null;
 
 Ext.extend(KnownLayerGridPanel, Ext.grid.GridPanel, {
+	
+	knownLayerRecordFilter : function(knownLayerRecord) {
+		return !knownLayerRecord.getHidden();
+	},
+	
 	/**
 	 * Whenever the internal datastore changes, update our filtered copy
 	 */
 	internalOnDataChanged : function(store) {
-		this.getStore().copyFrom(store, this.cswRecordFilter);
+		this.getStore().copyFrom(this.initialConfig.originalStore, this.knownLayerRecordFilter);
 	}
 });

@@ -17,6 +17,19 @@ public class KnownLayerWFS extends KnownLayer {
     private Dimension iconSize;
     private boolean disableBboxFiltering;
     
+    
+    /**
+     * @param featureTypeName The feature type name used to identify members of this layer
+     * @param title The descriptive title of this layer
+     * @param description The extended description of this layer
+     * @param proxyUrl The URL that filter requests should be made through
+     * @param iconUrl The Icon that will be used to render this feature on the map 
+     */
+    public KnownLayerWFS(String featureTypeName) {
+        this.id = "KnownLayerWFS-" + featureTypeName;
+        this.featureTypeName = featureTypeName;
+    }
+    
     /**
      * @param featureTypeName The feature type name used to identify members of this layer
      * @param title The descriptive title of this layer
@@ -26,8 +39,7 @@ public class KnownLayerWFS extends KnownLayer {
      */
     public KnownLayerWFS(String featureTypeName, String title, 
             String description, String proxyUrl, String iconUrl) {
-        this.id = "KnownLayerWFS-" + featureTypeName;
-        this.featureTypeName = featureTypeName;
+        this(featureTypeName);
         this.title = title;
         this.description = description;
         this.proxyUrl = proxyUrl;

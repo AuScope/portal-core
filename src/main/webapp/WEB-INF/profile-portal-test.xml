@@ -20,6 +20,9 @@
                 <ref bean="knownTypeReports" />
                 <ref bean="knownTypeGeotransects" />
                 <ref bean="knownTypeYilgarnGeochemistry"/>
+                <ref bean="knownTypeERCommodity"/>
+                <ref bean="knownTypeERMiningFeatureOccurence"/>
+                <ref bean="knownTypeGSMLMappedFeature"/>
             </list>
         </constructor-arg>
     </bean>

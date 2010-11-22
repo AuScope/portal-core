@@ -41,6 +41,7 @@ public class ViewKnownLayerFactory {
 
         obj.put("type", "KnownLayerKeywords");
         obj.put("title", k.getTitle());
+        obj.put("hidden", k.isHidden());
         obj.put("description",k.getDescription());
         obj.put("id", k.getId());
         obj.put("descriptiveKeyword", k.getDescriptiveKeyword());
@@ -64,6 +65,7 @@ public class ViewKnownLayerFactory {
 
 	    obj.put("type", "KnownLayerWFS");
         obj.put("title", k.getTitle());
+        obj.put("hidden", k.isHidden());
         obj.put("description",k.getDescription());
         obj.put("id", k.getId());
         obj.put("featureTypeName", k.getFeatureTypeName());
@@ -95,6 +97,7 @@ public class ViewKnownLayerFactory {
 
         obj.put("type", "KnownLayerWMS");
         obj.put("title", k.getTitle());
+        obj.put("hidden", k.isHidden());
         obj.put("description",k.getDescription());
         obj.put("id", k.getId());
         obj.put("layerName", k.getLayerName());

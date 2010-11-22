@@ -18,6 +18,9 @@
                 <ref bean="knownTypeGeodesy" />
                 <ref bean="knownTypeReports" />
                 <ref bean="knownTypeGeotransects" />
+                <ref bean="knownTypeERCommodity"/>
+                <ref bean="knownTypeERMiningFeatureOccurence"/>
+                <ref bean="knownTypeGSMLMappedFeature"/>
             </list>
         </constructor-arg>
     </bean>

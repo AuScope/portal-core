@@ -34,6 +34,13 @@ KnownLayerRecord.prototype.getType = function() {
 };
 
 /**
+ * Gets whether this known layer should be hidden from the user as a boolean
+ */
+KnownLayerRecord.prototype.getHidden = function() {
+	return this.internalGetStringField('hidden');
+};
+
+/**
  * Gets the id of this known layer as a String.
  */
 KnownLayerRecord.prototype.getId = function() {

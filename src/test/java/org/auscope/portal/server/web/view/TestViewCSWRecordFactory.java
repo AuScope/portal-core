@@ -74,20 +74,20 @@ public class TestViewCSWRecordFactory {
     	geoExpectation.put("southBoundLatitude", bboxSouth);
 
     	context.checking(new Expectations() {{
-    		oneOf(mockCSWRecord).getServiceName();will(returnValue(serviceName));
-    		oneOf(mockCSWRecord).getContactOrganisation();will(returnValue(contactOrg));
-    		oneOf(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
-    		oneOf(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
-    		oneOf(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
-    		oneOf(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
-    		oneOf(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
-    		oneOf(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
-    		oneOf(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
+    		allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
+    		allowing(mockCSWRecord).getContactOrganisation();will(returnValue(contactOrg));
+    		allowing(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
+    		allowing(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
+    		allowing(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
+    		allowing(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
+    		allowing(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
+    		allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
+    		allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
 
-    		oneOf(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
-    		oneOf(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
-    		oneOf(mockBbox).getNorthBoundLatitude();will(returnValue(bboxNorth));
-    		oneOf(mockBbox).getSouthBoundLatitude();will(returnValue(bboxSouth));
+    		allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
+    		allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
+    		allowing(mockBbox).getNorthBoundLatitude();will(returnValue(bboxNorth));
+    		allowing(mockBbox).getSouthBoundLatitude();will(returnValue(bboxSouth));
 
     		allowing(mockOnlineRes).getDescription();will(returnValue(orDesc));
     		allowing(mockOnlineRes).getName();will(returnValue(orName));
@@ -143,20 +143,20 @@ public class TestViewCSWRecordFactory {
         geoExpectation.put("southBoundLatitude", bboxSouth);
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWRecord).getServiceName();will(returnValue(serviceName));
-            oneOf(mockCSWRecord).getContactOrganisation();will(returnValue(contactOrg));
-            oneOf(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
-            oneOf(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
-            oneOf(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
-            oneOf(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
-            oneOf(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
-            oneOf(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
-            oneOf(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
+            allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
+            allowing(mockCSWRecord).getContactOrganisation();will(returnValue(contactOrg));
+            allowing(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
+            allowing(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
+            allowing(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
+            allowing(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
+            allowing(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
+            allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
+            allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
 
-            oneOf(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
-            oneOf(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
-            oneOf(mockBbox).getNorthBoundLatitude();will(returnValue(bboxNorth));
-            oneOf(mockBbox).getSouthBoundLatitude();will(returnValue(bboxSouth));
+            allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
+            allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
+            allowing(mockBbox).getNorthBoundLatitude();will(returnValue(bboxNorth));
+            allowing(mockBbox).getSouthBoundLatitude();will(returnValue(bboxSouth));
 
             allowing(mockOnlineRes).getDescription();will(returnValue(orDesc));
             allowing(mockOnlineRes).getName();will(returnValue(orName));
