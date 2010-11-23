@@ -392,5 +392,17 @@
         	<version>4.1</version>
         	<optional>false</optional>
         </dependency>
+        <dependency>
+        	<groupId>net.sf.saxon</groupId>
+        	<artifactId>saxon-xpath</artifactId>
+        	<version>8.7</version>
+        	<optional>false</optional>
+        </dependency>
+        <dependency>
+        	<groupId>net.sf.saxon</groupId>
+        	<artifactId>saxon-dom</artifactId>
+        	<version>8.7</version>
+        	<optional>false</optional>
+        </dependency>
     </dependencies>
 </project>

@@ -5,6 +5,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+
+import net.sf.saxon.xpath.XPathFactoryImpl;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,7 +22,9 @@ public final class CSWXPathUtil {
     private static final Log logger = LogFactory.getLog(CSWXPathUtil.class);
     
     static {
-        xPath = XPathFactory.newInstance().newXPath();
+        //Force the usage of the Saxon XPath library
+        XPathFactory factory = new XPathFactoryImpl();
+        xPath = factory.newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());
     }
     
