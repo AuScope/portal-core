@@ -283,10 +283,8 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
  */
 function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latlng) {
 
-	url += "&INFO_FORMAT=application/vnd.ogc.gml";
-
     Ext.Ajax.request({
-    	url: url,
+    	url: url+"&INFO_FORMAT=application/vnd.ogc.gml",
     	timeout		: 180000,
     	wmsOnlineResource : wmsOnlineResource,
     	cswRecord : cswRecord,
@@ -325,10 +323,8 @@ function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latl
                 	}
             	}
 
-
-
-                var lineId = "";
-
+        		//Get the line
+            	var lineId = "";
                 if(line != null && line.length > 0) {
             	    if(document.all) { //IE
             	        lineId = line[0].text;
@@ -336,11 +332,12 @@ function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latl
             	    	lineId = line[0].textContent;
             	    }
 
+            	    //Remove the prefixes - we dont store them in the DB
             	    if(lineId.indexOf("cdp") == 0) {
             	    	lineId = lineId.substring(3, lineId.length);
             	    }
 
-                	var infoWindow = new GeotransectsInfoWindow(latlng, map, lineId, options.cswRecord, options.wmsOnlineResource, rootNode);
+                	var infoWindow = new GeotransectsInfoWindow(latlng, map, lineId, options.cswRecord, options.wmsOnlineResource, url);
                 	infoWindow.show();
                 } else {
                 	alert("Remote server returned an unsupported response.");
@@ -365,32 +362,55 @@ function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latl
 function handleGenericWmsRecord(url, i, map, latlng) {
 
  	url += "&INFO_FORMAT=text/html";
-
-    GDownloadUrl(url, function(response, responseCode) {
-        if (responseCode == 200) {
-            if (isHtmlDataThere(response)) {
-                if (isHtmlPage(response)) {
-                    var openWindow = window.open('','mywindow'+i);
+ 	Ext.Ajax.request({
+ 		url: url,
+ 		timeout		: 180000,
+    	success: function(response, options) {
+            if (isHtmlDataThere(response.responseText)) {
+                if (isHtmlPage(response.responseText)) {
+                    var openWindow = window.open('','new'+i+'window');
                     if (openWindow) {
-                        openWindow.document.write(response);
+                        openWindow.document.write(response.responseText);
                         openWindow.document.close();
                     } else {
                     	alert('Couldn\'t open popup window containing WMS information. Please disable any popup blockers and try again');
                     }
                 } else {
-                	map.openInfoWindowHtml(latlng, response, {autoScroll:true});
+                	map.openInfoWindowHtml(latlng, response.responseText, {autoScroll:true});
                 }
             }
-        } else if(responseCode == -1) {
-            alert("Data request timed out. Please try later.");
-        } else if ((responseCode >= 400) & (responseCode < 500)){
-            alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
-        } else if ((responseCode >= 500) & (responseCode <= 506)){
-            alert('Requested service not available, not implemented or internal service error. Error code is: ' + responseCode);
-        } else {
-            alert('Remote server returned error code: ' + responseCode);
-        }
+    	},
+    	failure: function(response, options) {
+    		Ext.Msg.alert('Error requesting data', 'Error (' +
+    				response.status + '): ' + response.statusText);
+    	}
     });
+
+//    GDownloadUrl(url, function(response, responseCode) {
+//        if (responseCode == 200) {
+//            if (isHtmlDataThere(response)) {
+//                if (isHtmlPage(response)) {
+//                    var openWindow = window.open('','mywindow'+i);
+//                    if (openWindow) {
+//                        openWindow.document.write(response);
+//                        openWindow.document.close();
+//                    } else {
+//                    	alert('Couldn\'t open popup window containing WMS information. Please disable any popup blockers and try again');
+//                    }
+//                } else {
+//                	map.openInfoWindowHtml(latlng, response, {autoScroll:true});
+//                }
+//            }
+//        } else if(responseCode == -1) {
+//            alert("Data request timed out. Please try later.");
+//        } else if ((responseCode >= 400) & (responseCode < 500)){
+//            alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
+//        } else if ((responseCode >= 500) & (responseCode <= 506)){
+//            alert('Requested service not available, not implemented or internal service error. Error code is: ' + responseCode);
+//        } else {
+//            alert('Remote server returned error code: ' + responseCode);
+//        }
+//    });
 }
 
 /**

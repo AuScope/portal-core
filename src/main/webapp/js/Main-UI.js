@@ -6,13 +6,17 @@ var theglobalexml;
 //A global instance of GMapInfoWindowManager that helps to open GMap info windows
 var mapInfoWindowManager = null;
 
+
+// EVIL GLOBAL for all CSW records....
+var cswRecordStore = null;
+
 Ext.onReady(function() {
     var map;
     var formFactory = new FormFactory();
     var searchBarThreshold = 6; //how many records do we need to have before we show a search bar
 
     //Generate our data stores
-    var cswRecordStore = new CSWRecordStore('getCSWRecords.do');
+    cswRecordStore = new CSWRecordStore('getCSWRecords.do');
     var knownLayersStore = new KnownLayerStore('getKnownLayers.do');
     var customLayersStore = new CSWRecordStore('getCustomLayers.do');
     var activeLayersStore = new ActiveLayersStore();
