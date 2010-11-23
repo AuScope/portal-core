@@ -34,19 +34,32 @@ public class CSWRecord {
     private CSWGeographicElement[] cswGeographicElements;
     private String[] descriptiveKeywords;
     private String dataIdentificationAbstract;
-
-    private static final XPath xPath = XPathFactory.newInstance().newXPath();
-
-    private static final String serviceTitleExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
-    private static final String dataIdentificationAbstractExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString";
-    private static final String contactOrganisationExpression = "gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString";
-    private static final String resourceProviderExpression =  "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
-    private static final String fileIdentifierExpression = "gmd:fileIdentifier/gco:CharacterString";
-    private static final String onlineTransfersExpression = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine";
-    private static final String bboxExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
-    private static final String keywordListExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
-
-
+    
+    private static final XPathExpression serviceTitleExpression;
+    private static final XPathExpression dataIdentificationAbstractExpression;
+    private static final XPathExpression contactOrganisationExpression;
+    private static final XPathExpression resourceProviderExpression;
+    private static final XPathExpression fileIdentifierExpression;
+    private static final XPathExpression onlineTransfersExpression;
+    private static final XPathExpression bboxExpression;
+    private static final XPathExpression keywordListExpression;
+    
+    /**
+     * Initialise all of our XPathExpressions
+     */
+    static {
+        
+        serviceTitleExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString");
+        dataIdentificationAbstractExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString");
+        contactOrganisationExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:contact/gmd:CI_ResponsibleParty/gmd:organisationName/gco:CharacterString");
+        resourceProviderExpression =  CSWXPathUtil.attemptCompileXpathExpr("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString");
+        fileIdentifierExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:fileIdentifier/gco:CharacterString");
+        onlineTransfersExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine");
+        bboxExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox");
+        keywordListExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString");
+        
+    }
+    
     public CSWRecord(String serviceName, String contactOrganisation,
     		String fileIdentifier, String recordInfoUrl, String dataIdentificationAbstract,
 			CSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements) {
@@ -63,25 +76,24 @@ public class CSWRecord {
     public CSWRecord(Node node) throws XPathExpressionException {
 
         NodeList tempNodeList1 = null;
-        xPath.setNamespaceContext(new CSWNamespaceContext());
 
-        serviceName = (String)xPath.evaluate(serviceTitleExpression, node, XPathConstants.STRING);
-        dataIdentificationAbstract = (String) xPath.evaluate(dataIdentificationAbstractExpression, node, XPathConstants.STRING);
-        contactOrganisation = (String) xPath.evaluate(contactOrganisationExpression, node, XPathConstants.STRING);
-        fileIdentifier = (String) xPath.evaluate(fileIdentifierExpression, node, XPathConstants.STRING);
+        serviceName = (String)serviceTitleExpression.evaluate(node, XPathConstants.STRING);
+        dataIdentificationAbstract = (String) dataIdentificationAbstractExpression.evaluate(node, XPathConstants.STRING);
+        contactOrganisation = (String) contactOrganisationExpression.evaluate(node, XPathConstants.STRING);
+        fileIdentifier = (String) fileIdentifierExpression.evaluate(node, XPathConstants.STRING);
 
-        resourceProvider = (String) xPath.evaluate(resourceProviderExpression, node, XPathConstants.STRING);
+        resourceProvider = (String) resourceProviderExpression.evaluate(node, XPathConstants.STRING);
         if (resourceProvider.equals("")) {
         	resourceProvider = "Unknown";
         }
 
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        tempNodeList1 = (NodeList)xPath.evaluate(onlineTransfersExpression, node, XPathConstants.NODESET);
+        tempNodeList1 = (NodeList)onlineTransfersExpression.evaluate(node, XPathConstants.NODESET);
         List<CSWOnlineResource> resources = new ArrayList<CSWOnlineResource>();
         for (int i = 0; i < tempNodeList1.getLength(); i++) {
         	try {
         	    Node onlineNode = tempNodeList1.item(i);
-        	    resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode, xPath));
+        	    resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
         	} catch (IllegalArgumentException ex) {
         	    logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",serviceName, ex));
         	}
@@ -89,13 +101,13 @@ public class CSWRecord {
         onlineResources = resources.toArray(new CSWOnlineResource[resources.size()]);
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
-        tempNodeList1 = (NodeList)xPath.evaluate(bboxExpression, node, XPathConstants.NODESET);
+        tempNodeList1 = (NodeList)bboxExpression.evaluate(node, XPathConstants.NODESET);
         if (tempNodeList1 != null && tempNodeList1.getLength() > 0) {
         	List<CSWGeographicElement> elList = new ArrayList<CSWGeographicElement>();
         	for (int i = 0; i < tempNodeList1.getLength(); i++) {
 	            try {
 	            	Node geographyNode = tempNodeList1.item(i);
-	            	elList.add(CSWGeographicBoundingBox.fromGeographicBoundingBoxNode(geographyNode, xPath));
+	            	elList.add(CSWGeographicBoundingBox.fromGeographicBoundingBoxNode(geographyNode));
 	            } catch (Exception ex) {
 	            	logger.debug(String.format("Unable to parse CSWGeographicBoundingBox resource for serviceName='%1$s' %2$s",serviceName, ex));
 	            }
@@ -104,7 +116,7 @@ public class CSWRecord {
         }
 
         //Parse the descriptive keywords
-        tempNodeList1 = (NodeList) xPath.evaluate(keywordListExpression, node, XPathConstants.NODESET);
+        tempNodeList1 = (NodeList) keywordListExpression.evaluate(node, XPathConstants.NODESET);
         if (tempNodeList1 != null && tempNodeList1.getLength() > 0 ) {
         	List<String> keywords = new ArrayList<String>();
         	Node keyword;

@@ -5,6 +5,7 @@ import java.net.URL;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.w3c.dom.Node;
@@ -19,13 +20,20 @@ public abstract class CSWOnlineResourceFactory {
      * @throws Exception
      */
 
-	private static final String protocolXpath = "gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString";
-	private static final String nameXpath = "gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
-	private static final String descriptionXpath = "gmd:CI_OnlineResource/gmd:description/gco:CharacterString";
-	private static final String urlXpath = "gmd:CI_OnlineResource/gmd:linkage/gmd:URL";
+	private static final XPathExpression protocolXpath;
+	private static final XPathExpression nameXpath;
+	private static final XPathExpression descriptionXpath;
+	private static final XPathExpression urlXpath;
 
+	static {
+	    protocolXpath = CSWXPathUtil.attemptCompileXpathExpr("gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString");
+	    nameXpath = CSWXPathUtil.attemptCompileXpathExpr("gmd:CI_OnlineResource/gmd:name/gco:CharacterString");
+	    descriptionXpath = CSWXPathUtil.attemptCompileXpathExpr("gmd:CI_OnlineResource/gmd:description/gco:CharacterString");
+	    urlXpath = CSWXPathUtil.attemptCompileXpathExpr("gmd:CI_OnlineResource/gmd:linkage/gmd:URL");
+	}
+	
 
-    public static CSWOnlineResource parseFromNode(Node node, XPath xPath) throws XPathExpressionException {
+    public static CSWOnlineResource parseFromNode(Node node) throws XPathExpressionException {
         String urlString = null;
         String name = "";
         String description = "";
@@ -33,7 +41,7 @@ public abstract class CSWOnlineResourceFactory {
         URL url = null;
 
     	try {
-    		urlString = (String) xPath.evaluate(urlXpath, node, XPathConstants.STRING);
+    		urlString = (String) urlXpath.evaluate(node, XPathConstants.STRING);
             if(urlString != null) {
             	url = new URL(urlString);
             }
@@ -43,9 +51,9 @@ public abstract class CSWOnlineResourceFactory {
     		//	throw new IllegalArgumentException(String.format("malformed url '%1$s'",temp.getTextContent()), ex);
     	}
 
-    	protocol = (String) xPath.evaluate(protocolXpath, node, XPathConstants.STRING);
-    	name = (String) xPath.evaluate(nameXpath, node, XPathConstants.STRING);
-        description = (String) xPath.evaluate(descriptionXpath, node, XPathConstants.STRING);
+    	protocol = (String) protocolXpath.evaluate(node, XPathConstants.STRING);
+    	name = (String) nameXpath.evaluate(node, XPathConstants.STRING);
+        description = (String) descriptionXpath.evaluate(node, XPathConstants.STRING);
 
         return new CSWOnlineResourceImpl(url, protocol, name, description);
     }
