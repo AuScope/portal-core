@@ -64,7 +64,7 @@ GeotransectsInfoWindow.prototype = {
 
 
 	    // Hack to find the line's descrition from CSW
-		var linecsw = cswRecordStore.getCSWRecordsByKeyword(this.lineId);
+		var linecsw = cswRecordStore.getCSWRecordsByKeywords([this.lineId]);
 
 	    try {
 	    	this.linedesc = linecsw[0].getDataIdentificationAbstract();
