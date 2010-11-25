@@ -1272,10 +1272,10 @@ Ext.onReady(function() {
     //As there is a relationship between these two stores,
     //We should refresh any GUI components whose view is dependent on these stores
     cswRecordStore.load({callback : function() {
-    	knownLayersStore.fireEvent('datachanged');
+    	knownLayersStore.load({callback : function() {
+        	cswRecordStore.fireEvent('datachanged');
+        }});
     }});
-    knownLayersStore.load({callback : function() {
-    	cswRecordStore.fireEvent('datachanged');
-    }});
+    
 
 });

@@ -110,6 +110,8 @@ Ext.extend(CSWRecordStore, Ext.data.GroupingStore, {
 	 * Gets all records that have a descriptive keyword that matches the specified
 	 * keyword(s).
 	 * 
+	 * param keywords Can be a string OR an array of strings
+	 * 
 	 * Returns an array of CSWRecord objects
 	 */
 	getCSWRecordsByKeywords : function(keywords) {
@@ -119,12 +121,19 @@ Ext.extend(CSWRecordStore, Ext.data.GroupingStore, {
 		CSWRecordStore.superclass.each.call(this, function(rec) {
 			var descriptiveKeywords = rec.get('descriptiveKeywords');
 			
+			//We may have an array OR a single string. Ensure we search accordingly
 			var containsKeywords = true;
-			for(var i=0; i<keywords.length; i++) {				 
-				if (descriptiveKeywords.indexOf(keywords[i]) < 0) {
-					containsKeywords = false;
-					break;
+			if (keywords instanceof Array) {
+				//An array requires EVERY keyword to be present
+				for(var i=0; i<keywords.length; i++) {	
+					if (descriptiveKeywords.indexOf(keywords[i]) < 0) {
+						containsKeywords = false;
+						break;
+					}
 				}
+			} else {
+				//Assume we have a string.
+				containsKeywords = descriptiveKeywords.indexOf(keywords) >= 0;
 			}
 			
 			if (containsKeywords) {
