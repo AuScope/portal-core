@@ -173,7 +173,7 @@
    </bean>
    <bean id="knownTypeGeotransects" class="org.auscope.portal.server.web.KnownLayerWMS">
        <constructor-arg name="title" value="Geotransects"/>
-       <constructor-arg name="description" value=""/>
+       <constructor-arg name="description" value="Seismic geotransect data for a strategically selected set of corridors across Australia that cross major geological features."/>
        <constructor-arg name="layerName" value="gt:AuScope_Land_Seismic_gda94"/>
    </bean>
 
