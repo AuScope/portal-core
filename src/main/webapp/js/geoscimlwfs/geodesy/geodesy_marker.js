@@ -1250,7 +1250,7 @@ function GeodesyMarker_getDataUrlCheckedFn(pYear, pMonth, pDate, pIndex, pDataUr
   var oGeodesyMarker = this;
   
   return function () {
-    wfs.dataUrlChecked(pYear, pMonth, pDate, pIndex, pDataUrlChkId);
+	  oGeodesyMarker.dataUrlChecked(pYear, pMonth, pDate, pIndex, pDataUrlChkId);
   }
 }
 
