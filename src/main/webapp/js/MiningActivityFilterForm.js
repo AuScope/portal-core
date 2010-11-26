@@ -67,7 +67,7 @@ MiningActivityFilterForm = function(id) {
             {
                 fieldLabel: 'Associated Mine',
                 name: 'mineName'
-            }
+            },
             /*new Ext.form.ComboBox({
                 anchor: '100%',
                 fieldLabel: 'Mine Name',
@@ -83,8 +83,8 @@ MiningActivityFilterForm = function(id) {
                 displayField:'mineDisplayName',
                 valueField:'mineDisplayName'
             })*/
-            ,producedMaterialCombo
-            ,{
+            producedMaterialCombo,
+            {
                 xtype: 'datefield',
                 fieldLabel: 'Activity Start Date',
                 name: 'startDate',

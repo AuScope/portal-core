@@ -17,7 +17,7 @@ KnownLayerRecord.prototype.internalGetStringField = function(fieldName) {
 };
 KnownLayerRecord.prototype.internalGetBooleanField = function(fieldName) {
 	var b = this.internalRecord.get(fieldName);
-	if (b == null || b == undefined) {
+	if (b === null || b === undefined) {
 		return false;
 	}
 	
@@ -219,10 +219,10 @@ KnownLayerRecord.prototype.getLinkedCSWRecordsByKeywords = function(cswRecordSto
  * @returns {Array}
  */
 KnownLayerRecord.prototype.getLinkedCSWRecordsKeywordCount = function(cswRecordStore, includeOwnKeyword) {
-	var keywords = new Array();
-	var temp = new Array();
+	var keywords = [];
+	var temp = [];
 	var recs = cswRecordStore.getCSWRecordsByKeywords([this.getDescriptiveKeyword()]);
-	var ownKeyword = this.getDescriptiveKeyword();;
+	var ownKeyword = this.getDescriptiveKeyword();
 	var k = 0;
 
 	for(var i=0; i< recs.length; i++) {
@@ -256,8 +256,8 @@ KnownLayerRecord.prototype.getLinkedCSWRecordsKeywordCount = function(cswRecordS
  * @returns {Array}
  */
 KnownLayerRecord.prototype.getLinkedCSWRecordResourceProvidersCount = function(cswRecordStore) {	
-	var resourceProviders = new Array();
-	var temp = new Array();
+	var resourceProviders = [];
+	var temp = [];
 	var recs = cswRecordStore.getCSWRecordsByKeywords([this.getDescriptiveKeyword()]);
 	var k = 0;
 	

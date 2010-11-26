@@ -59,7 +59,7 @@ Ext.extend(KnownLayerStore, Ext.data.JsonStore, {
 					continue;
 				}
 					
-				recordsToAdd.push(recordsToCopy[i])
+				recordsToAdd.push(recordsToCopy[i]);
 			}
 			
 			this.add(recordsToAdd);

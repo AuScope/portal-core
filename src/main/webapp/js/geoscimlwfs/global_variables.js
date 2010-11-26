@@ -19,9 +19,9 @@ var HTML_DIV_STATION_CONTROL = "stationcontrol";
 *   This allows the images directory to be relocated. However the structure within the images
 *   directory should be maintained. This hardcoding (as seen later when assigning gaIcon) can be removed.
 */
-var DEFAULT_MAP_CENTRE = new Array();
-DEFAULT_MAP_CENTRE["lon"] = 133.3;
-DEFAULT_MAP_CENTRE["lat"] = -26;
+var DEFAULT_MAP_CENTRE = [];
+DEFAULT_MAP_CENTRE.lon = 133.3;
+DEFAULT_MAP_CENTRE.lat = -26;
 var DEFAULT_MAP_ZOOM_LEVEL = 5;
 var MAX_ZOOM_LEVEL = 18;
 var IMAGES_DIR = "img";
@@ -35,7 +35,7 @@ var IMAGES_DIR = "img";
 //var gaYears = new Array(2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001, 2000, 1999, 1998);
 var gaYears = getYearsArrayFrom(1998);
 
-var gaMonths = new Array();
+var gaMonths = [];
 gaMonths[1] = "Jan";
 gaMonths[2] = "Feb";
 gaMonths[3] = "Mar";
@@ -84,18 +84,18 @@ var gsCurrentDate = goToday.getDate();
 *   This html div id is where the groups belonging to the category will be placed on the interface.
 */
 
-var gaFeatureTypes = new Array("gsml:Borehole", "geodesy:stations", "sa:SamplingPoint", "Avhrr48to72Hours-1404", "Modis48to72Hours-1604");
+var gaFeatureTypes = ["gsml:Borehole", "geodesy:stations", "sa:SamplingPoint", "Avhrr48to72Hours-1404", "Modis48to72Hours-1604"];
 
-var gaGroups = new Array();
+var gaGroups = [];
 
-var gaFeatureTypeIconOn = new Array();
+var gaFeatureTypeIconOn = [];
 gaFeatureTypeIconOn["gsml:Borehole"] = IMAGES_DIR + "/nvcl/borehole_on.png";
 gaFeatureTypeIconOn["geodesy:stations"] = IMAGES_DIR + "/geodesy/gps_stations_on.png";
 gaFeatureTypeIconOn["sa:SamplingPoint"] = IMAGES_DIR + "/gnss/gps_stations_on.png";
 gaFeatureTypeIconOn["Avhrr48to72Hours-1404"] = IMAGES_DIR + "/ga_sentinel/avhrr48to72_on.png";
 gaFeatureTypeIconOn["Modis48to72Hours-1604"] = IMAGES_DIR + "/ga_sentinel/modis48to72_on.png";
 
-var gaFeatureTypeIconOff = new Array();
+var gaFeatureTypeIconOff = [];
 gaFeatureTypeIconOff["gsml:Borehole"] = IMAGES_DIR + "/nvcl/borehole_off.png";
 gaFeatureTypeIconOff["geodesy:stations"] = IMAGES_DIR + "/geodesy/gps_stations_off.png";
 gaFeatureTypeIconOff["sa:SamplingPoint"] = IMAGES_DIR + "/gnss/gps_stations_off.png";
@@ -105,11 +105,11 @@ gaFeatureTypeIconOff["Modis48to72Hours-1604"] = IMAGES_DIR + "/ga_sentinel/modis
 var ProxyURL = WEB_CONTEXT + "/restproxy?";
 var kmlProxyUrl = WEB_CONTEXT + "/xsltRestProxy.do?url=";
 
-var gaFeatureTypeProxy = new Array();
+var gaFeatureTypeProxy = [];
 gaFeatureTypeProxy["Avhrr48to72Hours-1404"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/ga/sentinel/proxy?";
 gaFeatureTypeProxy["Modis48to72Hours-1604"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/ga/sentinel/proxy?";
 
-var gaFeatureTypeGroupSpace = new Array();
+var gaFeatureTypeGroupSpace = [];
 gaFeatureTypeGroupSpace["gsml:Borehole"] = "NVCL_Groups";
 gaFeatureTypeGroupSpace["geodesy:stations"] = "Geodesy_Groups";
 gaFeatureTypeGroupSpace["sa:SamplingPoint"] = "GNSS_Groups";

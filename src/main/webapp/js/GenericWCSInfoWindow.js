@@ -420,7 +420,7 @@ function showWCSDownload(serviceUrl, layerName) {
 
 		    		    	fieldSetsToDisplay.push(new Ext.form.FieldSet({
 		    			        id              : constraint.componentId,
-		    			        title           : 'Parameter \'' + constraint.label + '\' Constraints',
+		    			        title           : "Parameter '" + constraint.label + "' Constraints",
 		    			        checkboxToggle  : true,
 		    			        defaultType     : 'textfield',
 		    			        bodyStyle       : 'padding: 0 0 0 50px',
@@ -814,11 +814,11 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
 	    			htmlFragment += generateRowFragment('Name', record.name);
 	    			htmlFragment += generateRowFragment('Description', record.description);
 	    			htmlFragment += generateRowFragment('Label', record.label);
-	    			htmlFragment += generateRowFragmentFromArray('SupportedRequestCRS\'s', record.supportedRequestCRSs, 5);
-	    			htmlFragment += generateRowFragmentFromArray('SupportedResponseCRS\'s', record.supportedResponseCRSs, 5);
-	    			htmlFragment += generateRowFragmentFromArray('SupportedFormats', record.supportedFormats, 1);
-	    			htmlFragment += generateRowFragmentFromArray('SupportedInterpolation', record.supportedInterpolations, 1);
-	    			htmlFragment += generateRowFragmentFromArray('NativeCRS\'s\'', record.nativeCRSs, 5);
+	    			htmlFragment += generateRowFragmentFromArray("SupportedRequestCRS's", record.supportedRequestCRSs, 5);
+	    			htmlFragment += generateRowFragmentFromArray("SupportedResponseCRS's", record.supportedResponseCRSs, 5);
+	    			htmlFragment += generateRowFragmentFromArray("SupportedFormats", record.supportedFormats, 1);
+	    			htmlFragment += generateRowFragmentFromArray("SupportedInterpolation", record.supportedInterpolations, 1);
+	    			htmlFragment += generateRowFragmentFromArray("NativeCRS's", record.nativeCRSs, 5);
 
 	    			var opendapResources = options.params.cswRecord.getFilteredOnlineResources('OPeNDAP');
 	    			if (opendapResources.length > 0) {
@@ -873,13 +873,13 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
 	        		htmlFragment += '<div align="right">' +
 	    					            '<br/>' +
 	    					            '<input type="button" id="downloadWCSBtn"  value="Download" onclick="showWCSDownload('+
-	    					            '\'' + opts.serviceUrl +'\',' +
-	    					            '\''+ opts.layerName + '\'' +
+	    					            "'" + opts.serviceUrl +"'," +
+	    					            "'" + opts.layerName + "'" +
 	    					            ');"/>';
 	        		if (opendapResources.length > 0) {
 	        			htmlFragment += '<input type="button" id="downloadOpendapBtn"  value="Download (OPeNDAP)" onclick="showOPeNDAPDownload('+
-			            				'\'' + opendapResources[0].url +'\',' +
-			            				'\'' + opendapResources[0].name +'\'' +
+			            				"'" + opendapResources[0].url + "'," +
+			            				"'" + opendapResources[0].name +"'" +
 			            				');"/>';
 	        		}
 	        		htmlFragment +=	'</div>';

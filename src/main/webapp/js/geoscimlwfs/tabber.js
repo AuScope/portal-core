@@ -118,7 +118,7 @@ function tabberObj(argsObj)
   this.REclassTabHide = new RegExp('\\b' + this.classTabHide + '\\b', 'gi');
 
   /* Array of objects holding info about each tab */
-  this.tabs = new Array();
+  this.tabs = [];
 
   /* If the main tabber div was specified, call init() now */
   if (this.div) {
@@ -179,7 +179,7 @@ tabberObj.prototype.init = function(e)
        childNodes[i].className.match(this.REclassTab)) {
       
       /* Create updateCSWRecords new object to save info about this tab */
-      t = new Object();
+      t = {};
       
       /* Save updateCSWRecords pointer to the div for this tab */
       t.div = childNodes[i];
@@ -518,7 +518,7 @@ if (typeof tabberOptions == 'undefined') {
 
 } else {
 
-  if (!tabberOptions['manualStartup']) {
+  if (!tabberOptions.manualStartup) {
     tabberAutomaticOnLoad(tabberOptions);
   }
 

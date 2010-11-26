@@ -176,7 +176,7 @@ GeotransectsInfoWindow.prototype = {
 				'(right click > Save Target / Link As).' +
 				'</div>' +
 				'<div>' +
-				"<table border=\"1\" cellspacing=\"1\" width=\"100%\" bgcolor=\"#EAF0F8\">";
+				'<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">';
 
 			for (var i = 0; i < values.length; i++) {
 				sHtml += "<tr><td>";
@@ -190,8 +190,8 @@ GeotransectsInfoWindow.prototype = {
 		}
 		else {
 			sHtml += '<div style="padding-bottom:10px;" >' +
-			'No DataSets available.' +
-			'</div>'
+			         'No DataSets available.' +
+			          '</div>';
 	        this.mask.hide();
 		}
 

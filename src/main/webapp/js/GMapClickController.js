@@ -1,7 +1,7 @@
 
 //Returns true if the click has originated from a generic parser layer
 var genericParserClickHandler = function (map, overlay, latlng, parentOnlineResource) {
-	if (overlay == null || !overlay.description) {
+	if (overlay === null || !overlay.description) {
 		return false;
 	}
 
@@ -12,7 +12,7 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
 	//The generic parser stamps the description with a specific string followed by the gml:id of the node
 	var genericParserString = 'GENERIC_PARSER:';
 
-	if (overlay.description.indexOf(genericParserString) == 0) {
+	if (overlay.description.indexOf(genericParserString) === 0) {
 
 		//Lets extract the ID and then lookup the parent record
 		//Assumption - We are only interested in the first WFS record
@@ -118,7 +118,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	            else if (wfsTypeName == "gsml:GeologicUnit"){
 	            	var featureId;
 	            	var geochemParserString = 'featureId:';
-	            	if (overlay.description.indexOf(geochemParserString) == 0){
+	            	if (overlay.description.indexOf(geochemParserString) === 0){
 	            		var indexOfSpace=overlay.description.indexOf('<');
 	            		featureId = overlay.description.substring(geochemParserString.length,indexOfSpace);
 	            	}	            	
@@ -126,11 +126,11 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	            	infoWindow.show();
 	            	
 	            }
-	            else if (overlay.description != null) {
+	            else if (overlay.description !== null) {
 	                overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
 	            }
 	        //Otherwise it could be a WFS polygon
-	        } else if (overlay.description != null) {
+	        } else if (overlay.description !== null) {
                 map.openInfoWindowHtml(overlay.getVertex(0),overlay.description);
 	        }
 	    	return;
@@ -147,7 +147,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	                    var alr = activeLayersStore.getActiveLayerAt(i);
 
 	                    //Only consider records that are part of this known layer grouping
-	                    if (alr.getParentKnownLayer() != null &&
+	                    if (alr.getParentKnownLayer() !== null &&
 	                    		alr.getParentKnownLayer().getId() == parentKnownLayer.getId()) {
 
 	                    	var overlayManager = alr.getOverlayManager();
@@ -168,7 +168,8 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 		                        	selectedReports.push({
 		                				text: shortTitle,
 		                				handler: function(item, checked) {
-		                		            new ReportsInfoWindow(map, this.overlay, this.cswRecord).show();
+		                		            var repWin = new ReportsInfoWindow(map, this.overlay, this.cswRecord);
+		                		            repWin.show();
 		                				}.createDelegate({overlay: reportOverlay, cswRecord: cswRecord})
 		                			});
 		                        }
@@ -212,7 +213,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 
 	    //otherwise Handle for WCS services (if any)
 	    cswRecords = parentActiveLayerRecord.getCSWRecordsWithType('WCS');
-	    if (cswRecords.length != 0) {
+	    if (cswRecords.length !== 0) {
 	    	
 	    	var infoWindow = new GenericWCSInfoWindow(map, overlay, parentOnlineResource.url, parentOnlineResource.name, parentCSWRecord);
 			infoWindow.showInfoWindow();
@@ -221,7 +222,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	//Otherwise we test each of our WMS layers to see if a click will affect them
 	}else {
 		//If the user clicks on an info window, we will still get click events, lets ignore these
-    	if (latlng == null || latlng == undefined) {
+    	if (latlng === null || latlng === undefined) {
     		return;
     	}
 
@@ -310,13 +311,13 @@ function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latl
 
                 //Extract the line Id from the XML
             	var line = rootNode.getElementsByTagName("gt:LINE");
-            	if(line == null || line.length <= 0) {
+            	if(line === null || line.length <= 0) {
             		//Chrome, Opera may not want the namespace prefix
             		line = rootNode.getElementsByTagName("LINE");
             	}
 
             	// Change to enable the SURV_LINE which is the key in the shapefile
-            	if(line == null || line.length <= 0) {
+            	if(line === null || line.length <= 0) {
             		line = rootNode.getElementsByTagName("gt:SURV_LINE");
                 	if(line == null || line.length <= 0) {
                 		line = rootNode.getElementsByTagName("SURV_LINE");
@@ -325,7 +326,7 @@ function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latl
 
         		//Get the line
             	var lineId = "";
-                if(line != null && line.length > 0) {
+                if(line !== null && line.length > 0) {
             	    if(document.all) { //IE
             	        lineId = line[0].text;
             	    } else {
@@ -333,7 +334,7 @@ function handleGeotransectWmsRecord(url, cswRecord, wmsOnlineResource, map, latl
             	    }
 
             	    //Remove the prefixes - we dont store them in the DB
-            	    if(lineId.indexOf("cdp") == 0) {
+            	    if(lineId.indexOf("cdp") === 0) {
             	    	lineId = lineId.substring(3, lineId.length);
             	    }
 
@@ -373,7 +374,7 @@ function handleGenericWmsRecord(url, i, map, latlng) {
                         openWindow.document.write(response.responseText);
                         openWindow.document.close();
                     } else {
-                    	alert('Couldn\'t open popup window containing WMS information. Please disable any popup blockers and try again');
+                    	alert("Couldn't open popup window containing WMS information. Please disable any popup blockers and try again");
                     }
                 } else {
                 	map.openInfoWindowHtml(latlng, response.responseText, {autoScroll:true});

@@ -64,7 +64,7 @@ function GaSentinelMarker_getMarkerClickedFn() {
   var gaSentinel = this;
   return function() {
     gaSentinel.markerClicked();
-  }
+  };
 }
 
 /**

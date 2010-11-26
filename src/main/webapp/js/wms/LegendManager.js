@@ -27,10 +27,11 @@ LegendManager.prototype.generateImageUrl = function() {
 
 	var last_char = url.charAt(url.length - 1);
 	if ((last_char !== "?") && (last_char !== "&")) {
-      if (url.indexOf('?') == -1)
+      if (url.indexOf('?') == -1) {
          url += "?";
-      else
+      } else {
          url += "&";
+      }
 	}
 
 	url += 'REQUEST=GetLegendGraphic';

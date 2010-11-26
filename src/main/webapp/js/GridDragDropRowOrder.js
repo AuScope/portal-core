@@ -8,8 +8,9 @@ Ext.ux.dd.GridDragDropRowOrder = Ext.extend(Ext.util.Observable,
 
     constructor : function(config)
     {
-        if (config)
+        if (config) {
             Ext.apply(this, config);
+        }
 
         this.addEvents(
         {
@@ -68,7 +69,7 @@ Ext.ux.dd.GridDragDropRowOrder = Ext.extend(Ext.util.Observable,
                 var ds = this.grid.getStore();
 
                 // Changes for multiselction by Spirit
-                var selections = new Array();
+                var selections = [];
                 var keys = ds.data.keys;
                 for (var key in keys)
                 {
@@ -172,8 +173,9 @@ Ext.ux.dd.GridDragDropRowOrder = Ext.extend(Ext.util.Observable,
                 // If on first row, remove upper line. Prevents negative index error as a result of rindex going negative.
                 if (rindex < 0 || rindex === false)
                 {
-                    if (this.currentRowEl)
+                    if (this.currentRowEl) {
                         this.currentRowEl.removeClass('grid-row-insert-above');
+                    }
                     return this.dropNotAllowed;
                 }
 

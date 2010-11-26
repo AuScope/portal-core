@@ -35,12 +35,12 @@ More info at http://earthcode.com
 function GZoomControl(oBoxStyle,oOptions,oCallbacks) {
 	//box style options
   GZoomControl.G.style = {
-    nOpacity:.2,
+    nOpacity:0.2,
     sColor:"#000",
     sBorder:"2px solid blue"
   };
   var style=GZoomControl.G.style;
-  for (var s in oBoxStyle) {style[s]=oBoxStyle[s];};
+  for (var s in oBoxStyle) {style[s]=oBoxStyle[s];}
   var aStyle=style.sBorder.split(' ');
   style.nOutlineWidth=parseInt(aStyle[0].replace(/\D/g,''));
   style.sOutlineColor=aStyle[2];
@@ -58,10 +58,10 @@ function GZoomControl(oBoxStyle,oOptions,oCallbacks) {
 		bStickyZoom:false
 	};
 
-	for (var s in oOptions) {GZoomControl.G.options[s]=oOptions[s];};
+	for (var s in oOptions) {GZoomControl.G.options[s]=oOptions[s];}
 
 	// callbacks: buttonClick, dragStart,dragging, dragEnd
-	if (oCallbacks == null) {oCallbacks={};};
+	if (oCallbacks === null) {oCallbacks={};}
 	GZoomControl.G.callbacks=oCallbacks;
 }
 
@@ -161,7 +161,7 @@ GZoomControl.prototype.getDefaultPosition = function() {
 // ******************************************************************************************
 GZoomControl.prototype.coverMousedown_ = function(e){
   var G=GZoomControl.G;
-  if (G.oZoomArea != null) G.oMap.removeOverlay(G.oZoomArea);
+  if (G.oZoomArea !== null) {G.oMap.removeOverlay(G.oZoomArea);}
 
   var oPos = GZoomControl.prototype.getRelPos_(e);
   debug("Mouse down at "+oPos.left+", "+oPos.top);
@@ -187,7 +187,7 @@ GZoomControl.prototype.coverMousedown_ = function(e){
   G.mcb.style.display='block';
 
 	// invoke the callback if provided
-	if (G.callbacks.dragStart !=null){G.callbacks.dragStart(G.nStartX,G.nStartY);};
+	if (G.callbacks.dragStart !==null){G.callbacks.dragStart(G.nStartX,G.nStartY);}
 
   debug("mouse down done");
   return false;
@@ -212,7 +212,7 @@ GZoomControl.prototype.drag_=function(e){
     var sw = G.oMap.fromContainerPixelToLatLng(swpx);
 
 	// invoke callback if provided
-	if (G.callbacks.dragging !=null){
+	if (G.callbacks.dragging !==null){
 	  G.callbacks.dragging(ne, sw);
 	}
 
@@ -243,8 +243,8 @@ GZoomControl.prototype.mouseup_=function(e){
     var se = G.oMap.fromContainerPixelToLatLng(sepx);
     var sw = G.oMap.fromContainerPixelToLatLng(swpx);
 
-    if (G.oZoomArea != null) G.oMap.removeOverlay(G.oZoomArea);
-    G.oZoomArea = new GPolyline([nw,ne,se,sw,nw],G.style.sOutlineColor,G.style.nOutlineWidth+1,.4);
+    if (G.oZoomArea !== null) {G.oMap.removeOverlay(G.oZoomArea);}
+    G.oZoomArea = new GPolyline([nw,ne,se,sw,nw],G.style.sOutlineColor,G.style.nOutlineWidth+1,0.4);
 
     try{
 
@@ -262,7 +262,7 @@ GZoomControl.prototype.mouseup_=function(e){
       G.oMap.setCenter(oCenter, nZoom);
 
 	  // invoke callback if provided
-	  if (G.callbacks.dragEnd !=null){
+	  if (G.callbacks.dragEnd !== null){
 	    G.callbacks.dragEnd(nw,ne,se,sw,nwpx,nepx,sepx,swpx);
 	  }
 
@@ -277,7 +277,7 @@ GZoomControl.prototype.mouseup_=function(e){
 // set the cover sizes according to the size of the map
 GZoomControl.prototype.setDimensions_=function() {
   var G=GZoomControl.G;
-	if (G.options.bForceCheckResize){G.oMap.checkResize();};
+	if (G.options.bForceCheckResize){G.oMap.checkResize();}
   var oSize = G.oMap.getSize();
   G.nMapWidth  = oSize.width;
   G.nMapHeight = oSize.height;
@@ -310,7 +310,7 @@ GZoomControl.prototype.initCover_=function(){
 	acl.style([G.mc],{display:'block',background:G.style.sColor});
 	acl.style([G.oOutline],{width:'0px',height:'0px'});
 	//invoke callback if provided
-	if(GZoomControl.G.callbacks['buttonClick'] !=null){GZoomControl.G.callbacks.buttonClick();};
+	if(GZoomControl.G.callbacks.buttonClick !==null){GZoomControl.G.callbacks.buttonClick();}
 	debug("done initCover_");
 };
 
@@ -323,8 +323,8 @@ GZoomControl.prototype.getRelPos_=function(e) {
 GZoomControl.prototype.getRectangle_=function(nStartX,nStartY,oPos,nRatio){
 	var dX=oPos.left-nStartX;
 	var dY=oPos.top-nStartY;
-	if (dX <0) dX =dX*-1;
-	if (dY <0) dY =dY*-1;
+	if (dX <0) {dX =dX*-1;}
+	if (dY <0) {dY =dY*-1;}
 	delta = dX > dY ? dX : dY;
 
   return {
@@ -361,14 +361,14 @@ GZoomControl.prototype.resetDragZoom_=function() {
 /* alias get element by id */
 function $id(sId) { return document.getElementById(sId); }
 /* utility functions in acl namespace */
-if (!window['acldefined']) {var acl={};window['acldefined']=true;}//only set the acl namespace once, then set updateCSWRecords flag
+if (!window.acldefined) {var acl={};window.acldefined=true;}//only set the acl namespace once, then set updateCSWRecords flag
 
 /* A general-purpose function to get the absolute position of
 the mouse */
 acl.getMousePosition=function(e) {
 	var posx = 0;
 	var posy = 0;
-	if (!e) var e = window.event;
+	if (!e) {e = window.event;}
 	if (e.pageX || e.pageY) {
 		posx = e.pageX;
 		posy = e.pageY;
@@ -389,7 +389,7 @@ acl.getElementPosition=function(eElement) {
   var nLeftPos = eElement.offsetLeft;          // initialize var to store calculations
 	var nTopPos = eElement.offsetTop;            // initialize var to store calculations
 	var eParElement = eElement.offsetParent;     // identify first offset parent element
-	while (eParElement != null ) {                // move up through element hierarchy
+	while (eParElement !== null ) {                // move up through element hierarchy
 		nLeftPos += eParElement.offsetLeft;      // appending left offset of each parent
 		nTopPos += eParElement.offsetTop;
 		eParElement = eParElement.offsetParent;  // until no more offset parents exist
@@ -407,7 +407,7 @@ acl.style=function(a,o){
 acl.getManyElements=function(s){
 	t=s.split(',');
 	a=[];
-	for (var i=0;i<t.length;i++){a[a.length]=$id(t[i]);};
+	for (var i=0;i<t.length;i++){a[a.length]=$id(t[i]);}
 	return a;
 };
 

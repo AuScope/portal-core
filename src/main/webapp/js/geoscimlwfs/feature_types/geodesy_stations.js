@@ -51,8 +51,9 @@ GeodesyStation.prototype.parseXmlElement = GeodesyStation_parseXmlElement;
 function GeodesyStation_parseXmlElement(pGeodesyStationNode) {
   var nodeGeodesyStation = pGeodesyStationNode;
   
-  if (g_IsIE)
+  if (g_IsIE) {
     nodeGeodesyStation.setProperty("SelectionLanguage", "XPath");
+  }
 
   /**
   * Sample XML fragment for updateCSWRecords Geodesy station -

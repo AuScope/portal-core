@@ -8,7 +8,7 @@ function StationGroup(pIcon, pTitle, pDescription, pWfsUrl, pWfsFeatureType) {
   this.msIcon = pIcon;
   this.mbIsGroupOn = false;
   this.msFeatureType = pWfsFeatureType;
-  this.maMarkers = new Array();
+  this.maMarkers = [];
   
   this.msWfsUrl = pWfsUrl;
   this.msLayerName = pWfsFeatureType;
@@ -198,8 +198,9 @@ function StationGroup_parseXmlForMarkers(pRootNode) {
 
   var rootNode = pRootNode;
   
-  if (g_IsIE)
+  if (g_IsIE) {
     rootNode.setProperty("SelectionLanguage", "XPath");
+  }
   
   // Parse the XML for stations
   // Beware of using namespaces when using getElementsByTagName - it does not include namespaces in parsing.
@@ -209,8 +210,9 @@ function StationGroup_parseXmlForMarkers(pRootNode) {
     aStations = rootNode.getElementsByTagName(this.msFeatureType.replace(/^[^:]+:/, ""));
   }
 
-  if (!aStations.length)
+  if (!aStations.length) {
     return;
+  }
   
   // Depending on the featureType, create markers for the stations.
   switch(this.msFeatureType) {
@@ -334,7 +336,7 @@ function StationGroup_getClickFn() {
   var group = this;
   return function() {
     group.onClick();
-  }
+  };
 }
 
 /**
@@ -344,7 +346,7 @@ function StationGroup_getShowToolTipFn() {
   var group = this;
   return function() {
     Tip(group.msDescription);
-  }
+  };
 }
 
 /**
@@ -353,5 +355,5 @@ function StationGroup_getShowToolTipFn() {
 function StationGroup_getHideToolTipFn() {
   return function() {
     UnTip();
-  }
+  };
 }

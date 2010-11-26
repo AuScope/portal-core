@@ -1,8 +1,9 @@
 
 function isRecognizedFeature(sFeature) {
   for (var i=0; i<gaFeatureTypes.length; i++) {
-    if (gaFeatureTypes[i] == sFeature) 
+    if (gaFeatureTypes[i] == sFeature) {
       return true;
+    }
   }
   return false;
 }
@@ -14,10 +15,11 @@ function isRecognizedFeature(sFeature) {
  * will return [2009,2008,2007] 
  */
 function getYearsArrayFrom(yearFrom) {
-	var years = new Array();
+	var years = [];
 	var currentYear = new Date().getFullYear();
 	
-	for (x=0;x<= currentYear - yearFrom;x++ )
+	for (x=0;x<= currentYear - yearFrom;x++ ) {
 		years[x] = currentYear - x;
+	}
 	return years;		
 }

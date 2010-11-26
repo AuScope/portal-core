@@ -44,8 +44,9 @@ ActiveLayersGridPanel = function(id, title, activeLayersStore, layerSelectionHan
             pressed:true,
             handler: function() {
                 var record = activeLayersPanel.getSelectionModel().getSelected();
-                if (record == null)
+                if (record === null) {
                     return;
+                }
 
                 layerRemoveHandler(new ActiveLayersRecord(record));
             }

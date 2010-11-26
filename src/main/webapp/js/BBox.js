@@ -66,15 +66,19 @@ BBox.prototype.splitAt = function(longitude, latitude) {
 			//If we split across a range that sees a sign flip
 			//ensure the sign across each split rectangle is equal
 			var leftSplitValue = value;
-			while (leftSplitValue < 0 && leftSplit[left] > 0)
+			while (leftSplitValue < 0 && leftSplit[left] > 0) {
 				leftSplitValue += 360;
-			while (leftSplitValue > 0 && leftSplit[left] < 0)
+			}
+			while (leftSplitValue > 0 && leftSplit[left] < 0) {
 				leftSplitValue -= 360;
+			}
 			var rightSplitValue = value;
-			while (rightSplitValue < 0 && rightSplit[right] > 0)
+			while (rightSplitValue < 0 && rightSplit[right] > 0) {
 				rightSplitValue += 360;
-			while (rightSplitValue > 0 && rightSplit[right] < 0)
+			}
+			while (rightSplitValue > 0 && rightSplit[right] < 0) {
 				rightSplitValue -= 360;
+			}
 			
 			leftSplit[left] = bbox[left];
 			leftSplit[right] = leftSplitValue;

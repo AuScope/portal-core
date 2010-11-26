@@ -25,11 +25,11 @@ function NVCLMarker (boreholeId, marker, description) {
   this.msPlotsHtml = "";
 
   // Create the various arrays for the borehole
-  this.maMosaicTrays = new Array();
-  this.maScalars = new Array();
-  this.maScalarNames = new Array();
-  this.maScalarNotes = new Array();
-  this.maScalarSelected = new Array();
+  this.maMosaicTrays = [];
+  this.maScalars = [];
+  this.maScalarNames = [];
+  this.maScalarNotes = [];
+  this.maScalarSelected = [];
   this.mnStartDepth = 0;
   this.mnEndDepth = 0;
   this.mnSamplingInterval = 1;
@@ -216,7 +216,7 @@ function NVCLMarker_getMarkerClickedFn() {
   var nvclMarker = this;
   return function() {
     nvclMarker.markerClicked();
-  }
+  };
 }
 
 /**
@@ -233,8 +233,9 @@ function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
   GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
     if(pResponseCode == 200) {
       var XmlDoc = GXml.parse(pData);
-      if (g_IsIE)
+      if (g_IsIE) {
         XmlDoc.setProperty("SelectionLanguage", "XPath");
+      }
 
       var rootNode = XmlDoc.documentElement;
       if (!rootNode) {
@@ -243,7 +244,7 @@ function NVCLMarker_getScalarNote(marker, scalarId, scalarName) {
 
       // get the concept tag (inside is the additional info)
       var aConcepts = rootNode.getElementsByTagName("skos:Concept");
-      if (aConcepts.length == 0) {
+      if (aConcepts.length === 0) {
         return;
       }
       // there is only one concept, so we'll use the 0th item in the array!
@@ -287,13 +288,14 @@ function NVCLMarker_markerClicked()
   scalars_proxy += "?coreid=" + sCoreId;
 
 
-  if (this.maScalars.length == 0) {
+  if (this.maScalars.length === 0) {
 	GDownloadUrl(scalars_proxy, function(pData, pResponseCode) {
       if(pResponseCode == 200) {
         // Call the parse function to read the XML data from the file.
         var xmlDoc = GXml.parse(pData);
-        if (g_IsIE)
+        if (g_IsIE) {
           xmlDoc.setProperty("SelectionLanguage", "XPath");
+        }
 
         var rootNode = xmlDoc.documentElement;
         if (!rootNode) {
@@ -310,7 +312,7 @@ function NVCLMarker_markerClicked()
           var sScalarId = GXml.value(nvclStation.selectSingleNode("*[local-name() = 'Scalar_ID']"));
           var sScalarName = GXml.value(nvclStation.selectSingleNode("*[local-name() = 'Name']"));
 
-          if (sScalarId != "" && sScalarName != "") {
+          if (sScalarId !== "" && sScalarName !== "") {
             oNVCLMarker.maScalars[scalar_index] = sScalarId;
             oNVCLMarker.maScalarNames[sScalarId] = sScalarName;
             oNVCLMarker.maScalarSelected[sScalarId] = false;
@@ -453,8 +455,9 @@ function NVCLMarker_createMosaicTabHtml() {
     GDownloadUrl(sMosaicUrl, function(pData, pResponseCode) {
       if(pResponseCode == 200) {
         var xmlDoc = GXml.parse(pData);
-        if (g_IsIE)
+        if (g_IsIE) {
           xmlDoc.setProperty("SelectionLanguage", "XPath");
+        }
 
         var rootNode = xmlDoc.documentElement;
         if (!rootNode) {
@@ -469,17 +472,17 @@ function NVCLMarker_createMosaicTabHtml() {
           var trayNode = aTrays[i];
           sTrayId = GXml.value(trayNode.selectSingleNode("*[local-name() = 'Tray_ID']"));
 
-          if (sTrayId != "") {
+          if (sTrayId !== "") {
             oNVCLMarker.maMosaicTrays[nTrayIndex] = sTrayId;
             nTrayIndex++;
           }
         }
 
-        if (nTrayIndex != 0) {
+        if (nTrayIndex !== 0) {
           // Link to open the moscaic image in updateCSWRecords new window
           //var newMosaicHtmlUrl = top.location.protocol + "//" + top.location.host + "/GoogleMap/html/mosaic_image.html?coreid=" + sCoreId;
             var newMosaicHtmlUrl = "/mosaic_image.html?coreid=" + sCoreId;
-          mosaicHtml += '<div id="div_new_mosaic_window" style="height:20px; width:100%; text-align:center">'
+          mosaicHtml += '<div id="div_new_mosaic_window" style="height:20px; width:100%; text-align:center">';
           mosaicHtml += '<a id="a_new_mosaic_window" target="_blank" href="'+newMosaicHtmlUrl+'"> Open in a new window </a><br/>';
           mosaicHtml += '</div>';
 
@@ -552,7 +555,7 @@ function NVCLMarker_createPlotScalarsTabHtml() {
   //var oBorehole = this.moBorehole;
   var plotScalarHtml = "";
 
-  if (oNVCLMarker.maScalars.length == 0) {
+  if (oNVCLMarker.maScalars.length === 0) {
     // No scalars for this borehole
     plotScalarHtml += '<div style="color:red">No scalars for this borehole</div>';
   } else {
@@ -572,7 +575,7 @@ function NVCLMarker_createPlotScalarsTabHtml() {
 
     for (var i=0; i<oNVCLMarker.maScalars.length; i++) {
       var scalarId = oNVCLMarker.maScalars[i];
-      if (oNVCLMarker.maScalarSelected[scalarId] == false) {
+      if (oNVCLMarker.maScalarSelected[scalarId] === false) {
         plotScalarHtml += '<option value="'+scalarId;
         plotScalarHtml += '" title="'+oNVCLMarker.maScalarNotes[scalarId]+'">';
         plotScalarHtml += oNVCLMarker.maScalarNames[scalarId];
@@ -596,8 +599,8 @@ function NVCLMarker_createPlotScalarsTabHtml() {
 
     for (var i=0; i<oNVCLMarker.maScalars.length; i++) {
       var scalarId = oNVCLMarker.maScalars[i];
-      if (oNVCLMarker.maScalarSelected[scalarId] == true) {
-        plotScalarHtml += '<option value="'+scalarId+'">'
+      if (oNVCLMarker.maScalarSelected[scalarId] === true) {
+        plotScalarHtml += '<option value="'+scalarId+'">';
         plotScalarHtml += '" title="'+oNVCLMarker.maScalarNotes[scalarId]+'">';
         plotScalarHtml += oNVCLMarker.maScalarNames[scalarId];
       }
@@ -710,7 +713,7 @@ function NVCLMarker_displayInfoWindow() {
   // Create the Plot Scalars tab html
   var plotScalarsHtml = this.createPlotScalarsTabHtml();
 
-  if (this.maScalars.length == 0) {
+  if (this.maScalars.length === 0) {
     // If the borehole does not have any scalars, no need to make the 4th tab
     // Open the popup window for the marker with the tabs Summary, Mosaic and Plot Scalars
     oMarker.openInfoWindowTabsHtml([new GInfoWindowTab(label1, this.msSummaryHtml),
@@ -726,7 +729,7 @@ function NVCLMarker_displayInfoWindow() {
                                     new GInfoWindowTab(label3, plotScalarsHtml),
                                     new GInfoWindowTab(label4, plotsHtml)]);
 
-    setTimeout( function(){oNVCLMarker.updateInfoWindow()}, 500);
+    setTimeout( function(){oNVCLMarker.updateInfoWindow();}, 500);
   }
 }
 
@@ -768,8 +771,8 @@ function NVCLMarker_createPlotsTabHtml() {
   //var oBorehole = this.moBorehole;
   var plotsHtml = "";
 
-  if (this.msPlotImageSrc == "") {
-    plotsHtml += '<div id="div_new_window" style="height:20px; width:100%; text-align:center">'
+  if (this.msPlotImageSrc === "") {
+    plotsHtml += '<div id="div_new_window" style="height:20px; width:100%; text-align:center">';
     plotsHtml += '<a id="a_new_window" href="' + gsNoSclarasPlottedImg + '" style="display: none"> Open in a new window </a><br/>';
     plotsHtml += '</div>';
 
@@ -783,7 +786,7 @@ function NVCLMarker_createPlotsTabHtml() {
     plotsHtml += '</div>';
 
   } else {
-    plotsHtml += '<div id="div_new_window" style="height:20px; width:100%; text-align:center">'
+    plotsHtml += '<div id="div_new_window" style="height:20px; width:100%; text-align:center">';
     plotsHtml += '<a id="a_new_window" href="' + this.msPlotImageSrc + '" target="_blank"> Open in a new window </a><br/>';
     plotsHtml += '</div>';
     plotsHtml += '<div id="div_plotted_scalars" style="height:400px; width:100%; overflow: auto; text-align:center">';
@@ -808,7 +811,7 @@ function NVCLMarker_getMoveScalarsInLists(pFromListBox, pToListBox, pIsSelecting
   var sToListBox = pToListBox;
   return function() {
     nvclMarker.moveScalarsInLists(sFromListBox, sToListBox, bIsSelecting);
-  }
+  };
 }
 
 /**
@@ -826,14 +829,16 @@ function NVCLMarker_moveScalarsInLists(pFromListBox, pToListBox, pIsSelecting) {
   var oFromList = document.getElementById(pFromListBox);
   var oToList = document.getElementById(pToListBox);
 
-  if ((oFromList != null) && (oToList != null)) {
+  if ((oFromList !== null) && (oToList !== null)) {
     // No items in the list
-    if(oFromList.length < 1)
+    if(oFromList.length < 1) {
       return;
+    }
 
     // When no Item is selected the index will be -1
-    if(oFromList.options.selectedIndex == -1)
+    if(oFromList.options.selectedIndex == -1) {
       return;
+    }
 
     while ( oFromList.options.selectedIndex >= 0 ) {
       // Create updateCSWRecords new instance of ListItem
@@ -854,8 +859,8 @@ function NVCLMarker_moveScalarsInLists(pFromListBox, pToListBox, pIsSelecting) {
 
     // Sort the target list
     // Prepare variables
-    var arrLookup = new Array();  // To quickly find the index of the text
-    var arrToList = new Array();  // To use JavaScripts builtin sort
+    var arrLookup = [];  // To quickly find the index of the text
+    var arrToList = [];  // To use JavaScripts builtin sort
     var newToList = oToList.cloneNode(false);   // Only clone the parent
 
     // Prepare the sorting arrays
@@ -907,19 +912,19 @@ function NVCLMarker_plotSelectedScalars() {
   var oSelectedListBox = document.getElementById(this.msSelectedListId);
   var oMessagesDiv = document.getElementById("div_messages");
 
-  if (oSelectedListBox != null) {
+  if (oSelectedListBox !== null) {
     // Extract all items from the selected scalars list box
     var sSelectedScalars = "";
     var nScalarCount = 0;
     for(var i=0; i<oSelectedListBox.options.length; i++) {
       nScalarCount++;
-      if (sSelectedScalars.length != 0) {
+      if (sSelectedScalars.length !== 0) {
         sSelectedScalars += ",";
       }
       sSelectedScalars += oSelectedListBox.options[i].value;
     }
 
-    if (sSelectedScalars.length != 0) {
+    if (sSelectedScalars.length !== 0) {
       var width = 1200;
       var imgWidth = 400*nScalarCount + "px";
       if (nScalarCount > 3) {
@@ -944,8 +949,8 @@ function NVCLMarker_plotSelectedScalars() {
 
       // Append start depth and end depth
       // 0,0 are special values when the user wants the plot for the entire depth
-      if (startDepth != null && endDepth != null) {
-        if (startDepth.value !=0 && endDepth.value != 0) {
+      if (startDepth !== null && endDepth !== null) {
+        if (startDepth.value !==0 && endDepth.value !== 0) {
           this.mnStartDepth = startDepth.value;
           this.mnEndDepth = endDepth.value;
           sScalarsPlotUrl += "&start=" + startDepth.value;
@@ -964,13 +969,13 @@ function NVCLMarker_plotSelectedScalars() {
       }
 
       var plotImage = document.getElementById("plot_image");
-      if (plotImage != null) {
+      if (plotImage !== null) {
         plotImage.style.width = "";
         plotImage.src = gsLoadingNvclPlotsImg;
       }
 
       // Set the message that user should check results on the Plot tab
-      if (oMessagesDiv != null) {
+      if (oMessagesDiv !== null) {
         oMessagesDiv.style.color = "blue";
         oMessagesDiv.innerHTML = "Plots loading...";
       }
@@ -978,7 +983,7 @@ function NVCLMarker_plotSelectedScalars() {
       GDownloadUrl(sScalarsPlotUrl, function(pData, pResponseCode) {
         if(pResponseCode == 200) {
           // Display the image
-          if (plotImage != null) {
+          if (plotImage !== null) {
             plotImage.src = sScalarsPlotUrl;
             plotImage.style.width = imgWidth;
           }
@@ -989,7 +994,7 @@ function NVCLMarker_plotSelectedScalars() {
           // Once the image is downloaded,
           // activate the link "Open in updateCSWRecords new window"
           var plotImageHref = document.getElementById("a_new_window");
-          if (plotImageHref != null) {
+          if (plotImageHref !== null) {
             gPlottedImageSrc = sScalarsPlotUrl;
             plotImageHref.href = "/plotted_images.html?" + sParamsList;
             plotImageHref.target = "_blank";
@@ -997,7 +1002,7 @@ function NVCLMarker_plotSelectedScalars() {
           }
 
           // Set the message that the images have loaded and the user can check results
-          if (oMessagesDiv != null) {
+          if (oMessagesDiv !== null) {
             oMessagesDiv.style.color = "blue";
             oMessagesDiv.innerHTML = '<div style="color:red; font-size:12px"> Plots loaded. </div>';
             oMessagesDiv.innerHTML += 'Please select the "Plots" tab to check results.';
@@ -1016,10 +1021,10 @@ function NVCLMarker_plotSelectedScalars() {
             alert('Remote server returned error code: ' + responseCode);
         }
       });
-    } else if (oMessagesDiv != null) {
+    } else if (oMessagesDiv !== null) {
       // No scalars in the "Selected Scalars" list box
       oMessagesDiv.style.color = "red";
-      oMessagesDiv.innerHTML = "Please add scalars to the \"Select Scalars\" table and then click on \"Plot\"";
+      oMessagesDiv.innerHTML = 'Please add scalars to the "Select Scalars" table and then click on "Plot"';
     }
   }
 }

@@ -14,10 +14,11 @@ Ext.onReady(function() {
         var regexS = "[\\?&]" + name + "=([^&#]*)";
         var regex = new RegExp(regexS);
         var results = regex.exec(window.location.href);
-        if (results == null)
+        if (results === null) {
             return "";
-        else
+        } else {
             return results[1];
+        }
     };
 
     var isLeafNode = function(documentNode) {
@@ -40,16 +41,15 @@ Ext.onReady(function() {
             var textContent = documentNode.textContent ? documentNode.textContent : documentNode.text;  
             
             treeNode = new Ext.tree.TreeNode( {
-                text : documentNode.tagName + " = "
-                        + textContent
+                text : documentNode.tagName + " = " + textContent
             });
         } else { // we have a parent node
             var parentName = documentNode.tagName;
             if (documentNode.attributes.length > 0) {
                 parentName += '(';
                 for ( var i = 0; i < documentNode.attributes.length; i++) {
-                    parentName += ' ' + documentNode.attributes[i].nodeName
-                            + '=' + documentNode.attributes[i].value;
+                    parentName += ' ' + documentNode.attributes[i].nodeName +
+                                  '=' + documentNode.attributes[i].value;
                 }
                 parentName += ')';
             }
@@ -86,8 +86,8 @@ Ext.onReady(function() {
         // Create opening tag with attributes
         htmlText = indent + '<span class="tag">&lt;' + xmlDocNode.tagName;
         for ( var i = 0; i < xmlDocNode.attributes.length; i++) {
-            htmlText += ' ' + xmlDocNode.attributes[i].nodeName + '=&quot;'
-                    + xmlDocNode.attributes[i].value + '&quot;';
+            htmlText += ' ' + xmlDocNode.attributes[i].nodeName + '=&quot;' + 
+                        xmlDocNode.attributes[i].value + '&quot;';
         }
         htmlText += '&gt;</span>';
         if (isLeaf) {
@@ -105,8 +105,8 @@ Ext.onReady(function() {
         }, this);
 
         // Write closing tag
-        htmlText += '<span class="tag">' + (isLeaf ? '' : indent) + '&lt;/'
-                + xmlDocNode.tagName + '&gt;</span><br/>';
+        htmlText += '<span class="tag">' + (isLeaf ? '' : indent) + '&lt;/' +
+                    xmlDocNode.tagName + '&gt;</span><br/>';
 
         return htmlText;
     };
@@ -114,18 +114,20 @@ Ext.onReady(function() {
     // Given a GML DOM document, figure out if it contains some response
     // data
     var doesResponseContainsData = function(gmlDocument) {
-        if (!gmlDocument)
+        if (!gmlDocument) {
             return false;
+        }
 
         // Making an assumption about namespace...
-        if (gmlDocument.tagName !== 'wfs:FeatureCollection')
+        if (gmlDocument.tagName !== 'wfs:FeatureCollection') {
             return false;
+        }
 
         // Parse our number of features
-        var numberOfFeaturesAttr = gmlDocument.attributes
-                .getNamedItem("numberOfFeatures");
-        if (!numberOfFeaturesAttr)
+        var numberOfFeaturesAttr = gmlDocument.attributes.getNamedItem("numberOfFeatures");
+        if (!numberOfFeaturesAttr) {
             return false;
+        }
 
         return parseInt(numberOfFeaturesAttr.value) > 0;
     };
@@ -145,8 +147,8 @@ Ext.onReady(function() {
             var httpStatus = response.status;
             var httpStatusText = response.statusText;
 
-            loadingMessageEl.textContent = "There was an error requesting information for this marker ("
-                    + responseCode + ")";
+            loadingMessageEl.textContent = "There was an error requesting information for this marker (" + 
+                                          responseCode + ")";
             return;
         }
 
@@ -191,13 +193,14 @@ Ext.onReady(function() {
         // something "interesting"
         if (rootNode.childNodes.length == 1) {
             var childNode = rootNode.childNodes[0];
-            while (childNode != null) {
+            while (childNode !== null) {
                 childNode.expanded = true;
 
-                if (childNode.childNodes.length > 1)
+                if (childNode.childNodes.length > 1) {
                     break;
-                else
+                } else {
                     childNode = childNode.childNodes[0];
+                }
             }
         }
 

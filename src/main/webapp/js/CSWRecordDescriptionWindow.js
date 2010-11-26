@@ -81,8 +81,7 @@ CSWRecordDescriptionWindow = function(cswRecords) {
         			cell: new Ext.Template(
         				'<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} x-selectable {css}" style="{style}" tabIndex="0" {cellAttr}>',
         				'<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>',
-        				'</td>'
-        			)
+        				'</td>')
         		}
             }),
             autoExpandColumn: 'description',
@@ -137,7 +136,6 @@ CSWRecordDescriptionWindow = function(cswRecords) {
             		case 'WFS':
             			var getFeatureUrl = onlineRes.url + this.internalURLSeperator(onlineRes.url) + 'SERVICE=WFS&REQUEST=GetFeature&VERSION=1.1.0&maxFeatures=5&typeName=' + onlineRes.name;
             			return '<a target="_blank" href="' + getFeatureUrl + '"><p>First 5 features</p></a>';
-            			break;
             		case 'WCS':
             			var describeCoverageUrl = onlineRes.url + this.internalURLSeperator(onlineRes.url) + 'SERVICE=WCS&REQUEST=DescribeCoverage&VERSION=1.0.0&coverage=' + onlineRes.name;
             			return '<a target="_blank" href="' + describeCoverageUrl + '"><p>DescribeCoverage response</p></a>';

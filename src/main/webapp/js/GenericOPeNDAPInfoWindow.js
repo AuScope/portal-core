@@ -15,8 +15,9 @@ function getOPeNDAPParameters() {
 	//Generates parameters recursively
 	//as an array of constraints
 	var generateConstraints = function(component) {
-		if (!component)
+		if (!component) {
 			return null;
+		}
 
 		if (component.initialConfig.variableType === 'axis') {
 			var fromField = component.get(0);
@@ -28,12 +29,12 @@ function getOPeNDAPParameters() {
 			};
 
 			if (component.initialConfig.usingDimensionBounds) {
-				obj['dimensionBounds'] = {
+				obj.dimensionBounds = {
 					from		: parseFloat(fromField.value),
 					to			: parseFloat(toField.value)
 				};
 			} else {
-				obj['valueBounds'] = {
+				obj.valueBounds = {
 						from		: parseFloat(fromField.value),
 						to			: parseFloat(toField.value)
 				};
@@ -44,8 +45,9 @@ function getOPeNDAPParameters() {
 			var childAxes = [];
 			for (var i = 0; i < frm.items.getCount(); i++) {
 				var child = generateConstraints(component.items.get(i));
-				if (child)
+				if (child) {
 					childAxes.push(child);
+				}
 			}
 			return {
 				type		: component.initialConfig.variableType,
@@ -67,8 +69,9 @@ function getOPeNDAPParameters() {
 
 		if (component && !component.disabled) {
 			var constraint = generateConstraints(component);
-			if (constraint)
+			if (constraint) {
 				variableConstraints.push(constraint);
+			}
 		}
 	}
 	var constraintObj = {
@@ -307,8 +310,9 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
 	//to the specified FormPanel
     var variableListToForm = function (frm, responseObj) {
 
-    	if (!responseObj || !responseObj.variables)
+    	if (!responseObj || !responseObj.variables) {
     		return;
+    	}
 
     	for (var i = 0; i < responseObj.variables.length; i++) {
     		var variableFldSet = generateVariableFieldSet(responseObj.variables[i]);

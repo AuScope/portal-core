@@ -114,8 +114,9 @@ Borehole.prototype.parseXmlElement = Borehole_parseXmlElement;
 function Borehole_parseXmlElement(pBoreholeNode) {
   var nodeBorehole = pBoreholeNode;
   
-  if (g_IsIE)
+  if (g_IsIE) {
     nodeBorehole.setProperty("SelectionLanguage", "XPath");
+  }
 
   /**
   * Sample XML fragment for updateCSWRecords gsml:borehole node -

@@ -25,7 +25,7 @@ ActiveLayersRecord.prototype.internalGetArrayField = function(fieldName) {
 };
 ActiveLayersRecord.prototype.internalGetBooleanField = function(fieldName) {
 	var b = this.internalRecord.get(fieldName);
-	if (b == null || b == undefined) {
+	if (b === null || b === undefined) {
 		return false;
 	}
 	
@@ -33,7 +33,7 @@ ActiveLayersRecord.prototype.internalGetBooleanField = function(fieldName) {
 };
 ActiveLayersRecord.prototype.internalGetNumberField = function(fieldName, defaultValue) {
 	var num = this.internalRecord.get(fieldName);
-	if (num == null || num == undefined) {
+	if (num === null || num === undefined) {
 		return defaultValue;
 	}
 	
@@ -186,7 +186,7 @@ ActiveLayersRecord.prototype.getOverlayManager = function() {
 ActiveLayersRecord.prototype.setOverlayManager = function(overlayManager) {
 	//We are forced to read/write directly to the record because this 
 	//field is too complex to be serialized using JSON
-	return this.internalRecord.overlayManager = overlayManager;
+	this.internalRecord.overlayManager = overlayManager;
 };
 
 /**
@@ -204,7 +204,7 @@ ActiveLayersRecord.prototype.getFilterPanel = function() {
 ActiveLayersRecord.prototype.setFilterPanel = function(filterPanel) {
 	//We are forced to read/write directly to the record because this 
 	//field is too complex to be serialized using JSON
-	return this.internalRecord.filterPanel = filterPanel;
+	this.internalRecord.filterPanel = filterPanel;
 };
 
 /**
@@ -222,7 +222,7 @@ ActiveLayersRecord.prototype.getResponseToolTip = function() {
 ActiveLayersRecord.prototype.setResponseToolTip = function(responseToolTip) {
 	//We are forced to read/write directly to the record because this 
 	//field is too complex to be serialized using JSON
-	return this.internalRecord.responseToolTip = responseToolTip;
+	this.internalRecord.responseToolTip = responseToolTip;
 };
 
 /**
@@ -244,7 +244,7 @@ ActiveLayersRecord.prototype.getLegendWindow = function() {
 ActiveLayersRecord.prototype.setLegendWindow = function(legendWindow) {
 	//We are forced to read/write directly to the record because this 
 	//field is too complex to be serialized using JSON
-	return this.internalRecord.legendWindow = legendWindow;
+	this.internalRecord.legendWindow = legendWindow;
 };
 
 /**
@@ -266,7 +266,7 @@ ActiveLayersRecord.prototype.getDebuggerData = function() {
 ActiveLayersRecord.prototype.setDebuggerData = function(debuggerData) {
 	//We are forced to read/write directly to the record because this 
 	//field is too complex to be serialized using JSON
-	return this.internalRecord.debuggerData = debuggerData;
+	this.internalRecord.debuggerData = debuggerData;
 };
 
 /**

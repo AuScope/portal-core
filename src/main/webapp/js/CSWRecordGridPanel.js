@@ -174,7 +174,7 @@ CSWRecordGridPanel = function(id, title, cswRecordStore, addLayerHandler, cswRec
 
                 
                 //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
-                if (col != null && (!this.currentToolTip || !this.currentToolTip.isVisible())) {
+                if (col !== null && (!this.currentToolTip || !this.currentToolTip.isVisible())) {
 
                     //get the actual data record
                     var theRow = this.getView().findRow(row);

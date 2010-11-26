@@ -64,8 +64,9 @@ GeodesyCalendar.prototype.parseStringDate = GeodesyCalendar_parseStringDate;
 */
 function GeodesyCalendar_parseStringDate (pStringDate) {
 	// if no parameter specified return current timestamp
-	if (!pStringDate)
+	if (!pStringDate) {
 		return (new Date());
+	}
 
 	// if positive integer treat as milliseconds from epoch
 	if (RE_NUM.exec(pStringDate)) {
@@ -86,10 +87,11 @@ function GeodesyCalendar_show (pDateSelected) {
   var currentDate = "";
   var dateSelected = "";
   
-  if (pDateSelected)
+  if (pDateSelected) {
     currentDate = dateSelected = this.parseStringDate(pDateSelected);
-  else 
+  } else { 
     currentDate = dateSelected = this.parseStringDate("");
+  }
 
   if (!currentDate) {
     return;
@@ -113,8 +115,9 @@ function GeodesyCalendar_show (pDateSelected) {
   innerHTML += '<tr><td colspan="7" bgcolor="#52a3eb" align="center"><font color="#ffffff" size="2">'+ currentMonth+'&nbsp;&nbsp;'+currentYear +'</font></td><tr>';
   
   // Display weekdays titles
-  for (var n=0; n<7; n++)
+  for (var n=0; n<7; n++) {
 	innerHTML += '<td bgcolor="#3e91da" align="center"><font color="#ffffff" size="2">'+ARR_WEEKDAYS[(NUM_WEEKSTART+n)%7]+'</font></td>';
+  }
   innerHTML += '</tr>';
 
   // print calendar table
@@ -196,10 +199,10 @@ function GeodesyCalendar_show (pDateSelected) {
     // Check if we are processing data for the current month
     if ( currentDate_day.getMonth() == currentDate.getMonth() && tdateDivObj) {
       // Check if we have data url for this date
-      if (this.moParentMarker.maStationDataForDate[nYear]
-         && this.moParentMarker.maStationDataForDate[nYear][nMonth]
-         && this.moParentMarker.maStationDataForDate[nYear][nMonth][nDate]
-         && this.moParentMarker.maStationDataForDate[nYear][nMonth][nDate].length) {
+      if (this.moParentMarker.maStationDataForDate[nYear] &&
+         this.moParentMarker.maStationDataForDate[nYear][nMonth] &&
+         this.moParentMarker.maStationDataForDate[nYear][nMonth][nDate] &&
+         this.moParentMarker.maStationDataForDate[nYear][nMonth][nDate].length) {
          
          // If we have data url, we create checkbox and href for the date
          var tdateHrefId = "date_href_" + this.msStation + "_" + nYear + "_" + nMonth + "_" + nDate;    

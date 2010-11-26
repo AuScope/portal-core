@@ -30,17 +30,16 @@ Tile = function( iMap,iLatLng) {
                      (tile.x+1) * this.tileSize + " " +
                      (tile.y+1) * this.tileSize;
 
-   latlng1 = this.currentProjection.fromPixelToLatLng
-      ( new GPoint(tile.x*this.tileSize, (tile.y+1)*this.tileSize), this.zoom);
-   latlng2 = this.currentProjection.fromPixelToLatLng
-      ( new GPoint((tile.x+1)*this.tileSize, tile.y*this.tileSize), this.zoom);
+   latlng1 = this.currentProjection.fromPixelToLatLng(
+      new GPoint(tile.x*this.tileSize, (tile.y+1)*this.tileSize), this.zoom);
+   latlng2 = this.currentProjection.fromPixelToLatLng(
+      new GPoint((tile.x+1)*this.tileSize, tile.y*this.tileSize), this.zoom);
 
    this.tileCoordinates = latlng1.lng() + "," + latlng1.lat() + "," +
                           latlng2.lng() + "," + latlng2.lat();
 
-   this.tilePoint 
-      = new GPoint((point.x % this.tileSize),(point.y % this.tileSize) );
-}
+   this.tilePoint = new GPoint((point.x % this.tileSize),(point.y % this.tileSize) );
+};
 
 
 Tile.prototype = {
@@ -61,4 +60,4 @@ Tile.prototype = {
    'getTilePoint': function() {
       return this.tilePoint;
    }
-}
+};

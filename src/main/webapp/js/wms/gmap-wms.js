@@ -103,20 +103,22 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
 	var upperRight = proj.fromPixelToLatLng(upperRightPix, zoom);
 	var lowerLeft = proj.fromPixelToLatLng(lowerLeftPix, zoom);
    
-   if (this.mercZoomLevel != 0 && zoom < this.mercZoomLevel) {
-      var boundBox = this.dd2MercMetersLng(lowerLeft.lng()) + "," +
+	var boundBox = null;
+	var srs = null;
+   if (this.mercZoomLevel !== 0 && zoom < this.mercZoomLevel) {
+      boundBox = this.dd2MercMetersLng(lowerLeft.lng()) + "," +
                      this.dd2MercMetersLat(lowerLeft.lat()) + "," +
                      this.dd2MercMetersLng(upperRight.lng()) + "," +
                      this.dd2MercMetersLat(upperRight.lat());
 		// Change for GeoServer - 41001 is mercator and installed by default.
-      var srs = "EPSG:41001";
+      srs = "EPSG:41001";
    } else {
-       var boundBox = lowerLeft.lng() + "," +
+       boundBox = lowerLeft.lng() + "," +
                       lowerLeft.lat() + "," +
                       upperRight.lng() + "," +
                       upperRight.lat();
                   
-       var srs = "EPSG:4326";
+       srs = "EPSG:4326";
 	}
 
    // Build GetMap request URL
@@ -124,22 +126,26 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
    
    var last_char = url.charAt(url.length - 1);
    if ((last_char !== "?") && (last_char !== "&")) {
-      if (url.indexOf('?') == -1)
+      if (url.indexOf('?') == -1) {
          url += "?";
-      else
+      } else {
          url += "&";
+      }
    }
    
    url += "REQUEST=GetMap";
    url += "&SERVICE=WMS";
    url += "&VERSION=1.1.1";
-   if (this.layers)
+   if (this.layers) {
       url += "&LAYERS=" + this.layers;
-   url += "&STYLES="
-   if (this.styles)
+   }
+   url += "&STYLES=";
+   if (this.styles) {
       url += this.styles;
-   if (this.sld)
+   }
+   if (this.sld) {
       url += "&SLD=" + this.sld;
+   }
    url += "&FORMAT=" + this.format;
    url += "&BGCOLOR=0xFFFFFF";
    url += "&TRANSPARENT=TRUE";

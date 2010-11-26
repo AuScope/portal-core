@@ -167,7 +167,7 @@ CSWRecord.prototype.generateGeographicExtent = function() {
 	for (var i = 0; i < geoEls.length; i++) {
 		if (geoEls[i] instanceof BBox) {
 			
-			if (extent == null) {
+			if (extent === null) {
 				extent = geoEls[i];
 			} else {
 				extent = extent.combine(geoEls[i]);
@@ -203,4 +203,4 @@ CSWRecord.prototype.containsKeyword = function(str) {
 		}
 	}
 	return false;
-}
+};

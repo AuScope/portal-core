@@ -31,7 +31,7 @@ OverlayManager.prototype.clearOverlays = function() {
 OverlayManager.prototype.addOverlay = function(overlay) {
 	this.map.addOverlay(overlay);
 	this.overlayList.push(overlay);
-}
+};
 
 /**
  * Iterates through every layer in this manager and updates the overlay zOrder
@@ -44,7 +44,7 @@ OverlayManager.prototype.updateZOrder = function(newZOrder) {
         this.map.removeOverlay(this.overlayList[i]);
         this.map.addOverlay(this.overlayList[i]);
 	}
-}
+};
 
 /**
  * Iterates through every WMS layer sets the opacity to the specified value
@@ -59,6 +59,6 @@ OverlayManager.prototype.updateOpacity = function(newOpacity) {
 	        this.map.addOverlay(this.overlayList[i]);
 		}
 	}
-}
+};
 
 

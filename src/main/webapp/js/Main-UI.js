@@ -178,8 +178,8 @@ Ext.onReady(function() {
     	var superBbox = null;
     	for (var i = 0; i < linkedRecords.length; i++) {
     		var bboxToCombine =  linkedRecords[i].generateGeographicExtent();
-    		if (bboxToCombine != null) {
-	    		if (superBbox == null) {
+    		if (bboxToCombine !== null) {
+	    		if (superBbox === null) {
 	    			superBbox = bboxToCombine;
 	    		} else {
 	    			superBbox = superBbox.combine(bboxToCombine);
@@ -223,13 +223,13 @@ Ext.onReady(function() {
     //----------- Map Layers Panel Configurations (Drawn from CSWRecords that aren't a KnownLayer)
     var mapLayersFilter = function(cswRecord) {
     	var serviceName = cswRecord.getServiceName();
-    	if (!serviceName || serviceName.length == 0) {
+    	if (!serviceName || serviceName.length === 0) {
     		return false;
     	}
 
     	//ensure its not referenced via KnownLayer
     	var knownLayers = getParentKnownLayers(cswRecord);
-    	return knownLayers.length == 0;
+    	return knownLayers.length === 0;
     };
     var mapLayersPanel = new CSWRecordGridPanel('wms-layers-panel',
 									    		'Map Layers',
@@ -340,11 +340,11 @@ Ext.onReady(function() {
         if (cswRecords.length > 0) {
         	var cswRecord = cswRecords[0];
 
-        	if (cswRecord.getFilteredOnlineResources('WFS').length != 0) {
+        	if (cswRecord.getFilteredOnlineResources('WFS').length !== 0) {
         		wfsHandler(activeLayerRecord);
-        	} else if (cswRecord.getFilteredOnlineResources('WCS').length != 0) {
+        	} else if (cswRecord.getFilteredOnlineResources('WCS').length !== 0) {
         		wcsHandler(activeLayerRecord);
-        	} else if (cswRecord.getFilteredOnlineResources('WMS').length != 0) {
+        	} else if (cswRecord.getFilteredOnlineResources('WMS').length !== 0) {
         		wmsHandler(activeLayerRecord);
         	} else {
         		genericRecordHandler(activeLayerRecord);
@@ -437,15 +437,15 @@ Ext.onReady(function() {
     	
     	reportTitleFilter = filterObj.title;
         var regexp = /\*/;
-        if(reportTitleFilter != '' && /^\w+/.test(reportTitleFilter)) {
-        	var regexp = new RegExp(reportTitleFilter, "i");
+        if(reportTitleFilter !== '' && /^\w+/.test(reportTitleFilter)) {
+        	regexp = new RegExp(reportTitleFilter, "i");
         }
 
-        if(filterObj.keyword != null) {
+        if(filterObj.keyword !== null) {
         	keywordFilter = filterObj.keyword;
         }
 
-        if(filterObj.resourceProvider != null) {
+        if(filterObj.resourceProvider !== null) {
         	resourceProviderFilter = filterObj.resourceProvider;
         }
         
@@ -454,9 +454,9 @@ Ext.onReady(function() {
         var knownLayer = activeLayerRecord.getParentKnownLayer();
         var numRecords = 0;
     	for (var i = 0; i < cswRecords.length; i++) {
-    		if ((reportTitleFilter === '' || regexp.test(cswRecords[i].getServiceName()))
-    				&& (keywordFilter === '' || cswRecords[i].containsKeyword(keywordFilter))
-    				&& (resourceProviderFilter === '' || cswRecords[i].getResourceProvider() == resourceProviderFilter)) {
+    		if ((reportTitleFilter === '' || regexp.test(cswRecords[i].getServiceName())) &&
+    				(keywordFilter === '' || cswRecords[i].containsKeyword(keywordFilter)) &&
+    				(resourceProviderFilter === '' || cswRecords[i].getResourceProvider() == resourceProviderFilter)) {
     			numRecords++;
     			var geoEls = cswRecords[i].getGeographicElements();
 
@@ -535,7 +535,7 @@ Ext.onReady(function() {
     		//Assumption - We only contain a single WCS in a CSWRecord (although more would be possible)
     		var wcsOnlineResource = wcsOnlineResources[0];
 
-    		if (geographyEls.length == 0) {
+    		if (geographyEls.length === 0) {
     			responseTooltip.addResponse(wcsOnlineResource.url, 'No bounding box has been specified for this coverage.');
     			continue;
     		}
@@ -727,10 +727,11 @@ Ext.onReady(function() {
                 } else {
                     //store the status
                 	responseTooltip.addResponse(filterParameters.serviceUrl, jsonResponse.msg);
-                    if(jsonResponse.debugInfo === undefined)
+                    if(jsonResponse.debugInfo === undefined) {
                     	debuggerData.addResponse(filterParameters.serviceUrl, jsonResponse.msg);
-                    else
+                    } else {
                     	debuggerData.addResponse(filterParameters.serviceUrl, jsonResponse.msg +jsonResponse.debugInfo.info);
+                    }
                 }
 
         		//we are finished
@@ -773,7 +774,7 @@ Ext.onReady(function() {
         if (!activeLayerRecord.getLayerVisible()) {
             filterPanel.getLayout().setActiveItem(0);
             filterButton.disable();
-        } else if (activeLayerRecord.getFilterPanel() != null) {
+        } else if (activeLayerRecord.getFilterPanel() !== null) {
         	var filterPanelObj = activeLayerRecord.getFilterPanel();
 
             //if filter panel already exists then show it
@@ -783,7 +784,7 @@ Ext.onReady(function() {
         		filterPanel.getLayout().setActiveItem(0);
         	}
 
-            if (filterPanelObj.supportsFiltering) {
+            if (filterPanelObj && filterPanelObj.supportsFiltering) {
             	filterButton.enable();
                 filterButton.toggle(true);
             } else {
@@ -852,7 +853,7 @@ Ext.onReady(function() {
         var col = e.getTarget('.x-grid3-col');
 
         //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
-        if (col != null && (activeLayersToolTip == null || !activeLayersToolTip.isVisible())) {
+        if (col !== null && (activeLayersToolTip === null || !activeLayersToolTip.isVisible())) {
 
             //get the actual data record
             var theRow = activeLayersPanel.getView().findRow(row);
@@ -878,8 +879,9 @@ Ext.onReady(function() {
             else if (col.cellIndex == '2') {
                 var html = 'No status has been recorded.';
 
-                if (activeLayerRecord.getResponseToolTip() != null)
+                if (activeLayerRecord.getResponseToolTip()) {
                     html = activeLayerRecord.getResponseToolTip().getHtml();
+                }
 
                 activeLayersToolTip = new Ext.ToolTip({
                     target: e.target ,
@@ -922,7 +924,7 @@ Ext.onReady(function() {
 
         // if there is no visible tooltip then create one, if on is
         // visible already we don't want to layer another one on top
-        if (col != null) {
+        if (col !== null) {
 
             //get the actual data record
             var theRow = activeLayersPanel.getView().findRow(row);
@@ -946,7 +948,7 @@ Ext.onReady(function() {
             				for (var j = 0; j < wmsOnlineResources.length; j++) {
 			            		var url = new LegendManager(wmsOnlineResources[j].url, wmsOnlineResources[j].name).generateImageUrl();
 
-			            		if (titleTypes.length != 0) {
+			            		if (titleTypes.length !== 0) {
 			            			titleTypes += ', ';
 			            		}
 			            		titleTypes += wmsOnlineResources[j].name;
@@ -987,16 +989,17 @@ Ext.onReady(function() {
             else if (col.cellIndex == '2') {
 
 	            //to get the value of variable used in url
-            	function gup( name ) {
+            	var gup = function ( name ) {
             		name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
             		var regexS = "[\\?&]"+name+"=([^&#]*)";
             		var regex = new RegExp( regexS );
             		var results = regex.exec( window.location.href );
-            		if( results == null )
+            		if( results === null ) {
             			return "";
-            		else
+            		} else {
             		    return results[1];
-            	}
+            		}
+            	};
             	var filter_debugger_param = gup( 'debug' );
             	//get the debug window if there is a debug variable with value 1
             	if(filter_debugger_param == 1 || filter_debugger_param == "on"){
@@ -1030,7 +1033,7 @@ Ext.onReady(function() {
                 //We simplify things by treating the record list as a single type of WFS, WCS or WMS
                 //So lets find the first record with a type we can choose (Prioritise WFS -> WCS -> WMS)
                 var cswRecords = activeLayerRecord.getCSWRecordsWithType('WFS');
-                if (cswRecords.length != 0) {
+                if (cswRecords.length !== 0) {
                 	for (var i = 0; i < cswRecords.length; i++) {
                 		var wfsOnlineResources = cswRecords[i].getFilteredOnlineResources('WFS');
 
@@ -1049,7 +1052,7 @@ Ext.onReady(function() {
                 }
 
                 cswRecords = activeLayerRecord.getCSWRecordsWithType('WCS');
-                if (cswRecords.length != 0) {
+                if (cswRecords.length !== 0) {
                 	//Assumption - we only expect 1 WCS
             		var wcsOnlineResource = cswRecords[0].getFilteredOnlineResources('WCS')[0];
             		showWCSDownload(wcsOnlineResource.url, wcsOnlineResource.name);
@@ -1058,7 +1061,7 @@ Ext.onReady(function() {
 
                 //For WMS we download every WMS
                 cswRecords = activeLayerRecord.getCSWRecordsWithType('WMS');
-                if (cswRecords.length != 0) {
+                if (cswRecords.length !== 0) {
                 	for (var i = 0; i < cswRecords.length; i++) {
 	                	var wmsOnlineResources = cswRecords[i].getFilteredOnlineResources('WMS');
 	    				for (var j = 0; j < wmsOnlineResources.length; j++) {
@@ -1083,10 +1086,11 @@ Ext.onReady(function() {
 					         url += "&SERVICE=WMS";
 					         url += "&VERSION=1.1.0";
 					         url += "&LAYERS=" + typeName;
-					         if (this.styles)
+					         if (this.styles) {
 					             url += "&STYLES=" + this.styles;
-					         else
+					         } else {
 					             url += "&STYLES="; //Styles parameter is mandatory, using a null string ensures default style
+					         }
 					         /*
 					          if (this.sld)
 					          url += "&SLD=" + this.sld;*/
@@ -1150,7 +1154,7 @@ Ext.onReady(function() {
         });
         form.dom.action = url;
         form.dom.submit();
-    }
+    };
 
     // basic tabs 1, built from existing content
     var tabsPanel = new Ext.TabPanel({
@@ -1259,9 +1263,9 @@ Ext.onReady(function() {
     });
 
     GEvent.addListener(map, "mousemove", function(latlng){
-        var latStr = "<b>Long:</b> " + latlng.lng().toFixed(6)
-                   + "&nbsp&nbsp&nbsp&nbsp"
-                   + "<b>Lat:</b> " + latlng.lat().toFixed(6);
+        var latStr = "<b>Long:</b> " + latlng.lng().toFixed(6) +
+                   "&nbsp&nbsp&nbsp&nbsp" +
+                   "<b>Lat:</b> " + latlng.lat().toFixed(6);
     	document.getElementById("latlng").innerHTML = latStr;
     });
 

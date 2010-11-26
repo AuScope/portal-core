@@ -57,7 +57,7 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
             		
             		var linkedCSWRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
             		
-            		if (linkedCSWRecords.length == 0) {
+            		if (linkedCSWRecords.length === 0) {
             			return '<div style="text-align:center"><img src="img/cross.png" width="16" height="16" align="CENTER"/></div>';
             		}
             		
@@ -131,7 +131,7 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
                		var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
             		
                		//Can show service info if there are no linked records
-               		if (cswRecords.length == 0) {
+               		if (cswRecords.length === 0) {
                			return;
                		}
                		
@@ -165,7 +165,7 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
 
                 
                 //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
-                if (col != null && (!this.currentToolTip || !this.currentToolTip.isVisible())) {
+                if (col !== null && (!this.currentToolTip || !this.currentToolTip.isVisible())) {
 
                     //get the actual data record
                     var theRow = this.getView().findRow(row);
@@ -175,7 +175,7 @@ KnownLayerGridPanel = function(id, title, knownFeatureTypeStore, cswRecordStore,
                     if (col.cellIndex == '2') {
                     	var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
                     	var text = 'Click for detailed information about the web services this layer utilises';
-                    	if (cswRecords.length == 0) {
+                    	if (cswRecords.length === 0) {
                     		text = 'This layer currently has no services that it can utilise. Please try reloading the page later.';
                     	}
                     	

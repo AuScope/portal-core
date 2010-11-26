@@ -94,8 +94,9 @@ Bushfire.prototype.parseXmlElement = Bushfire_parseXmlElement;
 function Bushfire_parseXmlElement(pBushfireNode) {
   var nodeBushfire = pBushfireNode;
   
-  if (g_IsIE)
+  if (g_IsIE) {
     nodeBushfire.setProperty("SelectionLanguage", "XPath");
+  }
   
   /**
   * Sample XML fragment for updateCSWRecords Geodesy station -

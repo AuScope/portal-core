@@ -41,8 +41,9 @@ Coordinates.prototype.parseXmlElement = Coordinates_parseXmlElement;
 * @param {DomXmlNode} pCoordinatesNode The XML node for <b>gml:Point</b>.
 */
 function Coordinates_parseXmlElement(pCoordinatesNode) {
-  if (g_IsIE)
+  if (g_IsIE) {
     pCoordinatesNode.setProperty("SelectionLanguage", "XPath");
+  }
   
   /** Sample XML node
   * <gml:Point srsName="http://www.opengis.net/gml/srs/epsg.xml#4326">

@@ -73,7 +73,7 @@ Ext.extend(CSWRecordStore, Ext.data.GroupingStore, {
 					continue;
 				}
 					
-				recordsToAdd.push(recordsToCopy[i])
+				recordsToAdd.push(recordsToCopy[i]);
 			}
 			
 			this.add(recordsToAdd);

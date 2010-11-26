@@ -37,7 +37,7 @@ Ext.LinkButton = Ext.extend(Ext.Button, {
     },
 
     onClick : function(e){
-        if(e.button != 0){
+        if(e.button !== 0){
             return;
         }
         if(this.disabled){

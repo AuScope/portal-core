@@ -36,6 +36,7 @@ SamplingCurve.prototype.shape = "";
 * @param {DomXmlNode} pSamplingCurveNode The XML node for <b>samplingManifold:SamplingCurve</b>.
 */
 function Location_parseXmlElement(pSamplingCurveNode) {
-  if (g_IsIE)
-    pSamplingCurveNode.setProperty("SelectionLanguage", "XPath"); 
+  if (g_IsIE) {
+    pSamplingCurveNode.setProperty("SelectionLanguage", "XPath");
+  }
 }

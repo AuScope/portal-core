@@ -24,29 +24,29 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description)
   //cut off this from the URL "%26request=GetFeature%26typeName=ngcp:GnssStation"
   this.msWfsUrl = pWfsUrl.substring(0,pWfsUrl.indexOf('?')+1);
   this.msDataLayerName = pDataLayerName;
-  this.maStationDataForDate = new Array();
-  this.maYearMonthWfsUrlQueried = new Array();
-  this.maYearCheckedState = new Array();
-  this.maMonthCheckedStateForYear = new Array();
-  this.maDateCheckedStateForMonth = new Array();
-  this.maDataCheckedStateForDate = new Array();
+  this.maStationDataForDate = [];
+  this.maYearMonthWfsUrlQueried = [];
+  this.maYearCheckedState = [];
+  this.maMonthCheckedStateForYear = [];
+  this.maDateCheckedStateForMonth = [];
+  this.maDataCheckedStateForDate = [];
   
   // This class stores the previously selected years, months and dates for the station
   // This helps to recreate user selection between successive marker clicks.
   for(year=0; year<gaYears.length; year++) {
-    this.maYearMonthWfsUrlQueried[gaYears[year]] = new Array();
-    this.maMonthCheckedStateForYear[gaYears[year]] = new Array();
-    this.maDateCheckedStateForMonth[gaYears[year]] = new Array();
-    this.maDataCheckedStateForDate[gaYears[year]] = new Array();
+    this.maYearMonthWfsUrlQueried[gaYears[year]] = [];
+    this.maMonthCheckedStateForYear[gaYears[year]] = [];
+    this.maDateCheckedStateForMonth[gaYears[year]] = [];
+    this.maDataCheckedStateForDate[gaYears[year]] = [];
     this.maYearCheckedState[gaYears[year]] = false;
       
     for(var month=1; month<=12; month++) {
       this.maYearMonthWfsUrlQueried[gaYears[year]][gaMonths[month]] = false;
       this.maMonthCheckedStateForYear[gaYears[year]][gaMonths[month]] = false;
-      this.maDateCheckedStateForMonth[gaYears[year]][gaMonths[month]] = new Array();
-      this.maDataCheckedStateForDate[gaYears[year]][gaMonths[month]] = new Array();
+      this.maDateCheckedStateForMonth[gaYears[year]][gaMonths[month]] = [];
+      this.maDataCheckedStateForDate[gaYears[year]][gaMonths[month]] = [];
       for(var date=1; date<=31; date++) {
-        this.maDataCheckedStateForDate[gaYears[year]][gaMonths[month]][date] = new Array();
+        this.maDataCheckedStateForDate[gaYears[year]][gaMonths[month]][date] = [];
         this.maDateCheckedStateForMonth[gaYears[year]][gaMonths[month]][date] = false;
       }
     }
@@ -56,14 +56,14 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description)
   // Users can chose different months in different years for viewing data
   // These arrays retain the last selected year, month dates etc by the user for any station.
   this.msYearSelected = "";
-  this.maMonthSelectedForYear = new Array();
-  this.maDateSelectedForMonth = new Array();
+  this.maMonthSelectedForYear = [];
+  this.maDateSelectedForMonth = [];
     
   for(var y=0; y<gaYears.length; y++) {
     // Initially user choses nothing
     var year = gaYears[y];
     this.maMonthSelectedForYear[year] = "";
-    this.maDateSelectedForMonth[year] = new Array();
+    this.maDateSelectedForMonth[year] = [];
     for(var m=1; m<=12; m++) {
       this.maDateSelectedForMonth[year][gaMonths[m]] = "";
     }
@@ -72,18 +72,18 @@ function GeodesyMarker (pWfsUrl, pDataLayerName, stationId, marker, description)
   // Users can query data based on updateCSWRecords year (by clicking on the checkbox against updateCSWRecords year)
   // or months (by clicking on the checkbox against any month)
   // We create different wfs query urls for data from each year
-  this.msWfsYearDataUrl = new Array();
+  this.msWfsYearDataUrl = [];
   for (i=0; i<gaYears.length; i++) {
     this.msWfsYearDataUrl[gaYears[i]] = this.getWfsYearUrl(gaYears[i] );
   }
     
   // We create different wfs urls (to query renix files) for each year-month combination
-  this.msYearMonthWfsUrl = new Array();
+  this.msYearMonthWfsUrl = [];
   // Loop over years
   for (var year=0; year<gaYears.length; year++) {
-    this.msYearMonthWfsUrl[gaYears[year]] = new Array();
+    this.msYearMonthWfsUrl[gaYears[year]] = [];
     // Loop over months
-    for (month=1; month<=12; month++) {
+    for (var month=1; month<=12; month++) {
       this.msYearMonthWfsUrl[gaYears[year]][gaMonths[month]] = this.getYearMonthWfsUrl(gaYears[year], month);
     }
   }
@@ -369,8 +369,8 @@ function GeodesyMarker_getMarkerClickedFn() {
     // The onOpenFn option with GInfoWindow does not work
     // Hence this function is called with updateCSWRecords time lag of 500ms
     var marker = geodesyMarker;
-    setTimeout( function(){ marker.updateInfoWindow() }, 500);
-  }
+    setTimeout( function(){ marker.updateInfoWindow(); }, 500);
+  };
 }
 
 /**
@@ -523,13 +523,13 @@ function GeodesyMarker_updateInfoWindow() {
 */
 function GeodesyMarker_createDataArraysForYear(pYear) {
   // Check if arrays don't already exist for this year
-  if (this.maStationDataForDate[pYear] == undefined) {
-    this.maStationDataForDate[pYear] = new Array();
+  if (this.maStationDataForDate[pYear] === undefined) {
+    this.maStationDataForDate[pYear] = [];
     for(var m=1; m<=12; m++) {
       // Create arrays for each month.
       // Dates for these arrays will be populated in createDataArraysForMonth function
       var month = gaMonths[m];
-      this.maStationDataForDate[pYear][month] = new Array();
+      this.maStationDataForDate[pYear][month] = [];
     }
   }
 }
@@ -550,7 +550,7 @@ function GeodesyMarker_createDataArraysForMonth(pYear, pMonth) {
   // Now create arrays for each date
   // We have arrays to hold data for each date, as there may be more than one data files for each date
   for(var d=1; d<=31; d++) {
-    this.maStationDataForDate[pYear][pMonth][d] = new Array();
+    this.maStationDataForDate[pYear][pMonth][d] = [];
   }
 }
 
@@ -602,7 +602,7 @@ function GeodesyMarker_setCheckedStateForDate (pYear, pMonth, pDate, pState) {
   
   // Propogate this state to all the data urls belonging to this date
   var num_urls = this.maDataCheckedStateForDate[pYear][pMonth][pDate].length;
-  if (num_urls != 0) {
+  if (num_urls !== 0) {
     for (var url_index=0; url_index<num_urls; url_index++ ) {
       this.maDataCheckedStateForDate[pYear][pMonth][pDate][url_index] = pState;
     }
@@ -631,7 +631,7 @@ function GeodesyMarker_getYearCheckedFn (pYear, pYearChkId, pYearHrefId, pMonths
   // Return the actual function that should be called when updateCSWRecords year checkbox is clicked
   return function () {
     oGeodesyMarker.yearChecked(year, yearChkId, yearHrefId, monthsDivId, datesDivId);
-  }
+  };
 }
 
 /**
@@ -674,8 +674,9 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
   GDownloadUrl(sStationDataUrl, function(xmlData, pResponseCode) {
     var xmlDoc = GXml.parse(xmlData);
 
-    if (g_IsIE)
+    if (g_IsIE) {
       xmlDoc.setProperty("SelectionLanguage", "XPath");
+    }
       
     var rootNode = xmlDoc.documentElement;
     if (!rootNode) {
@@ -697,7 +698,7 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
   	  // Extract date and url from each featureMember
       var fullDate = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'date']"));
       var url = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'url']"));
-      if (fullDate=="" || url=="") {
+      if (fullDate==="" || url==="") {
         continue;
       } else {
         // Extract month from the date element
@@ -752,7 +753,7 @@ function GeodesyMarker_getMonthCheckedFn (pYear, pMonth, pMonthChkId, pMonthHref
   // Return the actual function that should be called when updateCSWRecords year checkbox is clicked
   return function() {
     oGeodesyMarker.monthChecked(year, month, monthChkId, monthHrefId, datesDivId);
-  }
+  };
 }
 
 /**
@@ -804,7 +805,7 @@ function GeodesyMarker_getDateCheckedFn (pYear, pMonth, pDate, pDateChkId, pDate
   // Return the actual function that should be called when updateCSWRecords year checkbox is clicked
   return function() {
     oGeodesyMarker.dateChecked(year, month, date, dateChkId, dateHrefId);
-  }
+  };
 }
 
 /**
@@ -855,7 +856,7 @@ function GeodesyMarker_getYearClickedFn (pYear, pYearChkId, pYearHrefId, pMonths
   // Return the actual function that should be called when updateCSWRecords year href is clicked
   return function () {
     oGeodesyMarker.yearClicked(year, yearHrefId, monthsDivId, datesDivId);
-  }
+  };
 }
 
 /**
@@ -964,7 +965,7 @@ function GeodesyMarker_getMonthClickedFn (pYear, pMonth, pMonthHrefId, pDatesDiv
   // Return the actual function that should be called when updateCSWRecords month href is clicked
   return function() {
     oGeodesyMarker.monthClicked(year, month, monthHrefId, datesDivId);
-  }
+  };
 }
 
 /**
@@ -1060,12 +1061,12 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
     // Parse the XML for "featureMembers"
     var featureMembers = rootNode.selectNodes(".//*[local-name() = 'featureMember']");
    	
-    if (featureMembers.length != 0) {
+    if (featureMembers.length !== 0) {
    	  // Each of these contain updateCSWRecords "geodesy:date" and "geodesy:url" child node.
   	  for(var i=0; i < featureMembers.length; i++) {
         var fullDate = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'date']"));
         var url = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'url']"));
-        if (fullDate=="" || url=="") {
+        if (fullDate==="" || url==="") {
           continue;
         } else {
           // Get the date out of the geodesy:date tag
@@ -1148,7 +1149,7 @@ function GeodesyMarker_getDateClickedFn(pYear, pMonth, pDate, pDateHrefId) {
   // Return the actual function that should be called when updateCSWRecords year checkbox is clicked
   return function() {
     oGeodesyMarker.dateClicked(year, month, date, dateHrefId);
-  }
+  };
 }
 
 /**
@@ -1251,7 +1252,7 @@ function GeodesyMarker_getDataUrlCheckedFn(pYear, pMonth, pDate, pIndex, pDataUr
   
   return function () {
 	  oGeodesyMarker.dataUrlChecked(pYear, pMonth, pDate, pIndex, pDataUrlChkId);
-  }
+  };
 }
 
 /**
@@ -1267,7 +1268,7 @@ function GeodesyMarker_getDataUrlCheckedFn(pYear, pMonth, pDate, pIndex, pDataUr
 function GeodesyMarker_dataUrlChecked(pYear, pMonth, pDate, pIndex, pDataUrlChkId) {
   var dataUrlChkObj = document.getElementById(pDataUrlChkId);
 
-  if (dataUrlChkObj && this.maDataCheckedStateForDate[pYear][pMonth][pDate][pIndex]!=undefined) {
+  if (dataUrlChkObj && this.maDataCheckedStateForDate[pYear][pMonth][pDate][pIndex]!==undefined) {
     this.maDataCheckedStateForDate[pYear][pMonth][pDate][pIndex] = dataUrlChkObj.checked;
   }
 }

@@ -25,7 +25,7 @@ function Map(pMapContainer) {
   this.mnZoomLevel = DEFAULT_MAP_ZOOM_LEVEL;
   this.mnMaxZoomLevel = MAX_ZOOM_LEVEL;
   										   
-  this.moCenter = new GLatLng(DEFAULT_MAP_CENTRE["lat"], DEFAULT_MAP_CENTRE["lon"]);					 
+  this.moCenter = new GLatLng(DEFAULT_MAP_CENTRE.lat, DEFAULT_MAP_CENTRE.lon);					 
   
   // Instance of Google Map.
   this.moMap = new GMap2(document.getElementById(pMapContainer));
@@ -35,7 +35,7 @@ function Map(pMapContainer) {
   
   // Add the Bounding Box control to the map
   this.moMap.addControl(this.moDragZoomControl = new GZoomControl(
-                              { nOpacity: .2
+                              { nOpacity: 0.2
                               },
                               {
                                 sButtonHTML: "Bounding Box",                           

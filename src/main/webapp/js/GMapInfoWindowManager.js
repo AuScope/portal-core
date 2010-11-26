@@ -26,24 +26,25 @@ GMapInfoWindowManager.prototype.openInfoWindow = function(windowLocation, conten
 	var listenerFunction = function() {
 		GEvent.removeListener(listenerHandler);
 		
-		if (initFunction)
+		if (initFunction) {
 			initFunction(scope.map, windowLocation, initFunctionParam);
+		}
 	};
 
 	
 	//Figure out which function to call based upon our parameters
-	if (windowLocation.constructor == (new GLatLng).constructor) {
+	if (windowLocation instanceof GLatLng) {
 		listenerHandler = GEvent.addListener(this.map, "infowindowopen", listenerFunction);
 		
-		if (content.constructor == (new Array).constructor) {
+		if (content instanceof Array) {
 			this.map.openInfoWindowTabs(windowLocation, content, infoWindowOpts);
 		} else if (typeof(content) === "string") {
 			this.map.openInfoWindowHtml(windowLocation, content, infoWindowOpts);
 		}
-	} else if (windowLocation.constructor == (new GMarker).constructor) {
+	} else if (windowLocation instanceof GMarker) {
 		listenerHandler = GEvent.addListener(windowLocation, "infowindowopen", listenerFunction);
 		
-		if (content.constructor == (new Array).constructor) {
+		if (content instanceof Array) {
 			windowLocation.openInfoWindowTabs(content, infoWindowOpts);
 		} else if (typeof(content) === "string") {
 			windowLocation.openInfoWindowHtml(content, infoWindowOpts);

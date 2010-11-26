@@ -41,8 +41,9 @@ Location.prototype.parseXmlElement = Location_parseXmlElement;
 * @param {DomXmlNode} pLocationNode The XML node for <b>gml:Point</b>.
 */
 function Location_parseXmlElement(pLocationNode) {
-  if (g_IsIE)
+  if (g_IsIE) {
     pLocationNode.setProperty("SelectionLanguage", "XPath");
+  }
   
   /** Sample XML node
   * <gml:Point srsName="EPSG:4326">

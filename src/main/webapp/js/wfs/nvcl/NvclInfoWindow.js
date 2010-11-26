@@ -18,12 +18,12 @@ function NvclInfoWindow(iMap, iMarker, wfsUrl) {
     this.boreholeId = iMarker.title || "";
     this.summaryHtml = iMarker.description || "";    
     this.waitHtml = 
-        "<div>" +
-            "<b>" + this.boreholeId + "</b>" +
-            "<p style=\"text-align:center;\">" +
-                "<img src=\"img/wait.gif\" style=\"padding-top:50px;\" />" +
-            "</p>" +
-        "</div>";                    
+        '<div>' +
+            '<b>' + this.boreholeId + '</b>' +
+            '<p style="text-align:center;">' +
+                '<img src="img/wait.gif" style="padding-top:50px;" />' +
+            '</p>' +
+        '</div>';                    
     this.wfsServiceUrl = wfsUrl; 
     /**
      * iMarker.wfsUrl comes from GeoNetwork and represents GeoServer's service 
@@ -70,12 +70,14 @@ NvclInfoWindow.prototype = {
             if (responseCode == 200) {
                 var XmlDoc = GXml.parse(response);
                 
-                if (g_IsIE)
+                if (g_IsIE) {
                     XmlDoc.setProperty("SelectionLanguage", "XPath");
+                }
 
                 var rootNode = XmlDoc.documentElement;
-                if (!rootNode)
+                if (!rootNode) {
                     return;
+                }
   
                 // get the dataset tag (inside is the info we need)
                 var aDataset = rootNode.getElementsByTagName("Dataset");
@@ -89,12 +91,8 @@ NvclInfoWindow.prototype = {
                     var aId, aName;
                     
                     for (var i=0; i < aDataset.length; i++ ) {
- 
-                         aId = GXml.value(aDataset[i].selectSingleNode
-                                    ("*[local-name() = 'DatasetID']"));
- 
-                         aName = GXml.value(aDataset[i].selectSingleNode
-                                    ("*[local-name() = 'DatasetName']"));
+                         aId = GXml.value(aDataset[i].selectSingleNode("*[local-name() = 'DatasetID']"));
+                         aName = GXml.value(aDataset[i].selectSingleNode("*[local-name() = 'DatasetName']"));
                                     
                         datasetCol.add(aId, aName);                    
                     }
