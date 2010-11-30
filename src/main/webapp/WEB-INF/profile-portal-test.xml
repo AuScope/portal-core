@@ -23,6 +23,11 @@
                 <ref bean="knownTypeERCommodity"/>
                 <ref bean="knownTypeERMiningFeatureOccurence"/>
                 <ref bean="knownTypeGSMLMappedFeature"/>
+                <ref bean="knownTypeSamplingPoint"/>
+                <ref bean="knownTypeSamplingFeatureCollection"/>
+                <ref bean="knownTypeFeatureCollection"/>
+                <ref bean="knownTypeSimpleLogsInformation"/>
+                <ref bean="knownTypeGeodesyStations"/>
             </list>
         </constructor-arg>
     </bean>
