@@ -47,10 +47,16 @@ NvclInfoWindow.prototype = {
     'show': function() {
 		//Open our window with the basic info displayed
 		this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);
-        this.Marker.openInfoWindowTabs(this.tabsArray);
-        
-        //And update it with the downloaded data as it arrives
-        this.retrieveDatasets();  
+		
+		var me = this;
+		
+        this.Marker.openInfoWindowTabs(this.tabsArray, {
+        	onOpenFn:function(){
+                //And update it with the downloaded data as it arrives
+                me.retrieveDatasets(); 
+                }
+        });       
+ 
     },
             
     /*
