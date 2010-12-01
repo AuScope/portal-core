@@ -97,34 +97,34 @@
     <!-- TEMPLATE FOR TRANSLATING Mining Activity -->
     <!-- =============================================================== -->
     <xsl:template match="er:MiningActivity">
-        <xsl:variable name="miningActivityID" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>        
+        <xsl:variable name="miningActivityID" select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
         <xsl:variable name="substring" select="substring(./er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href, 2)"/>
         <xsl:variable name="commodity" select="//*[@gml:id=$substring]"/>
 
         <xsl:variable name="commodityName">
             <xsl:choose>
                 <xsl:when test="exists(./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/er:commodityName)">
-                    <xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/er:commodityName" />       
+                    <xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/er:commodityName" />
                 </xsl:when>
                 <xsl:when test="starts-with(./er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href, '#')">
-                    <xsl:value-of select="$commodity/er:commodityName" />          
+                    <xsl:value-of select="$commodity/er:commodityName" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="''" />          
+                    <xsl:value-of select="''" />
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-    
+
         <xsl:variable name="commodityID">
             <xsl:choose>
                 <xsl:when test="exists(./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616'])">
-                    <xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']" />       
+                    <xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']" />
                 </xsl:when>
                 <xsl:when test="starts-with(./er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href, '#')">
-                    <xsl:value-of select="$commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']" />          
+                    <xsl:value-of select="$commodity/gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href" />          
+                    <xsl:value-of select="./er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href" />
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -183,7 +183,7 @@
                     <td class="row header">Commodity</td>
                     <td class="row"><xsl:value-of select="$commodityName"/></td>
                     <td class="row header">Commodity Id:</td>
-                    <td class="row" colspan="2">                   
+                    <td class="row" colspan="2">
                         <xsl:choose>
                             <xsl:when test="starts-with($commodityID, 'http://')">
                                 <a href="wfsFeaturePopup.do?url={$commodityID}" onclick="var w=window.open('wfsFeaturePopup.do?url={$commodityID}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;"><xsl:value-of select="$commodityID"/></a>
@@ -678,26 +678,40 @@
                     <td></td>
                 </tr>
        </xsl:if>
-                <!-- Composition -->
+                <!-- Composition
+                Note: there are more than one type of thing in here. -->
        <xsl:if test="./er:composition">
+           <xsl:for-each select="./er:composition">
                 <tr>
                     <td class="row header">Composition</td>
+	 			<xsl:if test="./er:EarthResourceMaterial/er:material/gsml:RockMaterial/gsml:lithology/@xlink:title">
                     <td class="row col_header">Lithology</td>
+                </xsl:if>
+	 			<xsl:if test="./er:EarthResourceMaterial/er:material/gsml:Mineral/gsml:mineralName/@xlink:title">
+                    <td class="row col_header">Mineral Name</td>
+                </xsl:if>
+
                     <td class="row col_header">Role</td>
                     <td class="row col_header">Proportion</td>
                     <td class="row col_header"></td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:material/gsml:RockMaterial/gsml:lithology"/></td>
-                    <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:earthResourceMaterialRole"/></td>
-                    <td><xsl:value-of select="./er:composition/er:EarthResourceMaterial/er:proportion/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
+                    <xsl:if test="./er:EarthResourceMaterial/er:material/gsml:RockMaterial/gsml:lithology/@xlink:title">
+                        <td><xsl:value-of select="./er:EarthResourceMaterial/er:material/gsml:RockMaterial/gsml:lithology/@xlink:title"/></td>
+                	</xsl:if>
+	 				<xsl:if test="./er:EarthResourceMaterial/er:material/gsml:Mineral/gsml:mineralName/@xlink:title">
+                    	<td><xsl:value-of select="./er:EarthResourceMaterial/er:material/gsml:Mineral/gsml:mineralName/@xlink:title"/></td>
+                	</xsl:if>
+                    <td><xsl:value-of select="./er:EarthResourceMaterial/er:earthResourceMaterialRole"/></td>
+                    <td><xsl:value-of select="./er:EarthResourceMaterial/er:proportion/gsml:CGI_NumericValue/gsml:principalValue"/><xsl:value-of select="' '"/>
                         <xsl:call-template name="convert-escaped-percentage">
                             <xsl:with-param name="value" select="substring-after(./er:composition/er:EarthResourceMaterial/er:proportion/gsml:CGI_NumericValue/gsml:principalValue/@uom,'::')"/>
                         </xsl:call-template>
                     </td>
                     <td></td>
                 </tr>
+           </xsl:for-each>
        </xsl:if>
                 <!-- Geological History -->
        <xsl:if test="./gsml:preferredAge/gsml:GeologicEvent">
@@ -862,7 +876,7 @@
             </tbody>
         </table>
     </xsl:template>
-    
+
 
 
     <!-- TEMPLATE FOR TRANSLATING MiningFeatureOccurrence -->
