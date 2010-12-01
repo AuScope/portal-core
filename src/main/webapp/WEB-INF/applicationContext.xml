@@ -16,12 +16,12 @@
          </list>
       </property>
    </bean>
-   
+
    <bean id="connectionParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
         <property name="connectionTimeout" value="900000"/> <!--  15 minutes -->
         <property name="soTimeout" value="900000"/> <!--  15 minutes -->
    </bean>
-   
+
     <bean id="cswAuscopeDev" class="org.auscope.portal.server.web.service.CSWServiceItem">
         <constructor-arg index="0" value="http://auscope-portal-dev.arrc.csiro.au/geonetwork/srv/en/csw"/>
     </bean>
@@ -29,7 +29,7 @@
 	<bean id="cswAuscopeTest" class="org.auscope.portal.server.web.service.CSWServiceItem">
 		<constructor-arg index="0" value="http://auscope-portal-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
 	</bean>
-	
+
 	<bean id="cswAuscopeProduction" class="org.auscope.portal.server.web.service.CSWServiceItem">
         <constructor-arg index="0" value="http://portal.auscope.org/geonetwork/srv/en/csw"/>
     </bean>
@@ -37,9 +37,13 @@
 	<bean id="cswMDUTest" class="org.auscope.portal.server.web.service.CSWServiceItem">
 		<constructor-arg index="0" value="http://mdu-data-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
 	</bean>
-	
+
 	<bean id="cswMDUProduction" class="org.auscope.portal.server.web.service.CSWServiceItem">
         <constructor-arg index="0" value="http://mdu-data.arrc.csiro.au/geonetwork/srv/en/csw"/>
+	</bean>
+
+    <bean id="cswSissANUProduction" class="org.auscope.portal.server.web.service.CSWServiceItem">
+        <constructor-arg index="0" value="http://siss1.anu.edu.au/geonetwork/srv/en/csw"/>
     </bean>
 
    <bean id="knownTypeMine" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -254,13 +258,13 @@
            </bean>
        </constructor-arg>
    </bean>
-   
-   <bean id="knownTypeYilgarnGeochemistry" class="org.auscope.portal.server.web.KnownLayerWFS">       
+
+   <bean id="knownTypeYilgarnGeochemistry" class="org.auscope.portal.server.web.KnownLayerWFS">
        <constructor-arg name="featureTypeName" value="gsml:GeologicUnit"/>
-       <constructor-arg name="title" value="Yilgarn Geochemistry"/>       
-       <constructor-arg name="description" value="A collection of detailed information about all analytes that were detected at a specific location"/>       
+       <constructor-arg name="title" value="Yilgarn Geochemistry"/>
+       <constructor-arg name="description" value="A collection of detailed information about all analytes that were detected at a specific location"/>
        <constructor-arg name="proxyUrl" value="doYilgarnGeochemistry.do"/>
-       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/grn-blank.png"/>       
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/grn-blank.png"/>
        <constructor-arg name="iconAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>
@@ -280,8 +284,8 @@
            </bean>
        </constructor-arg>
    </bean>
-   
-    
+
+
     <!-- This layer is NOT selectable, it is only used for hiding these features -->
     <bean id="knownTypeSamplingPoint" class="org.auscope.portal.server.web.KnownLayerWFS">
         <constructor-arg name="featureTypeName" value="sa:SamplingPoint"/>
