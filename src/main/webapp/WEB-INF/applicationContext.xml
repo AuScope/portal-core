@@ -165,6 +165,7 @@
        <property name="relatedFeatureTypeNames">
             <list>
                 <value>geodesy:stations</value>
+				<value>geodesy:station_observations</value>
             </list>
        </property>
    </bean>
