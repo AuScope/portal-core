@@ -2,6 +2,8 @@ package org.auscope.portal.server.web.view;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.auscope.portal.server.web.KnownLayer;
 import org.auscope.portal.server.web.KnownLayerKeywords;
@@ -35,15 +37,23 @@ public class ViewKnownLayerFactory {
 
 		return obj;
 	}
-
-	public ModelMap toView(KnownLayerKeywords k) {
+	
+	private ModelMap baseToView(KnownLayer k) {
 	    ModelMap obj = new ModelMap();
-
-        obj.put("type", "KnownLayerKeywords");
-        obj.put("title", k.getTitle());
+	    
+	    obj.put("title", k.getTitle());
         obj.put("hidden", k.isHidden());
         obj.put("description",k.getDescription());
         obj.put("id", k.getId());
+        
+        
+        return obj;
+	}
+
+	public ModelMap toView(KnownLayerKeywords k) {
+	    ModelMap obj = baseToView(k);
+
+        obj.put("type", "KnownLayerKeywords");
         obj.put("descriptiveKeyword", k.getDescriptiveKeyword());
         obj.put("iconUrl", k.getIconUrl());
 
@@ -61,18 +71,14 @@ public class ViewKnownLayerFactory {
 	}
 
 	public ModelMap toView(KnownLayerWFS k) {
-	    ModelMap obj = new ModelMap();
+	    ModelMap obj = baseToView(k);
 
 	    obj.put("type", "KnownLayerWFS");
-        obj.put("title", k.getTitle());
-        obj.put("hidden", k.isHidden());
-        obj.put("description",k.getDescription());
-        obj.put("id", k.getId());
         obj.put("featureTypeName", k.getFeatureTypeName());
         obj.put("proxyUrl", k.getProxyUrl());
         obj.put("iconUrl", k.getIconUrl());
         obj.put("disableBboxFiltering", k.getDisableBboxFiltering());
-
+        obj.put("relatedFeatureTypeNames", k.getRelatedFeatureTypeNames());
 
         Point iconAnchor =  k.getIconAnchor();
         if (iconAnchor != null) {
@@ -93,13 +99,9 @@ public class ViewKnownLayerFactory {
     }
 
 	public ModelMap toView(KnownLayerWMS k) {
-	    ModelMap obj = new ModelMap();
+	    ModelMap obj = baseToView(k);
 
         obj.put("type", "KnownLayerWMS");
-        obj.put("title", k.getTitle());
-        obj.put("hidden", k.isHidden());
-        obj.put("description",k.getDescription());
-        obj.put("id", k.getId());
         obj.put("layerName", k.getLayerName());
         obj.put("styleName", k.getStyleName());
 
@@ -121,14 +123,7 @@ public class ViewKnownLayerFactory {
 		} else if (k instanceof KnownLayerKeywords) {
             return toView((KnownLayerKeywords) k);
         } else {
-            ModelMap obj = new ModelMap();
-
-            obj.put("type", "KnownLayer");
-            obj.put("title", k.getTitle());
-            obj.put("description",k.getDescription());
-            obj.put("id", k.getId());
-
-            return obj;
+            return baseToView(k);
         }
 	}
 }

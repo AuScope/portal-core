@@ -192,22 +192,44 @@ Ext.onReady(function() {
     	}
     };
 
-    //Iterates through the list of Known Layers looking for layers that 'own' this record
-    var getParentKnownLayers = function(cswRecord) {
-    	var knownLayers = [];
-
-    	knownLayersStore.each(function(rec) {
-    		var knownLayer = new KnownLayerRecord(rec);
-
+    //Returns true if the specified cswRecord is linked or related by a known layer
+    var isCSWRecordKnown = function(cswRecord) {
+    	
+    	//little utility function that returns true if the cswRecord is known by knownLayer
+    	var isKnownBy = function(knownLayer, cswRecord) {
+    		
+    		//Check this known layer
     		var childRecords = knownLayer.getLinkedCSWRecords(cswRecordStore);
     		for (var i = 0; i < childRecords.length; i++) {
     			if (childRecords[i].getFileIdentifier() === cswRecord.getFileIdentifier()) {
-    				knownLayers.push(knownLayer);
+    				return true;
     			}
     		}
-    	});
+    		
+    		//Check the related known layers
+    		var relatedRecords = knownLayer.getRelatedCSWRecords(cswRecordStore);
+    		for (var i = 0; i < relatedRecords.length; i++) {
+    			if (relatedRecords[i].getFileIdentifier() === cswRecord.getFileIdentifier()) {
+    				return true;
+    			}
+    		}
+    		
+    		return false;
+    	};
+    	
+    	//This is our known layer iterator
+    	var recordKnown = false;
+    	knownLayersStore.each(function(rec) {
+    		var knownLayer = new KnownLayerRecord(rec);
 
-    	return knownLayers;
+    		//check if this layer 
+    		if (isKnownBy(knownLayer, cswRecord)) {
+    			recordKnown = true;//we found the record
+    			return false;//abort iteration
+    		}
+    	});
+    	
+    	return recordKnown;
     };
 
     //-----------Known Features Panel Configurations (Groupings of various CSWRecords)
@@ -228,8 +250,7 @@ Ext.onReady(function() {
     	}
 
     	//ensure its not referenced via KnownLayer
-    	var knownLayers = getParentKnownLayers(cswRecord);
-    	return knownLayers.length === 0;
+    	return !isCSWRecordKnown(cswRecord);
     };
     var mapLayersPanel = new CSWRecordGridPanel('wms-layers-panel',
 									    		'Map Layers',

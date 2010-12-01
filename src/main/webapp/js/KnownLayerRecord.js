@@ -34,6 +34,19 @@ KnownLayerRecord.prototype.getType = function() {
 };
 
 /**
+ * Gets an array of String feature type names
+ * Gets every feature type name that is related to this feature type. Only valid if type=='KnownLayerWFS'
+ */
+KnownLayerRecord.prototype.getRelatedFeatureTypeNames = function() {
+	var recs = this.internalRecord.get('relatedFeatureTypeNames');
+	if (!recs) {
+		return [];
+	}
+	
+	return recs;
+};
+
+/**
  * Gets whether this known layer should be hidden from the user as a boolean
  */
 KnownLayerRecord.prototype.getHidden = function() {
@@ -183,6 +196,35 @@ KnownLayerRecord.prototype.getLinkedCSWRecords = function(cswRecordStore) {
 		var keyword = this.getDescriptiveKeyword();
 		this.internalRecord.cachedLinkedRecords = cswRecordStore.getCSWRecordsByKeywords(keyword);
 		return this.internalRecord.cachedLinkedRecords;
+	}
+	
+	return [];
+};
+
+/**
+ * Given a CSWRecordStore this function will return an array of CSWRecords that 
+ * this KnownLayerRecord is 'related' to. How that relation is defined depends on the
+ * KnownLayer type.
+ */
+KnownLayerRecord.prototype.getRelatedCSWRecords = function(cswRecordStore) {
+	var type = this.getType();
+	
+	//Internal cache added for AUS-1968
+	if (this.internalRecord.cachedRelatedRecords) {
+		return this.internalRecord.cachedRelatedRecords;
+	}
+	
+	switch (type) {
+	case 'KnownLayerWFS':
+		var featureTypeNames = this.getRelatedFeatureTypeNames();
+		var relatedRecs = [];
+		
+		for (var i = 0; i < featureTypeNames.length; i++) {
+			relatedRecs = relatedRecs.concat(cswRecordStore.getCSWRecordsByOnlineResource(featureTypeNames[i], null));
+		}
+		
+		this.internalRecord.cachedRelatedRecords = relatedRecs;
+		return this.internalRecord.cachedRelatedRecords;
 	}
 	
 	return [];

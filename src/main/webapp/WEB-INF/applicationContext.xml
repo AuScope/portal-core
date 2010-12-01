@@ -66,6 +66,12 @@
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
+       <property name="relatedFeatureTypeNames">
+            <list>
+                <value>er:MiningFeatureOccurrence</value>
+                <value>gsml:MappedFeature</value>
+            </list>
+       </property>
     </bean>
 
     <bean id="knownTypeMineralOccurrence" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -92,6 +98,12 @@
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
+       <property name="relatedFeatureTypeNames">
+            <list>
+                <value>er:Commodity</value>
+                <value>gsml:MappedFeature</value>
+            </list>
+       </property>
     </bean>
 
     <bean id="knownTypeMiningActivity" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -118,6 +130,12 @@
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
+       <property name="relatedFeatureTypeNames">
+            <list>
+                <value>er:MiningFeatureOccurence</value>
+                <value>gsml:MappedFeature</value>
+            </list>
+       </property>
     </bean>
 
     <bean id="knownTypeGeodesy" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -144,6 +162,11 @@
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
+       <property name="relatedFeatureTypeNames">
+            <list>
+                <value>geodesy:stations</value>
+            </list>
+       </property>
    </bean>
 
     <bean id="knownTypeGeochron" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -204,6 +227,12 @@
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
+       <property name="relatedFeatureTypeNames">
+            <list>
+                <value>sa:SamplingFeatureCollection</value>
+                <value>om:GETPUBLISHEDSYSTEMTSA</value>
+            </list>
+       </property>
    </bean>
 
    <bean id="knownTypeReports" class="org.auscope.portal.server.web.KnownLayerKeywords">
@@ -251,23 +280,6 @@
        </constructor-arg>
    </bean>
    
-   <!-- This layer is NOT selectable, it is only used for hiding these features -->
-    <bean id="knownTypeERCommodity" class="org.auscope.portal.server.web.KnownLayerWFS">
-        <constructor-arg name="featureTypeName" value="er:Commodity"/>
-        <property name="hidden" value="true"/>
-    </bean>
-    
-    <!-- This layer is NOT selectable, it is only used for hiding these features -->
-    <bean id="knownTypeERMiningFeatureOccurence" class="org.auscope.portal.server.web.KnownLayerWFS">
-        <constructor-arg name="featureTypeName" value="er:MiningFeatureOccurrence"/>
-        <property name="hidden" value="true"/>
-    </bean>
-    
-    <!-- This layer is NOT selectable, it is only used for hiding these features -->
-    <bean id="knownTypeGSMLMappedFeature" class="org.auscope.portal.server.web.KnownLayerWFS">
-        <constructor-arg name="featureTypeName" value="gsml:MappedFeature"/>
-        <property name="hidden" value="true"/>
-    </bean>
     
     <!-- This layer is NOT selectable, it is only used for hiding these features -->
     <bean id="knownTypeSamplingPoint" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -275,23 +287,8 @@
         <property name="hidden" value="true"/>
     </bean>
     <!-- This layer is NOT selectable, it is only used for hiding these features -->
-    <bean id="knownTypeSamplingFeatureCollection" class="org.auscope.portal.server.web.KnownLayerWFS">
-        <constructor-arg name="featureTypeName" value="sa:SamplingFeatureCollection"/>
-        <property name="hidden" value="true"/>
-    </bean>
-    <!-- This layer is NOT selectable, it is only used for hiding these features -->
     <bean id="knownTypeFeatureCollection" class="org.auscope.portal.server.web.KnownLayerWFS">
         <constructor-arg name="featureTypeName" value="gml:FeatureCollection"/>
-        <property name="hidden" value="true"/>
-    </bean>
-    <!-- This layer is NOT selectable, it is only used for hiding these features -->
-    <bean id="knownTypeSimpleLogsInformation" class="org.auscope.portal.server.web.KnownLayerWFS">
-        <constructor-arg name="featureTypeName" value="om:GETPUBLISHEDSYSTEMTSA"/>
-        <property name="hidden" value="true"/>
-    </bean>
-    <!-- This layer is NOT selectable, it is only used for hiding these features -->
-    <bean id="knownTypeGeodesyStations" class="org.auscope.portal.server.web.KnownLayerWFS">
-        <constructor-arg name="featureTypeName" value="geodesy:stations"/>
         <property name="hidden" value="true"/>
     </bean>
 

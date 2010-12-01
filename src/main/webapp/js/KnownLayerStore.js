@@ -23,6 +23,7 @@ KnownLayerStore = function(url) {
 		    'descriptiveKeyword',
 		    'styleName',
 		    'description',
+		    'relatedFeatureTypeNames',
 		    'id',
 		    'proxyUrl',
 		    'iconUrl',
@@ -36,7 +37,7 @@ KnownLayerStore = function(url) {
 
 
 Ext.extend(KnownLayerStore, Ext.data.JsonStore, {
-	
+
 	/**
 	 * Clears this store and then copies all records from sourceKnownLayerStore into this store.
 	 * 

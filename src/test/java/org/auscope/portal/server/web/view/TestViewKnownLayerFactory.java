@@ -54,6 +54,7 @@ public class TestViewKnownLayerFactory {
     	final ModelMap anchorExpectation = new ModelMap();
     	final ModelMap infoExpectation = new ModelMap();
     	final ModelMap sizeExpectation = new ModelMap();
+    	final String[] relatedFeatureTypeNames = new String[] {"rft1", "rft2"};
 
     	expectation.put("type", "KnownLayerWFS");
     	expectation.put("featureTypeName", featureTypeName);
@@ -67,6 +68,7 @@ public class TestViewKnownLayerFactory {
     	expectation.put("iconSize", sizeExpectation);
     	expectation.put("id", id);
     	expectation.put("disableBboxFiltering", disableBboxFiltering);
+    	expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
 
     	anchorExpectation.put("x", anchorX);
     	anchorExpectation.put("y", anchorY);
@@ -91,6 +93,7 @@ public class TestViewKnownLayerFactory {
     		allowing(mockWFS).getIconSize();will(returnValue(mockD1));
     		allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
     		allowing(mockWFS).isHidden();will(returnValue(hidden));
+    		allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(relatedFeatureTypeNames));
 
 
     		allowing(mockP1).getX();will(returnValue(anchorX));
@@ -124,6 +127,7 @@ public class TestViewKnownLayerFactory {
     	final String id = "eyedee";
     	final boolean disableBboxFiltering = true;
     	final boolean hidden = true;
+    	final String[] relatedFeatureTypeNames = null; 
 
     	final ModelMap expectation = new ModelMap();
 
@@ -136,6 +140,7 @@ public class TestViewKnownLayerFactory {
     	expectation.put("iconUrl", iconUrl);
     	expectation.put("id", id);
     	expectation.put("disableBboxFiltering", disableBboxFiltering);
+    	expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
 
     	context.checking(new Expectations() {{
 
@@ -150,6 +155,7 @@ public class TestViewKnownLayerFactory {
     		allowing(mockWFS).getIconSize();will(returnValue(null));
     		allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
     		allowing(mockWFS).isHidden();will(returnValue(hidden));
+    		allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(null));
         }});
 
     	ModelMap result = factory.toView(mockWFS);

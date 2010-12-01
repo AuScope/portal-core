@@ -16,6 +16,7 @@ public class KnownLayerWFS extends KnownLayer {
     private Point infoWindowAnchor;
     private Dimension iconSize;
     private boolean disableBboxFiltering;
+    private String[] relatedFeatureTypeNames;
     
     
     /**
@@ -162,4 +163,20 @@ public class KnownLayerWFS extends KnownLayer {
     public boolean getDisableBboxFiltering() {
         return this.disableBboxFiltering;
     }
+
+    /**
+     * @return the relatedFeatureTypeNames
+     */
+    public String[] getRelatedFeatureTypeNames() {
+        return relatedFeatureTypeNames;
+    }
+
+    /**
+     * @param relatedFeatureTypeNames the relatedFeatureTypeNames to set
+     */
+    public void setRelatedFeatureTypeNames(String[] relatedFeatureTypeNames) {
+        this.relatedFeatureTypeNames = relatedFeatureTypeNames;
+    }
+    
+    
 }
