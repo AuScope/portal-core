@@ -8,7 +8,7 @@ import java.net.URL;
  *
  */
 public abstract class CSWOnlineResource {
-    
+
     /**
      * A simplification of the protocol
      * @author vot002
@@ -35,13 +35,13 @@ public abstract class CSWOnlineResource {
          * OpenDAP
          */
         OPeNDAP,
-        
+
         /**
          * A generic web link
          */
         WWW
     }
-    
+
     /**
      * Gets the URL location of this online resource
      * @return
@@ -62,7 +62,7 @@ public abstract class CSWOnlineResource {
      * @return
      */
     public abstract String getDescription();
-    
+
     /**
      * Gets a simplification of the protocol that this online resource represents.
      * @return
@@ -71,7 +71,7 @@ public abstract class CSWOnlineResource {
         String lowerProtocol = getProtocol();
         if (lowerProtocol == null)
             return OnlineResourceType.Unsupported;
-        
+
         lowerProtocol = lowerProtocol.toLowerCase();
         if (lowerProtocol.contains("wfs")) {
             return OnlineResourceType.WFS;
@@ -79,18 +79,16 @@ public abstract class CSWOnlineResource {
             return OnlineResourceType.WMS;
         } else if (lowerProtocol.contains("wcs")) {
             return OnlineResourceType.WCS;
-        } else if (lowerProtocol.contains("www:link-1.0-http--link")) {
+        } else if (lowerProtocol.contains("www:link-1.0-http--link") || lowerProtocol.contains("www:download-1.0-http--download")) {
             //Dap is currently hacked in
             String name = getDescription();
-            if (name != null) {
-                if (name.equals("HACK-OPENDAP")) {
-                    return OnlineResourceType.OPeNDAP;
-                }
+            if ((name != null) && name.equals("HACK-OPENDAP")) {
+                return OnlineResourceType.OPeNDAP;
             }
-            
+
             return OnlineResourceType.WWW;
         }
-        
+
         return OnlineResourceType.Unsupported;
     }
 }
