@@ -906,7 +906,8 @@ Ext.onReady(function() {
 
                 activeLayersToolTip = new Ext.ToolTip({
                     target: e.target ,
-                    title: 'Status Information',
+                    header: false,
+                    //title: 'Status Information',
                     autoHide : true,
                     html: html ,
                     anchor: 'bottom',

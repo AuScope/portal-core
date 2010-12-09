@@ -18,15 +18,12 @@
 CSWRecordGridPanel = function(id, title, cswRecordStore, addLayerHandler, cswRecordFilter, visibleFilterHandler, showBoundsHandler, moveToBoundsHandler) {
 	this.addLayerHandler = addLayerHandler;
 	this.cswRecordFilter = cswRecordFilter;
-	
 	//Create our filtered datastore copy
 	var dsCopy = new CSWRecordStore();
 	cswRecordStore.on('datachanged', this.internalOnDataChanged, this);
 	dsCopy.copyFrom(cswRecordStore, cswRecordFilter);
-	
 	//This is so we can reference our search panel
 	var searchPanelId = id + '-search-panel';
-	
 	var rowExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template('<p>{dataIdentificationAbstract}</p><br>')
     });
@@ -62,7 +59,7 @@ CSWRecordGridPanel = function(id, title, cswRecordStore, addLayerHandler, cswRec
             	header : '',
             	width: 18,
             	dataIndex: 'onlineResources',
-            	renderer: function(value, metadata) {
+            	renderer: function(value, metadata, record) {
             		for (var i = 0; i < value.length; i++) {
             			if (value[i].onlineResourceType == 'WCS' ||
             				value[i].onlineResourceType == 'WFS') {
@@ -111,7 +108,9 @@ CSWRecordGridPanel = function(id, title, cswRecordStore, addLayerHandler, cswRec
         
         view: new Ext.grid.GroupingView({
             forceFit:true,
-            groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+            groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})',
+            emptyText: '<font size=3px color=#ff0000> No services currently available </font>',
+            deferEmptyText:false
         }),
         tbar: [
                'Search: ', ' ',
@@ -191,9 +190,7 @@ CSWRecordGridPanel = function(id, title, cswRecordStore, addLayerHandler, cswRec
                             html: 'Click for detailed information about the web services this layer utilises',
                             anchor: 'bottom',
                             trackMouse: true,
-                            showDelay:60,
-                            autoHeight:true,
-                            autoWidth: true
+                            showDelay:60
                         });
                     }
                     //this is the status icon column
@@ -216,6 +213,7 @@ CSWRecordGridPanel = function(id, title, cswRecordStore, addLayerHandler, cswRec
         }
 
     });
+	
 };
 
 CSWRecordGridPanel.prototype.addLayerHandler = null;
