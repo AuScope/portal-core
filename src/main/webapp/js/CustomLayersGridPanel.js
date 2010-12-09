@@ -19,7 +19,7 @@ CustomLayersGridPanel = function(id, title, cswRecordStore, addLayerHandler, sho
 	
 	var rowExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template('<p>{dataIdentificationAbstract}</p><br>')
-    });
+    });	
 	
 	CustomLayersGridPanel.superclass.constructor.call(this, {
 		id				 : id,
@@ -42,6 +42,14 @@ CustomLayersGridPanel = function(id, title, cswRecordStore, addLayerHandler, sho
                 header: "Title",
                 sortable: true,
                 dataIndex: 'serviceName'
+            },{
+            	id : 'recordType',
+            	header : '',
+            	width: 18,
+            	dataIndex: 'onlineResources',
+            	renderer: function(value, metadata, record) {
+            		return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
+            	}
             }, {
             	id:'search',
             	header: '',
@@ -69,6 +77,7 @@ CustomLayersGridPanel = function(id, title, cswRecordStore, addLayerHandler, sho
                 name : 'STTField',
                 emptyText : 'http://'
             })
+           
         ],
         bbar: [{
             text:'Add Layer to Map',
@@ -85,26 +94,79 @@ CustomLayersGridPanel = function(id, title, cswRecordStore, addLayerHandler, sho
         listeners: {
         	cellclick : function (grid, rowIndex, colIndex, e) {
             	var fieldName = grid.getColumnModel().getDataIndex(colIndex);
-            	if (fieldName !== 'geographicElements') {
-            		return;
+            	var cswRecord = grid.getStore().getCSWRecordAt(rowIndex);
+            	if (fieldName === 'geographicElements') {
+            		e.stopEvent();	            	
+	            	showBoundsHandler(cswRecord);
+            	}else if (fieldName === 'onlineResources') {
+            		e.stopEvent();
+            		
+            		//Close an existing popup
+            		if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
+            			this.onlineResourcesPopup.close();
+            		}
+            		
+            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecord);
+            		this.onlineResourcesPopup.show(e.getTarget());
             	}
-            	
-            	e.stopEvent();
-            	
-            	showBoundsHandler(grid.getStore().getCSWRecordAt(rowIndex));
         	},
         	
         	celldblclick : function (grid, rowIndex, colIndex, e) {
             	var record = grid.getStore().getAt(rowIndex);
             	var fieldName = grid.getColumnModel().getDataIndex(colIndex);
-            	if (fieldName !== 'geographicElements') {
-            		return;
+            	if (fieldName === 'geographicElements') {
+            		e.stopEvent();
+                	
+                	moveToBoundsHandler(grid.getStore().getCSWRecordAt(rowIndex));
             	}
-            	
-            	e.stopEvent();
-            	
-            	moveToBoundsHandler(grid.getStore().getCSWRecordAt(rowIndex));
-        	}
+        	},
+        	
+        	mouseover : function(e, t) {
+                e.stopEvent();
+
+                var row = e.getTarget('.x-grid3-row');
+                var col = e.getTarget('.x-grid3-col');
+
+                
+                //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
+                if (col !== null && (!this.currentToolTip || !this.currentToolTip.isVisible())) {
+
+                    //get the actual data record
+                    var theRow = this.getView().findRow(row);
+                    var cswRecord = new CSWRecord(this.getStore().getAt(theRow.rowIndex));
+                    
+                    //This is for the 'record type' column
+                    if (col.cellIndex == '2') {
+                    	
+                    	
+                    	this.currentToolTip = new Ext.ToolTip({
+                            target: e.target ,
+                            title: 'Service Information for ' + cswRecord.getServiceName(),
+                            autoHide : true,
+                            html: 'Click for detailed information about the web services this layer utilises',
+                            anchor: 'bottom',
+                            trackMouse: true,
+                            showDelay:60
+                        });
+                    }
+                    //this is the status icon column
+                    else if (col.cellIndex == '3') {
+                    	if(cswRecord.internalRecord.data.geographicElements.length > 0){
+	                        this.currentToolTip = new Ext.ToolTip({
+	                            target: e.target ,
+	                            title: 'Bounds Information',
+	                            autoHide : true,
+	                            html: 'Click to see the bounds of this layer',
+	                            anchor: 'bottom',
+	                            trackMouse: true,
+	                            showDelay:60,
+	                            autoHeight:true,
+	                            autoWidth: true
+	                        });
+                    	}
+                    }
+                }
+            }
         }
     });
 };
