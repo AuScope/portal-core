@@ -7,6 +7,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.csw.CSWGeographicBoundingBox;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This class represents WMS Layer node within GetCapabilites WMS response.
@@ -22,6 +23,7 @@ public class GetCapabilitiesWMSLayerRecord {
     private String title;
     private String description;
     private CSWGeographicBoundingBox bbox;
+    private String[] childLayerSRS;
     
     // ----------------------------------------------------------- Constructors
     public GetCapabilitiesWMSLayerRecord(Node node) throws XPathExpressionException {
@@ -55,6 +57,16 @@ public class GetCapabilitiesWMSLayerRecord {
 	        			Double.parseDouble(maxy));
         	} catch (Exception ex) { }
         }
+        
+        String layerSRSExpression = "SRS";
+        NodeList nodes = (NodeList)xPath.evaluate( layerSRSExpression
+                , node
+                , XPathConstants.NODESET );
+		childLayerSRS = new String[nodes.getLength()];
+		for(int i =0; i< nodes.getLength(); i++){
+			Node childSRSNode = nodes.item(i);
+			childLayerSRS[i] = childSRSNode != null ? childSRSNode.getTextContent() : "";
+		}
     }
     
     
@@ -74,6 +86,10 @@ public class GetCapabilitiesWMSLayerRecord {
     
     public CSWGeographicBoundingBox getBoundingBox() {
     	return bbox;
+    }
+    
+    public String[] getChildLayerSRS() throws XPathExpressionException {
+        return childLayerSRS;
     }
     
     public String toString() {

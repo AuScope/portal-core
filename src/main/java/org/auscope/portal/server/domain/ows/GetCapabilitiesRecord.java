@@ -37,6 +37,7 @@ public class GetCapabilitiesRecord {
     private String organisation = "";
     private String url = "";
     private ArrayList<GetCapabilitiesWMSLayerRecord> layers;
+    private String[] layerSRS = null;
 
     // ----------------------------------------------------------- Constructors
 
@@ -55,7 +56,7 @@ public class GetCapabilitiesRecord {
             getService(xPath, doc);
             getContactOrg(xPath, doc);
             getGetMapUrl(xPath, doc);
-
+            getWMSLayerSRS(xPath, doc);
             if (isWMS()) {
                 getWMSLayers(xPath, doc);
             } else {
@@ -92,6 +93,10 @@ public class GetCapabilitiesRecord {
 
     public ArrayList<GetCapabilitiesWMSLayerRecord> getLayers() {
         return this.layers;
+    }
+    
+    public String[] getLayerSRS(){
+    	return this.layerSRS;
     }
 
 
@@ -181,6 +186,27 @@ public class GetCapabilitiesRecord {
 
         } catch (XPathExpressionException e) {
             log.error("GetCapabilities - getWMSLayers xml parsing error: " + e.getMessage());
+        }
+    }
+    
+    private void getWMSLayerSRS(XPath xPath, Document doc){
+    	String extractLayerSRS
+        	= "/WMT_MS_Capabilities/Capability/Layer/SRS";
+    	
+    	try{
+    		NodeList nodes = (NodeList)xPath.evaluate( extractLayerSRS
+                    , doc
+                    , XPathConstants.NODESET );
+    		
+    		layerSRS = new String[nodes.getLength()];
+    		for(int i =0; i< nodes.getLength(); i++){
+    			Node srsNode = nodes.item(i);
+    			//String tempValue = (nodes.item(i)).getNodeValue();
+    			layerSRS[i]= srsNode!= null ? srsNode.getTextContent() : "";
+    			
+    		}
+    	}catch (XPathExpressionException e) {
+            log.error("GetCapabilities - getLayerSRS xml parsing error: " + e.getMessage());
         }
     }
 

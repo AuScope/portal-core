@@ -55,7 +55,6 @@ public abstract class CSWRecordResponse {
     	     log.error("Error converting data records", ex);
     		 return generateJSONResponse(false, "Error converting data records", null);
     	 }
-    	
     	return generateJSONResponse(true, "No errors", recordRepresentations);
     }
 }
