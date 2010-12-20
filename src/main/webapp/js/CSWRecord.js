@@ -152,6 +152,10 @@ CSWRecord.prototype.getDescriptiveKeywords = function() {
 	return this.internalGetArrayField('descriptiveKeywords');
 };
 
+CSWRecord.prototype.getConstraints = function() {
+	return this.internalGetArrayField('constraints');
+}
+
 /**
  * Iterates through all geographic elements and returns a bounding box that contains them all.
  * 

@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,6 +32,7 @@ public class CSWRecord {
     private CSWGeographicElement[] cswGeographicElements;
     private String[] descriptiveKeywords;
     private String dataIdentificationAbstract;
+    private String[] constraints;
     
     private static final XPathExpression serviceTitleExpression;
     private static final XPathExpression dataIdentificationAbstractExpression;
@@ -43,6 +42,7 @@ public class CSWRecord {
     private static final XPathExpression onlineTransfersExpression;
     private static final XPathExpression bboxExpression;
     private static final XPathExpression keywordListExpression;
+    private static final XPathExpression otherConstraintsExpression;
     
     /**
      * Initialise all of our XPathExpressions
@@ -57,7 +57,7 @@ public class CSWRecord {
         onlineTransfersExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine");
         bboxExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox");
         keywordListExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString");
-        
+        otherConstraintsExpression = CSWXPathUtil.attemptCompileXpathExpr("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString");
     }
     
     public CSWRecord(String serviceName, String contactOrganisation,
@@ -71,6 +71,7 @@ public class CSWRecord {
     	this.onlineResources = onlineResources;
     	this.cswGeographicElements = cswGeographicsElements;
     	this.descriptiveKeywords = new String[0];
+    	this.constraints = new String[0];
     }
 
     public CSWRecord(Node node) throws XPathExpressionException {
@@ -129,6 +130,18 @@ public class CSWRecord {
         else {
         	// Its already at size zero in the constructor
         }
+        
+        //Parse constraints   	
+        tempNodeList1 = (NodeList) otherConstraintsExpression.evaluate(node, XPathConstants.NODESET);
+        if(tempNodeList1 != null && tempNodeList1.getLength() > 0) {
+        	List<String> constraintsList = new ArrayList<String>();
+        	Node constraint;
+        	for (int j=0; j<tempNodeList1.getLength(); j++) {
+            	constraint = tempNodeList1.item(j);
+            	constraintsList.add(constraint.getTextContent());
+            }
+        	constraints = constraintsList.toArray(new String[constraintsList.size()]);
+        }       
     }
 
     public void setRecordInfoUrl(String recordInfoUrl) {
@@ -186,6 +199,10 @@ public class CSWRecord {
     public String[] getDescriptiveKeywords() {
     	return descriptiveKeywords;
     }
+    
+    public String[] getConstraints() {
+    	return constraints;
+    }
 
     @Override
 	public String toString() {
@@ -196,7 +213,8 @@ public class CSWRecord {
 				+ ", dataIdentificationAbstract=" + dataIdentificationAbstract
 				+ ", fileIdentifier=" + fileIdentifier + ", onlineResources="
 				+ Arrays.toString(onlineResources) + ", recordInfoUrl="
-				+ recordInfoUrl + ", serviceName=" + serviceName + "]";
+				+ recordInfoUrl + ", serviceName=" + serviceName 
+				+ ", constraints=" + Arrays.toString(constraints) + "]";
 	}
 
 	/**

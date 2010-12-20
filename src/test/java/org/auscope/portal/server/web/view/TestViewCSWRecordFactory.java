@@ -36,6 +36,8 @@ public class TestViewCSWRecordFactory {
     	final String dataAbstract = "assda";
     	final String descriptiveKeyword1 = "kw1";
     	final String descriptiveKeyword2 = "kw1";
+    	final String constraint1 = "c1";
+    	final String constraint2 = "c2";
 
     	final URL orUrl = new URL("http://hah.com");
     	final String orName = "ascom";
@@ -61,6 +63,7 @@ public class TestViewCSWRecordFactory {
     	expectation.put("geographicElements", Arrays.asList(geoExpectation));
     	expectation.put("geographicElements", Arrays.asList(geoExpectation));
     	expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
+    	expectation.put("constraints", Arrays.asList(constraint1, constraint2));
 
     	onlineResExpectation.put("url", orUrl.toString());
     	onlineResExpectation.put("name", orName);
@@ -83,7 +86,8 @@ public class TestViewCSWRecordFactory {
     		allowing(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
     		allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
     		allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
-
+    		allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
+    		
     		allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
     		allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
     		allowing(mockBbox).getNorthBoundLatitude();will(returnValue(bboxNorth));
@@ -112,6 +116,8 @@ public class TestViewCSWRecordFactory {
         final String dataAbstract = "assda";
         final String descriptiveKeyword1 = "kw1";
         final String descriptiveKeyword2 = "kw1";
+    	final String constraint1 = "c1";
+    	final String constraint2 = "c2";
 
         final URL orUrl = null;
         final String orName = "ascom";
@@ -135,7 +141,8 @@ public class TestViewCSWRecordFactory {
         expectation.put("onlineResources", new ArrayList<ModelMap>());
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
-
+    	expectation.put("constraints", Arrays.asList(constraint1, constraint2));
+    	
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
         geoExpectation.put("westBoundLongitude", bboxWest);
@@ -152,7 +159,8 @@ public class TestViewCSWRecordFactory {
             allowing(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
             allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
-
+    		allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
+            
             allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
             allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
             allowing(mockBbox).getNorthBoundLatitude();will(returnValue(bboxNorth));

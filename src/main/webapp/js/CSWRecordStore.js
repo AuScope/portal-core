@@ -42,7 +42,8 @@ CSWRecordStore = function(url) {
 			    'dataIdentificationAbstract',
 			    'onlineResources',
 			    'descriptiveKeywords',
-			    {name : 'geographicElements', convert : convertGeographicEls}
+			    {name : 'geographicElements', convert : convertGeographicEls},
+			    'constraints'
 			]
 		})
 	});

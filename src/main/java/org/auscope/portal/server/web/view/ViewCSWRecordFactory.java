@@ -62,6 +62,14 @@ public class ViewCSWRecordFactory {
 		}
 		obj.put("descriptiveKeywords", descriptiveKeywords);
 
+		List<String> constraints = new ArrayList<String>();
+		if(record.getConstraints() != null) {
+			for (String s : record.getConstraints()) {
+				constraints.add(s);
+			}
+		}
+		obj.put("constraints", constraints);
+		
 		return obj;
 	}
 

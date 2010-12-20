@@ -32,6 +32,8 @@ Ext.onReady(function() {
 
             //invoke this layer as being checked
             activeLayerCheckHandler(activeLayerRec, true);
+
+            showCopyrightInfo(activeLayerRec);          
         }
 
         //set this record to selected
@@ -49,10 +51,71 @@ Ext.onReady(function() {
 
             //invoke this layer as being checked
             activeLayerCheckHandler(activeLayerRec, true);
+            
+            showCopyrightInfo(activeLayerRec);
         }
 
         //set this record to selected
         activeLayersPanel.getSelectionModel().selectRecords([activeLayerRec.internalRecord], false);
+    };
+    
+    //Display any copyright information associated with the layer.
+    var showCopyrightInfo = function(activeLayerRec) {
+    	var html = "";
+    	var cswRecords = activeLayerRec.getCSWRecords();
+    	if(cswRecords.length > 0) {
+    		if(cswRecords.length == 1) {
+    			var constraints = activeLayerRec.getCSWRecords()[0].getConstraints();
+    			
+    			if(constraints.length > 0) {
+    				html += "<table cellspacing='10' cellpadding='0' border='0'>";
+    				for(var i=0; i<constraints.length; i++) {
+    					if(/^http:\/\//.test(constraints[i])) {
+    						html += "<tr><td><a href="+constraints[i]+" target='_blank'>" + constraints[i] + "</a></td></tr>";
+    					} else {
+    						html += "<tr><td>" + constraints[i] + "</td></tr>";
+    					}
+    				}
+    				html += "</table>";
+    			} 
+    		} else { //TODO: Uncomment to handle layers with multiple cswRecords
+//    			var hasConstraints = false;
+//    			var i = 0;
+//    			while(hasConstraints == false && i < cswRecords.length) {
+//    				var constraints = activeLayerRec.getCSWRecords()[0].getConstraints();
+//    				if(constraints.length > 0) {
+//    					hasConstraints = true;
+//    				}	
+//    				i++;
+//    			}
+//    			
+//    			if(hasConstraints == true) {
+//    				html += "<table cellspacing='10' cellpadding='0' border='0'>";
+//    				html += "<tr><td>";
+//    				html += "One or more of the records in this collection has copyright constraints. Please refer to individual records for further information.";
+//					html += "</td></tr>";
+//    				html += "</table>";
+//    			}
+    		}
+
+    		if(html != "") {
+    			win = new Ext.Window({
+    				title		: 'Copyright Information',
+    			    layout		: 'fit',
+    			    width		: 500,
+    			    autoHeight:    true,   			
+    			    items: [{
+    			    	xtype 	: 'panel',
+    			    	html	: html,
+    			    	bodyStyle   : 'padding:0px',
+    			    	autoScroll	: true,
+    			        autoDestroy : true
+    			    }]
+    			});
+    		    			
+    			win.show(this);   
+    		}
+    	}    	
     };
 
     //Returns true if the CSWRecord record intersects the GMap viewport (based on its bounding box)
