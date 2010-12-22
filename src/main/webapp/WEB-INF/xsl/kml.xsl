@@ -194,15 +194,43 @@
                		</xsl:if>
 			   </xsl:for-each-group>
 			   <![CDATA[</td></tr>]]>  
-               <![CDATA[<tr><td>Commodity Description</td><td>]]>            
-               <xsl:for-each-group select="./er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity/er:commodityName[@codeSpace='urn:cgi:classifierScheme:GA:commodity']" group-by=".">
-					<xsl:if test="position()= 1">
-               			<xsl:value-of select="."/>
+               <![CDATA[<tr><td>Commodity Description</td><td>]]>    
+                         
+               <xsl:choose>     
+               <xsl:when test="exists(./er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity)">
+               <xsl:for-each-group select="./er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity" group-by=".">
+                   	<xsl:if test="position()= 1">
+					    <![CDATA[<a href="#" onclick="var w=window.open(']]><xsl:value-of select="'wfsFeaturePopup.do?url='"/><xsl:value-of select="gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="er:commodityName[@codeSpace='urn:cgi:classifierScheme:GA:commodity']"/><![CDATA[</a>]]>
                		</xsl:if>
-               		<xsl:if test="position() != 1">
-               		   	<![CDATA[, ]]><xsl:value-of select="."/>
+               		<xsl:if test="position() != 1">               		
+					    <![CDATA[, <a href="#" onclick="var w=window.open(']]><xsl:value-of select="'wfsFeaturePopup.do?url='"/><xsl:value-of select="gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="er:commodityName[@codeSpace='urn:cgi:classifierScheme:GA:commodity']"/><![CDATA[</a>]]>
                		</xsl:if>
 			   </xsl:for-each-group>
+			   </xsl:when>
+			   <xsl:when test="exists(./er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href)">
+			   <xsl:for-each-group select="./er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:producedMaterial/er:Product/er:sourceCommodity/@xlink:href" group-by=".">
+			       <xsl:choose>
+			           <xsl:when test="starts-with(., 'http')">
+					       <xsl:if test="position()= 1">
+		                       <![CDATA[<a href="#" onclick="var w=window.open(']]><xsl:value-of select="'wfsFeaturePopup.do?url='"/><xsl:value-of select="."/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="."/><![CDATA[</a>]]>
+		               	   </xsl:if>
+		               	   <xsl:if test="position() != 1">
+		                       <![CDATA[, <a href="#" onclick="var w=window.open(']]><xsl:value-of select="'wfsFeaturePopup.do?url='"/><xsl:value-of select="."/><![CDATA[','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=850');w.focus();return false;">]]><xsl:value-of select="."/><![CDATA[</a>]]>
+		               	   </xsl:if>
+	               	   </xsl:when>
+	               	   <xsl:otherwise>
+					       <xsl:if test="position()= 1">
+		               	       <xsl:value-of select="."/>
+		               	   </xsl:if>
+		               	   <xsl:if test="position() != 1">
+		               	       <![CDATA[, ]]><xsl:value-of select="."/>
+		               	   </xsl:if>               		
+	               	   </xsl:otherwise>               		
+               		</xsl:choose>
+			   </xsl:for-each-group>
+			   </xsl:when>
+			   </xsl:choose>
+						   
 			   <![CDATA[</td></tr>]]>
 	           <![CDATA[</table>]]>              
             </description>           
