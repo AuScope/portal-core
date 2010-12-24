@@ -12,6 +12,8 @@ WMSLayerFilterForm = function(activeLayerRecord, map) {
     	activeLayerRecord.setOpacity(newOpacity);
     	overlayManager.updateOpacity(newOpacity);
     };
+    
+    this.isFormLoaded = true; //We aren't reliant on any remote downloads
 
     //-----------Panel
     WMSLayerFilterForm.superclass.constructor.call(this, {

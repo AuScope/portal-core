@@ -5,13 +5,13 @@ var theglobalexml;
 
 //A global instance of GMapInfoWindowManager that helps to open GMap info windows
 var mapInfoWindowManager = null;
-
+var map;
 
 // EVIL GLOBAL for all CSW records....
 var cswRecordStore = null;
 
 Ext.onReady(function() {
-    var map;
+    
     var formFactory = new FormFactory();
     var searchBarThreshold = 6; //how many records do we need to have before we show a search bar
 
@@ -22,16 +22,25 @@ Ext.onReady(function() {
     var activeLayersStore = new ActiveLayersStore();
 
     //Called whenever any of the KnownLayer panels click 'Add to Map'
-    var knownLayerAddHandler = function(knownLayer) {
+    //defaultVisibility [boolean] - Optional - Set this to override the visibility setting for the new layer
+    var knownLayerAddHandler = function(knownLayer, defaultVisibility, deferLayerLoad) {
         var activeLayerRec = activeLayersStore.getByKnownLayerRecord(knownLayer);
 
+        if (defaultVisibility == null || defaultVisibility == undefined) {
+            defaultVisibility = true;
+        }
+        
+        if (deferLayerLoad == null || deferLayerLoad == undefined) {
+            deferLayerLoad = false;
+        }
+        
         //Only add if the record isn't already there
         if (!activeLayerRec) {
             //add to active layers (At the top of the Z-order)
         	activeLayerRec = activeLayersStore.addKnownLayer(knownLayer, cswRecordStore);
 
             //invoke this layer as being checked
-            activeLayerCheckHandler(activeLayerRec, true);
+            activeLayerCheckHandler(activeLayerRec, defaultVisibility, false, deferLayerLoad);
 
             showCopyrightInfo(activeLayerRec);          
         }
@@ -41,16 +50,25 @@ Ext.onReady(function() {
     };
 
     //Called whenever any of the CSWPanels click 'Add to Map'
-    var cswPanelAddHandler = function(cswRecord) {
+    //defaultVisibility [boolean] - Optional - Set this to override the visibility setting for the new layer
+    var cswPanelAddHandler = function(cswRecord, defaultVisibility, deferLayerLoad) {
         var activeLayerRec = activeLayersStore.getByCSWRecord(cswRecord);
 
+        if (defaultVisibility == null || defaultVisibility == undefined) {
+            defaultVisibility = true;
+        }
+        
+        if (deferLayerLoad == null || deferLayerLoad == undefined) {
+            deferLayerLoad = false;
+        }
+        
         //Only add if the record isn't already there
         if (!activeLayerRec) {
             //add to active layers (At the top of the Z-order)
         	activeLayerRec = activeLayersStore.addCSWRecord(cswRecord);
 
             //invoke this layer as being checked
-            activeLayerCheckHandler(activeLayerRec, true);
+            activeLayerCheckHandler(activeLayerRec, defaultVisibility, false, deferLayerLoad);
             
             showCopyrightInfo(activeLayerRec);
         }
@@ -416,7 +434,8 @@ Ext.onReady(function() {
     };
 
     //Loads the contents for the specified activeLayerRecord (applying any filtering too)
-    var loadLayer = function(activeLayerRecord) {
+    //overrideFilterParams [Object] - Optional - specify to ignore any calculated filter parameters and use these values instead
+    var loadLayer = function(activeLayerRecord, overrideFilterParams) {
     	var cswRecords = activeLayerRecord.getCSWRecords();
 
         //We simplify things by treating the record list as a single type of WFS, WCS or WMS
@@ -425,13 +444,13 @@ Ext.onReady(function() {
         	var cswRecord = cswRecords[0];
 
         	if (cswRecord.getFilteredOnlineResources('WFS').length !== 0) {
-        		wfsHandler(activeLayerRecord);
+        		wfsHandler(activeLayerRecord, overrideFilterParams);
         	} else if (cswRecord.getFilteredOnlineResources('WCS').length !== 0) {
         		wcsHandler(activeLayerRecord);
         	} else if (cswRecord.getFilteredOnlineResources('WMS').length !== 0) {
         		wmsHandler(activeLayerRecord);
         	} else {
-        		genericRecordHandler(activeLayerRecord);
+        		genericRecordHandler(activeLayerRecord, overrideFilterParams);
         	}
         }
     };
@@ -439,8 +458,9 @@ Ext.onReady(function() {
 
     /**
      *@param forceApplyFilter (Optional) if set AND isChecked is set AND this function has a filter panel, it will force the current filter to be loaded
+     *@param deferLayerLoad (Optional) if set, the layer will be added but it will NOT load any data
      */
-    var activeLayerCheckHandler = function(activeLayerRecord, isChecked, forceApplyFilter) {
+    var activeLayerCheckHandler = function(activeLayerRecord, isChecked, forceApplyFilter, deferLayerLoad) {
         //set the record to be selected if checked
         activeLayersPanel.getSelectionModel().selectRecords([activeLayerRecord.internalRecord], false);
 
@@ -479,13 +499,15 @@ Ext.onReady(function() {
                 filterPanel.getLayout().setActiveItem(activeLayerRecord.getId());
             }
 
-            //if we enable the filter button we don't download the layer immediately (as the user will have to enter in filter params)
-            if (filterPanelObj.supportsFiltering) {
-                filterButton.enable();
-                filterButton.toggle(true);
-            } else {
-            	//Otherwise the layer doesn't need filtering, just display it immediately
-                loadLayer(activeLayerRecord);
+            if (!deferLayerLoad) {
+                //if we enable the filter button we don't download the layer immediately (as the user will have to enter in filter params)
+                if (filterPanelObj.supportsFiltering) {
+                    filterButton.enable();
+                    filterButton.toggle(true);
+                } else {
+                	//Otherwise the layer doesn't need filtering, just display it immediately
+                    loadLayer(activeLayerRecord);
+                }
             }
             filterPanel.doLayout();
         } else {
@@ -502,7 +524,7 @@ Ext.onReady(function() {
 
 
     //This will attempt to render the record using only the csw record bounding boxes
-    var genericRecordHandler = function(activeLayerRecord) {
+    var genericRecordHandler = function(activeLayerRecord, overrideFilterParams) {
     	//get our overlay manager (create if required)
     	var overlayManager = activeLayerRecord.getOverlayManager();
     	if (!overlayManager) {
@@ -517,7 +539,12 @@ Ext.onReady(function() {
     	var reportTitleFilter = '';
         var keywordFilter = '';
         var resourceProviderFilter = '';
-    	var filterObj = filterPanel.getLayout().activeItem.getForm().getValues();
+    	var filterObj = null; 
+    	if (overrideFilterParams) {
+    	    filterObj = overrideFilterParams;
+    	} else {
+    	    filterObj = filterPanel.getLayout().activeItem.getForm().getValues();
+    	}
     	
     	reportTitleFilter = filterObj.title;
         var regexp = /\*/;
@@ -532,6 +559,8 @@ Ext.onReady(function() {
         if(filterObj.resourceProvider !== null) {
         	resourceProviderFilter = filterObj.resourceProvider;
         }
+        
+        activeLayerRecord.setLastFilterParameters(filterObj);
         
         //Get the list of bounding box polygons
         var cswRecords = activeLayerRecord.getCSWRecords();
@@ -662,7 +691,7 @@ Ext.onReady(function() {
         updateActiveLayerZOrder();
     };
 
-    var wfsHandler = function(activeLayerRecord) {
+    var wfsHandler = function(activeLayerRecord, overrideFilterParams) {
         //if there is already a filter running for this record then don't call another
         if (activeLayerRecord.getIsLoading()) {
             Ext.MessageBox.show({
@@ -699,24 +728,31 @@ Ext.onReady(function() {
 
         //Begin loading from each service
         activeLayerRecord.setIsLoading(true);
+        
+        //Generate our filter parameters for this service (or use the override values if specified)
+        var filterParameters = { };
+        if (overrideFilterParams) {
+            filterParameters = overrideFilterParams;
+        } else {
+            if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
+                filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
+            }
+            filterParameters.maxFeatures = MAX_FEATURES; // limit our feature request to 200 so we don't overwhelm the browser
+            filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
+            if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
+                filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
+            }
+        }
+        
+        activeLayerRecord.setLastFilterParameters(filterParameters);
+        
         for (var i = 0; i < cswRecords.length; i++) {
         	//Assumption - We will only have 1 WFS linked per CSW
         	var wfsOnlineResource = cswRecords[i].getFilteredOnlineResources('WFS')[0];
-
-        	//Generate our filter parameters for this service
-        	var filterParameters = null;
-            if (filterPanel.getLayout().activeItem == filterPanel.getComponent(0)) {
-            	filterParameters = {typeName : wfsOnlineResource.name};
-            } else {
-            	filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
-            }
-            filterParameters.maxFeatures = MAX_FEATURES; // limit our feature request to 200 so we don't overwhelm the browser
-        	filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
+        	
         	filterParameters.serviceUrl = wfsOnlineResource.url;
-        	if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
-        		filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
-        	}
-
+        	filterParameters.typeName = wfsOnlineResource.name;
+        	
             handleQuery(activeLayerRecord, cswRecords[i], wfsOnlineResource, filterParameters, function() {
                 //decrement the counter
                 finishedLoadingCounter--;
@@ -913,6 +949,8 @@ Ext.onReady(function() {
         	filterPanelObj.form.destroy();
         }
     };
+    
+    
 
     this.activeLayersPanel = new ActiveLayersGridPanel('active-layers-panel',
 											    		'Active Layers',
@@ -1358,11 +1396,92 @@ Ext.onReady(function() {
         document.getElementById("latlng").innerHTML = "";
     });
 
+    //Attempts to deserialize the state string and apply its contents to the current map
+    var attemptDeserialization = function(stateString) {
+        var s = new MapStateSerializer();
+        s.deserialize(stateString);
+        
+        //Pan our map to the appropriate location
+        map.setZoom(s.mapState.zoom);
+        map.panTo(new GLatLng(s.mapState.center.lat, s.mapState.center.lng));
+        
+        var missingLayers = false; //are there any layers serialized that no longer exist?
+        
+        //Add the layers
+        for (var i = 0; i < s.activeLayers.length; i++) {
+            if (s.activeLayers[i].source === 'KnownLayer') {
+                var knownLayer = knownLayersStore.getKnownLayerById(s.activeLayers[i].id);
+                if (!knownLayer) {
+                    missingLayers = true;
+                    continue;
+                }
+                
+                knownLayerAddHandler(knownLayer, s.activeLayers[i].visible, true);
+                var activeLayerRec = activeLayersStore.getByKnownLayerRecord(knownLayer);
+                if (activeLayerRec) {
+                    activeLayerRec.setOpacity(s.activeLayers[i].opacity);
+                    
+                    if (s.activeLayers[i].visible) {
+                        loadLayer(activeLayerRec, s.activeLayers[i].filter);
+                    }
+                    
+                    //Prefill our filter panel (if we have the fields)
+                    var filterPanel = activeLayerRec.getFilterPanel();
+                    if (filterPanel && filterPanel.form && s.activeLayers[i].filter) {
+                        
+                        //Register for the load event
+                        var filterObj = s.activeLayers[i].filter;
+                        filterPanel.form.on('formloaded', function() {
+                            filterPanel.form.getForm().setValues(filterObj);
+                            
+                        });
+                        
+                        //If the even has already fired we can just load normally
+                        if (filterPanel.form.isFormLoaded) {
+                            filterPanel.form.getForm().setValues(filterObj);
+                        }
+                    }
+                }
+                
+            } else if (s.activeLayers[i].source === 'CSWRecord') {
+                var cswRecord = cswRecordStore.getCSWRecordById(s.activeLayers[i].id);
+                if (!cswRecord) {
+                    missingLayers = true;
+                    continue;
+                }
+                
+                cswPanelAddHandler(cswRecord, s.activeLayers[i].visible, true);
+                var activeLayerRec = activeLayersStore.getByCSWRecord(cswRecord);
+                if (activeLayerRec) {
+                    activeLayerRec.setOpacity(s.activeLayers[i].opacity);
+                    
+                    if (s.activeLayers[i].visible) {
+                        loadLayer(activeLayerRec, s.activeLayers[i].filter);
+                    }
+                }
+            }
+        }
+        
+        if (missingLayers) {
+            Ext.MessageBox.show({
+                icon : Ext.MessageBox.WARNING,
+                msg : 'A number of layers that were saved no longer exist in this portal.',
+                multiline : false
+            });
+        }
+    };
+    
     //As there is a relationship between these two stores,
     //We should refresh any GUI components whose view is dependent on these stores
     cswRecordStore.load({callback : function() {
     	knownLayersStore.load({callback : function() {
         	cswRecordStore.fireEvent('datachanged');
+        	
+        	//Afterwards we decode any saved state included as a URL parameter
+        	var urlParams = Ext.urlDecode(location.search.substring(1));
+        	if (urlParams && urlParams.state) {
+        	    attemptDeserialization(urlParams.state);
+        	}   
         }});
     }});
     

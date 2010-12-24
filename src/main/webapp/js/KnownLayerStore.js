@@ -11,7 +11,7 @@ KnownLayerStore = function(url) {
 		proxy			: new Ext.data.HttpProxy(conn),
 		storeId			: 'knownLayerRecordStore',
 		root			: 'records',
-		id				: 'featureTypeName',
+		id				: 'id',
 		successProperty	: 'success',
 		messageProperty : 'msg',
 		fields			: [

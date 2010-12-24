@@ -13,7 +13,9 @@ MineFilterForm = function(id) {
         }, [{name:'mineDisplayName', mapping:'mineDisplayName'}])
     });*/
     
-    Ext.FormPanel.call(this, {
+    this.isFormLoaded = true; //We aren't reliant on any remote downloads
+    
+    MineFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
         border      : false,
         autoScroll  : true,
@@ -80,4 +82,7 @@ MineFilterForm = function(id) {
     //return thePanel;
 };
 
-MineFilterForm.prototype = new Ext.FormPanel();
+Ext.extend(MineFilterForm, BaseFilterForm, {
+    
+});
+

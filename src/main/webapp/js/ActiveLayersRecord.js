@@ -172,6 +172,15 @@ ActiveLayersRecord.prototype.setOpacity = function(opacity) {
 };
 
 /**
+ * Gets the source record type that was used to make this ActiveLayer
+ * 
+ * Returns one of the following ['KnownLayer', 'CSWRecord']
+ */
+ActiveLayersRecord.prototype.getSource = function() {
+    return this.internalGetStringField('source');
+};
+
+/**
  * Gets an instance of OverlayManager or null
  */
 ActiveLayersRecord.prototype.getOverlayManager = function() {
@@ -300,4 +309,20 @@ ActiveLayersRecord.prototype.setParentKnownLayer = function(knownLayerRecord) {
 	} else {
 		this.internalRecord.parentKnownLayer = null;
 	}
+};
+
+/**
+ * Gets the last set of filter params (as a basic object) that were used to query
+ * this layer. Can be null/undefined
+ */
+ActiveLayersRecord.prototype.getLastFilterParameters = function() {
+    return this.internalRecord.lastFilterParams;
+};
+
+/**
+ * Sets the last set of filter params (as a basic object) that were used to query
+ * this layer. Can be null/undefined
+ */
+ActiveLayersRecord.prototype.setLastFilterParameters = function(filterParams) {
+    this.internalRecord.lastFilterParams = filterParams;
 };

@@ -110,7 +110,13 @@ MineralOccurrenceFilterForm = function(id) {
         ])
     });
 
-    commodityStore.reload();
+    var callingInstance = this;
+    commodityStore.load( {
+        callback : function() {
+            callingInstance.isFormLoaded = true;
+            callingInstance.fireEvent('formloaded');
+        }
+    });
 
     var commodityNameCombo = new Ext.form.ComboBox({
         tpl: '<tpl for="."><div ext:qtip="{label}" class="x-combo-list-item">{label}</div></tpl>',
@@ -191,8 +197,7 @@ MineralOccurrenceFilterForm = function(id) {
 
 
     //-----------Panel
-
-    Ext.FormPanel.call(this,{
+    MineralOccurrenceFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
         border      : false,
         autoScroll  : true,
@@ -204,6 +209,7 @@ MineralOccurrenceFilterForm = function(id) {
         bodyStyle   : 'padding:5px',
         autoHeight:    true,
         layout: 'anchor',
+        delayFormPopulation : true,
         items: [{
             xtype      : 'fieldset',
             title      : 'Mineral Occurrence Filter Properties',
@@ -264,4 +270,6 @@ MineralOccurrenceFilterForm = function(id) {
     });
 };
 
-MineralOccurrenceFilterForm.prototype = new Ext.FormPanel();
+Ext.extend(MineralOccurrenceFilterForm, BaseFilterForm, {
+    
+});

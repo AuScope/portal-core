@@ -25,7 +25,13 @@ MiningActivityFilterForm = function(id) {
         ])
     });
     
-    commodityStore.reload();
+    var callingInstance = this;
+    commodityStore.load( {
+        callback : function() {
+            callingInstance.isFormLoaded = true;
+            callingInstance.fireEvent('formloaded');
+        }
+    });
     
     var producedMaterialCombo = new Ext.form.ComboBox({
         tpl: '<tpl for="."><div ext:qtip="{label}" class="x-combo-list-item">{label}</div></tpl>',
@@ -45,7 +51,7 @@ MiningActivityFilterForm = function(id) {
     });	
 	
 	
-    Ext.FormPanel.call(this, {
+    MiningActivityFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
         border      : false,
         autoScroll  : true,
@@ -133,4 +139,7 @@ MiningActivityFilterForm = function(id) {
     });
 };
 
-MiningActivityFilterForm.prototype = new Ext.FormPanel();
+Ext.extend(MiningActivityFilterForm, BaseFilterForm, {
+    
+});
+

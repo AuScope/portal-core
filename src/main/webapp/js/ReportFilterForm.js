@@ -17,6 +17,8 @@ ReportFilterForm = function(id, knownLayerRecord, cswRecordStore) {
         ])
     });
     
+    this.isFormLoaded = true; //We aren't reliant on any remote downloads
+    
     Ext.QuickTips.init();
     
     var keywordCombo = new Ext.form.ComboBox({
@@ -65,7 +67,7 @@ ReportFilterForm = function(id, knownLayerRecord, cswRecordStore) {
         autoScroll	   : true
     });
     
-    Ext.FormPanel.call(this, {
+    ReportFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
         border      : false,
         autoScroll  : true,
@@ -96,4 +98,6 @@ ReportFilterForm = function(id, knownLayerRecord, cswRecordStore) {
 
 };
 
-ReportFilterForm.prototype = new Ext.FormPanel();
+Ext.extend(ReportFilterForm, BaseFilterForm, {
+    
+});
