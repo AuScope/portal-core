@@ -1407,8 +1407,14 @@ Ext.onReady(function() {
         
         var missingLayers = false; //are there any layers serialized that no longer exist?
         
-        //Add the layers
+        //Add the layers, attempt to load whatever layers are available
+        //but warn the user if some layers no longer exist
         for (var i = 0; i < s.activeLayers.length; i++) {
+            
+            if (!s.activeLayers[i].id) {
+                continue;
+            }
+            
             if (s.activeLayers[i].source === 'KnownLayer') {
                 var knownLayer = knownLayersStore.getKnownLayerById(s.activeLayers[i].id);
                 if (!knownLayer) {
@@ -1464,8 +1470,9 @@ Ext.onReady(function() {
         
         if (missingLayers) {
             Ext.MessageBox.show({
+                title : 'Missing Layers',
                 icon : Ext.MessageBox.WARNING,
-                msg : 'A number of layers that were saved no longer exist in this portal.',
+                msg : 'Some of the layers that were saved no longer exist and will be ignored. The remaining layers will load normally',
                 multiline : false
             });
         }
