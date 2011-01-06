@@ -71,9 +71,21 @@ CustomLayersGridPanel = function(id, title, cswRecordStore, addLayerHandler, sho
         tbar: [
             '<span style="color:#15428B; font-weight:bold">Enter WMS Url: </span>',
             ' ',
+            {
+            	xtype:'button',
+            	text:'<font size=3px color=#ff0000><b>?</b></font>',
+        	   	handler: function(){
+            		Ext.Msg.show({
+            			title:'Hint',
+            			msg: 'Works only for EPSG:4326 WMS layers. URLs like http://auscope-services-test.arrc.csiro.au:80/earth-imaging/wms are valid',
+            			buttons: Ext.Msg.OK
+            		});
+            	}
+        	   	
+            },
             new Ext.ux.form.SearchTwinTriggerField({
                 store: cswRecordStore,
-                width:260,
+                width:243,
                 name : 'STTField',
                 emptyText : 'http://'
             })
