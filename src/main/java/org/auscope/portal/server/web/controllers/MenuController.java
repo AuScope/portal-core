@@ -119,12 +119,10 @@ public class MenuController {
             mav.addObject("serverOsArch", System.getProperty("os.arch"));
             mav.addObject("serverOsName", System.getProperty("os.name"));
             mav.addObject("serverOsVersion", System.getProperty("os.version"));
-         } else {
-            logger.error("Error reading manifest file.");
          }
       } catch (IOException e) {
          /* ignore, since we'll just leave an empty form */
-         e.printStackTrace();
+    	  logger.debug(e.getMessage());
       }
       return mav;
    }
