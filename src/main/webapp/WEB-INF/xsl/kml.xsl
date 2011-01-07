@@ -194,7 +194,7 @@
                		</xsl:if>
 			   </xsl:for-each-group>
 			   <![CDATA[</td></tr>]]>  
-               <![CDATA[<tr><td>Commodity Description</td><td>]]>    
+               <![CDATA[<tr><td>Commodity(s)</td><td>]]>    
                          
                <xsl:choose>     
                <xsl:when test="exists(./er:specification/er:Mine/er:relatedActivity/er:MiningActivity/er:producedMaterial/er:Product/er:sourceCommodity/er:Commodity)">
