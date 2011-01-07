@@ -16,6 +16,7 @@ ActiveLayersStore = function() {
 			    {   name	: 'iconUrl'         },	//String: The raw URL pointing to an appropriate image icon (used for WFS) 
 			    {   name	: 'keyIconHtml'     },	//String: HTML that will appear under the 'key' column
 			    {   name	: 'isLoading' 		},	//boolean: Whether this layer is currently 'loading'
+			    {   name    : 'hasData'         },  //boolean: Whether this layer currently has data avaiable for download
 			    {   name	: 'layerVisible'    },	//boolean: Whether the layer is currently visible
 			    {   name	: 'opacity' 		},	//number: The layers opacity (if applicable) from [0, 1],
 			    {   name    : 'source'          }   //String: Will be either ['KnownLayer','CSWRecord']
@@ -60,6 +61,7 @@ Ext.extend(ActiveLayersStore, Ext.data.Store, {
 			iconUrl		: null,
 			keyIconHtml	: keyIconHtml,
 			isLoading	: false,
+			hasData     : false,
 			layerVisible: true,
 			opacity		: 1,
 			source      : 'CSWRecord'
@@ -85,6 +87,7 @@ Ext.extend(ActiveLayersStore, Ext.data.Store, {
 			iconUrl		: knownLayerRecord.getIconUrl(),
 			keyIconHtml	: '<img width="16" height="16" src="' + knownLayerRecord.getIconUrl() + '">',
 			isLoading	: false,
+			hasData     : false,
 			layerVisible: true,
 			opacity		: 1,
 			source      : 'KnownLayer'

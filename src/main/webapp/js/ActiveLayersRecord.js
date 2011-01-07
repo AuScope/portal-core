@@ -131,6 +131,20 @@ ActiveLayersRecord.prototype.setIsLoading = function(isLoading) {
 };
 
 /**
+ * Gets whether this record currently has data available for download or not.
+ */
+ActiveLayersRecord.prototype.hasData = function() {
+	return this.internalGetBooleanField('hasData');
+}
+
+/**
+ * Sets whether this record currently has data available for download or not.
+ */
+ActiveLayersRecord.prototype.setHasData = function(hasData) {
+    return this.internalRecord.set('hasData', hasData);	
+}
+
+/**
  * Gets whether this record is visible or not as a boolean
  */
 ActiveLayersRecord.prototype.getLayerVisible = function() {
