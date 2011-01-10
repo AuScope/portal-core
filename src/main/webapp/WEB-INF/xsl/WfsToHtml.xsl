@@ -89,6 +89,7 @@
                 <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMembers/er:MiningActivity | er:MiningActivity"/>
                 <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMembers/er:Commodity | er:Commodity"/>
                 <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMembers/er:MiningFeatureOccurrence | er:MiningFeatureOccurrence"/>
+                <xsl:apply-templates select="wfs:FeatureCollection/gml:featureMembers/gsml:GeologicUnit | gsml:GeologicUnit"/>
             </body>
         </html>
     </xsl:template>
@@ -950,6 +951,54 @@
             </table>&#160;
         </xsl:for-each>
     </xsl:template>
+    
+    <!-- TEMPLATE FOR TRANSLATING Yilgarn Geochemistry -->
+    <!-- =============================================================== -->
+    <xsl:template match="gsml:GeologicUnit">
+        <xsl:variable name="guID" select="./gml:name[@codeSpace='http://www.cgi-iugs.org/uri']"/>
+
+        <table>
+            <colgroup span="1" width="15%"/>
+            <colgroup span="1" width="25%"/>
+            <colgroup span="2" width="15%"/>
+            <colgroup span="1" width="35%"/>
+            <tbody>
+                <tr>
+                    <td class="caption" colspan="3" rowspan="1">GSML - Yilgarn Geochemistry</td>
+                    <td colspan="2" ALIGN="right"><b>View As: </b>
+                        <xsl:call-template name="make-popup-url">
+                            <xsl:with-param name="friendly-name" select="'GSML'"/>
+                            <xsl:with-param name="real-url" select="$serviceURL"/>
+                        </xsl:call-template>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="row header">Name:</td>
+                    <td class="row"><xsl:value-of select="./gml:name[2]"/></td>
+                    <td class="row header">Id:</td>
+                    <td class="row" colspan="2"><xsl:call-template name="make-wfspopup-url">
+                            <xsl:with-param name="friendly-name" select="$guID"/>
+                            <xsl:with-param name="real-url" select="$serviceURL"/>           
+                        </xsl:call-template></td>
+                </tr>
+                <tr>
+                    <td class="row header">Observation Method:</td>
+                    <td class="row"><xsl:value-of select="./gsml:observationMethod/gsml:CGI_TermValue/gsml:value"/></td>
+                    <td class="row header">Purpose:</td>
+                    <td class="row" colspan="2"><xsl:value-of select="./gsml:purpose"/></td>
+                </tr>
+                <tr>
+                    <td class="row header">Mapped FeatureId:</td>
+                    <td class="row"><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/@gml:id"/></td>
+                    <td class="row header">Mapped Feature Observation Method:</td>
+                    <td class="row" colspan="2"><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value"/></td>
+                </tr>
+                
+            </tbody>
+        </table>
+    </xsl:template>
+    
+    
 
     <!-- ================================================================= -->
     <!--    FUNCTION TO GET STRING AFTER LAST OCCURRENCE OF A SUBSTR       -->

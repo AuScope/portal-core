@@ -515,21 +515,24 @@
         <description>
            <xsl:text>featureId:</xsl:text><xsl:value-of select="@gml:id"/>
            
-           <![CDATA[<table border="1" cellspacing="1" cellpadding="2" " width="100%" bgcolor="#EAF0F8">
-           <tr><td>Name</td><td>]]><xsl:value-of select="./gml:name[@codeSpace='http://www.cgi-iugs.org/uri']"/><![CDATA[</td>]]>          
-           <![CDATA[</tr><tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/><![CDATA[</td>]]>
+           <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
+           <tr><td>Id</td><td>]]>
+           <xsl:call-template name="make-wfspopup-url">
+                        <xsl:with-param name="friendly-name" select="./gml:name[@codeSpace='http://www.cgi-iugs.org/uri']"/>
+                        <xsl:with-param name="real-url">
+                            <xsl:value-of select="$serviceURL"/><![CDATA[?service=WFS&version=1.1.0&request=GetFeature&typename=gsml:GeologicUnit&featureId=]]><xsl:value-of select="@gml:id"/></xsl:with-param>
+           </xsl:call-template><![CDATA[</td>]]>          
+           <![CDATA[</tr><td>Location</td><td>]]><xsl:value-of select="$coordinates"/><![CDATA[</td>]]>
            <![CDATA[</tr><tr><td>Observation Method</td><td>]]><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace='urn:cgi:classifier:CGI:MappedFeatureObservationMethod:200811']"/><![CDATA[</td>]]>
            <![CDATA[</tr><tr><td>Rock Material</td><td>]]><xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td>]]>
            <![CDATA[</tr><tr><td>Proportion</td><td>]]><xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value[@codeSpace='urn:cgi:classifier:CGI:ProportionTerm:200811']"/><![CDATA[</td>]]>
            <![CDATA[</tr><tr><td>Weathering Description</td><td>]]><xsl:value-of select="./gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td>]]>
-           <![CDATA[</td></tr></table>]]>
+           <![CDATA[</tr></table>]]>
         </description>
         
         <xsl:apply-templates select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>
      </Placemark>
    </xsl:template>
-   
-   
    
    <!-- TEMPLATE FOR TRANSLATING GNSS -->
    <!-- ================================================================= -->
@@ -854,7 +857,9 @@
       <xsl:param name="friendly-name"/>
       <xsl:param name="real-url"/>
       <a href="#" onclick="var w=window.open('{$real-url}','AboutWin','toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820');w.focus();return false;"><xsl:value-of select="$friendly-name"/></a>
-   </xsl:template>
+   </xsl:template> 
+   
+  
 
    <!-- ================================================================= -->
    <!--    This function creates a same window popup link                 -->
