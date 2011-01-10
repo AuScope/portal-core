@@ -220,7 +220,7 @@ public class TestGSMLController {
 
             oneOf(mockGeochemFilter).getFilterStringAllRecords(); will(returnValue(filterString));
         }});
-        ModelAndView modelAndView = gsmlController.doYilgarnGeochemistryFilter("fake","fake", "fake", null, 0,mockHttpRequest);
+        ModelAndView modelAndView = gsmlController.doYilgarnGeochemistryFilter("fake","fake", "fake", "fake", null, 0,mockHttpRequest);
         
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
         
@@ -251,7 +251,7 @@ public class TestGSMLController {
 
             oneOf(mockGeochemFilter).getFilterStringAllRecords(); will(returnValue(filterString));
         }});
-        ModelAndView modelAndView = gsmlController.doYilgarnGeochemistryFilter("fake","fake", "fake", bboxToParse, 0,mockHttpRequest);
+        ModelAndView modelAndView = gsmlController.doYilgarnGeochemistryFilter("fake","fake", "fake", "fake", bboxToParse, 0,mockHttpRequest);
         
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
         

@@ -16,6 +16,7 @@ import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 public class YilgarnGeochemistryFilter extends AbstractFilter{
 	private String rockLithology;
     private String weatherLithology;
+    private String geologicName;
     
 // -------------------------------------------------------------- Constants
     
@@ -25,8 +26,9 @@ public class YilgarnGeochemistryFilter extends AbstractFilter{
     
     // ----------------------------------------------------------- Constructors
     
-    public YilgarnGeochemistryFilter(String rockLithology,
+    public YilgarnGeochemistryFilter(String geologicName, String rockLithology,
                                 String weatherLithology) {
+    	this.geologicName = geologicName;
         this.rockLithology = rockLithology;
         this.weatherLithology = weatherLithology;
     }
@@ -51,7 +53,9 @@ public class YilgarnGeochemistryFilter extends AbstractFilter{
     // -------------------------------------------------------- Private Methods
     private String generateFilterFragment() {
         List<String> parameterFragments = new ArrayList<String>();
-        
+        if(this.geologicName.length() > 0)
+        	parameterFragments.add(this.generatePropertyIsLikeFragment("gml:name", this.geologicName));
+        	
         if(this.rockLithology.length() > 0)
             parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href", this.rockLithology));
         
