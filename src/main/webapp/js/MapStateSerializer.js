@@ -31,13 +31,27 @@ MapStateSerializer.prototype.addMapState = function(map) {
  * Internal use only - returns an object representing a bare minimum activeLayerRecord
  */
 MapStateSerializer.prototype.serializeActiveLayer = function(activeLayerRecord) {
-    return {
-        id : activeLayerRecord.getId(),
-        filter : activeLayerRecord.getLastFilterParameters(),
-        opacity : activeLayerRecord.getOpacity(),
-        source : activeLayerRecord.getSource(),
-        visible : activeLayerRecord.getLayerVisible()
-    };
+    var source = activeLayerRecord.getSource();
+    
+    //Known layers have a persistable ID, CSWRecords do NOT
+    //This means we have to do a 'best effort' to identify a CSWRecord
+    if (source === 'KnownLayer') {
+        return {
+            id : activeLayerRecord.getId(), //This is only persistent for KnownLayers
+            filter : activeLayerRecord.getLastFilterParameters(),
+            opacity : activeLayerRecord.getOpacity(),
+            source : source,
+            visible : activeLayerRecord.getLayerVisible()
+        };
+    } else if (source === 'CSWRecord') {
+        var cswRecord = activeLayerRecord.getCSWRecords()[0];
+        return {
+            opacity : activeLayerRecord.getOpacity(),
+            source : source,
+            visible : activeLayerRecord.getLayerVisible(),
+            onlineResources : cswRecord.getOnlineResources()
+        };
+    }
 };
 
 /**

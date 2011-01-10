@@ -208,3 +208,34 @@ CSWRecord.prototype.containsKeyword = function(str) {
 	}
 	return false;
 };
+
+/**
+ * Returns true if every onlineResource in the specified array can be found in this CSWRecord
+ * param onlineResources - an array of objects that match the response from getOnlineResources.
+ */
+CSWRecord.prototype.matchesOnlineResources = function(onlineResources) {
+    var comparator = function(or1, or2) {
+        return (or1.url === or2.url) &&
+               (or1.onlineResourceType === or2.onlineResourceType) &&
+               (or1.name === or2.name) &&
+               (or1.description === or2.description);
+    };
+    
+    var resourcesToMatch = this.getOnlineResources();
+    
+    //Iterate the specified list of online resources
+    for (var i = 0; i < onlineResources.length; i++) {
+        var matchFound = false;
+        
+        //Find an associated match in the online resources of this object 
+        for (var j = 0; j < resourcesToMatch.length && !matchFound; j++) {
+            matchFound = comparator(onlineResources[i], resourcesToMatch[j]);
+        }
+        
+        if (!matchFound) {
+            return false;
+        }
+    }
+    
+    return true;
+};

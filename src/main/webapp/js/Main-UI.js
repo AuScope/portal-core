@@ -1437,12 +1437,11 @@ Ext.onReady(function() {
         //Add the layers, attempt to load whatever layers are available
         //but warn the user if some layers no longer exist
         for (var i = 0; i < s.activeLayers.length; i++) {
-            
-            if (!s.activeLayers[i].id) {
-                continue;
-            }
-            
             if (s.activeLayers[i].source === 'KnownLayer') {
+                if (!s.activeLayers[i].id) {
+                    continue;
+                }
+                
                 var knownLayer = knownLayersStore.getKnownLayerById(s.activeLayers[i].id);
                 if (!knownLayer) {
                     missingLayers = true;
@@ -1477,12 +1476,14 @@ Ext.onReady(function() {
                 }
                 
             } else if (s.activeLayers[i].source === 'CSWRecord') {
-                var cswRecord = cswRecordStore.getCSWRecordById(s.activeLayers[i].id);
-                if (!cswRecord) {
+                //Perform a 'best effort' to find a matching CSWRecord
+                var cswRecords = cswRecordStore.getCSWRecordsByOnlineResources(s.activeLayers[i].onlineResources);
+                if (cswRecords.length === 0) {
                     missingLayers = true;
                     continue;
                 }
                 
+                var cswRecord = cswRecords[0];
                 cswPanelAddHandler(cswRecord, s.activeLayers[i].visible, true);
                 var activeLayerRec = activeLayersStore.getByCSWRecord(cswRecord);
                 if (activeLayerRec) {

@@ -183,6 +183,26 @@ Ext.extend(CSWRecordStore, Ext.data.GroupingStore, {
 		});	
 		
 		return results;
-	}	
+	},
+	
+	/**
+     * Gets all records that have a CSWRecord list that matches the specified onlineResource array
+     * 
+     * onlineResources Array of OnlineResources
+     * Returns an array of CSWRecord objects
+     */
+    getCSWRecordsByOnlineResources : function(onlineResources) {
+        
+        //Filter our results by the list of online resources
+        var results = [];
+        for (var i = 0; i < this.getCount(); i++) {
+            var cswRecord = this.getCSWRecordAt(i);
+            if (cswRecord && cswRecord.matchesOnlineResources(onlineResources)) {
+                results.push(cswRecord);
+            }
+        }
+        
+        return results;
+    }   
 	
 });
