@@ -955,13 +955,9 @@
     <!-- TEMPLATE FOR TRANSLATING Yilgarn Geochemistry -->
     <!-- =============================================================== -->
     <xsl:template match="gsml:GeologicUnit">
-        <xsl:variable name="guID" select="./gml:name[@codeSpace='http://www.cgi-iugs.org/uri']"/>
+        <xsl:variable name="guID" select="@gml:id"/>
 
         <table>
-            <colgroup span="1" width="15%"/>
-            <colgroup span="1" width="25%"/>
-            <colgroup span="2" width="15%"/>
-            <colgroup span="1" width="35%"/>
             <tbody>
                 <tr>
                     <td class="caption" colspan="3" rowspan="1">GSML - Yilgarn Geochemistry</td>
@@ -973,14 +969,34 @@
                     </td>
                 </tr>
                 <tr>
-                    <td class="row header">Name:</td>
-                    <td class="row"><xsl:value-of select="./gml:name[2]"/></td>
                     <td class="row header">Id:</td>
-                    <td class="row" colspan="2"><xsl:call-template name="make-wfspopup-url">
+                    <td class="row" colspan="4"><xsl:call-template name="make-wfspopup-url">
                             <xsl:with-param name="friendly-name" select="$guID"/>
                             <xsl:with-param name="real-url" select="$serviceURL"/>           
                         </xsl:call-template></td>
                 </tr>
+                <xsl:for-each select="./gml:name">
+                    <xsl:choose>
+                        <xsl:when test="position()=1">
+                        <tr>
+                            <td class="row header">Name:</td>
+                            <td class="row"><xsl:value-of select="."/></td>
+                            <td class="row">&#160;</td>
+                            <td class="row">&#160;</td>
+                            <td class="row">&#160;</td>
+                        </tr>
+                        </xsl:when>
+                        <xsl:otherwise>
+                        <tr>
+                            <td>&#160;</td>
+                            <td><xsl:value-of select="."/></td>
+                            <td>&#160;</td>
+                            <td>&#160;</td>
+                            <td>&#160;</td>
+                        </tr>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
                 <tr>
                     <td class="row header">Observation Method:</td>
                     <td class="row"><xsl:value-of select="./gsml:observationMethod/gsml:CGI_TermValue/gsml:value"/></td>
