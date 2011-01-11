@@ -77,7 +77,7 @@ CustomLayersGridPanel = function(id, title, cswRecordStore, addLayerHandler, sho
         	   	handler: function(){
             		Ext.Msg.show({
             			title:'Hint',
-            			msg: 'Works only for EPSG:4326 WMS layers. URLs like http://auscope-services-test.arrc.csiro.au:80/earth-imaging/wms are valid',
+            			msg: 'You will need to enter the fully qualified URL of a WMS. Any layers that can be projected in EPSG:4326 will then be made available for display.',
             			buttons: Ext.Msg.OK
             		});
             	}

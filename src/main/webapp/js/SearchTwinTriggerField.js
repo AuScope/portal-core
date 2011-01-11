@@ -60,7 +60,7 @@ Ext.ux.form.SearchTwinTriggerField = Ext.extend(Ext.form.TwinTriggerField, {
         if((v.match('request'))!==null || (v.match('version'))!==null){
         	Ext.Msg.show({
     			title:'Error!',
-    			msg: 'URL has either "version" or "request" parameters.Please remove them',
+    			msg: 'The WMS URL specified cannot include a "version" or "request" parameter.<br/> You will have to remove these parameters before continuing',
     			buttons: Ext.Msg.OK
     		});
         	return;
@@ -77,7 +77,7 @@ Ext.ux.form.SearchTwinTriggerField = Ext.extend(Ext.form.TwinTriggerField, {
         				if(invalidLayerCount > 0){
         					Ext.Msg.show({
                     			title:'Non EPSG:4326 WMS Layers!',
-                    			msg: 'There are ' + invalidLayerCount + ' non EPSG:4326 WMS Layers.<br/>Portal cannot display them.',
+                    			msg: 'There are ' + invalidLayerCount + ' WMS layers that do not support EPSG:4326.<br/> These layers will not be available for display.',
                     			buttons: Ext.Msg.OK
                     		});
         				}
@@ -93,7 +93,7 @@ Ext.ux.form.SearchTwinTriggerField = Ext.extend(Ext.form.TwinTriggerField, {
         				}else{
         					Ext.Msg.show({
                     			title:'Non EPSG:4326 WMS Layers!',
-                    			msg: 'There are ' + invalidLayerCount + ' non EPSG:4326 WMS Layers.<br/>Portal cannot display them.',
+                    			msg: 'There are ' + invalidLayerCount + ' WMS layers that do not support EPSG:4326.<br/> These layers will not be available for display.',
                     			buttons: Ext.Msg.OK
                     		});
         				}
