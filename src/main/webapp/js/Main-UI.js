@@ -732,27 +732,29 @@ Ext.onReady(function() {
         activeLayerRecord.setIsLoading(true);
         activeLayerRecord.setHasData(false);
         
-        //Generate our filter parameters for this service (or use the override values if specified)
-        var filterParameters = { };
-        if (overrideFilterParams) {
-            filterParameters = overrideFilterParams;
-        } else {
-            if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
-                filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
-            }
-            filterParameters.maxFeatures = MAX_FEATURES; // limit our feature request to 200 so we don't overwhelm the browser
-            filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
-            if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
-                filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
-            }
-        }
-        
-        activeLayerRecord.setLastFilterParameters(filterParameters);
         
         for (var i = 0; i < cswRecords.length; i++) {
         	//Assumption - We will only have 1 WFS linked per CSW
         	var wfsOnlineResource = cswRecords[i].getFilteredOnlineResources('WFS')[0];
-        	
+
+            //Generate our filter parameters for this service (or use the override values if specified)
+            var filterParameters = { };
+            
+            if (overrideFilterParams) {
+                filterParameters = overrideFilterParams;
+            } else {
+                if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
+                    filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
+                }
+                filterParameters.maxFeatures = MAX_FEATURES; // limit our feature request to 200 so we don't overwhelm the browser
+                filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
+                if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
+                    filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
+                }
+            }
+            activeLayerRecord.setLastFilterParameters(filterParameters);
+            
+        	//Generate our filter parameters for this service
         	filterParameters.serviceUrl = wfsOnlineResource.url;
         	filterParameters.typeName = wfsOnlineResource.name;
         	
