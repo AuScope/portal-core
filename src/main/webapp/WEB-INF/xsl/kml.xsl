@@ -857,7 +857,7 @@
    <!--    Returns something like this
          <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
    -->
-   <xsl:template name="start-table"><![CDATA[<div style='min-width: 400px; max-width:650px; min-height: 40px; max-height: 350px; overflow: auto;"'><table border="1" cellpadding="4" class="auscopedefault" style="font-family: Verdana;
+   <xsl:template name="start-table"><![CDATA[<div style='min-width: 40px; max-width:650px; min-height: 40px; max-height: 350px; overflow: auto;"'><table border="1" cellpadding="4" class="auscopedefault" style="font-family: Verdana;
         font-weight: normal;
         font-size: 12px;
         color: #404040;

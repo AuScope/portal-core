@@ -79,19 +79,20 @@ GeotransectsInfoWindow.prototype = {
 
 		}
 
-		this.tabsArray[0] = new GInfoWindowTab(this.TAB_2, '<div style="padding-bottom:10px;" >' +
-				'Specific Line information from registry:' +
-				'</div>' +
-				'<div style="min-width:400; min-height:300;">' +
-				'<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">' +
-				'<tr><td>ID:</td><td>' + this.lineId + '</td></tr>' +
-				'<tr><td>Descrtiption</td><td><pre style="white-space:pre-wrap;white-space:-moz-pre-wrap;' +
-				'white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;' +
-				'width:99%;overflow:auto;">' + this.linedesc + '</pre></td></tr>' +
-				'<tr><td>HighRes Layer Name</td><td>' + this.serviceurl + '</td></tr>' +
-				'<tr><td>HighRes Layer URL</td><td>' + this.layername + '</td></tr>' +
+		this.tabsArray[0] = new GInfoWindowTab(this.TAB_2, '<div class="niceDiv">' +
+				'<div style="padding-bottom:10px;" >' +
+				'Specific Line information from registry:' + '</div>' +
+				'<div class="niceDiv">' +
+				'<table border="1" cellspacing="1" cellpadding="4" class="auscopeTable">' +
+				'<tr><td id="headings">ID</td><td id="data">' + this.lineId + '</td></tr>' +
+				'<tr><td id="headings">Descrtiption</td><td id="data">' +
+				'<pre id="auscopePre">' +
+				this.linedesc + '</pre></td></tr>' +
+				'<tr><td id="headings">HighRes Service URL</td><td id="data">' + this.serviceurl + '</td></tr>' +
+				'<tr><td id="headings">HighRes Layer Name</td><td id="data">' + this.layername + '</td></tr>' +
 				'</table>' +
-			    '</div>');
+			    '</div>' +
+				'</div>');
 
 		//The following initialisation is required as the tabs later added asynchronously
 		//may end up being added in the wrong order (2 before 1 exists) resulting in errors
@@ -167,7 +168,8 @@ GeotransectsInfoWindow.prototype = {
     	var sHtml = "";
 
 		if(values.length > 1) {
-			sHtml += '<div style="padding-bottom:10px;" >' +
+			sHtml += '<div class="niceDiv">' +
+				'<div style="padding-bottom:10px;" >' +
 				'Available data sets:' +
 				'</div>' +
 				'<div>' +
@@ -176,7 +178,7 @@ GeotransectsInfoWindow.prototype = {
 				'(right click > Save Target / Link As).' +
 				'</div>' +
 				'<div>' +
-				'<table border="1" cellspacing="1" width="100%" bgcolor="#EAF0F8">';
+				'<table border="1" cellspacing="1" cellpadding="4" class="auscopeTable">';
 
 			for (var i = 0; i < values.length; i++) {
 				sHtml += "<tr><td>";
@@ -184,12 +186,11 @@ GeotransectsInfoWindow.prototype = {
 				sHtml += "</tr></td>";
 			}
 
-			sHtml += "</table>";
-			sHtml += '</div>';
+			sHtml += "</table></div></div>";
 	        this.mask.hide();
 		}
 		else {
-			sHtml += '<div style="padding-bottom:10px;" >' +
+			sHtml += '<div class="niceDiv">' +
 			         'No DataSets available.' +
 			          '</div>';
 	        this.mask.hide();

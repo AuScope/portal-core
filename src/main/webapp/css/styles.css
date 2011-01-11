@@ -50,3 +50,45 @@
         border-bottom: 1px solid black;
         width: 80%;
     }
+
+    .niceDiv {
+        min-width: 40px;
+        max-width:650px;
+        min-height: 40px;
+        max-height: 350px;
+        font-family: Verdana;
+
+    }
+
+    .niceDivOverFlow {
+        font-family: Verdana;
+        min-width: 40px;
+        max-width:650px;
+        min-height: 40px;
+        max-height: 350px;
+        overflow: auto;
+    }
+
+    .auscopeTable {
+        font-family: Verdana;
+        font-weight: normal;
+        font-size: 12px;
+        color: #404040;
+        background-color: #fafafa;
+        border-style: solid;
+        border-color: #6699CC;
+        border-collapse: collapse;
+    }
+
+    #reportsname {
+        font-weight: bold;
+    }
+
+    #auscopePre {
+        white-space: pre-wrap;
+        white-space: -moz-pre-wrap;
+        white-space: -pre-wrap;
+        white-space: -o-pre-wrap;
+        word-wrap: break-word;
+        width: 99%;
+    }
