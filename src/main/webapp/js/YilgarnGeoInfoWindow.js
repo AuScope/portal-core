@@ -142,10 +142,12 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 
 			            	   			var selectedMineral = record.get('field1'); //TODO change to a proper field name
 			            	   			if(selectedMineral == 'All'){
-			            	   				groupStore.filter('quantityName','', false, false);
-			            	   			}else
-			            	   			//do stuff
-			            	   			groupStore.filter('quantityName', selectedMineral, false, false);
+			            	   				groupStore.filter('quantityName', '', false, false);
+			            	   			}
+			            	   			else {
+			            	   				//do stuff
+			            	   				groupStore.filter('quantityName', selectedMineral, false, false);
+			            	   			}
 			               			}
 			               		}
 			               })
@@ -191,7 +193,7 @@ function locSpecDownload(wfsUrl,locSpecimenFeatureId,locSpecTypeName, geoFeature
     url += '&' + key + '=' + escape(geoLink);
 
 	downloadFile(url);
-};
+}
 
 downloadFile = function(url) {
     var body = Ext.getBody();

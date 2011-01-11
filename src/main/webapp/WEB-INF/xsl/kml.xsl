@@ -225,7 +225,7 @@
 			   </xsl:choose>
 
 			   <![CDATA[</td></tr>]]>
-	           <![CDATA[<</table></div>>]]>
+	           <![CDATA[</table></div>]]>
             </description>
             <xsl:apply-templates select="./descendant::gml:Point"/>
          </Placemark>
@@ -858,16 +858,14 @@
          <![CDATA[<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">
    -->
    <xsl:template name="start-table">
-      <![CDATA[<div style='min-width: 400px; max-width:650px; max-height: 250px; overflow: auto;'><table border="1" cellspacing="1" cellpadding="2" style="font-family: Verdana;
-font-weight: normal;
-font-size: 11px;
-color: #404040;
-width: 500px;
-background-color: #fafafa;
-border: 1px #6699CC solid;
-border-collapse: collapse;
-border-spacing: 0px;
-overflow:auto">]]>
+      <![CDATA[<div style='min-width: 400px; max-width:650px; min-height: 100px; max-height: 350px; overflow: auto;"'><table border="1" cellpadding="4" class="auscopedefault" style="font-family: Verdana;
+        font-weight: normal;
+        font-size: 12px;
+        color: #404040;
+        background-color: #fafafa;
+        border-style: solid;
+        border-color: #6699CC;
+        border-collapse: collapse;">]]>
    </xsl:template>
 
 </xsl:stylesheet>
