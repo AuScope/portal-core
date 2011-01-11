@@ -866,5 +866,4 @@
         border-color: #6699CC;
         border-collapse: collapse;">]]>
    </xsl:template>
-
 </xsl:stylesheet>
