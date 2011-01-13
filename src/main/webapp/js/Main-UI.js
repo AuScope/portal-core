@@ -1516,7 +1516,7 @@ Ext.onReady(function() {
 
     //As there is a relationship between these two stores,
     //We should refresh any GUI components whose view is dependent on these stores
-    cswRecordStore.load({callback : function() {
+    cswRecordStore.load({callback : function(r, options, success) {
     	knownLayersStore.load({callback : function() {
         	cswRecordStore.fireEvent('datachanged');
 
@@ -1524,6 +1524,15 @@ Ext.onReady(function() {
         	var urlParams = Ext.urlDecode(location.search.substring(1));
         	if (urlParams && urlParams.state) {
         	    attemptDeserialization(urlParams.state);
+        	}
+        	
+        	if(r.length == 0) {
+                Ext.MessageBox.show({
+                    title : 'No Services Available',
+                    icon : Ext.MessageBox.WARNING,
+                    msg : 'The CSW(s) are not returning any records and functionality will be affected.',
+                    multiline : false
+                });
         	}
         }});
     }});
