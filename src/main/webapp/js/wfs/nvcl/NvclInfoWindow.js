@@ -322,12 +322,16 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
         //var store = grid.getStore();  // Capture the Store.
         var view = grid.getView();    // Capture the GridView.
 
+        var autoWidth = !Ext.isIE6 && !Ext.isIE7;
+        var width = autoWidth ? undefined : 250;
+        
         scalarGrid.tip = new Ext.ToolTip({
             target: view.mainBody,    // The overall target element.
             delegate: '.x-grid3-row', // Each grid row causes its own seperate show and hide.
             trackMouse: true,         // Moving within the row should not hide the tip.
             renderTo: document.body,  // Render immediately so that tip.body can be referenced prior to the first show.
-            autoWidth: true,
+            autoWidth: autoWidth,
+            width: width,
             listeners: {              // Change content dynamically depending on which element triggered the show.
                 beforeshow: function updateTipBody(tip) {
                     var grid = Ext.getCmp('nvcl-scalar-grid');

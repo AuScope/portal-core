@@ -995,6 +995,8 @@ Ext.onReady(function() {
             var theRow = activeLayersPanel.getView().findRow(row);
             var activeLayerRecord = new ActiveLayersRecord(activeLayersPanel.getStore().getAt(theRow.rowIndex));
 
+            var autoWidth = !Ext.isIE6 && !Ext.isIE7;
+            
             //This is for the key/legend column
             if (col.cellIndex == '1') {
 
@@ -1007,18 +1009,20 @@ Ext.onReady(function() {
 	                    trackMouse: true,
 	                    showDelay:60,
 	                    autoHeight:true,
-	                    autoWidth: true
+	                    autoWidth: autoWidth
 	                });
             	}
             }
             //this is the status icon column
             else if (col.cellIndex == '2') {
                 var html = 'No status has been recorded.';
-
-                if (activeLayerRecord.getResponseToolTip()) {
+                var htmlResponse = false;
+                
+                if (activeLayerRecord.getResponseToolTip() != null) {
                     html = activeLayerRecord.getResponseToolTip().getHtml();
+                    htmlResponse = true;
                 }
-
+                
                 activeLayersToolTip = new Ext.ToolTip({
                     target: e.target ,
                     header: false,
@@ -1029,7 +1033,9 @@ Ext.onReady(function() {
                     trackMouse: true,
                     showDelay:60,
                     autoHeight:true,
-                    autoWidth: true
+                    autoWidth: autoWidth,
+                    maxWidth:500,
+                    width:autoWidth ? undefined : 500
                 });
             }
             //this is the column for download link icons
@@ -1044,7 +1050,7 @@ Ext.onReady(function() {
 	                    trackMouse: true,
 	                    showDelay:60,
 	                    autoHeight:true,
-	                    autoWidth: true
+	                    autoWidth: autoWidth
 	                });
             	} else {
                     activeLayersToolTip = new Ext.ToolTip({
@@ -1055,7 +1061,7 @@ Ext.onReady(function() {
                         trackMouse: true,
                         showDelay:60,
                         autoHeight:true,
-                        autoWidth: true
+                        autoWidth: autoWidth
                     });
                 }
             }
