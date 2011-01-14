@@ -1101,13 +1101,14 @@ Ext.onReady(function() {
             			var titleTypes = '';
             			for (var i = 0; i < cswRecords.length; i++) {
             				var wmsOnlineResources = cswRecords[i].getFilteredOnlineResources('WMS');
+            				
+            				if (titleTypes.length !== 0) {
+                                titleTypes += ', ';
+                            }
+                            titleTypes += cswRecords[i].getServiceName();
+            				
             				for (var j = 0; j < wmsOnlineResources.length; j++) {
 			            		var url = new LegendManager(wmsOnlineResources[j].url, wmsOnlineResources[j].name).generateImageUrl();
-
-			            		if (titleTypes.length !== 0) {
-			            			titleTypes += ', ';
-			            		}
-			            		titleTypes += wmsOnlineResources[j].name;
 
 			            		html += '<a target="_blank" href="' + url + '">';
 			            		html += '<img alt="Loading legend..." src="' + url + '"/>';
