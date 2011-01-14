@@ -681,8 +681,8 @@ Ext.onReady(function() {
     		//Add our WMS tiles (if any)
             for (var j = 0; j < wmsOnlineResources.length; j++) {
             	var tileLayer = new GWMSTileLayer(map, new GCopyrightCollection(""), 1, 17);
-                tileLayer.baseURL = wmsOnlineResources[i].url;
-                tileLayer.layers = wmsOnlineResources[i].name;
+                tileLayer.baseURL = wmsOnlineResources[j].url;
+                tileLayer.layers = wmsOnlineResources[j].name;
                 tileLayer.opacity = activeLayerRecord.getOpacity();
 
                 overlayManager.addOverlay(new GTileLayerOverlay(tileLayer));
