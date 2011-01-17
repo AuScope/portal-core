@@ -85,15 +85,19 @@ Ext.onReady(function() {
     		if(cswRecords.length == 1) {
     			var constraints = activeLayerRec.getCSWRecords()[0].getConstraints();
 
-    			if(constraints.length > 0) {
+    			if(constraints.length > 0 ) {
     				html += "<table cellspacing='10' cellpadding='0' border='0'>";
-    				for(var i=0; i<constraints.length; i++) {
-    					if(/^http:\/\//.test(constraints[i])) {
-    						html += "<tr><td><a href="+constraints[i]+" target='_blank'>" + constraints[i] + "</a></td></tr>";
-    					} else {
-    						html += "<tr><td>" + constraints[i] + "</td></tr>";
-    					}
-    				}
+	    			if(constraints.length == 1 && constraints[0].length <= 0) {
+	    				html += "<tr><td>Copyright: Exclusive right to the publication, production, or sale of the rights to a literary, dramatic, musical, or artistic work, or to the use of a commercial print or label, granted by law for a specified period of time to an author, composer, artist, distributor.</td></tr>";
+	    			} else {
+	    				for(var i=0; i<constraints.length; i++) {
+	    					if(/^http:\/\//.test(constraints[i])) {
+	    						html += "<tr><td><a href="+constraints[i]+" target='_blank'>" + constraints[i] + "</a></td></tr>";
+	    					} else {
+	    						html += "<tr><td>" + constraints[i] + "</td></tr>";
+	    					}
+	    				}
+	    			}
     				html += "</table>";
     			}
     		} else { //TODO: Uncomment to handle layers with multiple cswRecords
@@ -536,27 +540,31 @@ Ext.onReady(function() {
     	var responseTooltip = new ResponseTooltip();
     	activeLayerRecord.setResponseToolTip(responseTooltip);
 
-    	var reportTitleFilter = '';
+    	var titleFilter = '';
         var keywordFilter = '';
         var resourceProviderFilter = '';
     	var filterObj = null;
     	if (overrideFilterParams) {
     	    filterObj = overrideFilterParams;
     	} else {
-    	    filterObj = filterPanel.getLayout().activeItem.getForm().getValues();
+    	    if(typeof filterPanel.getLayout().activeItem.getForm == 'function') {
+    	        filterObj = filterPanel.getLayout().activeItem.getForm().getValues();
+    	    }
     	}
 
-    	reportTitleFilter = filterObj.title;
         var regexp = /\*/;
-        if(reportTitleFilter !== '' && /^\w+/.test(reportTitleFilter)) {
-        	regexp = new RegExp(reportTitleFilter, "i");
+        if(filterObj !== null){ 
+        	titleFilter = filterObj.title;       		
+        	if(titleFilter !== '' && /^\w+/.test(titleFilter)) {
+        	    regexp = new RegExp(titleFilter, "i");
+        	}       
         }
 
-        if(filterObj.keyword !== null) {
+        if(filterObj !== null && filterObj.keyword !== null) {
         	keywordFilter = filterObj.keyword;
         }
 
-        if(filterObj.resourceProvider !== null) {
+        if(filterObj !== null && filterObj.resourceProvider !== null) {
         	resourceProviderFilter = filterObj.resourceProvider;
         }
 
@@ -567,7 +575,7 @@ Ext.onReady(function() {
         var knownLayer = activeLayerRecord.getParentKnownLayer();
         var numRecords = 0;
     	for (var i = 0; i < cswRecords.length; i++) {
-    		if ((reportTitleFilter === '' || regexp.test(cswRecords[i].getServiceName())) &&
+    		if ((titleFilter === '' || regexp.test(cswRecords[i].getServiceName())) &&
     				(keywordFilter === '' || cswRecords[i].containsKeyword(keywordFilter)) &&
     				(resourceProviderFilter === '' || cswRecords[i].getResourceProvider() == resourceProviderFilter)) {
     			numRecords++;
@@ -619,7 +627,7 @@ Ext.onReady(function() {
     	}
         overlayManager.markerManager.refresh();
 
-    	responseTooltip.addResponse("", numRecords + " records retrieved.");
+    	responseTooltip.addResponse("", numRecords + " record(s) retrieved.");
 
     	activeLayerRecord.setHasData(numRecords > 0);
     };
@@ -848,7 +856,7 @@ Ext.onReady(function() {
                     debuggerData.addResponse(jsonResponse.debugInfo.url,debugInfo);
 
                     //store the status
-                    responseTooltip.addResponse(filterParameters.serviceUrl, (markers.length + overlays.length) + " records retrieved.");
+                    responseTooltip.addResponse(filterParameters.serviceUrl, (markers.length + overlays.length) + " record(s) retrieved.");
 
                     if(markers.length > 0 || overlays.length > 0) {
                     	activeLayerRecord.setHasData(true);
