@@ -14,29 +14,6 @@ MineralOccurrenceFilterForm = function(id) {
             ['UKN', 'urn:ogc:def:nil:OGC::missing']
         ];
 
-            // Those ones are not required but leaving them in case ...
-            //['CUB M/HA', 'urn:ogc:def:uom:UCUM::m3.har-1'],
-            //['TONNE/M', 'urn:ogc:def:uom:UCUM::t.m-1'],
-            //['TONNE/100M', 'urn:ogc:def:uom:UCUM::t.hm-1'],
-            //['GM/TONNE', 'urn:ogc:def:uom:UCUM::g.t-1'],
-            //['KG/TONNE', 'urn:ogc:def:uom:UCUM::kg.t-1'],
-            //['MILL TONNE', 'urn:ogc:def:uom:UCUM::Mt'],
-            //['M', 'urn:ogc:def:uom:UCUM::m'],
-            //['%', 'urn:ogc:def:uom:UCUM::%25'],
-            //['SQ M', 'urn:ogc:def:uom:UCUM::m2'],
-            //['MA', 'urn:ogc:def:uom:UCUM::Ma'],
-            //['NOUNIT', 'urn:ogc:def:nil:OGC::inapplicable'],
-            //['PPM', 'urn:ogc:def:uom:UCUM::%5Bppm%5D'],
-            //['PPB', 'urn:ogc:def:uom:UCUM::%5Bppb%5D'],
-            //['MM', 'urn:ogc:def:uom:UCUM::mm'],
-            //['UM', 'urn:ogc:def:uom:UCUM::um'],
-            //['GCOUNT', 'urn:ogc:def:uom:UCUM::%7BGCOUNT%7D'],
-            //['HA', 'urn:ogc:def:uom:UCUM::har'],
-            //['MESH', 'urn:ogc:def:uom:UCUM::%5Bmesh_i%5D'],
-            //['SI', 'urn:ogc:def:uom:UCUM::%7BSI%7D'],
-            //['GM/CC', 'urn:ogc:def:uom:UCUM::g.cm-3']
-
-
     var unitOfMeasureStore = new Ext.data.SimpleStore({
         fields : ['unitLabel', 'urn'],
         data   : unitsOfMeasure
@@ -89,12 +66,7 @@ MineralOccurrenceFilterForm = function(id) {
                         Ext.getCmp('minCommodityAmountUOMCmbBx').enable();
                     }
                 }
-            }/*,
-            blur: {
-                fn:function(field) {
-                    alert('This is blur' + field.getValue());
-                }
-            }*/
+            }
         }
     });
 
@@ -123,7 +95,7 @@ MineralOccurrenceFilterForm = function(id) {
         anchor         : '100%',
         name           : 'commodityNameDisplayed', /* this just returns the values from displayField! */
         hiddenName     : 'commodityName',    /* this returns the values from valueField! */
-        fieldLabel     : 'Commodity',
+        fieldLabel     : '<span qtip="Please select a commodity from the Commodity Vocabulary. Powered by SISSVoc">' + 'Commodity' + '</span>',
         labelAlign     : 'right',
         forceSelection : true,
         mode           : 'local',
@@ -212,7 +184,9 @@ MineralOccurrenceFilterForm = function(id) {
         delayFormPopulation : true,
         items: [{
             xtype      : 'fieldset',
-            title      : 'Mineral Occurrence Filter Properties',
+            title      : '<span qtip="Please enter the filter constraints then hit \'Apply Filter\'">' +
+                         'Mineral Occurrence Filter Properties' +
+                         '</span>',
             autoHeight : true,
             labelAlign : 'right',
             bodyStyle   : 'padding:0px',
@@ -256,20 +230,12 @@ MineralOccurrenceFilterForm = function(id) {
                             ]
                         }
                     ]
-                }/*,{
-                    anchor     : '100%',
-                    xtype      : 'textfield',
-                    fieldLabel : 'Cut Off Grade',
-                    name       : 'cutOffGrade',
-                    hidden     : true,
-                    hideLabel  : true
-                },
-                cutOffGradeUOMCombo */
+                }
             ]
         }]
     });
 };
 
 Ext.extend(MineralOccurrenceFilterForm, BaseFilterForm, {
-    
+
 });

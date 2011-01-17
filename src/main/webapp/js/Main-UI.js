@@ -12,6 +12,9 @@ var cswRecordStore = null;
 
 Ext.onReady(function() {
 
+	// Ext quicktips - check out <span qtip="blah blah"></span> around pretty much anything.
+	Ext.QuickTips.init();
+
     var formFactory = new FormFactory();
     var searchBarThreshold = 6; //how many records do we need to have before we show a search bar
 
@@ -320,6 +323,7 @@ Ext.onReady(function() {
     //-----------Known Features Panel Configurations (Groupings of various CSWRecords)
     var knownLayersPanel = new KnownLayerGridPanel('kft-layers-panel',
 												    		'Featured Layers',
+												    		'Layers or layer groups with custom handlers',
 												    		knownLayersStore,
 												    		cswRecordStore,
 												    		knownLayerAddHandler,
@@ -339,6 +343,7 @@ Ext.onReady(function() {
     };
     var mapLayersPanel = new CSWRecordGridPanel('wms-layers-panel',
 									    		'Map Layers',
+									    		'Other layers present in the Registry',
 									    		cswRecordStore,
 									    		cswPanelAddHandler,
 									    		mapLayersFilter,
@@ -351,6 +356,7 @@ Ext.onReady(function() {
     //------ Custom Layers
     var customLayersPanel = new CustomLayersGridPanel('custom-layers-panel',
 										    		'Custom Layers',
+										    		'Add your own WMS Layers',
 										    		customLayersStore,
 										    		cswPanelAddHandler,
 										    		showBoundsCSWRecord,
@@ -400,7 +406,7 @@ Ext.onReady(function() {
      * Used to show extra details for querying services
      */
     var filterPanel = new Ext.Panel({
-        title: "Filter Properties",
+        title: '<span qtip="Layer Specific filter properties. <br>Dont forget to hit \'Apply Filter\'">Filter Properties</span>',
         region: 'south',
         split: true,
         layout: 'card',
@@ -553,11 +559,11 @@ Ext.onReady(function() {
     	}
 
         var regexp = /\*/;
-        if(filterObj !== null){ 
-        	titleFilter = filterObj.title;       		
+        if(filterObj !== null){
+        	titleFilter = filterObj.title;
         	if(titleFilter !== '' && /^\w+/.test(titleFilter)) {
         	    regexp = new RegExp(titleFilter, "i");
-        	}       
+        	}
         }
 
         if(filterObj !== null && filterObj.keyword !== null) {
@@ -1004,7 +1010,7 @@ Ext.onReady(function() {
             var activeLayerRecord = new ActiveLayersRecord(activeLayersPanel.getStore().getAt(theRow.rowIndex));
 
             var autoWidth = !Ext.isIE6 && !Ext.isIE7;
-            
+
             //This is for the key/legend column
             if (col.cellIndex == '1') {
 
@@ -1025,12 +1031,12 @@ Ext.onReady(function() {
             else if (col.cellIndex == '2') {
                 var html = 'No status has been recorded.';
                 var htmlResponse = false;
-                
+
                 if (activeLayerRecord.getResponseToolTip() != null) {
                     html = activeLayerRecord.getResponseToolTip().getHtml();
                     htmlResponse = true;
                 }
-                
+
                 activeLayersToolTip = new Ext.ToolTip({
                     target: e.target ,
                     header: false,
@@ -1109,12 +1115,12 @@ Ext.onReady(function() {
             			var titleTypes = '';
             			for (var i = 0; i < cswRecords.length; i++) {
             				var wmsOnlineResources = cswRecords[i].getFilteredOnlineResources('WMS');
-            				
+
             				if (titleTypes.length !== 0) {
                                 titleTypes += ', ';
                             }
                             titleTypes += cswRecords[i].getServiceName();
-            				
+
             				for (var j = 0; j < wmsOnlineResources.length; j++) {
 			            		var url = new LegendManager(wmsOnlineResources[j].url, wmsOnlineResources[j].name).generateImageUrl();
 
@@ -1535,7 +1541,7 @@ Ext.onReady(function() {
         	if (urlParams && urlParams.state) {
         	    attemptDeserialization(urlParams.state);
         	}
-        	
+
         	if(r.length == 0) {
                 Ext.MessageBox.show({
                     title : 'No Services Available',
