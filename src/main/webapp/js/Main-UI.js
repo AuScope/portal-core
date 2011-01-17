@@ -1206,10 +1206,11 @@ Ext.onReady(function() {
 	                		for (var j = 0; j < wfsOnlineResources.length; j++) {
 	                			var typeName = wfsOnlineResources[j].name;
 	                			var url = wfsOnlineResources[j].url;
+	                			var proxyUrl = activeLayerRecord.getProxyUrl()!== null ? activeLayerRecord.getProxyUrl() : 'getAllFeatures.do';
 	                			var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + typeName : filterPanel.getLayout().activeItem.getForm().getValues(true);
 
 	                			keys.push('serviceUrls');
-	                			values.push(window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + activeLayerRecord.getProxyUrl() + "?" + filterParameters + "&serviceUrl=" + url);
+	                			values.push(window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?" + filterParameters + "&serviceUrl=" + url);
 	                		}
 	                	}
 
