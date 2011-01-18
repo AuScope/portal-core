@@ -982,6 +982,7 @@ Ext.onReady(function() {
 
     this.activeLayersPanel = new ActiveLayersGridPanel('active-layers-panel',
 											    		'Active Layers',
+											    		'The map layers will display on the map in the order in which they were added.',
 											    		activeLayersStore,
 											    		activeLayerSelectionHandler,
 											    		updateActiveLayerZOrder,

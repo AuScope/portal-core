@@ -100,3 +100,10 @@
          color:#555;
          background: #f9f9f9;
     }
+
+    .x-grid-dirty-cell {
+    	background-image:none ! important;
+	}
+	.x-grid3-dirty-cell {
+    	background-image:none ! important;
+	}
