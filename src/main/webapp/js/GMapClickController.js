@@ -50,7 +50,7 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
  * of the point that was clicked. If the user clicks on an overlay that
  * is clickable (such as a GMarker, GPolygon, GPolyline, or GInfoWindow),
  * the overlay argument contains the overlay object, while the
- * 
+ *
  * overlay. In addition, a click event is then also fired on the overlay
  * itself.
  *
@@ -121,10 +121,10 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	            	if (overlay.description.indexOf(geochemParserString) === 0){
 	            		var indexOfSpace=overlay.description.indexOf('<');
 	            		featureId = overlay.description.substring(geochemParserString.length,indexOfSpace);
-	            	}	            	
+	            	}
 	            	var infoWindow = new YilgarnGeoInfoWindow(map,overlay,wfsUrl,featureId,wfsTypeName);
 	            	infoWindow.show();
-	            	
+
 	            }
 	            else if (overlay.description !== null) {
 	                overlay.openInfoWindowHtml(overlay.description, {maxWidth:800, maxHeight:600, autoScroll:true});
@@ -214,7 +214,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	    //otherwise Handle for WCS services (if any)
 	    cswRecords = parentActiveLayerRecord.getCSWRecordsWithType('WCS');
 	    if (cswRecords.length !== 0) {
-	    	
+
 	    	var infoWindow = new GenericWCSInfoWindow(map, overlay, parentOnlineResource.url, parentOnlineResource.name, parentCSWRecord);
 			infoWindow.showInfoWindow();
 			return;
@@ -232,7 +232,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 
 	        if (!alr.getLayerVisible()) {
 	        	continue;
-	        }        
+	        }
 
 	        //each linked WMS record must be tested
 	        var wmsCSWRecords = alr.getCSWRecordsWithType('WMS');
@@ -265,7 +265,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	                if(typeName.substring(0, typeName.indexOf(":")) == "gt") {
 	                	handleGeotransectWmsRecord(url, wmsCSWRecords[j], wmsOnlineResource, map, latlng);
 	                } else {
-	                	handleGenericWmsRecord(url, i, map, latlng);
+	                	handleGenericWmsRecord(url, typeName, map, latlng);
 	            	}
 	        	}
 	        }
@@ -386,32 +386,6 @@ function handleGenericWmsRecord(url, i, map, latlng) {
     				response.status + '): ' + response.statusText);
     	}
     });
-
-//    GDownloadUrl(url, function(response, responseCode) {
-//        if (responseCode == 200) {
-//            if (isHtmlDataThere(response)) {
-//                if (isHtmlPage(response)) {
-//                    var openWindow = window.open('','mywindow'+i);
-//                    if (openWindow) {
-//                        openWindow.document.write(response);
-//                        openWindow.document.close();
-//                    } else {
-//                    	alert('Couldn\'t open popup window containing WMS information. Please disable any popup blockers and try again');
-//                    }
-//                } else {
-//                	map.openInfoWindowHtml(latlng, response, {autoScroll:true});
-//                }
-//            }
-//        } else if(responseCode == -1) {
-//            alert("Data request timed out. Please try later.");
-//        } else if ((responseCode >= 400) & (responseCode < 500)){
-//            alert('Request not found, bad request or similar problem. Error code is: ' + responseCode);
-//        } else if ((responseCode >= 500) & (responseCode <= 506)){
-//            alert('Requested service not available, not implemented or internal service error. Error code is: ' + responseCode);
-//        } else {
-//            alert('Remote server returned error code: ' + responseCode);
-//        }
-//    });
 }
 
 /**
