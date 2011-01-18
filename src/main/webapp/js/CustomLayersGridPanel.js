@@ -164,7 +164,12 @@ CustomLayersGridPanel = function(id, title, description, cswRecordStore, addLaye
                             trackMouse: true,
                             showDelay:60,
                             autoHeight:true,
-                            autoWidth: autoWidth
+                            autoWidth: autoWidth,
+                            listeners : {
+                                hide : function(component) {
+                                    component.destroy();
+                                }
+                            }
                         });
                     }
                     //this is the status icon column
@@ -179,7 +184,12 @@ CustomLayersGridPanel = function(id, title, description, cswRecordStore, addLaye
 	                            trackMouse: true,
 	                            showDelay:60,
 	                            autoHeight:true,
-	                            autoWidth: autoWidth
+	                            autoWidth: autoWidth,
+	                            listeners : {
+	                                hide : function(component) {
+	                                    component.destroy();
+	                                }
+	                            }
 	                        });
                     	}
                     }

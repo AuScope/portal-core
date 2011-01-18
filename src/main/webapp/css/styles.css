@@ -92,3 +92,11 @@
         word-wrap: break-word;
         width: 99%;
     }
+
+    #filterpanelbox {
+         margin:15px;
+         padding:15px;
+         border:1px dotted #999;
+         color:#555;
+         background: #f9f9f9;
+    }

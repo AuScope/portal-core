@@ -119,16 +119,17 @@ CSWRecordGridPanel = function(id, title, description, cswRecordStore, addLayerHa
                    width:200,
                    id: searchPanelId,
                    fieldName:'serviceName'
-               }), {
-            	   	xtype:'button',
-            	   	text:'<span qtip="Display only layers in present view window">' + 'Visible' + '</span>',
-            	   	handler:function() {
-            	   		var searchPanel = Ext.getCmp(searchPanelId);
-            	   		searchPanel.runCustomFilter('<visible layers>', function(rec){
-            	   			return visibleFilterHandler(new CSWRecord(rec));
-            	   		});
-               		}
-               }
+               }),
+               new Ext.Button({
+                   text     :'Visible',
+                   tooltip  :'Display only layers in present view window',
+                   handler  : function() {
+		       	       var searchPanel = Ext.getCmp(searchPanelId);
+		    	       searchPanel.runCustomFilter('<visible layers>', function(rec){
+		    	    	   return visibleFilterHandler(new CSWRecord(rec));
+		    	       });
+                   }
+               })
            ],
         listeners: {
         	cellclick : function (grid, rowIndex, colIndex, e) {
@@ -193,7 +194,12 @@ CSWRecordGridPanel = function(id, title, description, cswRecordStore, addLayerHa
                             trackMouse: true,
                             showDelay:60,
                             autoHeight:true,
-                            autoWidth: autoWidth
+                            autoWidth: autoWidth,
+                            listeners : {
+                                hide : function(component) {
+                                    component.destroy();
+                                }
+                            }
                         });
                     }
                     //this is the status icon column
@@ -207,7 +213,12 @@ CSWRecordGridPanel = function(id, title, description, cswRecordStore, addLayerHa
                             trackMouse: true,
                             showDelay:60,
                             autoHeight:true,
-                            autoWidth: autoWidth
+                            autoWidth: autoWidth,
+                            listeners : {
+                                hide : function(component) {
+                                    component.destroy();
+                                }
+                            }
                         });
                     }
                 }

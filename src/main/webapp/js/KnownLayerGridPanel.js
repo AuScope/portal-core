@@ -107,16 +107,16 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
                    width:200,
                    id:searchPanelId,
                    fieldName:'title'
-               }), {
-              	   	xtype:'button',
-               	   	text:'Visible',
-               	   	handler:function() {
+               }), new Ext.Button({
+                   text     :'Visible',
+                   tooltip  :'Display only layers in present view window',
+                   handler:function() {
                	   		var searchPanel = Ext.getCmp(searchPanelId);
                	   		searchPanel.runCustomFilter('<visible layers>', function(rec) {
                	   			return visibleLayerHandler(new KnownLayerRecord(rec));
                	   		});
                		}
-               }
+               })
            ],
         listeners: {
            	cellclick : function (grid, rowIndex, colIndex, e) {
@@ -190,7 +190,12 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
                             trackMouse: true,
                             showDelay:60,
                             autoHeight:true,
-                            autoWidth: autoWidth
+                            autoWidth: autoWidth,
+                            listeners : {
+                                hide : function(component) {
+                                    component.destroy();
+                                }
+                            }
                         });
                     }
                     //this is the status icon column
@@ -205,7 +210,12 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
                             trackMouse: true,
                             showDelay:60,
                             autoHeight:true,
-                            autoWidth: autoWidth
+                            autoWidth: autoWidth,
+                            listeners : {
+                                hide : function(component) {
+                                    component.destroy();
+                                }
+                            }
                         });
                     }
                 }
