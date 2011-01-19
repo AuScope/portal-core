@@ -1146,7 +1146,7 @@ Ext.onReady(function() {
 			            		var url = new LegendManager(wmsOnlineResources[j].url, wmsOnlineResources[j].name).generateImageUrl();
 
 			            		html += '<a target="_blank" href="' + url + '">';
-			            		html += '<img onerror="this.alt=\'There was an error loading this legend. Click here to try again in a new window.\'" alt="Loading legend..." src="' + url + '"/>';
+			            		html += '<img onerror="this.alt=\'There was an error loading this legend. Click here to try again in a new window or contact the data supplier.\'" alt="Loading legend..." src="' + url + '"/>';
 			            		html += '</a>';
 			            		html += '<br/>';
             				}
