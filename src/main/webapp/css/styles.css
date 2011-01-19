@@ -1,4 +1,3 @@
-
     body {
         margin: 0px;
         padding: 0px;
@@ -101,6 +100,8 @@
          background: #f9f9f9;
     }
 
+
+    <!-- AUS-1466 - disable red triangles - they confuse people -->
     .x-grid-dirty-cell {
     	background-image:none ! important;
 	}

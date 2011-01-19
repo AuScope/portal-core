@@ -49,20 +49,6 @@ GeotransectsInfoWindow.prototype = {
 
         this.mask.show();
 
-//        this.tabsArray[0] = new GInfoWindowTab(this.TAB_1,
-//				"<div style='min-width:400; min-height:300;'>" +
-//				"<table border=\"1\" cellspacing=\"1\" width=\"100%\" bgcolor=\"#EAF0F8\">" +
-//				"<tr>" +
-//				//"<td>" + this.testdes + "</td>" +
-//				"<td><pre style=\"white-space:pre-wrap;white-space:-moz-pre-wrap;" +
-//						"white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word;" +
-//						"width:99%;overflow:auto;\">" +
-//				this.description +
-//				"</pre></td></tr>" +
-//				"</table>" +
-//			    "</div>");
-
-
 	    // Hack to find the line's descrition from CSW
 		var linecsw = cswRecordStore.getCSWRecordsByKeywords([this.lineId]);
 
@@ -107,7 +93,6 @@ GeotransectsInfoWindow.prototype = {
         	onOpenFn:function(){
                 me.retrieveDatasets();
         	}});
-
 	},
 
 	'retrieveDatasets' : function() {
@@ -139,13 +124,23 @@ GeotransectsInfoWindow.prototype = {
         		serviceUrl 		: url
         	},
         	success: function(response, options) {
-        		var responseObj = Ext.util.JSON.decode(Ext.util.JSON.decode(response.responseText).json);
+        		var responseObj;
+        		try {
+	        		responseObj = Ext.util.JSON.decode(Ext.util.JSON.decode(response.responseText).json);
+        		}
+	        	catch (err) {
+	        		me.mask.hide();
+        			Ext.Msg.alert('Error downloading data', 'There was an error whilst communicating with the geotransects data server');
+                    return;
+	        	}
 
         		//Generate an error / success fragment to display to the user
         		if (!responseObj.result.success) {
-        			Ext.Msg.alert('Error downloading data', 'There was an error whilst communicating with ' + url);
+        			me.mask.hide();
+        			Ext.Msg.alert('Error downloading data', 'The service returned a failure result status ' + url);
         			return;
         		}
+
 
         		//Parse records and download the data
                 var values = [responseObj.items.length];
@@ -158,7 +153,7 @@ GeotransectsInfoWindow.prototype = {
         	},
         	failure: function(response, options) {
         		Ext.Msg.alert('Error requesting data', 'Error (' + response.status + '): ' + response.statusText);
-                this.mask.hide();
+                me.mask.hide();
         	}
         });
 	},
@@ -201,6 +196,6 @@ GeotransectsInfoWindow.prototype = {
 
         //Add new tab to pop-up window
         this.map.updateInfoWindow(this.tabsArray);
-        this.mask.hide();
+        me.mask.hide();
 	}
 };
