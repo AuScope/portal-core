@@ -14,7 +14,8 @@
                 <ref bean="knownTypeMine" />
                 <ref bean="knownTypeMineralOccurrence" />
                 <ref bean="knownTypeMiningActivity" />
-                <ref bean="knownTypeBorehole" />
+                <ref bean="knownTypeBoreholeNvcl" />
+                <ref bean="knownTypeBoreholePressureDB" />
                 <ref bean="knownTypeGeodesy" />
                 <ref bean="knownTypeReports" />
                 <ref bean="knownTypeGeotransects" />

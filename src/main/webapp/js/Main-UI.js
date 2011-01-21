@@ -751,37 +751,65 @@ Ext.onReady(function() {
         	//Assumption - We will only have 1 WFS linked per CSW
         	var wfsOnlineResource = cswRecords[i].getFilteredOnlineResources('WFS')[0];
 
-            //Generate our filter parameters for this service (or use the override values if specified)
-            var filterParameters = { };
-
-            if (overrideFilterParams) {
-                filterParameters = overrideFilterParams;
-            } else {
-                if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
-                    filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
-                }
-                filterParameters.maxFeatures = MAX_FEATURES; // limit our feature request to 200 so we don't overwhelm the browser
-                filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
-                if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
-                    filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
-                }
-            }
-            activeLayerRecord.setLastFilterParameters(filterParameters);
-
-        	//Generate our filter parameters for this service
-        	filterParameters.serviceUrl = wfsOnlineResource.url;
-        	filterParameters.typeName = wfsOnlineResource.name;
-
-            handleQuery(activeLayerRecord, cswRecords[i], wfsOnlineResource, filterParameters, function() {
-                //decrement the counter
-                finishedLoadingCounter--;
-
-                //check if we can set the status to finished
-                if (finishedLoadingCounter <= 0) {
-                	activeLayerRecord.setIsLoading(false);
-                }
-            });
+        	//Proceed with the query only if the resource url is contained in the list
+        	//of service endpoints for the known layer, or if the list is null.
+        	if(activeLayerRecord.getServiceEndpoints() == null  || 
+        			includeEndpoint(activeLayerRecord.getServiceEndpoints(),
+        					wfsOnlineResource.url, activeLayerRecord.includeEndpoints())) {
+        	
+	            //Generate our filter parameters for this service (or use the override values if specified)
+	            var filterParameters = { };
+	
+	            if (overrideFilterParams) {
+	                filterParameters = overrideFilterParams;
+	            } else {
+	                if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
+	                    filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
+	                }
+	                filterParameters.maxFeatures = MAX_FEATURES; // limit our feature request to 200 so we don't overwhelm the browser
+	                filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
+	                if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
+	                    filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
+	                }
+	            }
+	            activeLayerRecord.setLastFilterParameters(filterParameters);
+	
+	        	//Generate our filter parameters for this service
+	        	filterParameters.serviceUrl = wfsOnlineResource.url;
+	        	filterParameters.typeName = wfsOnlineResource.name;
+	
+	            handleQuery(activeLayerRecord, cswRecords[i], wfsOnlineResource, filterParameters, function() {
+	                //decrement the counter
+	                finishedLoadingCounter--;
+	
+	                //check if we can set the status to finished
+	                if (finishedLoadingCounter <= 0) {
+	                	activeLayerRecord.setIsLoading(false);
+	                }
+	            });
+	        } else { //If the endpoint will not be part of this layer just mark it as finished loading
+	            //decrement the counter
+	            finishedLoadingCounter--;
+	
+	            //check if we can set the status to finished
+	            if (finishedLoadingCounter <= 0) {
+	            	activeLayerRecord.setIsLoading(false);
+	            }
+	        }
         }
+    };
+    
+    /**
+     * determines whether or not a particular endpoint should be included when loading
+     * a layer
+     */
+    var includeEndpoint = function(endpoints, endpoint, includeEndpoints) { 	
+    	for(var i = 0; i < endpoints.length; i++) {
+    		if(endpoints[i].indexOf(endpoint) >= 0) {
+    			return includeEndpoints;
+    		}
+    	}
+    	return !includeEndpoints;
     };
 
     /**
@@ -1236,8 +1264,11 @@ Ext.onReady(function() {
 	                			var proxyUrl = activeLayerRecord.getProxyUrl()!== null ? activeLayerRecord.getProxyUrl() : 'getAllFeatures.do';
 	                			var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + typeName : filterPanel.getLayout().activeItem.getForm().getValues(true);
 
-	                			keys.push('serviceUrls');
-	                			values.push(window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?" + filterParameters + "&serviceUrl=" + url);
+	                			if(activeLayerRecord.getServiceEndpoints() == null || 
+	                					includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {
+	                				keys.push('serviceUrls');
+	                				values.push(window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?" + filterParameters + "&serviceUrl=" + url);
+	                			}
 	                		}
 	                	}
 

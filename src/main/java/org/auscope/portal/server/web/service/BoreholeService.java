@@ -9,14 +9,14 @@ import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 /**
- * A utility class which provides methods for querying nvcl service
+ * A utility class which provides methods for querying borehole service
  * 
  * @author Jarek Sanders
  * @version $Id$
  *
  */
 @Service
-public class NvclService {
+public class BoreholeService {
 
     // -------------------------------------------------------------- Constants
     
@@ -28,12 +28,6 @@ public class NvclService {
     private IFilter filter;
 
     // ----------------------------------------------------------- Constructors
-    /*
-    public NvclService() {
-        this.httpServiceCaller = new HttpServiceCaller();
-        this.methodMaker = new WFSGetFeatureMethodMakerPOST();
-    } */
-    
     
     // ------------------------------------------ Attribute Setters and Getters    
     

@@ -12,20 +12,20 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestNvclService {
+public class TestBoreholeService {
     
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
     
-    private NvclService service;
+    private BoreholeService service;
     private IFilter mockFilter = context.mock(IFilter.class);
     private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
     private IWFSGetFeatureMethodMaker mockMethodMaker = context.mock(IWFSGetFeatureMethodMaker.class);
     
     @Before
     public void setup() throws Exception {
-        service = new NvclService();
+        service = new BoreholeService();
         service.setFilter(mockFilter);
         service.setHttpServiceCaller(mockHttpServiceCaller);
         service.setWFSGetFeatureMethodMakerPOST(mockMethodMaker);

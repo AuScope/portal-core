@@ -104,6 +104,20 @@ KnownLayerRecord.prototype.getIconUrl = function() {
 };
 
 /**
+ * Gets the list of service endpoints to be included/excluded from the layer
+ */
+KnownLayerRecord.prototype.getServiceEndpoints = function() {
+	return this.internalRecord.get('serviceEndpoints');
+};
+
+/**
+ * Gets the flag indicating whether the listed endpoints should be included or excluded
+ */
+KnownLayerRecord.prototype.includeEndpoints = function() {
+	return this.internalRecord.get('includeEndpoints');
+};
+
+/**
  * Gets the descriptive keyword as a String. Only valid if type=='KnownLayerKeywords'
  */
 KnownLayerRecord.prototype.getDescriptiveKeyword = function() {

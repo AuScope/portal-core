@@ -14,6 +14,8 @@ ActiveLayersStore = function() {
 			    {   name	: 'cswRecords'      },	//[CSWRecord]: Objects that represent the content of this layer
 			    {	name	: 'proxyUrl'		},	//String: The raw URL that references the location the active layer should query 
 			    {   name	: 'iconUrl'         },	//String: The raw URL pointing to an appropriate image icon (used for WFS) 
+			    {   name    : 'serviceEndpoints'},  //String[]: The list of service endpoints that will be included/excluded from the layer
+			    {   name    : 'includeEndpoints'},  //boolean: The flag indicating whether the listed endpoints will be included or excluded
 			    {   name	: 'keyIconHtml'     },	//String: HTML that will appear under the 'key' column
 			    {   name	: 'isLoading' 		},	//boolean: Whether this layer is currently 'loading'
 			    {   name    : 'hasData'         },  //boolean: Whether this layer currently has data avaiable for download
@@ -59,6 +61,8 @@ Ext.extend(ActiveLayersStore, Ext.data.Store, {
 			proxyUrl	: null,
 			cswRecords	: [cswRecord],
 			iconUrl		: null,
+			serviceEndpoints : null,
+			includeEndpoints : false,
 			keyIconHtml	: keyIconHtml,
 			isLoading	: false,
 			hasData     : false,
@@ -85,6 +89,8 @@ Ext.extend(ActiveLayersStore, Ext.data.Store, {
 			proxyUrl	: knownLayerRecord.getProxyUrl(),
 			cswRecords	: linkedCSWRecords,
 			iconUrl		: knownLayerRecord.getIconUrl(),
+			serviceEndpoints: knownLayerRecord.getServiceEndpoints(),
+			includeEndpoints: knownLayerRecord.includeEndpoints(),
 			keyIconHtml	: '<img width="16" height="16" src="' + knownLayerRecord.getIconUrl() + '">',
 			isLoading	: false,
 			hasData     : false,

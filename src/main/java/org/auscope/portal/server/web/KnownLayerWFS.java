@@ -12,6 +12,8 @@ public class KnownLayerWFS extends KnownLayer {
     private String featureTypeName;
     private String proxyUrl;
     private String iconUrl;
+    private String[] serviceEndpoints;
+    private boolean includeEndpoints;
     private Point iconAnchor;
     private Point infoWindowAnchor;
     private Dimension iconSize;
@@ -22,12 +24,9 @@ public class KnownLayerWFS extends KnownLayer {
     /**
      * @param featureTypeName The feature type name used to identify members of this layer
      * @param title The descriptive title of this layer
-     * @param description The extended description of this layer
-     * @param proxyUrl The URL that filter requests should be made through
-     * @param iconUrl The Icon that will be used to render this feature on the map 
      */
-    public KnownLayerWFS(String featureTypeName) {
-        this.id = "KnownLayerWFS-" + featureTypeName;
+    public KnownLayerWFS(String featureTypeName, String title) {
+        this.id = "KnownLayerWFS-" + featureTypeName + "-" + title.replace(" ", "_");
         this.featureTypeName = featureTypeName;
     }
     
@@ -40,7 +39,7 @@ public class KnownLayerWFS extends KnownLayer {
      */
     public KnownLayerWFS(String featureTypeName, String title, 
             String description, String proxyUrl, String iconUrl) {
-        this(featureTypeName);
+        this(featureTypeName, title);
         this.title = title;
         this.description = description;
         this.proxyUrl = proxyUrl;
@@ -63,7 +62,7 @@ public class KnownLayerWFS extends KnownLayer {
     public KnownLayerWFS(String featureTypeName, String title, 
             String description, String proxyUrl, String iconUrl, Point iconAnchor,
             Point infoWindowAnchor, Dimension iconSize) {
-        this(featureTypeName, title, description, proxyUrl, iconUrl, iconAnchor, 
+        this(featureTypeName, title, description, proxyUrl, iconUrl, null, false, iconAnchor, 
              infoWindowAnchor, iconSize, false);
     }    
     
@@ -73,6 +72,10 @@ public class KnownLayerWFS extends KnownLayer {
      * @param description The extended description of this layer
      * @param proxyUrl The URL that filter requests should be made through
      * @param iconUrl The Icon that will be used to render this feature on the map 
+     * @param serviceEndpoints A list of the end points that will either be included or
+     *  excluded from the WFS, depending on the value of includeEndpoints
+     * @param includeEndpoints A flag indicating whether the listed service end points
+     *  will be included or excluded from the WFS
      * @param iconAnchor  The pixel coordinate relative to the top left corner of 
      *  the icon image at which this icon is anchored to the map.
      * @param infoWindowAnchor  The pixel coordinate relative to the top left corner of
@@ -81,13 +84,16 @@ public class KnownLayerWFS extends KnownLayer {
      * @param disableBboxFiltering if true, the GUI will be instructed NOT to use to bounding box filters for this WFS collection
      */
     public KnownLayerWFS(String featureTypeName, String title, 
-            String description, String proxyUrl, String iconUrl, Point iconAnchor,
+            String description, String proxyUrl, String iconUrl, String[] serviceEndpoints, 
+            boolean includeEndpoints, Point iconAnchor,
             Point infoWindowAnchor, Dimension iconSize, boolean disableBboxFiltering) {
         this(featureTypeName, title, description, proxyUrl, iconUrl);
         this.iconAnchor = iconAnchor;
         this.infoWindowAnchor = infoWindowAnchor;
         this.iconSize = iconSize;
         this.disableBboxFiltering = disableBboxFiltering;
+        this.serviceEndpoints = serviceEndpoints;
+        this.includeEndpoints = includeEndpoints;
     }    
 
     public String getFeatureTypeName() {
@@ -108,6 +114,14 @@ public class KnownLayerWFS extends KnownLayer {
 
     public String getIconUrl() {
         return iconUrl;
+    }
+    
+    public String[] getServiceEndpoints() {
+        return serviceEndpoints;
+    }
+    
+    public boolean includeEndpoints() {
+    	return includeEndpoints;
     }
     
     /**

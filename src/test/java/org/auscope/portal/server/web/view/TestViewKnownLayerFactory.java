@@ -37,9 +37,11 @@ public class TestViewKnownLayerFactory {
     	final String description = "asb";
     	final String proxyUrl = "http://bob.xom";
     	final String iconUrl = "http://bob.xom.foo.bar";
+    	final String[] serviceEndpoints = new String[]{"http://bob.xox"};
     	final String id = "eyedee";
     	final boolean disableBboxFiltering = false;
     	final boolean hidden = false;
+    	final boolean includeEndpoints = true;
 
     	final double anchorX = 0.1;
     	final double anchorY = 0.2;
@@ -69,6 +71,8 @@ public class TestViewKnownLayerFactory {
     	expectation.put("id", id);
     	expectation.put("disableBboxFiltering", disableBboxFiltering);
     	expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
+    	expectation.put("serviceEndpoints", serviceEndpoints);
+    	expectation.put("includeEndpoints", includeEndpoints);
 
     	anchorExpectation.put("x", anchorX);
     	anchorExpectation.put("y", anchorY);
@@ -94,8 +98,9 @@ public class TestViewKnownLayerFactory {
     		allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
     		allowing(mockWFS).isHidden();will(returnValue(hidden));
     		allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(relatedFeatureTypeNames));
-
-
+            allowing(mockWFS).getServiceEndpoints();will(returnValue(serviceEndpoints));
+            allowing(mockWFS).includeEndpoints();will(returnValue(includeEndpoints));
+            
     		allowing(mockP1).getX();will(returnValue(anchorX));
     		allowing(mockP1).getY();will(returnValue(anchorY));
 
@@ -124,10 +129,12 @@ public class TestViewKnownLayerFactory {
     	final String description = "asb";
     	final String proxyUrl = "http://bob.xom";
     	final String iconUrl = "http://bob.xom.foo.bar";
+    	final String[] serviceEndpoints = null;
     	final String id = "eyedee";
     	final boolean disableBboxFiltering = true;
     	final boolean hidden = true;
     	final String[] relatedFeatureTypeNames = null; 
+    	final boolean includeEndpoints = false;
 
     	final ModelMap expectation = new ModelMap();
 
@@ -141,6 +148,8 @@ public class TestViewKnownLayerFactory {
     	expectation.put("id", id);
     	expectation.put("disableBboxFiltering", disableBboxFiltering);
     	expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
+    	expectation.put("serviceEndpoints", serviceEndpoints);
+    	expectation.put("includeEndpoints", includeEndpoints);
 
     	context.checking(new Expectations() {{
 
@@ -156,6 +165,8 @@ public class TestViewKnownLayerFactory {
     		allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
     		allowing(mockWFS).isHidden();will(returnValue(hidden));
     		allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(null));
+    		allowing(mockWFS).getServiceEndpoints();will(returnValue(null));
+    		allowing(mockWFS).includeEndpoints();will(returnValue(includeEndpoints));
         }});
 
     	ModelMap result = factory.toView(mockWFS);

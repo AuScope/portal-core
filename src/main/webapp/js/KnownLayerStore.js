@@ -27,6 +27,8 @@ KnownLayerStore = function(url) {
 		    'id',
 		    'proxyUrl',
 		    'iconUrl',
+		    'serviceEndpoints',
+		    'includeEndpoints',
 		    'iconAnchor',
 		    'infoWindowAnchor',
 		    'iconSize',

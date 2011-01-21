@@ -110,6 +110,21 @@ ActiveLayersRecord.prototype.getIconUrl = function() {
 };
 
 /**
+ * Gets the list of service endpoints applicable to the layer
+ */
+ActiveLayersRecord.prototype.getServiceEndpoints = function() {
+	return this.internalRecord.get('serviceEndpoints');
+};
+
+/**
+ * Gets the flag indicating whether the listed service endpoints should be 
+ * included or excluded from the layer.
+ */
+ActiveLayersRecord.prototype.includeEndpoints = function() {
+	return this.internalRecord.get('includeEndpoints');
+};
+
+/**
  * Gets the html representation of the key column as a String
  */
 ActiveLayersRecord.prototype.getKeyIconHtml = function() {
