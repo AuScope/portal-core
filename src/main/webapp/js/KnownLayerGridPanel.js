@@ -140,7 +140,7 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
             			this.onlineResourcesPopup.close();
             		}
 
-            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords);
+            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords, knownLayerRecord);
             		this.onlineResourcesPopup.show(e.getTarget());
                	}
            	},

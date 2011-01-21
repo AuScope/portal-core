@@ -4,8 +4,9 @@
  * detailed information about a list of CSWRecords
  *
  *  cswRecords - a CSWRecord or Array of CSWRecords
+ *  knownLayerRecord
  */
-CSWRecordDescriptionWindow = function(cswRecords) {
+CSWRecordDescriptionWindow = function(cswRecords, knownLayerRecord) {
 	if (cswRecords) {
 		if (cswRecords instanceof CSWRecord) {
 			this.cswRecords = [cswRecords];
@@ -34,14 +35,18 @@ CSWRecordDescriptionWindow = function(cswRecords) {
 				continue;//don't include anything else
 			}
 
-			dataItems.push([
-			    onlineResources[j].name,
-			    onlineResources[j].description,
-			    onlineResources[j].url,
-			    onlineResources[j],
-			    onlineResources[j].onlineResourceType,
-			    i
-			]);
+			if(knownLayerRecord.getServiceEndpoints() == null || 
+					includeEndpoint(knownLayerRecord.getServiceEndpoints(), onlineResources[j].url, 
+							knownLayerRecord.includeEndpoints())) {
+				dataItems.push([
+				    onlineResources[j].name,
+				    onlineResources[j].description,
+				    onlineResources[j].url,
+				    onlineResources[j],
+				    onlineResources[j].onlineResourceType,
+				    i
+				]);
+			}
 		}
 	}
 
@@ -212,8 +217,18 @@ CSWRecordDescriptionWindow.prototype.cswRecords = [];
 CSWRecordDescriptionWindow.prototype.store = null;
 
 
-
-
+/**
+ * determines whether or not a particular endpoint should be included when loading
+ * a layer
+ */
+var includeEndpoint = function(endpoints, endpoint, includeEndpoints) { 	
+	for(var i = 0; i < endpoints.length; i++) {
+		if(endpoints[i].indexOf(endpoint) >= 0) {
+			return includeEndpoints;
+		}
+	}
+	return !includeEndpoints;
+};
 
 
 Ext.extend(CSWRecordDescriptionWindow, Ext.Window, {
