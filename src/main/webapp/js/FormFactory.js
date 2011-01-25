@@ -53,6 +53,7 @@ FormFactory.prototype.getFilterForm = function(activeLayersRecord, map, cswRecor
                 case 'er:MiningActivity': return this.internalGenerateResult(new MiningActivityFilterForm(id), true); 
                 case 'er:MineralOccurrence': return this.internalGenerateResult(new MineralOccurrenceFilterForm(id), true); 
                 case 'gsml:GeologicUnit': return this.internalGenerateResult(new YilgarnGeochemistryFilterForm(id), true);
+                case 'gsml:Borehole': return this.internalGenerateResult(new NvclFilterForm(id), true);
                 default: return this.internalGenerateResult(null, false); 
             }
     	}

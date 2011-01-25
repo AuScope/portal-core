@@ -3,6 +3,7 @@ package org.auscope.portal.server.web.service;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
 import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
@@ -45,9 +46,13 @@ public class BoreholeService {
     public void setFilter(IFilter filter) {
         this.filter = filter;
     }
+    
+    
 
     
     // --------------------------------------------------------- Public Methods    
+    
+    
     
     /**
      * Get all boreholes from a given service url and return the response
@@ -56,13 +61,13 @@ public class BoreholeService {
      * @return
      * @throws Exception
      */
-    public HttpMethodBase getAllBoreholes(String serviceURL, int maxFeatures, FilterBoundingBox bbox) throws Exception {
+    public HttpMethodBase getAllBoreholes(String serviceURL, String boreholeName, String custodian, String dateOfDrilling, int maxFeatures, FilterBoundingBox bbox) throws Exception {
         String filterString;
-        
+        BoreholeFilter nvclFilter = new BoreholeFilter(boreholeName, custodian, dateOfDrilling);
         if (bbox == null) {
-            filterString = filter.getFilterStringAllRecords();
+            filterString = nvclFilter.getFilterStringAllRecords();
         } else {
-            filterString = filter.getFilterStringBoundingBox(bbox);
+            filterString = nvclFilter.getFilterStringBoundingBox(bbox);
         }
         
         // Create a GetFeature request with an empty filter - get all

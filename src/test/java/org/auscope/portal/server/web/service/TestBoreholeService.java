@@ -2,6 +2,7 @@ package org.auscope.portal.server.web.service;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
 import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
@@ -20,6 +21,7 @@ public class TestBoreholeService {
     
     private BoreholeService service;
     private IFilter mockFilter = context.mock(IFilter.class);
+    private BoreholeFilter nvclMockFilter = context.mock(BoreholeFilter.class);
     private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
     private IWFSGetFeatureMethodMaker mockMethodMaker = context.mock(IWFSGetFeatureMethodMaker.class);
     
@@ -42,12 +44,12 @@ public class TestBoreholeService {
         context.checking(new Expectations() {{
             allowing(mockFilter).getFilterStringBoundingBox(bbox);will(returnValue(filterString));
             
-            oneOf(mockMethodMaker).makeMethod(serviceURL, "gsml:Borehole", filterString, maxFeatures);
+            oneOf(mockMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
             oneOf(mockHttpServiceCaller).getHttpClient();
             oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(responseString));
         }});
         
-        HttpMethodBase method = service.getAllBoreholes(serviceURL, maxFeatures, bbox);
+        HttpMethodBase method = service.getAllBoreholes(serviceURL, "", "", "", 0, bbox);
         String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
         Assert.assertNotNull(result);
         Assert.assertEquals(responseString, result);
@@ -68,7 +70,7 @@ public class TestBoreholeService {
             oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(responseString));
         }});
         
-        HttpMethodBase method = service.getAllBoreholes(serviceURL, maxFeatures, null);
+        HttpMethodBase method = service.getAllBoreholes(serviceURL,"", "", "", maxFeatures, null);
         String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
         Assert.assertNotNull(result);
         Assert.assertEquals(responseString, result);

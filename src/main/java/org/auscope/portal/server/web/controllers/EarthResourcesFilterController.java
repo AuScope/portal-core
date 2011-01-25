@@ -89,10 +89,6 @@ public class EarthResourcesFilterController {
         this.gmlToKml = gmlToKml;
         this.commodityService = commodityService;
         this.httpServiceCaller = httpServiceCaller;
-
-
-
-
     }
 
     // ------------------------------------------- Property Setters and Getters
@@ -345,6 +341,8 @@ public class EarthResourcesFilterController {
             return this.handleExceptionResponse(e, serviceUrl, requestInfo);
         }
     }
+    
+    
 
 
     /**
@@ -356,8 +354,13 @@ public class EarthResourcesFilterController {
      * @return a WFS response converted into KML
      * @throws Exception
      */
+
+
     @RequestMapping("/doBoreholeFilter.do")
     public ModelAndView doBoreholeFilter( @RequestParam("serviceUrl") String serviceUrl,
+    								  @RequestParam("boreholeName")     String boreholeName,
+    								  @RequestParam("custodian")        String custodian,
+    								  @RequestParam("dateOfDrilling")   String dateOfDrilling,
                                       @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
                                       @RequestParam(required=false, value="bbox") String bboxJson,
                                       HttpServletRequest request) throws Exception {
@@ -365,10 +368,8 @@ public class EarthResourcesFilterController {
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
 
         JSONArray requestInfo = new JSONArray();
-
-
         try {
-        	HttpMethodBase method = this.boreholeService.getAllBoreholes(serviceUrl, maxFeatures, bbox);
+        	HttpMethodBase method = this.boreholeService.getAllBoreholes(serviceUrl, boreholeName, custodian, dateOfDrilling, maxFeatures, bbox);
             String gmlBlob = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
             String kmlBlob = convertToKml(gmlBlob, request, serviceUrl);
