@@ -7,6 +7,85 @@
        http://www.springframework.org/schema/tx 
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
+    <bean id="knownTypeBoreholeNvcl" class="org.auscope.portal.server.web.KnownLayerWFS">
+       <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
+       <constructor-arg name="title" value="National Virtual Core Library"/>
+       <constructor-arg name="description" value="A collection of services that implement the AuScope National Virtual Core Library v1 Profile for gsml:Borehole"/>
+       <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
+	   <constructor-arg name="serviceEndpoints">
+	       <list>
+	           <value>http://services-test.auscope.org:80/nvcl/wfs</value>
+	           <value>http://www.mrt.tas.gov.au:80/web-services/wfs</value>
+	       </list>
+	   </constructor-arg>
+	   <constructor-arg name="includeEndpoints" value="true"/>
+       <constructor-arg name="disableBboxFiltering" value="false"/>
+       <constructor-arg name="iconAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="infoWindowAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="iconSize">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <property name="relatedFeatureTypeNames">
+            <list>
+                <value>sa:SamplingFeatureCollection</value>
+                <value>om:GETPUBLISHEDSYSTEMTSA</value>
+            </list>
+       </property>
+   </bean>
+   
+   <bean id="knownTypeBoreholePressureDB" class="org.auscope.portal.server.web.KnownLayerWFS">
+       <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
+       <constructor-arg name="title" value="Pressure DB"/>
+       <constructor-arg name="description" value="A collection of services that implement the Pressure DB Profile for gsml:Borehole"/>
+       <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
+	   <constructor-arg name="serviceEndpoints">
+	       <list>
+	           <value>http://services-test.auscope.org:80/pressuredb/wfs</value>	           
+	       </list>
+	   </constructor-arg>
+	   <constructor-arg name="includeEndpoints" value="true"/>
+       <constructor-arg name="disableBboxFiltering" value="false"/>
+       <constructor-arg name="iconAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="infoWindowAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="iconSize">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <property name="relatedFeatureTypeNames">
+            <list>
+                <value>sa:SamplingFeatureCollection</value>
+                <value>om:GETPUBLISHEDSYSTEMTSA</value>
+            </list>
+       </property>
+   </bean>
+
     <!-- All elements must be of type org.auscope.portal.server.web.KnownLayer -->
     <bean id="knownTypes" class="java.util.ArrayList">
         <constructor-arg>

@@ -190,7 +190,7 @@ public class TestDownloadController {
      * Test that this function makes all of the approriate calls, and see if it returns xml file zipped up
      */
     @Test
-    public void testDownloadWMSAsZipWithError() throws Exception {
+    public void testDownloadDataAsZipWithError() throws Exception {
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
         final String[] serviceUrls = {"http://someUrl"};
         final String dummyData = "dummyData";
@@ -211,7 +211,7 @@ public class TestDownloadController {
             oneOf(httpServiceCaller).getResponseHeader(with(any(HttpMethodBase.class)), with(any(String.class)));will(returnValue(header));
         }});
 
-        downloadController.downloadWMSAsZip(serviceUrls, mockHttpResponse);
+        downloadController.downloadDataAsZip(serviceUrls, "WMS_Layer_Download", mockHttpResponse);
 
         //check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
@@ -239,7 +239,7 @@ public class TestDownloadController {
      * @throws Exception
      */
     @Test
-    public void testDownloadWMSAsZipWithPNG() throws Exception {
+    public void testDownloadDataAsZipWithPNG() throws Exception {
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
         final String[] serviceUrls = {"http://someUrl"};
         final String dummyData = "dummyData";
@@ -260,7 +260,7 @@ public class TestDownloadController {
             oneOf(httpServiceCaller).getResponseHeader(with(any(HttpMethodBase.class)), with(any(String.class)));will(returnValue(header));
         }});
 
-        downloadController.downloadWMSAsZip(serviceUrls, mockHttpResponse);
+        downloadController.downloadDataAsZip(serviceUrls, "WMS_Layer_Download", mockHttpResponse);
 
         //check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
