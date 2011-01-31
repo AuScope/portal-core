@@ -1,21 +1,26 @@
     body {
         margin: 0px;
         padding: 0px;
+        overflow: hidden;
     }
 
     #header-container {
         width: 100%;
         height: 100px;
         background-color: #ffffff;
-        position:absolute;
+        position:fixed;
         top: 0px;
         left: 0px;
+        z-index: 1;
     }
 
     #body-container {
-        position:fixed;
+    	position: fixed;
         top: 100px;
-        width: 80%;
+        bottom: 0px;
+        width: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     #logo {
@@ -44,10 +49,11 @@
         display: none;
     }
 
-    #related-portal-div {
+    .related-portal-div {
         margin-top: 5px;
+        margin-left: 15px;
+        margin-right: 15px;
         border-bottom: 1px solid black;
-        width: 80%;
     }
 
     .niceDiv {
@@ -84,11 +90,11 @@
     }
 
     #auscopePre {
-        white-space: pre-wrap;
-        white-space: -moz-pre-wrap;
-        white-space: -pre-wrap;
-        white-space: -o-pre-wrap;
-        word-wrap: break-word;
+		white-space: pre-wrap;       /* css-3 */
+		white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+		white-space: -pre-wrap;      /* Opera 4-6 */
+		white-space: -o-pre-wrap;    /* Opera 7 */
+		word-wrap: break-word;       /* Internet Explorer 5.5+ */
         width: 99%;
     }
 
