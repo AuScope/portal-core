@@ -35,7 +35,7 @@ CSWRecordDescriptionWindow = function(cswRecords, knownLayerRecord) {
 				continue;//don't include anything else
 			}
 
-			if(knownLayerRecord.getServiceEndpoints() == null || 
+			if(knownLayerRecord == null || knownLayerRecord.getServiceEndpoints() == null || 
 					includeEndpoint(knownLayerRecord.getServiceEndpoints(), onlineResources[j].url, 
 							knownLayerRecord.includeEndpoints())) {
 				dataItems.push([
