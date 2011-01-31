@@ -1091,6 +1091,26 @@ Ext.onReady(function() {
                     }
                 });
             }
+            //this is to show servcie Information window tooltip
+            else if (col.cellIndex == '3'){
+            	
+            	this.currentToolTip = new Ext.ToolTip({
+                    target: e.target ,
+                    title: 'Service Information',
+                    autoHide : true,
+                    html: 'Click for detailed information about the web services this layer utilises',
+                    anchor: 'bottom',
+                    trackMouse: true,
+                    showDelay:60,
+                    autoHeight:true,
+                    autoWidth: autoWidth,
+                    listeners : {
+                        hide : function(component) {
+                            component.destroy();
+                        }
+                    }
+                });
+            }
             //this is the column for download link icons
             else if (col.cellIndex == '5') {
                 if(activeLayerRecord.hasData()) {
@@ -1244,6 +1264,18 @@ Ext.onReady(function() {
 
 		            debugWin.show(this);
             	}
+            }
+            
+            //this is to add Service Information Window to Active Layers
+            else if (col.cellIndex == '3'){
+            	
+            	if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
+        			this.onlineResourcesPopup.close();
+        		}
+            	var cswRecords = activeLayerRecord.getCSWRecords();
+        		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords);
+        		this.onlineResourcesPopup.show(e.getTarget());
+        		
             }
             //this is the column for download link icons
             else if (col.cellIndex == '5') {
