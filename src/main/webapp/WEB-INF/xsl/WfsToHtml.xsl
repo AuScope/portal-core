@@ -15,8 +15,7 @@
     <xsl:param name="serviceURL"/>
     <xsl:param name="vocabserviceURL"/>
     <xsl:param name="vocabservice-reponame"/>
-    <xsl:variable name="vocab-hard-coded-lookup" select="concat('http://auscope-services-test.arrc.csiro.au/vocab-service/query?repository=commodity_vocab','&amp;','id=','')"/>
-
+    <xsl:variable name="vocab-hard-coded-lookup" select="concat('http://services-test.auscope.org/SISSVoc/getConceptByURI?commodity_vocab/', '')"/>
     <!-- Global Variables -->
 
 

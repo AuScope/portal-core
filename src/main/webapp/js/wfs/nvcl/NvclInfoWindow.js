@@ -326,8 +326,8 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
         var width = autoWidth ? undefined : 250;
 
         scalarGrid.tip = new Ext.ToolTip({
-            target: view.mainBody,    // The overall target element.
-            delegate: '.x-grid3-row', // Each grid row causes its own seperate show and hide.
+            target: view.mainBody,    // The overall target element.           
+        	delegate: '.x-grid3-row', // Each grid row causes its own seperate show and hide.
             trackMouse: true,         // Moving within the row should not hide the tip.
             renderTo: document.body,  // Render immediately so that tip.body can be referenced prior to the first show.
             autoWidth: autoWidth,
@@ -364,10 +364,12 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
                         else
                         	tip.body.dom.innerHTML = 'N/A';
                       });
-                },
-                hide : function(component) {
-                    component.destroy();
                 }
+                //TODO: Commenting this out for now as it causes js errors. Still need to
+                // test whether there is a better solution.
+                //hide : function(component) {
+                //    component.destroy();
+                //}
             }
         });
     });
