@@ -15,7 +15,7 @@
        <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
 	   <constructor-arg name="serviceEndpoints">
 	       <list>
-	           <value>http://services-test.auscope.org:80/nvcl/wfs</value>
+	           <value>http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs</value>
 	           <value>http://www.mrt.tas.gov.au:80/web-services/wfs</value>
 	       </list>
 	   </constructor-arg>
