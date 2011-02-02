@@ -65,6 +65,9 @@ public class WFSGetFeatureMethodMakerPOST implements IWFSGetFeatureMethodMaker {
         sb.append("  <wfs:Query typeName=\""+featureType+"\"");
         if (srsName != null && ! srsName.isEmpty())
             sb.append(" srsName=\"" + srsName + "\"");
+        else if(featureType == "gsml:Borehole"){
+        	sb.append(" srsName=\"" + "EPSG:4326" + "\"");
+        }
         sb.append(">\n");
         sb.append(filterString);
         sb.append("  </wfs:Query>\n");
