@@ -1091,7 +1091,7 @@ Ext.onReady(function() {
                     }
                 });
             }
-            //this is to show servcie Information window tooltip
+            //this is to show Service Information window tooltip
             else if (col.cellIndex == '3'){
             	
             	this.currentToolTip = new Ext.ToolTip({
@@ -1266,14 +1266,19 @@ Ext.onReady(function() {
             	}
             }
             
-            //this is to add Service Information Window to Active Layers
+            //this is to add Service Information Popup Window to Active Layers
             else if (col.cellIndex == '3'){
             	
             	if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
         			this.onlineResourcesPopup.close();
         		}
             	var cswRecords = activeLayerRecord.getCSWRecords();
-        		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords);
+            	if (activeLayerRecord.getSource() === 'KnownLayer'){            	 
+            		var knownLayerRecord = knownLayersStore.getKnownLayerById(activeLayerRecord.getId());
+            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords, knownLayerRecord);
+            	}else{
+            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords);
+            	}
         		this.onlineResourcesPopup.show(e.getTarget());
         		
             }
