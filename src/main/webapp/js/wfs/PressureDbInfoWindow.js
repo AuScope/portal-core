@@ -58,7 +58,7 @@ PressureDbInfoWindow.prototype = {
         
         summaryHtml += '<div align="right">' +
         						'<br/>' +
-        			              '<input type="button" id="downloadDatasetBtn" value="Download" name=butDownloadDataset onclick="openPressureDbDownloadWindow(\''+ this.boreholeId +'\',\''+ this.wfsServiceUrl +'\',\''+ this.geoServerUrl +'\')">';
+        			              '<input type="button" id="downloadDatasetBtn" value="Download Observations" name=butDownloadDataset onclick="openPressureDbDownloadWindow(\''+ this.boreholeId +'\',\''+ this.wfsServiceUrl +'\',\''+ this.geoServerUrl +'\')">';
         summaryHtml +=	'</div>';
         summaryHtml += '</body>';
         summaryHtml += '</html>';

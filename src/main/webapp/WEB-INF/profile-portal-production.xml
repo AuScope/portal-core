@@ -10,7 +10,7 @@
     <bean id="knownTypeBoreholeNvcl" class="org.auscope.portal.server.web.KnownLayerWFS">
        <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
        <constructor-arg name="title" value="National Virtual Core Library"/>
-       <constructor-arg name="description" value="A collection of services that implement the AuScope National Virtual Core Library v1 Profile for gsml:Borehole"/>
+       <constructor-arg name="description" value="A collection of services implementing the National Virtual Core Library Profile v1 for gsml:Borehole and a collection of observations"/>
        <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
        <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
 	   <constructor-arg name="serviceEndpoints">
@@ -50,7 +50,7 @@
    <bean id="knownTypeBoreholePressureDB" class="org.auscope.portal.server.web.KnownLayerWFS">
        <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
        <constructor-arg name="title" value="Pressure DB"/>
-       <constructor-arg name="description" value="A collection of services that implement the Pressure DB Profile for gsml:Borehole"/>
+       <constructor-arg name="description" value="A collection of services implementing the Pressure DB Profile for gsml:Borehole and a collection of observations"/>
        <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
        <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
 	   <constructor-arg name="serviceEndpoints">
