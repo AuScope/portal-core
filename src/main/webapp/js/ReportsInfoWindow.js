@@ -19,8 +19,15 @@ ReportsInfoWindow.prototype = {
 //		'width:99%;max-height:300px;overflow:auto;">' +
 
 	'show': function() {
+		var recordID = this.cswRecord.getFileIdentifier();
+		var recordLinkName = "Link back to registry";
 		var sHtml = '<div class="niceDivOverFlow">' +
 			'<table border="1" cellspacing="1" cellpadding="4" class="auscopeTable">' +
+			"<tr><td>" +
+		     "<a href='http://auscope-portal-2.arrc.csiro.au/geonetwork/srv/en/main.home?uuid="	+ recordID + "' target='_blank'>" +
+		     recordLinkName +
+		     "</a>" +
+		     "</td></tr>"+
 			'<tr><td id="reportsname">' +
 			this.cswRecord.getServiceName() +
 			'</td></tr>' +
@@ -37,10 +44,9 @@ ReportsInfoWindow.prototype = {
 				     "</a>" +
 				     "</td></tr>";
 		}
-
+		
 
 		sHtml += "</table></div>";
-
 		if (this.overlay instanceof GPolygon) {
 			this.map.openInfoWindowHtml(this.overlay.getBounds().getCenter(), sHtml,
 					{maxWidth:800, maxHeight:400, autoScroll:true});
