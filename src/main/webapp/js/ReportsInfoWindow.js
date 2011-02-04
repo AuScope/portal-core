@@ -19,12 +19,12 @@ ReportsInfoWindow.prototype = {
 //		'width:99%;max-height:300px;overflow:auto;">' +
 
 	'show': function() {
-		var recordID = this.cswRecord.getFileIdentifier();
+		var recordLink = this.cswRecord.getRecordInfoUrl();
 		var recordLinkName = "Link back to registry";
 		var sHtml = '<div class="niceDivOverFlow">' +
 			'<table border="1" cellspacing="1" cellpadding="4" class="auscopeTable">' +
 			"<tr><td>" +
-		     "<a href='http://auscope-portal-2.arrc.csiro.au/geonetwork/srv/en/main.home?uuid="	+ recordID + "' target='_blank'>" +
+		     "<a href='" + recordLink + "' target='_blank'>" +
 		     recordLinkName +
 		     "</a>" +
 		     "</td></tr>"+

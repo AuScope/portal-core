@@ -24,26 +24,32 @@
 
     <bean id="cswAuscopeDev" class="org.auscope.portal.server.web.service.CSWServiceItem">
         <constructor-arg index="0" value="http://auscope-portal-dev.arrc.csiro.au/geonetwork/srv/en/csw"/>
+        <constructor-arg index="1" value="http://auscope-portal-dev.arrc.csiro.au/geonetwork/srv/en/main.home?uuid=%recordID%"/>
     </bean>
 
 	<bean id="cswAuscopeTest" class="org.auscope.portal.server.web.service.CSWServiceItem">
 		<constructor-arg index="0" value="http://auscope-portal-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
+        <constructor-arg index="1" value="http://auscope-portal-2.arrc.csiro.au/geonetwork/srv/en/main.home?uuid=%recordID%"/>
 	</bean>
 
 	<bean id="cswAuscopeProduction" class="org.auscope.portal.server.web.service.CSWServiceItem">
         <constructor-arg index="0" value="http://portal.auscope.org/geonetwork/srv/en/csw"/>
+        <constructor-arg index="1" value="http://portal.auscope.org/geonetwork/srv/en/main.home?uuid=%recordID%"/>
     </bean>
 
 	<bean id="cswMDUTest" class="org.auscope.portal.server.web.service.CSWServiceItem">
 		<constructor-arg index="0" value="http://mdu-data-2.arrc.csiro.au/geonetwork/srv/en/csw"/>
+        <constructor-arg index="1" value="http://mdu-data-2.arrc.csiro.au/geonetwork/srv/en/metadata.show?uuid=%recordID%"/>
 	</bean>
 
 	<bean id="cswMDUProduction" class="org.auscope.portal.server.web.service.CSWServiceItem">
         <constructor-arg index="0" value="http://mdu-data.arrc.csiro.au/geonetwork/srv/en/csw"/>
+        <constructor-arg index="1" value="http://mdu-data.arrc.csiro.au/geonetwork/srv/en/main.home?uuid=%recordID%"/>
 	</bean>
 
     <bean id="cswSissANUProduction" class="org.auscope.portal.server.web.service.CSWServiceItem">
         <constructor-arg index="0" value="http://siss1.anu.edu.au/geonetwork/srv/en/csw"/>
+        <constructor-arg index="1" value="http://siss1.anu.edu.au/geonetwork/srv/en/main.home?uuid=%recordID%"/>
     </bean>
 
    <bean id="knownTypeMine" class="org.auscope.portal.server.web.KnownLayerWFS">
