@@ -101,6 +101,15 @@
                 <ref bean="knownTypeGeotransects" />
                 <ref bean="knownTypeSamplingPoint"/>
                 <ref bean="knownTypeFeatureCollection"/>
+                <ref bean="knownTypeLateriteYilgarnGeoChem"/>
+                <ref bean="knownTypeHighPSiteFeatureType"/>
+                <ref bean="knownTypeHighPFeatureType"/>
+                <ref bean="knownTypeHighPREIronLayer"/>
+                <ref bean="knownTypeHighPREPhosLayer"/>
+                <ref bean="knownTypeHighPSiteIronLayer"/>
+                <ref bean="knownTypeHighPSitePhosLayer"/>
+                <ref bean="geodesyWorkflowPortal"/>
+                <ref bean="c3dmmPortal"/>
             </list>
         </constructor-arg>
     </bean>

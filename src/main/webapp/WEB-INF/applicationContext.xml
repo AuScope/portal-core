@@ -269,5 +269,59 @@
         <constructor-arg name="title" value="Feature Collection"/>
         <property name="hidden" value="true"/>
     </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeLateriteYilgarnGeoChem" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="Geochem:LateriteYilgarnGeoChem"/>
+        <constructor-arg name="title" value="Laterite Yilgarn GeoChem"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeHighPSiteFeatureType" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="highp:HighPSiteFeatureType"/>
+        <constructor-arg name="title" value="HighP Site Feature Type"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeHighPFeatureType" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="highp:HighPFeatureType"/>
+        <constructor-arg name="title" value="HighP Feature Type"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeHighPREIronLayer" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="HighP-RE-IronLayer"/>
+        <constructor-arg name="title" value="HighP-RE-IronLayer"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeHighPREPhosLayer" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="HighP-RE-PhosLayer"/>
+        <constructor-arg name="title" value="HighP-RE-PhosLayer"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeHighPSiteIronLayer" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="HighP-Site-IronLayer"/>
+        <constructor-arg name="title" value="HighP-Site-IronLayer"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeHighPSitePhosLayer" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="HighP-Site-PhosLayer"/>
+        <constructor-arg name="title" value="HighP-Site-PhosLayer"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="geodesyWorkflowPortal" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="Geodesy Workflow Portal"/>
+        <constructor-arg name="title" value="Geodesy Workflow Portal"/>
+        <property name="hidden" value="true"/>
+    </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="c3dmmPortal" class="org.auscope.portal.server.web.KnownLayerWFS">
+        <constructor-arg name="featureTypeName" value="C3DMM Portal"/>
+        <constructor-arg name="title" value="C3DMM Portal"/>
+        <property name="hidden" value="true"/>
+    </bean>
 
 </beans>
