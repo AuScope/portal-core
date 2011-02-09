@@ -196,6 +196,6 @@ GeotransectsInfoWindow.prototype = {
 
         //Add new tab to pop-up window
         this.map.updateInfoWindow(this.tabsArray);
-        me.mask.hide();
+        this.mask.hide();
 	}
 };
