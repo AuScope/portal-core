@@ -40,7 +40,7 @@ MineFilterForm = function(id) {
                 fieldLabel : '<span qtip="Wildcards: \'!\' escape character; \'*\' zero or more, \'#\' just one character.">' +
                 			 'Mine Name' +
                 			 '</span>',
-                name       : 'mineName',
+                name       : 'mineName'
             }]
         }]
     });
