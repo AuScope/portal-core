@@ -44,11 +44,11 @@ PressureDbInfoWindow.prototype = {
     	summaryHtml += '<body>';
     	if (Ext.isIE) {
     		summaryHtml += '<div style="';
-    		summaryHtml += 'width: expression(!document.body ? &quot;auto&quot; : (document.body.clientWidth > 599 ? &quot;600px&quot; : &quot;auto&quot;) );';
+    		summaryHtml += 'width: expression(!document.body ? &quot;auto&quot; : (document.body.clientWidth > 299 ? &quot;300px&quot; : &quot;auto&quot;) );';
     		summaryHtml += 'height: expression( this.scrollHeight > 549 ? &quot;550px&quot; : &quot;auto&quot; );';
     		summaryHtml += 'overflow: auto;">';
     	} else {
-    		summaryHtml += '<div style="max-width: 600px; max-height: 550px; overflow: hidden;">';
+    		summaryHtml += '<div style="max-width: 300px; max-height: 550px; overflow: hidden;">';
     	}
     	summaryHtml += overlayDescription;
     	summaryHtml += '</div>';
