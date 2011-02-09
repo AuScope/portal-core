@@ -700,8 +700,13 @@ Ext.onReady(function() {
                 tileLayer.opacity = activeLayerRecord.getOpacity();
 
                 overlayManager.addOverlay(new GTileLayerOverlay(tileLayer));
-            }
+            }       
+        	
+    		if(wcsOnlineResources.length > 0 || wmsOnlineResources.length > 0) {
+    			activeLayerRecord.setHasData(true);
+    		}
     	}
+
 
     	//This will update the Z order of our WMS layers
         updateActiveLayerZOrder();
