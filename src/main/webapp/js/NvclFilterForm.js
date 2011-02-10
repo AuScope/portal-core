@@ -8,6 +8,12 @@ NvclFilterForm = function(id) {
 	
 	this.isFormLoaded = true; //We aren't reliant on any remote downloads
 	
+	var showQtip = null;
+	if (id.indexOf("Pressure_DB") !== -1){
+		showQtip = '<span qtip="This filter is not available in the current dataset">' + 'Custodian' + '</span>';
+	}else 
+		showQtip = 'Custodian';
+	
 	NvclFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
         border      : false,
@@ -34,7 +40,7 @@ NvclFilterForm = function(id) {
             {
             	anchor     : '95%',
                 xtype      : 'textfield',
-                fieldLabel : 'Custodian',
+                fieldLabel :  showQtip,
                 name       : 'custodian'
             },
             {
