@@ -67,7 +67,7 @@ function getOPeNDAPParameters() {
 	for (var i = 0; i < frm.items.getCount(); i++) {
 		var component = frm.items.get(i);
 
-		if (component && !component.disabled) {
+		if(component && !component.disabled && (component.checkboxToggle != true || component.collapsed == false)) {
 			var constraint = generateConstraints(component);
 			if (constraint) {
 				variableConstraints.push(constraint);
@@ -285,21 +285,10 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
 				name			: variable.name,
 				variableType	: variable.type,
 				checkboxToggle 	: true,
-				items			: items,
-				listeners		: {
-		            expand 		: {
-		                scope: this,
-		                fn : function(panel, anim) {
-					    	setFieldSetDisabled(panel, false);
-					    }
-					},
-					collapse : {
-						scope: this,
-						fn : function(panel, anim) {
-					        setFieldSetDisabled(panel, true);
-					    }
-		            }
-		        }
+				items			: items
+				//Listeners that enabled/disabled fieldsets on expand/collapse have been 
+				//removed because this is not compatible with IE7. It causes the checkbox
+				//itself to become disabled.
 			};
 		}
 
