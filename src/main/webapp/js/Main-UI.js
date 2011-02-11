@@ -1096,26 +1096,7 @@ Ext.onReady(function() {
                     }
                 });
             }
-            //this is to show Service Information window tooltip
-            else if (col.cellIndex == '3'){
-            	
-            	this.currentToolTip = new Ext.ToolTip({
-                    target: e.target ,
-                    title: 'Service Information',
-                    autoHide : true,
-                    html: 'Click for detailed information about the web services this layer utilises',
-                    anchor: 'bottom',
-                    trackMouse: true,
-                    showDelay:60,
-                    autoHeight:true,
-                    autoWidth: autoWidth,
-                    listeners : {
-                        hide : function(component) {
-                            component.destroy();
-                        }
-                    }
-                });
-            }
+           
             //this is the column for download link icons
             else if (col.cellIndex == '5') {
                 if(activeLayerRecord.hasData()) {
@@ -1230,8 +1211,25 @@ Ext.onReady(function() {
             		}
             	}
             }
-            //this is for clicking the loading icon
-            else if (col.cellIndex == '2') {
+            //this is to add Service Information Popup Window to Active Layers
+            else if (col.cellIndex == '2'){
+            	
+            	if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
+        			this.onlineResourcesPopup.close();
+        		}
+            	var cswRecords = activeLayerRecord.getCSWRecords();
+            	if (activeLayerRecord.getSource() === 'KnownLayer'){            	 
+            		var knownLayerRecord = knownLayersStore.getKnownLayerById(activeLayerRecord.getId());
+            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords, knownLayerRecord);
+            	}else{
+            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords);
+            	}
+        		this.onlineResourcesPopup.show(e.getTarget());
+        		
+            }
+            
+          //this is for clicking the loading icon
+            else if (col.cellIndex == '3') {
 
 	            //to get the value of variable used in url
             	var gup = function ( name ) {
@@ -1269,23 +1267,6 @@ Ext.onReady(function() {
 
 		            debugWin.show(this);
             	}
-            }
-            
-            //this is to add Service Information Popup Window to Active Layers
-            else if (col.cellIndex == '3'){
-            	
-            	if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
-        			this.onlineResourcesPopup.close();
-        		}
-            	var cswRecords = activeLayerRecord.getCSWRecords();
-            	if (activeLayerRecord.getSource() === 'KnownLayer'){            	 
-            		var knownLayerRecord = knownLayersStore.getKnownLayerById(activeLayerRecord.getId());
-            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords, knownLayerRecord);
-            	}else{
-            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords);
-            	}
-        		this.onlineResourcesPopup.show(e.getTarget());
-        		
             }
             //this is the column for download link icons
             else if (col.cellIndex == '5') {
