@@ -1282,15 +1282,26 @@ Ext.onReady(function() {
 	                		var wfsOnlineResources = cswRecords[i].getFilteredOnlineResources('WFS');
 
 	                		for (var j = 0; j < wfsOnlineResources.length; j++) {
-	                			var typeName = wfsOnlineResources[j].name;
-	                			var url = wfsOnlineResources[j].url;
-	                			var proxyUrl = activeLayerRecord.getProxyUrl()!== null ? activeLayerRecord.getProxyUrl() : 'getAllFeatures.do';
-	                			var filterParameters = filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + typeName : filterPanel.getLayout().activeItem.getForm().getValues(true);
+	                		    //Generate our filter parameters (or just grab the last set used
+	                		    var typeName = wfsOnlineResources[j].name;
+	                		    var url = wfsOnlineResources[j].url;
+	                            var filterParameters = activeLayerRecord.getLastFilterParameters(); //filterPanel.getLayout().activeItem == filterPanel.getComponent(0) ? "&typeName=" + typeName : filterPanel.getLayout().activeItem.getForm().getValues(true);
+	                            if (!filterParameters) {
+	                                filterParameters = {};
+	                            }
+	                            filterParameters.serviceUrl = wfsOnlineResources[j].url;
+	                            filterParameters.typeName = wfsOnlineResources[j].name;
+	                            filterParameters.maxFeatures = 0;
+
+	                            //The url that will actually call a WFS and return XML
+	                            var proxyUrl = activeLayerRecord.getProxyUrl()!== null ? activeLayerRecord.getProxyUrl() : 'getAllFeatures.do';
 
 	                			if(activeLayerRecord.getServiceEndpoints() == null || 
 	                					includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {
+	                			    var prefixUrl = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?";
+	                			    
 	                				keys.push('serviceUrls');
-	                				values.push(window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?" + filterParameters + "&serviceUrl=" + url);
+	                				values.push(Ext.urlEncode(filterParameters, prefixUrl));
 	                			}
 	                		}
 	                	}
