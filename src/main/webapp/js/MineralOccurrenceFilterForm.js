@@ -191,46 +191,47 @@ MineralOccurrenceFilterForm = function(id) {
             labelAlign : 'right',
             bodyStyle   : 'padding:0px',
             items :[
-                commodityNameCombo,
-                {
-                    xtype      : 'fieldset',
-                    title      : 'Amount',
-                    autoHeight: true,
-                    items:[
-                        measureTypeCombo,
-                        {
-                            xtype      : 'fieldset',
-                            title      : 'Ore Amount',
-                            autoHeight: true,
-                            items:[
-                                {
-                                    id         : 'minOreAmountTxtFld',
-                                    anchor     : '100%',
-                                    xtype      : 'textfield',
-                                    fieldLabel : 'Min. Amount',
-                                    name       : 'minOreAmount',
-                                    disabled   : true
-                                },
-                                minOreAmountUOMCombo
-                            ]
-                        },{
-                            xtype       : 'fieldset',
-                            title       : 'Commodity Amount',
-                            autoHeight: true,
-                            items:[
-                                {
-                                    id         : 'minCommodityAmountTxtFld',
-                                    anchor     : '100%',
-                                    xtype      : 'textfield',
-                                    fieldLabel : 'Min. Amount',
-                                    name       : 'minCommodityAmount',
-                                    disabled   : true
-                                },
-                                minCommodityAmountUOMCombo
-                            ]
-                        }
-                    ]
-                }
+                commodityNameCombo//,
+//Uncomment this block to enable filtering by Amount                
+//                {
+//                    xtype      : 'fieldset',
+//                    title      : 'Amount',
+//                    autoHeight: true,
+//                    items:[
+//                        measureTypeCombo,
+//                        {
+//                            xtype      : 'fieldset',
+//                            title      : 'Ore Amount',
+//                            autoHeight: true,
+//                            items:[
+//                                {
+//                                    id         : 'minOreAmountTxtFld',
+//                                    anchor     : '100%',
+//                                    xtype      : 'textfield',
+//                                    fieldLabel : 'Min. Amount',
+//                                    name       : 'minOreAmount',
+//                                    disabled   : true
+//                                },
+//                                minOreAmountUOMCombo
+//                            ]
+//                        },{
+//                            xtype       : 'fieldset',
+//                            title       : 'Commodity Amount',
+//                            autoHeight: true,
+//                            items:[
+//                                {
+//                                    id         : 'minCommodityAmountTxtFld',
+//                                    anchor     : '100%',
+//                                    xtype      : 'textfield',
+//                                    fieldLabel : 'Min. Amount',
+//                                    name       : 'minCommodityAmount',
+//                                    disabled   : true
+//                                },
+//                                minCommodityAmountUOMCombo
+//                            ]
+//                        }
+//                    ]
+//                }
             ]
         }]
     });
