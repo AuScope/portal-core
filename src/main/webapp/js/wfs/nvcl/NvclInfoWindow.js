@@ -511,7 +511,7 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
                         ]
                     }]
 
-                }],
+                }],                
                 buttons:[{
                     text: 'Plot',
                     handler: function() {
@@ -526,7 +526,6 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
 
                         var sHtml = '';
                         var item_count = scalarGrid.getSelectionModel().getCount();
-
                         //alert(Ext.getCmp('scalarsForm').getForm().findField('enddepth').getValue());
                         //alert(Ext.getCmp('scalarsForm').getForm().getValues(true));
                         var scalarForm = Ext.getCmp('scalarsForm').getForm();
@@ -542,25 +541,32 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
                                 sHtml += '&height=600';
                                 sHtml += '"/>';
                             }
+                            
+                            var winPlot = new Ext.Window({
+                                autoScroll  : true,
+                                border      : true,
+                                html        : sHtml,
+                                id          : 'plWindow',
+                                layout      : 'fit',
+                                maximizable : true,
+                                modal       : true,
+                                plain       : false,
+                                title       : 'Plot: ',
+                                autoHeight  : true,
+                                autoWidth   : true,
+                                x           : 10,
+                                y           : 10
+                              });
+
+                            winPlot.show();
                         }
-
-                        var winPlot = new Ext.Window({
-                            autoScroll  : true,
-                            border      : true,
-                            html        : sHtml,
-                            id          : 'plWindow',
-                            layout      : 'fit',
-                            maximizable : true,
-                            modal       : true,
-                            plain       : false,
-                            title       : 'Plot: ',
-                            autoHeight  : true,
-                            autoWidth   : true,
-                            x           : 10,
-                            y           : 10
-                          });
-
-                        winPlot.show();
+                        else if (item_count === 0){
+                        	Ext.Msg.show({
+                    			title:'Hint',
+                    			msg: 'You need to select a scalar(s) from the "List of Scalars" table to plot.',
+                    			buttons: Ext.Msg.OK
+                    		});
+                        }                        
                     }
                 }]
             }]
