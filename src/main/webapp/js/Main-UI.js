@@ -1283,106 +1283,56 @@ Ext.onReady(function() {
 	                //So lets find the first record with a type we can choose (Prioritise WFS -> WCS -> WMS)
 	                var cswRecords = wfsRecords;
 	                if (cswRecords.length !== 0) {
-	                	for (var i = 0; i < cswRecords.length; i++) {
-	                		var wfsOnlineResources = cswRecords[i].getFilteredOnlineResources('WFS');
-	                		var cswWfsRecordCount = cswRecords.length;
-	                		var WfsOnlineResourceCount = wfsOnlineResources.length;
-
-	                		for (var j = 0; j < wfsOnlineResources.length; j++) {
-	                		    //Generate our filter parameters (or just grab the last set used	                		    
-	                		    var url = wfsOnlineResources[j].url;
-	                            var filterParameters = activeLayerRecord.getLastFilterParameters();
-	                            if (!filterParameters) {
-	                                filterParameters = {};
-	                            }
-	                            filterParameters.serviceUrl = wfsOnlineResources[j].url;
-	                            filterParameters.typeName = wfsOnlineResources[j].name;
-	                            filterParameters.maxFeatures = 0;
-	                            var bbox = filterParameters.bbox;
-	                            
-	                            var boundingbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map));
-	                            
-	                            function copy_obj(obj) {
-								    var c = new Object();
-								
-								    for (var e in obj) {
-								      c[e] = obj[e];
-								    }
-								    return c;
-								  }
-	                            
-	                            
-	                            //The url that will actually call a WFS and return XML
-	                            var proxyUrl = activeLayerRecord.getProxyUrl()!== null ? activeLayerRecord.getProxyUrl() : 'getAllFeatures.do';
-
-	                			if(activeLayerRecord.getServiceEndpoints() == null || 
-	                					includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {
-	                			    var prefixUrl = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?";
-	                			    
-	                			    if(bbox === null || bbox === undefined){
-		                				
-		                				keys.push('serviceUrls');		                				
-		                    			values.push(Ext.urlEncode(filterParameters, prefixUrl));
-		                    			chkWfsCount(i , j, cswWfsRecordCount,WfsOnlineResourceCount, keys, values);
-	                				}
-	                			    else{
-		                				if(bbox === boundingbox){
-		                					Ext.MessageBox.show({
-		                		        		buttons:{yes:'Download Current', no:'Download All'},
-		                		        		fn:function (buttonId) {
-		                		        			if (buttonId == 'yes') {
-		                		        				keys.push('serviceUrls');
-		                		        				values.push(Ext.urlEncode(filterParameters, prefixUrl));
-		                		        				chkWfsCount(i , j, cswWfsRecordCount,WfsOnlineResourceCount, keys, values);
-		                		        			} else if (buttonId == 'no') {
-		                		        				var currentFilterParameters = copy_obj(filterParameters);		                		        				currentFilterParameters.bbox = null;
-		                		        				keys.push('serviceUrls');
-		                		        				values.push(Ext.urlEncode(currentFilterParameters, prefixUrl));
-		                		        				chkWfsCount(i , j, cswWfsRecordCount,WfsOnlineResourceCount, keys, values);
-		                		        			}
-		                		        		},
-		                		        		modal:true,
-		                		        		msg:'Do you want to download the data according to the Current Viewport or irrespective of ViewPort?',
-		                		        		title:'Options: Current Viewport or Without Viewport'
-		                		        	});
-		                		    	}
-		                		    	else{
-		                					Ext.MessageBox.show({
-		                		        		buttons:{yes:'Download Current', no:'Download Initial', cancel:'Download All'},
-		                		        		fn:function (buttonId) {
-		                		        			if (buttonId === 'yes') {              		        				
-		                		        				var currentFilterParameters = copy_obj(filterParameters);
-		                		        				currentFilterParameters.bbox = boundingbox;
-		                		        				keys.push('serviceUrls');
-		                		        				values.push(Ext.urlEncode(currentFilterParameters, prefixUrl));
-		                		        				chkWfsCount(i , j, cswWfsRecordCount,WfsOnlineResourceCount, keys, values);
-		                		        			} else if (buttonId === 'no') {
-		                		        				keys.push('serviceUrls');
-		                		        				values.push(Ext.urlEncode(filterParameters, prefixUrl));
-		                		        				chkWfsCount(i , j, cswWfsRecordCount,WfsOnlineResourceCount, keys, values);
-		                		        			} else if (buttonId === 'cancel') {
-		                		        				var currentFilterParameters = copy_obj(filterParameters);
-		                		        				currentFilterParameters.bbox = null;
-		                		        				keys.push('serviceUrls');
-		                		        				values.push(Ext.urlEncode(currentFilterParameters, prefixUrl));
-		                		        				chkWfsCount(i , j, cswWfsRecordCount,WfsOnlineResourceCount, keys, values);
-		                		        			}
-		                		        		},
-		                		        		modal:true,
-		                		        		msg:'Do you want to download data according to the Visible Markers Area or the Current Viewport or irrespective of ViewPort?',
-		                		        		title:'Warning: Different bounding box'
-		                		        	});
-		                		    	}
-		                			}
-	                			    
-	                				
-	                			}
-	                		}
+	                	var filterParameters = activeLayerRecord.getLastFilterParameters();
+	                	if (!filterParameters) {
+                            filterParameters = {};
+                        }
+	                	var bbox = filterParameters.bbox;
+	                	var boundingbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map));
+	                	var proxyUrl = activeLayerRecord.getProxyUrl()!== null ? activeLayerRecord.getProxyUrl() : 'getAllFeatures.do';
+	                	var prefixUrl = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?";
+	                	
+	                	if(bbox === null || bbox === undefined){
+	                		downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, null, keys, values);
 	                	}
+	                	else{
+            				if(bbox === boundingbox){
+            					Ext.MessageBox.show({
+            		        		buttons:{yes:'Download Current', no:'Download All'},
+            		        		fn:function (buttonId) {
+            		        			if (buttonId == 'yes') {
+            		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values);
+            		        			} else if (buttonId == 'no') {
+            		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, null, keys, values);
+            		        			}
+            		        		},
+            		        		modal:true,
+            		        		msg:'Do you want to download the data according to the Current Viewport or irrespective of ViewPort?',
+            		        		title:'Options: Current Viewport or Without Viewport'
+            		        	});
+            		    	}
+            		    	else{
+            					Ext.MessageBox.show({
+            		        		buttons:{yes:'Download Current', no:'Download Initial', cancel:'Download All'},
+            		        		fn:function (buttonId) {
+            		        			if (buttonId === 'yes') {              		        				
+            		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, boundingbox, keys, values);
+            		        			} else if (buttonId === 'no') {
+            		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values);
+            		        			} else if (buttonId === 'cancel') {
+            		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, null, keys, values);
+            		        			}
+            		        		},
+            		        		modal:true,
+            		        		msg:'Do you want to download data according to the Visible Markers Area, the Current Viewport or irrespective of ViewPort?',
+            		        		title:'Warning: Different bounding box'
+            		        	});
+            		    	}
+            			}	
 	                }
-
-	                cswRecords = wcsRecords;
-	                if (wfsRecords.length === 0 && cswRecords.length !== 0) {
+	                
+	                if (wfsRecords.length === 0 && wcsRecords.length !== 0) {
+	                	cswRecords = wcsRecords;
 	                	//Assumption - we only expect 1 WCS
 	            		var wcsOnlineResource = cswRecords[0].getFilteredOnlineResources('WCS')[0];
 	            		showWCSDownload(wcsOnlineResource.url, wcsOnlineResource.name);
@@ -1390,8 +1340,8 @@ Ext.onReady(function() {
 	                }
 
 	                //For WMS we download every WMS
-	                cswRecords = wmsRecords;
-	                if (wfsRecords.length === 0 && wcsRecords.length === 0 && cswRecords.length !== 0) {
+	                if (wfsRecords.length === 0 && wcsRecords.length === 0 && wmsRecords.length !== 0) {
+	                	cswRecords = wmsRecords;
 	                	for (var i = 0; i < cswRecords.length; i++) {
 		                	var wmsOnlineResources = cswRecords[i].getFilteredOnlineResources('WMS');
 		    				for (var j = 0; j < wmsOnlineResources.length; j++) {
@@ -1446,13 +1396,34 @@ Ext.onReady(function() {
     });
 
     
-    var chkWfsCount = function(cswCount, onlineResourcesCount, cswWfsRecord,WfsOnlineResource, keys, values){
-    	if(cswCount >= (cswWfsRecord-1) && onlineResourcesCount >= (WfsOnlineResource-1))
-    	{
-    		openWindowWithPost("downloadGMLAsZip.do?", 'WFS_Layer_Download_'+new Date().getTime(), keys, values);
-            return;
+    var downloadWFS = function( cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values){
+    	
+    	for (var i = 0; i < cswRecords.length; i++) {
+    		var wfsOnlineResources = cswRecords[i].getFilteredOnlineResources('WFS');
+    		var cswWfsRecordCount = cswRecords.length;
+    		var WfsOnlineResourceCount = wfsOnlineResources.length;
+    		
+    		for (var j = 0; j < wfsOnlineResources.length; j++) {
+    			//Generate our filter parameters (or just grab the last set used	                		    
+    			var url = wfsOnlineResources[j].url;
+    			
+    			filterParameters.serviceUrl = wfsOnlineResources[j].url;
+    			filterParameters.typeName = wfsOnlineResources[j].name;
+    			filterParameters.maxFeatures = 0;
+    			
+    			if(activeLayerRecord.getServiceEndpoints() === null || 
+    					includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {
+    					var currentFilterParameters = copy_obj(filterParameters);
+    					currentFilterParameters.bbox = bbox;
+    					keys.push('serviceUrls');
+    					values.push(Ext.urlEncode(currentFilterParameters, prefixUrl));
+    			}
+    		}
     	}
-    };
+    	
+    	openWindowWithPost("downloadGMLAsZip.do?", 'WFS_Layer_Download_'+new Date().getTime(), keys, values);
+        return;
+    }
     
    /** This function copy an object to another by value and not by reference**/ 
    var copy_obj = function(objToCopy) {
