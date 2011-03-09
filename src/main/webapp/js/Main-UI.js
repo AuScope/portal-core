@@ -1442,7 +1442,7 @@ Ext.onReady(function() {
     			
     			filterParameters.serviceUrl = wfsOnlineResources[j].url;
     			filterParameters.typeName = wfsOnlineResources[j].name;
-    			filterParameters.maxFeatures = 2;
+    			filterParameters.maxFeatures = 0;
     			
     			if(activeLayerRecord.getServiceEndpoints() === null || 
     					includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {
