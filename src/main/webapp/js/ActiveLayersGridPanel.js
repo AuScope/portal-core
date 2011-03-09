@@ -11,11 +11,12 @@
  *                         The first boolean is the current visibility state
  *                         The second boolean is whether the filter (if any) for this layer should be applied
  */
-ActiveLayersGridPanel = function(id, title, description, activeLayersStore, layerSelectionHandler, layerMoveHandler, layerRemoveHandler, layerVisibilityHandler) {
+ActiveLayersGridPanel = function(id, title, description, activeLayersStore, layerSelectionHandler, layerMoveHandler, layerRemoveHandler, layerStopRequest, layerVisibilityHandler) {
 	this.layerSelectionHandler = layerSelectionHandler;
 	this.layerMoveHandler = layerMoveHandler;
 	this.layerRemoveHandler = layerRemoveHandler;
 	this.layerVisibilityHandler = layerVisibilityHandler;
+	this.layerStopRequest = layerStopRequest;
 
 	 // custom column plugin example
     var activeLayersPanelCheckColumn = new Ext.ux.grid.EventCheckColumn({
@@ -49,6 +50,20 @@ ActiveLayersGridPanel = function(id, title, description, activeLayersStore, laye
                 }
 
                 layerRemoveHandler(new ActiveLayersRecord(record));
+            }
+        };
+	var activeLayersStopButton = {
+            text:'Stop Processing',
+            tooltip:'Stop Processing',
+            iconCls:'stop',
+            pressed:true,
+            handler: function() {
+                var record = activeLayersPanel.getSelectionModel().getSelected();
+                if (record === null) {
+                    return;
+                }
+
+                layerStopRequest(new ActiveLayersRecord(record));
             }
         };
 
@@ -153,6 +168,11 @@ ActiveLayersGridPanel = function(id, title, description, activeLayersStore, laye
                 //Create the context menu to hold the buttons
                 var contextMenu = new Ext.menu.Menu();
                 contextMenu.add(activeLayersRemoveButton);
+                var activeLayerRecord = new ActiveLayersRecord(activeLayersPanel.getStore().getAt(rowIndex));
+        		var wfsRecords = activeLayerRecord.getCSWRecordsWithType('WFS');
+        		if(wfsRecords.length !== 0){
+        			contextMenu.add(activeLayersStopButton);
+        		}               
 
                 //Show the menu
                 contextMenu.showAt(event.getXY());
@@ -165,6 +185,7 @@ ActiveLayersGridPanel.layerSelectionHandler = null;
 ActiveLayersGridPanel.layerMoveHandler = null;
 ActiveLayersGridPanel.layerRemoveHandler = null;
 ActiveLayersGridPanel.layerVisibilityHandler = null;
+ActiveLayersGridPanel.layerStopRequest = null;
 
 
 

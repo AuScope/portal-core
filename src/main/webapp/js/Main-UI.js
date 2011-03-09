@@ -751,7 +751,9 @@ Ext.onReady(function() {
         //Begin loading from each service
         activeLayerRecord.setIsLoading(true);
         activeLayerRecord.setHasData(false);
-
+        
+        var transId = [];
+        var transIdUrl = [];
 
         for (var i = 0; i < cswRecords.length; i++) {
         	//Assumption - We will only have 1 WFS linked per CSW
@@ -793,6 +795,9 @@ Ext.onReady(function() {
 	                	activeLayerRecord.setIsLoading(false);
 	                }
 	            });
+	            transId[i] = this.Ext.Ajax.transId;
+	            transIdUrl[i] = wfsOnlineResource.url;
+	            
 	        } else { //If the endpoint will not be part of this layer just mark it as finished loading
 	            //decrement the counter
 	            finishedLoadingCounter--;
@@ -803,6 +808,8 @@ Ext.onReady(function() {
 	            }
 	        }
         }
+        activeLayerRecord.setWFSRequestTransId(transId);
+        activeLayerRecord.setWFSRequestTransIdUrl(transIdUrl);
     };
     
     /**
@@ -1011,6 +1018,31 @@ Ext.onReady(function() {
         	filterPanelObj.form.destroy();
         }
     };
+    
+    var activeLayersStopRequest = function(activeLayerRecord){
+    	if (!activeLayerRecord.getIsLoading()) {
+            Ext.MessageBox.show({
+                title: 'No Services to stop',
+                msg: "None of the service(s) are in loading state.",
+                buttons: Ext.MessageBox.OK,
+                animEl: 'mb9',
+                icon: Ext.MessageBox.INFO
+            });
+            return;
+        }
+    	else{
+    		var transID = activeLayerRecord.getWFSRequestTransId();
+    		var transIDUrl = activeLayerRecord.getWFSRequestTransIdUrl();
+    		for(i =0;i< transID.length; i++){
+    			if(Ext.Ajax.isLoading(transID[i])){
+    				Ext.Ajax.abort(transID[i]);
+    				var responseTooltip = activeLayerRecord.getResponseToolTip();
+    	            responseTooltip.addResponse(transIDUrl[i],"Processing Aborted");
+    			}
+    		}
+    		activeLayerRecord.setIsLoading(false);    		
+    	}
+    };
 
 
 
@@ -1021,6 +1053,7 @@ Ext.onReady(function() {
 											    		activeLayerSelectionHandler,
 											    		updateActiveLayerZOrder,
 											    		activeLayersRemoveHandler,
+											    		activeLayersStopRequest,
 											    		activeLayerCheckHandler);
 
     /**
@@ -1409,7 +1442,7 @@ Ext.onReady(function() {
     			
     			filterParameters.serviceUrl = wfsOnlineResources[j].url;
     			filterParameters.typeName = wfsOnlineResources[j].name;
-    			filterParameters.maxFeatures = 0;
+    			filterParameters.maxFeatures = 2;
     			
     			if(activeLayerRecord.getServiceEndpoints() === null || 
     					includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {

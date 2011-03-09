@@ -67,3 +67,8 @@
 .remove {
     background-image:url(../img/delete.gif) !important;
 }
+.stop{
+	background-image:url(../img/drop-no.gif) !important;
+	
+}
+

@@ -355,3 +355,35 @@ ActiveLayersRecord.prototype.getLastFilterParameters = function() {
 ActiveLayersRecord.prototype.setLastFilterParameters = function(filterParams) {
     this.internalRecord.lastFilterParams = filterParams;
 };
+
+/**
+ * Gets the array of unique ids of the services request of a layer.
+ * Can be null/undefined
+ */
+ActiveLayersRecord.prototype.getWFSRequestTransId = function() {
+    return this.internalRecord.transId;
+};
+
+/**
+ * Sets the array of unique ids of the services request of a layer.
+ * Can be null/undefined
+ */
+ActiveLayersRecord.prototype.setWFSRequestTransId = function(transId) {
+    this.internalRecord.transId = transId;
+};
+
+/**
+ * Gets the service Url for which the unique ids are set.
+ * Can be null/undefined
+ */
+ActiveLayersRecord.prototype.getWFSRequestTransIdUrl = function() {
+    return this.internalRecord.transIdUrl;
+};
+
+/**
+ * Sets the service Url for which the unique ids are set.
+ * Can be null/undefined
+ */
+ActiveLayersRecord.prototype.setWFSRequestTransIdUrl = function(transIdUrl) {
+    this.internalRecord.transIdUrl = transIdUrl;
+};
