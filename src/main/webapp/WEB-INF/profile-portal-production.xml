@@ -2,9 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-       http://www.springframework.org/schema/tx 
+       http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <bean id="knownTypeBoreholeNvcl" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -46,7 +46,7 @@
             </list>
        </property>
    </bean>
-   
+
    <bean id="knownTypeBoreholePressureDB" class="org.auscope.portal.server.web.KnownLayerWFS">
        <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
        <constructor-arg name="title" value="Pressure DB"/>
@@ -55,11 +55,10 @@
        <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
 	   <constructor-arg name="serviceEndpoints">
 	       <list>
-	           <value>http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs</value>
-	           <value>http://www.mrt.tas.gov.au:80/web-services/wfs</value>
+	           <value>http://services-test.auscope.org:80/pressuredb/wfs</value>
 	       </list>
 	   </constructor-arg>
-	   <constructor-arg name="includeEndpoints" value="false"/>
+	   <constructor-arg name="includeEndpoints" value="true"/>
        <constructor-arg name="disableBboxFiltering" value="false"/>
        <constructor-arg name="iconAnchor">
            <bean class="java.awt.Point">
@@ -86,7 +85,7 @@
             </list>
        </property>
    </bean>
-   
+
     <!-- All elements must be of type org.auscope.portal.server.web.KnownLayer -->
     <bean id="knownTypes" class="java.util.ArrayList">
         <constructor-arg>
@@ -113,7 +112,7 @@
             </list>
         </constructor-arg>
     </bean>
-    
+
     <bean id="cswServiceList" class="java.util.ArrayList">
         <constructor-arg>
             <list>
@@ -121,6 +120,6 @@
                 <ref bean="cswMDUProduction" />
             </list>
         </constructor-arg>
-    </bean>       
+    </bean>
 
 </beans>
