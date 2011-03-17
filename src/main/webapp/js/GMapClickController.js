@@ -237,6 +237,11 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	        if (!alr.getLayerVisible()) {
 	        	continue;
 	        }
+	        
+	        var wcsCSWRecords = alr.getCSWRecordsWithType('WCS');
+	        if (wcsCSWRecords !== null && wcsCSWRecords !== undefined){
+	        	continue;
+	        }
 
 	        //each linked WMS record must be tested
 	        var wmsCSWRecords = alr.getCSWRecordsWithType('WMS');

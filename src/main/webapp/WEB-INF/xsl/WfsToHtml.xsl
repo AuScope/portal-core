@@ -957,12 +957,16 @@
         <xsl:variable name="guID" select="@gml:id"/>
 
         <table>
+        	<colgroup span="1" width="15%"/>
+            <colgroup span="1" width="35%"/>
+            <colgroup span="2" width="15%"/>
+            <colgroup span="1" width="25%"/>
             <tbody>
                 <tr>
                     <td class="caption" colspan="3" rowspan="1">GSML - Yilgarn Geochemistry</td>
                     <td colspan="2" ALIGN="right"><b>View As: </b>
                         <xsl:call-template name="make-popup-url">
-                            <xsl:with-param name="friendly-name" select="'GSML'"/>
+                            <xsl:with-param name="friendly-name" select="'GeoSciML'"/>
                             <xsl:with-param name="real-url" select="$serviceURL"/>
                         </xsl:call-template>
                     </td>
