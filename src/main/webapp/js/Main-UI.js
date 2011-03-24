@@ -1330,34 +1330,20 @@ Ext.onReady(function() {
 	                	}
 	                	else{
             				if(bbox === boundingbox){
-            					Ext.MessageBox.show({
-            		        		buttons:{yes:'Download Current', no:'Download All'},
-            		        		fn:function (buttonId) {
-            		        			if (buttonId == 'yes') {
-            		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values);
-            		        			} else if (buttonId == 'no') {
-            		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, null, keys, values);
-            		        			}
-            		        		},
-            		        		modal:true,
-            		        		msg:'Do you want to download the data according to the Current Viewport or irrespective of ViewPort?',
-            		        		title:'Options: Current Viewport or Without Viewport'
-            		        	});
+            					downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values);
             		    	}
             		    	else{
             					Ext.MessageBox.show({
-            		        		buttons:{yes:'Download Current', no:'Download Initial', cancel:'Download All'},
+            		        		buttons:{yes:'Download Current', no:'Download Initial'},
             		        		fn:function (buttonId) {
             		        			if (buttonId === 'yes') {              		        				
             		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, boundingbox, keys, values);
             		        			} else if (buttonId === 'no') {
             		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values);
-            		        			} else if (buttonId === 'cancel') {
-            		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, null, keys, values);
             		        			}
             		        		},
             		        		modal:true,
-            		        		msg:'Do you want to download data according to the Visible Markers Area, the Current Viewport or irrespective of ViewPort?',
+            		        		msg:'Do you want to download data according to the Visible Markers Area or the Current Viewport?',
             		        		title:'Warning: Different bounding box'
             		        	});
             		    	}
