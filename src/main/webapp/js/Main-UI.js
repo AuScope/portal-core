@@ -990,44 +990,47 @@ Ext.onReady(function() {
     //This handler is called on records that the user has requested to delete from the active layer list
     var activeLayersRemoveHandler = function(activeLayerRecord) {
         if (activeLayerRecord.getIsLoading()) {
-            Ext.MessageBox.show({
-                title: 'Please wait',
-                msg: "There is an operation in process for this layer. Please wait until it is finished.",
-                buttons: Ext.MessageBox.OK,
-                animEl: 'mb9',
-                icon: Ext.MessageBox.INFO
+            Ext.MessageBox.show({                
+                buttons: {yes:'Stop Processing', no:'Cancel'},
+                fn: function(buttonId){
+                	if(buttonId === 'yes')
+                	{
+                		activeLayersStopRequest(activeLayerRecord);
+                	}
+                	else if (buttonId === 'no') {
+        				return;
+        			}
+                },
+                icon: Ext.MessageBox.INFO,
+                modal:true,
+                msg: "Cannot remove the layer because there is an operation in process. Do you want to stop further processing?",
+                title: 'Stop Processing!'
             });
-            return;
         }
+        else{
 
-        var overlayManager = activeLayerRecord.getOverlayManager();
-        if (overlayManager) {
-        	overlayManager.clearOverlays();
-        }
-
-        //remove it from active layers
-        activeLayersStore.removeActiveLayersRecord(activeLayerRecord);
-
-        //set the filter panels active item to 0
-        filterPanel.getLayout().setActiveItem(0);
-
-        //Completely destroy the filter panel object as we no longer
-        //have any use for it
-        var filterPanelObj = activeLayerRecord.getFilterPanel();
-        if (filterPanelObj && filterPanelObj.form) {
-        	filterPanelObj.form.destroy();
+	        var overlayManager = activeLayerRecord.getOverlayManager();
+	        if (overlayManager) {
+	        	overlayManager.clearOverlays();
+	        }
+	
+	        //remove it from active layers
+	        activeLayersStore.removeActiveLayersRecord(activeLayerRecord);
+	
+	        //set the filter panels active item to 0
+	        filterPanel.getLayout().setActiveItem(0);
+	
+	        //Completely destroy the filter panel object as we no longer
+	        //have any use for it
+	        var filterPanelObj = activeLayerRecord.getFilterPanel();
+	        if (filterPanelObj && filterPanelObj.form) {
+	        	filterPanelObj.form.destroy();
+	        }
         }
     };
     
     var activeLayersStopRequest = function(activeLayerRecord){
-    	if (!activeLayerRecord.getIsLoading()) {
-            Ext.MessageBox.show({
-                title: 'No Services to stop',
-                msg: "None of the service(s) are in loading state.",
-                buttons: Ext.MessageBox.OK,
-                animEl: 'mb9',
-                icon: Ext.MessageBox.INFO
-            });
+    	if (!activeLayerRecord.getIsLoading()) {            
             return;
         }
     	else{

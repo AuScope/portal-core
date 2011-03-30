@@ -52,20 +52,7 @@ ActiveLayersGridPanel = function(id, title, description, activeLayersStore, laye
                 layerRemoveHandler(new ActiveLayersRecord(record));
             }
         };
-	var activeLayersStopButton = {
-            text:'Stop Processing',
-            tooltip:'Stop Processing',
-            iconCls:'stop',
-            pressed:true,
-            handler: function() {
-                var record = activeLayersPanel.getSelectionModel().getSelected();
-                if (record === null) {
-                    return;
-                }
-
-                layerStopRequest(new ActiveLayersRecord(record));
-            }
-        };
+	
 
 	ActiveLayersGridPanel.superclass.constructor.call(this, {
         plugins: [activeLayersPanelCheckColumn,
@@ -168,12 +155,6 @@ ActiveLayersGridPanel = function(id, title, description, activeLayersStore, laye
                 //Create the context menu to hold the buttons
                 var contextMenu = new Ext.menu.Menu();
                 contextMenu.add(activeLayersRemoveButton);
-                var activeLayerRecord = new ActiveLayersRecord(activeLayersPanel.getStore().getAt(rowIndex));
-        		var wfsRecords = activeLayerRecord.getCSWRecordsWithType('WFS');
-        		if(wfsRecords.length !== 0){
-        			contextMenu.add(activeLayersStopButton);
-        		}               
-
                 //Show the menu
                 contextMenu.showAt(event.getXY());
             }
