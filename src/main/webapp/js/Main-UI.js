@@ -1337,7 +1337,7 @@ Ext.onReady(function() {
             		    	}
             		    	else{
             					Ext.MessageBox.show({
-            		        		buttons:{yes:'Download Current', no:'Download Initial'},
+            		        		buttons:{yes:'Use current', no:'Use original'},
             		        		fn:function (buttonId) {
             		        			if (buttonId === 'yes') {              		        				
             		        				downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, boundingbox, keys, values);
@@ -1346,8 +1346,8 @@ Ext.onReady(function() {
             		        			}
             		        		},
             		        		modal:true,
-            		        		msg:'Do you want to download data according to the Visible Markers Area or the Current Viewport?',
-            		        		title:'Warning: Different bounding box'
+            		        		msg:'The visible bounds have changed since you added this layer. Would you like to download using the original or the current visible bounds?',
+            		        		title:'Warning: Changed Visible Bounds!'
             		        	});
             		    	}
             			}	
