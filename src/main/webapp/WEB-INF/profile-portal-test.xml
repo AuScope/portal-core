@@ -17,6 +17,7 @@
 	       <list>
 	           <value>http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs</value>
 	           <value>http://www.mrt.tas.gov.au:80/web-services/wfs</value>
+	           <value>http://geossdi.dmp.wa.gov.au:80/services/wfs</value>
 	       </list>
 	   </constructor-arg>
 	   <constructor-arg name="includeEndpoints" value="true"/>
