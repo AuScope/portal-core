@@ -92,15 +92,18 @@ NvclInfoWindow.prototype = {
                 if (aDataset.length > 0) {
 
                     // Dataset Collection of key : value pairs
-                    // 6dd70215-fe38-457c-be42-3b165fd98c7 : WTB5
+                    // 6dd70215-fe38-457c-be42-3b165fd98c7 : {datasetName : WTB5, omUrl : http://something/wfs}
                     var datasetCol = new Ext.util.MixedCollection();
                     var aId, aName;
 
                     for (var i=0; i < aDataset.length; i++ ) {
                          aId = GXml.value(aDataset[i].selectSingleNode("*[local-name() = 'DatasetID']"));
                          aName = GXml.value(aDataset[i].selectSingleNode("*[local-name() = 'DatasetName']"));
+                         omUrl = GXml.value(aDataset[i].selectSingleNode("*[local-name() = 'OmUrl']"));
 
-                        datasetCol.add(aId, aName);
+                        datasetCol.add(aId, {
+                            datasetName : aName,
+                            omUrl : omUrl});
                     }
 
                     // Get tab content
@@ -147,20 +150,26 @@ NvclInfoWindow.prototype = {
                            '<select name="selDataset" id="selDataset" size="5" style="width:200px;">';
 
             datasetCol.eachKey( function(key,item) {
+                var datasetDetails = {
+                    datasetId : key,
+                    datasetName : item.datasetName,
+                    omUrl : item.omUrl
+                };
+                
                 if (datasetCol.indexOfKey(key) === 0) {
-                    lHtml += '<option value="\''+ key +'\'" selected="selected">'+ item + ' (Latest)</option>';
+                    lHtml += '<option value="'+ escape(Ext.util.JSON.encode(datasetDetails)) +'" selected="selected">'+ item.datasetName + ' (Latest)</option>';
                 } else {
-                    lHtml += '<option value="\''+ key +'\'">'+ item +'</option>';
+                    lHtml += '<option value="'+ escape(Ext.util.JSON.encode(datasetDetails)) +'">'+ item.datasetName +'</option>';
                 }
             });
 
             lHtml +=       '</select>' +
                            '<div align="right">' +
                               '<br>' +
-                              '<input type="button" id="displayDatasetBtn"  value="Display" name=butSelectDataset onclick="showBoreholeDetails(\''+ this.boreholeId +'\',\''+ this.geoServerUrl +'\', this.form.selDataset.value);">' +
+                              '<input type="button" id="displayDatasetBtn"  value="Display" name=butSelectDataset onclick="showBoreholeDetails(\''+ this.geoServerUrl +'\', Ext.util.JSON.decode(unescape(this.form.selDataset.value)));">' +
                               '&#160;' +
                               '&#160;' +
-                              '<input type="button" id="downloadDatasetBtn" value="Download" name=butDownloadDataset onclick="showDownloadDetails(\''+ this.boreholeId +'\',\''+ this.wfsServiceUrl +'\',\''+ this.geoServerUrl +'\', this.form.selDataset.value)">' +
+                              '<input type="button" id="downloadDatasetBtn" value="Download" name=butDownloadDataset onclick="showDownloadDetails(\''+ this.wfsServiceUrl +'\',\''+ this.geoServerUrl +'\', Ext.util.JSON.decode(unescape(this.form.selDataset.value)))">' +
                            '</div>' +
                         '</form>' +
                      '</div>';
@@ -175,15 +184,17 @@ NvclInfoWindow.prototype = {
  * Static method called from google map's info window to open a
  * new Ext JS window with borehole details
  *
- * @param {String} iBoreholeId
  * @param {String} iServerUrl
- * @param {String} iDatasetId
+ * @param {String} iDatasetDetails - an object with datasetName, datasetId and omUrl set.
  */
-function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
+function showBoreholeDetails(iServerUrl, iDatasetDetails) {
 
     Ext.QuickTips.init();
 
-    var lDatasetId  = iDatasetId.replace(/'/g, '');
+    var lDatasetId   = iDatasetDetails.datasetId.replace(/'/g, '');
+    var lDatasetName = iDatasetDetails.datasetName;
+    var lOMUrl = iDatasetDetails.omUrl;
+    
     var LOG_PATH    = '/NVCLDataServices/getLogCollection.html?datasetid=';
     var MOSAIC_PATH = '/NVCLDataServices/mosaic.html?logid=';
     var PLOT_PATH   = '/NVCLDataServices/plotscalar.html?logid=';
@@ -202,7 +213,7 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
         resizable   : false,
         modal       : true,
         plain       : false,
-        title       : 'Borehole Id: '+ iBoreholeId,
+        title       : 'Borehole Id: '+ lDatasetName,
         height      : 600,
         width       : 820,
         items:[{
@@ -588,14 +599,15 @@ function showBoreholeDetails(iBoreholeId, iServerUrl, iDatasetId) {
  * Static method called from google map's info window to open a
  * new Ext JS window with borehole details
  *
- * @param {String} iBoreholeId
  * @param {String} iWfsServiceUrl - GeoServer Borehole service url
  * @param {String} iServerUrl
- * @param {String} iDatasetId
+ * @param {String} iDatasetDetails - an object with datasetName, datasetId and omUrl set.
  */
-function showDownloadDetails(iBoreholeId, iWfsServiceUrl, iServerUrl, iDatasetId) {
+function showDownloadDetails(iWfsServiceUrl, iServerUrl, iDatasetDetails) {
 
-    var lDatasetId   = iDatasetId.replace(/'/g, '');
+    var lDatasetId   = iDatasetDetails.datasetId.replace(/'/g, '');
+    var lDatasetName = iDatasetDetails.datasetName;
+    var lOMUrl = iDatasetDetails.omUrl;
 
     var CSV_PATH     = Ext.util.Format.htmlEncode("?request=GetFeature&typeName=om:GETPUBLISHEDSYSTEMTSA&CQL_FILTER=(DATASET_ID='");
     var CSV_PATH_END = Ext.util.Format.htmlEncode("')&outputformat=csv");
@@ -623,7 +635,7 @@ function showDownloadDetails(iBoreholeId, iWfsServiceUrl, iServerUrl, iDatasetId
         resizable       : false,
         modal           : true,
         plain           : false,
-        title           : 'Borehole Id:  '+ iBoreholeId,
+        title           : 'Borehole Id:  '+ lDatasetName,
         height          : 400,
         width           : 500,
         //defaultButton   :'emailAddress',
@@ -867,9 +879,9 @@ function showDownloadDetails(iBoreholeId, iWfsServiceUrl, iServerUrl, iDatasetId
                             var downloadForm = Ext.getCmp('nvclDownloadFrm').getForm();
                             sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="';
                             sUrl += ProxyURL + iServerUrl + O_M_PATH;
-                            sUrl += 'boreholeid=' + iBoreholeId;
-                            sUrl += '&serviceurl=' + iServerUrl + '/geoserverOM/wfs';
-                            sUrl += '&typename=gsml:Borehole';
+                            sUrl += 'boreholeid=sa.samplingfeaturecollection.' + lDatasetId;
+                            sUrl += '&serviceurl=' + lOMUrl + 'wfs';
+                            sUrl += '&typename=sa:SamplingFeatureCollection';
                             sUrl += '&email=' + sEmail;
                             sUrl += '"></iframe>';
                             //alert(sUrl);
