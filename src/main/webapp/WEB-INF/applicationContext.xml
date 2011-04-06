@@ -232,7 +232,7 @@
 
    <bean id="knownTypeYilgarnGeochemistry" class="org.auscope.portal.server.web.KnownLayerWFS">
        <constructor-arg name="featureTypeName" value="gsml:GeologicUnit"/>
-       <constructor-arg name="title" value="Yilgarn Geochemistry"/>
+       <constructor-arg name="title" value="Yilgarn Laterite Geochemistry"/>
        <constructor-arg name="description" value="A collection of detailed information about all analytes that were detected at a specific location"/>
        <constructor-arg name="proxyUrl" value="doYilgarnGeochemistry.do"/>
        <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/grn-blank.png"/>

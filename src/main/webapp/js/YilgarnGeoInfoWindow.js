@@ -48,40 +48,34 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 	    	var recordItems = [];
 	    	for (var i = 0; i < records.length ; i++) {
 	    		recordItems.push([
-	    			    records[i].serviceName,
-	    			    records[i].date,
-	    			    records[i].observedMineralName,
-	    			    records[i].observedMineralDescription,
-	    			    records[i].obsProcessContact,
-	    			    records[i].obsProcessMethod,
-	    			    records[i].observedProperty,
-	    			    records[i].quantityName,
-	    			    records[i].quantityValue,
+	    		        records[i].analyteName,
+	    			    records[i].analyteValue,
 	    			    records[i].uom,
+	    			    records[i].analyticalMethod,
+	    			    records[i].labDetails,
+	    			    records[i].date,
+	    			    records[i].preparationDetails,
 	    			    i
 	    			]);
 	    		}
 
 	    	var groupStore = new Ext.data.GroupingStore({
 	    		autoDestroy		: true,
-	    		groupField		: 'quantityName',
+	    		groupField		: 'analyteName',
 	    		sortInfo		: {
-	    			field			: 'quantityName',
+	    			field			: 'analyteName',
 	    			direction		: 'ASC'
 	    		},
 	    		reader : new Ext.data.ArrayReader({
 	    			fields : [
-	    			    'name',
-	    			    'date',
-	    			    'MineralName',
-	    			    'MineralDescription',
-	    			    'ProcessContact',
-	    			    'ProcessMethod',
-	    			    'Property',
-	    			    'quantityName',
-	    			    'quantityValue',
+	    			    'analyteName',
+	    			    'analyteValue',
 	    			    'uom',
-	    			    'RecordIndex'
+	    			    'analyticalMethod',
+	    			    'labDetails',
+	    			    'analysisDate',
+	    			    'preparationDetails',
+	    			    'recordIndex'
 	    			]
 	    		}),
 	    		data : recordItems
@@ -94,34 +88,34 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 		             	sortable: true // columns are not sortable by default
 		         },
 		         columns: [{
-		             id: 'name',
-		             header: 'Common Name',
-		             dataIndex: 'name',
-		             width: 200
-		         },{
-		             header: 'date',
-		             dataIndex: 'date',
-		             width: 100
-		         },{
-		             header: 'MineralDescription',
-		             dataIndex: 'MineralDescription',
-		             width: 200
-		         },{
-		             header: 'ProcessContact',
-		             dataIndex: 'ProcessContact',
-		             width: 100
-		         },{
-		             header: 'AnalyteName',
-		             dataIndex: 'quantityName',
+		        	 id: 'analyteName',
+		             header: 'Analyte',
+		             dataIndex: 'analyteName',
 		             width: 100
 		         },{
 		             header: 'Value',
-		             dataIndex: 'quantityValue',
+		             dataIndex: 'analyteValue',
 		             width: 100
 		         },{
-		             header: 'Measuring Unit',
+		             header: 'Unit Of Measure',
 		             dataIndex: 'uom',
 		             width: 100
+		         },{		             
+		             header: 'Analytical Method',
+		             dataIndex: 'analyticalMethod',
+		             width: 100
+		         },{
+		             header: 'Lab Details',
+		             dataIndex: 'labDetails',
+		             width: 100
+		         },{
+		             header: 'Analysis Date',
+		             dataIndex: 'analysisDate',
+		             width: 100
+		         },{
+		             header: 'Preparation Details',
+		             dataIndex: 'preparationDetails',
+		             width: 200
 		         }]
 
 		    	 }),
@@ -142,11 +136,11 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 
 			            	   			var selectedMineral = record.get('field1'); //TODO change to a proper field name
 			            	   			if(selectedMineral == 'All'){
-			            	   				groupStore.filter('quantityName', '', false, false);
+			            	   				groupStore.filter('analyteName', '', false, false);
 			            	   			}
 			            	   			else {
 			            	   				//do stuff
-			            	   				groupStore.filter('quantityName', selectedMineral, false, false);
+			            	   				groupStore.filter('analyteName', selectedMineral, false, false);
 			            	   			}
 			               			}
 			               		}
@@ -163,7 +157,7 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 
 	    	 var win = new Ext.Window({
 
-			        	title: 'Located Specimen Details',
+			        	title: 'Specimen Chemical Analyses',
 		               	layout:'fit',
 		                width:1000,
 		                height:500,

@@ -86,7 +86,7 @@ public class YilgarnLocSpecimenController {
 			records = YilgarnLocSpecimenRecords.parseRecords(gmlResponse);
 	        specName = new String[records.length];
 	        for (int j=0; j<records.length; j++){
-	        	specName[j] = records[j].getQuantityName();
+	        	specName[j] = records[j].getAnalyteName();
 	        }
 	        //specName has duplicate values so this is to get Unique values.
 	        Arrays.sort(specName);

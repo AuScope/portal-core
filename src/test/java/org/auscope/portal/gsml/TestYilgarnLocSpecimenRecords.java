@@ -20,13 +20,13 @@ public class TestYilgarnLocSpecimenRecords {
         Assert.assertEquals("serviceName1", record.getServiceName());
         Assert.assertEquals("2006-09-28", record.getDate());
         Assert.assertEquals("quantityName1", record.getObservedMineralName());
-        Assert.assertEquals("MineralDescription1", record.getObservedMineralDescription());
-        Assert.assertEquals("obsProcessContact1", record.getObsProcessContact());
-        Assert.assertEquals("obsProcessMethod1", record.getObsProcessMethod());
+        Assert.assertEquals("MineralDescription1", record.getPreparationDetails());
+        Assert.assertEquals("obsProcessContact1", record.getLabDetails());
+        Assert.assertEquals("obsProcessMethod1", record.getAnalyticalMethod());
         Assert.assertEquals("observedProperty", record.getObservedProperty());
-        Assert.assertEquals("quantityName1", record.getQuantityName());
-        Assert.assertEquals("21.4", record.getQuantityValue());
-        Assert.assertEquals("urn:ogc:def:uom:UCUM::%25", record.getUom());
+        Assert.assertEquals("quantityName1", record.getAnalyteName());
+        Assert.assertEquals("21.4", record.getAnalyteValue());
+        Assert.assertEquals("%", record.getUom());
         
 	}
 
