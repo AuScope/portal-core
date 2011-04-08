@@ -64,11 +64,11 @@ GeotransectsInfoWindow.prototype = {
 	    	this.layername = "No HighRes Layer Name Found in Registry";
 
 		}
-   	
+
 	    //TODO: use of the CSS styles causes issues with the layout in IE especially
 	    // (the pre style also has issues in FF). This is the best I can do for now
 	    // to make slightly less ugly in IE. Will need to look at it again later.
-		this.tabsArray[0] = new GInfoWindowTab(this.TAB_2, 
+		this.tabsArray[0] = new GInfoWindowTab(this.TAB_2,
 //				'<div class="niceDiv">' +
 				'<div style="padding-bottom:10px;" >' +
 				'Specific Line information from registry:' + '</div>' +
@@ -76,15 +76,15 @@ GeotransectsInfoWindow.prototype = {
 				'<div style="min-width:400; min-height:300;">' +
 				'<table border="1" cellspacing="1" cellpadding="4" class="auscopeTable">' +
 				'<tr><td id="headings">ID</td><td id="data">' + this.lineId + '</td></tr>' +
-				'<tr><td id="headings">Descrtiption</td><td id="data">' +
+				'<tr><td id="headings">Description</td><td id="data">' +
 				'<pre id="auscopePre">' +
 				this.linedesc + '</pre></td></tr>' +
 				'<tr><td id="headings">HighRes Service URL</td><td id="data">' + this.serviceurl + '</td></tr>' +
 				'<tr><td id="headings">HighRes Layer Name</td><td id="data">' + this.layername + '</td></tr>' +
 				'</table>' +
 //			    '</div>' +
-				'</div>');		
-		
+				'</div>');
+
 		//The following initialisation is required as the tabs later added asynchronously
 		//may end up being added in the wrong order (2 before 1 exists) resulting in errors
 		//such as: contextElem is null or not an object.
