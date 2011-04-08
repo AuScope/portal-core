@@ -765,7 +765,7 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
 	    			var record = responseObj.records[0]; //We only ever check the first record because only 1 should be returned
 
 	    			var generateRowFragment = function (col1, col2) {
-	    				return '<tr><td>' + col1 + '</td><td>' + col2 + '</td></tr>';
+	    				return '<tr><td id="headings">' + col1 + '</td><td id="data">' + col2 + '</td></tr>';
 	    			};
 
 	    			var generateRowFragmentFromArray = function (col1, arr, colCount, contentFunc) {
@@ -805,11 +805,11 @@ GenericWCSInfoWindow.prototype.showInfoWindow = function() {
 	    				htmlFragment += '<div style="';
 	    				htmlFragment += 'width: expression(!document.body ? &quot;auto&quot; : (document.body.clientWidth > 599 ? &quot;600px&quot; : &quot;auto&quot;) );';
 	    				htmlFragment += 'height: expression( this.scrollHeight > 549 ? &quot;550px&quot; : &quot;auto&quot; );';
-	    				htmlFragment += 'overflow: scroll;">';
+	    				htmlFragment += 'overflow: auto;">';
 	    			} else {
-	    				htmlFragment += '<div style="max-width: 600px; max-height: 550px; overflow: scroll;">';
+	    				htmlFragment += '<div style="max-width: 600px; max-height: 550px; overflow: auto;">';
 	    			}
-	    			htmlFragment += '<table border="1" cellspacing="1" cellpadding="2" width="100%" bgcolor="#EAF0F8">';
+	    			htmlFragment += '<table class=auscopeTable border="1" cellspacing="1" cellpadding="2" width="100%" >';
 	    			htmlFragment += generateRowFragment('<b>Field</b>', '<b>Value</b>');
 	    			htmlFragment += generateRowFragment('Name', record.name);
 	    			htmlFragment += generateRowFragment('Description', record.description);
