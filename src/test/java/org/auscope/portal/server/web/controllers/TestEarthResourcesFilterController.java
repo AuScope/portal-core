@@ -14,6 +14,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.util.GmlToKml;
@@ -40,7 +41,6 @@ public class TestEarthResourcesFilterController {
     private HttpServletRequest mockHttpRequest;
     private HttpServletResponse mockHttpResponse;
     private GmlToKml mockGmlToKml;
-    private BoreholeService mockBoreholeService;
     private CommodityService mockCommodityService;
     private HttpSession mockHttpSession;
     private ServletContext mockServletContext;
@@ -57,7 +57,6 @@ public class TestEarthResourcesFilterController {
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.mineralOccurrenceService = context.mock(MineralOccurrenceService.class);
         this.mockGmlToKml = context.mock(GmlToKml.class);
-        this.mockBoreholeService = context.mock(BoreholeService.class);
         this.mockHttpRequest = context.mock(HttpServletRequest.class);
         this.mockHttpResponse = context.mock(HttpServletResponse.class);
         this.mockCommodityService = context.mock(CommodityService.class);
@@ -67,7 +66,7 @@ public class TestEarthResourcesFilterController {
         this.httpMethodBase = context.mock(HttpMethodBase.class);
         this.mockHttpClient = context.mock(HttpClient.class);
         this.earthResourcesFilterController = new EarthResourcesFilterController(
-        		this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService, this.mockBoreholeService, 
+        		this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService, 
         		this.mockGmlToKml, this.mockCommodityService, this.mockHttpServiceCaller);
     }
 
@@ -107,6 +106,8 @@ public class TestEarthResourcesFilterController {
         final StringWriter jsonResponse = new StringWriter();
 
         context.checking(new Expectations() {{
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
+            
             oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
@@ -144,6 +145,8 @@ public class TestEarthResourcesFilterController {
         final StringWriter jsonResponse = new StringWriter();
 
         context.checking(new Expectations() {{
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
+            
             oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
@@ -181,6 +184,7 @@ public class TestEarthResourcesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
             oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(expectedGML));
@@ -219,6 +223,7 @@ public class TestEarthResourcesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
             oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(expectedGML));
@@ -260,6 +265,7 @@ public class TestEarthResourcesFilterController {
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
 
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
