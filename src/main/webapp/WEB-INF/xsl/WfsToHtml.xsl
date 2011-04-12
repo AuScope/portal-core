@@ -959,14 +959,14 @@
         <table>
         	<colgroup span="1" width="15%"/>
             <colgroup span="1" width="35%"/>
-            <colgroup span="2" width="15%"/>
-            <colgroup span="1" width="25%"/>
+            <colgroup span="2" width="20%"/>
+            <colgroup span="1" width="20%"/>
             <tbody>
                 <tr>
-                    <td class="caption" colspan="3" rowspan="1">GSML - Yilgarn Geochemistry</td>
+                    <td class="caption" colspan="3" rowspan="1">GeoSciML - Yilgarn Laterite Geologic Unit</td>
                     <td colspan="2" ALIGN="right"><b>View As: </b>
                         <xsl:call-template name="make-popup-url">
-                            <xsl:with-param name="friendly-name" select="'GeoSciML'"/>
+                            <xsl:with-param name="friendly-name" select="'XML'"/>
                             <xsl:with-param name="real-url" select="$serviceURL"/>
                         </xsl:call-template>
                     </td>
@@ -978,7 +978,7 @@
                             <xsl:with-param name="real-url" select="$serviceURL"/>           
                         </xsl:call-template></td>
                 </tr>
-                <xsl:for-each select="./gml:name">
+                <xsl:for-each select="./gml:name[not(@codeSpace='http://www.ietf.org/rfc/rfc3406')]">
                     <xsl:choose>
                         <xsl:when test="position()=1">
                         <tr>
@@ -1003,14 +1003,12 @@
                 <tr>
                     <td class="row header">Observation Method:</td>
                     <td class="row"><xsl:value-of select="./gsml:observationMethod/gsml:CGI_TermValue/gsml:value"/></td>
-                    <td class="row header">Purpose:</td>
-                    <td class="row" colspan="2"><xsl:value-of select="./gsml:purpose"/></td>
+                    <td class="row header">Mapped Feature Id:</td>
+                    <td class="row" colspan="2"><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/@gml:id"/></td>                    
                 </tr>
-                <tr>
-                    <td class="row header">Mapped FeatureId:</td>
-                    <td class="row"><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/@gml:id"/></td>
+                <tr>                    
                     <td class="row header">Mapped Feature Observation Method:</td>
-                    <td class="row" colspan="2"><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value"/></td>
+                    <td class="row" colspan="4"><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value"/></td>                    
                 </tr>
                 
             </tbody>

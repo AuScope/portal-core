@@ -25,7 +25,7 @@ YilgarnGeochemistryFilterForm = function(id) {
             {
             	anchor     : '95%',
                 xtype      : 'textfield',
-                fieldLabel : 'Name',
+                fieldLabel : 'Geologic Unit Name',
                 name       : 'geologicName'
             },
             {
