@@ -239,7 +239,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 	        }
 	        
 	        var wcsCSWRecords = alr.getCSWRecordsWithType('WCS');
-	        if (wcsCSWRecords !== null && wcsCSWRecords !== undefined){
+	        if(wcsCSWRecords.length !== 0){
 	        	continue;
 	        }
 
