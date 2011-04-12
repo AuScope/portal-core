@@ -19,6 +19,7 @@ public class BoreholeFilter extends AbstractFilter{
 		private String boreholeName;
 	    private String custodian;
 	    private String dateOfDrilling;
+	    private List<String> restrictToIDList;
 	    
 	// -------------------------------------------------------------- Constants
 	    
@@ -29,10 +30,11 @@ public class BoreholeFilter extends AbstractFilter{
 	    // ----------------------------------------------------------- Constructors
 	    
 	    public BoreholeFilter(String boreholeName, String custodian,
-	                                String dateOfDrilling) {
+	                          String dateOfDrilling, List<String> restrictToIDList) {
 	    	this.boreholeName = boreholeName;
 	        this.custodian = custodian;
 	        this.dateOfDrilling = dateOfDrilling;
+	        this.restrictToIDList = restrictToIDList;
 	    }
 
 	    // --------------------------------------------------------- Public Methods
@@ -64,7 +66,15 @@ public class BoreholeFilter extends AbstractFilter{
 	        if(this.dateOfDrilling.length() > 0)
 	            parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling", this.dateOfDrilling));
 	        
-	        
+	        if (this.restrictToIDList != null && this.restrictToIDList.size() > 0) {
+	            List<String> idFragments = new ArrayList<String>();
+	            for (String id : restrictToIDList) {
+	                if (id != null && id.length() > 0) {
+	                    idFragments.add(this.generateGmlObjectIdFragment(id));
+	                }
+	            }
+	            parameterFragments.add(this.generateOrComparisonFragment(idFragments.toArray(new String[idFragments.size()])));
+	        }
 	        
 	        return this.generateAndComparisonFragment(
 	                this.generateAndComparisonFragment(parameterFragments.toArray(new String[parameterFragments.size()])));

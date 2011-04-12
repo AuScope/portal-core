@@ -20,6 +20,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class AbstractFilter implements IFilter {
 	protected final Log log = LogFactory.getLog(getClass());
+	
+	protected String generateGmlObjectIdFragment(String gmlId) {
+	    return String.format("<ogc:GmlObjectId gml:id=\"%1$s\"/>", gmlId);
+	}
+	
     /**
      * returns a ogc:Filter string fragment that can be embedded in
      * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.

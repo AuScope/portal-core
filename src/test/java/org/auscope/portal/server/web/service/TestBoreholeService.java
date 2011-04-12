@@ -1,8 +1,17 @@
 package org.auscope.portal.server.web.service;
 
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.csw.CSWOnlineResource;
+import org.auscope.portal.csw.CSWOnlineResourceImpl;
+import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.mineraloccurrence.BoreholeFilter;
+import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
 import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
@@ -28,7 +37,6 @@ public class TestBoreholeService {
     @Before
     public void setup() throws Exception {
         service = new BoreholeService();
-        service.setFilter(mockFilter);
         service.setHttpServiceCaller(mockHttpServiceCaller);
         service.setWFSGetFeatureMethodMakerPOST(mockMethodMaker);
     }
@@ -40,6 +48,7 @@ public class TestBoreholeService {
         final String filterString = "myFilter";
         final int maxFeatures = 45;
         final String responseString = "xmlString";
+        final List<String> restrictedIds = null;
         
         context.checking(new Expectations() {{
             allowing(mockFilter).getFilterStringBoundingBox(bbox);will(returnValue(filterString));
@@ -49,7 +58,7 @@ public class TestBoreholeService {
             oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(responseString));
         }});
         
-        HttpMethodBase method = service.getAllBoreholes(serviceURL, "", "", "", 0, bbox);
+        HttpMethodBase method = service.getAllBoreholes(serviceURL, "", "", "", 0, bbox, restrictedIds);
         String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
         Assert.assertNotNull(result);
         Assert.assertEquals(responseString, result);
@@ -61,6 +70,7 @@ public class TestBoreholeService {
         final String filterString = "";
         final int maxFeatures = 45;
         final String responseString = "xmlString";
+        final List<String> restrictedIds = null;
         
         context.checking(new Expectations() {{
             allowing(mockFilter).getFilterStringAllRecords();will(returnValue(filterString));
@@ -70,9 +80,67 @@ public class TestBoreholeService {
             oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(responseString));
         }});
         
-        HttpMethodBase method = service.getAllBoreholes(serviceURL,"", "", "", maxFeatures, null);
+        HttpMethodBase method = service.getAllBoreholes(serviceURL,"", "", "", maxFeatures, null, restrictedIds);
         String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
         Assert.assertNotNull(result);
         Assert.assertEquals(responseString, result);
+    }
+    
+    @Test
+    public void testGetRestrictedBoreholesBbox() throws Exception {
+        final String serviceURL = "http://foo.bar";
+        final int maxFeatures = 45;
+        final String boreholeName = "asda";
+        final String custodian = "shaksdhska";
+        final String dateOfDrilling = "2010-01-02";
+        final String responseString = "xmlString";
+        final List<String> restrictedIds = Arrays.asList("id1", "id2", "id3");
+        final String filterString = (new BoreholeFilter(boreholeName, custodian, dateOfDrilling, restrictedIds)).getFilterStringAllRecords();
+        
+        context.checking(new Expectations() {{
+            oneOf(mockMethodMaker).makeMethod(serviceURL, "gsml:Borehole", filterString, maxFeatures);
+            oneOf(mockHttpServiceCaller).getHttpClient();
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(responseString));
+        }});
+        
+        HttpMethodBase method = service.getAllBoreholes(serviceURL,boreholeName, custodian, dateOfDrilling, maxFeatures, null, restrictedIds);
+        String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
+        Assert.assertNotNull(result);
+        Assert.assertEquals(responseString, result);
+    }
+    
+    /**
+     * Tests that the service correctly parses a response from an NVCL WFS
+     * @throws Exception
+     */
+    @Test
+    public void testGetHyloggerIDs() throws Exception {
+        final CSWRecord mockRecord1 = context.mock(CSWRecord.class, "mockRecord1"); //good record
+        final CSWRecord mockRecord2 = context.mock(CSWRecord.class, "mockRecord2"); //has the wrong wfs
+        final CSWRecord mockRecord3 = context.mock(CSWRecord.class, "mockRecord3"); //has no wfs
+        final CSWService mockCSWService = context.mock(CSWService.class);
+        
+        final CSWOnlineResource mockRecord1Resource1 = new CSWOnlineResourceImpl(new URL("http://record.1.resource.1"), "wfs", "dne", "description");
+        final CSWOnlineResource mockRecord1Resource2 = new CSWOnlineResourceImpl(new URL("http://record.1.resource.2"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "description");
+        
+        final CSWOnlineResource mockRecord2Resource1 = new CSWOnlineResourceImpl(new URL("http://record.2.resource.1"), "wfs", "dne", "description");
+        
+        final String successResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetScannedBorehole.xml");
+
+        context.checking(new Expectations() {{
+            oneOf(mockCSWService).getWFSRecords();will(returnValue(new CSWRecord[] {mockRecord1, mockRecord2, mockRecord3}));
+            
+            oneOf(mockRecord1).getOnlineResourcesByType(OnlineResourceType.WFS);will(returnValue(new CSWOnlineResource[] {mockRecord1Resource1, mockRecord1Resource2}));
+            oneOf(mockRecord2).getOnlineResourcesByType(OnlineResourceType.WFS);will(returnValue(new CSWOnlineResource[] {mockRecord2Resource1}));
+            oneOf(mockRecord3).getOnlineResourcesByType(OnlineResourceType.WFS);will(returnValue(new CSWOnlineResource[] {}));
+            
+            oneOf(mockMethodMaker).makeMethod(mockRecord1Resource2.getLinkage().toString(), mockRecord1Resource2.getName(), "", 0);
+            oneOf(mockHttpServiceCaller).getHttpClient();
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(successResponse));
+        }});
+        
+        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService);
+        Assert.assertNotNull(restrictedIDs);
+        Assert.assertArrayEquals(new String[] {"gsml.borehole.WTB5", "gsml.borehole.GSDD006", "gsml.borehole.GDDH7"}, restrictedIDs.toArray(new String[restrictedIDs.size()]));
     }
 }
