@@ -3,6 +3,7 @@ package org.auscope.portal.server.web.controllers;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -177,7 +178,46 @@ public class TestNVCLController {
             oneOf(mockCSWService).getWFSRecords();will(returnValue(cswRecords));
             
             oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);will(throwException(new ConnectException()));
-            oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, restrictedIds);will(returnValue(mockHttpMethodBase));
+            
+            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient); will(returnValue(nvclWfsResponse));
+            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(nvclKmlResponse));
+            
+            allowing(mockHttpMethodBase).getURI();will(returnValue(httpMethodURI));
+            
+            allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
+            allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
+            allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+        }});
+        
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);
+        Assert.assertFalse((Boolean) response.getModel().get("success"));
+    }
+    
+    /**
+     * Tests that hylogger filter uses the correct functions when the underlying hylogger lookup returns no results
+     */
+    @Test
+    public void testHyloggerFilterNoDatasets() throws Exception {
+        final String serviceUrl = "http://fake.com/wfs";
+        final String nameFilter = "filterBob";
+        final String custodianFilter = "filterCustodian";
+        final String filterDate = "1986-10-09";
+        final int maxFeatures = 10;
+        final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1, 2}, new double[] {3,4});
+        final String nvclWfsResponse = "wfsResponse";
+        final String nvclKmlResponse = "kmlResponse";
+        final List<String> restrictedIds = Arrays.asList("ID1", "ID2");
+        final boolean onlyHylogger = true;
+        final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
+        final URI httpMethodURI = new URI( "http://foo.bar");
+        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d","e",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://foo.bar"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
+        
+        context.checking(new Expectations() {{
+            oneOf(mockCSWService).getWFSRecords();will(returnValue(cswRecords));
+            
+            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);will(returnValue(new ArrayList<String>()));
             
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));

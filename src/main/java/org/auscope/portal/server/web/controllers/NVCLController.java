@@ -107,6 +107,11 @@ public class NVCLController extends BaseWFSToKMLController {
                 log.warn("Error requesting list of hylogger borehole ID's", e);
                 return makeModelAndViewFailure("Failure when identifying which boreholes have Hylogger data.", null);
             }
+            
+            if (hyloggerBoreholeIDs.size() == 0) {
+                log.warn("No hylogger boreholes exist (or the services are missing)");
+                return makeModelAndViewFailure("Unable to identify any boreholes with Hylogger data.", null);
+            }
         }
         
         HttpMethodBase method = null;
