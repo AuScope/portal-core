@@ -66,9 +66,9 @@ public class NVCLController extends BaseWFSToKMLController {
      */
     @RequestMapping("/doBoreholeFilter.do")
     public ModelAndView doBoreholeFilter( @RequestParam("serviceUrl") String serviceUrl,
-                                      @RequestParam("boreholeName")     String boreholeName,
-                                      @RequestParam("custodian")        String custodian,
-                                      @RequestParam("dateOfDrilling")   String dateOfDrilling,
+                                      @RequestParam(required=false, value="boreholeName", defaultValue="")     String boreholeName,
+                                      @RequestParam(required=false, value="custodian", defaultValue="")        String custodian,
+                                      @RequestParam(required=false, value="dateOfDrilling", defaultValue="")   String dateOfDrilling,
                                       @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
                                       @RequestParam(required=false, value="bbox") String bboxJson,
                                       @RequestParam(required=false, value="onlyHylogger") String onlyHyloggerString,

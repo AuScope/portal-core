@@ -48,12 +48,19 @@ FormFactory.prototype.getFilterForm = function(activeLayersRecord, map, cswRecor
 
     	//a Known WFS may have a custom filter form
     	if (parentKnownLayer && parentKnownLayer.getType() === 'KnownLayerWFS') {
+    	    //Pick out any known layers specifically by their ID
+    	    switch (parentKnownLayer.getId()) {
+    	        case 'pressuredb-borehole': return this.internalGenerateResult(new PressureDBFilterForm(id), true);
+    	        case 'nvcl-borehole': return this.internalGenerateResult(new NvclFilterForm(id), true);
+    	    }
+    	    
+    	    //Otherwise assign a filter form based on the feature type
             switch (parentKnownLayer.getFeatureTypeName()) {
                 case 'er:Mine': return this.internalGenerateResult(new MineFilterForm(id), true); 
                 case 'er:MiningActivity': return this.internalGenerateResult(new MiningActivityFilterForm(id), true); 
                 case 'er:MineralOccurrence': return this.internalGenerateResult(new MineralOccurrenceFilterForm(id), true); 
                 case 'gsml:GeologicUnit': return this.internalGenerateResult(new YilgarnGeochemistryFilterForm(id), true);
-                case 'gsml:Borehole': return this.internalGenerateResult(new NvclFilterForm(id), true);
+                case 'gsml:Borehole': return this.internalGenerateResult(new BoreholeFilterForm(id), true);
                 default: return this.internalGenerateResult(null, false); 
             }
     	}
