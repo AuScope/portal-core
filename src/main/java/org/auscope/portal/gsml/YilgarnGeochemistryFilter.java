@@ -13,9 +13,7 @@ import org.auscope.portal.server.domain.filter.FilterBoundingBox;
  * @version $Id: YilgarnGeochemistryFilter.java 1233 2010-10-20   $
  */
 
-public class YilgarnGeochemistryFilter extends AbstractFilter{
-	private String rockLithology;
-    private String weatherLithology;
+public class YilgarnGeochemistryFilter extends AbstractFilter{	
     private String geologicName;
     
 // -------------------------------------------------------------- Constants
@@ -26,11 +24,8 @@ public class YilgarnGeochemistryFilter extends AbstractFilter{
     
     // ----------------------------------------------------------- Constructors
     
-    public YilgarnGeochemistryFilter(String geologicName, String rockLithology,
-                                String weatherLithology) {
+    public YilgarnGeochemistryFilter(String geologicName) {
     	this.geologicName = geologicName;
-        this.rockLithology = rockLithology;
-        this.weatherLithology = weatherLithology;
     }
 
     // --------------------------------------------------------- Public Methods
@@ -55,13 +50,6 @@ public class YilgarnGeochemistryFilter extends AbstractFilter{
         List<String> parameterFragments = new ArrayList<String>();
         if(this.geologicName.length() > 0)
         	parameterFragments.add(this.generatePropertyIsLikeFragment("gml:name", this.geologicName));
-        	
-        if(this.rockLithology.length() > 0)
-            parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href", this.rockLithology));
-        
-        if(this.weatherLithology.length() > 0)
-            parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href", this.weatherLithology));
-        
         
         
         return this.generateAndComparisonFragment(

@@ -51,6 +51,7 @@
 
    <!-- External parameter -->
    <xsl:param name="serviceURL"/>
+   <xsl:variable name="vocab-hard-coded-lookupCGI" select="concat('http://services-test.auscope.org/SISSVoc/getConceptByURI?CGI/', '')"/>
 
    <!-- Replace the above parameter with the one below for stand-alone testing
    <xsl:variable name="serviceURL" select="'http://gsv-ws.dpi.vic.gov.au/EarthResourceML/1.1/wfs?'"/>
@@ -492,6 +493,15 @@
       <xsl:variable name="coordinates">
          <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
       </xsl:variable>
+      <xsl:variable name="observationMethod">
+         <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace='www.ietf.org/rfc/rfc1738']"/>
+      </xsl:variable>
+      <xsl:variable name="rockMaterial">
+         <xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href"/>
+      </xsl:variable>
+      <xsl:variable name="proportion">
+         <xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value"/>
+      </xsl:variable>
      <Placemark>
         <name><xsl:value-of select="@gml:id"/></name>
         <description>
@@ -507,9 +517,21 @@
            <xsl:call-template name="swapLatLongCoord">
                <xsl:with-param name="coordinates" select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>               
            </xsl:call-template><![CDATA[</td></tr>]]>
-           <![CDATA[<tr><td>Observation Method</td><td>]]><xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace='www.ietf.org/rfc/rfc1738']"/><![CDATA[</td></tr>]]>
-           <![CDATA[<tr><td>Rock Material</td><td>]]><xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td></tr>]]>
-           <![CDATA[<tr><td>Proportion</td><td>]]><xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value"/><![CDATA[</td></tr>]]>
+           <![CDATA[<tr><td>Observation Method</td><td>]]>
+           <xsl:call-template name="make-popup-url">
+               <xsl:with-param name="friendly-name" select="$observationMethod"/>
+               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$observationMethod)"/>               
+           </xsl:call-template><![CDATA[</td></tr>]]>
+           <![CDATA[<tr><td>Rock Material</td><td>]]>
+           <xsl:call-template name="make-popup-url">
+               <xsl:with-param name="friendly-name" select="$rockMaterial"/>
+               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$rockMaterial)"/>               
+           </xsl:call-template><![CDATA[</td></tr>]]>
+           <![CDATA[<tr><td>Proportion</td><td>]]>
+           <xsl:call-template name="make-popup-url">
+               <xsl:with-param name="friendly-name" select="$proportion"/>
+               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$proportion)"/>               
+           </xsl:call-template><![CDATA[</td></tr>]]>
            <![CDATA[<tr><td>Weathering Description</td><td>]]><xsl:value-of select="./gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td></tr>]]>
            <![CDATA[</table></div>]]>
         </description>

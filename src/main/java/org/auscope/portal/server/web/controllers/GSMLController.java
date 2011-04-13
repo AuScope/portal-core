@@ -109,9 +109,7 @@ public class GSMLController extends BaseWFSToKMLController {
     public ModelAndView doYilgarnGeochemistryFilter(
     		@RequestParam(required=false,	value="serviceUrl") String serviceUrl,
     		@RequestParam(required=false,	value="geologicName") String geologicName,
-            @RequestParam(required=false,	value="rockLithology") String rockLithology,
-            @RequestParam(required=false,	value="weatherLithology") String weatherLithology,            
-            @RequestParam(required=false, value="bbox") String bboxJson,
+    		@RequestParam(required=false, value="bbox") String bboxJson,
             @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
             HttpServletRequest request) throws Exception  {
 
@@ -121,7 +119,7 @@ public class GSMLController extends BaseWFSToKMLController {
         HttpMethodBase method = null;
         try{
         	String filterString;
-	        YilgarnGeochemistryFilter yilgarnGeochemistryFilter = new YilgarnGeochemistryFilter(geologicName, rockLithology, weatherLithology);
+	        YilgarnGeochemistryFilter yilgarnGeochemistryFilter = new YilgarnGeochemistryFilter(geologicName);
 	        if (bbox == null) {
 	            filterString = yilgarnGeochemistryFilter.getFilterStringAllRecords();
 	        } else {

@@ -13,7 +13,7 @@ YilgarnGeochemistryFilterForm = function(id) {
         width       :'100%',
         buttonAlign :'right',
         labelAlign  :'right',
-        labelWidth  : 70,
+        labelWidth  : 130,
         timeout     : 180, //should not time out before the server does
         bodyStyle   :'padding:5px',
         autoHeight: true,
@@ -23,22 +23,10 @@ YilgarnGeochemistryFilterForm = function(id) {
             autoHeight : true,
             items      : [
             {
-            	anchor     : '95%',
+            	anchor     : '100%',
                 xtype      : 'textfield',
                 fieldLabel : 'Geologic Unit Name',
                 name       : 'geologicName'
-            },
-            {
-            	anchor     : '95%',
-                xtype      : 'textfield',
-                fieldLabel : 'Rock Material',
-                name       : 'rockLithology'
-            },
-            {
-            	anchor     : '95%',
-                xtype      : 'textfield',
-                fieldLabel : 'Weathering',
-                name       : 'weatherLithology'
             }
             ]
         }]
