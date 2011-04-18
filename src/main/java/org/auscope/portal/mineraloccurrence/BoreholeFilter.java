@@ -70,7 +70,9 @@ public class BoreholeFilter extends AbstractFilter{
 	            List<String> idFragments = new ArrayList<String>();
 	            for (String id : restrictToIDList) {
 	                if (id != null && id.length() > 0) {
-	                    idFragments.add(this.generateGmlObjectIdFragment(id));
+	                    //TODO - Uncomment this when http://jira.codehaus.org/browse/GEOT-3522 is fixed
+	                    //idFragments.add(this.generatePropertyIsEqualToFragment("gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']", id));
+	                    idFragments.add(this.generatePropertyIsEqualToFragment("gml:name[1]", id));
 	                }
 	            }
 	            parameterFragments.add(this.generateOrComparisonFragment(idFragments.toArray(new String[idFragments.size()])));

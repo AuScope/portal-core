@@ -13,7 +13,7 @@ import javax.xml.namespace.NamespaceContext;
  */
 public class NVCLNamespaceContext implements NamespaceContext {
 
-    public static final String PUBLISHED_DATASETS_TYPENAME = "nvcl:ScannedBorehole";
+    public static final String PUBLISHED_DATASETS_TYPENAME = "nvcl:ScannedBoreholeCollection";
     
     private Map<String, String> map = new HashMap<String, String>();
     

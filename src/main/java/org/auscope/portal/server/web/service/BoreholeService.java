@@ -99,11 +99,11 @@ public class BoreholeService {
         xPath.setNamespaceContext(new NVCLNamespaceContext());
         
         //Get our ID's
-        NodeList publishedDatasets = (NodeList)xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/" + NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, doc, XPathConstants.NODESET);
+        NodeList publishedDatasets = (NodeList)xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/" + NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME + "/nvcl:scannedBorehole", doc, XPathConstants.NODESET);
         for (int i = 0; i < publishedDatasets.getLength(); i++) {
-            Node holeIdentifier = (Node)xPath.evaluate("nvcl:Borehole/@xlink:title", publishedDatasets.item(i), XPathConstants.NODE);
+            Node holeIdentifier = (Node)xPath.evaluate("@xlink:href", publishedDatasets.item(i), XPathConstants.NODE);
             if (holeIdentifier != null) {
-                idList.add("gsml.borehole." + holeIdentifier.getTextContent());
+                idList.add(holeIdentifier.getTextContent());
             }
         }
     }

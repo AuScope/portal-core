@@ -141,6 +141,6 @@ public class TestBoreholeService {
         
         List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService);
         Assert.assertNotNull(restrictedIDs);
-        Assert.assertArrayEquals(new String[] {"gsml.borehole.WTB5", "gsml.borehole.GSDD006", "gsml.borehole.GDDH7"}, restrictedIDs.toArray(new String[restrictedIDs.size()]));
+        Assert.assertArrayEquals(new String[] {"http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/WTB5", "http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GSDD006", "http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GDDH7"}, restrictedIDs.toArray(new String[restrictedIDs.size()]));
     }
 }
