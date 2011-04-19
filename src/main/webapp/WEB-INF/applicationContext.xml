@@ -308,7 +308,7 @@
        <constructor-arg name="title" value="Pressure DB"/>
        <constructor-arg name="description" value="A collection of services implementing the Pressure DB Profile for gsml:Borehole and a collection of observations"/>
        <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
-       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"/>
        <constructor-arg name="serviceEndpoints">
            <list>
                <value>http://services-test.auscope.org:80/pressuredb/wfs</value>
@@ -345,7 +345,7 @@
 
     <bean id="knownTypeGSMLBorehole" class="org.auscope.portal.server.web.KnownLayerWFS">
        <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
-       <constructor-arg name="title" value="GeoSciML Borehole"/>
+       <constructor-arg name="title" value="All Boreholes"/>
        <constructor-arg name="description" value="A collection of services that support the GeoSciML Borehole feature type."/>
        <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
        <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png"/>
