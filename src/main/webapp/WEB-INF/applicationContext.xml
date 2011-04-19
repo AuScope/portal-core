@@ -348,7 +348,7 @@
        <constructor-arg name="title" value="GeoSciML Borehole"/>
        <constructor-arg name="description" value="A collection of services that support the GeoSciML Borehole feature type."/>
        <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
-       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png"/>
        <constructor-arg name="iconAnchor">
            <bean class="java.awt.Point">
                <constructor-arg index="0" value="16"/>
