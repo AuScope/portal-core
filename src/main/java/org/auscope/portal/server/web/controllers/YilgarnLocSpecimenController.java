@@ -77,13 +77,15 @@ public class YilgarnLocSpecimenController {
 	        }.makeMethod(), serviceCaller.getHttpClient());
 		}catch (Exception e){
 			logger.error("Error occured whilst communicating to remote service", e);
-			return generateJSONResponse(false, "Error occured whilst communicating to remote service: " + e.getMessage(), null, null,null);
+			return generateJSONResponse(false, "Error occured whilst communicating to remote service: " + e.getMessage(), null, null,null, null);
 		}
 		YilgarnLocSpecimenRecords[] records = null;
+		String materialDesc = null;
 		String[] specName = null;
 		String[] uniqueSpecName = null;
 		try{
 			records = YilgarnLocSpecimenRecords.parseRecords(gmlResponse);
+			materialDesc = YilgarnLocSpecimenRecords.YilgarnLocSpecMaterialDesc(gmlResponse);
 	        specName = new String[records.length];
 	        for (int j=0; j<records.length; j++){
 	        	specName[j] = records[j].getAnalyteName();
@@ -104,9 +106,9 @@ public class YilgarnLocSpecimenController {
 		}
 		catch (Exception ex) {
             logger.warn("Error parsing request", ex);
-            return generateJSONResponse(false, "Error occured whilst parsing response: " + ex.getMessage(), null, null,null);
+            return generateJSONResponse(false, "Error occured whilst parsing response: " + ex.getMessage(), null, null,null, null);
 		}
-		return generateJSONResponse(true, "No errors found",gmlResponse, records,uniqueSpecName);
+		return generateJSONResponse(true, "No errors found", gmlResponse, records, materialDesc, uniqueSpecName);
     
     }
 	
@@ -140,13 +142,13 @@ public class YilgarnLocSpecimenController {
 	        }.makeMethod(), serviceCaller.getHttpClient());
 		}catch (Exception e){
 			logger.error("Error occured whilst communicating to remote service", e);
-			return generateJSONResponse(false, "Error occured whilst communicating to remote service: " + e.getMessage(), null, null,null);
+			return generateJSONResponse(false, "Error occured whilst communicating to remote service: " + e.getMessage(), null, null,null,null);
 		}
-		return generateJSONResponse(true, "No errors found",gmlResponse, null,null);
+		return generateJSONResponse(true, "No errors found",gmlResponse, null,null,null);
     }
     
 
-    protected JSONModelAndView generateJSONResponse(boolean success, String errorMessage, final String gmlResponse, YilgarnLocSpecimenRecords[] records, String[] uniqueSpecName){
+    protected JSONModelAndView generateJSONResponse(boolean success, String errorMessage, final String gmlResponse, YilgarnLocSpecimenRecords[] records, String materialDesc, String[] uniqueSpecName){
     	final Map<String,String> data = new HashMap<String,String>();
         data.put("gml", gmlResponse);
     	
@@ -155,6 +157,7 @@ public class YilgarnLocSpecimenController {
         response.put("msg", errorMessage);
         response.put("data", data);
         response.put("records", records);
+        response.put("materialDesc", materialDesc);
         response.put("uniqueSpecName", uniqueSpecName);
         
         return new JSONModelAndView(response);

@@ -44,6 +44,7 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
     		}
 	    	var resultMessage = jsonData.result;
 	    	var locSpecName = jsonData.uniqueSpecName;
+	    	var materialDesc = jsonData.materialDesc;
 	    	var records = jsonData.records;
 	    	var recordItems = [];
 	    	for (var i = 0; i < records.length ; i++) {
@@ -144,7 +145,10 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 			            	   			}
 			               			}
 			               		}
-			               })
+			               }),
+			               {xtype: 'tbfill'},
+			               'Material Description: ',
+			               materialDesc
 			           ],
 		    	    frame:true,
 		    	    columnLines: true,

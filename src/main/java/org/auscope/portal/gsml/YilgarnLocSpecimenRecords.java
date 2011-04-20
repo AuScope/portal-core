@@ -1,5 +1,6 @@
 package org.auscope.portal.gsml;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import javax.xml.xpath.XPath;
@@ -11,6 +12,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.auscope.portal.gsml.YilgarnNamespaceContext;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -156,6 +158,21 @@ public class YilgarnLocSpecimenRecords {
 	        }
 			
 			return records;
+	}
+	
+	public static String YilgarnLocSpecMaterialDesc(String gmlResponse) throws Exception{
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    	factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();            
+        InputSource inputSource = new InputSource(new StringReader(gmlResponse));
+        Document doc = builder.parse(inputSource); 
+        
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        xPath.setNamespaceContext(new YilgarnNamespaceContext());
+        
+        Node materialDescriptionNode = (Node)xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:materialClass", doc, XPathConstants.NODE);
+        String materialDescription = materialDescriptionNode != null ? materialDescriptionNode.getTextContent() : "";
+		return materialDescription;
 	}
 	
 }
