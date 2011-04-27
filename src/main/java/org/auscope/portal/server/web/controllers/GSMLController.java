@@ -97,7 +97,7 @@ public class GSMLController extends BaseWFSToKMLController {
         } else {
             filterString = filter.getFilterStringBoundingBox(bbox);
         }
-        HttpMethodBase method = methodMaker.makeMethod(serviceUrl, featureType, filterString, maxFeatures);
+        HttpMethodBase method = methodMaker.makeMethod(serviceUrl, featureType, filterString, maxFeatures, "http://www.opengis.net/gml/srs/epsg.xml#4326");
         
         String gmlResponse = httpServiceCaller.getMethodResponseAsString(method, 
                                                                      httpServiceCaller.getHttpClient());
