@@ -80,7 +80,7 @@ PressureDbInfoWindow.prototype = {
                items : [{
                    boxLabel : 'T',
                    name : 't',
-                   disabled : availableOmResponse.temperatureT
+                   disabled : !availableOmResponse.temperatureT
                }]
            },{
                xtype : 'checkboxgroup',
@@ -88,15 +88,15 @@ PressureDbInfoWindow.prototype = {
                items : [{
                    boxLabel : 'TDS',
                    name : 'tds',
-                   disabled : availableOmResponse.salinityTds
+                   disabled : !availableOmResponse.salinityTds
                },{
                    boxLabel : 'NaCl',
                    name : 'nacl',
-                   disabled : availableOmResponse.salinityNacl
+                   disabled : !availableOmResponse.salinityNacl
                },{
                    boxLabel : 'Cl',
                    name : 'cl',
-                   disabled : availableOmResponse.salinityCl
+                   disabled : !availableOmResponse.salinityCl
                }]
            },{
                xtype : 'checkboxgroup',
@@ -104,15 +104,15 @@ PressureDbInfoWindow.prototype = {
                items : [{
                    boxLabel : 'RFT',
                    name : 'rft',
-                   disabled : availableOmResponse.pressureRft
+                   disabled : !availableOmResponse.pressureRft
                },{
                    boxLabel : 'DST',
                    name : 'dst',
-                   disabled : availableOmResponse.pressureDst
+                   disabled : !availableOmResponse.pressureDst
                },{
                    boxLabel : 'FITP',
                    name : 'fitp',
-                   disabled : availableOmResponse.pressureFitp
+                   disabled : !availableOmResponse.pressureFitp
                }]
            }],
            buttons : [{
