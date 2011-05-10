@@ -125,11 +125,15 @@ PressureDbInfoWindow.prototype = {
                    
                    //Find the parent form - iterate the selected values
                    var parentForm = this.findParentByType('form');
+                   var featuresAdded = 0;
                    for (feature in parentForm.getForm().getValues()) {
                        url = Ext.urlAppend(url, Ext.urlEncode({feature : feature}));
+                       featuresAdded++;
                    }
                    
-                   me.downloadUrl(url);
+                   if (featuresAdded > 0) {
+                       me.downloadUrl(url);
+                   }
                }
            }]
         });
