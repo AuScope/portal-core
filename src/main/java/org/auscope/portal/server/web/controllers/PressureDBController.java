@@ -46,7 +46,9 @@ public class PressureDBController extends BaseWFSToKMLController {
         
         try {
            AvailableOMResponse response = pressureDBService.makeGetAvailableOMRequest(wellID, serviceUrl);
-           return makeModelAndView(true, "", response);
+           
+           
+           return makeModelAndView(true, "", new AvailableOMResponse[] {response});
         } catch (Exception e) {
             log.warn("Error making pressure-db service request", e);
             return makeModelAndView(false, "Failure communicating with Pressure DB data service", null);
