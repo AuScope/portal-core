@@ -64,7 +64,7 @@ public class TestPressureDBController {
         ModelAndView mav = controller.getAvailableOM(serviceUrl, wellID);
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean)mav.getModel().get("success"));
-        Assert.assertSame(response, mav.getModel().get("data"));
+        Assert.assertSame(response, ((Object[])mav.getModel().get("data"))[0]);
     }
     
     @Test
