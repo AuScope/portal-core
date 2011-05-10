@@ -64,6 +64,10 @@ public abstract class BaseWFSToKMLController {
      * @return
      */
     protected Map<String,String> makeDebugInfo(HttpMethodBase request) {
+        if (request == null) {
+            return null;
+        }
+        
         Map<String,String> debugInfo = new HashMap<String,String>();
         try {
             debugInfo.put("url",request.getURI().toString());
@@ -79,6 +83,38 @@ public abstract class BaseWFSToKMLController {
         }
         
         return debugInfo;
+    }
+    
+    /**
+     * Creates a generic response ModelAndView
+     * @param success
+     * @param message
+     * @param data
+     * @param debugInfo Optional - can be null or empty
+     * @return
+     */
+    protected ModelAndView makeModelAndView(boolean success, String message, Object data) {
+        return makeModelAndView(success, message, data, null);
+    }
+    
+    /**
+     * Creates a generic response ModelAndView
+     * @param success
+     * @param message
+     * @param data
+     * @param debugInfo Optional - can be null or empty
+     * @return
+     */
+    protected ModelAndView makeModelAndView(boolean success, String message, Object data, Object debugInfo) {
+        ModelMap model = new ModelMap();
+        model.put("success", success);
+        model.put("data", data);
+        model.put("msg", message);
+        if (debugInfo != null) {
+            model.put("debugInfo", debugInfo);
+        }
+        
+        return new JSONModelAndView(model);
     }
     
     /**
@@ -102,20 +138,11 @@ public abstract class BaseWFSToKMLController {
      * @return
      */
     protected ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob, HttpMethodBase request) {
-
-
         final Map<String,String> data = new HashMap<String,String>();
         data.put("kml", kmlBlob);
         data.put("gml", gmlBlob);
 
-        ModelMap model = new ModelMap();
-        model.put("success", true);
-        model.put("data", data);
-        if (request != null) {
-            model.put("debugInfo", makeDebugInfo(request));
-        }
-        
-        return new JSONModelAndView(model);
+        return makeModelAndView(true, "", data, makeDebugInfo(request));
     }
     
     /**
@@ -135,15 +162,7 @@ public abstract class BaseWFSToKMLController {
      * @return
      */
     protected ModelAndView makeModelAndViewFailure(final String message, HttpMethodBase request) {
-        ModelMap model = new ModelMap();
-
-        model.put("success", false);
-        model.put("msg", message);
-        if (request != null) {
-            model.put("debugInfo", makeDebugInfo(request));
-        }
-
-        return new JSONModelAndView(model);
+        return makeModelAndView(false, message, null, makeDebugInfo(request));
     }
     
     /**
