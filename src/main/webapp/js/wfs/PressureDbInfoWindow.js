@@ -117,7 +117,7 @@ PressureDbInfoWindow.prototype = {
            }],
            buttons : [{
                xtype : 'button',
-               text : 'Download',
+               text : 'Download Selected Observations',
                handler : function() {
                    //We need to generate our download URL
                    var url = Ext.urlAppend(me.CONTROLLER_DOWNLOAD, Ext.urlEncode({wellID : me.boreholeId}));
@@ -133,6 +133,12 @@ PressureDbInfoWindow.prototype = {
                    
                    if (featuresAdded > 0) {
                        me.downloadUrl(url);
+                   } else {
+                       Ext.Msg.show({
+                           title:'No selection',
+                           msg: 'No observations have been selected! You must select at least one before proceeding with a download.',
+                           icon: Ext.MessageBox.WARNING
+                        });
                    }
                }
            }]
@@ -151,14 +157,22 @@ PressureDbInfoWindow.prototype = {
             success : function(response) {
                 var responseObj = Ext.util.JSON.decode(response.responseText);
                 if (responseObj && responseObj.success) {
-                    //This is our html page - our ext js panel will render to the div here
-                    var divId = 'pressuredb-om';
-                    var baseHtml = '<html><body><div id="' + divId + '"/></body></html>';
+                    var availableOMResponse = responseObj.data[0];
                     
-                    //So update the page according to what we get from the data service
-                    this.tabList.push(new GInfoWindowTab("Available OM", baseHtml));
-                    this.map.updateInfoWindow(this.tabList);
-                    this.renderAvailableOMTab(divId, responseObj.data[0]);
+                    //Only show the tab if there are actually observations...
+                    if (availableOMResponse.obsTemperature ||
+                        availableOMResponse.obsPressureData ||
+                        availableOMResponse.obsSalinity) {
+                        
+                        //This is our html page to show in the tab - our ext js panel will render directly to the div
+                        var divId = 'pressuredb-om';
+                        var baseHtml = '<html><body><div id="' + divId + '"/></body></html>';
+                        
+                        //So update the page according to what we get from the data service
+                        this.tabList.push(new GInfoWindowTab("Available OM", baseHtml));
+                        this.map.updateInfoWindow(this.tabList);
+                        this.renderAvailableOMTab(divId, availableOMResponse);
+                    }
                 }
             }
         });
