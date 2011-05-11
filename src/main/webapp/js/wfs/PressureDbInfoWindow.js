@@ -117,7 +117,16 @@ PressureDbInfoWindow.prototype = {
            }],
            buttons : [{
                xtype : 'button',
-               text : 'Download Selected Observations',
+               text : 'Refresh observations',
+               handler : function() {
+                   //The refresh is quite simple - kill the entire ExtJS panel and recreate it based on the response
+                   var parentForm = this.findParentByType('form');
+                   parentForm.destroy();
+                   me.retrieveAvailableOM();
+               }
+           },{
+               xtype : 'button',
+               text : 'Download selected observations',
                handler : function() {
                    //We need to generate our download URL
                    var url = Ext.urlAppend(me.CONTROLLER_DOWNLOAD, Ext.urlEncode({wellID : me.boreholeId}));
@@ -158,21 +167,18 @@ PressureDbInfoWindow.prototype = {
                 var responseObj = Ext.util.JSON.decode(response.responseText);
                 if (responseObj && responseObj.success) {
                     var availableOMResponse = responseObj.data[0];
-                    
-                    //Only show the tab if there are actually observations...
-                    if (availableOMResponse.obsTemperature ||
-                        availableOMResponse.obsPressureData ||
-                        availableOMResponse.obsSalinity) {
                         
-                        //This is our html page to show in the tab - our ext js panel will render directly to the div
-                        var divId = 'pressuredb-om';
+                    //This is our html page to show in the tab - our ext js panel will render directly to the div
+                    var divId = 'pressuredb-om';
+                    if (this.tabList.length == 1) {
                         var baseHtml = '<html><body><div id="' + divId + '"/></body></html>';
                         
                         //So update the page according to what we get from the data service
                         this.tabList.push(new GInfoWindowTab("Available OM", baseHtml));
                         this.map.updateInfoWindow(this.tabList);
-                        this.renderAvailableOMTab(divId, availableOMResponse);
                     }
+                    
+                    this.renderAvailableOMTab(divId, availableOMResponse);
                 }
             }
         });
