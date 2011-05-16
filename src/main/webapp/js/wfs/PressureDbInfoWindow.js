@@ -174,7 +174,7 @@ PressureDbInfoWindow.prototype = {
                         var baseHtml = '<html><body><div id="' + divId + '"/></body></html>';
                         
                         //So update the page according to what we get from the data service
-                        this.tabList.push(new GInfoWindowTab("Available OM", baseHtml));
+                        this.tabList.push(new GInfoWindowTab("Observations", baseHtml));
                         this.map.updateInfoWindow(this.tabList);
                     }
                     
