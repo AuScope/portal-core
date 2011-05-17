@@ -774,7 +774,13 @@ Ext.onReady(function() {
 	                if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
 	                    filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
 	                }
-	                filterParameters.maxFeatures = MAX_FEATURES; // limit our feature request to 200 so we don't overwhelm the browser
+	                
+	                // limit our feature request to 200 so we don't overwhelm the browser
+	                if (Ext.isNumber(MAX_FEATURES)) {
+	                    filterParameters.maxFeatures = MAX_FEATURES; 
+	                } else {
+	                    filterParameters.maxFeatures = 200;
+	                }
 	                filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
 	                if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
 	                    filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
