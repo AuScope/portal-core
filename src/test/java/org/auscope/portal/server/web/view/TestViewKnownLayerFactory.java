@@ -42,6 +42,7 @@ public class TestViewKnownLayerFactory {
     	final boolean disableBboxFiltering = false;
     	final boolean hidden = false;
     	final boolean includeEndpoints = true;
+    	final String group = "mygroup";
 
     	final double anchorX = 0.1;
     	final double anchorY = 0.2;
@@ -73,6 +74,7 @@ public class TestViewKnownLayerFactory {
     	expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
     	expectation.put("serviceEndpoints", serviceEndpoints);
     	expectation.put("includeEndpoints", includeEndpoints);
+    	expectation.put("group", group);
 
     	anchorExpectation.put("x", anchorX);
     	anchorExpectation.put("y", anchorY);
@@ -100,6 +102,7 @@ public class TestViewKnownLayerFactory {
     		allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(relatedFeatureTypeNames));
             allowing(mockWFS).getServiceEndpoints();will(returnValue(serviceEndpoints));
             allowing(mockWFS).includeEndpoints();will(returnValue(includeEndpoints));
+            allowing(mockWFS).getGroup();will(returnValue(group));
             
     		allowing(mockP1).getX();will(returnValue(anchorX));
     		allowing(mockP1).getY();will(returnValue(anchorY));
@@ -134,6 +137,7 @@ public class TestViewKnownLayerFactory {
     	final boolean disableBboxFiltering = true;
     	final boolean hidden = true;
     	final String[] relatedFeatureTypeNames = null; 
+    	final String group = "mygroup";
     	final boolean includeEndpoints = false;
 
     	final ModelMap expectation = new ModelMap();
@@ -150,7 +154,8 @@ public class TestViewKnownLayerFactory {
     	expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
     	expectation.put("serviceEndpoints", serviceEndpoints);
     	expectation.put("includeEndpoints", includeEndpoints);
-
+    	expectation.put("group", group);
+    	
     	context.checking(new Expectations() {{
 
     		allowing(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
@@ -167,6 +172,7 @@ public class TestViewKnownLayerFactory {
     		allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(null));
     		allowing(mockWFS).getServiceEndpoints();will(returnValue(null));
     		allowing(mockWFS).includeEndpoints();will(returnValue(includeEndpoints));
+    		allowing(mockWFS).getGroup();will(returnValue(group));
         }});
 
     	ModelMap result = factory.toView(mockWFS);
@@ -184,6 +190,7 @@ public class TestViewKnownLayerFactory {
         final String styleName = "styleThatispretty";
         final String id = "eyedee";
         final boolean hidden = false;
+        final String group = "mygroup";
 
         final ModelMap expectation = new ModelMap();
 
@@ -194,6 +201,7 @@ public class TestViewKnownLayerFactory {
         expectation.put("description", description);
         expectation.put("styleName", styleName);
         expectation.put("id", id);
+        expectation.put("group", group);
 
         context.checking(new Expectations() {{
 
@@ -203,6 +211,7 @@ public class TestViewKnownLayerFactory {
             allowing(mockWMS).getDescription();will(returnValue(description));
             allowing(mockWMS).getStyleName();will(returnValue(styleName));
             allowing(mockWMS).isHidden();will(returnValue(hidden));
+            allowing(mockWMS).getGroup();will(returnValue(group));
         }});
 
         ModelMap result = factory.toView(mockWMS);
@@ -220,6 +229,7 @@ public class TestViewKnownLayerFactory {
         final String id = "eyedee";
         final String iconUrl = "http://maps.google.com/mapfiles/kml/paddle/blu-blank.png";
         final boolean hidden = true;
+        final String group = "mygroup";
 
     	final double anchorX = 1.0;
     	final double anchorY = 1.0;
@@ -241,6 +251,7 @@ public class TestViewKnownLayerFactory {
         expectation.put("iconUrl", iconUrl);
     	expectation.put("iconAnchor", anchorExpectation);
     	expectation.put("iconSize", sizeExpectation);
+    	expectation.put("group", group);
 
     	anchorExpectation.put("x", anchorX);
     	anchorExpectation.put("y", anchorY);
@@ -257,6 +268,7 @@ public class TestViewKnownLayerFactory {
             allowing(mockKeywords).getIconAnchor();will(returnValue(mockP1));
             allowing(mockKeywords).getIconSize();will(returnValue(mockD1));
             allowing(mockKeywords).isHidden();will(returnValue(hidden));
+            allowing(mockKeywords).getGroup();will(returnValue(group));
 
     		allowing(mockP1).getX();will(returnValue(anchorX));
     		allowing(mockP1).getY();will(returnValue(anchorY));
