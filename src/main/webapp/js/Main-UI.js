@@ -10,6 +10,11 @@ var map;
 // EVIL GLOBAL for all CSW records....
 var cswRecordStore = null;
 
+//Send these headers with every AJax request we make...
+Ext.Ajax.defaultHeaders = {
+    'Accept-Encoding': 'gzip, deflate' //This ensures we use gzip for most of our requests (where available)
+};
+
 Ext.onReady(function() {
 
 	// Ext quicktips - check out <span qtip="blah blah"></span> around pretty much anything.
