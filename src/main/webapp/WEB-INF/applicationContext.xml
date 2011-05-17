@@ -82,6 +82,7 @@
                 <value>gsml:MappedFeature</value>
             </list>
        </property>
+       <property name="group" value="AuScope Earth Resource ML Services"/>
     </bean>
 
     <bean id="knownTypeMineralOccurrence" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -114,6 +115,7 @@
                 <value>gsml:MappedFeature</value>
             </list>
        </property>
+       <property name="group" value="AuScope Earth Resource ML Services"/>
     </bean>
 
     <bean id="knownTypeMiningActivity" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -146,6 +148,7 @@
                 <value>gsml:MappedFeature</value>
             </list>
        </property>
+       <property name="group" value="AuScope Earth Resource ML Services"/>
     </bean>
 
     <bean id="knownTypeGeodesy" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -300,6 +303,7 @@
                 <value>nvcl:scannedBorehole</value>
             </list>
        </property>
+       <property name="group" value="Boreholes"/>
    </bean>
 
    <bean id="knownTypeBoreholePressureDB" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -341,6 +345,7 @@
                 <value>om:GETPUBLISHEDSYSTEMTSA</value>
             </list>
        </property>
+       <property name="group" value="Boreholes"/>
    </bean>
 
     <bean id="knownTypeGSMLBorehole" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -367,6 +372,7 @@
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
+       <property name="group" value="Boreholes"/>
    </bean>
 
     <!-- This layer is NOT selectable, it is only used for hiding these features -->

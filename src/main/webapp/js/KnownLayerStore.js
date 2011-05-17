@@ -10,35 +10,43 @@ KnownLayerStore = function(url) {
 	KnownLayerStore.superclass.constructor.call(this, {
 		proxy			: new Ext.data.HttpProxy(conn),
 		storeId			: 'knownLayerRecordStore',
-		root			: 'records',
-		id				: 'id',
-		successProperty	: 'success',
-		messageProperty : 'msg',
-		fields			: [
-		    'featureTypeName',
-		    'type',
-		    'hidden',
-		    'layerName',
-		    'title',
-		    'descriptiveKeyword',
-		    'styleName',
-		    'description',
-		    'relatedFeatureTypeNames',
-		    'id',
-		    'proxyUrl',
-		    'iconUrl',
-		    'serviceEndpoints',
-		    'includeEndpoints',
-		    'iconAnchor',
-		    'infoWindowAnchor',
-		    'iconSize',
-		    'disableBboxFiltering'
-		]
+		groupField      : 'group',
+		sortInfo      : {
+            field           : 'layerName',
+            direction       : 'ASC'
+        },
+        reader          : new Ext.data.JsonReader({
+            root            : 'records',
+            id              : 'id',
+            successProperty : 'success',
+            messageProperty : 'msg',
+            fields          : [
+                'featureTypeName',
+                'type',
+                'hidden',
+                'layerName',
+                'title',
+                'descriptiveKeyword',
+                'styleName',
+                'description',
+                'relatedFeatureTypeNames',
+                'id',
+                'proxyUrl',
+                'iconUrl',
+                'serviceEndpoints',
+                'includeEndpoints',
+                'iconAnchor',
+                'infoWindowAnchor',
+                'iconSize',
+                'disableBboxFiltering',
+                'group'
+            ]
+        })
 	});
 };
 
 
-Ext.extend(KnownLayerStore, Ext.data.JsonStore, {
+Ext.extend(KnownLayerStore, Ext.data.GroupingStore, {
 
 	/**
 	 * Clears this store and then copies all records from sourceKnownLayerStore into this store.

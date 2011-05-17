@@ -45,6 +45,7 @@ public class ViewKnownLayerFactory {
         obj.put("hidden", k.isHidden());
         obj.put("description",k.getDescription());
         obj.put("id", k.getId());
+        obj.put("group", k.getGroup());
         
         
         return obj;

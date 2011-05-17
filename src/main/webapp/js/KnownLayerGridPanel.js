@@ -39,6 +39,10 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
         autoScroll       : true,
         store            : dsCopy,
         originalStore    : knownFeatureTypeStore,
+        view: new Ext.grid.GroupingView({
+            forceFit:true,
+            groupTextTpl: '{[values.group ? values.group : "Others"]} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
+        }),
         columns: [
             rowExpander,
             {
@@ -86,6 +90,12 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
             		//Assume every known feature type will have at least one visible bbox
             		return '<img src="img/magglass.gif"/>';
             	}
+            },{
+                id:'groupCol',
+                width: 160,
+                sortable: true,
+                dataIndex: 'group',
+                hidden:true
             }
         ],
         bbar: [{

@@ -332,3 +332,10 @@ KnownLayerRecord.prototype.getLinkedCSWRecordResourceProvidersCount = function(c
 	
 	return resourceProviders;
 };
+
+/**
+ * Gets the organisational group of this KnownLayer as a string (can be null/emopty)
+ */
+KnownLayerRecord.prototype.getGroup = function() {
+    return this.internalGetStringField('group');
+};

@@ -12,6 +12,7 @@ public abstract class KnownLayer implements Serializable {
     protected String description;
     protected String id;
     protected boolean hidden;
+    protected String group;
     
     /**
      * @return the id
@@ -71,6 +72,20 @@ public abstract class KnownLayer implements Serializable {
      */
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    /**
+     * Gets the group for this known layer. Layers will be organised according to their group names
+     */
+    public String getGroup() {
+        return group;
+    }
+
+    /**
+     * Sets the group for this known layer. Layers will be organised according to their group names
+     */
+    public void setGroup(String group) {
+        this.group = group;
     }
     
     
