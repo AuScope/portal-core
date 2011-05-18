@@ -82,7 +82,7 @@
                 <value>gsml:MappedFeature</value>
             </list>
        </property>
-       <property name="group" value="AuScope Earth Resource ML Services"/>
+       <property name="group" value="AuScope Earth Resource Services"/>
     </bean>
 
     <bean id="knownTypeMineralOccurrence" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -115,7 +115,7 @@
                 <value>gsml:MappedFeature</value>
             </list>
        </property>
-       <property name="group" value="AuScope Earth Resource ML Services"/>
+       <property name="group" value="AuScope Earth Resource Services"/>
     </bean>
 
     <bean id="knownTypeMiningActivity" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -148,7 +148,7 @@
                 <value>gsml:MappedFeature</value>
             </list>
        </property>
-       <property name="group" value="AuScope Earth Resource ML Services"/>
+       <property name="group" value="AuScope Earth Resource Services"/>
     </bean>
 
     <bean id="knownTypeGeodesy" class="org.auscope.portal.server.web.KnownLayerWFS">
