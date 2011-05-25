@@ -440,11 +440,21 @@
 
       <xsl:variable name="idTokens" select="tokenize($rawId, '/')"/>
 
+      <xsl:variable name="clickyName">
+            <xsl:call-template name="make-popup-url">
+                <xsl:with-param name="friendly-name" select="./gml:name[@codeSpace!='http://www.ietf.org/rfc/rfc2616']"/>
+                <xsl:with-param name="real-url" select="$rawId"/>
+            </xsl:call-template>
+      </xsl:variable>
+
+
+
+
       <Placemark>
          <name><xsl:value-of select="$idTokens[last()]"/></name>
          <description>
             <xsl:call-template name="start-table"></xsl:call-template>
-            <![CDATA[<tr><td>Borehole Name</td><td>]]><xsl:value-of select="./gml:name[@codeSpace!='http://www.ietf.org/rfc/rfc2616']"/>
+            <![CDATA[<tr><td>Borehole Name</td><td>]]><xsl:value-of select="$clickyName"/>
             <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
             <![CDATA[</td></tr><tr><td>Elevation (]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation/@uomLabels"/><![CDATA[)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation"/>
             <![CDATA[</td></tr><tr><td>Start Depth (m)</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner"/>
@@ -515,22 +525,22 @@
            </xsl:call-template><![CDATA[</td></tr>]]>
            <![CDATA[<tr><td>Location</td><td>]]>
            <xsl:call-template name="swapLatLongCoord">
-               <xsl:with-param name="coordinates" select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>               
+               <xsl:with-param name="coordinates" select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>
            </xsl:call-template><![CDATA[</td></tr>]]>
            <![CDATA[<tr><td>Observation Method</td><td>]]>
            <xsl:call-template name="make-popup-url">
                <xsl:with-param name="friendly-name" select="$observationMethod"/>
-               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$observationMethod)"/>               
+               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$observationMethod)"/>
            </xsl:call-template><![CDATA[</td></tr>]]>
            <![CDATA[<tr><td>Rock Material</td><td>]]>
            <xsl:call-template name="make-popup-url">
                <xsl:with-param name="friendly-name" select="$rockMaterial"/>
-               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$rockMaterial)"/>               
+               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$rockMaterial)"/>
            </xsl:call-template><![CDATA[</td></tr>]]>
            <![CDATA[<tr><td>Proportion</td><td>]]>
            <xsl:call-template name="make-popup-url">
                <xsl:with-param name="friendly-name" select="$proportion"/>
-               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$proportion)"/>               
+               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$proportion)"/>
            </xsl:call-template><![CDATA[</td></tr>]]>
            <![CDATA[<tr><td>Weathering Description</td><td>]]><xsl:value-of select="./gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td></tr>]]>
            <![CDATA[</table></div>]]>
@@ -848,13 +858,13 @@
       </xsl:for-each>
 
    </xsl:template>
-   
-   
+
+
     <!-- ================================================================= -->
    <!--    This function swaps the coordinates                             -->
    <!--    PARAM: coordinates                                              -->
    <!-- ================================================================= -->
-   
+
    <xsl:template name="swapLatLongCoord">
    	<xsl:param name="coordinates"/>
 
