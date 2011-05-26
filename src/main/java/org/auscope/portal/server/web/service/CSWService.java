@@ -153,9 +153,10 @@ public class CSWService {
 
     /**
      * Starts a new update thread for each service URL that has no records OR hasn't been updated in the last UPDATE_INTERVAL
+     * @param force if set every cache will be forced to update
      * @throws Exception
      */
-    public void updateRecordsInBackground() throws Exception {
+    public void updateRecordsInBackground(boolean force) throws Exception {
     	//Update every service URL
     	for (int i = 0; i < cache.length; i++) {
     		UrlCache currentCache = cache[i];
@@ -163,12 +164,20 @@ public class CSWService {
             // Update the cache if it's not already updating
     		if (!currentCache.getUpdateInProgress()) {
     			//Update cache each UPDATE_INTERVAL mins.
-    			if ((System.currentTimeMillis() - currentCache.getLastTimeUpdated() > UPDATE_INTERVAL)) {
+    			if (force || (System.currentTimeMillis() - currentCache.getLastTimeUpdated() > UPDATE_INTERVAL)) {
 	            	currentCache.setUpdateInProgress(true);
 	                executor.execute(currentCache);
 	            }
     		}
     	}
+    }
+    
+    /**
+     * Starts a new update thread for each service URL that has no records OR hasn't been updated in the last UPDATE_INTERVAL
+     * @throws Exception
+     */
+    public void updateRecordsInBackground() throws Exception {
+        this.updateRecordsInBackground(false);
     }
 
 

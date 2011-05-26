@@ -64,4 +64,18 @@ public class CSWController extends CSWRecordResponse {
 		}
 		return generateJSONResponse(this.viewCSWRecordFactory, records);
     }
+    
+    /**
+     * This controller method is for forcing the internal cache of CSWRecords to invalidate and update. 
+     * @return
+     */
+    @RequestMapping("/updateCSWCache.do")
+    public ModelAndView updateCSWCache() {
+        try {
+            this.cswService.updateRecordsInBackground(true);
+            return generateJSONResponse(true, "", null);
+        } catch (Exception e) {
+            return generateJSONResponse(false, e.getMessage(), null);
+        }
+    }
 }
