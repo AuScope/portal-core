@@ -127,7 +127,7 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 		    	    }),
 		    	    tbar: [
 			               'Select Analyte: ',
-			               new Ext.form.ComboBox({
+			               new Ext.ux.form.ClearableComboBox({
 			                   store: locSpecName,
 			                   width:200,
 			                   typeAhead: true,
@@ -135,12 +135,11 @@ function showLocSpecDetails(wfsUrl ,typename, locSpecimenFeatureId){
 			                   listeners:{
 			            	   		select : function(combo, record, index){
 
-			            	   			var selectedMineral = record.get('field1'); //TODO change to a proper field name
-			            	   			if(selectedMineral == 'All'){
+			            	   			//This will occur if our field is cleared
+			            	   			if (record == null) {
 			            	   				groupStore.filter('analyteName', '', false, false);
-			            	   			}
-			            	   			else {
-			            	   				//do stuff
+			            	   			} else {
+			            	   				var selectedMineral = record.get('field1'); //TODO change to a proper field name
 			            	   				groupStore.filter('analyteName', selectedMineral, false, false);
 			            	   			}
 			               			}

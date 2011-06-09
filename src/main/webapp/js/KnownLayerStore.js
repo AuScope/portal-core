@@ -29,7 +29,7 @@ KnownLayerStore = function(url) {
                 'descriptiveKeyword',
                 'styleName',
                 'description',
-                'relatedFeatureTypeNames',
+                'relatedNames',
                 'id',
                 'proxyUrl',
                 'iconUrl',

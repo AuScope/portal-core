@@ -212,6 +212,15 @@
        <constructor-arg name="title" value="Geotransects"/>
        <constructor-arg name="description" value="Seismic geotransect data for a strategically selected set of corridors across Australia that cross major geological features."/>
        <constructor-arg name="layerName" value="gt:AuScope_Land_Seismic_gda94"/>
+       
+       <property name="relatedLayerNames">
+            <list>
+                <value>gt:Geotransects-07GA-A1</value>
+                <value>gt:Geotransects-08GA-OM1</value>
+                <value>gt:Geotransects-09GA-SD1</value>
+                <value>gt:Geotransects-09GA-SD2</value>
+            </list>
+       </property>
    </bean>
 
    <bean id="knownTypeReports" class="org.auscope.portal.server.web.KnownLayerKeywords">
@@ -257,6 +266,13 @@
                <constructor-arg index="1" value="32"/>
            </bean>
        </constructor-arg>
+       <property name="relatedFeatureTypeNames">
+            <list>
+                <value>omx:ObservationProcess</value>
+                <value>gml:TimeInstant</value>
+                <value>sa:LocatedSpecimen</value>
+            </list>
+       </property>
    </bean>
    
    <bean id="knownTypeBoreholeNvcl" class="org.auscope.portal.server.web.KnownLayerWFS">
@@ -301,6 +317,7 @@
                 <value>sa:SamplingFeatureCollection</value>
                 <value>om:GETPUBLISHEDSYSTEMTSA</value>
                 <value>nvcl:scannedBorehole</value>
+                <value>nvcl:ScannedBoreholeCollection</value>
             </list>
        </property>
        <property name="group" value="Boreholes"/>
@@ -343,6 +360,13 @@
             <list>
                 <value>sa:SamplingFeatureCollection</value>
                 <value>om:GETPUBLISHEDSYSTEMTSA</value>
+                <value>pdb:rft</value>
+                <value>pdb:nacl</value>
+                <value>pdb:t</value>
+                <value>pdb:cl</value>
+                <value>pdb:tds</value>
+                <value>pdb:dst</value>
+                <value>pdb:fitp</value>
             </list>
        </property>
        <property name="group" value="Boreholes"/>
@@ -429,17 +453,26 @@
         <constructor-arg name="title" value="HighP-Site-PhosLayer"/>
         <property name="hidden" value="true"/>
     </bean>
-    <!-- This layer is NOT selectable, it is only used for hiding these features -->
-    <bean id="geodesyWorkflowPortal" class="org.auscope.portal.server.web.KnownLayerWFS">
-        <constructor-arg name="featureTypeName" value="Geodesy Workflow Portal"/>
-        <constructor-arg name="title" value="Geodesy Workflow Portal"/>
-        <property name="hidden" value="true"/>
-    </bean>
-    <!-- This layer is NOT selectable, it is only used for hiding these features -->
-    <bean id="c3dmmPortal" class="org.auscope.portal.server.web.KnownLayerWFS">
-        <constructor-arg name="featureTypeName" value="C3DMM Portal"/>
-        <constructor-arg name="title" value="C3DMM Portal"/>
-        <property name="hidden" value="true"/>
-    </bean>
+	<!-- This layer is NOT selectable, it is only used for hiding these features -->
+	<bean id="knownTypePortals" class="org.auscope.portal.server.web.KnownLayerKeywords">
+       <constructor-arg name="title" value="Portals"/>
+       <constructor-arg name="description" value="A collection of SISS enabled web portals"/>
+       <constructor-arg name="descriptiveKeyword" value="Portal"/>
+       <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-square.png"/>
+       <constructor-arg name="iconAnchor">
+           <bean class="java.awt.Point">
+               <constructor-arg index="0" value="16"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+       <constructor-arg name="iconSize">
+           <bean class="java.awt.Dimension">
+               <constructor-arg index="0" value="32"/>
+               <constructor-arg index="1" value="32"/>
+           </bean>
+       </constructor-arg>
+
+       <property name="hidden" value="true"/>
+   </bean>
 
 </beans>

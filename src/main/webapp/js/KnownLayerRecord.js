@@ -34,11 +34,11 @@ KnownLayerRecord.prototype.getType = function() {
 };
 
 /**
- * Gets an array of String feature type names
- * Gets every feature type name that is related to this feature type. Only valid if type=='KnownLayerWFS'
+ * Gets an array of String feature type names or wms layer names
+ * Gets every feature type/layer name that is related to this feature type/layer. Only valid if type=='KnownLayerWFS' or type=='KnownLayerWMS'
  */
-KnownLayerRecord.prototype.getRelatedFeatureTypeNames = function() {
-	var recs = this.internalRecord.get('relatedFeatureTypeNames');
+KnownLayerRecord.prototype.getRelatedNames = function() {
+	var recs = this.internalRecord.get('relatedNames');
 	if (!recs) {
 		return [];
 	}
@@ -229,12 +229,13 @@ KnownLayerRecord.prototype.getRelatedCSWRecords = function(cswRecordStore) {
 	}
 	
 	switch (type) {
+	case 'KnownLayerWMS':
 	case 'KnownLayerWFS':
-		var featureTypeNames = this.getRelatedFeatureTypeNames();
+		var names = this.getRelatedNames();
 		var relatedRecs = [];
 		
-		for (var i = 0; i < featureTypeNames.length; i++) {
-			relatedRecs = relatedRecs.concat(cswRecordStore.getCSWRecordsByOnlineResource(featureTypeNames[i], null));
+		for (var i = 0; i < names.length; i++) {
+			relatedRecs = relatedRecs.concat(cswRecordStore.getCSWRecordsByOnlineResource(names[i], null));
 		}
 		
 		this.internalRecord.cachedRelatedRecords = relatedRecs;

@@ -347,7 +347,7 @@ Ext.onReady(function() {
     	return !isCSWRecordKnown(cswRecord);
     };
     var mapLayersPanel = new CSWRecordGridPanel('wms-layers-panel',
-									    		'Map Layers',
+									    		'Registered Layers',
 									    		'Other layers present in the Registry',
 									    		cswRecordStore,
 									    		cswPanelAddHandler,
@@ -1629,7 +1629,20 @@ Ext.onReady(function() {
     //Attempts to deserialize the state string and apply its contents to the current map
     var attemptDeserialization = function(stateString) {
         var s = new MapStateSerializer();
-        s.deserialize(stateString);
+        
+        //Attempt to deserialize - there shouldn't be any problems unless we are trying to backport a 'future' serialization string
+        try {
+        	s.deserialize(stateString);
+        } catch(er) {
+        	Ext.MessageBox.show({
+                title : 'Unsupported Permanent Link',
+                icon : Ext.MessageBox.WARNING,
+                buttons : Ext.Msg.OK,
+                msg : 'The permanent link that you are using is in a format that this portal cannot recognize. The saved layers and viewport will not be loaded.',
+                multiline : false
+            });
+        	return;
+        }
 
         //Pan our map to the appropriate location
         map.setZoom(s.mapState.zoom);
@@ -1703,6 +1716,7 @@ Ext.onReady(function() {
             Ext.MessageBox.show({
                 title : 'Missing Layers',
                 icon : Ext.MessageBox.WARNING,
+                buttons : Ext.Msg.OK,
                 msg : 'Some of the layers that were saved no longer exist and will be ignored. The remaining layers will load normally',
                 multiline : false
             });
@@ -1716,15 +1730,32 @@ Ext.onReady(function() {
         	cswRecordStore.fireEvent('datachanged');
 
         	//Afterwards we decode any saved state included as a URL parameter
-        	var urlParams = Ext.urlDecode(location.search.substring(1));
+        	var urlParams = Ext.urlDecode(window.location.search.substring(1));
         	if (urlParams && urlParams.state) {
-        	    attemptDeserialization(urlParams.state);
+        		//IE will truncate our URL at 2048 characters which destroys our state string.
+        		//Let's warn the user if we suspect this to have occurred 
+        		if (Ext.isIE && window.location.href.length === 2047) {
+        			Ext.MessageBox.show({
+        				title : 'Mangled Permanent Link',
+                        icon : Ext.MessageBox.WARNING,
+                        msg : 'The web browser you are using (Internet Explorer) has likely truncated the permanent link you are using which will probably render it unuseable. The AuScope portal will attempt to restore the saved state anyway.',
+                        buttons : Ext.Msg.OK,
+                        multiline : false,
+                        fn : function() {
+        					attemptDeserialization(urlParams.state);
+        				}
+        			});
+        		} else {
+        			//otherwise there *shouldn't* be any problems
+        			attemptDeserialization(urlParams.state);
+        		}
         	}
 
         	if(r.length == 0) {
                 Ext.MessageBox.show({
                     title : 'No Services Available',
                     icon : Ext.MessageBox.WARNING,
+                    buttons : Ext.Msg.OK,
                     msg : 'The CSW(s) are not returning any records and functionality will be affected.',
                     multiline : false
                 });

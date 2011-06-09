@@ -98,9 +98,8 @@ public class YilgarnLocSpecimenController {
 	        		continue;
 	        	specName[k++] = specName[i];
 	        }
-	        uniqueSpecName = new String[k+1];
-	        uniqueSpecName[0] = "All";
-	        System.arraycopy(specName, 0, uniqueSpecName, 1, k);
+	        uniqueSpecName = new String[k];
+	        System.arraycopy(specName, 0, uniqueSpecName, 0, k);
 	        
 
 		}

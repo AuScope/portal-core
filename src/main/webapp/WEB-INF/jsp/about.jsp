@@ -99,6 +99,8 @@
 			color: #F39650;
 		}
     </style>
+    <script type="text/javascript" src="js/external/extjs/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="js/external/extjs/ext-all.js"></script>
     <script type="text/javascript">
 
     //<![CDATA[
@@ -113,6 +115,23 @@
         return x.appCodeName;
     }
 
+	function updateCSWCache() {
+		Ext.Ajax.request({
+			url : 'updateCSWCache.do',
+			callback : function(opt, success, response) {
+				if (success) {
+					var responseObj = Ext.util.JSON.decode(response.responseText);
+					if (responseObj && responseObj.success) {
+						alert('The internal cache has started its refresh. Please wait a few moments before refreshing the page');
+						return;
+					}
+				}
+
+				alert('There has been a problem telling the portal to update its internal cache. Please try again later.');
+			}
+		});
+	}
+    
     //]]>
     </script>
   </head>
@@ -196,6 +215,18 @@
         <tr>
           <th scope="row" class="specalt">Server OS Version</th>
           <td class="alt">${serverOsVersion}</td>
+        </tr>
+        <tr>
+	       <td scope="row" class="nobg">&nbsp;</td>
+	       <td scope="row" class="nobg">&nbsp;</td>
+        </tr>
+        <tr>
+          <th scope="col" class="nobg">Admin Tools</th>
+          <th scope="col"></th>
+        </tr>
+        <tr>
+	       <th scope="row" class="specalt">Clear CSW Cache</th>
+	       <td class="alt"><a href="javascript:updateCSWCache()">click here</a></td>
         </tr>
       </table>
     </div>

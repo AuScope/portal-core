@@ -8,6 +8,7 @@ package org.auscope.portal.server.web;
 public class KnownLayerWMS extends KnownLayer {
     protected String layerName;
     protected String styleName;
+    protected String[] relatedLayerNames;
 
     /**
      * @param title The descriptive title of this layer
@@ -65,4 +66,22 @@ public class KnownLayerWMS extends KnownLayer {
     public void setStyleName(String styleName) {
         this.styleName = styleName;
     }
+
+    /**
+     * Gets all related layer names (layers that are related to this WMS but should not be used for display)
+     * @return
+     */
+	public String[] getRelatedLayerNames() {
+		return relatedLayerNames;
+	}
+
+	/**
+	 * Sets all related layer names (layers that are related to this WMS but should not be used for display)
+	 * @param relatedLayerNames
+	 */
+	public void setRelatedLayerNames(String[] relatedLayerNames) {
+		this.relatedLayerNames = relatedLayerNames;
+	}
+
+    
 }

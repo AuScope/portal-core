@@ -71,7 +71,7 @@ public class TestViewKnownLayerFactory {
     	expectation.put("iconSize", sizeExpectation);
     	expectation.put("id", id);
     	expectation.put("disableBboxFiltering", disableBboxFiltering);
-    	expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
+    	expectation.put("relatedNames", relatedFeatureTypeNames);
     	expectation.put("serviceEndpoints", serviceEndpoints);
     	expectation.put("includeEndpoints", includeEndpoints);
     	expectation.put("group", group);
@@ -191,6 +191,7 @@ public class TestViewKnownLayerFactory {
         final String id = "eyedee";
         final boolean hidden = false;
         final String group = "mygroup";
+        final String[] relatedLayers = new String[] {"a", "b"};
 
         final ModelMap expectation = new ModelMap();
 
@@ -202,6 +203,7 @@ public class TestViewKnownLayerFactory {
         expectation.put("styleName", styleName);
         expectation.put("id", id);
         expectation.put("group", group);
+        expectation.put("relatedNames", relatedLayers);
 
         context.checking(new Expectations() {{
 
@@ -212,6 +214,7 @@ public class TestViewKnownLayerFactory {
             allowing(mockWMS).getStyleName();will(returnValue(styleName));
             allowing(mockWMS).isHidden();will(returnValue(hidden));
             allowing(mockWMS).getGroup();will(returnValue(group));
+            allowing(mockWMS).getRelatedLayerNames();will(returnValue(relatedLayers));
         }});
 
         ModelMap result = factory.toView(mockWMS);

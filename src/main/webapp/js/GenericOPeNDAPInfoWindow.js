@@ -261,7 +261,7 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
 					minValue	: bounds.from,
 					maxValue	: bounds.to,
 					allowDecimals : !usingDimensionBounds,
-					decimalPrecision : 3,
+					decimalPrecision : 8,
 					anchor		: '-50'
 				}, {
 					xtype		: 'numberfield',
@@ -271,7 +271,7 @@ function showOPeNDAPDownload(opendapUrl, variableName) {
 					minValue	: bounds.from,
 					maxValue	: bounds.to,
 					allowDecimals : !usingDimensionBounds,
-					decimalPrecision : 3,
+					decimalPrecision : 8,
 					anchor		: '-50'
 				}]
 			};

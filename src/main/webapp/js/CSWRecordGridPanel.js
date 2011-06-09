@@ -110,6 +110,7 @@ CSWRecordGridPanel = function(id, title, description, cswRecordStore, addLayerHa
             forceFit:true,
             groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})',
             emptyText: '<font size=3px color=#ff0000> No services currently available </font>',
+            emptyGroupText : 'Unknown',
             deferEmptyText:false
         }),
         tbar: [

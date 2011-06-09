@@ -81,7 +81,7 @@ public class ViewKnownLayerFactory {
         obj.put("serviceEndpoints", k.getServiceEndpoints());
         obj.put("includeEndpoints", k.includeEndpoints());
         obj.put("disableBboxFiltering", k.getDisableBboxFiltering());
-        obj.put("relatedFeatureTypeNames", k.getRelatedFeatureTypeNames());
+        obj.put("relatedNames", k.getRelatedFeatureTypeNames());
 
         Point iconAnchor =  k.getIconAnchor();
         if (iconAnchor != null) {
@@ -107,6 +107,7 @@ public class ViewKnownLayerFactory {
         obj.put("type", "KnownLayerWMS");
         obj.put("layerName", k.getLayerName());
         obj.put("styleName", k.getStyleName());
+        obj.put("relatedNames", k.getRelatedLayerNames());
 
         return obj;
     }

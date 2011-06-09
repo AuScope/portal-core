@@ -32,8 +32,7 @@
                 <ref bean="knownTypeHighPREPhosLayer"/>
                 <ref bean="knownTypeHighPSiteIronLayer"/>
                 <ref bean="knownTypeHighPSitePhosLayer"/>
-                <ref bean="geodesyWorkflowPortal"/>
-                <ref bean="c3dmmPortal"/>
+                <ref bean="knownTypePortals"/>
             </list>
         </constructor-arg>
     </bean>
