@@ -395,13 +395,6 @@ public class TestWCSController {
 
         //Test we can parse another timezone
         setupWCSDownloadAsZip(geotiffData);
-        inputTimes = new String[] {"2010-03-04 12:22:33 WST"};
-        methodInterceptor = new TimeComparatorMethodInterceptor("2010-03-04T04:22:33Z");
-        controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
-        controller.downloadWCSAsZip(serviceUrl, layerName, format, inputCrs, 256, 256, 0, 0, outputCrs, 0, 0, 0, 0, inputTimes, null, null,null, null, mockResponse);
-
-        //Test we can parse another timezone
-        setupWCSDownloadAsZip(geotiffData);
         inputTimes = new String[] {"2010-03-04 12:22:33 -0500"};
         methodInterceptor = new TimeComparatorMethodInterceptor("2010-03-04T17:22:33Z");
         controller = new WCSController(mockServiceCaller, methodInterceptor, mockDescribeMethodMaker, mockHostConfigurer);
