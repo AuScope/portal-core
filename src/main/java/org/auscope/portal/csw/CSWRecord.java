@@ -75,7 +75,9 @@ public class CSWRecord {
     }
 
     public CSWRecord(Node node) throws XPathExpressionException {
-
+        //Load default values before parsing
+        this("","","","","", new CSWOnlineResource[0], new CSWGeographicElement[0]);
+        
         NodeList tempNodeList1 = null;
 
         serviceName = (String)serviceTitleExpression.evaluate(node, XPathConstants.STRING);
@@ -126,9 +128,6 @@ public class CSWRecord {
             	keywords.add(keyword.getTextContent());
             }
             descriptiveKeywords = keywords.toArray(new String[keywords.size()]);
-        }
-        else {
-        	// Its already at size zero in the constructor
         }
         
         //Parse constraints   	
