@@ -143,4 +143,42 @@ public class TestBoreholeService {
         Assert.assertNotNull(restrictedIDs);
         Assert.assertArrayEquals(new String[] {"http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/WTB5", "http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GSDD006", "http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GDDH7"}, restrictedIDs.toArray(new String[restrictedIDs.size()]));
     }
+    
+    /**
+     * Tests that the service correctly parses a response from an NVCL WFS (even when there is an error)
+     * @throws Exception
+     */
+    @Test
+    public void testGetHyloggerIDsWithError() throws Exception {
+        final CSWRecord mockRecord1 = context.mock(CSWRecord.class, "mockRecord1"); //will return failure
+        final CSWRecord mockRecord2 = context.mock(CSWRecord.class, "mockRecord2"); //good record
+        final CSWService mockCSWService = context.mock(CSWService.class);
+        final HttpClient mockHttpClient = context.mock(HttpClient.class);
+        final HttpMethodBase mockRecord1Method = context.mock(HttpMethodBase.class, "rec1method");
+        final HttpMethodBase mockRecord2Method = context.mock(HttpMethodBase.class, "rec2method");
+        
+        final CSWOnlineResource mockRecord1Resource1 = new CSWOnlineResourceImpl(new URL("http://record.1.resource.1"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "description");
+        final CSWOnlineResource mockRecord2Resource1 = new CSWOnlineResourceImpl(new URL("http://record.2.resource.1"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "description");
+        
+        final String successResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetScannedBorehole.xml");
+
+        context.checking(new Expectations() {{
+            oneOf(mockCSWService).getWFSRecords();will(returnValue(new CSWRecord[] {mockRecord1, mockRecord2}));
+            
+            oneOf(mockRecord1).getOnlineResourcesByType(OnlineResourceType.WFS);will(returnValue(new CSWOnlineResource[] {mockRecord1Resource1}));
+            oneOf(mockRecord2).getOnlineResourcesByType(OnlineResourceType.WFS);will(returnValue(new CSWOnlineResource[] {mockRecord2Resource1}));
+            
+            
+            oneOf(mockMethodMaker).makeMethod(mockRecord1Resource1.getLinkage().toString(), mockRecord1Resource1.getName(), "", 0);will(returnValue(mockRecord1Method));
+            oneOf(mockMethodMaker).makeMethod(mockRecord2Resource1.getLinkage().toString(), mockRecord2Resource1.getName(), "", 0);will(returnValue(mockRecord2Method));
+            allowing(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockRecord1Method, mockHttpClient);will(throwException(new Exception("I'm an exception!")));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockRecord2Method, mockHttpClient);will(returnValue(successResponse));
+        }});
+        
+        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService);
+        Assert.assertNotNull(restrictedIDs);
+        Assert.assertArrayEquals(new String[] {"http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/WTB5", "http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GSDD006", "http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GDDH7"}, restrictedIDs.toArray(new String[restrictedIDs.size()]));
+    }
 }

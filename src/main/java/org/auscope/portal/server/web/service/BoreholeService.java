@@ -112,7 +112,10 @@ public class BoreholeService {
      * Goes to the CSWService to get all services that support the PUBLISHED_DATASETS_TYPENAME and queries them
      * to generate a list of borehole ID's that represent every borehole with Hylogger data.
      * 
+     * If any of the services queried fail to return valid responses they will be skipped
+     * 
      * @param cswService Will be used to find the appropriate service to query
+     * @throws Exception 
      */
     public List<String> discoverHyloggerBoreholeIDs(CSWService cswService) throws Exception {
         List<String> ids = new ArrayList<String>();
@@ -120,7 +123,11 @@ public class BoreholeService {
         for (CSWRecord record : cswService.getWFSRecords()) {
             for (CSWOnlineResource resource : record.getOnlineResourcesByType(OnlineResourceType.WFS)) {
                 if (resource.getName().equals(NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME)) {
-                    appendHyloggerBoreholeIDs(resource.getLinkage().toString(), resource.getName(), ids);
+                    try {
+                        appendHyloggerBoreholeIDs(resource.getLinkage().toString(), resource.getName(), ids);
+                    } catch (Exception ex) {
+                        log.warn(String.format("Discovering boreholes at '%1$s' failed", resource.getLinkage()), ex);
+                    }
                 }
             }
         }
