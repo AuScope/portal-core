@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.auscope.portal</groupId>
     <artifactId>AuScope-Portal</artifactId>
@@ -10,34 +8,31 @@
     <description>AuScopes flagship demonstration tool</description>
     <url>http://portal.auscope.org</url>
     <issueManagement>
-    	<system>Jira</system>
-    	<url>https://jira.csiro.au/browse/AUS</url>
+        <system>Jira</system>
+        <url>https://jira.csiro.au/browse/AUS</url>
     </issueManagement>
     <ciManagement>
-    	<system>BuildBot</system>
-    	<url>http://geobuilder.arrc.csiro.au</url>
+        <system>BuildBot</system>
+        <url>http://geobuilder.arrc.csiro.au</url>
     </ciManagement>
     <scm>
         <connection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</connection>
         <developerConnection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</developerConnection>
     </scm>
-
     <!-- Build Configuration -->
     <organization>
-    	<name>AuScope</name>
-    	<url>http://www.auscope.org</url>
+        <name>AuScope</name>
+        <url>http://www.auscope.org</url>
     </organization>
-
     <!-- Project properties -->
     <properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jetty.version>6.1.25</jetty.version>
         <log4j.version>1.2.16</log4j.version>
         <spring.version>3.0.5.RELEASE</spring.version>
         <spring.security.version>3.0.5.RELEASE</spring.security.version>
         <geotools.version>2.6.5</geotools.version>
     </properties>
-
     <build>
         <finalName>AuScope-Portal</finalName>
         <plugins>
@@ -70,12 +65,12 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-				<version>2.6</version>
-			</plugin>
+                <version>2.6</version>
+            </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-				<version>2.4.3</version>
-			</plugin>
+                <version>2.4.3</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -128,48 +123,47 @@
                     <webApp>${project.build.directory}/${project.build.finalName}</webApp>
                     <scanIntervalSeconds>9999</scanIntervalSeconds>
                     <contextPath>/</contextPath>
-				</configuration>
+                </configuration>
             </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-eclipse-plugin</artifactId>
-				<version>2.8</version>
-				<configuration>
-					<classpathContainers>
-						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-					</classpathContainers>
-					<wtpversion>2.0</wtpversion>
-				</configuration>
-			</plugin>
-    	  	<plugin>
-        		<groupId>net.alchim31.maven</groupId>
-		        <artifactId>yuicompressor-maven-plugin</artifactId>
-		        <version>1.2</version>
-        		<configuration>
-					<excludes>
-				    	<!-- Exclude Ext JS -->
-				    	<exclude>js/external/**</exclude>
-					</excludes>
-                	<nosuffix>true</nosuffix>
-        		</configuration>
-	      	</plugin>
-	      	<plugin>
- 				<groupId>org.zeroturnaround</groupId>
-				<artifactId>javarebel-maven-plugin</artifactId>
-				<version>1.0.5</version>
-				<executions>
-					<execution>
-      					<id>generate-rebel-xml</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.8</version>
+                <configuration>
+                    <classpathContainers>
+                        <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+                    </classpathContainers>
+                    <wtpversion>2.0</wtpversion>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>1.2</version>
+                <configuration>
+                    <excludes>
+                        <!-- Exclude Ext JS -->
+                        <exclude>js/external/**</exclude>
+                    </excludes>
+                    <nosuffix>true</nosuffix>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.zeroturnaround</groupId>
+                <artifactId>javarebel-maven-plugin</artifactId>
+                <version>1.0.5</version>
+                <executions>
+                    <execution>
+                        <id>generate-rebel-xml</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
-
     <repositories>
         <repository>
             <id>osgeo</id>
@@ -177,12 +171,18 @@
             <url>http://download.osgeo.org/webdav/geotools</url>
         </repository>
         <repository>
-        	<id>geotoolkit</id>
-        	<name>Geo Toolkit Repository</name>
-        	<url>http://maven.geotoolkit.org/</url>
+            <id>geotoolkit</id>
+            <name>Geo Toolkit Repository</name>
+            <url>http://maven.geotoolkit.org/</url>
+        </repository>
+		
+		<!-- The new home of RESTPROXY - its world readable -->
+        <repository>
+            <id>cgsrv8.arrc.csiro.au</id>
+            <name>cgsrv8.arrc.csiro.au-releases</name>
+            <url>https://cgsrv8.arrc.csiro.au/artifactory/PortalRepo</url>
         </repository>
     </repositories>
-
     <!-- Dependencies -->
     <dependencies>
         <!-- Servlets 2.4 - JSTL 1.1 -->
@@ -202,7 +202,6 @@
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
         </dependency>
-
         <!-- Spring framework -->
         <!--
         Core utilities used by other modules.
@@ -265,13 +264,11 @@
             <artifactId>spring-webmvc</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-mock</artifactId>
             <version>2.0.8</version>
         </dependency>
-
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
@@ -348,7 +345,6 @@
             <artifactId>jmock-legacy</artifactId>
             <version>2.5.1</version>
         </dependency>
-	
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
@@ -380,28 +376,28 @@
             <version>1.2.5</version>
         </dependency>
         <dependency>
-        	<groupId>org.slf4j</groupId>
-        	<artifactId>slf4j-log4j12</artifactId>
-        	<version>1.5.6</version>
-        	<optional>false</optional>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.5.6</version>
+            <optional>false</optional>
         </dependency>
         <dependency>
-        	<groupId>edu.ucar</groupId>
-        	<artifactId>netcdf</artifactId>
-        	<version>4.1</version>
-        	<optional>false</optional>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf</artifactId>
+            <version>4.1</version>
+            <optional>false</optional>
         </dependency>
         <dependency>
-        	<groupId>net.sf.saxon</groupId>
-        	<artifactId>saxon-xpath</artifactId>
-        	<version>8.7</version>
-        	<optional>false</optional>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-xpath</artifactId>
+            <version>8.7</version>
+            <optional>false</optional>
         </dependency>
         <dependency>
-        	<groupId>net.sf.saxon</groupId>
-        	<artifactId>saxon-dom</artifactId>
-        	<version>8.7</version>
-        	<optional>false</optional>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-dom</artifactId>
+            <version>8.7</version>
+            <optional>false</optional>
         </dependency>
     </dependencies>
 </project>
