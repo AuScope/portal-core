@@ -88,7 +88,7 @@
                         </manifest>
                         <manifestEntries>
                             <Implementation-Build>${buildNumber}</Implementation-Build>
-                            <projectName>{project.name}</projectName>
+                            <projectName>${project.name}</projectName>
                             <version>${project.version}</version>
                             <buildDate>${timestamp}</buildDate>
                             <osName>${os.name}</osName>
@@ -282,7 +282,7 @@
         <dependency>
             <groupId>net.sf.json-lib</groupId>
             <artifactId>json-lib</artifactId>
-            <version>2.2.3</version>
+            <version>2.4</version>
             <classifier>jdk15</classifier>
         </dependency>
         <dependency>
