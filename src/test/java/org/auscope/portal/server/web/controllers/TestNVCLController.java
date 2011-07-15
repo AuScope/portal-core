@@ -83,7 +83,7 @@ public class TestNVCLController {
         final String nvclKmlResponse = "kmlResponse";
         final boolean onlyHylogger = false;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
-        final URI httpMethodURI = new URI( "http://foo.bar");
+        final URI httpMethodURI = new URI( "http://example.com");
         
         context.checking(new Expectations() {{
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, null);will(returnValue(mockHttpMethodBase));
@@ -125,8 +125,8 @@ public class TestNVCLController {
         final List<String> restrictedIds = Arrays.asList("ID1", "ID2");
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
-        final URI httpMethodURI = new URI( "http://foo.bar");
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d","e",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://foo.bar"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
+        final URI httpMethodURI = new URI( "http://example.com");
+        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d","e",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
         
         context.checking(new Expectations() {{
             oneOf(mockCSWService).getWFSRecords();will(returnValue(cswRecords));
@@ -171,8 +171,8 @@ public class TestNVCLController {
         final List<String> restrictedIds = Arrays.asList("ID1", "ID2");
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
-        final URI httpMethodURI = new URI( "http://foo.bar");
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d","e",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://foo.bar"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
+        final URI httpMethodURI = new URI( "http://example.com");
+        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d","e",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
         
         context.checking(new Expectations() {{
             oneOf(mockCSWService).getWFSRecords();will(returnValue(cswRecords));
@@ -211,8 +211,8 @@ public class TestNVCLController {
         final List<String> restrictedIds = Arrays.asList("ID1", "ID2");
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
-        final URI httpMethodURI = new URI( "http://foo.bar");
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d","e",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://foo.bar"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
+        final URI httpMethodURI = new URI( "http://example.com");
+        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d","e",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
         
         context.checking(new Expectations() {{
             oneOf(mockCSWService).getWFSRecords();will(returnValue(cswRecords));

@@ -22,13 +22,13 @@ public class TestAbstractFilter extends AbstractFilter {
      */
     @Test
     public void testMatchCaseDefault() {
-        Assert.assertTrue(this.generatePropertyIsEqualToFragment("foo", "bar").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsNotEqualTo("foo", "bar").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsLessThan("foo", "bar").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsGreaterThan("foo", "bar").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsLessThanOrEqualTo("foo", "bar").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsGreaterThanOrEqualTo("foo", "bar").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsLikeFragment("foo", "bar").contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsNotEqualTo("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsLessThan("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsGreaterThan("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsLessThanOrEqualTo("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsLikeFragment("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
     }
     
     /**
@@ -37,33 +37,33 @@ public class TestAbstractFilter extends AbstractFilter {
      */
     @Test
     public void testWellFormedXML() throws Exception {
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("foo", "bar"));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("foo", "bar"));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThan("foo", "bar"));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThan("foo", "bar"));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThanOrEqualTo("foo", "bar"));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThanOrEqualTo("foo", "bar"));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLikeFragment("foo", "bar"));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("myPropertyName", "myLiteral"));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThan("myPropertyName", "myLiteral"));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThan("myPropertyName", "myLiteral"));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThanOrEqualTo("myPropertyName", "myLiteral"));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName", "myLiteral"));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLikeFragment("myPropertyName", "myLiteral"));
         
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("foo", "bar", true, MatchActionType.Any));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("foo", "bar", true, MatchActionType.All));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThan("foo", "bar", true, MatchActionType.One));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThan("foo", "bar", true, MatchActionType.Any));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThanOrEqualTo("foo", "bar", false, MatchActionType.All));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThanOrEqualTo("foo", "bar", false, MatchActionType.One));
-        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLikeFragment("foo", "bar",'a','b','c', true, MatchActionType.Any));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral", true, MatchActionType.Any));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("myPropertyName", "myLiteral", true, MatchActionType.All));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThan("myPropertyName", "myLiteral", true, MatchActionType.One));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThan("myPropertyName", "myLiteral", true, MatchActionType.Any));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThanOrEqualTo("myPropertyName", "myLiteral", false, MatchActionType.All));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName", "myLiteral", false, MatchActionType.One));
+        FilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLikeFragment("myPropertyName", "myLiteral",'a','b','c', true, MatchActionType.Any));
         
         FilterTestUtilities.parsefilterStringXML(this.generateAndComparisonFragment(
-                this.generatePropertyIsEqualToFragment("foo", "bar"),
-                this.generatePropertyIsEqualToFragment("foo", "bar"),
-                this.generatePropertyIsEqualToFragment("foo", "bar"),
-                this.generatePropertyIsEqualToFragment("foo", "bar")));
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"),
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"),
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"),
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral")));
         FilterTestUtilities.parsefilterStringXML(this.generateOrComparisonFragment(
-                this.generatePropertyIsEqualToFragment("foo", "bar"),
-                this.generatePropertyIsEqualToFragment("foo", "bar"),
-                this.generatePropertyIsEqualToFragment("foo", "bar"),
-                this.generatePropertyIsEqualToFragment("foo", "bar")));
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"),
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"),
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"),
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral")));
         FilterTestUtilities.parsefilterStringXML(this.generateNotComparisonFragment(
-                this.generatePropertyIsEqualToFragment("foo", "bar")));
+                this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral")));
     }
 }

@@ -40,7 +40,7 @@ public class TestPressureDBController {
     public void testGetOMError() throws Exception {
         final String wellID = "1234";
         final String serviceUrl = "http://example.com";
-        final PressureDBException exception = new PressureDBException("FOOBAR");
+        final PressureDBException exception = new PressureDBException();
         
         context.checking(new Expectations() {{
             oneOf(mockService).makeGetAvailableOMRequest(wellID, serviceUrl);will(throwException(exception));

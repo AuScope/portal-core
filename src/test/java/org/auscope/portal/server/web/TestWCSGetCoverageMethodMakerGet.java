@@ -51,7 +51,7 @@ public class TestWCSGetCoverageMethodMakerGet {
     
     @Test
     public void testBbox() throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 1, 2, 0, 0, "myCrs", mockBbox, null, null);
+        HttpMethodBase method = methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 1, 2, 0, 0, "myCrs", mockBbox, null, null);
         
         Assert.assertNotNull(method);
         
@@ -65,7 +65,7 @@ public class TestWCSGetCoverageMethodMakerGet {
     
     @Test
     public void testTime() throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 1, 1, 0, 0, "myCrs", mockBbox, "thetimeis", null);
+        HttpMethodBase method = methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 1, 1, 0, 0, "myCrs", mockBbox, "thetimeis", null);
         
         Assert.assertNotNull(method);
         
@@ -103,43 +103,43 @@ public class TestWCSGetCoverageMethodMakerGet {
         customParams.put("param2", "param2value");
         
         //Testing optional output crs
-        runOptionTest("response_crs", null, "foo", "foo", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", null);
+        runOptionTest("response_crs", null, "http://example.com/wcs", "layerName", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", null);
         
         //Testing width /height
-        runOptionTest("resx", "width", "foo", "foo", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", customParams);
-        runOptionTest("resy", "height", "foo", "foo", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", null);
-        runOptionTest("width", "resx", "foo", "foo", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
-        runOptionTest("height", "resy", "foo", "foo", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", null);
+        runOptionTest("resx", "width", "http://example.com/wcs", "layerName", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", customParams);
+        runOptionTest("resy", "height", "http://example.com/wcs", "layerName", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", null);
+        runOptionTest("width", "resx", "http://example.com/wcs", "layerName", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
+        runOptionTest("height", "resy", "http://example.com/wcs", "layerName", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", null);
         
         //Testing custom params
-        runOptionTest(null, "param1=param1value", "foo", "foo", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
-        runOptionTest(null, "param2=param2value", "foo", "foo", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
+        runOptionTest(null, "param1=param1value", "http://example.com/wcs", "layerName", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
+        runOptionTest(null, "param2=param2value", "http://example.com/wcs", "layerName", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
     }
     
     @Test
     public void testBadArguments() throws Exception {
         try {
-            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 0, 0, 0, "foo", mockBbox, "time", null);
+            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 0, 0, 0, 0, "inputCrs", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 5, 0, 0, 0, "foo", mockBbox, "time", null);
+            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 5, 0, 0, 0, "inputCrs", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 5, 0, 0, "foo", mockBbox, "time", null);
+            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 0, 5, 0, 0, "inputCrs", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 0, 5, 0, "foo", mockBbox, "time", null);
+            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 0, 0, 5, 0, "inputCrs", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
         
         try {
-            methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 0, 0, 0, 5, "foo", mockBbox, "time", null);
+            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 0, 0, 0, 5, "inputCrs", mockBbox, "time", null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
     }
@@ -176,7 +176,7 @@ public class TestWCSGetCoverageMethodMakerGet {
      */
     @Test
     public void testBboxMeridians() throws Exception {
-    	HttpMethodBase method = methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 1, 2, 0, 0, "myCrs", mockAntiMeridianBbox, null, null);
+    	HttpMethodBase method = methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 1, 2, 0, 0, "myCrs", mockAntiMeridianBbox, null, null);
     	
     	String queryString = method.getQueryString();
         Assert.assertNotNull(queryString);
@@ -186,7 +186,7 @@ public class TestWCSGetCoverageMethodMakerGet {
         //about which way the bbox will wrap around the earth
         compareBboxesInQuery(queryString, 60, -50, 325, 1);
         
-        method = methodMaker.makeMethod("foo", "foo", "GeoTIFF", "foo", 1, 2, 0, 0, "myCrs", mockMeridianBbox, null, null);
+        method = methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 1, 2, 0, 0, "myCrs", mockMeridianBbox, null, null);
     	queryString = method.getQueryString();
         Assert.assertNotNull(queryString);
         Assert.assertFalse(queryString.isEmpty());

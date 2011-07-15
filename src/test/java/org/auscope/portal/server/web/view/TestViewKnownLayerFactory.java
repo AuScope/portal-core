@@ -35,9 +35,9 @@ public class TestViewKnownLayerFactory {
     	final String featureTypeName = "ftn";
     	final String title = "co";
     	final String description = "asb";
-    	final String proxyUrl = "http://bob.xom";
-    	final String iconUrl = "http://bob.xom.foo.bar";
-    	final String[] serviceEndpoints = new String[]{"http://bob.xox"};
+    	final String proxyUrl = "http://proxy.com";
+    	final String iconUrl = "http://example.com/icon";
+    	final String[] serviceEndpoints = new String[]{"http://endpoint.com"};
     	final String id = "eyedee";
     	final boolean disableBboxFiltering = false;
     	final boolean hidden = false;
@@ -130,8 +130,8 @@ public class TestViewKnownLayerFactory {
     	final String featureTypeName = "ftn";
     	final String title = "co";
     	final String description = "asb";
-    	final String proxyUrl = "http://bob.xom";
-    	final String iconUrl = "http://bob.xom.foo.bar";
+    	final String proxyUrl = "http://proxy.com";
+    	final String iconUrl = "http://example.com/icon";
     	final String[] serviceEndpoints = null;
     	final String id = "eyedee";
     	final boolean disableBboxFiltering = true;

@@ -184,8 +184,6 @@ public class TestCSWRecordTransformer {
     private void assertNodeTreesEqual(Node expected, Node actual) {
     	String debugLocationString = String.format("expected='%1$s'\nactual='%2$s'\n", debugLocation(expected), debugLocation(actual));
     	
-    	System.out.println(debugLocationString);
-    	
     	//Compare node URI + name
     	String expectedUri = expected.getNamespaceURI();
     	if (expectedUri == null) {

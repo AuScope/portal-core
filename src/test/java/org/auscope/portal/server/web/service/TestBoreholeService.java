@@ -44,7 +44,7 @@ public class TestBoreholeService {
     @Test
     public void testGetAllBoreholesNoBbox() throws Exception {
         final FilterBoundingBox bbox = new FilterBoundingBox("mySrs", new double[] {0, 1}, new double[] {2,3});
-        final String serviceURL = "http://foo.bar";
+        final String serviceURL = "http://example.com";
         final String filterString = "myFilter";
         final int maxFeatures = 45;
         final String responseString = "xmlString";
@@ -66,7 +66,7 @@ public class TestBoreholeService {
     
     @Test
     public void testGetAllBoreholesBbox() throws Exception {
-        final String serviceURL = "http://foo.bar";
+        final String serviceURL = "http://example.com";
         final String filterString = "";
         final int maxFeatures = 45;
         final String responseString = "xmlString";
@@ -88,7 +88,7 @@ public class TestBoreholeService {
     
     @Test
     public void testGetRestrictedBoreholesBbox() throws Exception {
-        final String serviceURL = "http://foo.bar";
+        final String serviceURL = "http://example.com";
         final int maxFeatures = 45;
         final String boreholeName = "asda";
         final String custodian = "shaksdhska";
