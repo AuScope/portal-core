@@ -7,7 +7,6 @@
         <gco:CharacterString>944e1417-83ca-4d62-b4b1-f3f4a5292b4d</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
-
         <gco:CharacterString>eng</gco:CharacterString>
       </gmd:language>
       <gmd:characterSet>
@@ -16,7 +15,6 @@
       <gmd:contact>
         <gmd:CI_ResponsibleParty>
           <gmd:individualName>
-
             <gco:CharacterString>Michael Stegherr</gco:CharacterString>
           </gmd:individualName>
           <gmd:organisationName>
@@ -24,7 +22,6 @@
           </gmd:organisationName>
           <gmd:contactInfo>
             <gmd:CI_Contact>
-
               <gmd:address>
                 <gmd:CI_Address>
                   <gmd:electronicMailAddress>
@@ -33,7 +30,6 @@
                 </gmd:CI_Address>
               </gmd:address>
               <gmd:onlineResource>
-
                 <gmd:CI_OnlineResource>
                   <gmd:linkage>
                     <gmd:URL>http://www.em.csiro.au/</gmd:URL>
@@ -41,17 +37,21 @@
                   <gmd:protocol>
                     <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
                   </gmd:protocol>
+                  <gmd:applicationProfile gco:nilReason="missing">
+								<gco:CharacterString/>
+							</gmd:applicationProfile>
                   <gmd:name>
-
                     <gco:CharacterString>CSIRO Exploration and Mining Web Site</gco:CharacterString>
                   </gmd:name>
+                  <gmd:description>
+                    <gco:CharacterString>CSIRO Exploration and Mining Web Site - description</gco:CharacterString>
+                  </gmd:description>
                 </gmd:CI_OnlineResource>
               </gmd:onlineResource>
             </gmd:CI_Contact>
           </gmd:contactInfo>
           <gmd:role>
             <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" />
-
           </gmd:role>
         </gmd:CI_ResponsibleParty>
       </gmd:contact>
@@ -60,7 +60,6 @@
       </gmd:dateStamp>
       <gmd:metadataStandardName>
         <gco:CharacterString>ANZLIC Metadata Profile: An Australian/New Zealand Profile of AS/NZS ISO 19115:2005, Geographic information - Metadata</gco:CharacterString>
-
       </gmd:metadataStandardName>
       <gmd:metadataStandardVersion>
         <gco:CharacterString>1.1</gco:CharacterString>
@@ -69,16 +68,17 @@
         <gmd:MD_DataIdentification>
           <gmd:citation>
             <gmd:CI_Citation>
-
               <gmd:title>
                 <gco:CharacterString>GSV GeologicUnit WFS</gco:CharacterString>
               </gmd:title>
               <gmd:date>
                 <gmd:CI_Date>
+                  <gmd:date>
+					<gco:DateTime>2011-10-09</gco:DateTime>
+				 </gmd:date>
                   <gmd:dateType>
-                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="" />
+                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" />
                   </gmd:dateType>
-
                 </gmd:CI_Date>
               </gmd:date>
             </gmd:CI_Citation>
@@ -95,16 +95,24 @@ Consequently responses from these services should only used for demonstration an
 Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:CharacterString>
           </gmd:abstract>
           <gmd:status>
-
             <gmd:MD_ProgressCode codeListValue="completed" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" />
           </gmd:status>
+          <gmd:resourceConstraints>
+                <gmd:MD_LegalConstraints>
+                    <gmd:otherConstraints>
+                        <gco:CharacterString>CopyrightConstraint1</gco:CharacterString>
+                    </gmd:otherConstraints>
+                    <gmd:otherConstraints>
+                        <gco:CharacterString>CopyrightConstraint2</gco:CharacterString>
+                    </gmd:otherConstraints>
+                </gmd:MD_LegalConstraints>
+            </gmd:resourceConstraints>
           <gmd:pointOfContact>
             <gmd:CI_ResponsibleParty>
               <gmd:individualName>
                 <gco:CharacterString>Alistair Ritchie</gco:CharacterString>
               </gmd:individualName>
               <gmd:organisationName>
-
                 <gco:CharacterString>GeoScience Victoria</gco:CharacterString>
               </gmd:organisationName>
               <gmd:positionName>
@@ -112,70 +120,43 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
               </gmd:positionName>
               <gmd:contactInfo>
                 <gmd:CI_Contact>
-                  <gmd:phone>
-
-                    <gmd:CI_Telephone>
-                      <gmd:voice>
-                        <gco:CharacterString>+61 3 9658 4512</gco:CharacterString>
-                      </gmd:voice>
-                    </gmd:CI_Telephone>
-                  </gmd:phone>
-                  <gmd:address>
-                    <gmd:CI_Address>
-
-                      <gmd:deliveryPoint>
-                        <gco:CharacterString>9/55 Collins St</gco:CharacterString>
-                      </gmd:deliveryPoint>
-                      <gmd:city>
-                        <gco:CharacterString>Melbourne</gco:CharacterString>
-                      </gmd:city>
-                      <gmd:administrativeArea>
-                        <gco:CharacterString>Victoria</gco:CharacterString>
-
-                      </gmd:administrativeArea>
-                      <gmd:postalCode>
-                        <gco:CharacterString>3000</gco:CharacterString>
-                      </gmd:postalCode>
-                      <gmd:country>
-                        <gco:CharacterString>Australia</gco:CharacterString>
-                      </gmd:country>
-                      <gmd:electronicMailAddress>
-
-                        <gco:CharacterString>Alistair.Ritchie@dpi.vic.gov.au</gco:CharacterString>
-                      </gmd:electronicMailAddress>
-                    </gmd:CI_Address>
-                  </gmd:address>
-                  <gmd:onlineResource>
-                    <gmd:CI_OnlineResource>
-                      <gmd:linkage>
-                        <gmd:URL>http://www.dpi.vic.gov.au/minpet</gmd:URL>
-
-                      </gmd:linkage>
-                      <gmd:protocol>
-                        <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
-                      </gmd:protocol>
-                      <gmd:name>
-                        <gco:CharacterString>DPI Minerals &amp; Petroleum</gco:CharacterString>
-                      </gmd:name>
-
-                      <gmd:description>
-                        <gco:CharacterString>Minerals and Petroleum Web pages of the Department of Primary Industries</gco:CharacterString>
-                      </gmd:description>
-                    </gmd:CI_OnlineResource>
-                  </gmd:onlineResource>
-                  <gmd:hoursOfService>
-                    <gco:CharacterString>24x7</gco:CharacterString>
-                  </gmd:hoursOfService>
-
-                  <gmd:contactInstructions>
-                    <gco:CharacterString>8h00-16h30 GMT+10</gco:CharacterString>
-                  </gmd:contactInstructions>
-                </gmd:CI_Contact>
+							<gmd:phone>
+								<gmd:CI_Telephone>
+									<gmd:voice gco:nilReason="missing">
+										<gco:CharacterString/>
+									</gmd:voice>
+									<gmd:facsimile gco:nilReason="missing">
+										<gco:CharacterString/>
+									</gmd:facsimile>
+								</gmd:CI_Telephone>
+							</gmd:phone>
+							<gmd:address>
+								<gmd:CI_Address>
+									<gmd:deliveryPoint gco:nilReason="missing">
+										<gco:CharacterString/>
+									</gmd:deliveryPoint>
+									<gmd:city gco:nilReason="missing">
+										<gco:CharacterString/>
+									</gmd:city>
+									<gmd:administrativeArea gco:nilReason="missing">
+										<gco:CharacterString/>
+									</gmd:administrativeArea>
+									<gmd:postalCode gco:nilReason="missing">
+										<gco:CharacterString/>
+									</gmd:postalCode>
+									<gmd:country gco:nilReason="missing">
+										<gco:CharacterString/>
+									</gmd:country>
+									<gmd:electronicMailAddress gco:nilReason="missing">
+										<gco:CharacterString/>
+									</gmd:electronicMailAddress>
+								</gmd:CI_Address>
+							</gmd:address>
+						</gmd:CI_Contact>
               </gmd:contactInfo>
               <gmd:role>
                 <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" />
               </gmd:role>
-
             </gmd:CI_ResponsibleParty>
           </gmd:pointOfContact>
           <gmd:descriptiveKeywords>
@@ -184,7 +165,6 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                 <gco:CharacterString>WFS</gco:CharacterString>
               </gmd:keyword>
               <gmd:keyword>
-
                 <gco:CharacterString>GeologicUnit</gco:CharacterString>
               </gmd:keyword>
               <gmd:keyword>
@@ -192,25 +172,33 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
               </gmd:keyword>
               <gmd:keyword>
                 <gco:CharacterString>gsml:GeologicUnit</gco:CharacterString>
-
               </gmd:keyword>
               <gmd:keyword>
                 <gco:CharacterString>gsml:MappedFeature</gco:CharacterString>
               </gmd:keyword>
               <gmd:type>
-                <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" />
-              </gmd:type>
+                        <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode"/> 
+                    </gmd:type>
             </gmd:MD_Keywords>
-
           </gmd:descriptiveKeywords>
-          <srv:serviceType>
-            <gco:LocalName codeSpace="www.w3c.org">OGC:WFS</gco:LocalName>
-          </srv:serviceType>
-          <srv:serviceTypeVersion>
-            <gco:CharacterString>1.1.0</gco:CharacterString>
-          </srv:serviceTypeVersion>
+          <gmd:language>
+            <gco:CharacterString>eng</gco:CharacterString>
+          </gmd:language>
           <gmd:extent>
-
+				<gmd:EX_Extent>
+					<gmd:temporalElement>
+						<gmd:EX_TemporalExtent>
+							<gmd:extent>
+								<gml:TimePeriod gml:id="d766e435a1049886">
+									<gml:beginPosition/>
+									<gml:endPosition/>
+								</gml:TimePeriod>
+							</gmd:extent>
+						</gmd:EX_TemporalExtent>
+					</gmd:temporalElement>
+				</gmd:EX_Extent>
+			</gmd:extent>
+          <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
                 <gmd:EX_GeographicBoundingBox>
@@ -219,7 +207,6 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                   </gmd:westBoundLongitude>
                   <gmd:eastBoundLongitude>
                     <gco:Decimal>145.00</gco:Decimal>
-
                   </gmd:eastBoundLongitude>
                   <gmd:southBoundLatitude>
                     <gco:Decimal>-39.00</gco:Decimal>
@@ -228,17 +215,14 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                     <gco:Decimal>-35.00</gco:Decimal>
                   </gmd:northBoundLatitude>
                 </gmd:EX_GeographicBoundingBox>
-
               </gmd:geographicElement>
             </gmd:EX_Extent>
           </gmd:extent>
-          <srv:couplingType>
-            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
-          </srv:couplingType>
-          <srv:containsOperations />
+          <gmd:supplementalInformation>
+				<gco:CharacterString>Supplemental info goes in here</gco:CharacterString>
+			</gmd:supplementalInformation>
         </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
-
       <gmd:distributionInfo>
         <gmd:MD_Distribution>
           <gmd:transferOptions>
@@ -247,7 +231,6 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                 <gmd:CI_OnlineResource>
                   <gmd:linkage>
                     <gmd:URL>http://www.gsv-tb.dpi.vic.gov.au/AuScope-GeoSciML/services?service=WFS&amp;version=1.1.0</gmd:URL>
-
                   </gmd:linkage>
                   <gmd:protocol>
                     <gco:CharacterString>OGC:WFS-1.0.0-http-get-capabilities</gco:CharacterString>
@@ -256,16 +239,14 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                     <gco:CharacterString>GeoSciML-GeologicUnit</gco:CharacterString>
                   </gmd:applicationProfile>
                   <gmd:name>
-
                     <gco:CharacterString>DPI GeologicUnit WFS</gco:CharacterString>
                   </gmd:name>
-                  <gmd:function>
-                    <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download" />
-                  </gmd:function>
+                  <gmd:description gco:nilReason="missing">
+								<gco:CharacterString/>
+							</gmd:description>
                 </gmd:CI_OnlineResource>
               </gmd:onLine>
             </gmd:MD_DigitalTransferOptions>
-
           </gmd:transferOptions>
         </gmd:MD_Distribution>
       </gmd:distributionInfo>
@@ -274,8 +255,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
           <gmd:scope>
             <gmd:DQ_Scope>
               <gmd:level>
-                <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="service" />
-
+                <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset" />
               </gmd:level>
             </gmd:DQ_Scope>
           </gmd:scope>

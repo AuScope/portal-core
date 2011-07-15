@@ -1,5 +1,8 @@
 package org.auscope.portal.csw;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +55,10 @@ public class CSWGetRecordResponse {
         records = new CSWRecord[nodes.getLength()];
 
         for(int i=0; i<nodes.getLength(); i++ ) {
-        	records[i] =new CSWRecord(nodes.item(i));
-            log.debug("GN layer " + (i+1) + " : " + records[i].toString());
+            Node metadataNode = nodes.item(i);
+            CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
+            records[i] = transformer.transformToCSWRecord();
+            log.debug("GN layer " + (i+1) + " : " + records[i].toString());            
         }
 
         return records;
