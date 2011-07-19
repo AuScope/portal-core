@@ -199,6 +199,20 @@ public abstract class AbstractFilter implements IFilter {
     * @param propertyName The XPath to the property to compare
     * @param literal The literal to compare against
     * @param matchCase Whether the comparison should be case sensitive
+    * @return
+    */
+   protected String generatePropertyIsEqualToFragment(String propertyName, String literal, Boolean matchCase) {
+       return generatePropertyIsEqualToFragment(propertyName, literal, matchCase, null);
+   }
+   
+   /**
+    * Generates an ogc:Filter string fragment that can be embedded in
+    * <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+    * 
+    * Will compare whether a property equals literal 
+    * @param propertyName The XPath to the property to compare
+    * @param literal The literal to compare against
+    * @param matchCase Whether the comparison should be case sensitive
     * @param matchAction How to resolve propertyName matching multiple elements
     * @return
     */

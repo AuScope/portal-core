@@ -42,5 +42,17 @@ public class TestMineFilter {
         		new String[] {"*", "Dominion Copper Mine"}, 1);
 
     }
+    
+    /**
+     * Tests to ensure match case is set to false
+     */
+    @Test
+    public void testMatchCaseDefault() throws Exception {
+        MineFilter mineFilter = new MineFilter("mineNameToTest");
+
+        String filter = mineFilter.getFilterStringAllRecords();
+        Document doc = FilterTestUtilities.parsefilterStringXML(filter);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/@matchCase", new String[] {"false"}, 1);
+    }
 
 }

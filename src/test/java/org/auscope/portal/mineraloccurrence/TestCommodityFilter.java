@@ -4,7 +4,9 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.server.domain.ogc.FilterTestUtilities;
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 
 /**
@@ -37,5 +39,18 @@ public class TestCommodityFilter {
                 //Util.loadXML("src/test/resources/GetCommoditiesWithSpecifiedName.xml").replace("\n", "").replace(" ", ""),
                 //commodityFilter.getFilterString().replace("\n", "").replace(" ", "")
                 );
+    }
+    
+    
+    /**
+     * Tests that matchCase is explicitly set to false
+     * @throws Exception
+     */
+    public void testMatchCaseDefault() throws Exception {
+        CommodityFilter commodityFilter = new CommodityFilter("Gold");
+
+        String filter = commodityFilter.getFilterStringAllRecords();
+        Document doc = FilterTestUtilities.parsefilterStringXML(filter);
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/@matchCase", new String[] {"false"}, 1);
     }
 }

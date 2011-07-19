@@ -82,18 +82,20 @@ public class TestMineralOccurrenceFilter {
 
         FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/ogc:Literal", new String[] {"urn:ogc:def:uom:UCUM:t", "7000000"}, 4);
     }
-
-
-    //TODO: to be reimplemented when the data model (mineraloccurrence ml) complies to this feature
-
-/*
+    
+    /**
+     * Ensures that matchCase is always set to false
+     * @throws Exception
+     */
     @Test
-    public void testEndowmentCutOffGrade() throws IOException {
+    public void testMatchCaseDefault() throws Exception {
         MineralOccurrenceFilter mineralOccurrenceFilter =
-            new MineralOccurrenceFilter(null, "Endowment", "", "", "", "1500", "", "");
+            new MineralOccurrenceFilter("commodityName", "None", "", "", "", "");
 
-        Assert.assertEquals(Util.loadXML(
-            "src/test/resources/GetMineralOccurrencesWithSpecifiedEndowmentCutOffGrade.xml").replaceAll("\n", "").replaceAll("\\W", ""),
-            mineralOccurrenceFilter.getFilterString().replaceAll("\n", "").replaceAll("\\W", ""));
-    }*/
+        String filter = mineralOccurrenceFilter.getFilterStringAllRecords();
+        Document doc = FilterTestUtilities.parsefilterStringXML(filter);
+
+        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsEqualTo/@matchCase", new String[] {"false"}, 1);
+    }
+
 }

@@ -57,22 +57,25 @@ public class BoreholeFilter extends AbstractFilter{
 	    // -------------------------------------------------------- Private Methods
 	    private String generateFilterFragment() {
 	        List<String> parameterFragments = new ArrayList<String>();
-	        if(this.boreholeName.length() > 0)
+	        if(boreholeName != null && !boreholeName.isEmpty()) {
 	        	parameterFragments.add(this.generatePropertyIsLikeFragment("gml:name", this.boreholeName));
+	        }
 	        	
-	        if(this.custodian.length() > 0)
+	        if(custodian != null && !custodian.isEmpty()) {
 	            parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:title", this.custodian));
+	        }
 	        
-	        if(this.dateOfDrilling.length() > 0)
+	        if(dateOfDrilling != null && !dateOfDrilling.isEmpty()) {
 	            parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling", this.dateOfDrilling));
+	        }
 	        
-	        if (this.restrictToIDList != null && this.restrictToIDList.size() > 0) {
+	        if (this.restrictToIDList != null && !this.restrictToIDList.isEmpty()) {
 	            List<String> idFragments = new ArrayList<String>();
 	            for (String id : restrictToIDList) {
 	                if (id != null && id.length() > 0) {
 	                    //TODO - Uncomment this when http://jira.codehaus.org/browse/GEOT-3522 is fixed
 	                    //idFragments.add(this.generatePropertyIsEqualToFragment("gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']", id));
-	                    idFragments.add(this.generatePropertyIsEqualToFragment("gml:name[1]", id));
+	                    idFragments.add(this.generatePropertyIsEqualToFragment("gml:name[1]", id, true));
 	                }
 	            }
 	            parameterFragments.add(this.generateOrComparisonFragment(idFragments.toArray(new String[idFragments.size()])));
