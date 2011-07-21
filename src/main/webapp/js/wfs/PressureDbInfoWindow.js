@@ -76,41 +76,44 @@ PressureDbInfoWindow.prototype = {
            autoHeight : true,
            items : [{
                xtype : 'checkboxgroup',
-               fieldLabel: 'Temperature',
+               fieldLabel: '<b>Temperature</b>',
+               columns : 1,
                items : [{
-                   boxLabel : 'T',
+                   boxLabel : 'Temperature',
                    name : 't',
                    disabled : !availableOmResponse.temperatureT
                }]
            },{
                xtype : 'checkboxgroup',
-               fieldLabel: 'Salinity',
+               fieldLabel: '<b>Salinity</b>',
+               columns : 1,
                items : [{
-                   boxLabel : 'TDS',
+                   boxLabel : 'Total Dissolved Solids',
                    name : 'tds',
                    disabled : !availableOmResponse.salinityTds
                },{
-                   boxLabel : 'NaCl',
+                   boxLabel : 'NaCl concentration',
                    name : 'nacl',
                    disabled : !availableOmResponse.salinityNacl
                },{
-                   boxLabel : 'Cl',
+                   boxLabel : 'Cl concentration',
                    name : 'cl',
                    disabled : !availableOmResponse.salinityCl
                }]
            },{
                xtype : 'checkboxgroup',
-               fieldLabel: 'Pressure',
+               fieldLabel: '<b>Pressure</b>',
+               columns : 1,
                items : [{
-                   boxLabel : 'RFT',
+                   boxLabel : 'Rock Formation Test',
                    name : 'rft',
                    disabled : !availableOmResponse.pressureRft
                },{
-                   boxLabel : 'DST',
+                   boxLabel : 'Drill Stem Test',
                    name : 'dst',
                    disabled : !availableOmResponse.pressureDst
                },{
-                   boxLabel : 'FITP',
+                   boxLabel : 'Formation Interval Test Pressure',
                    name : 'fitp',
                    disabled : !availableOmResponse.pressureFitp
                }]
