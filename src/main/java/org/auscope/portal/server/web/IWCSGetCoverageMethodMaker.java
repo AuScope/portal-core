@@ -3,7 +3,7 @@ package org.auscope.portal.server.web;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.csw.CSWGeographicBoundingBox;
+import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 
 public interface IWCSGetCoverageMethodMaker {
     

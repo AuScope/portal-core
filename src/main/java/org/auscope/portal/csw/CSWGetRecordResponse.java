@@ -13,6 +13,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.csw.record.CSWRecord;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 

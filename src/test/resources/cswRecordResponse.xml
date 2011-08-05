@@ -2,7 +2,7 @@
 <csw:GetRecordsResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
   <csw:SearchStatus timestamp="2009-08-26T15:23:00" />
   <csw:SearchResults numberOfRecordsMatched="53" numberOfRecordsReturned="53" elementSet="full" nextRecord="0">
-    <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:geonet="http://www.fao.org/geonetwork">
+    <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
       <gmd:fileIdentifier>
         <gco:CharacterString>944e1417-83ca-4d62-b4b1-f3f4a5292b4d</gco:CharacterString>
       </gmd:fileIdentifier>
@@ -10,7 +10,7 @@
         <gco:CharacterString>eng</gco:CharacterString>
       </gmd:language>
       <gmd:characterSet>
-        <gmd:MD_CharacterSetCode codeListValue="utf8" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" />
+        <gmd:MD_CharacterSetCode codeListValue="utf8" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_CharacterSetCode" />
       </gmd:characterSet>
       <gmd:contact>
         <gmd:CI_ResponsibleParty>
@@ -20,10 +20,38 @@
           <gmd:organisationName>
             <gco:CharacterString>CSIRO Exploration &amp; Mining</gco:CharacterString>
           </gmd:organisationName>
+          <gmd:positionName>
+            <gco:CharacterString>Software Developer</gco:CharacterString>
+          </gmd:positionName>
           <gmd:contactInfo>
             <gmd:CI_Contact>
+                <gmd:phone>
+                    <gmd:CI_Telephone>
+                        <gmd:voice>
+                            <gco:CharacterString>+61 2 2138961</gco:CharacterString>
+                        </gmd:voice>
+                        <gmd:facsimile>
+                            <gco:CharacterString>+61 2 314717304219</gco:CharacterString>
+                        </gmd:facsimile>
+                    </gmd:CI_Telephone>
+                </gmd:phone>
               <gmd:address>
                 <gmd:CI_Address>
+                    <gmd:deliveryPoint>
+                        <gco:CharacterString>GPO Box 378</gco:CharacterString>
+                    </gmd:deliveryPoint>
+                    <gmd:city>
+                        <gco:CharacterString>Canberra</gco:CharacterString>
+                    </gmd:city>
+                    <gmd:administrativeArea>
+                        <gco:CharacterString>ACT</gco:CharacterString>
+                    </gmd:administrativeArea>
+                    <gmd:postalCode>
+                        <gco:CharacterString>2601</gco:CharacterString>
+                    </gmd:postalCode>
+                    <gmd:country>
+                        <gco:CharacterString>Australia</gco:CharacterString>
+                    </gmd:country>
                   <gmd:electronicMailAddress>
                     <gco:CharacterString>Michael.Stegherr@csiro.au</gco:CharacterString>
                   </gmd:electronicMailAddress>
@@ -38,8 +66,8 @@
                     <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
                   </gmd:protocol>
                   <gmd:applicationProfile gco:nilReason="missing">
-								<gco:CharacterString/>
-							</gmd:applicationProfile>
+                                <gco:CharacterString/>
+                            </gmd:applicationProfile>
                   <gmd:name>
                     <gco:CharacterString>CSIRO Exploration and Mining Web Site</gco:CharacterString>
                   </gmd:name>
@@ -51,7 +79,7 @@
             </gmd:CI_Contact>
           </gmd:contactInfo>
           <gmd:role>
-            <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" />
+            <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode" />
           </gmd:role>
         </gmd:CI_ResponsibleParty>
       </gmd:contact>
@@ -74,10 +102,10 @@
               <gmd:date>
                 <gmd:CI_Date>
                   <gmd:date>
-					<gco:DateTime>2011-10-09</gco:DateTime>
-				 </gmd:date>
+                    <gco:DateTime>2011-10-09</gco:DateTime>
+                 </gmd:date>
                   <gmd:dateType>
-                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" />
+                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_DateTypeCode" codeListValue="creation" />
                   </gmd:dateType>
                 </gmd:CI_Date>
               </gmd:date>
@@ -95,7 +123,7 @@ Consequently responses from these services should only used for demonstration an
 Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:CharacterString>
           </gmd:abstract>
           <gmd:status>
-            <gmd:MD_ProgressCode codeListValue="completed" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" />
+            <gmd:MD_ProgressCode codeListValue="completed" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ProgressCode" />
           </gmd:status>
           <gmd:resourceConstraints>
                 <gmd:MD_LegalConstraints>
@@ -119,43 +147,62 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                 <gco:CharacterString>Information Geologist</gco:CharacterString>
               </gmd:positionName>
               <gmd:contactInfo>
-                <gmd:CI_Contact>
-							<gmd:phone>
-								<gmd:CI_Telephone>
-									<gmd:voice gco:nilReason="missing">
-										<gco:CharacterString/>
-									</gmd:voice>
-									<gmd:facsimile gco:nilReason="missing">
-										<gco:CharacterString/>
-									</gmd:facsimile>
-								</gmd:CI_Telephone>
-							</gmd:phone>
-							<gmd:address>
-								<gmd:CI_Address>
-									<gmd:deliveryPoint gco:nilReason="missing">
-										<gco:CharacterString/>
-									</gmd:deliveryPoint>
-									<gmd:city gco:nilReason="missing">
-										<gco:CharacterString/>
-									</gmd:city>
-									<gmd:administrativeArea gco:nilReason="missing">
-										<gco:CharacterString/>
-									</gmd:administrativeArea>
-									<gmd:postalCode gco:nilReason="missing">
-										<gco:CharacterString/>
-									</gmd:postalCode>
-									<gmd:country gco:nilReason="missing">
-										<gco:CharacterString/>
-									</gmd:country>
-									<gmd:electronicMailAddress gco:nilReason="missing">
-										<gco:CharacterString/>
-									</gmd:electronicMailAddress>
-								</gmd:CI_Address>
-							</gmd:address>
-						</gmd:CI_Contact>
+                    <gmd:CI_Contact>
+                    <gmd:phone>
+                        <gmd:CI_Telephone>
+                            <gmd:voice>
+                                <gco:CharacterString>+61 2 2138961</gco:CharacterString>
+                            </gmd:voice>
+                            <gmd:facsimile>
+                                <gco:CharacterString>+61 2 314717304219</gco:CharacterString>
+                            </gmd:facsimile>
+                        </gmd:CI_Telephone>
+                    </gmd:phone>
+                  <gmd:address>
+                    <gmd:CI_Address>
+                        <gmd:deliveryPoint>
+                            <gco:CharacterString>GPO Box 378</gco:CharacterString>
+                        </gmd:deliveryPoint>
+                        <gmd:city>
+                            <gco:CharacterString>Canberra</gco:CharacterString>
+                        </gmd:city>
+                        <gmd:administrativeArea>
+                            <gco:CharacterString>ACT</gco:CharacterString>
+                        </gmd:administrativeArea>
+                        <gmd:postalCode>
+                            <gco:CharacterString>2601</gco:CharacterString>
+                        </gmd:postalCode>
+                        <gmd:country>
+                            <gco:CharacterString>Australia</gco:CharacterString>
+                        </gmd:country>
+                      <gmd:electronicMailAddress>
+                        <gco:CharacterString>Michael.Stegherr@csiro.au</gco:CharacterString>
+                      </gmd:electronicMailAddress>
+                    </gmd:CI_Address>
+                  </gmd:address>
+                  <gmd:onlineResource>
+                    <gmd:CI_OnlineResource>
+                      <gmd:linkage>
+                        <gmd:URL>http://www.em.csiro.au/</gmd:URL>
+                      </gmd:linkage>
+                      <gmd:protocol>
+                        <gco:CharacterString>WWW:LINK-1.0-http--link</gco:CharacterString>
+                      </gmd:protocol>
+                      <gmd:applicationProfile gco:nilReason="missing">
+                                    <gco:CharacterString/>
+                                </gmd:applicationProfile>
+                      <gmd:name>
+                        <gco:CharacterString>CSIRO Exploration and Mining Web Site</gco:CharacterString>
+                      </gmd:name>
+                      <gmd:description>
+                        <gco:CharacterString>CSIRO Exploration and Mining Web Site - description</gco:CharacterString>
+                      </gmd:description>
+                    </gmd:CI_OnlineResource>
+                  </gmd:onlineResource>
+                </gmd:CI_Contact>
               </gmd:contactInfo>
               <gmd:role>
-                <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" />
+                <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode" />
               </gmd:role>
             </gmd:CI_ResponsibleParty>
           </gmd:pointOfContact>
@@ -177,27 +224,13 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                 <gco:CharacterString>gsml:MappedFeature</gco:CharacterString>
               </gmd:keyword>
               <gmd:type>
-                        <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode"/> 
+                        <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_KeywordTypeCode"/>
                     </gmd:type>
             </gmd:MD_Keywords>
           </gmd:descriptiveKeywords>
           <gmd:language>
             <gco:CharacterString>eng</gco:CharacterString>
           </gmd:language>
-          <gmd:extent>
-				<gmd:EX_Extent>
-					<gmd:temporalElement>
-						<gmd:EX_TemporalExtent>
-							<gmd:extent>
-								<gml:TimePeriod gml:id="d766e435a1049886">
-									<gml:beginPosition/>
-									<gml:endPosition/>
-								</gml:TimePeriod>
-							</gmd:extent>
-						</gmd:EX_TemporalExtent>
-					</gmd:temporalElement>
-				</gmd:EX_Extent>
-			</gmd:extent>
           <gmd:extent>
             <gmd:EX_Extent>
               <gmd:geographicElement>
@@ -219,8 +252,8 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
             </gmd:EX_Extent>
           </gmd:extent>
           <gmd:supplementalInformation>
-				<gco:CharacterString>Supplemental info goes in here</gco:CharacterString>
-			</gmd:supplementalInformation>
+                <gco:CharacterString>Supplemental info goes in here</gco:CharacterString>
+            </gmd:supplementalInformation>
         </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
       <gmd:distributionInfo>
@@ -242,8 +275,8 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                     <gco:CharacterString>DPI GeologicUnit WFS</gco:CharacterString>
                   </gmd:name>
                   <gmd:description gco:nilReason="missing">
-								<gco:CharacterString/>
-							</gmd:description>
+                                <gco:CharacterString/>
+                            </gmd:description>
                 </gmd:CI_OnlineResource>
               </gmd:onLine>
             </gmd:MD_DigitalTransferOptions>
@@ -255,7 +288,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
           <gmd:scope>
             <gmd:DQ_Scope>
               <gmd:level>
-                <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset" />
+                <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ScopeCode" codeListValue="dataset" />
               </gmd:level>
             </gmd:DQ_Scope>
           </gmd:scope>
@@ -271,7 +304,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
         <gco:CharacterString>eng</gco:CharacterString>
       </gmd:language>
       <gmd:characterSet>
-        <gmd:MD_CharacterSetCode codeListValue="utf8" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" />
+        <gmd:MD_CharacterSetCode codeListValue="utf8" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_CharacterSetCode" />
       </gmd:characterSet>
       <gmd:contact>
 
@@ -311,7 +344,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
           </gmd:contactInfo>
 
           <gmd:role>
-            <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" />
+            <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode" />
           </gmd:role>
         </gmd:CI_ResponsibleParty>
       </gmd:contact>
@@ -340,7 +373,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
                     <gco:DateTime />
                   </gmd:date>
                   <gmd:dateType>
-                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" />
+                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_DateTypeCode" codeListValue="creation" />
                   </gmd:dateType>
                 </gmd:CI_Date>
               </gmd:date>
@@ -359,7 +392,7 @@ Consequently responses from these services should only used for demonstration an
 Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructures.</gco:CharacterString>
           </gmd:abstract>
           <gmd:status>
-            <gmd:MD_ProgressCode codeListValue="completed" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" />
+            <gmd:MD_ProgressCode codeListValue="completed" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ProgressCode" />
           </gmd:status>
           <gmd:pointOfContact>
             <gmd:CI_ResponsibleParty>
@@ -437,7 +470,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
                 </gmd:CI_Contact>
               </gmd:contactInfo>
               <gmd:role>
-                <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" />
+                <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode" />
               </gmd:role>
             </gmd:CI_ResponsibleParty>
           </gmd:pointOfContact>
@@ -462,7 +495,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
               </gmd:keyword>
               <gmd:type>
 
-                <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" />
+                <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_KeywordTypeCode" />
               </gmd:type>
             </gmd:MD_Keywords>
           </gmd:descriptiveKeywords>
@@ -496,7 +529,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
             </gmd:EX_Extent>
           </gmd:extent>
           <srv:couplingType>
-            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
+            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/codelist/codeList.xml#SV_CouplingType" />
 
           </srv:couplingType>
           <srv:containsOperations />
@@ -523,7 +556,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
                     <gco:CharacterString>DPI ShearDisplacementStructure Service WFS</gco:CharacterString>
                   </gmd:name>
                   <gmd:function>
-                    <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download" />
+                    <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_OnLineFunctionCode" codeListValue="download" />
 
                   </gmd:function>
                 </gmd:CI_OnlineResource>
@@ -538,7 +571,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
           <gmd:scope>
             <gmd:DQ_Scope>
               <gmd:level>
-                <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="service" />
+                <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ScopeCode" codeListValue="service" />
               </gmd:level>
             </gmd:DQ_Scope>
           </gmd:scope>
@@ -719,7 +752,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
             </gmd:EX_Extent>
           </gmd:extent>
           <srv:couplingType>
-            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
+            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/codelist/codeList.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
         </gmd:MD_DataIdentification>
@@ -995,7 +1028,7 @@ The site quality database contains statistical quantities for each site for each
           </gmd:extent>
 
           <srv:couplingType>
-            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
+            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/codelist/codeList.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
         </srv:SV_ServiceIdentification>
@@ -1237,7 +1270,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
             </gmd:EX_Extent>
           </gmd:extent>
           <srv:couplingType>
-            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
+            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/codelist/codeList.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
         </srv:SV_ServiceIdentification>
@@ -1286,7 +1319,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
         <gco:CharacterString>eng</gco:CharacterString>
       </gmd:language>
       <gmd:characterSet>
-        <gmd:MD_CharacterSetCode codeListValue="utf8" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" />
+        <gmd:MD_CharacterSetCode codeListValue="utf8" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_CharacterSetCode" />
       </gmd:characterSet>
 
       <gmd:contact>
@@ -1326,7 +1359,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
 
           </gmd:contactInfo>
           <gmd:role>
-            <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" />
+            <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode" />
           </gmd:role>
         </gmd:CI_ResponsibleParty>
       </gmd:contact>
@@ -1355,7 +1388,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
                     <gco:DateTime />
                   </gmd:date>
                   <gmd:dateType>
-                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" />
+                    <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_DateTypeCode" codeListValue="creation" />
                   </gmd:dateType>
                 </gmd:CI_Date>
               </gmd:date>
@@ -1374,7 +1407,7 @@ Consequently responses from these services should only used for demonstration an
 Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterString>
           </gmd:abstract>
           <gmd:status>
-            <gmd:MD_ProgressCode codeListValue="completed" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" />
+            <gmd:MD_ProgressCode codeListValue="completed" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ProgressCode" />
           </gmd:status>
           <gmd:pointOfContact>
 
@@ -1452,7 +1485,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
                 </gmd:CI_Contact>
               </gmd:contactInfo>
               <gmd:role>
-                <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" />
+                <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode" />
               </gmd:role>
             </gmd:CI_ResponsibleParty>
           </gmd:pointOfContact>
@@ -1477,7 +1510,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
               </gmd:keyword>
               <gmd:type>
 
-                <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" />
+                <gmd:MD_KeywordTypeCode codeListValue="theme" codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_KeywordTypeCode" />
               </gmd:type>
             </gmd:MD_Keywords>
           </gmd:descriptiveKeywords>
@@ -1511,7 +1544,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
             </gmd:EX_Extent>
           </gmd:extent>
           <srv:couplingType>
-            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
+            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/codelist/codeList.xml#SV_CouplingType" />
 
           </srv:couplingType>
           <srv:containsOperations />
@@ -1538,7 +1571,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
                     <gco:CharacterString>DPI Contact Service WFS</gco:CharacterString>
                   </gmd:name>
                   <gmd:function>
-                    <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="download" />
+                    <gmd:CI_OnLineFunctionCode codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_OnLineFunctionCode" codeListValue="download" />
 
                   </gmd:function>
                 </gmd:CI_OnlineResource>
@@ -1553,7 +1586,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
           <gmd:scope>
             <gmd:DQ_Scope>
               <gmd:level>
-                <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="service" />
+                <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ScopeCode" codeListValue="service" />
               </gmd:level>
             </gmd:DQ_Scope>
           </gmd:scope>
@@ -3379,7 +3412,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
           </gmd:extent>
 
           <srv:couplingType>
-            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
+            <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/codelist/codeList.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
         </srv:SV_ServiceIdentification>

@@ -9,7 +9,7 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.csw.CSWGeographicBoundingBox;
+import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.springframework.stereotype.Repository;
 
 @Repository

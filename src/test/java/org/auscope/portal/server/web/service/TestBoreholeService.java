@@ -6,10 +6,10 @@ import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.csw.CSWOnlineResource;
-import org.auscope.portal.csw.CSWOnlineResourceImpl;
-import org.auscope.portal.csw.CSWRecord;
-import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
+import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
+import org.auscope.portal.csw.record.CSWRecord;
+import org.auscope.portal.csw.record.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;

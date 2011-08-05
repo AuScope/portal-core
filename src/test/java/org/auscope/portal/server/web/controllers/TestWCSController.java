@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.csw.CSWGeographicBoundingBox;
+import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.server.domain.wcs.DescribeCoverageRecord;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.IWCSDescribeCoverageMethodMaker;

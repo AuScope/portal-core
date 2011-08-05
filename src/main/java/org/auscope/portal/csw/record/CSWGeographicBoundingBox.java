@@ -1,4 +1,4 @@
-package org.auscope.portal.csw;
+package org.auscope.portal.csw.record;
 
 import java.io.Serializable;
 
@@ -7,6 +7,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.auscope.portal.csw.CSWXPathUtil;
 import org.w3c.dom.Node;
 
 /**

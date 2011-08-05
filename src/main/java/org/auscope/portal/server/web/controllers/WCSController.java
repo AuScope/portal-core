@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.csw.CSWGeographicBoundingBox;
+import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.server.domain.wcs.DescribeCoverageRecord;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.IWCSDescribeCoverageMethodMaker;

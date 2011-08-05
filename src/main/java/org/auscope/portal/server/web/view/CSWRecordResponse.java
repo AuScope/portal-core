@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.csw.record.CSWRecord;
 import org.springframework.ui.ModelMap;
 
 /**

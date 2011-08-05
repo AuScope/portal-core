@@ -1,6 +1,6 @@
 package org.auscope.portal.server.web.controllers;
 
-import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.service.CSWService;
 import org.auscope.portal.server.web.view.CSWRecordResponse;

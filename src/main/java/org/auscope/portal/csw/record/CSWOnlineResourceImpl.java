@@ -1,4 +1,4 @@
-package org.auscope.portal.csw;
+package org.auscope.portal.csw.record;
 
 import java.net.URL;
 

@@ -1,4 +1,4 @@
-package org.auscope.portal.csw;
+package org.auscope.portal.csw.record;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -8,6 +8,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.auscope.portal.csw.CSWXPathUtil;
 import org.w3c.dom.Node;
 
 public abstract class CSWOnlineResourceFactory {

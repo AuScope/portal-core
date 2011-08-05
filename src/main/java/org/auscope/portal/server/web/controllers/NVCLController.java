@@ -9,9 +9,9 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.csw.CSWOnlineResource;
-import org.auscope.portal.csw.CSWRecord;
-import org.auscope.portal.csw.CSWOnlineResource.OnlineResourceType;
+import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.CSWRecord;
+import org.auscope.portal.csw.record.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.util.GmlToKml;

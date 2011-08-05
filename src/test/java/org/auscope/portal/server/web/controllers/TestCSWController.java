@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.auscope.portal.csw.CSWRecord;
+import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.service.CSWService;
 import org.auscope.portal.server.web.view.ViewCSWRecordFactory;

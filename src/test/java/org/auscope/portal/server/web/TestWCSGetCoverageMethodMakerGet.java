@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.csw.CSWGeographicBoundingBox;
+import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;

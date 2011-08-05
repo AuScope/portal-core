@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.auscope.portal.csw.record.CSWRecord;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
