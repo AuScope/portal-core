@@ -73,7 +73,7 @@ public class CSWRecordTransformer {
         Iterator<String> prefixIterator = nc.getPrefixIterator();
         while (prefixIterator.hasNext()) {
             String prefix = prefixIterator.next();
-            mdMetadataNode.setAttributeNS("http://www.w3.org/2000/xmlns/", prefix, nc.getNamespaceURI(prefix));
+            mdMetadataNode.setAttributeNS("", prefix, nc.getNamespaceURI(prefix));
         }
 
         this.mdMetadataNode = mdMetadataNode;

@@ -37,6 +37,8 @@ public class TestCSWRecordTransformer {
     private CSWRecord[] records;
     private Document doc;
 
+    private static final String xmlnsUri = "http://www.w3.org/2000/xmlns/";
+
     private static final XPathExpression exprGetAllMetadataNodes = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata");
     private static final XPathExpression exprGetFirstMetadataNode = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]");
 
@@ -234,6 +236,13 @@ public class TestCSWRecordTransformer {
         String actualUri = actual.getNamespaceURI();
         if (actualUri == null) {
             actualUri = "";
+        }
+        //To deal with ambiguity of xmlns namespaces (http://xerces.apache.org/xerces2-j/faq-sax.html#faq-5)
+        //we have to be a little tricky with our XML namespaces... (how annoying)
+        if (expectedUri.equals(xmlnsUri) && actualUri.isEmpty()) {
+            actualUri = xmlnsUri;
+        } else if (actualUri.equals(xmlnsUri) && expectedUri.isEmpty()) {
+            expectedUri = xmlnsUri;
         }
         Assert.assertEquals(debugLocationString, expectedUri, actualUri);
         Assert.assertEquals(debugLocationString, expected.getLocalName(), actual.getLocalName());
