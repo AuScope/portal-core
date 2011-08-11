@@ -17,9 +17,8 @@ import org.auscope.portal.csw.record.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
-import org.auscope.portal.server.domain.filter.IFilter;
-import org.auscope.portal.server.util.Util;
-import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
+import org.auscope.portal.server.util.DOMUtil;
+import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -27,7 +26,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 /**
  * A utility class which provides methods for querying borehole service
- * 
+ *
  * @author Jarek Sanders
  * @version $Id$
  *
@@ -36,33 +35,32 @@ import org.w3c.dom.NodeList;
 public class BoreholeService {
 
     // -------------------------------------------------------------- Constants
-    
+
     protected final Log log = LogFactory.getLog(getClass());
-    
+
     // ----------------------------------------------------- Instance variables
     private HttpServiceCaller httpServiceCaller;
-    private IWFSGetFeatureMethodMaker methodMaker;
-    private Util util = new Util();
+    private WFSGetFeatureMethodMaker methodMaker;
 
     // ----------------------------------------------------------- Constructors
-    
-    // ------------------------------------------ Attribute Setters and Getters    
-    
+
+    // ------------------------------------------ Attribute Setters and Getters
+
     @Autowired
     public void setHttpServiceCaller(HttpServiceCaller httpServiceCaller) {
         this.httpServiceCaller = httpServiceCaller;
     }
-    
+
     @Autowired
-    public void setWFSGetFeatureMethodMakerPOST(IWFSGetFeatureMethodMaker iwfsGetFeatureMethodMaker) {
+    public void setWFSGetFeatureMethodMakerPOST(WFSGetFeatureMethodMaker iwfsGetFeatureMethodMaker) {
         this.methodMaker = iwfsGetFeatureMethodMaker;
     }
 
-    
-    // --------------------------------------------------------- Public Methods    
-    
-    
-    
+
+    // --------------------------------------------------------- Public Methods
+
+
+
     /**
      * Get all boreholes from a given service url and return the response
      * @param serviceURL
@@ -79,25 +77,25 @@ public class BoreholeService {
         } else {
             filterString = nvclFilter.getFilterStringBoundingBox(bbox);
         }
-        
+
         // Create a GetFeature request with an empty filter - get all
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:Borehole", filterString, maxFeatures);
         // Call the service, and get all the boreholes
         //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
         return method;
     }
-    
-    
+
+
     private void appendHyloggerBoreholeIDs(String url, String typeName, List<String> idList) throws Exception {
         //Make request
         HttpMethodBase method = methodMaker.makeMethod(url, typeName, "", 0);
         String wfsResponse = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        
+
         //Parse response
-        Document doc = util.buildDomFromString(wfsResponse);
+        Document doc = DOMUtil.buildDomFromString(wfsResponse);
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new NVCLNamespaceContext());
-        
+
         //Get our ID's
         NodeList publishedDatasets = (NodeList)xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/" + NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME + "/nvcl:scannedBorehole", doc, XPathConstants.NODESET);
         for (int i = 0; i < publishedDatasets.getLength(); i++) {
@@ -107,19 +105,19 @@ public class BoreholeService {
             }
         }
     }
-    
+
     /**
      * Goes to the CSWService to get all services that support the PUBLISHED_DATASETS_TYPENAME and queries them
      * to generate a list of borehole ID's that represent every borehole with Hylogger data.
-     * 
+     *
      * If any of the services queried fail to return valid responses they will be skipped
-     * 
+     *
      * @param cswService Will be used to find the appropriate service to query
-     * @throws Exception 
+     * @throws Exception
      */
-    public List<String> discoverHyloggerBoreholeIDs(CSWService cswService) throws Exception {
+    public List<String> discoverHyloggerBoreholeIDs(CSWCacheService cswService) throws Exception {
         List<String> ids = new ArrayList<String>();
-        
+
         for (CSWRecord record : cswService.getWFSRecords()) {
             for (CSWOnlineResource resource : record.getOnlineResourcesByType(OnlineResourceType.WFS)) {
                 if (resource.getName().equals(NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME)) {
@@ -131,7 +129,7 @@ public class BoreholeService {
                 }
             }
         }
-        
+
         return ids;
     }
 }

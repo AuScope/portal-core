@@ -98,20 +98,20 @@ public class EarthResourcesFilterController extends BaseWFSToKMLController {
             String gmlBlob;
             if (mineName.equals(ALL_MINES)) {//get all mines
                 if (bbox == null){
-                	method = this.mineralOccurrenceService.getAllMinesGML(serviceUrl, maxFeatures);
+                    method = this.mineralOccurrenceService.getAllMinesGML(serviceUrl, maxFeatures);
                     gmlBlob = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
                 }
                 else{
-                	method = this.mineralOccurrenceService.getAllVisibleMinesGML(serviceUrl, bbox, maxFeatures);
+                    method = this.mineralOccurrenceService.getAllVisibleMinesGML(serviceUrl, bbox, maxFeatures);
                     gmlBlob = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
                 }
             } else {
                 if (bbox == null){
-                	method = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName, maxFeatures);
+                    method = this.mineralOccurrenceService.getMineWithSpecifiedNameGML(serviceUrl, mineName, maxFeatures);
                     gmlBlob = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
                 }
                 else{
-                	method = this.mineralOccurrenceService.getVisibleMineWithSpecifiedNameGML(serviceUrl, mineName, maxFeatures, bbox);
+                    method = this.mineralOccurrenceService.getVisibleMineWithSpecifiedNameGML(serviceUrl, mineName, maxFeatures, bbox);
                     gmlBlob = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
                 }
             }
@@ -123,12 +123,12 @@ public class EarthResourcesFilterController extends BaseWFSToKMLController {
             //And should probably try to extract an error message
             if (kmlBlob == null || kmlBlob.length() == 0) {
                 log.error(String.format("Transform failed serviceUrl='%1$s' gmlBlob='%2$s'",serviceUrl, gmlBlob));
-            	return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED ,method);
+                return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED ,method);
             } else {
-            	return makeModelAndViewKML(kmlBlob, gmlBlob, method);
+                return makeModelAndViewKML(kmlBlob, gmlBlob, method);
             }
         } catch (Exception e) {
-            return this.handleExceptionResponse(e, serviceUrl, method);
+            return this.generateExceptionResponse(e, serviceUrl, method);
         }
 
     }
@@ -171,7 +171,7 @@ public class EarthResourcesFilterController extends BaseWFSToKMLController {
             //get the mineral occurrences
             String mineralOccurrenceResponse = null;
             if (bbox == null) {
-            	method = this.mineralOccurrenceService.getMineralOccurrenceGML (
+                method = this.mineralOccurrenceService.getMineralOccurrenceGML (
                         serviceUrl,
                         commodityName,
                         measureType,
@@ -203,7 +203,7 @@ public class EarthResourcesFilterController extends BaseWFSToKMLController {
             return makeModelAndViewKML(convertToKml(mineralOccurrenceResponse, request, serviceUrl), mineralOccurrenceResponse, method);
 
         } catch (Exception e) {
-            return this.handleExceptionResponse(e, serviceUrl, method);
+            return this.generateExceptionResponse(e, serviceUrl, method);
 
         }
     }
@@ -249,28 +249,28 @@ public class EarthResourcesFilterController extends BaseWFSToKMLController {
             // Get the mining activities
             String miningActivityResponse = null;
             if (bbox == null) {
-            	method = this.mineralOccurrenceService.getMiningActivityGML( serviceUrl
-                        											, mineName
-                        											, startDate
-                        											, endDate
-                        											, oreProcessed
-                        											, producedMaterial
-                        											, cutOffGrade
-                        											, production
-                        											, maxFeatures);
+                method = this.mineralOccurrenceService.getMiningActivityGML( serviceUrl
+                                                                    , mineName
+                                                                    , startDate
+                                                                    , endDate
+                                                                    , oreProcessed
+                                                                    , producedMaterial
+                                                                    , cutOffGrade
+                                                                    , production
+                                                                    , maxFeatures);
                 miningActivityResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
             } else {
-            	method = this.mineralOccurrenceService.getVisibleMiningActivityGML( serviceUrl
-            																, mineName
-            																, startDate
-            																, endDate
-            																, oreProcessed
-            																, producedMaterial
-            																, cutOffGrade
-            																, production
-            																, maxFeatures
-            																, bbox);
+                method = this.mineralOccurrenceService.getVisibleMiningActivityGML( serviceUrl
+                                                                            , mineName
+                                                                            , startDate
+                                                                            , endDate
+                                                                            , oreProcessed
+                                                                            , producedMaterial
+                                                                            , cutOffGrade
+                                                                            , production
+                                                                            , maxFeatures
+                                                                            , bbox);
                 miningActivityResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
             }
@@ -281,30 +281,13 @@ public class EarthResourcesFilterController extends BaseWFSToKMLController {
             return makeModelAndViewKML(convertToKml(miningActivityResponse, request, serviceUrl), miningActivityResponse, method);
 
         } catch (Exception e) {
-            return this.handleExceptionResponse(e, serviceUrl, method);
+            return this.generateExceptionResponse(e, serviceUrl, method);
         }
     }
 
     // ------------------------------------------------------ Protected Methods
 
     // ------------------------------------------------------ Private Methods
-    /**
-     * Create a new ModelAndView given a kml block and serialised xml document.
-     * @param kmlBlob
-     * @param gmlBlob
-     * @return ModelAndView JSON response object
-     */
-   /* private ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob) {
-        final Map<String,String> data = new HashMap<String,String>();
-        data.put("kml", kmlBlob);
-        data.put("gml", gmlBlob);
-
-        ModelMap model = new ModelMap();
-        model.put("success", true);
-        model.put("data", data);
-
-        return new JSONModelAndView(model);
-    }*/
 
 
     /**

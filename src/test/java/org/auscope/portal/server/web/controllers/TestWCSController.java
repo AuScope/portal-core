@@ -338,34 +338,34 @@ public class TestWCSController {
 
         Assert.assertEquals(true, model.get("success"));
 
-        Assert.assertNotNull(model.get("records"));
-        Assert.assertEquals(1, ((DescribeCoverageRecord[]) model.get("records")).length);
-        Assert.assertNotNull(((DescribeCoverageRecord[]) model.get("records"))[0]);
+        Assert.assertNotNull(model.get("data"));
+        Assert.assertEquals(1, ((DescribeCoverageRecord[]) model.get("data")).length);
+        Assert.assertNotNull(((DescribeCoverageRecord[]) model.get("data"))[0]);
     }
 
     private class TimeComparatorMethodInterceptor implements IWCSGetCoverageMethodMaker {
 
-    	private String expectedTimeString;
+        private String expectedTimeString;
 
-    	public TimeComparatorMethodInterceptor(String expectedTimeString) {
-    		this.expectedTimeString = expectedTimeString;
-    	}
+        public TimeComparatorMethodInterceptor(String expectedTimeString) {
+            this.expectedTimeString = expectedTimeString;
+        }
 
-		@Override
-		public HttpMethodBase makeMethod(String serviceURL, String layerName,
-				String format, String outputCrs, int outputWidth,
-				int outputHeight, double outputResX, double outputResY,
-				String inputCrs, CSWGeographicBoundingBox bbox,
-				String timeConstraint, Map<String, String> customParams)
-				throws Exception {
+        @Override
+        public HttpMethodBase makeMethod(String serviceURL, String layerName,
+                String format, String outputCrs, int outputWidth,
+                int outputHeight, double outputResX, double outputResY,
+                String inputCrs, CSWGeographicBoundingBox bbox,
+                String timeConstraint, Map<String, String> customParams)
+                throws Exception {
 
-			Assert.assertEquals(expectedTimeString, timeConstraint);
+            Assert.assertEquals(expectedTimeString, timeConstraint);
 
-			return mockGetMethodMaker.makeMethod(serviceURL, layerName,
+            return mockGetMethodMaker.makeMethod(serviceURL, layerName,
                     format, outputCrs, outputWidth, outputHeight,
                     outputResX, outputResY, inputCrs, bbox, timeConstraint,
                     customParams);
-		}
+        }
 
     }
 

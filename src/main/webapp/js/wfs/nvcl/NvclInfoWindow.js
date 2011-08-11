@@ -45,13 +45,13 @@ NvclInfoWindow.prototype = {
     'NVCL_SERVICE' : "/NVCLDataServices/getDatasetCollection.html?holeidentifier=",
 
     'show': function() {
-		//Open our window with the basic info displayed
-		this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);
+        //Open our window with the basic info displayed
+        this.tabsArray[0] = new GInfoWindowTab(this.TAB_1, this.summaryHtml);
 
-		var me = this;
+        var me = this;
 
         this.Marker.openInfoWindowTabs(this.tabsArray, {
-        	onOpenFn:function(){
+            onOpenFn:function(){
                 //And update it with the downloaded data as it arrives
                 me.retrieveDatasets();
                 }
@@ -155,7 +155,7 @@ NvclInfoWindow.prototype = {
                     datasetName : item.datasetName,
                     omUrl : item.omUrl
                 };
-                
+
                 if (datasetCol.indexOfKey(key) === 0) {
                     lHtml += '<option value="'+ escape(Ext.util.JSON.encode(datasetDetails)) +'" selected="selected">'+ item.datasetName + ' (Latest)</option>';
                 } else {
@@ -194,7 +194,7 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
     var lDatasetId   = iDatasetDetails.datasetId.replace(/'/g, '');
     var lDatasetName = iDatasetDetails.datasetName;
     var lOMUrl = iDatasetDetails.omUrl;
-    
+
     var LOG_PATH    = '/NVCLDataServices/getLogCollection.html?datasetid=';
     var MOSAIC_PATH = '/NVCLDataServices/mosaic.html?logid=';
     var PLOT_PATH   = '/NVCLDataServices/plotscalar.html?logid=';
@@ -337,8 +337,8 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
         var width = autoWidth ? undefined : 250;
 
         scalarGrid.tip = new Ext.ToolTip({
-            target: view.mainBody,    // The overall target element.           
-        	delegate: '.x-grid3-row', // Each grid row causes its own seperate show and hide.
+            target: view.mainBody,    // The overall target element.
+            delegate: '.x-grid3-row', // Each grid row causes its own seperate show and hide.
             trackMouse: true,         // Moving within the row should not hide the tip.
             renderTo: document.body,  // Render immediately so that tip.body can be referenced prior to the first show.
             autoWidth: autoWidth,
@@ -368,12 +368,12 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
                         }
 
                         //Update tool tip
-                        if (response.definition && response.definition.length > 0)
-                        	tip.body.dom.innerHTML = response.definition;
-                        else if (response.scopeNote && response.scopeNote.length > 0)
-                        	tip.body.dom.innerHTML = response.scopeNote;
+                        if (response.data.definition && response.data.definition.length > 0)
+                            tip.body.dom.innerHTML = response.data.definition;
+                        else if (response.data.scopeNote && response.data.scopeNote.length > 0)
+                            tip.body.dom.innerHTML = response.data.scopeNote;
                         else
-                        	tip.body.dom.innerHTML = 'N/A';
+                            tip.body.dom.innerHTML = 'N/A';
                       });
                 }
                 //TODO: Commenting this out for now as it causes js errors. Still need to
@@ -522,7 +522,7 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
                         ]
                     }]
 
-                }],                
+                }],
                 buttons:[{
                     text: 'Plot',
                     handler: function() {
@@ -552,7 +552,7 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
                                 sHtml += '&height=600';
                                 sHtml += '"/>';
                             }
-                            
+
                             var winPlot = new Ext.Window({
                                 autoScroll  : true,
                                 border      : true,
@@ -572,12 +572,12 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
                             winPlot.show();
                         }
                         else if (item_count === 0){
-                        	Ext.Msg.show({
-                    			title:'Hint',
-                    			msg: 'You need to select a scalar(s) from the "List of Scalars" table to plot.',
-                    			buttons: Ext.Msg.OK
-                    		});
-                        }                        
+                            Ext.Msg.show({
+                                title:'Hint',
+                                msg: 'You need to select a scalar(s) from the "List of Scalars" table to plot.',
+                                buttons: Ext.Msg.OK
+                            });
+                        }
                     }
                 }]
             }]

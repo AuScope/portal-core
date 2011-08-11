@@ -4,9 +4,9 @@
  * Is a combination of a MarkerManager with the added extension for generic overlays too
  */
 OverlayManager = function(map) {
-	this.overlayList = [];
-	this.markerManager = new MarkerManager(map);
-	this.map = map;
+    this.overlayList = [];
+    this.markerManager = new MarkerManager(map);
+    this.map = map;
 };
 
 
@@ -16,11 +16,11 @@ OverlayManager = function(map) {
  * @return
  */
 OverlayManager.prototype.clearOverlays = function() {
-	for (var i = 0; i < this.overlayList.length; i++) {
-		this.map.removeOverlay(this.overlayList[i]);
-	}
-	this.overlayList = [];
-	this.markerManager.clearMarkers();
+    for (var i = 0; i < this.overlayList.length; i++) {
+        this.map.removeOverlay(this.overlayList[i]);
+    }
+    this.overlayList = [];
+    this.markerManager.clearMarkers();
 };
 
 /**
@@ -29,8 +29,8 @@ OverlayManager.prototype.clearOverlays = function() {
  * @return
  */
 OverlayManager.prototype.addOverlay = function(overlay) {
-	this.map.addOverlay(overlay);
-	this.overlayList.push(overlay);
+    this.map.addOverlay(overlay);
+    this.overlayList.push(overlay);
 };
 
 /**
@@ -39,11 +39,11 @@ OverlayManager.prototype.addOverlay = function(overlay) {
  * @return
  */
 OverlayManager.prototype.updateZOrder = function(newZOrder) {
-	for (var i = 0; i < this.overlayList.length; i++) {
-		this.overlayList[i].zPriority = newZOrder;
+    for (var i = 0; i < this.overlayList.length; i++) {
+        this.overlayList[i].zPriority = newZOrder;
         this.map.removeOverlay(this.overlayList[i]);
         this.map.addOverlay(this.overlayList[i]);
-	}
+    }
 };
 
 /**
@@ -52,13 +52,13 @@ OverlayManager.prototype.updateZOrder = function(newZOrder) {
  * @return
  */
 OverlayManager.prototype.updateOpacity = function(newOpacity) {
-	for (var i = 0; i < this.overlayList.length; i++) {
-		if (this.overlayList[i] instanceof GTileLayerOverlay) {
-			this.overlayList[i].getTileLayer().opacity = newOpacity;
-	        this.map.removeOverlay(this.overlayList[i]);
-	        this.map.addOverlay(this.overlayList[i]);
-		}
-	}
+    for (var i = 0; i < this.overlayList.length; i++) {
+        if (this.overlayList[i] instanceof GTileLayerOverlay) {
+            this.overlayList[i].getTileLayer().opacity = newOpacity;
+            this.map.removeOverlay(this.overlayList[i]);
+            this.map.addOverlay(this.overlayList[i]);
+        }
+    }
 };
 
 

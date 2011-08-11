@@ -22,9 +22,9 @@ import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.web.WFSGetFeatureMethodMakerPOST;
+import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.BoreholeService;
-import org.auscope.portal.server.web.service.CSWService;
+import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -42,8 +42,8 @@ public class TestNVCLController {
     private ServletContext mockServletContext;
     private HttpServiceCaller mockHttpServiceCaller;
     private HttpClient mockHttpClient;
-    private CSWService mockCSWService;
-    private WFSGetFeatureMethodMakerPOST mockWfsMethodMaker;
+    private CSWCacheService mockCSWService;
+    private WFSGetFeatureMethodMaker mockWfsMethodMaker;
     private BoreholeService mockBoreholeService;
     private NVCLController nvclController;
 
@@ -61,7 +61,7 @@ public class TestNVCLController {
         this.mockHttpSession = context.mock(HttpSession.class);
         this.mockServletContext = context.mock(ServletContext.class);
         this.mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
-        this.mockCSWService = context.mock(CSWService.class);
+        this.mockCSWService = context.mock(CSWCacheService.class);
         this.mockHttpClient = context.mock(HttpClient.class);
 
         this.nvclController = new NVCLController(this.mockGmlToKml, this.mockBoreholeService, this.mockHttpServiceCaller, this.mockCSWService);

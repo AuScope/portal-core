@@ -14,17 +14,17 @@ import org.apache.commons.logging.LogFactory;
  * @author VOT002
  */
 public class FilterBoundingBox implements Serializable {
-    
+
     protected static final Log log = LogFactory.getLog(FilterBoundingBox.class);
-    
+
     private String bboxSrs;
     private double[] lowerCornerPoints;
     private double[] upperCornerPoints;
-    
+
     public FilterBoundingBox() {
-        
+
     }
-    
+
     public FilterBoundingBox(String bboxSrs, double[] lowerCornerPoints,
             double[] upperCornerPoints) {
         this.bboxSrs = bboxSrs;
@@ -46,18 +46,43 @@ public class FilterBoundingBox implements Serializable {
     public double[] getUpperCornerPoints() {
         return upperCornerPoints;
     }
-    
+
     public void setUpperCornerPoints(double[] upperCornerPoints) {
         this.upperCornerPoints = upperCornerPoints;
     }
-    
+
     @Override
     public String toString() {
         return "FilterBoundingBox [bboxSrs=" + bboxSrs + ", lowerCornerPoints="
                 + Arrays.toString(lowerCornerPoints) + ", upperCornerPoints="
                 + Arrays.toString(upperCornerPoints) + "]";
     }
-    
+
+    /**
+     * Compares this FilterBoundingBox with another instance. The comparison is made directly on doubles so
+     * this method may yield inaccurate results.
+     * @param bbox
+     * @return
+     */
+    public boolean equals(FilterBoundingBox bbox) {
+        if (this.bboxSrs != bbox.bboxSrs) {
+            return false;
+        }
+
+        if (this.bboxSrs != null && bbox.bboxSrs != null && !this.bboxSrs.equals(bbox.bboxSrs)) {
+            return false;
+        }
+
+        if (!Arrays.equals(this.lowerCornerPoints, bbox.lowerCornerPoints)) {
+            return false;
+        }
+        if (!Arrays.equals(this.upperCornerPoints, bbox.upperCornerPoints)) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Attempts to parse a FilterBoundingbox
      * @param bboxSrs
@@ -67,24 +92,24 @@ public class FilterBoundingBox implements Serializable {
      */
     public static FilterBoundingBox parseFromJSON(JSONObject obj) throws Exception {
         FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
-        
+
         JSONArray lowerCornerPoints = obj.getJSONArray("lowerCornerPoints");
         JSONArray upperCornerPoints = obj.getJSONArray("upperCornerPoints");
-        
+
         result.lowerCornerPoints = new double[lowerCornerPoints.size()];
         result.upperCornerPoints = new double[upperCornerPoints.size()];
-        
+
         for (int i = 0; i < lowerCornerPoints.size(); i++) {
             result.lowerCornerPoints[i] = lowerCornerPoints.getDouble(i);
         }
-        
+
         for (int i = 0; i < upperCornerPoints.size(); i++) {
             result.upperCornerPoints[i] = upperCornerPoints.getDouble(i);
         }
-         
+
         return result;
     }
-    
+
     /**
      * Convenience method to parse a bbox from a JSON string. Returns null if the parsing fails
      */
@@ -101,7 +126,7 @@ public class FilterBoundingBox implements Serializable {
         } catch (Exception ex) {
             log.warn("Couldnt parse bounding box filter (Invalid Values): " + ex);
         }
-        
+
         return bbox;
     }
 }

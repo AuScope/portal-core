@@ -19,45 +19,32 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-public class KnownLayerController {
+public class KnownLayerController extends BasePortalController {
 
-	private List knownTypes;
-	private ViewKnownLayerFactory viewFactory;
-	
-	@Autowired
-	public KnownLayerController(@Qualifier("knownTypes") ArrayList knownTypes,
-			ViewKnownLayerFactory viewFactory) {
-		this.knownTypes = knownTypes;
-		this.viewFactory = viewFactory;
-		
-	}
-	
-	private JSONModelAndView generateResponse(boolean success, String message, List<ModelMap> records) {
-		ModelMap response = new ModelMap();
-		
-		response.put("success", success);
-		response.put("message", message);
-    	if (records != null) {
-    		response.put("records", records);
-    	}
-    	
-    	return new JSONModelAndView(response);
-	}
-	
-	/**
-	 * Gets a JSON response which contains the representations of each and every "KnownFeatureTypeDefinition".
-	 * 
-	 * Each KnownFeatureTypeDefinition will map [0, N] CSWRecords with display information. 
-	 * @return
-	 */
-	@RequestMapping("getKnownLayers.do")
-	public ModelAndView getKnownLayers() {
-		
-		List<ModelMap> viewRepresentations = new ArrayList<ModelMap>();
-		for (Object k : knownTypes) {
-			viewRepresentations.add(viewFactory.toView((KnownLayer) k));
-		}
-		
-		return generateResponse(true, "No errors", viewRepresentations);
-	}
+    private List knownTypes;
+    private ViewKnownLayerFactory viewFactory;
+
+    @Autowired
+    public KnownLayerController(@Qualifier("knownTypes") ArrayList knownTypes,
+            ViewKnownLayerFactory viewFactory) {
+        this.knownTypes = knownTypes;
+        this.viewFactory = viewFactory;
+
+    }
+
+    /**
+     * Gets a JSON response which contains the representations of each and every "KnownFeatureTypeDefinition".
+     *
+     * Each KnownFeatureTypeDefinition will map [0, N] CSWRecords with display information.
+     * @return
+     */
+    @RequestMapping("getKnownLayers.do")
+    public ModelAndView getKnownLayers() {
+        List<ModelMap> viewRepresentations = new ArrayList<ModelMap>();
+        for (Object k : knownTypes) {
+            viewRepresentations.add(viewFactory.toView((KnownLayer) k));
+        }
+
+        return generateJSONResponseMAV(true, viewRepresentations, "");
+    }
 }

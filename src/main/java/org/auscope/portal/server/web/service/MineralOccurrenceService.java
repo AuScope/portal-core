@@ -11,7 +11,7 @@ import org.auscope.portal.mineraloccurrence.MineralOccurrenceFilter;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.mineraloccurrence.MiningActivityFilter;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
-import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
+import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +31,7 @@ public class MineralOccurrenceService {
 
     private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
-    private IWFSGetFeatureMethodMaker methodMaker;
+    private WFSGetFeatureMethodMaker methodMaker;
 
 
     // ----------------------------------------------------------- Constructors
@@ -47,7 +47,7 @@ log.info(".......default C'tor");
     @Autowired
     public MineralOccurrenceService( HttpServiceCaller httpServiceCaller,
                                      MineralOccurrencesResponseHandler respHandler,
-                                     IWFSGetFeatureMethodMaker methodMaker ) {
+                                     WFSGetFeatureMethodMaker methodMaker ) {
         this.httpServiceCaller = httpServiceCaller;
         this.mineralOccurrencesResponseHandler = respHandler;
         this.methodMaker = methodMaker;
@@ -65,7 +65,7 @@ log.info(".......default C'tor");
      */
     public List<Mine> getAllMines(String serviceURL, int maxFeatures) throws Exception {
         //get the mines
-    	HttpMethodBase method = this.getAllMinesGML(serviceURL, maxFeatures);
+        HttpMethodBase method = this.getAllMinesGML(serviceURL, maxFeatures);
         String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
         //convert the response into a nice collection of Mine Nodes
@@ -84,7 +84,7 @@ log.info(".......default C'tor");
      */
     public List<Mine> getAllVisibleMines(String serviceURL, FilterBoundingBox bbox, int maxFeatures) throws Exception {
         //get the mines
-    	HttpMethodBase method = this.getAllVisibleMinesGML(serviceURL, bbox, maxFeatures);
+        HttpMethodBase method = this.getAllVisibleMinesGML(serviceURL, bbox, maxFeatures);
         String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
         //convert the response into a nice collection of Mine Nodes
@@ -122,8 +122,8 @@ log.info(".......default C'tor");
      */
     public List<Mine> getMineWithSpecifiedName(String serviceURL, String mineName, int maxFeatures) throws Exception {
         //get the mine
-    	HttpMethodBase method = this.getMineWithSpecifiedNameGML(serviceURL, mineName, maxFeatures);
-    	String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        HttpMethodBase method = this.getMineWithSpecifiedNameGML(serviceURL, mineName, maxFeatures);
+        String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
         //convert the response into a collection of Mine Nodes
         List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
 
@@ -142,7 +142,7 @@ log.info(".......default C'tor");
 
         log.debug("Mine query... url:" + serviceURL);
         log.trace("Mine query... filter: " + filter.getFilterStringAllRecords());
-        
+
         //create a GetFeature request with an empty filter - get all
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", filter.getFilterStringAllRecords(), maxFeatures);
 
@@ -267,7 +267,7 @@ log.info(".......default C'tor");
                                            String minCommodityAmountUOM,
                                            int maxFeatures,
                                            FilterBoundingBox bbox
-                                           
+
                                            ) throws Exception {
 
         MineralOccurrenceFilter mineralOccurrenceFilter

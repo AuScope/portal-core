@@ -9,6 +9,7 @@ import javax.xml.xpath.XPathFactory;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.server.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -30,11 +31,11 @@ public abstract class FilterTestUtilities {
     public static Document parsefilterStringXML(String xmlString) throws Exception {
         NamespaceContext nsc = new OGCNamespaceContext();
         xmlString = String.format("<test xmlns:ogc=\"%1$s\">%2$s</test>",nsc.getNamespaceURI("ogc"), xmlString);
-        
-        return new org.auscope.portal.server.util.Util().buildDomFromString(xmlString);
+
+        return new DOMUtil().buildDomFromString(xmlString);
     }
-    
-    
+
+
     /**
      * Runs an xpath query (which should return a nodeset) against doc and tests the number of items in the nodeset
      * @param doc
@@ -45,7 +46,7 @@ public abstract class FilterTestUtilities {
     public static void runNodeSetValueCheck(Document doc, String xPathQuery, int expectedCount) throws Exception {
         runNodeSetValueCheck(doc, xPathQuery, null, expectedCount);
     }
-    
+
     /**
      * Runs an xpath query (which should return a nodeset) against doc and tests that each response
      * object is a member from validValues
@@ -57,7 +58,7 @@ public abstract class FilterTestUtilities {
     public static void runNodeSetValueCheck(Document doc, String xPathQuery, String[] validValues) throws Exception {
         runNodeSetValueCheck(doc, xPathQuery, validValues, -1);
     }
-    
+
     /**
      * Runs an xpath query (which should return a nodeset) against doc and tests that each response
      * object is a member from validValues and there is a specified number of elements returned
@@ -68,24 +69,24 @@ public abstract class FilterTestUtilities {
     public static void runNodeSetValueCheck(Document doc, String xPathQuery, String[] validValues, int expectedCount) throws Exception {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new OGCNamespaceContext());
-        
+
         NodeList tempList = (NodeList) xPath.evaluate(xPathQuery, doc, XPathConstants.NODESET);
         Assert.assertNotNull(tempList);
-        
+
         if (expectedCount >= 0)
             Assert.assertTrue(String.format("Count of expression invalid. Expected %1$s Got %2$s", expectedCount, tempList.getLength()), tempList.getLength() == expectedCount);
-        
+
         if (validValues != null) {
             for (int i = 0; i < tempList.getLength(); i++) {
-                
+
                 String text = tempList.item(i).getTextContent();
-                
+
                 boolean foundValidValue = false;
                 for (int j = 0; !foundValidValue && j < validValues.length; j++) {
-                    
+
                     foundValidValue = validValues[j].equals(text);
                 }
-                
+
                 Assert.assertTrue(String.format("Failed to find '%1$s' in '%2$s'", text, Arrays.toString(validValues)), foundValidValue);
             }
         }

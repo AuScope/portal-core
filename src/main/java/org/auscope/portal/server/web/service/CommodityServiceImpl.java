@@ -9,14 +9,14 @@ import org.auscope.portal.mineraloccurrence.Commodity;
 import org.auscope.portal.mineraloccurrence.CommodityFilter;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
-import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
+import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
 /**
  * Concrete implementation of the CommodityService interface.
- * 
+ *
  * @author Jarek Sanders
  * @version $Id$
  */
@@ -24,55 +24,55 @@ import org.springframework.stereotype.Service;
 public class CommodityServiceImpl implements CommodityService{
 
     // -------------------------------------------------------------- Constants
-    
+
     protected final Log log = LogFactory.getLog(getClass());
-    
-    
+
+
     // ----------------------------------------------------- Instance variables
-    
+
     private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
-    private IWFSGetFeatureMethodMaker methodMaker;
+    private WFSGetFeatureMethodMaker methodMaker;
 
-    
+
     // ----------------------------------------------------------- Constructors
-    
+
     @Autowired
     public CommodityServiceImpl( HttpServiceCaller httpServiceCaller,
-                                 MineralOccurrencesResponseHandler respHandler, 
-                                 IWFSGetFeatureMethodMaker methodMaker ) {
+                                 MineralOccurrencesResponseHandler respHandler,
+                                 WFSGetFeatureMethodMaker methodMaker ) {
         this.httpServiceCaller = httpServiceCaller;
         this.mineralOccurrencesResponseHandler = respHandler;
         this.methodMaker = methodMaker;
     }
-    
-    
+
+
     // ------------------------------------------- Property Setters and Getters
-    
-    
-    
-    private Collection<Commodity> get(String serviceURL, String commodityName, FilterBoundingBox bbox, int maxFeatures) 
+
+
+
+    private Collection<Commodity> get(String serviceURL, String commodityName, FilterBoundingBox bbox, int maxFeatures)
     throws Exception {
         HttpMethodBase method = null;
-         
+
         CommodityFilter commodityFilter = new CommodityFilter(commodityName);
         String filterString = null;
         String srsName = null;
-        
+
         if (bbox != null) {
             filterString = commodityFilter.getFilterStringBoundingBox(bbox);
             srsName = bbox.getBboxSrs();
         } else {
             filterString = commodityFilter.getFilterStringAllRecords();
         }
-        
+
         method = methodMaker.makeMethod(serviceURL, "er:Commodity", filterString, maxFeatures, srsName);
-                                
+
 
         // Call the service, and get all the commodities
         String commodityResponse = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
-        //parse the commodities and return them             
+        //parse the commodities and return them
         try {
             return this.mineralOccurrencesResponseHandler.getCommodities(commodityResponse);
         } catch (Exception ex) {
@@ -82,7 +82,7 @@ public class CommodityServiceImpl implements CommodityService{
             throw ex;
         }
     }
-    
+
     public Collection<Commodity> getAll(String serviceURL, String commodityName, int maxFeatures)
             throws Exception {
         return get(serviceURL, commodityName, null, maxFeatures);

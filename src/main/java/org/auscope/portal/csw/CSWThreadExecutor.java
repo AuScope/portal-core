@@ -8,24 +8,24 @@ import org.springframework.stereotype.Repository;
 
 /**
  * A simple wrapper around a thread pool
- * 
+ *
  * @version $Id$
  */
 @Repository
 public class CSWThreadExecutor implements Executor {
-	public static final int THREADPOOL_SIZE = 5;
-	
-	private ExecutorService threadPool = Executors.newFixedThreadPool(THREADPOOL_SIZE); 
-	
+    public static final int THREADPOOL_SIZE = 5;
+
+    private ExecutorService threadPool = Executors.newFixedThreadPool(THREADPOOL_SIZE);
+
     public void execute(Runnable runnable) {
         threadPool.execute(runnable);
     }
-    
+
     public ExecutorService getExecutorService() {
-    	return threadPool;
+        return threadPool;
     }
-    
+
     public void setExecutorService(ExecutorService service) {
-    	threadPool = service;
+        threadPool = service;
     }
 }

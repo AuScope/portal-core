@@ -39,11 +39,15 @@ public class TestCSWRecordTransformer {
 
     private static final String xmlnsUri = "http://www.w3.org/2000/xmlns/";
 
-    private static final XPathExpression exprGetAllMetadataNodes = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata");
-    private static final XPathExpression exprGetFirstMetadataNode = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]");
+    private XPathExpression exprGetAllMetadataNodes = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata");
+    private XPathExpression exprGetFirstMetadataNode = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]");
 
     @Before
     public void setup() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+
+        exprGetAllMetadataNodes = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata");
+        exprGetFirstMetadataNode = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]");
+
         // load CSW record response document
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);

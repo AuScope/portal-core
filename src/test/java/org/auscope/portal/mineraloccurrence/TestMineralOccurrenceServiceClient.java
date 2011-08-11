@@ -7,7 +7,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.auscope.portal.server.web.IWFSGetFeatureMethodMaker;
+import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
 import org.jmock.Expectations;
@@ -29,7 +29,7 @@ public class TestMineralOccurrenceServiceClient {
     private HttpClient mockHttpClient;
     //private CommodityService commodityService;
 
-    private IWFSGetFeatureMethodMaker methodMaker;
+    private WFSGetFeatureMethodMaker methodMaker;
 
     private Mockery context = new Mockery(){{
         setImposteriser(ClassImposteriser.INSTANCE);
@@ -38,7 +38,7 @@ public class TestMineralOccurrenceServiceClient {
 
     @Before
     public void setup() {
-        this.methodMaker = context.mock(IWFSGetFeatureMethodMaker.class);
+        this.methodMaker = context.mock(WFSGetFeatureMethodMaker.class);
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.httpServiceCaller = context.mock(HttpServiceCaller.class);
         this.mineralOccurrenceService = new MineralOccurrenceService(this.httpServiceCaller, this.mineralOccurrencesResponseHandler, this.methodMaker);
@@ -60,10 +60,10 @@ public class TestMineralOccurrenceServiceClient {
         final String mockMineResponse = new String();
         @SuppressWarnings("unchecked")
         final List<Mine> mockMines = context.mock(List.class);
-        
+
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(with(serviceURL), with("er:MiningFeatureOccurrence"), 
-            		with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(with(serviceURL), with("er:MiningFeatureOccurrence"),
+                    with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockMineResponse));
             oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
@@ -256,8 +256,8 @@ public class TestMineralOccurrenceServiceClient {
 
         context.checking(new Expectations() {{
             ignoring(mockMine);
-            oneOf (methodMaker).makeMethod(with(""), with("er:MiningFeatureOccurrence"), 
-            		with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
+            oneOf (methodMaker).makeMethod(with(""), with("er:MiningFeatureOccurrence"),
+                    with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
             oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
         }});

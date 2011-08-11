@@ -35,7 +35,7 @@ public class TestHttpServiceCaller {
     }};
     private HttpClient mockHttpClient;
     private HttpConnectionManagerParams mockParams;
-    private IWFSGetFeatureMethodMaker methodMaker;
+    private WFSGetFeatureMethodMaker methodMaker;
 
     private HttpServiceCaller httpServiceCaller;
     private static final String SERVICE_URL = "http://localhost?";
@@ -47,7 +47,7 @@ public class TestHttpServiceCaller {
         mockHttpClient = context.mock(HttpClient.class);
         mockParams = context.mock(HttpConnectionManagerParams.class);
         httpServiceCaller = new HttpServiceCaller();
-        methodMaker = new WFSGetFeatureMethodMakerPOST();
+        methodMaker = new WFSGetFeatureMethodMaker();
         httpServiceCaller.setClientParams(mockParams);
     }
 

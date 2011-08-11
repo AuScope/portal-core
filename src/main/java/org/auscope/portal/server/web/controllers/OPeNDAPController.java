@@ -36,7 +36,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  */
 @Controller
-public class OPeNDAPController {
+public class OPeNDAPController extends BasePortalController {
     protected final Log log = LogFactory.getLog(getClass());
 
     private HttpServiceCaller serviceCaller;
@@ -65,16 +65,6 @@ public class OPeNDAPController {
         return new JSONModelAndView(items);
     }
 
-    private JSONModelAndView generateResponse(boolean success, String errorMsg, ViewVariable[] variables) {
-        ModelMap response = new ModelMap();
-
-        response.put("success", success);
-        response.put("errorMsg", errorMsg);
-        response.put("variables", variables);
-
-        return new JSONModelAndView(response);
-    }
-
     /**
      * Downloads the list of queryable variables from the given OPeNDAP Service
      *
@@ -85,7 +75,7 @@ public class OPeNDAPController {
      */
     @RequestMapping("/opendapGetVariables.do")
     public ModelAndView getVariables(@RequestParam("opendapUrl") final String opendapUrl,
-    								 @RequestParam(required=false, value="variableName") final String variableName) throws Exception {
+                                     @RequestParam(required=false, value="variableName") final String variableName) throws Exception {
 
         //Open our connection
         NetcdfDataset ds = null;
@@ -94,16 +84,16 @@ public class OPeNDAPController {
         } catch (Exception ex) {
             log.info(String.format("Error connecting to '%1$s'", opendapUrl));
             log.debug("Exception...", ex);
-            return generateResponse(false, String.format("Error connecting to '%1$s'", opendapUrl), null);
+            return generateJSONResponseMAV(false, null, String.format("Error connecting to '%1$s'", opendapUrl));
         }
 
         //Attempt to parse our response
         try {
             ViewVariable[] vars = ViewVariableFactory.fromNetCDFDataset(ds, variableName);
-            return generateResponse(true, null, vars);
+            return generateJSONResponseMAV(true, vars, "");
         } catch (Exception ex) {
             log.error(String.format("Error parsing from '%1$s'", opendapUrl), ex);
-            return generateResponse(false, String.format("An error has occured whilst reading data from '%1$s'", opendapUrl), null);
+            return generateJSONResponseMAV(false, null, String.format("An error has occured whilst reading data from '%1$s'", opendapUrl));
         }
     }
 

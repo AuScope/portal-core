@@ -21,7 +21,7 @@ import org.auscope.portal.gsml.YilgarnGeochemistryFilter;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
 import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.web.WFSGetFeatureMethodMakerPOST;
+import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -58,7 +58,7 @@ public class TestGSMLController {
      * The controller to test
      */
     private GSMLController gsmlController;
-    
+
     GSMLResponseHandler gsmlResponseHandler;
 
     /**
@@ -81,14 +81,14 @@ public class TestGSMLController {
      */
     private ServletContext mockServletContext = context.mock(ServletContext.class);
 
-    private WFSGetFeatureMethodMakerPOST wfsGetFeatureMethodMakerPOST = context.mock(WFSGetFeatureMethodMakerPOST.class);
+    private WFSGetFeatureMethodMaker wfsGetFeatureMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
 
     private IFilter mockFilter = context.mock(IFilter.class);
     private YilgarnGeochemistryFilter mockGeochemFilter = context.mock(YilgarnGeochemistryFilter.class);
 
     @Before
     public void setup() {
-        gsmlController = new GSMLController(httpServiceCaller, gmlToKml, wfsGetFeatureMethodMakerPOST, mockFilter, gsmlResponseHandler);
+        gsmlController = new GSMLController(httpServiceCaller, gmlToKml, wfsGetFeatureMethodMaker, mockFilter, gsmlResponseHandler);
     }
     private void testJSONResponse(String json, Boolean success, String gml, String kml) {
         JSONObject obj = JSONObject.fromObject(json);
@@ -126,7 +126,7 @@ public class TestGSMLController {
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
 
-            oneOf(wfsGetFeatureMethodMakerPOST).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)), with(any(String.class)));
+            oneOf(wfsGetFeatureMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)), with(any(String.class)));
 
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
@@ -155,7 +155,7 @@ public class TestGSMLController {
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
 
-            oneOf(wfsGetFeatureMethodMakerPOST).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)), with(any(String.class)));
+            oneOf(wfsGetFeatureMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)), with(any(String.class)));
 
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
@@ -174,7 +174,10 @@ public class TestGSMLController {
     @Test
     public void testRequestFeature() throws Exception {
         final String kmlBlob = "kmlBlob";
-
+        final String serviceUrl = "http://example.com";
+        final String featureType = "featureType";
+        final String featureId = "featureId";
+        final HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
 
         context.checking(new Expectations() {{
             oneOf(httpServiceCaller).getHttpClient();
@@ -182,38 +185,40 @@ public class TestGSMLController {
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));will(returnValue(kmlBlob));
 
+            oneOf(wfsGetFeatureMethodMaker).makeMethod(serviceUrl, featureType, featureId);will(returnValue(mockMethod));
+
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestFeature("fake","fake", "fake",mockHttpRequest);
+        ModelAndView modelAndView = gsmlController.requestFeature(serviceUrl,featureType, featureId,mockHttpRequest);
 
         //check that the kml blob has been put ont he model
         Assert.assertEquals(kmlBlob, ((Map)modelAndView.getModel().get("data")).get("kml"));
         Assert.assertTrue(modelAndView.getModel().get("success").equals(true));
     }
-    
+
     /**
      * Test doing geochemistry filter and getting all values
      */
-    
+
     @Test
     public void testYilgarnGeochemistryFilter() throws Exception{
-    	final String kmlBlob = "kmlBlob";
+        final String kmlBlob = "kmlBlob";
         final String filterString = "filterStr";
         final String expectedGML = "<gml/>";
         final StringWriter actualJSONResponse = new StringWriter();
-        
+
         context.checking(new Expectations() {{
-        	oneOf(httpServiceCaller).getHttpClient();
+            oneOf(httpServiceCaller).getHttpClient();
             oneOf (httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class))); will(returnValue(expectedGML));
-            
+
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
-            
+
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
-            oneOf(wfsGetFeatureMethodMakerPOST).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
+            oneOf(wfsGetFeatureMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
@@ -221,30 +226,30 @@ public class TestGSMLController {
             oneOf(mockGeochemFilter).getFilterStringAllRecords(); will(returnValue(filterString));
         }});
         ModelAndView modelAndView = gsmlController.doYilgarnGeochemistryFilter("fake", "fake", null, 0,mockHttpRequest);
-        
+
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
-        
+
         testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(true), expectedGML, kmlBlob);
     }
-    
+
     @Test
     public void testYilgarnGeochemistryFilterInBbox() throws Exception{
-    	final String kmlBlob = "kmlBlob";
+        final String kmlBlob = "kmlBlob";
         final String filterString = "filterStr";
         final String bboxToParse = "{\"bboxSrs\":\"http://www.opengis.net/gml/srs/epsg.xml%234326\",\"lowerCornerPoints\":[-5,-6],\"upperCornerPoints\":[7,8]}";
         final String expectedGML = "<gml/>";
         final StringWriter actualJSONResponse = new StringWriter();
-        
+
         context.checking(new Expectations() {{
-        	oneOf(httpServiceCaller).getHttpClient();
+            oneOf(httpServiceCaller).getHttpClient();
             oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(expectedGML));
-            
+
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
-            
+
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
-            
-            oneOf(wfsGetFeatureMethodMakerPOST).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
+
+            oneOf(wfsGetFeatureMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
@@ -252,9 +257,9 @@ public class TestGSMLController {
             oneOf(mockGeochemFilter).getFilterStringAllRecords(); will(returnValue(filterString));
         }});
         ModelAndView modelAndView = gsmlController.doYilgarnGeochemistryFilter("fake", "fake", bboxToParse, 0,mockHttpRequest);
-        
+
         modelAndView.getView().render(modelAndView.getModel(), mockHttpRequest, mockHttpResponse);
-        
+
         testJSONResponse(actualJSONResponse.getBuffer().toString(), new Boolean(true), expectedGML, kmlBlob);
     }
 
@@ -280,5 +285,5 @@ public class TestGSMLController {
         if(kmlBlob.equals(responseString.getBuffer().toString()))
             Assert.assertTrue(true);
     }
-     
+
 }

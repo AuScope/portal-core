@@ -17,17 +17,12 @@ import org.auscope.portal.csw.record.CSWResponsibleParty;
 import org.auscope.portal.server.domain.ows.GetCapabilitiesRecord;
 import org.auscope.portal.server.domain.ows.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.server.web.service.GetCapabilitiesService;
-import org.auscope.portal.server.web.view.CSWRecordResponse;
-import org.auscope.portal.server.web.view.JSONModelAndView;
 import org.auscope.portal.server.web.view.ViewCSWRecordFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import ucar.ma2.Array;
 
 /**
  * Handles GetCapabilites (WFS)WMS queries.
@@ -36,20 +31,19 @@ import ucar.ma2.Array;
  * @version $Id$
  */
 @Controller
-public class GetCapabilitiesController extends CSWRecordResponse {
+public class GetCapabilitiesController extends BaseCSWController {
 
 
     // ----------------------------------------------------- Instance variables
 
     private GetCapabilitiesService capabilitiesService;
-    private ViewCSWRecordFactory viewCSWRecordFactory;
     protected final Log log = LogFactory.getLog(getClass());
 
     // ----------------------------------------------------------- Constructors
 
     @Autowired
     public GetCapabilitiesController( GetCapabilitiesService capService, ViewCSWRecordFactory viewCSWRecordFactory) {
-        this.viewCSWRecordFactory = viewCSWRecordFactory;
+        super(viewCSWRecordFactory);
         this.capabilitiesService = capService;
     }
 
@@ -114,14 +108,16 @@ public class GetCapabilitiesController extends CSWRecordResponse {
         }
         catch (MalformedURLException e) {
             log.debug(e.getMessage());
-            return generateJSONResponse(false, "URL not well formed", null);
+            return generateJSONResponseMAV(false, "URL not well formed", null);
         }
         catch (Exception e) {
             log.debug(e.getMessage());
-            return generateJSONResponse(false, "Unable to process request", null);
+            return generateJSONResponseMAV(false, "Unable to process request", null);
         }
 
-        return generateJSONResponse(viewCSWRecordFactory, records, invalidLayerCount);
+        ModelAndView mav = generateJSONResponseMAV(records);
+        mav.addObject("invalidLayerCount", invalidLayerCount);
+        return mav;
     }
 
     public String[] getSRSList(String[] layerSRS, String[] childLayerSRS){
@@ -148,35 +144,4 @@ public class GetCapabilitiesController extends CSWRecordResponse {
         }
 
     }
-
-    protected JSONModelAndView generateJSONResponse(ViewCSWRecordFactory viewCSWRecordFactory, CSWRecord[] records, int invalidLayerCount) {
-        List<ModelMap> recordRepresentations = new ArrayList<ModelMap>();
-
-        try {
-            for (CSWRecord record : records) {
-                recordRepresentations.add(viewCSWRecordFactory.toView(record));
-            }
-         } catch (Exception ex) {
-             log.error("Error converting data records", ex);
-             return generateJSONResponse(false, "Error converting data records", null);
-         }
-
-        return generateJSONResponse(true, "No errors", recordRepresentations, invalidLayerCount);
-    }
-
-    protected JSONModelAndView generateJSONResponse(boolean success, String message, List<ModelMap> records, int invalidLayerCount) {
-        ModelMap response = new ModelMap();
-
-        response.put("success", success);
-        response.put("msg", message);
-        if (records == null) {
-            response.put("records", new Object[] {});
-        } else {
-            response.put("records", records);
-        }
-        response.put("invalidLayerCount", invalidLayerCount);
-
-        return new JSONModelAndView(response);
-    }
-
 }
