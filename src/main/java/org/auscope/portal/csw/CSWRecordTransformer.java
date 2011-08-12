@@ -22,6 +22,7 @@ import org.auscope.portal.csw.record.CSWOnlineResourceFactory;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.csw.record.CSWResponsibleParty;
 import org.auscope.portal.csw.record.CSWResponsiblePartyFactory;
+import org.auscope.portal.server.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -397,7 +398,7 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     private String evalXPathString(Node node, String xPath) throws XPathExpressionException {
-        XPathExpression expression = CSWXPathUtil.attemptCompileXpathExpr(xPath);
+        XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (String) expression.evaluate(node, XPathConstants.STRING);
     }
 
@@ -410,7 +411,7 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     private NodeList evalXPathNodeList(Node node, String xPath) throws XPathExpressionException {
-        XPathExpression expression = CSWXPathUtil.attemptCompileXpathExpr(xPath);
+        XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (NodeList) expression.evaluate(node, XPathConstants.NODESET);
     }
 
@@ -423,7 +424,7 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     private Node evalXPathNode(Node node, String xPath) throws XPathExpressionException {
-        XPathExpression expression = CSWXPathUtil.attemptCompileXpathExpr(xPath);
+        XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (Node) expression.evaluate(node, XPathConstants.NODE);
     }
 

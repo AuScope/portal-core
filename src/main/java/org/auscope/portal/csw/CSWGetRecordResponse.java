@@ -16,6 +16,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.csw.record.CSWRecord;
+import org.auscope.portal.server.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -39,10 +40,11 @@ public class CSWGetRecordResponse {
      */
     public CSWGetRecordResponse(Document getRecordResponse) throws XPathExpressionException {
         //These cannot be static pre-compiled expressions as they are NOT threadsafe
-        XPathExpression exprRecordsMatched = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsMatched");
-        XPathExpression exprRecordsReturned = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsReturned");
-        XPathExpression exprNextRecord = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/@nextRecord");
-        XPathExpression exprRecordMetadata = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata");
+        CSWNamespaceContext nc = new CSWNamespaceContext();
+        XPathExpression exprRecordsMatched = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsMatched", nc);
+        XPathExpression exprRecordsReturned = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsReturned", nc);
+        XPathExpression exprNextRecord = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/@nextRecord", nc);
+        XPathExpression exprRecordMetadata = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata", nc);
 
         Node node = (Node) exprRecordsMatched.evaluate(getRecordResponse, XPathConstants.NODE);
         if (node != null) {

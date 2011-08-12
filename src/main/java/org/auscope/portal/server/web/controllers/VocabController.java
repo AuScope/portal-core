@@ -1,5 +1,6 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import net.sf.json.JSONArray;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.server.util.DOMUtil;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.SISSVocMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
@@ -182,7 +184,23 @@ public class VocabController extends BasePortalController {
     @RequestMapping("getAllCSWThemes.do")
     public ModelAndView getAllCSWThemes() throws Exception {
         List<ModelMap> dataItems = new ArrayList<ModelMap>();
+        
+        //Make our method for querying SISVoc for all GA themes
+        String url = portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.vocabService.url");
+        HttpMethodBase method = sissVocMethodMaker.getConceptByLabelMethod(url, "ga-theme-vocab", "*");
 
+        //Make the request, parse it into a document
+        Document response = null;
+        try {
+            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method, httpServiceCaller.getHttpClient());
+            response = DOMUtil.buildDomFromStream(responseStream);
+        } catch (Exception ex) {
+            log.warn("Error querying SISSVoc service", ex);
+            return generateJSONResponseMAV(false);
+        }
+        
+        
+        
         //TODO: Lookup from vocab instead of using hardcoded values
         try {
             ModelMap map;

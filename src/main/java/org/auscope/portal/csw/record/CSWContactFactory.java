@@ -3,7 +3,8 @@ package org.auscope.portal.csw.record;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.auscope.portal.csw.CSWXPathUtil;
+import org.auscope.portal.csw.CSWNamespaceContext;
+import org.auscope.portal.server.util.DOMUtil;
 import org.w3c.dom.Node;
 
 /**
@@ -32,49 +33,50 @@ public class CSWContactFactory {
      */
     public static CSWContact generateContactFromCIContactNode(Node node) throws XPathExpressionException {
         CSWContact contact = new CSWContact();
+        CSWNamespaceContext nc = new CSWNamespaceContext();
 
         //Parse from each of our fields, we are OK with missing values
-        Node field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathTelephone).evaluate(node, XPathConstants.NODE);
+        Node field = (Node) DOMUtil.compileXPathExpr(xpathTelephone, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             contact.setTelephone(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathFacsimile).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xpathFacsimile, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             contact.setFacsimile(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathAddressDeliveryPoint).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xpathAddressDeliveryPoint, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             contact.setAddressDeliveryPoint(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathAddressCity).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xpathAddressCity, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             contact.setAddressCity(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathAddressAdministrativeArea).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xpathAddressAdministrativeArea, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             contact.setAddressAdministrativeArea(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathAddressPostalCode).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xpathAddressPostalCode, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             contact.setAddressPostalCode(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathAddressCountry).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xpathAddressCountry, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             contact.setAddressCountry(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathAddressEmail).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xpathAddressEmail, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             contact.setAddressEmail(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xpathOnlineResource).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xpathOnlineResource, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             CSWOnlineResource resource = CSWOnlineResourceFactory.parseFromNode(field);
             contact.setOnlineResource(resource);

@@ -23,6 +23,7 @@ import org.auscope.portal.csw.record.CSWOnlineResource;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.csw.record.CSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWResponsibleParty;
+import org.auscope.portal.server.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,14 +40,15 @@ public class TestCSWRecordTransformer {
 
     private static final String xmlnsUri = "http://www.w3.org/2000/xmlns/";
 
-    private XPathExpression exprGetAllMetadataNodes = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata");
-    private XPathExpression exprGetFirstMetadataNode = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]");
+    private XPathExpression exprGetAllMetadataNodes;
+    private XPathExpression exprGetFirstMetadataNode;
 
     @Before
     public void setup() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 
-        exprGetAllMetadataNodes = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata");
-        exprGetFirstMetadataNode = CSWXPathUtil.attemptCompileXpathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]");
+        CSWNamespaceContext nc = new CSWNamespaceContext();
+        exprGetAllMetadataNodes = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata", nc);
+        exprGetFirstMetadataNode = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]", nc);
 
         // load CSW record response document
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

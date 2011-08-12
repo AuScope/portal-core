@@ -3,7 +3,8 @@ package org.auscope.portal.csw.record;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.auscope.portal.csw.CSWXPathUtil;
+import org.auscope.portal.csw.CSWNamespaceContext;
+import org.auscope.portal.server.util.DOMUtil;
 import org.w3c.dom.Node;
 
 /**
@@ -26,24 +27,25 @@ public class CSWResponsiblePartyFactory {
      */
     public static CSWResponsibleParty generateResponsiblePartyFromNode(Node node) throws XPathExpressionException {
         CSWResponsibleParty rp = new CSWResponsibleParty();
+        CSWNamespaceContext nc = new CSWNamespaceContext();
 
         //Parse from each of our fields, we are OK with missing values
-        Node field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xPathIndividualName).evaluate(node, XPathConstants.NODE);
+        Node field = (Node) DOMUtil.compileXPathExpr(xPathIndividualName, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             rp.setIndividualName(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xPathOrganisationName).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xPathOrganisationName, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             rp.setOrganisationName(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xPathPositionName).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xPathPositionName, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             rp.setPositionName(field.getTextContent());
         }
 
-        field = (Node) CSWXPathUtil.attemptCompileXpathExpr(xPathContactInfo).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(xPathContactInfo, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             CSWContact contact = CSWContactFactory.generateContactFromCIContactNode(field);
             rp.setContactInfo(contact);

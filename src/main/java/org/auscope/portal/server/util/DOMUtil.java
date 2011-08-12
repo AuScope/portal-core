@@ -1,11 +1,15 @@
 package org.auscope.portal.server.util;
 
+import net.sf.saxon.xpath.XPathFactoryImpl;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.auscope.portal.csw.CSWNamespaceContext;
 import org.springframework.stereotype.Repository;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,6 +20,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import java.io.InputStream;
 import java.io.StringReader;
@@ -86,5 +94,20 @@ public class DOMUtil {
         t.transform(new DOMSource(node),sr);
 
         return outText.toString();
+    }
+
+    /**
+     * Compiles the specified XPath (as a string) into an XPathExpression.
+     * @param xPathStr A string representing a valid XPath expression
+     * @param nc The namespace that the xPathStr is referencing
+     * @return
+     * @throws XPathExpressionException
+     */
+    public static XPathExpression compileXPathExpr(String xPathStr, NamespaceContext nc) throws XPathExpressionException {
+        //Force the usage of the Saxon XPath library
+        XPathFactory factory = new XPathFactoryImpl();
+        XPath xPath = factory.newXPath();
+        xPath.setNamespaceContext(nc);
+        return xPath.compile(xPathStr);
     }
 }
