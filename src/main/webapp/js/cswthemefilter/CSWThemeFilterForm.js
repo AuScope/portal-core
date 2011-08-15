@@ -67,6 +67,7 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
                                 '<div class="x-combo-list-item">',
                                     '<tpl if="indent==0"><b>{label}</b></tpl>',
                                     '<tpl if="indent==1">&bull; {label}</tpl>',
+                                    '<tpl if="indent==2">&raquo; {label}</tpl>',
                                 '</div>',
                             '</tpl>'),
                     listeners : {

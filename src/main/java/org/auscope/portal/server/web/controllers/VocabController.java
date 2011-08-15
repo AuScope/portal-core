@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import net.sf.json.JSONArray;
@@ -16,12 +17,14 @@ import net.sf.json.JSONArray;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.server.domain.vocab.Concept;
+import org.auscope.portal.server.domain.vocab.ConceptFactory;
+import org.auscope.portal.server.domain.vocab.VocabNamespaceContext;
 import org.auscope.portal.server.util.DOMUtil;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.SISSVocMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.view.JSONModelAndView;
-import org.auscope.portal.vocabs.VocabularyServiceResponseHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -42,7 +45,7 @@ public class VocabController extends BasePortalController {
     protected final Log log = LogFactory.getLog(getClass());
 
     private HttpServiceCaller httpServiceCaller;
-    private VocabularyServiceResponseHandler vocabularyServiceResponseHandler;
+    private ConceptFactory conceptFactory;
     private PortalPropertyPlaceholderConfigurer portalPropertyPlaceholderConfigurer;
     private SISSVocMethodMaker sissVocMethodMaker;
 
@@ -52,12 +55,12 @@ public class VocabController extends BasePortalController {
      */
     @Autowired
     public VocabController(HttpServiceCaller httpServiceCaller,
-                           VocabularyServiceResponseHandler vocabularyServiceResponseHandler,
+                           ConceptFactory conceptFactory,
                            PortalPropertyPlaceholderConfigurer portalPropertyPlaceholderConfigurer,
                            SISSVocMethodMaker sissVocMethodMaker) {
 
         this.httpServiceCaller = httpServiceCaller;
-        this.vocabularyServiceResponseHandler = vocabularyServiceResponseHandler;
+        this.conceptFactory = conceptFactory;
         this.portalPropertyPlaceholderConfigurer = portalPropertyPlaceholderConfigurer;
         this.sissVocMethodMaker = sissVocMethodMaker;
     }
@@ -75,35 +78,31 @@ public class VocabController extends BasePortalController {
     @RequestMapping("/getScalar.do")
     public ModelAndView getScalarQuery( @RequestParam("repository") final String repository,
                                         @RequestParam("label") final String label) throws Exception {
-        String response = "";
 
         //Attempt to request and parse our response
         try {
             //Do the request
             String url = portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.vocabService.url");
             HttpMethodBase method = sissVocMethodMaker.getConceptByLabelMethod(url, repository, label);
-            response = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method, httpServiceCaller.getHttpClient());
 
             //Parse the response
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource inputSource = new InputSource(new StringReader(response));
-            Document doc = builder.parse(inputSource);
+            Document doc = DOMUtil.buildDomFromStream(responseStream);
+            XPathExpression rdfExpression = DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext());
+            Node response = (Node) rdfExpression.evaluate(doc, XPathConstants.NODE);
+            Concept[] concepts = conceptFactory.parseFromRDF(response);
 
-            String extractLabelExpression = "/RDF/Concept/prefLabel";
-            Node tempNode = (Node)xPath.evaluate(extractLabelExpression, doc, XPathConstants.NODE);
-            final String labelString = tempNode != null ? tempNode.getTextContent() : "";
+            //Extract our strings
+            String labelString = "";
+            String scopeNoteString = "";
+            String definitionString = "";
+            if (concepts != null || concepts.length > 0) {
+                labelString = concepts[0].getPreferredLabel();
+                scopeNoteString = concepts[0].getDefinition();  //this is for legacy support
+                definitionString = concepts[0].getDefinition();
+            }
 
-            String extractScopeExpression = "/RDF/Concept/scopeNote";
-            tempNode = (Node)xPath.evaluate(extractScopeExpression, doc, XPathConstants.NODE);
-            final String scopeNoteString = tempNode != null ? tempNode.getTextContent() : "";
-
-            String extractDefinitionExpression = "/RDF/Concept/definition";
-            tempNode = (Node)xPath.evaluate(extractDefinitionExpression, doc, XPathConstants.NODE);
-            final String definitionString = tempNode != null ? tempNode.getTextContent() : "";
-
-            return generateJSONResponseMAV(true, createScalarQueryModel(response, scopeNoteString, labelString, definitionString), "");
+            return generateJSONResponseMAV(true, createScalarQueryModel(scopeNoteString, labelString, definitionString), "");
         } catch (Exception ex) {
             //On error, just return failure JSON (and the response string if any)
             log.error("getVocabQuery ERROR: " + ex.getMessage());
@@ -112,10 +111,8 @@ public class VocabController extends BasePortalController {
         }
     }
 
-    private ModelMap createScalarQueryModel
-            (final String response, final String scopeNote, final String label, final String definition) {
+    private ModelMap createScalarQueryModel(final String scopeNote, final String label, final String definition) {
         ModelMap map = new ModelMap();
-        map.put("response", response);
         map.put("scopeNote", scopeNote);
         map.put("definition", definition);
         map.put("label", label);
@@ -177,158 +174,84 @@ public class VocabController extends BasePortalController {
 
 
     /**
+     * Converts a concept and all related sub concepts into a list of model maps that can be sent to the GUI
+     * for rendering in some form of simple list
+     * @param concept
+     * @return
+     */
+    private List<ModelMap> denormaliseConceptTree(Concept concept, int currentIndent,  List<String> traversedUrns) {
+        List<ModelMap> denormalisedConcepts = new ArrayList<ModelMap>();
+
+        //This is to avoid any infinite cycles in our concept 'tree'
+        if (traversedUrns.contains(concept.getUrn())) {
+            return denormalisedConcepts;
+        } else {
+            traversedUrns.add(concept.getUrn());
+        }
+
+        //Build our map for concept
+        ModelMap map = new ModelMap();
+        map.put("urn", concept.getUrn());
+        map.put("label", concept.getPreferredLabel());
+        map.put("indent", currentIndent);
+        denormalisedConcepts.add(map);
+
+        //recurse into our children (identified by the skos:narrower relation)
+        for (Concept childConcept : concept.getNarrower()) {
+            List<ModelMap> denormalisedChildren = denormaliseConceptTree(childConcept, currentIndent + 1, traversedUrns);
+            denormalisedConcepts.addAll(denormalisedChildren);
+        }
+
+        return denormalisedConcepts;
+    }
+
+    /**
      * Get all GA CSW themes with preferred labels
      *
      * @param
      */
     @RequestMapping("getAllCSWThemes.do")
     public ModelAndView getAllCSWThemes() throws Exception {
-        List<ModelMap> dataItems = new ArrayList<ModelMap>();
-        
         //Make our method for querying SISVoc for all GA themes
         String url = portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.vocabService.url");
-        HttpMethodBase method = sissVocMethodMaker.getConceptByLabelMethod(url, "ga-theme-vocab", "*");
+        HttpMethodBase method = sissVocMethodMaker.getConceptByLabelMethod(url, "ga-darwin", "*");
 
         //Make the request, parse it into a document
-        Document response = null;
+        Node response = null;
         try {
             InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method, httpServiceCaller.getHttpClient());
-            response = DOMUtil.buildDomFromStream(responseStream);
+            Document doc = DOMUtil.buildDomFromStream(responseStream);
+            XPathExpression rdfExpression = DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext());
+            response = (Node) rdfExpression.evaluate(doc, XPathConstants.NODE);
         } catch (Exception ex) {
             log.warn("Error querying SISSVoc service", ex);
             return generateJSONResponseMAV(false);
         }
-        
-        
-        
-        //TODO: Lookup from vocab instead of using hardcoded values
+
+        //Take our response RDF and parse it into concepts
+        Concept[] concepts = null;
         try {
-            ModelMap map;
-
-            String tab = "";
-
-            map = new ModelMap();
-            map.put("urn", "urn:fake:geography");map.put("label","Geography");map.put("indent",0);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:builtenvironment");map.put("label",tab + "Built Environment");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:legislativelimits");map.put("label",tab + "Legislative Limits");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:physgeo");map.put("label",tab + "Physical Geography");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:earthobservations");map.put("label",tab + "Earth Observations");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:socialgeoandeconomics");map.put("label",tab + "Social Geography and Economics");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:geodesy");map.put("label",tab + "Geodesy");map.put("indent",1);
-            dataItems.add(map);
-
-            map = new ModelMap();
-            map.put("urn", "urn:fake:geology");map.put("label","Geology");map.put("indent",0);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:geounits");map.put("label",tab + "Geological Units");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:events");map.put("label",tab + "Events");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:earthmat");map.put("label",tab + "Earth Materials");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:geomorph");map.put("label",tab + "Geomorphology");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:timescale");map.put("label",tab + "Timescale");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:geologicalstructures");map.put("label",tab + "Geological Structures");map.put("indent",1);
-            dataItems.add(map);
-
-            map = new ModelMap();
-            map.put("urn", "urn:fake:geophysics");map.put("label",tab + "Geophysics");map.put("indent",0);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:gravimetry");map.put("label",tab + "Gravimetry");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:mag");map.put("label",tab + "Magnetism");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:electrmag");map.put("label",tab + "Electromagnetics");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:sesimology");map.put("label",tab + "Seismology");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:acoustic");map.put("label",tab + "Acoustic");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:radiometrics");map.put("label",tab + "Radiometrics");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:spectra");map.put("label",tab + "Spectra");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:rockprop");map.put("label",tab + "Rock Properties");map.put("indent",1);
-            dataItems.add(map);
-
-            map = new ModelMap();
-            map.put("urn", "urn:fake:geochemistry");map.put("label","Geochemistry");map.put("indent",0);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:atmo");map.put("label",tab + "Atmospheric Geochemistry");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:hydro");map.put("label",tab + "Hydro-Geochemistry");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:iso");map.put("label",tab + "Isotope Geochemistry");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:ino");map.put("label",tab + "Inorganic Geochemistry");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:org");map.put("label",tab + "Organic Geochemistry");map.put("indent",1);
-            dataItems.add(map);
-
-            map = new ModelMap();
-            map.put("urn", "urn:fake:resources");map.put("label","Resources");map.put("indent",0);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:energy");map.put("label",tab + "Energy");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:mineralcomm");map.put("label",tab + "Mineral Commodities");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:water");map.put("label",tab + "Water resources");map.put("indent",1);
-            dataItems.add(map);
-
-            map = new ModelMap();
-            map.put("urn", "urn:fake:biology");map.put("label","Biology");map.put("indent",0);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:pal");map.put("label",tab + "Palaeontology");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:marine");map.put("label",tab + "Marine Ecology");map.put("indent",1);
-            dataItems.add(map);
-            map = new ModelMap();
-            map.put("urn", "urn:fake:terreco");map.put("label",tab + "Terrestrial Ecology");map.put("indent",1);
-            dataItems.add(map);
-
-            return generateJSONResponseMAV(true, dataItems, "");
+            concepts = conceptFactory.parseFromRDF(response);
         } catch (Exception ex) {
-            //On error, just return failure JSON (and the response string if any)
-            log.error("getAllCSWThemes Exception: ", ex);
-            return generateJSONResponseMAV(false, null, "");
+            log.warn("Error parsing SISSVoc response", ex);
+            return generateJSONResponseMAV(false);
         }
+
+        //Just to be on the safe side
+        if (concepts == null) {
+            log.warn("Error parsing SISSVoc response (null response)");
+            return generateJSONResponseMAV(false);
+        }
+
+        //Simplify our concepts for the GUI
+        List<ModelMap> dataItems = new ArrayList<ModelMap>();
+        for (Concept concept : concepts) {
+            List<ModelMap> denormalisedConcept = denormaliseConceptTree(concept, 0, new ArrayList<String>());
+            dataItems.addAll(denormalisedConcept);
+        }
+
+        log.debug(String.format("returning a list of %1$d themes", dataItems.size()));;
+
+        return generateJSONResponseMAV(true, dataItems, "");
     }
 }
