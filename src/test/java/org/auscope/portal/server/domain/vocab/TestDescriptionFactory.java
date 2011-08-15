@@ -58,8 +58,10 @@ public class TestDescriptionFactory {
         Description concept1 = new Description("urn:concept:1");
         Description concept2 = new Description("urn:concept:2");
         Description concept3 = new Description("urn:concept:3");
+        Description concept4 = new Description("urn:concept:4");
         Description ni1 = new Description("urn:ni:1");
         Description ni2 = new Description("urn:ni:2");
+        Description ni3 = new Description("urn:ni:3");
 
         concept1.setNarrower(new Description[] {concept2, concept3, ni2});
 
@@ -70,11 +72,15 @@ public class TestDescriptionFactory {
         concept3.setRelated(new Description[] {concept2});
         concept3.setNarrower(new Description[] {ni1});
 
+        concept4.setNarrower(new Description[] {ni3});
+
         ni1.setBroader(new Description[] {concept3});
 
         ni2.setBroader(new Description[] {concept1});
 
-        Description[] expectation = new Description[] {concept1};
+        ni3.setBroader(new Description[] {concept4});
+
+        Description[] expectation = new Description[] {concept1, concept4};
 
         //Build our actual list
         String responseXml = Util.loadXML("src/test/resources/SISSVocResponse.xml");

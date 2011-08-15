@@ -1,6 +1,7 @@
 package org.auscope.portal.server.domain.vocab;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -97,53 +98,79 @@ public class DescriptionFactory {
      * @param descs
      * @param descriptionsMap
      */
-    protected void attemptResolveHrefs(Description[] descs, Map<String, Description> descriptionsMap, List<String> traversedUrns) {
+    protected void attemptResolveHrefs(Description[] descs, Map<String, Description> descriptionsMap) {
         for (int i = 0; i < descs.length; i++) {
             if (descs[i].isHref()) {
                 Description linkedObj = descriptionsMap.get(descs[i].getUrn());
                 if (linkedObj != null) {
                     descs[i] = linkedObj;
                 }
-            } else {
-                attemptResolveHrefs(descs[i], descriptionsMap, traversedUrns);
             }
         }
     }
 
     /**
      * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with
-     * an object from descriptions
+     * an object from descriptions.
+     *
+     * This function will NOT traverse any relations
      * @param desc
      * @param descriptionsMap
      */
-    protected void attemptResolveHrefs(Description desc, Map<String, Description> descriptionsMap, List<String> traversedUrns) {
-
-        //To deal with cycles in the hierarchy
-        if (traversedUrns.contains(desc.getUrn())) {
-            return;
-        } else {
-            traversedUrns.add(desc.getUrn());
-        }
+    protected void attemptResolveHrefs(Description desc, Map<String, Description> descriptionsMap) {
 
         Description[] broader = desc.getBroader();
-        attemptResolveHrefs(broader, descriptionsMap, traversedUrns);
+        attemptResolveHrefs(broader, descriptionsMap);
         desc.setBroader(broader);
 
         Description[] narrower = desc.getNarrower();
-        attemptResolveHrefs(narrower, descriptionsMap, traversedUrns);
+        attemptResolveHrefs(narrower, descriptionsMap);
         desc.setNarrower(narrower);
 
         Description[] related = desc.getRelated();
-        attemptResolveHrefs(related, descriptionsMap, traversedUrns);
+        attemptResolveHrefs(related, descriptionsMap);
         desc.setRelated(related);
 
         Description[] topConcepts = desc.getTopConcepts();
-        attemptResolveHrefs(topConcepts, descriptionsMap, traversedUrns);
+        attemptResolveHrefs(topConcepts, descriptionsMap);
         desc.setTopConcepts(topConcepts);
     }
 
     /**
+     * Merge the entirety of 2 sets of descriptions into a single array. Any duplicates will be removed
+     * with precedence being given to the non href duplicate.
+     */
+    private Description[] mergeDescriptionArrays(Description[] array1, Description[] array2) {
+        List<Description> source = new ArrayList<Description>(Arrays.asList(array2));
+        List<Description> destination = new ArrayList<Description>(Arrays.asList(array1));
+
+        //Iterate our source list looking for duplicates
+        for (Description candidate : source) {
+            int destinationIndex = destination.indexOf(candidate);
+
+            //With a duplicate we aim to keep a reference to a non href description (if available)
+            if (destinationIndex >= 0) {
+                Description destinationDuplicate = destination.get(destinationIndex);
+
+                //In the case where our candidate is a non href AND our duplicate is a href we perform a replace
+                //otherwise there is no point in replacing
+                if (destinationDuplicate.isHref() && !candidate.isHref()) {
+                    destination.remove(destinationIndex);
+                    destination.add(candidate); //we don't care about ordering
+                }
+            } else {
+                destination.add(candidate);
+            }
+        }
+
+        return destination.toArray(new Description[destination.size()]);
+    }
+
+    /**
      * Appends desc and all of desc's (non href) children to parsedDescriptions
+     *
+     * If desc already exists in parsedDescriptions then the two descriptions will be merged
+     *
      * @param desc
      * @param parsedDescriptions
      */
@@ -152,7 +179,17 @@ public class DescriptionFactory {
             return;
         }
 
-        parsedDescriptions.put(desc.getUrn(), desc);
+        //Either merge or insert our description
+        Description existingDesc = parsedDescriptions.get(desc.getUrn());
+        if (existingDesc != null) {
+            existingDesc.setBroader(mergeDescriptionArrays(existingDesc.getBroader(), desc.getBroader()));
+            existingDesc.setNarrower(mergeDescriptionArrays(existingDesc.getNarrower(), desc.getNarrower()));
+            existingDesc.setRelated(mergeDescriptionArrays(existingDesc.getRelated(), desc.getRelated()));
+            existingDesc.setTopConcepts(mergeDescriptionArrays(existingDesc.getTopConcepts(), desc.getTopConcepts()));
+        } else {
+            parsedDescriptions.put(desc.getUrn(), desc);
+        }
+
         for (Description broader : desc.getBroader()) {
             if (!broader.isHref()) {
                 addDescriptionToMap(broader, parsedDescriptions);
@@ -178,6 +215,11 @@ public class DescriptionFactory {
     /**
      * Parses every rdf:Description element that is a child of the specified node
      *
+     * If skos:hasTopConcept relations are defined only the top level descriptions
+     * will be returned (the remaining will be linked via the top level concepts)
+     *
+     * If no skos:hasTopConcept every description element will be returned
+     *
      * @param rdfNode The node to search for rdf:Description elements from
      * @return
      */
@@ -200,7 +242,7 @@ public class DescriptionFactory {
         //Next we take our parsed descriptions and attempt to link them together by replacing
         //'href' descriptions with links to the actual objects (if they exist)
         for (String urn : parsedDescriptions.keySet()) {
-            attemptResolveHrefs(parsedDescriptions.get(urn), parsedDescriptions, new ArrayList<String>());
+            attemptResolveHrefs(parsedDescriptions.get(urn), parsedDescriptions);
         }
 
         //Finally we return an array of our "top concepts"
@@ -211,6 +253,12 @@ public class DescriptionFactory {
                     topConcepts.add(topConcept);
                 }
             }
+        }
+
+        //This can occur if our RDF doesn't define 'Top Level Concepts'
+        //In this case we just return every description that is an immediate child of our RDF
+        if (topConcepts.isEmpty()) {
+            topConcepts.addAll(parsedDescriptions.values());
         }
 
         return topConcepts.toArray(new Description[topConcepts.size()]);

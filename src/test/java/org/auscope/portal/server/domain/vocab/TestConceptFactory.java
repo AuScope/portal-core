@@ -36,6 +36,7 @@ public class TestConceptFactory {
         Assert.assertEquals(errMsg, expected.getLabel(), actual.getLabel());
         Assert.assertEquals(errMsg, expected.getPreferredLabel(), actual.getPreferredLabel());
         Assert.assertEquals(errMsg, expected.isHref(), actual.isHref());
+        Assert.assertEquals(errMsg, expected.getDefinition(), actual.getDefinition());
 
         //To deal with cycles in the hierarchy
         if (traversedUrns.contains(expected.getUrn())) {
@@ -58,8 +59,10 @@ public class TestConceptFactory {
         Concept concept1 = new Concept("urn:concept:1");
         Concept concept2 = new Concept("urn:concept:2");
         Concept concept3 = new Concept("urn:concept:3");
+        Concept concept4 = new Concept("urn:concept:4");
         NamedIndividual ni1 = new NamedIndividual("urn:ni:1");
         NamedIndividual ni2 = new NamedIndividual("urn:ni:2");
+        NamedIndividual ni3 = new NamedIndividual("urn:ni:3");
 
         concept1.setNarrower(new Concept[] {concept2, concept3, ni2});
         concept1.setLabel("LabelConcept1");
@@ -69,12 +72,18 @@ public class TestConceptFactory {
         concept2.setRelated(new Concept[] {concept3});
         concept2.setLabel("LabelConcept2");
         concept2.setPreferredLabel("PrefLabelConcept2");
+        concept2.setDefinition("DefinitionConcept2");
 
         concept3.setBroader(new Concept[] {concept1});
         concept3.setRelated(new Concept[] {concept2});
         concept3.setNarrower(new Concept[] {ni1});
         concept3.setLabel("LabelConcept3");
         concept3.setPreferredLabel("PrefLabelConcept3");
+
+        concept4.setNarrower(new Concept[] {ni3});
+        concept4.setLabel("LabelConcept4");
+        concept4.setPreferredLabel("PrefLabelConcept4");
+        concept4.setDefinition("DefinitionConcept4");
 
         ni1.setBroader(new Concept[] {concept3});
         ni1.setLabel("LabelNamedIndividual1");
@@ -84,7 +93,11 @@ public class TestConceptFactory {
         ni2.setLabel("LabelNamedIndividual2");
         ni2.setPreferredLabel("PrefLabelNamedIndividual2");
 
-        Concept[] expectation = new Concept[] {concept1};
+        ni3.setBroader(new Concept[] {concept4});
+        ni3.setLabel("LabelNamedIndividual3");
+        ni3.setPreferredLabel("PrefLabelNamedIndividual3");
+
+        Concept[] expectation = new Concept[] {concept1, concept4};
 
         //Build our actual list
         String responseXml = Util.loadXML("src/test/resources/SISSVocResponse.xml");
@@ -95,5 +108,42 @@ public class TestConceptFactory {
 
         Assert.assertNotNull(actualConcepts);
         assertSameConcept(expectation, actualConcepts, new ArrayList<String>());
+    }
+
+    /**
+     * This is a legacy test for the older vocabularyServiceResponse.xml
+     *
+     * It tests our concepts still return EVEN if we don't define top level concepts
+     */
+    @Test
+    public void testGetConcepts() throws Exception {
+        String responseXml = Util.loadXML("src/test/resources/vocabularyServiceResponse.xml");
+        Document responseDoc = DOMUtil.buildDomFromString(responseXml);
+        Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc, XPathConstants.NODE);
+
+        ConceptFactory cf = new ConceptFactory();
+        Concept[] actualConcepts = cf.parseFromRDF(rdfNode);
+
+        Assert.assertEquals("There are 27 concepts", 27, actualConcepts.length);
+
+        //Must contain: Siltstone - concrete aggregate
+        boolean found = false;
+        for (Concept concept : actualConcepts) {
+            if (concept.getPreferredLabel().equals("Siltstone - concrete aggregate")) {
+                found = true;
+                break;
+            }
+        }
+        Assert.assertTrue("Must contain: Siltstone - concrete aggregate", found);
+
+        //Must contain: Gneiss - crusher dust
+        found = false;
+        for (Concept concept : actualConcepts) {
+            if (concept.getPreferredLabel().equals("Gneiss - crusher dust")) {
+                found = true;
+                break;
+            }
+        }
+        Assert.assertTrue("Must contain: Gneiss - crusher dust", found);
     }
 }

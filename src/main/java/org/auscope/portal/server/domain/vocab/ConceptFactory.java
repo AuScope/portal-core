@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.server.util.DOMUtil;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -20,6 +21,7 @@ import org.w3c.dom.NodeList;
  * @author Josh Vote
  *
  */
+@Component
 public class ConceptFactory {
 
     protected final Log log = LogFactory.getLog(getClass());
@@ -42,6 +44,7 @@ public class ConceptFactory {
         NamedIndividual namedIndividual = new NamedIndividual(urn);
         namedIndividual.setLabel((String) DOMUtil.compileXPathExpr("rdfs:label", nc).evaluate(node, XPathConstants.STRING));
         namedIndividual.setPreferredLabel((String) DOMUtil.compileXPathExpr("skos:prefLabel", nc).evaluate(node, XPathConstants.STRING));
+        namedIndividual.setDefinition((String) DOMUtil.compileXPathExpr("skos:definition", nc).evaluate(node, XPathConstants.STRING));
 
         return namedIndividual;
     }
@@ -65,6 +68,7 @@ public class ConceptFactory {
         Concept concept = new Concept(urn);
         concept.setLabel((String) DOMUtil.compileXPathExpr("rdfs:label", nc).evaluate(node, XPathConstants.STRING));
         concept.setPreferredLabel((String) DOMUtil.compileXPathExpr("skos:prefLabel", nc).evaluate(node, XPathConstants.STRING));
+        concept.setDefinition((String) DOMUtil.compileXPathExpr("skos:definition", nc).evaluate(node, XPathConstants.STRING));
 
         return concept;
     }

@@ -13,6 +13,7 @@ public class Concept {
     private boolean href;
     private String label;
     private String preferredLabel;
+    private String definition;
     private Concept[] broader;
     private Concept[] narrower;
     private Concept[] related;
@@ -33,6 +34,7 @@ public class Concept {
     public Concept(String urn, boolean href) {
         this.urn = urn;
         this.label = "";
+        this.definition = "";
         this.href = href;
         this.preferredLabel = "";
         this.broader = new Concept[0];
@@ -129,8 +131,28 @@ public class Concept {
         this.related = related;
     }
 
+    /**
+     * Gets whether this instance is a fully populated concept or just an empty reference to the URN of the actual concept
+     * @return
+     */
     public boolean isHref() {
         return href;
+    }
+
+    /**
+     * Gets the definition of this concept
+     * @return
+     */
+    public String getDefinition() {
+        return definition;
+    }
+
+    /**
+     * Sets the definition of this concept
+     * @param definition
+     */
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 
     @Override
@@ -172,8 +194,7 @@ public class Concept {
     @Override
     public String toString() {
         return "Concept [urn=" + urn + ", href=" + href + ", label=" + label
-                + ", preferredLabel=" + preferredLabel + "]";
+                + ", preferredLabel=" + preferredLabel + ", definition="
+                + definition + "]";
     }
-
-
 }
