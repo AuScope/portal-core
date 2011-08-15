@@ -17,8 +17,16 @@
     <skos:Concept rdf:about="urn:concept:2">
         <rdfs:label>LabelConcept2</rdfs:label>
         <skos:prefLabel>PrefLabelConcept2</skos:prefLabel>
+        <skos:definition>DefinitionConcept2</skos:definition>
         <skos:broader rdf:resource="urn:concept:1"/>
         <skos:related rdf:resource="urn:concept:3"/>
+    </skos:Concept>
+
+    <skos:Concept rdf:about="urn:concept:4">
+        <rdfs:label>LabelConcept4</rdfs:label>
+        <skos:prefLabel>PrefLabelConcept4</skos:prefLabel>
+        <skos:definition>DefinitionConcept4</skos:definition>
+        <skos:narrower rdf:resource="urn:ni:3"/>
     </skos:Concept>
 
     <owl:NamedIndividual rdf:about="urn:ni:1">
@@ -42,6 +50,12 @@
         <skos:broader rdf:resource="urn:concept:1"/>
     </owl:NamedIndividual>
 
+    <owl:NamedIndividual rdf:about="urn:ni:3">
+        <rdfs:label>LabelNamedIndividual3</rdfs:label>
+        <skos:prefLabel>PrefLabelNamedIndividual3</skos:prefLabel>
+        <skos:broader rdf:resource="urn:concept:4"/>
+    </owl:NamedIndividual>
+
     <rdf:Description rdf:about="urn:concept:root">
         <skos:hasTopConcept>
             <rdf:Description rdf:about="urn:concept:1">
@@ -50,6 +64,10 @@
                 <skos:narrower rdf:resource="urn:ni:2"/>
             </rdf:Description>
         </skos:hasTopConcept>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="urn:concept:root">
+        <skos:hasTopConcept rdf:resource="urn:concept:4"/>
     </rdf:Description>
 
     <rdf:Description rdf:about="urn:concept:2">
@@ -69,6 +87,14 @@
 
     <rdf:Description rdf:about="urn:ni:2">
         <skos:broader rdf:resource="urn:concept:1"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="urn:concept:4">
+        <skos:narrower rdf:resource="urn:ni:3"/>
+    </rdf:Description>
+
+    <rdf:Description rdf:about="urn:ni:3">
+        <skos:broader rdf:resource="urn:concept:4"/>
     </rdf:Description>
 
 </rdf:RDF>
