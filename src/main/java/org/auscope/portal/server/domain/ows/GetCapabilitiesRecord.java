@@ -35,7 +35,7 @@ public class GetCapabilitiesRecord {
 
     private String serviceType = "";
     private String organisation = "";
-    private String url = "";
+    private String getMapUrl = "";
     private ArrayList<GetCapabilitiesWMSLayerRecord> layers;
     private String[] layerSRS = null;
 
@@ -87,16 +87,20 @@ public class GetCapabilitiesRecord {
         return this.organisation;
     }
 
-    public String getUrl() {
-        return this.url;
+    /**
+     * Gets the URL that the GetCapabilities response has defined to be used for GetMap requests
+     * @return
+     */
+    public String getMapUrl() {
+        return this.getMapUrl;
     }
 
     public ArrayList<GetCapabilitiesWMSLayerRecord> getLayers() {
         return this.layers;
     }
-    
+
     public String[] getLayerSRS(){
-    	return this.layerSRS;
+        return this.layerSRS;
     }
 
 
@@ -152,14 +156,14 @@ public class GetCapabilitiesRecord {
 
     private void getGetMapUrl(XPath xPath, Document doc) {
         String extractUrlExpression
-            = "/WMT_MS_Capabilities/Service/OnlineResource";
+            = "/WMT_MS_Capabilities/Capability/Request/GetMap/DCPType/HTTP/Get/OnlineResource";
 
         try {
             Element elem = (Element)xPath.evaluate( extractUrlExpression
                                                   , doc
                                                   , XPathConstants.NODE);
 
-            this.url = elem.getAttribute("xlink:href");
+            this.getMapUrl = elem.getAttribute("xlink:href");
 
         } catch (XPathExpressionException e) {
             log.error("GetCapabilities GetMapUrl xml parsing error: " + e.getMessage());
@@ -168,7 +172,7 @@ public class GetCapabilitiesRecord {
 
     private void getWMSLayers(XPath xPath, Document doc) {
         String extractLayerExpression
-            = "/WMT_MS_Capabilities/Capability/Layer/Layer";
+            = "/WMT_MS_Capabilities/Capability/descendant::Layer[@queryable='1']";
 
         try {
             NodeList nodes = (NodeList)xPath.evaluate( extractLayerExpression
@@ -188,24 +192,24 @@ public class GetCapabilitiesRecord {
             log.error("GetCapabilities - getWMSLayers xml parsing error: " + e.getMessage());
         }
     }
-    
+
     private void getWMSLayerSRS(XPath xPath, Document doc){
-    	String extractLayerSRS
-        	= "/WMT_MS_Capabilities/Capability/Layer/SRS";
-    	
-    	try{
-    		NodeList nodes = (NodeList)xPath.evaluate( extractLayerSRS
+        String extractLayerSRS
+            = "/WMT_MS_Capabilities/Capability/Layer/SRS";
+
+        try{
+            NodeList nodes = (NodeList)xPath.evaluate( extractLayerSRS
                     , doc
                     , XPathConstants.NODESET );
-    		
-    		layerSRS = new String[nodes.getLength()];
-    		for(int i =0; i< nodes.getLength(); i++){
-    			Node srsNode = nodes.item(i);
-    			//String tempValue = (nodes.item(i)).getNodeValue();
-    			layerSRS[i]= srsNode!= null ? srsNode.getTextContent() : "";
-    			
-    		}
-    	}catch (XPathExpressionException e) {
+
+            layerSRS = new String[nodes.getLength()];
+            for(int i =0; i< nodes.getLength(); i++){
+                Node srsNode = nodes.item(i);
+                //String tempValue = (nodes.item(i)).getNodeValue();
+                layerSRS[i]= srsNode!= null ? srsNode.getTextContent() : "";
+
+            }
+        }catch (XPathExpressionException e) {
             log.error("GetCapabilities - getLayerSRS xml parsing error: " + e.getMessage());
         }
     }

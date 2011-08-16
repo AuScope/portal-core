@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WMT_MS_Capabilities version="1.1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Service>
+        <Name>Mineral web maps service for Western Australia</Name>
+        <Title>WA Mineral Web Map Service</Title>
+        <Abstract>WMS</Abstract>
+        <KeywordList>
+            <Keyword/>
+        </KeywordList>
+        <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://my.different.server/wms"/>
+
+        <ContactInformation>
+            <ContactPersonPrimary>
+                <ContactPerson>Bob</ContactPerson>
+                <ContactOrganization>Contact Org</ContactOrganization>
+            </ContactPersonPrimary>
+            <ContactPosition>Builder</ContactPosition>
+            <ContactAddress>
+                <AddressType/>
+                <Address/>
+
+                <City/>
+                <StateOrProvince/>
+                <PostCode/>
+                <Country/>
+            </ContactAddress>
+            <ContactVoiceTelephone/>
+            <ContactFacsimileTelephone/>
+            <ContactElectronicMailAddress/>
+        </ContactInformation>
+
+        <Fees/>
+        <AccessConstraints/>
+        <MaxWidth>2048</MaxWidth>
+        <MaxHeight>2048</MaxHeight>
+    </Service>
+    <Capability>
+        <Request>
+            <GetCapabilities>
+
+                <Format>application/vnd.ogc.wms_xml</Format>
+                <Format>text/xml</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://my.server/getcap/wms"/>
+                        </Get>
+                    </HTTP>
+                </DCPType>
+            </GetCapabilities>
+            <GetMap>
+                <Format>image/bmp</Format>
+                <Format>image/jpeg</Format>
+                <Format>image/tiff</Format>
+                <Format>image/png</Format>
+                <Format>image/gif</Format>
+                <Format>image/svg+xml</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://my.server/getmap/wms"/>
+                        </Get>
+                    </HTTP>
+                </DCPType>
+            </GetMap>
+            <GetFeatureInfo>
+                <Format>application/vnd.ogc.wms_xml</Format>
+                <Format>text/xml</Format>
+                <Format>text/html</Format>
+
+                <Format>text/plain</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xmlns:xlink="http://www.w3.org/1999/xlink" xlink:type="simple" xlink:href="http://my.server/getfeatureinfo/wms"/>
+                        </Get>
+                    </HTTP>
+                </DCPType>
+            </GetFeatureInfo>
+        </Request>
+        <Exception>
+            <Format>application/vnd.ogc.se_xml</Format>
+
+            <Format>application/vnd.ogc.se_inimage</Format>
+            <Format>application/vnd.ogc.se_blank</Format>
+            <Format>text/xml</Format>
+            <Format>XML</Format>
+        </Exception>
+        <Layer>
+            <Title>Grouping 1</Title>
+
+            <SRS>CRS:84</SRS>
+            <SRS>EPSG:4326</SRS>
+            <SRS>EPSG:4283</SRS>
+            <LatLonBoundingBox minx="-180" maxx="180" miny="-90" maxy="90"/>
+            <Layer queryable="1">
+                <Name>name1</Name>
+                <Title>title1</Title>
+                <Abstract>abstract1</Abstract>
+                <SRS>EPSG:4326</SRS>
+                <LatLonBoundingBox minx="10" maxx="20" miny="30" maxy="40"/>
+                <Style>
+                    <Name>default</Name>
+                    <Title>name1-style</Title>
+                    <LegendURL width="100" height="40">
+                        <Format>image/png</Format>
+                        <OnlineResource xlink:href="http://example/default0.png" xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+
+                    </LegendURL>
+                </Style>
+                <MaxScaleDenominator>2834821.428571</MaxScaleDenominator>
+            </Layer>
+            <Layer queryable="1">
+                <Name>name2</Name>
+                <Title>title2</Title>
+                <Abstract>abstract2</Abstract>
+                <SRS>EPSG:4283</SRS>
+                <LatLonBoundingBox minx="11" maxx="22" miny="33" maxy="44"/>
+                <Style>
+                    <Name>default</Name>
+                    <Title>name2-style</Title>
+                    <LegendURL width="100" height="30">
+                        <Format>image/png</Format>
+                        <OnlineResource xlink:href="http://example/default0.png" xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                    </LegendURL>
+
+                </Style>
+            </Layer>
+            <Layer>
+                <Title>Grouping 2</Title>
+                <Layer queryable="1">
+                    <Name>name3</Name>
+                    <Title>title3</Title>
+                    <Abstract>abstract3</Abstract>
+                    <LatLonBoundingBox minx="1" maxx="2" miny="3" maxy="4"/>
+                    <BoundingBox SRS="EPSG:4326" minx="1" maxx="2" miny="3" maxy="4"/>
+
+                    <Style>
+                        <Name>default</Name>
+                        <Title>name2-style</Title>
+                        <LegendURL width="100" height="30">
+                            <Format>image/png</Format>
+                            <OnlineResource xlink:href="http://example/default0.png" xlink:type="simple" xmlns:xlink="http://www.w3.org/1999/xlink" />
+                        </LegendURL>
+
+                    </Style>
+                </Layer>
+
+            </Layer>
+
+        </Layer>
+    </Capability>
+</WMT_MS_Capabilities>

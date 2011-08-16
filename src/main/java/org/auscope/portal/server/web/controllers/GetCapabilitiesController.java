@@ -93,7 +93,7 @@ public class GetCapabilitiesController extends BaseCSWController {
                     }
 
                     CSWOnlineResource[] onlineResources = new CSWOnlineResource[1];
-                    onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getUrl()),
+                    onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
                             "OGC:WMS-1.1.1-http-get-map",
                             rec.getName(),
                             rec.getTitle());
