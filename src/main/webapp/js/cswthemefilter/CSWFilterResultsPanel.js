@@ -99,3 +99,5 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
         return selectedRecords;
     },
 });
+
+Ext.reg('cswresultspanel', CSWFilterResultsPanel);

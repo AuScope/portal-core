@@ -8,6 +8,7 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
 
     availableComponents : [],
     themeStore : null,
+    cswServiceItemStore : null,
     getMapFn : null,
 
     /**
@@ -38,6 +39,22 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
             })
         });
         this.themeStore.load();
+
+        //Load our list of CSW Items (when the form is rendered)
+        this.cswServiceItemStore = new Ext.data.Store({
+            proxy    : new Ext.data.HttpProxy({url: 'getCSWServices.do'}),
+            reader : new Ext.data.JsonReader({
+                root            : 'data',
+                id              : 'id',
+                successProperty : 'success',
+                messageProperty : 'msg',
+                fields          : [
+                    'id',
+                    'title',
+                    'url'
+                ]
+            })
+        });
 
         //Load all components
         this.availableComponents.push(CSWThemeFilter.Keywords);
@@ -91,7 +108,14 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
                             cswThemeFilterForm.doLayout();
                         }
                     }
-                }]
+                }],
+                listeners : {
+                    afterrender : function() {
+                        cswThemeFilterForm.cswServiceItemStore.load({
+                            callback : cswThemeFilterForm._updateCSWList.createDelegate(cswThemeFilterForm)
+                        });
+                    }
+                }
             }]
         });
 
@@ -126,6 +150,43 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
     },
 
     /**
+     * Updates the list of CSW services available checkbox group (if this form is yet to be rendered this function has no effect)
+     */
+    _updateCSWList : function() {
+        if (!this.rendered) {
+            return;
+        }
+
+        //delete our checkbox group (if it exists)
+        var parentFieldSet = this.findByType('fieldset')[0];
+        var checkBoxItems = parentFieldSet.findByType('checkboxgroup');
+        for (var i = 0; i < checkBoxItems.length; i++) {
+            var cmp = checkBoxItems[i];
+            var parent = cmp.ownerCt;
+            parent.remove(cmp);
+        }
+
+        //Create a new checkbox group based upon the items in the cswServiceItemStore
+        var checkBoxItems = [];
+        for (var i = 0; i < this.cswServiceItemStore.getCount(); i++) {
+            var cswServiceItemRec = this.cswServiceItemStore.getAt(i);
+            checkBoxItems.push({
+                boxLabel : cswServiceItemRec.get('title'),
+                name : cswServiceItemRec.get('id'),
+                checked : true
+            });
+        }
+        parentFieldSet.insert(1, {
+            xtype : 'checkboxgroup',
+            fieldLabel : 'Registries',
+            columns : 1,
+            items : checkBoxItems
+        });
+
+        this.doLayout();
+    },
+
+    /**
      * Iterates through all components in this filter form and merges their
      * filter attributes into a single object which is returned
      *
@@ -140,5 +201,31 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
         }
 
         return filterParams;
+    },
+
+    /**
+     * Returns an array of objects representing the list of CSW services that the user has chosen to query
+     *[{
+     *  id : String - Unique ID for the service
+     *  url : String - URL of the CSW
+     *  title : String - descriptive title of the service
+     * }]
+     */
+    getSelectedCSWServices : function() {
+        var parentFieldSet = this.findByType('fieldset')[0];
+        var checkBoxGroup = parentFieldSet.findByType('checkboxgroup')[0];
+
+        var items = checkBoxGroup.getValue();
+        var result = [];
+        for (var i = 0; i < items.length; i++) {
+            var id = items[i].getName();
+            var rec = this.cswServiceItemStore.getById(id);
+            result.push({
+                id : rec.get('id'),
+                title : rec.get('title'),
+                url : rec.get('url')
+            });
+        }
+        return result;
     }
 });
