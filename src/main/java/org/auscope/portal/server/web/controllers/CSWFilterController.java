@@ -10,9 +10,12 @@ import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.csw.CSWGetDataRecordsFilter.KeywordMatchType;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.web.service.CSWFilterService;
+import org.auscope.portal.server.web.service.CSWServiceItem;
 import org.auscope.portal.server.web.view.ViewCSWRecordFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -57,8 +60,31 @@ public class CSWFilterController extends BaseCSWController {
     }
 
     /**
+     * Gets a list of CSWServiceItem objects that the portal is using for sources of CSWRecords.
+     * @return
+     */
+    @RequestMapping("/getCSWServices.do")
+    public ModelAndView getCSWServices() {
+        List<ModelMap> convertedServiceItems = new ArrayList<ModelMap>();
+
+        //Simplify our service items for the view
+        for (CSWServiceItem item : this.cswFilterService.getCSWServiceItems()) {
+            ModelMap map = new ModelMap();
+
+            map.put("title", item.getTitle());
+            map.put("id", item.getId());
+            map.put("url", item.getServiceUrl());
+
+            convertedServiceItems.add(map);
+        }
+
+        return generateJSONResponseMAV(true, convertedServiceItems, "");
+    }
+
+    /**
      * Gets a list of CSWRecord view objects filtered by the specified values from all internal
      * CSW's
+     * @param cswServiceId [Optional] The ID of a CSWService to query (if omitted ALL CSWServices will be queried)
      * @param westBoundLongitude [Optional] Spatial bbox constraint
      * @param eastBoundLongitude [Optional] Spatial bbox constraint
      * @param northBoundLatitude [Optional] Spatial bbox constraint
@@ -67,11 +93,12 @@ public class CSWFilterController extends BaseCSWController {
      * @param keywordMatchType [Optional] how the keyword list will be matched against records
      * @param capturePlatform [Optional]  A capture platform filter
      * @param sensor [Optional] A sensor filter
-     * @param startPosition [Optional] 0 based index indicating what index to start reading records from
+     * @param startPosition [Optional] 0 based index indicating what index to start reading records from (only applicable if cswServiceId is specified)
      * @return
      */
     @RequestMapping("/getFilteredCSWRecords.do")
     public ModelAndView getFilteredCSWRecords(
+            @RequestParam(value="cswServiceId", required=false) String cswServiceId,
             @RequestParam(value="westBoundLongitude", required=false) Double westBoundLongitude,
             @RequestParam(value="eastBoundLongitude", required=false) Double eastBoundLongitude,
             @RequestParam(value="northBoundLatitude", required=false) Double northBoundLatitude,
@@ -97,25 +124,34 @@ public class CSWFilterController extends BaseCSWController {
         log.debug(String.format("filter '%1$s'", filter));
 
         //Then make our requests to all of CSW's
-        List<CSWRecord> records = new ArrayList<CSWRecord>();
+        List<CSWRecord> records = null;
         int matchedResults = 0;
         try {
-            CSWGetRecordResponse[] responses = cswFilterService.getFilteredRecords(filter, maxRecords == null ? DEFAULT_MAX_RECORDS : maxRecords, startPosition);
-            for (CSWGetRecordResponse response : responses) {
-                records.addAll(response.getRecords());
-                matchedResults += response.getRecordsMatched();
+            //We may be requesting from all CSW's or just a specific one
+            if (cswServiceId == null || cswServiceId.isEmpty()) {
+                records = new ArrayList<CSWRecord>();
+                CSWGetRecordResponse[] responses = cswFilterService.getFilteredRecords(filter, maxRecords == null ? DEFAULT_MAX_RECORDS : maxRecords);
+                for (CSWGetRecordResponse response : responses) {
+                    records.addAll(response.getRecords());
+                    matchedResults += response.getRecordsMatched();
+                }
+            } else {
+                CSWGetRecordResponse response = cswFilterService.getFilteredRecords(cswServiceId, filter, maxRecords == null ? DEFAULT_MAX_RECORDS : maxRecords, startPosition);
+                records = response.getRecords();
+                matchedResults = response.getRecordsMatched();
             }
+
+            return generateJSONResponseMAV(records.toArray(new CSWRecord[records.size()]), matchedResults);
         } catch (Exception ex) {
             log.warn(String.format("Error fetching filtered records for filter '%1$s'", filter), ex);
             return generateJSONResponseMAV(false, null, "Error fetching filtered records");
         }
-
-        return generateJSONResponseMAV(records.toArray(new CSWRecord[records.size()]), matchedResults);
     }
 
     /**
      * Gets a list of CSWRecord view objects filtered by the specified values from all internal
      * CSW's
+     * @param cswServiceId [Optional] The ID of a CSWService to query (if omitted ALL CSWServices will be queried)
      * @param westBoundLongitude [Optional] Spatial bbox constraint
      * @param eastBoundLongitude [Optional] Spatial bbox constraint
      * @param northBoundLatitude [Optional] Spatial bbox constraint
@@ -128,6 +164,7 @@ public class CSWFilterController extends BaseCSWController {
      */
     @RequestMapping("/getFilteredCSWRecordsCount.do")
     public ModelAndView getFilteredCSWRecordsCount(
+            @RequestParam(value="cswServiceId", required=true) String cswServiceId,
             @RequestParam(value="westBoundLongitude", required=false) Double westBoundLongitude,
             @RequestParam(value="eastBoundLongitude", required=false) Double eastBoundLongitude,
             @RequestParam(value="northBoundLatitude", required=false) Double northBoundLatitude,
@@ -146,8 +183,13 @@ public class CSWFilterController extends BaseCSWController {
 
         //Then make our requests to all of CSW's
         int count = 0;
+        int maxRecordsInt = maxRecords == null ? 0 : maxRecords;
         try {
-            count = cswFilterService.getFilteredRecordsCount(filter, maxRecords == null ? DEFAULT_MAX_RECORDS : maxRecords);
+            if (cswServiceId == null || cswServiceId.isEmpty()) {
+                count = cswFilterService.getFilteredRecordsCount(filter, maxRecordsInt);
+            } else {
+                count = cswFilterService.getFilteredRecordsCount(cswServiceId, filter, maxRecordsInt);
+            }
         } catch (Exception ex) {
             log.warn(String.format("Error fetching filtered record count for filter '%1$s'", filter), ex);
             return generateJSONResponseMAV(false, null, "Error fetching filtered record count");

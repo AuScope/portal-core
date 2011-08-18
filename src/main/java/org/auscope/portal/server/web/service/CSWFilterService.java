@@ -3,7 +3,10 @@ package org.auscope.portal.server.web.service;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
@@ -21,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 
 /**
@@ -60,6 +65,26 @@ public class CSWFilterService {
     }
 
     /**
+     * Makes a CSW request to the specified service
+     * @param serviceItem The CSW service to call
+     * @param filter An optional filter to apply to each of the subset requests
+     * @param maxRecords The max records PER SERVICE that will be requested
+     * @param resultType The type of response that is required from the CSW
+     * @param startIndex The first record index to start filtering from (for pagination). Set to 1 for the first record
+     * @return
+     * @throws Exception
+     */
+    private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws Exception {
+        log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
+        CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords(serviceItem.getServiceUrl());
+        HttpMethodBase method = methodMaker.makeMethod(filter, resultType, maxRecords, startIndex);
+
+        InputStream responseStream = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
+        Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+        return new CSWGetRecordResponse(responseDoc);
+    }
+
+    /**
      * Generates a DistributedHTTPServiceCaller initialised to each and every
      * serviceUrl in the cswServiceList and begins making CSW requests to each of them.
      *
@@ -90,6 +115,14 @@ public class CSWFilterService {
     }
 
     /**
+     * Returns the list of internal CSWServiceItems that powers this service
+     * @return
+     */
+    public CSWServiceItem[] getCSWServiceItems() {
+        return Arrays.copyOf(this.cswServiceList, this.cswServiceList.length);
+    }
+
+    /**
      * Makes a request to each and every CSW service (on seperate threads) before parsing the responses
      * and collating them into a response array.
      *
@@ -99,15 +132,14 @@ public class CSWFilterService {
      *
      * @param filter An optional filter to apply to each of the subset requests
      * @param maxRecords The max records PER SERVICE that will be requested
-     * @param startPosition The first record index to start filtering from (for pagination). Set to 1 for the first record
      * @throws DistributedHTTPServiceCallerException If an underlying service call returns an exception
      * @return
      */
-    public CSWGetRecordResponse[] getFilteredRecords(CSWGetDataRecordsFilter filter, int maxRecords, int startPosition) throws Exception {
+    public CSWGetRecordResponse[] getFilteredRecords(CSWGetDataRecordsFilter filter, int maxRecords) throws Exception {
         List<CSWGetRecordResponse> responses = new ArrayList<CSWGetRecordResponse>();
 
         //Call our services and start iterating the responses
-        DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, startPosition, ResultType.Results);
+        DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Results);
         while (dsc.hasNext()) {
             InputStream responseStream = dsc.next();
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
@@ -115,6 +147,31 @@ public class CSWFilterService {
         }
 
         return responses.toArray(new CSWGetRecordResponse[responses.size()]);
+    }
+
+    /**
+     * Makes a request to the specified CSW service (on this thread) before parsing and returning the response
+     *
+     * If serviceId does not match an existing CSWService an exception will be thrown
+     *
+     * @param filter An optional filter to apply to each of the subset requests
+     * @param maxRecords The max records PER SERVICE that will be requested
+     * @param startPosition 1 based index to begin searching from
+     * @return
+     */
+    public CSWGetRecordResponse getFilteredRecords(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords, int startPosition) throws Exception {
+        //Lookup the service to call
+        CSWServiceItem cswServiceItem = null;
+        for (CSWServiceItem serviceItem : cswServiceList) {
+            if (serviceItem.equals(serviceId)) {
+                cswServiceItem = serviceItem;
+            }
+        }
+        if (cswServiceItem == null) {
+            throw new IllegalArgumentException(String.format("serviceId '%1$s' DNE", serviceId));
+        }
+
+        return callSingleService(cswServiceItem, filter, maxRecords, startPosition, ResultType.Results);
     }
 
     /**
@@ -144,5 +201,30 @@ public class CSWFilterService {
         }
 
         return count;
+    }
+
+    /**
+     * Makes a request to the specified CSW service (on this thread) before parsing and returning the response
+     *
+     * If serviceId does not match an existing CSWService an exception will be thrown
+     *
+     * @param filter An optional filter to apply to each of the subset requests
+     * @param maxRecords The max records PER SERVICE that will be requested
+     * @return
+     */
+    public int getFilteredRecordsCount(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords) throws Exception {
+        //Lookup the service to call
+        CSWServiceItem cswServiceItem = null;
+        for (CSWServiceItem serviceItem : cswServiceList) {
+            if (serviceItem.equals(serviceId)) {
+                cswServiceItem = serviceItem;
+            }
+        }
+        if (cswServiceItem == null) {
+            throw new IllegalArgumentException(String.format("serviceId '%1$s' DNE", serviceId));
+        }
+
+        CSWGetRecordResponse response = callSingleService(cswServiceItem, filter, maxRecords, 1, ResultType.Hits);
+        return response.getRecordsMatched();
     }
 }

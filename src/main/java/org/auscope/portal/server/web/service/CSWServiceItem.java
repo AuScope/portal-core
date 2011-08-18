@@ -8,28 +8,49 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * A simple class that stores the URL of a CSW service along with extra security / misc information
  *
- * @author VOT002
+ * @author Josh Vote
  */
 public class CSWServiceItem {
     public final String PLACEHOLDER_RECORD_ID = "%recordID%";
 
+    private String id;
+    private String title;
     private String serviceUrl;
     private String[] restrictedRoleList;
     private String recordInformationUrl;
 
     /**
      * Creates a new service item with NO role restrictions
+     * @param id Must be unique per service
      * @param serviceUrl
      */
-    public CSWServiceItem(String serviceUrl) {
-        this.serviceUrl = serviceUrl;
+    public CSWServiceItem(String id, String serviceUrl) {
+        this(id, serviceUrl, "");
     }
 
-    public CSWServiceItem(String serviceUrl, String recordInformationUrl) {
+    /**
+     * Creates a new service item with NO role restrictions
+     * @param id Must be unique per service
+     * @param serviceUrl
+     * @param recordInformationUrl
+     */
+    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl) {
+        this(id, serviceUrl, recordInformationUrl, "");
+    }
+
+    /**
+     * Creates a new service item with NO role restrictions
+     * @param id Must be unique per service
+     * @param serviceUrl
+     * @param recordInformationUrl
+     * @param title
+     */
+    public CSWServiceItem(String id, String serviceUrl, String recordInformationUrl, String title) {
+        this.id = id;
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
+        this.title = title;
     }
-
 
     /**
      * Creates a new service item that is restricted to users with ANY of the specified roles
@@ -66,6 +87,22 @@ public class CSWServiceItem {
     }
 
     /**
+     * Gets the descriptive title of this service item
+     * @return
+     */
+    public String getTitle() {
+        return this.title;
+    }
+
+    /**
+     * Gets the unique ID of this service item
+     * @return
+     */
+    public String getId() {
+        return this.id;
+    }
+
+    /**
      * Gets whether this service URL's record set can be read by the user making the request
      * @return
      */
@@ -93,13 +130,51 @@ public class CSWServiceItem {
         return recordInformationUrl;
     }
 
-    /**
-     * Generates a printed version of this CSWServiceItem
-     */
     @Override
     public String toString() {
-        return "CSWServiceItem [serviceUrl=" + serviceUrl
-                + ", restrictedRoleList=" + Arrays.toString(restrictedRoleList)
+        return "CSWServiceItem [id=" + id + ", title=" + title
+                + ", serviceUrl=" + serviceUrl + ", restrictedRoleList="
+                + Arrays.toString(restrictedRoleList)
                 + ", recordInformationUrl=" + recordInformationUrl + "]";
+    }
+
+    /**
+     * Compares id against this item
+     * @param id
+     * @return
+     */
+    public boolean equals(String id) {
+        if (this.id == null) {
+            return id == null;
+        }
+
+        return this.id.equals(id);
+    }
+
+    /**
+     * Compares these items based on id
+     * @param item
+     * @return
+     */
+    public boolean equals(CSWServiceItem item) {
+        if (item == null) {
+            return false;
+        }
+
+        return this.equals(item.id);
+    }
+
+    /**
+     * A comparison that can be made based on whether obj is a String or a CSWServiceItem
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof String) {
+            return this.equals((String) obj);
+        } else if (obj instanceof CSWServiceItem) {
+            return this.equals((CSWServiceItem) obj);
+        } else {
+            return super.equals(obj);
+        }
     }
 }

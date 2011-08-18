@@ -71,7 +71,7 @@ public class TestCSWCacheService extends CSWCacheService {
           //Create our service list
           ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
           for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++){
-              serviceUrlList.add(new CSWServiceItem(String.format(serviceUrlFormatString, i + 1)));
+              serviceUrlList.add(new CSWServiceItem(String.format("id:%1$s", i + 1) ,String.format(serviceUrlFormatString, i + 1)));
           }
 
         this.cswCacheService = new CSWCacheService(threadExecutor, httpServiceCaller, serviceUrlList);

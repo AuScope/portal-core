@@ -44,7 +44,9 @@ public class TestCSWFilterService {
     private CSWThreadExecutor threadExecutor;
     private CSWGetDataRecordsFilter mockFilter = context.mock(CSWGetDataRecordsFilter.class);
     private HttpClient mockHttpClient = context.mock(HttpClient.class);
+    private ArrayList<CSWServiceItem> serviceUrlList;
 
+    private static final String idFormatString = "id:%1$s";
     private static final String serviceUrlFormatString = "http://cswservice.%1$s.url/";
 
     /**
@@ -56,11 +58,11 @@ public class TestCSWFilterService {
 
         this.threadExecutor = new CSWThreadExecutor();
 
-          //Create our service list
-          ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
-          for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++){
-              serviceUrlList.add(new CSWServiceItem(String.format(serviceUrlFormatString, i)));
-          }
+        //Create our service list
+        serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
+        for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++){
+            serviceUrlList.add(new CSWServiceItem(String.format(idFormatString, i), String.format(serviceUrlFormatString, i)));
+        }
 
         this.cswFilterService = new CSWFilterService(threadExecutor, httpServiceCaller, serviceUrlList);
     }
@@ -71,11 +73,11 @@ public class TestCSWFilterService {
     }
 
     /**
-     * Test that the function is able to actually load CSW records
+     * Test that the function is able to actually load CSW records from multiple services
      * @throws Exception
      */
     @Test
-    public void testGetCSWRecords() throws Exception {
+    public void testGetCSWRecordsMultiService() throws Exception {
         final String docString = org.auscope.portal.Util.loadXML("src/test/resources/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is2 = new ByteArrayInputStream(docString.getBytes());
@@ -93,7 +95,7 @@ public class TestCSWFilterService {
 
         //We call this twice to test that an update wont commence whilst
         //an update for a service is already running (if it does it will trigger too many calls to getHttpClient
-        CSWGetRecordResponse[] records = this.cswFilterService.getFilteredRecords(mockFilter, 100, 1);
+        CSWGetRecordResponse[] records = this.cswFilterService.getFilteredRecords(mockFilter, 100);
         try {
             threadExecutor.getExecutorService().shutdown();
             threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
@@ -118,7 +120,7 @@ public class TestCSWFilterService {
      * @throws Exception
      */
     @Test
-    public void testGetCount() throws Exception {
+    public void testGetCountMultiService() throws Exception {
         final String docString = org.auscope.portal.Util.loadXML("src/test/resources/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is2 = new ByteArrayInputStream(docString.getBytes());
@@ -147,5 +149,72 @@ public class TestCSWFilterService {
         }
 
         Assert.assertEquals(RECORD_MATCH_TOTAL * CONCURRENT_THREADS_TO_RUN, count);
+    }
+
+    /**
+     * Test that the function is able to actually load CSW records from multiple services
+     * @throws Exception
+     */
+    @Test
+    public void testGetCSWRecordsSingleService() throws Exception {
+        final String docString = org.auscope.portal.Util.loadXML("src/test/resources/cswRecordResponse.xml");
+        final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
+
+        final int serviceToTest = CONCURRENT_THREADS_TO_RUN / 2;
+        final String serviceIdToUse = String.format(idFormatString, serviceToTest);
+        final String expectedServiceUrl = String.format(serviceUrlFormatString, serviceToTest);
+
+        context.checking(new Expectations() {{
+            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+
+            allowing(mockFilter).getFilterStringAllRecords();
+
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, expectedServiceUrl, null)), with(any(HttpClient.class)));will(returnValue(is1));
+        }});
+
+        //We call this twice to test that an update wont commence whilst
+        //an update for a service is already running (if it does it will trigger too many calls to getHttpClient
+        CSWGetRecordResponse response = this.cswFilterService.getFilteredRecords(serviceIdToUse, mockFilter, 100, 1);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(RECORD_COUNT_TOTAL, response.getRecordsReturned());
+    }
+
+    /**
+     * Test that the function is able to actually load CSW records from multiple services
+     * @throws Exception
+     */
+    @Test
+    public void testGetCountSingleService() throws Exception {
+        final String docString = org.auscope.portal.Util.loadXML("src/test/resources/cswRecordResponse.xml");
+        final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
+
+        final int serviceToTest = CONCURRENT_THREADS_TO_RUN / 2;
+        final String serviceIdToUse = String.format(idFormatString, serviceToTest);
+        final String expectedServiceUrl = String.format(serviceUrlFormatString, serviceToTest);
+
+        context.checking(new Expectations() {{
+            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+
+            allowing(mockFilter).getFilterStringAllRecords();
+
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, expectedServiceUrl, null)), with(any(HttpClient.class)));will(returnValue(is1));
+        }});
+
+        //We call this twice to test that an update wont commence whilst
+        //an update for a service is already running (if it does it will trigger too many calls to getHttpClient
+        int count = this.cswFilterService.getFilteredRecordsCount(serviceIdToUse, mockFilter, 100);
+        Assert.assertEquals(RECORD_MATCH_TOTAL, count);
+    }
+
+    /**
+     * Simple test to ensure that we can fetch the list of CSWServiceItems
+     * @throws Exception
+     */
+    @Test
+    public void testGetCSWServices() throws Exception {
+        CSWServiceItem[] actual = this.cswFilterService.getCSWServiceItems();
+        CSWServiceItem[] expected = serviceUrlList.toArray(new CSWServiceItem[serviceUrlList.size()]);
+
+        Assert.assertArrayEquals(expected, actual);
     }
 }
