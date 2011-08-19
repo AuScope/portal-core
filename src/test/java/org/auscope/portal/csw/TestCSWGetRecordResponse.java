@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.auscope.portal.csw.record.CSWRecord;
+import org.auscope.portal.server.web.service.CSWServiceItem;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import org.xml.sax.SAXException;
 public class TestCSWGetRecordResponse {
 
     private CSWGetRecordResponse recordResponse;
+    private CSWServiceItem origin;
 
     /**
      * INitialise our recordResponse from the test resource cswRecordResponse.xml
@@ -37,8 +39,9 @@ public class TestCSWGetRecordResponse {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc =
             builder.parse( "src/test/resources/cswRecordResponse.xml" );
+        this.origin = new CSWServiceItem("id", "http://test.com", "http://test.com?uuid=%1$s", "title");
 
-        this.recordResponse = new CSWGetRecordResponse(doc);
+        this.recordResponse = new CSWGetRecordResponse(this.origin, doc);
     }
 
     /**
@@ -55,6 +58,11 @@ public class TestCSWGetRecordResponse {
         Assert.assertEquals(15, recordResponse.getRecordsReturned());
         Assert.assertEquals(30, recordResponse.getRecordsMatched());
         Assert.assertEquals(16, recordResponse.getNextRecord());
+
+        for (int i = 0; i < recs.size(); i++) {
+            String expectedInfoUrl = String.format(this.origin.getRecordInformationUrl(), recs.get(i).getFileIdentifier());
+            Assert.assertEquals(expectedInfoUrl, recs.get(i).getRecordInfoUrl());
+        }
     }
 
 }

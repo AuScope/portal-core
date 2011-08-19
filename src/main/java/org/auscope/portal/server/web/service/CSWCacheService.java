@@ -329,7 +329,7 @@ public class CSWCacheService {
                     //Parse the response into newCache (remember that maps are NOT thread safe)
                     Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
                     OWSExceptionParser.checkForExceptionResponse(responseDocument);
-                    CSWGetRecordResponse response = new CSWGetRecordResponse(responseDocument);
+                    CSWGetRecordResponse response = new CSWGetRecordResponse(endpoint, responseDocument);
                     synchronized(newKeywordCache) {
                         synchronized(newRecordCache) {
                             for (CSWRecord record : response.getRecords()) {

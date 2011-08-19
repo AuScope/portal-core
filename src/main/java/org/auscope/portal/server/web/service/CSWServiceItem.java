@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Josh Vote
  */
 public class CSWServiceItem {
-    public final String PLACEHOLDER_RECORD_ID = "%recordID%";
 
     private String id;
     private String title;

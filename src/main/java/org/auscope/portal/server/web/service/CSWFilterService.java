@@ -76,12 +76,14 @@ public class CSWFilterService {
 
         InputStream responseStream = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
         Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-        return new CSWGetRecordResponse(responseDoc);
+        return new CSWGetRecordResponse(serviceItem, responseDoc);
     }
 
     /**
      * Generates a DistributedHTTPServiceCaller initialised to each and every
      * serviceUrl in the cswServiceList and begins making CSW requests to each of them.
+     *
+     * The DistributedHTTPServiceCaller will be given 'Additional Information' in the form of CSWServiceItem objects
      *
      * @param filter An optional filter to apply to each of the subset requests
      * @param maxRecords The max records PER SERVICE that will be requested
@@ -91,6 +93,7 @@ public class CSWFilterService {
      */
     private DistributedHTTPServiceCaller callAllServices(CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
         List<HttpMethodBase> requestMethods = new ArrayList<HttpMethodBase>();
+        List<Object> additionalInfo = new ArrayList<Object>();
 
         //Create various HTTP Methods for making each and every CSW request
         for (CSWServiceItem serviceItem : cswServiceList) {
@@ -98,12 +101,13 @@ public class CSWFilterService {
                 log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
                 CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords(serviceItem.getServiceUrl());
                 requestMethods.add(methodMaker.makeMethod(filter, resultType, maxRecords, startIndex));
+                additionalInfo.add(serviceItem);
             } catch (UnsupportedEncodingException ex) {
                 log.warn(String.format("Error generating HTTP method for serviceItem '%1$s'",serviceItem), ex);
             }
         }
 
-        DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(requestMethods, serviceCaller);
+        DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(requestMethods, additionalInfo, serviceCaller);
         dsc.beginCallingServices(executor);
 
         return dsc;
@@ -137,8 +141,9 @@ public class CSWFilterService {
         DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Results);
         while (dsc.hasNext()) {
             InputStream responseStream = dsc.next();
+            CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-            responses.add(new CSWGetRecordResponse(responseDoc));
+            responses.add(new CSWGetRecordResponse(origin, responseDoc));
         }
 
         return responses.toArray(new CSWGetRecordResponse[responses.size()]);
@@ -189,8 +194,9 @@ public class CSWFilterService {
         DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Hits);
         while (dsc.hasNext()) {
             InputStream responseStream = dsc.next();
+            CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-            CSWGetRecordResponse response = new CSWGetRecordResponse(responseDoc);
+            CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc);
 
             count += response.getRecordsMatched();
         }

@@ -17,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.server.util.DOMUtil;
+import org.auscope.portal.server.web.service.CSWServiceItem;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -36,9 +37,10 @@ public class CSWGetRecordResponse {
     /**
      * Creates a new instance from the specified record response by parsing its contents
      * @param getRecordResponse an XML CSW GetRecords response parsed into a DOM tree
+     * @param origin Where the getRecordResponse has originated from
      * @throws XPathExpressionException
      */
-    public CSWGetRecordResponse(Document getRecordResponse) throws XPathExpressionException {
+    public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse) throws XPathExpressionException {
         //These cannot be static pre-compiled expressions as they are NOT threadsafe
         CSWNamespaceContext nc = new CSWNamespaceContext();
         XPathExpression exprRecordsMatched = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsMatched", nc);
@@ -68,6 +70,7 @@ public class CSWGetRecordResponse {
             Node metadataNode = nodes.item(i);
             CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
             CSWRecord newRecord = transformer.transformToCSWRecord();
+            newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);
             log.trace("GN layer " + (i+1) + " : " + newRecord.toString());
         }
