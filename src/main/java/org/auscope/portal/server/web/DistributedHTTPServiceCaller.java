@@ -27,10 +27,40 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
     protected final Log log = LogFactory.getLog(getClass());
 
     private List<ServiceCallStatus> statusList;
+    private List<Object> additionalInformationObjs;
+    private Object lastAdditionalInformation;
 
+    /**
+     * Creates a DistributedHTTPServiceCaller for calling the specified list of methods.
+     *
+     * Ensure that beginCallingServices is run before any of the iterator methods are called.
+     *
+     * @param methods The HTTP methods to call
+     * @param serviceCaller The service caller that will run the specified methods
+     */
     public DistributedHTTPServiceCaller(List<HttpMethodBase> methods, HttpServiceCaller serviceCaller) {
-        statusList = new ArrayList<ServiceCallStatus>(methods.size());
+        this(methods, null, serviceCaller);
+    }
 
+    /**
+     * Creates a DistributedHTTPServiceCaller for calling the specified list of methods.
+     *
+     * Also allows the 1-1 correspondance of an 'additional information object' that is made available
+     * during method iteration to provide information on the currently iterated response
+     *
+     * Ensure that beginCallingServices is run before any of the iterator methods are called.
+     *
+     * @param methods The HTTP methods to call
+     * @param additionalInformation Must be the same length as methods. Made available through getAdditionalInformation function during iteration
+     * @param serviceCaller The service caller that will run the specified methods
+     */
+    public DistributedHTTPServiceCaller(List<HttpMethodBase> methods, List<Object> additionalInformation, HttpServiceCaller serviceCaller) {
+        if (additionalInformation != null && additionalInformation.size() != methods.size()) {
+            throw new IllegalArgumentException("additionalInformation.size() != methods.size()");
+        }
+
+        additionalInformationObjs = additionalInformation;
+        statusList = new ArrayList<ServiceCallStatus>(methods.size());
         for (HttpMethodBase method : methods) {
             statusList.add(new ServiceCallStatus(this, method, serviceCaller));
         }
@@ -63,6 +93,18 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
     }
 
     /**
+     * Non blocking function - returns the last 'Additional Information Object' associated with
+     * the last response from 'next' or null if there is no such set of objects specified
+     *
+     * Each subsequent response from next will change the result returned by this function
+     *
+     * @return
+     */
+    public synchronized Object getLastAdditionalInformation() {
+        return lastAdditionalInformation;
+    }
+
+    /**
      * Blocking function - will return the next input stream that is available ONLY blocking
      * if there is no input stream that is readily available.
      *
@@ -73,7 +115,8 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
     @Override
     public synchronized InputStream next() throws DistributedHTTPServiceCallerException {
         //Find a service that hasn't been iterated AND has returned data
-        for (ServiceCallStatus status : statusList) {
+        for (int i = 0; i <  statusList.size(); i++) {
+            ServiceCallStatus status = statusList.get(i);
             synchronized(status) {
                 if (!status.isIterated() && !status.isRunning()) {
                     status.setIterated(true);
@@ -81,6 +124,11 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
                     if (data == null) {
                         throw new DistributedHTTPServiceCallerException(status.getResultingError());
                     } else {
+                        //Store additional info (if provided) about the current iteration
+                        if (additionalInformationObjs != null) {
+                            lastAdditionalInformation = additionalInformationObjs.get(i);
+                        }
+
                         return data;
                     }
                 }

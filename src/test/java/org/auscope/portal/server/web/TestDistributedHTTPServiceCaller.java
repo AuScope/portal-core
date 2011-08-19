@@ -35,6 +35,9 @@ public class TestDistributedHTTPServiceCaller implements Thread.UncaughtExceptio
     private HttpMethodBase mockMethod1 = context.mock(HttpMethodBase.class, "method1");
     private HttpMethodBase mockMethod2 = context.mock(HttpMethodBase.class, "method2");
     private HttpMethodBase mockMethod3 = context.mock(HttpMethodBase.class, "method3");
+    private Object mockAdditionalInfo1 = context.mock(Object.class, "mockAddInfo1");
+    private Object mockAdditionalInfo2 = context.mock(Object.class, "mockAddInfo2");
+    private Object mockAdditionalInfo3 = context.mock(Object.class, "mockAddInfo3");
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private HttpClient mockHttpClient = context.mock(HttpClient.class);
     private ExecutorService threadPool;
@@ -180,7 +183,10 @@ public class TestDistributedHTTPServiceCaller implements Thread.UncaughtExceptio
         final long delay2ms = 100;
         final long delay3ms = 250;
 
-        final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1, mockMethod2, mockMethod3), mockServiceCaller);
+        final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(
+                Arrays.asList(mockMethod1, mockMethod2, mockMethod3),
+                Arrays.asList(mockAdditionalInfo1, mockAdditionalInfo2, mockAdditionalInfo3),
+                mockServiceCaller);
 
         context.checking(new Expectations() {{
             allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
@@ -195,14 +201,17 @@ public class TestDistributedHTTPServiceCaller implements Thread.UncaughtExceptio
         //We should get stream 2
         Assert.assertTrue(dsc.hasNext());
         Assert.assertEquals(mockInputStream2, dsc.next());
+        Assert.assertEquals(mockAdditionalInfo2, dsc.getLastAdditionalInformation());
 
         //Then stream 3
         Assert.assertTrue(dsc.hasNext());
         Assert.assertEquals(mockInputStream3, dsc.next());
+        Assert.assertEquals(mockAdditionalInfo3, dsc.getLastAdditionalInformation());
 
         //Then finally stream 1
         Assert.assertTrue(dsc.hasNext());
         Assert.assertEquals(mockInputStream1, dsc.next());
+        Assert.assertEquals(mockAdditionalInfo1, dsc.getLastAdditionalInformation());
 
         //And then there should be no more data
         Assert.assertFalse(dsc.hasNext());
