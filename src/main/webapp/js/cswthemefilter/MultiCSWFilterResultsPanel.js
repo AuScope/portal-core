@@ -12,10 +12,13 @@ MultiCSWFilterResultsPanel = Ext.extend(Ext.TabPanel, {
      * {
      *  filterParams : An object containing filter parameters (generate this from a CSWThemeFilterForm)
      *  cswServiceItems : An array of objects with 'title' and 'id' being set to the details of a CSW service
+     *  map : An instance of a GMap object
      * }
      */
     constructor : function(cfg) {
         var multiCSWFilterResultsPanel = this;
+
+        this.map = cfg.map;
 
         //Build a result browser for each CSW
         var resultBrowsers = [];
@@ -27,6 +30,7 @@ MultiCSWFilterResultsPanel = Ext.extend(Ext.TabPanel, {
                 xtype : 'cswresultspanel',
                 title : cfg.cswServiceItems[i].title,
                 layout : 'fit',
+                map : this.map,
                 filterParams : newParams
             });
         }
