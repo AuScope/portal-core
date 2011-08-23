@@ -22,7 +22,7 @@ ReportsInfoWindow.prototype = {
         var divId = 'reports-binding-id';
         var sHtml = '';
         var maxWidth = 600;
-        var maxHeight = 360;
+        var maxHeight = 300;
 
         sHtml += '<div id="' + divId + '" style="width: ' + maxWidth + 'px; height: ' + maxHeight  +'px;"/>';
 
@@ -32,9 +32,11 @@ ReportsInfoWindow.prototype = {
                 height : maxHeight - 20,
                 renderTo : divId,
                 hideBorders : true,
-                layout : 'fit',
+                layout : 'auto',
+                autoScroll : true,
                 items : [{
                     xtype : 'cswmetadatapanel',
+                    hideBorder : true,
                     cswRecord : this.cswRecord,
                     bodyStyle : {
                         'background-color' : '#ffffff'
@@ -50,7 +52,7 @@ ReportsInfoWindow.prototype = {
         if (this.overlay instanceof GPolygon) {
             this.map.openInfoWindowHtml(this.overlay.getBounds().getCenter(), sHtml, {
                 maxWidth:maxWidth,
-                maxHeight:maxHeight,
+                //maxHeight:maxHeight,
                 autoScroll:true,
                 onOpenFn : renderMetadataPanel.createDelegate(this),
                 onCloseFn : destroyReportsPanel.createDelegate(this)
@@ -58,7 +60,7 @@ ReportsInfoWindow.prototype = {
         } else if (this.overlay instanceof GMarker) {
             this.map.openInfoWindowHtml(this.overlay.getPoint(), sHtml,{
                 maxWidth:maxWidth,
-                maxHeight:maxHeight,
+                //maxHeight:maxHeight,
                 autoScroll:true,
                 onOpenFn : renderMetadataPanel.createDelegate(this),
                 onCloseFn : destroyReportsPanel.createDelegate(this)
