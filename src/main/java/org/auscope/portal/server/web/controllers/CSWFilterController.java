@@ -99,6 +99,7 @@ public class CSWFilterController extends BaseCSWController {
     @RequestMapping("/getFilteredCSWRecords.do")
     public ModelAndView getFilteredCSWRecords(
             @RequestParam(value="cswServiceId", required=false) String cswServiceId,
+            @RequestParam(value="anyText", required=false) String anyText,
             @RequestParam(value="westBoundLongitude", required=false) Double westBoundLongitude,
             @RequestParam(value="eastBoundLongitude", required=false) Double eastBoundLongitude,
             @RequestParam(value="northBoundLatitude", required=false) Double northBoundLatitude,
@@ -120,7 +121,7 @@ public class CSWFilterController extends BaseCSWController {
         //Firstly generate our filter
         FilterBoundingBox filterBbox = attemptParseBBox(westBoundLongitude, eastBoundLongitude,
                 northBoundLatitude, southBoundLatitude);
-        CSWGetDataRecordsFilter filter = new CSWGetDataRecordsFilter(filterBbox, keywords, capturePlatform, sensor, keywordMatchType);
+        CSWGetDataRecordsFilter filter = new CSWGetDataRecordsFilter(anyText, filterBbox, keywords, capturePlatform, sensor, keywordMatchType);
         log.debug(String.format("filter '%1$s'", filter));
 
         //Then make our requests to all of CSW's
@@ -165,6 +166,7 @@ public class CSWFilterController extends BaseCSWController {
     @RequestMapping("/getFilteredCSWRecordsCount.do")
     public ModelAndView getFilteredCSWRecordsCount(
             @RequestParam(value="cswServiceId", required=true) String cswServiceId,
+            @RequestParam(value="anyText", required=false) String anyText,
             @RequestParam(value="westBoundLongitude", required=false) Double westBoundLongitude,
             @RequestParam(value="eastBoundLongitude", required=false) Double eastBoundLongitude,
             @RequestParam(value="northBoundLatitude", required=false) Double northBoundLatitude,
@@ -178,7 +180,7 @@ public class CSWFilterController extends BaseCSWController {
         //Firstly generate our filter
         FilterBoundingBox filterBbox = attemptParseBBox(westBoundLongitude, eastBoundLongitude,
                 northBoundLatitude, southBoundLatitude);
-        CSWGetDataRecordsFilter filter = new CSWGetDataRecordsFilter(filterBbox, keywords, capturePlatform, sensor, keywordMatchType);
+        CSWGetDataRecordsFilter filter = new CSWGetDataRecordsFilter(anyText, filterBbox, keywords, capturePlatform, sensor, keywordMatchType);
         log.debug(String.format("filter '%1$s'", filter));
 
         //Then make our requests to all of CSW's

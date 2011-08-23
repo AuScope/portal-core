@@ -28,7 +28,8 @@ CSWMetadataPanel = Ext.extend(Ext.Panel, {
 
         //Build our configuration object
         Ext.apply(cfg, {
-            layout : 'border',
+            layout : 'auto',
+            autoHeight : true,
             items : [{
                 xtype : 'fieldset',
                 hideBorders : true,
@@ -70,11 +71,12 @@ CSWMetadataPanel = Ext.extend(Ext.Panel, {
                     fieldLabel : 'Contact Org',
                     anchor : '100%',
                     text : this.cswRecord.getContactOrganisation()
+                },{
+                    fieldLabel : 'Resources',
+                    region : 'center',
+                    xtype : 'cswresourcesgrid',
+                    cswRecords : this.cswRecord
                 }]
-            },{
-                region : 'center',
-                xtype : 'cswresourcesgrid',
-                cswRecords : this.cswRecord
             }]
         });
 

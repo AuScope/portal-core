@@ -56,6 +56,7 @@ public class TestCSWFilterController {
      */
     @Test
     public void testGetFilteredRecords() throws Exception {
+        final String anyText = "any-text";
         final String cswServiceId = "my-csw-service-id";
         final double east = 0.1;
         final double west = 5.5;
@@ -93,7 +94,7 @@ public class TestCSWFilterController {
             oneOf(mockViewRecordFactory).toView(filteredRecs[2]);will(returnValue(mockViewRec3));
         }});
 
-        ModelAndView mav = controller.getFilteredCSWRecords(cswServiceId, west, east, north, south, keywords, KeywordMatchType.All, capturePlatform, sensor, maxRecords, startPosition);
+        ModelAndView mav = controller.getFilteredCSWRecords(cswServiceId, anyText, west, east, north, south, keywords, KeywordMatchType.All, capturePlatform, sensor, maxRecords, startPosition);
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean) mav.getModel().get("success"));
         Collection<ModelMap> dataRecs = (Collection<ModelMap>) mav.getModel().get("data");
@@ -112,6 +113,7 @@ public class TestCSWFilterController {
      */
     @Test
     public void testGetFilteredRecordsNoServiceID() throws Exception {
+        final String anyText = "any-text";
         final double east = 0.1;
         final double west = 5.5;
         final double north = 4.8;
@@ -152,7 +154,7 @@ public class TestCSWFilterController {
             oneOf(mockViewRecordFactory).toView(filteredRecs[2]);will(returnValue(mockViewRec3));
         }});
 
-        ModelAndView mav = controller.getFilteredCSWRecords(null, west, east, north, south, keywords, KeywordMatchType.All, capturePlatform, sensor, maxRecords, null);
+        ModelAndView mav = controller.getFilteredCSWRecords(null, anyText, west, east, north, south, keywords, KeywordMatchType.All, capturePlatform, sensor, maxRecords, null);
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean) mav.getModel().get("success"));
         Collection<ModelMap> dataRecs = (Collection<ModelMap>) mav.getModel().get("data");
@@ -171,6 +173,7 @@ public class TestCSWFilterController {
      */
     @Test
     public void testGetFilteredRecordsError() throws Exception {
+        final String anyText = "any-text";
         final String cswServiceId = "my-csw-service-id";
         final double east = 0.1;
         final double west = 5.5;
@@ -191,7 +194,7 @@ public class TestCSWFilterController {
             oneOf(mockService).getFilteredRecords(with(equal(cswServiceId)), with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)), with(equal(startPosition + 1)));will(throwException(new Exception()));
         }});
 
-        ModelAndView mav = controller.getFilteredCSWRecords(cswServiceId, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords, startPosition);
+        ModelAndView mav = controller.getFilteredCSWRecords(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords, startPosition);
         Assert.assertNotNull(mav);
         Assert.assertFalse((Boolean) mav.getModel().get("success"));
     }
@@ -203,6 +206,7 @@ public class TestCSWFilterController {
      */
     @Test
     public void testGetFilteredRecordsOptionalParams() throws Exception {
+        final String anyText = null;
         final String cswServiceId = null;
         final Double east = null;
         final Double west = null;
@@ -244,7 +248,7 @@ public class TestCSWFilterController {
             oneOf(mockViewRecordFactory).toView(filteredRecs[2]);will(returnValue(mockViewRec3));
         }});
 
-        ModelAndView mav = controller.getFilteredCSWRecords(cswServiceId, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords, startPosition);
+        ModelAndView mav = controller.getFilteredCSWRecords(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords, startPosition);
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean) mav.getModel().get("success"));
         Collection<ModelMap> dataRecs = (Collection<ModelMap>) mav.getModel().get("data");
@@ -261,6 +265,7 @@ public class TestCSWFilterController {
      */
     @Test
     public void testGetFilteredRecordsCountSingleCSW() throws Exception {
+        final String anyText = "any-text";
         final String cswServiceId = "my-csw-service-id";
         final double east = 0.1;
         final double west = 5.5;
@@ -280,7 +285,7 @@ public class TestCSWFilterController {
             oneOf(mockService).getFilteredRecordsCount(with(equal(cswServiceId)), with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));will(returnValue(expectedCount));
         }});
 
-        ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
+        ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean) mav.getModel().get("success"));
         Assert.assertEquals(expectedCount, (Integer) mav.getModel().get("data"));
@@ -292,6 +297,7 @@ public class TestCSWFilterController {
      */
     @Test
     public void testGetFilteredRecordsCountAllCSWs() throws Exception {
+        final String anyText = "any-text";
         final String cswServiceId = null;
         final double east = 0.1;
         final double west = 5.5;
@@ -311,7 +317,7 @@ public class TestCSWFilterController {
             oneOf(mockService).getFilteredRecordsCount(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));will(returnValue(expectedCount));
         }});
 
-        ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
+        ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean) mav.getModel().get("success"));
         Assert.assertEquals(expectedCount, (Integer) mav.getModel().get("data"));
@@ -324,6 +330,7 @@ public class TestCSWFilterController {
      */
     @Test
     public void testGetFilteredRecordsCountOptionalParams() throws Exception {
+        final String anyText = null;
         final String cswServiceId = null;
         final Double east = null;
         final Double west = null;
@@ -341,7 +348,7 @@ public class TestCSWFilterController {
             oneOf(mockService).getFilteredRecordsCount(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(0)));will(returnValue(expectedCount));
         }});
 
-        ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
+        ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean) mav.getModel().get("success"));
         Assert.assertEquals(expectedCount, (Integer) mav.getModel().get("data"));
@@ -354,6 +361,7 @@ public class TestCSWFilterController {
      */
     @Test
     public void testGetFilteredRecordsCountError() throws Exception {
+        final String anyText = "any-text";
         final String cswServiceId = "my-csw-service-id";
         final double east = 0.1;
         final double west = 5.5;
@@ -372,7 +380,7 @@ public class TestCSWFilterController {
             oneOf(mockService).getFilteredRecordsCount(with(equal(cswServiceId)), with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));will(throwException(new Exception()));
         }});
 
-        ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
+        ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
         Assert.assertNotNull(mav);
         Assert.assertFalse((Boolean) mav.getModel().get("success"));
     }

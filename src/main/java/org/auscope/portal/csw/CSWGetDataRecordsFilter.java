@@ -31,6 +31,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         All
     }
 
+    private String anyText;
     private FilterBoundingBox spatialBounds;
     private String[] keywords;
     private String capturePlatform;
@@ -40,6 +41,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /**
      * Generates a new filter generator for the specified fields.
      *
+     * @param anyText [Optional] The text used to query the 'AnyText' attribute
      * @param spatialBounds
      *            [Optional] The spatial bounds to filter by
      * @param keywords
@@ -52,14 +54,15 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      *            [Optional] A sensor filter that must be specified for a record
      *            to be included
      */
-    public CSWGetDataRecordsFilter(FilterBoundingBox spatialBounds,
+    public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor) {
-        this(spatialBounds, keywords, capturePlatform, sensor, null);
+        this(anyText, spatialBounds, keywords, capturePlatform, sensor, null);
     }
 
     /**
      * Generates a new filter generator for the specified fields.
      *
+     * @param anyText [Optional] The text used to query the 'AnyText' attribute
      * @param spatialBounds
      *            [Optional] The spatial bounds to filter by
      * @param keywords
@@ -73,9 +76,10 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      *            to be included
      * @param keywordMatchType [Optional] How the list of keywords will be matched (defaults to All)
      */
-    public CSWGetDataRecordsFilter(FilterBoundingBox spatialBounds,
+    public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor,
             KeywordMatchType keywordMatchType) {
+        this.anyText = anyText;
         this.spatialBounds = spatialBounds;
         this.keywords = keywords;
         this.capturePlatform = capturePlatform;
@@ -89,6 +93,10 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     private String generateFilterFragment() {
         List<String> fragments = new ArrayList<String>();
+
+        if (anyText != null && !anyText.isEmpty()) {
+            fragments.add(this.generatePropertyIsLikeFragment("anytext", this.anyText));
+        }
 
         if (spatialBounds != null) {
             fragments.add(this.generateBboxFragment(spatialBounds, "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement"));

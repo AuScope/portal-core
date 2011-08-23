@@ -19,7 +19,9 @@ CSWRecordMetadataWindow = Ext.extend(Ext.Window, {
 
         //Build our configuration object
         Ext.apply(cfg, {
-            layout : 'fit',
+            layout : 'auto',
+            autoScroll : true,
+            autoHeight : true,
             items : [{
                 xtype : 'cswmetadatapanel',
                 cswRecord : this.cswRecord,
@@ -30,7 +32,7 @@ CSWRecordMetadataWindow = Ext.extend(Ext.Window, {
             }]
         }, {
             width : 800,
-            height : 450,
+            //height : 450,
             title : this.cswRecord.getServiceName()
         });
 

@@ -40,7 +40,6 @@
     <bean id="cswServiceList" class="java.util.ArrayList">
         <constructor-arg>
             <list>
-                <ref bean="cswAuscopeTest" />
                 <ref bean="cswMDUTest" />
             </list>
         </constructor-arg>

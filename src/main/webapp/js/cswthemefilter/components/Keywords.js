@@ -57,6 +57,7 @@ CSWThemeFilter.Keywords = Ext.extend(CSWThemeFilter.BaseComponent, {
                 xtype : 'fieldset',
                 layout : 'column',
                 border : false,
+                style : 'padding:5px 10px 0px 10px',
                 items : [{
                     columnWidth : 1.0,
                     border : false,

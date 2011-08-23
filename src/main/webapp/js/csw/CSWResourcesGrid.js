@@ -75,50 +75,59 @@ CSWResourcesGrid = Ext.extend(Ext.grid.GridPanel, {
                 }),
                 data : dataItems
             }),
+            hideHeaders : true,
             autoHeight: true,
-            view : new Ext.grid.GroupingView({
-                groupTextTpl: '{text}',
-                showGroupName: false,
+            autoExpandColumn: 'text',
+            viewConfig : {
                 templates: {
                     cell: new Ext.Template(
                         '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} x-selectable {css}" style="{style}" tabIndex="0" {cellAttr}>',
                         '<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>',
                         '</td>')
                 }
-            }),
-            autoExpandColumn: 'description',
+            },
             columns: [{
-                id : 'name',
-                header : 'Name',
+                id : 'text',
+                header : 'Text',
                 dataIndex: 'name',
                 menuDisabled: true,
+                scope : this,
                 sortable: true,
                 renderer: function(value, metadata, record) {
-                    return '<b>' + value + '</b>';
-                }
-            },{
-                id : 'description',
-                header : 'Description',
-                dataIndex: 'description',
-                sortable: false,
-                menuDisabled: true,
-                width: 290,
-                renderer: function(value, metadata, record) {
-                return '<p><i>' + value + '</i></p>';
-                }
-            }, {
-                id : 'url',
-                header : 'URL',
-                dataIndex: 'url',
-                sortable: false,
-                menuDisabled: true,
-                width: 256,
-                renderer: function(value, metadata, record) {
+                    var name = record.get('name');
+                    var description = record.get('description');
+                    var cswRecord = this.cswRecords[record.get('cswRecordIndex')];
+                    var onlineRes = record.get('preview');
+
+                    //Ensure there is a title (even it is just '<Untitled>'
+                    if (!name || name.length === 0) {
+                        name = '&gt;Untitled&lt;';
+                    }
+
+                    //Adjust our name with our service type (if appopriate)
+                    switch(record.get('type')) {
+                    case 'WFS':
+                        name += ' [Web Feature Service]';
+                        break;
+                    case 'WMS':
+                        name += ' [Web Map Service]';
+                        break;
+                    case 'WCS':
+                        name += ' [Web Coverage Service]';
+                        break;
+                    }
+
+                    //Truncate description
+                    var maxLength = 190;
+                    if (description.length > maxLength) {
+                        description = description.substring(0, maxLength) + '...';
+                    }
+
                     switch(record.get('type')) {
                     case 'WWW':
-                        return '<a target="_blank" href="' + value + '"><p>' + value + '</p></a>';
+                        return '<a target="_blank" href="' + onlineRes.url + '"><b>' + name + '</b></a><br/><span style="color:#555;">' + description + '</span>';
                     default:
-                        return value;
+                        return '<b>' + name + '</b><br/><span style="color:#555;">' + description + '</span>';
                     }
                 }
             },{
@@ -181,29 +190,10 @@ CSWResourcesGrid = Ext.extend(Ext.grid.GridPanel, {
 
                             return '<a target="_blank" href="' + getMapUrl + '"><img width="' + thumbWidth + '" height="' + thumbHeight + '" alt="Loading preview..." src="' + getMapUrl + '"/></a>';
                         }
-                        return 'N/A';
+                        return 'Unable to preview WMS';
                     default :
-                        return 'N/A';
+                        return '';
                     }
-                }
-            }, {
-                id : 'type',
-                header : 'Service Type',
-                dataIndex: 'type',
-                hidden: true,
-                renderer : function(value) {
-                    switch (value) {
-                    case 'WWW':
-                        return 'Web Link';
-                    case 'WFS':
-                        return 'OGC Web Feature Service 1.1.0';
-                    case 'WMS':
-                        return 'OGC Web Map Service 1.1.1';
-                    case 'WCS':
-                        return 'OGC Web Coverage Service 1.0.0';
-                    }
-
-                    return '';
                 }
             }]
         });
