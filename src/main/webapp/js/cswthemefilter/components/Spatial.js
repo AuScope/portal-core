@@ -26,6 +26,9 @@ CSWThemeFilter.Spatial = Ext.extend(CSWThemeFilter.BaseComponent, {
      */
     numberFieldSWLon : null,
 
+    buttonClear : null,
+    buttonDraw : null,
+
     /**
      * Shown when the user clicks "Draw Bounds"
      */
@@ -45,6 +48,9 @@ CSWThemeFilter.Spatial = Ext.extend(CSWThemeFilter.BaseComponent, {
                 spatialComponent.numberFieldNELon.setRawValue(spatialComponent.bboxSelection.getNorthEastLng());
                 spatialComponent.numberFieldSWLat.setRawValue(spatialComponent.bboxSelection.getSouthWestLat());
                 spatialComponent.numberFieldSWLon.setRawValue(spatialComponent.bboxSelection.getSouthWestLng());
+
+                spatialComponent.buttonDraw.hide();
+                spatialComponent.buttonClear.show();
             }
         });
 
@@ -98,6 +104,11 @@ CSWThemeFilter.Spatial = Ext.extend(CSWThemeFilter.BaseComponent, {
                 text : 'Draw Bounds',
                 handler : this._drawBoundsHandler.createDelegate(this, [])
             },{
+                xtype : 'button',
+                text : 'Clear Bounds',
+                handler : this._clearBoundsHandler.createDelegate(this, []),
+                hidden : true
+            },{
                 xtype : 'label',
                 cls : 'x-form-item',
                 text : 'Use your mouse to drag a filter bounding box on the map.',
@@ -118,6 +129,11 @@ CSWThemeFilter.Spatial = Ext.extend(CSWThemeFilter.BaseComponent, {
                             spatialComponent.numberFieldSWLon = coordFields[i];
                         }
                     }
+
+                    var buttonFields = cmp.findByType('button');
+
+                    spatialComponent.buttonDraw = buttonFields[0];
+                    spatialComponent.buttonClear = buttonFields[1];
 
                     var labelFields = cmp.findByType('label');
                     spatialComponent.labelBBoxHelp = labelFields[0];
@@ -141,23 +157,39 @@ CSWThemeFilter.Spatial = Ext.extend(CSWThemeFilter.BaseComponent, {
             this.bboxSelection.drawRectangle(north,east,south,west);
         } else {
             this.bboxSelection.reset();
+
+            this.buttonDraw.enable();
+            this.buttonDraw.show();
+            this.buttonClear.hide();
         }
+    },
+
+    _clearBounds : function() {
+        this.numberFieldNELat.setRawValue('');
+        this.numberFieldNELon.setRawValue('');
+        this.numberFieldSWLat.setRawValue('');
+        this.numberFieldSWLon.setRawValue('');
     },
 
     /**
      * Handler for the draw bounds function
      */
     _drawBoundsHandler : function() {
-        this.numberFieldNELat.setValue(Number.NaN);
-        this.numberFieldNELon.setValue(Number.NaN);
-        this.numberFieldSWLat.setValue(Number.NaN);
-        this.numberFieldSWLon.setValue(Number.NaN);
-
+        this._clearBounds();
 
         if (!this.bboxSelection.transMarkerEnabled) {
             this.labelBBoxHelp.show();
             this.bboxSelection.enableTransMarker();
+            this.buttonDraw.disable();
         }
+    },
+
+    _clearBoundsHandler : function() {
+        this._clearBounds();
+        this.bboxSelection.reset();
+        this.buttonDraw.enable();
+        this.buttonDraw.show();
+        this.buttonClear.hide();
     },
 
     /**
