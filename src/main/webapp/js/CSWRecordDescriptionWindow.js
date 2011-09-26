@@ -7,9 +7,32 @@
  *  knownLayerRecord
  */
 CSWRecordDescriptionWindow = function(cswRecords, knownLayerRecord) {
+
+    var onlineResourcesCount = 0;
+    if (Ext.isArray(cswRecords)) {
+        for (var i = 0; i < cswRecords.length; i++) {
+            onlineResourcesCount += cswRecords[i].getOnlineResources().length;
+        }
+    } else {
+        onlineResourcesCount += cswRecords.getOnlineResources().length;
+    }
+
+    //Ext JS 3 doesn't allow us to limit autoHeight panels
+    //I believe there is a 'max height' element added in Ext JS 4
+    var height = undefined;
+    var autoHeight = true;
+    if (onlineResourcesCount > 4) {
+        height = 400;
+        autoHeight = false;
+    }
+
+
     CSWRecordDescriptionWindow.superclass.constructor.call(this, {
         title: 'Service Information',
         autoDestroy : true,
+        autoHeight : autoHeight,
+        autoScroll : true,
+        height : height,
         width : 800,
         items : [{
             xtype : 'cswresourcesgrid',
