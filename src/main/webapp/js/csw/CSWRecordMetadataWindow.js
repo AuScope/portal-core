@@ -17,11 +17,21 @@ CSWRecordMetadataWindow = Ext.extend(Ext.Window, {
 
         this.cswRecord = cfg.cswRecord;
 
+        //Ext JS 3 doesn't allow us to limit autoHeight panels
+        //I believe there is a 'max height' element added in Ext JS 4
+        var height = undefined;
+        var autoHeight = true;
+        if (this.cswRecord.getOnlineResources().length > 4) {
+            height = 400;
+            autoHeight = false;
+        }
+
         //Build our configuration object
         Ext.apply(cfg, {
             layout : 'auto',
+            height : height,
             autoScroll : true,
-            autoHeight : true,
+            autoHeight : autoHeight,
             items : [{
                 xtype : 'cswmetadatapanel',
                 cswRecord : this.cswRecord,
