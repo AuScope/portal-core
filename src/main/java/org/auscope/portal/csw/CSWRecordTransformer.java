@@ -56,6 +56,7 @@ public class CSWRecordTransformer {
     private static final String supplementalInfoExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
     private static final String languageExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
     private static final String otherConstraintsExpression = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString";
+    private static final String dataQualityStatementExpression = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
 
     /**
      * Creates a new instance of this class and generates an empty document that will be
@@ -374,7 +375,7 @@ public class CSWRecordTransformer {
             }
         }
 
-        //Data Quality (hardcoded)
+        //Data Quality (partially hardcoded)
         Node dataQualityInfo = createChildNode(root, nc.getNamespaceURI("gmd"), "dataQualityInfo");
         Node dqDataQuality = createChildNode(dataQualityInfo, nc.getNamespaceURI("gmd"), "DQ_DataQuality");
         Node dataQualityScope = createChildNode(dqDataQuality, nc.getNamespaceURI("gmd"), "scope");
@@ -383,7 +384,11 @@ public class CSWRecordTransformer {
         Element dataQualityScopeLevelCode = createChildNode(dataQualityScopeLevel, nc.getNamespaceURI("gmd"), "MD_ScopeCode");
         dataQualityScopeLevelCode.setAttributeNS("", "codeListValue", "dataset");
         dataQualityScopeLevelCode.setAttributeNS("", "codeList", "http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ScopeCode");
-
+        if (record.getDataQualityStatement() != null && !record.getDataQualityStatement().isEmpty()) {
+            Node dqLineage = createChildNode(dqDataQuality, nc.getNamespaceURI("gmd"), "lineage");
+            Node dqLILineage = createChildNode(dqLineage, nc.getNamespaceURI("gmd"), "LI_Lineage");
+            appendChildCharacterString(dqLILineage, nc.getNamespaceURI("gmd"), "statement", record.getDataQualityStatement());
+        }
 
         return root;
     }
@@ -447,6 +452,7 @@ public class CSWRecordTransformer {
         record.setFileIdentifier(evalXPathString(this.mdMetadataNode, fileIdentifierExpression));
         record.setSupplementalInformation(evalXPathString(this.mdMetadataNode, supplementalInfoExpression));
         record.setLanguage(evalXPathString(this.mdMetadataNode, languageExpression));
+        record.setDataQualityStatement(evalXPathString(this.mdMetadataNode, dataQualityStatementExpression));
 
         String resourceProvider = (String) evalXPathString(this.mdMetadataNode, resourceProviderExpression);
         if (resourceProvider == null || resourceProvider.isEmpty()) {

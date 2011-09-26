@@ -174,6 +174,15 @@ public class TestCSWRecordTransformer {
     }
 
     /**
+     * Tests that the data quality info is correctly parsed
+     */
+    @Test
+    public void testDataQualityInfo() {
+        Assert.assertEquals("Data Quality Statment 1", this.records[0].getDataQualityStatement());
+        Assert.assertEquals("", this.records[1].getDataQualityStatement());
+    }
+
+    /**
      * Generates an xpath-esque location for the current node for debug purposes
      * @param node
      * @return

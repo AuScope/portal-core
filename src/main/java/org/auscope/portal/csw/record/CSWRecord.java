@@ -31,6 +31,7 @@ public class CSWRecord {
     private String[] constraints;
     private CSWResponsibleParty contact;
     private Date date;
+    private String dataQualityStatement;
 
     public CSWRecord(String serviceName, String fileIdentifier,
             String recordInfoUrl, String dataIdentificationAbstract,
@@ -160,6 +161,14 @@ public class CSWRecord {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getDataQualityStatement() {
+        return dataQualityStatement;
+    }
+
+    public void setDataQualityStatement(String dataQualityStatement) {
+        this.dataQualityStatement = dataQualityStatement;
     }
 
     @Override

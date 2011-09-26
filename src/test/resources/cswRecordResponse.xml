@@ -292,6 +292,13 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
               </gmd:level>
             </gmd:DQ_Scope>
           </gmd:scope>
+          <gmd:lineage>
+            <gmd:LI_Lineage>
+                <gmd:statement>
+                   <gco:CharacterString>Data Quality Statment 1</gco:CharacterString>
+                </gmd:statement>
+            </gmd:LI_Lineage>
+          </gmd:lineage>
         </gmd:DQ_DataQuality>
       </gmd:dataQualityInfo>
     </gmd:MD_Metadata>
