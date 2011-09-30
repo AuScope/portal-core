@@ -54,8 +54,10 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpMethodBase> {
             switch (type) {
             case GET:
                 matches &= method instanceof GetMethod;
+                break;
             case POST:
                 matches &= method instanceof PostMethod;
+                break;
             }
         }
 
