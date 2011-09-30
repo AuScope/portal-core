@@ -36,20 +36,11 @@ CSWMetadataPanel = Ext.extend(Ext.Panel, {
                 autoHeight : true,
                 region : 'north',
                 items : [{
-                    xtype : 'box',
-                    anchor : '',
-                    isFormField : true,
+                    xtype : 'linklabel',
                     fieldLabel : 'Source',
-                    autoEl : {
-                        tag : 'div',
-                        children : [{
-                            tag : 'a',
-                            target : '_blank',
-                            qtip : 'This is a link back to the registry of origin for this record.',
-                            href : this.cswRecord.getRecordInfoUrl(),
-                            html : 'Link back to registry'
-                        }]
-                    }
+                    qtip : 'This is a link back to the registry of origin for this record.',
+                    href : this.cswRecord.getRecordInfoUrl(),
+                    text : 'Link back to registry'
                 },{
                     xtype : 'label',
                     fieldLabel : 'Title',
