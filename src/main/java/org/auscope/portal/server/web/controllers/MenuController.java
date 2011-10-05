@@ -32,17 +32,6 @@ public class MenuController {
    @Qualifier(value = "propertyConfigurer")
    private PortalPropertyPlaceholderConfigurer hostConfigurer;
 
-
-   @RequestMapping("/genericparser.html")
-   public ModelAndView genericParser() {
-	   String googleKey = hostConfigurer.resolvePlaceholder("HOST.googlemap.key");
-
-	   ModelAndView mav = new ModelAndView("genericparser");
-	      mav.addObject("googleKey", googleKey);
-
-	   return mav;
-   }
-
    @RequestMapping("/gmap.html")
    public ModelAndView gmap() {
       String googleKey
@@ -50,7 +39,7 @@ public class MenuController {
       String vocabServiceUrl
          = hostConfigurer.resolvePlaceholder("HOST.vocabService.url");
       String maxFeatureValue
-      	 = hostConfigurer.resolvePlaceholder("HOST.maxFeatures.value");
+           = hostConfigurer.resolvePlaceholder("HOST.maxFeatures.value");
 
       logger.debug("googleKey: " + googleKey);
       logger.debug("vocabServiceUrl: " + vocabServiceUrl);
@@ -122,7 +111,7 @@ public class MenuController {
          }
       } catch (IOException e) {
          /* ignore, since we'll just leave an empty form */
-    	  logger.debug(e.getMessage());
+          logger.debug(e.getMessage());
       }
       return mav;
    }

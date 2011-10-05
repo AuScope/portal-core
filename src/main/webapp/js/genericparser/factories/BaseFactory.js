@@ -7,6 +7,9 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
     //Namespace Constants
     XMLNS_GSML_2 : 'urn:cgi:xmlns:CGI:GeoSciML:2.0',
     XMLNS_GML : 'http://www.opengis.net/gml',
+    XMLNS_SA : 'http://www.opengis.net/sampling/1.0',
+    XMLNS_OM : 'http://www.opengis.net/om/1.0',
+    XMLNS_SWE : 'http://www.opengis.net/swe/1.0.1',
 
     //DOM constants
     XML_NODE_ELEMENT : 1,
@@ -158,7 +161,7 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
         var matchingNode = xpathResult.iterateNext();
         while (matchingNode) {
             matchingNodes.push(matchingNode);
-            matchingNode = iterator.iterateNext();
+            matchingNode = xpathResult.iterateNext();
         }
 
         return matchingNodes;

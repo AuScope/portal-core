@@ -496,62 +496,6 @@
         </Placemark>
     </xsl:template>
 
-    <!-- TEMPLATE FOR TRANSLATING Yilgarn Geochemistry -->
-   <!-- ================================================================= -->
-   <xsl:template match="gml:featureMember/gsml:GeologicUnit | gml:featureMembers/gsml:GeologicUnit" priority="100">
-
-      <xsl:variable name="coordinates">
-         <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point/gml:pos"/>
-      </xsl:variable>
-      <xsl:variable name="observationMethod">
-         <xsl:value-of select="./gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace='www.ietf.org/rfc/rfc1738']"/>
-      </xsl:variable>
-      <xsl:variable name="rockMaterial">
-         <xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href"/>
-      </xsl:variable>
-      <xsl:variable name="proportion">
-         <xsl:value-of select="./gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value"/>
-      </xsl:variable>
-     <Placemark>
-        <name><xsl:value-of select="@gml:id"/></name>
-        <description>
-           <xsl:text>featureId:</xsl:text><xsl:value-of select="@gml:id"/>
-           <xsl:call-template name="start-table"></xsl:call-template>
-           <![CDATA[<tr><td>Name</td><td>]]>
-           <xsl:call-template name="make-wfspopup-url">
-               <xsl:with-param name="friendly-name" select="@gml:id"/>
-               <xsl:with-param name="real-url">
-               <xsl:value-of select="$serviceURL"/><xsl:value-of select="$gsmlGeoUnitString"/><xsl:value-of select="@gml:id"/></xsl:with-param>
-           </xsl:call-template><![CDATA[</td></tr>]]>
-           <![CDATA[<tr><td>Location</td><td>]]>
-           <xsl:call-template name="swapLatLongCoord">
-               <xsl:with-param name="coordinates" select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>
-           </xsl:call-template><![CDATA[</td></tr>]]>
-           <![CDATA[<tr><td>Observation Method</td><td>]]>
-           <xsl:call-template name="make-popup-url">
-               <xsl:with-param name="friendly-name" select="$observationMethod"/>
-               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$observationMethod)"/>
-           </xsl:call-template><![CDATA[</td></tr>]]>
-           <![CDATA[<tr><td>Rock Material</td><td>]]>
-           <xsl:call-template name="make-popup-url">
-               <xsl:with-param name="friendly-name" select="$rockMaterial"/>
-               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$rockMaterial)"/>
-           </xsl:call-template><![CDATA[</td></tr>]]>
-           <![CDATA[<tr><td>Proportion</td><td>]]>
-           <xsl:call-template name="make-popup-url">
-               <xsl:with-param name="friendly-name" select="$proportion"/>
-               <xsl:with-param name="real-url" select = "concat($vocab-hard-coded-lookupCGI,$proportion)"/>
-           </xsl:call-template><![CDATA[</td></tr>]]>
-           <![CDATA[<tr><td>Weathering Description</td><td>]]><xsl:value-of select="./gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href"/><![CDATA[</td></tr>]]>
-           <![CDATA[</table></div>]]>
-        </description>
-
-        <xsl:apply-templates select="./gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point"/>
-     </Placemark>
-   </xsl:template>
-
-
-
    <!-- TEMPLATE FOR TRANSLATING GNSS -->
    <!-- ================================================================= -->
    <xsl:template match="gml:featureMembers/sa:SamplingPoint">

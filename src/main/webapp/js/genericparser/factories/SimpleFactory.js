@@ -27,6 +27,7 @@ GenericParser.Factory.SimpleFactory = Ext.extend(GenericParser.Factory.BaseFacto
     parseNode : function(domNode, wfsUrl, rootCfg) {
         // Turn our DOM Node in an ExtJS Tree
         var rootNode = this._createTreeNode(domNode);
+        var gmlId = this._evaluateXPathString(domNode, '@gml:id');
         this._parseXmlTree(domNode, rootNode);
         rootNode.expanded = true;
 
@@ -46,7 +47,6 @@ GenericParser.Factory.SimpleFactory = Ext.extend(GenericParser.Factory.BaseFacto
         }
 
         Ext.apply(rootCfg, {
-            title : String.format('Node Information for {0}', domNode.tagName),
             layout : 'fit',
             height : 300,
             items : [{
@@ -54,6 +54,19 @@ GenericParser.Factory.SimpleFactory = Ext.extend(GenericParser.Factory.BaseFacto
                 autoScroll : true,
                 rootVisible : true,
                 root : rootNode
+            }],
+            buttons : [{
+                xtype : 'button',
+                text : 'Download Feature',
+                iconCls : 'download',
+                handler : function() {
+                    var getXmlUrl = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "requestFeature.do" + "?" +
+                        "serviceUrl=" + wfsUrl + "&typeName=" + domNode.nodeName +
+                        "&featureId=" + gmlId;
+
+                    var url = 'downloadGMLAsZip.do?serviceUrls=' + escape(getXmlUrl);
+                    FileDownloader.downloadFile(url);
+                }
             }]
          });
 

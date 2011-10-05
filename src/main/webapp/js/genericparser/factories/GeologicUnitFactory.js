@@ -1,5 +1,5 @@
 /**
- * Abstract base class for all Generic Parser factories to inherit from.
+ * A factory for parsing a gsml:GeologicUnit element.
  */
 Ext.ns('GenericParser.Factory');
 GenericParser.Factory.GeologicUnitFactory = Ext.extend(GenericParser.Factory.BaseFactory, {
@@ -11,16 +11,10 @@ GenericParser.Factory.GeologicUnitFactory = Ext.extend(GenericParser.Factory.Bas
         GenericParser.Factory.GeologicUnitFactory.superclass.constructor.call(this, cfg);
     },
 
-    /**
-     * The simple node supports EVERY type of node as it only displays simplistic information
-     * and is intended to be the 'catch all' factory for parsing nodes that have no specific
-     * factory written
-     */
     supportsNode : function(domNode) {
         return domNode.namespaceURI === this.XMLNS_GSML_2 &&
                domNode.localName === 'GeologicUnit';
     },
-
 
     /**
      * Generates a simple tree panel that represents the specified node
@@ -33,6 +27,12 @@ GenericParser.Factory.GeologicUnitFactory = Ext.extend(GenericParser.Factory.Bas
         var rockMaterial = this._evaluateXPathString(domNode, 'gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href');
         var proportion = this._evaluateXPathString(domNode, 'gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value');
         var weatheringDesc = this._evaluateXPathString(domNode, 'gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href');
+
+        //Figure out our located specimen id
+        var geoUnitPrefix = 'geologicUnit_';
+        var locSpecimenFeatureId = 'locatedSpecimen_' + gmlId.substring(geoUnitPrefix.length);
+
+        var geoUnitFact = this;
 
         //Build our component
         Ext.apply(rootCfg, {
@@ -70,11 +70,51 @@ GenericParser.Factory.GeologicUnitFactory = Ext.extend(GenericParser.Factory.Bas
             buttons : [{
                 xtype : 'button',
                 text : 'Download Chemistry',
-                iconCls : 'download'
+                iconCls : 'download',
+                handler : function() {
+                    //Generate our URL (with params) and make the download
+                    var key = 'serviceUrls';
+                    var locSpecLink=window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "requestFeature.do" + "?" +
+                    "serviceUrl=" + wfsUrl + "&typeName=" + "sa:LocatedSpecimen" +
+                    "&featureId=" + locSpecimenFeatureId;
+
+                    var geoLink = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "requestFeature.do" + "?" +
+                        "serviceUrl=" + wfsUrl + "&typeName=" + "gsml:GeologicUnit" +
+                        "&featureId=" + gmlId;
+
+                    var url = 'downloadLocSpecAsZip.do?';
+                    url += '&' + key + '=' + escape(locSpecLink);
+                    url += '&' + key + '=' + escape(geoLink);
+
+                    FileDownloader.downloadFile(url);
+                }
             },{
                 xtype : 'button',
                 text : 'Chemistry Details',
-                iconCls : 'info'
+                iconCls : 'info',
+                handler : function() {
+                    var wfsParser = new GenericParser.WFSParser({
+                        wfsUrl : wfsUrl,
+                        typeName : 'sa:LocatedSpecimen',
+                        featureId : locSpecimenFeatureId,
+                        rootCfg : {
+                            autoScroll : true
+                        }
+                    });
+
+                    wfsParser.makeWFSRequest(function(wfsParser, rootCmp) {
+                        if (rootCmp) {
+                            var popup = new Ext.Window({
+                                title: 'Specimen Chemical Analyses',
+                                layout : 'fit',
+                                width : 1000,
+                                height : 500,
+                                items : [rootCmp]
+                            });
+                            popup.show();
+                        }
+                    });
+                }
             }]
         });
         return new GenericParser.BaseComponent(rootCfg);

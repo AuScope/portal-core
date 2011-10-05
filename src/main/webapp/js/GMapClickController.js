@@ -20,17 +20,63 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
         var wfsUrl = parentOnlineResource.url;
         var wfsTypeName = parentOnlineResource.name;
 
-        //Parse the parameters to our iframe popup and get that to request the raw gml
-        var html = '<iframe src="genericparser.html';
-        html += '?serviceUrl=' + wfsUrl;
-        html += '&typeName=' + wfsTypeName;
-        html += '&featureId=' + gmlID;
-        html += '" width="600" height="350"/>';
+        //Open an info window with a simple HTML div. This will be the 'frame' that the window contents
+        //will be rendered to (after it loads)
+        var maxWidth = 600;
+        var maxHeight = 300;
+        var divId = 'generic-parser-popup';
+        var html = '<html><body><div id="' + divId + '" style="width: ' + maxWidth + 'px; height: ' + maxHeight  +'px;"></div></body></html>';
+        var loc = null;
         if (overlay instanceof GMarker) {
-            overlay.openInfoWindowHtml(html);
+            loc = overlay;
         } else {
-            map.openInfoWindowHtml(overlay.getBounds().getCenter(), html);
+            loc = overlay.getBounds().getCenter();
         }
+        var params = {
+            divId : divId,
+            maxWidth : maxWidth,
+            maxHeight : maxHeight,
+            wfsUrl : wfsUrl,
+            wfsTypeName : wfsTypeName,
+            gmlID : gmlID
+        };
+        var infoWindowParams = undefined;
+
+        //When the window opens, render a generic parser Ext JS panel to the div
+        mapInfoWindowManager.openInfoWindow(loc, html,infoWindowParams, function(map, loc, params) {
+
+            //Also ensure that the user sees a loading icon instead of a blank popup
+            var loadMask = new Ext.LoadMask(params.divId, {
+                removeMask : true
+            });
+            loadMask.show();
+
+            //Before we can render our component we need to have the WFS response
+            var wfsParser = new GenericParser.WFSParser({
+                wfsUrl : params.wfsUrl,
+                typeName : params.wfsTypeName,
+                featureId : params.gmlID,
+                rootCfg : {
+                    renderTo : params.divId, //This is crucial, it ensures we bind our parsed component to our empty div
+                    width : params.maxWidth,
+                    height : params.maxHeight,
+                    autoScroll : true
+                }
+            });
+
+            //Make the request and on response hide our loading / show any errors
+            wfsParser.makeWFSRequest(function(wfsParser, rootCmp) {
+                loadMask.hide();
+                if (!rootCmp) {
+                    Ext.MessageBox.show({
+                        buttons : Ext.MessageBox.OK,
+                        icon : Ext.MessageBox.WARNING,
+                        msg : 'There was an error requesting information about this feature. Please try again later.',
+                        title : 'Warning'
+                    });
+                }
+            });
+        }, params);
 
         return true;
     }

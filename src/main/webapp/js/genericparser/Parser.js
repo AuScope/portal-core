@@ -16,12 +16,13 @@ GenericParser.Parser = Ext.extend(Ext.util.Observable, {
     constructor : function(cfg) {
         GenericParser.Parser.superclass.constructor.call(this, cfg);
 
-        //The following ordering is important as it dicates the order in which to try
+        //The following ordering is important as it dictates the order in which to try
         //factories for parsing a particular node
         var cfg = {
             genericParser : this,
         };
         this.factoryList.push(new GenericParser.Factory.GeologicUnitFactory(cfg));
+        this.factoryList.push(new GenericParser.Factory.LocatedSpecimenFactory(cfg));
         this.factoryList.push(new GenericParser.Factory.SimpleFactory(cfg));//The simple factory should always go last
     },
 
@@ -33,6 +34,12 @@ GenericParser.Parser = Ext.extend(Ext.util.Observable, {
      * @param rootCfg [Optional] An Object whose properties will be applied to the top level component parsed (a GenericParser.BaseComponent instance)
      */
     parseNode : function(domNode, wfsUrl, rootCfg) {
+
+        //In the event of an empty node, return an empty component
+        if (!domNode) {
+            return new GenericParser.BaseComponent((rootCfg ? rootCfg : {}));
+        }
+
         for (var i = 0; i < this.factoryList.length; i++) {
             if (this.factoryList[i].supportsNode(domNode)) {
                 return this.factoryList[i].parseNode(domNode, wfsUrl, (rootCfg ? rootCfg : {}));
