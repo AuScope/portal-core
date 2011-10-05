@@ -155,7 +155,12 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
      */
     _evaluateXPathNodeArray : function(domNode, xPath) {
         var document = domNode.ownerDocument;
-        var xpathResult = document.evaluate(xPath, domNode, document.createNSResolver(domNode), XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+        var xpathResult = null;
+        try {
+            xpathResult = document.evaluate(xPath, domNode, document.createNSResolver(domNode), XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+        } catch(err) {
+            return [];
+        }
         var matchingNodes = [];
 
         var matchingNode = xpathResult.iterateNext();
