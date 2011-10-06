@@ -31,6 +31,7 @@
                 <ref bean="knownTypeHighPSiteIronLayer"/>
                 <ref bean="knownTypeHighPSitePhosLayer"/>
                 <ref bean="knownTypePortals"/>
+                <ref bean="knownTypeGeoNetworks"/>
             </list>
         </constructor-arg>
     </bean>

@@ -472,4 +472,25 @@
         </constructor-arg>
         <property name="hidden" value="true"/>
     </bean>
+    <!-- This layer is NOT selectable, it is only used for hiding these features -->
+    <bean id="knownTypeGeoNetworks" class="org.auscope.portal.server.web.KnownLayerKeywords">
+        <constructor-arg name="title" value="GeoNetworks"/>
+        <constructor-arg name="description" value="A collection of GeoNetwork instances"/>
+        <constructor-arg name="descriptiveKeyword" value="GeoNetwork"/>
+        <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-square.png"/>
+        <constructor-arg name="iconAnchor">
+            <bean class="java.awt.Point">
+                <constructor-arg index="0" value="16"/>
+                <constructor-arg index="1" value="32"/>
+            </bean>
+        </constructor-arg>
+        <constructor-arg name="iconSize">
+            <bean class="java.awt.Dimension">
+                <constructor-arg index="0" value="32"/>
+                <constructor-arg index="1" value="32"/>
+            </bean>
+        </constructor-arg>
+        <property name="hidden" value="true"/>
+    </bean>
+
 </beans>

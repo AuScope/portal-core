@@ -33,6 +33,7 @@
                 <ref bean="knownTypeHighPSiteIronLayer"/>
                 <ref bean="knownTypeHighPSitePhosLayer"/>
                 <ref bean="knownTypePortals"/>
+                <ref bean="knownTypeGeoNetworks"/>
             </list>
         </constructor-arg>
     </bean>
@@ -41,6 +42,7 @@
         <constructor-arg>
             <list>
                 <ref bean="cswMDUTest" />
+                <ref bean="cswAuscopeTest" />
             </list>
         </constructor-arg>
     </bean>
