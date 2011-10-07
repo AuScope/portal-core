@@ -19,7 +19,7 @@ GenericParser.Parser = Ext.extend(Ext.util.Observable, {
         //The following ordering is important as it dictates the order in which to try
         //factories for parsing a particular node
         var cfg = {
-            genericParser : this,
+            genericParser : this
         };
         this.factoryList.push(new GenericParser.Factory.GeologicUnitFactory(cfg));
         this.factoryList.push(new GenericParser.Factory.LocatedSpecimenFactory(cfg));

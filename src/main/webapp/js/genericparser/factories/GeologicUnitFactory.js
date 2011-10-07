@@ -13,7 +13,7 @@ GenericParser.Factory.GeologicUnitFactory = Ext.extend(GenericParser.Factory.Bas
 
     supportsNode : function(domNode) {
         return domNode.namespaceURI === this.XMLNS_GSML_2 &&
-               domNode.localName === 'GeologicUnit';
+               this._getNodeLocalName(domNode) === 'GeologicUnit';
     },
 
     /**

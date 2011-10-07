@@ -13,7 +13,7 @@ GenericParser.Factory.LocatedSpecimenFactory = Ext.extend(GenericParser.Factory.
 
     supportsNode : function(domNode) {
         return domNode.namespaceURI === this.XMLNS_SA &&
-               domNode.localName === 'LocatedSpecimen';
+               this._getNodeLocalName(domNode) === 'LocatedSpecimen';
     },
 
     /**
@@ -24,6 +24,10 @@ GenericParser.Factory.LocatedSpecimenFactory = Ext.extend(GenericParser.Factory.
         var gmlId = this._evaluateXPathString(domNode, '@gml:id');
         var allAnalyteNodes = this._evaluateXPathNodeArray(domNode, 'sa:relatedObservation/om:Observation/om:result/swe:Quantity/gml:name');
         var materialClass = this._evaluateXPathString(domNode, 'sa:materialClass');
+
+        if (!materialClass) {
+            materialClass = '';
+        }
 
         var allAnalytes = [];
         for (var i = 0; i < allAnalyteNodes.length; i++) {

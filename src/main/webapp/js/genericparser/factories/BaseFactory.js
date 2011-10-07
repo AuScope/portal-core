@@ -2,6 +2,7 @@
  * Abstract base class for all Generic Parser factories to inherit from.
  */
 Ext.ns('GenericParser.Factory');
+
 GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
 
     //Namespace Constants
@@ -16,6 +17,11 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
     XML_NODE_ATTRIBUTE : 2,
     XML_NODE_TEXT : 3,
 
+    //XPath Constants (have to be copied due to IE)
+    XPATH_STRING_TYPE : undefined,
+    XPATH_UNORDERED_NODE_ITERATOR_TYPE : undefined,
+
+
     //Reference back to genericParser that spawned this factory. Use
     //this reference to parse nodes that your factory cannot handle.
     genericParser : null,
@@ -28,6 +34,15 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
      */
     constructor : function(cfg) {
         this.genericParser = cfg.genericParser;
+
+        //IE and Safari dont have xPath so we need to work around that
+        if (Ext.isIE || Ext.isSafari) {
+            this.XPATH_STRING_TYPE = 0;
+            this.XPATH_UNORDERED_NODE_ITERATOR_TYPE = 1;
+        } else {
+            this.XPATH_STRING_TYPE = XPathResult.STRING_TYPE;
+            this.XPATH_UNORDERED_NODE_ITERATOR_TYPE = XPathResult.UNORDERED_NODE_ITERATOR_TYPE;
+        }
 
         GenericParser.Factory.BaseFactory.superclass.constructor.call(this, cfg);
     },
@@ -56,6 +71,15 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
      */
     parseNode : function(domNode, wfsUrl, rootCfg) {
         return new GenericParser.BaseComponent(rootCfg);
+    },
+
+    /**
+     * Utility for retrieving a W3C DOM Node 'localName' attribute across browsers.
+     *
+     * The localName is the node name without any namespace prefixes
+     */
+    _getNodeLocalName : function(domNode) {
+        return domNode.localName ? domNode.localName : domNode.baseName;
     },
 
     /**
@@ -151,13 +175,57 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
     },
 
     /**
+     * Because not every browser supports document.evaluate we need to have a pure javascript
+     * backup in place
+     */
+    _evaluateXPath : function(document, domNode, xPath, resultType) {
+        if (document.evaluate) {
+            return document.evaluate(xPath, domNode, document.createNSResolver(domNode), resultType, null);
+        } else {
+            //This gets us a list of dom nodes
+            var matchingNodeArray = XPath.selectNodes(xPath, domNode);
+            if (!matchingNodeArray) {
+                matchingNodeArray = [];
+            }
+
+            //we need to turn that into an XPathResult object (or an emulation of one)
+            switch(resultType) {
+            case this.XPATH_STRING_TYPE:
+                var stringValue = null;
+                if (matchingNodeArray.length > 0) {
+                    stringValue = this._getNodeTextContent(matchingNodeArray[0]);
+                }
+
+                return {
+                    stringValue : stringValue
+                };
+            case this.XPATH_UNORDERED_NODE_ITERATOR_TYPE:
+                return {
+                    _arr : matchingNodeArray,
+                    _i : 0,
+                    iterateNext : function() {
+                        if (this._i >= this._arr.length) {
+                            return null;
+                        } else  {
+                            return this._arr[this._i++];
+                        }
+                    }
+                };
+
+            }
+
+            throw 'Unrecognised resultType';
+        }
+    },
+
+    /**
      * Evaluates an Xpath for returning a node array
      */
     _evaluateXPathNodeArray : function(domNode, xPath) {
         var document = domNode.ownerDocument;
         var xpathResult = null;
         try {
-            xpathResult = document.evaluate(xPath, domNode, document.createNSResolver(domNode), XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+            xpathResult = this._evaluateXPath(document, domNode, xPath, this.XPATH_UNORDERED_NODE_ITERATOR_TYPE);
         } catch(err) {
             return [];
         }
@@ -177,8 +245,7 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
      */
     _evaluateXPathString : function(domNode, xPath) {
         var document = domNode.ownerDocument;
-        var xpathResult = document.evaluate(xPath, domNode, document.createNSResolver(domNode), XPathResult.STRING_TYPE, null);
-
+        var xpathResult = this._evaluateXPath(document, domNode, xPath, this.XPATH_STRING_TYPE);
         return xpathResult.stringValue;
     }
 });

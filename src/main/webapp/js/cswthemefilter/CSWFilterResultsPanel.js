@@ -40,7 +40,7 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
                 dataIndex : 'serviceName',
                 renderer : function(value, p, record) {
                     return String.format('<div><b>{0}</b></div>', value);
-                },
+                }
             },{
                 id : 'recordType',
                 header : '',
@@ -270,7 +270,7 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
         }
 
         return selectedRecords;
-    },
+    }
 });
 
 Ext.reg('cswresultspanel', CSWFilterResultsPanel);
