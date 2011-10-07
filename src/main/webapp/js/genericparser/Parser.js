@@ -23,6 +23,7 @@ GenericParser.Parser = Ext.extend(Ext.util.Observable, {
         };
         this.factoryList.push(new GenericParser.Factory.GeologicUnitFactory(cfg));
         this.factoryList.push(new GenericParser.Factory.LocatedSpecimenFactory(cfg));
+        this.factoryList.push(new GenericParser.Factory.BoreholeFactory(cfg));
         this.factoryList.push(new GenericParser.Factory.SimpleFactory(cfg));//The simple factory should always go last
     },
 

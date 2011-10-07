@@ -160,6 +160,15 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
     },
 
     /**
+     * Makes a HTML string containing an anchor with the specified content.
+     * The anchor element will be configured to open another window on click that gets
+     * data from the specified URL
+     */
+    _makeGeneralPopupHtml : function(url, content, qtip) {
+        return String.format('<a href="#" qtip="{2}" onclick="var w=window.open(\'{0}\',\'AboutWin\',\'toolbar=no, menubar=no,location=no,resizable=yes,scrollbars=yes,statusbar=no,height=450,width=820\');w.focus();return false;">{1}</a>',url, content, qtip ? qtip : '');
+    },
+
+    /**
      * Makes a HTML string containing an Anchor element with the specified content.
      * The anchor element will be configured to open a RDF Popup window on click that gets
      * data from the specified URI
