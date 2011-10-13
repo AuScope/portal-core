@@ -9,7 +9,9 @@ import java.io.Serializable;
  */
 public abstract class ViewVariable implements Serializable {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * This should be overridden in any sub classes.
      */
     protected String type = "undefined";

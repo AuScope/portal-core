@@ -44,7 +44,7 @@ public class YilgarnLocSpecimenRecords {
         String timeDateExpression = "om:Observation/om:samplingTime/gml:TimeInstant/gml:timePosition";
         tempNode = (Node)xPath.evaluate(timeDateExpression, node, XPathConstants.NODE);
         String dateAndTime = tempNode != null ? tempNode.getTextContent() : "";
-        dateAndTime.replaceAll("^\\s+", "");
+
         String[] dateTime = dateAndTime.split(" ");
         date = dateTime[0];
 

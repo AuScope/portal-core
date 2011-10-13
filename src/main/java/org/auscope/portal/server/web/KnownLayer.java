@@ -8,7 +8,9 @@ import java.io.Serializable;
  *
  */
 public abstract class KnownLayer implements Serializable {
-    protected String title;
+
+	private static final long serialVersionUID = 1L;
+	protected String title;
     protected String description;
     protected String id;
     protected boolean hidden;

@@ -6,7 +6,11 @@ package org.auscope.portal.server.web;
  *
  */
 public class KnownLayerWMS extends KnownLayer {
-    protected String layerName;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	protected String layerName;
     protected String styleName;
     protected String[] relatedLayerNames;
 

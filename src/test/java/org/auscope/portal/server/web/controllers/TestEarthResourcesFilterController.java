@@ -65,7 +65,7 @@ public class TestEarthResourcesFilterController {
         this.httpMethodBase = context.mock(HttpMethodBase.class);
         this.mockHttpClient = context.mock(HttpClient.class);
         this.earthResourcesFilterController = new EarthResourcesFilterController(
-        		this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService, 
+        		this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService,
         		this.mockGmlToKml, this.mockCommodityService, this.mockHttpServiceCaller);
     }
 
@@ -105,8 +105,8 @@ public class TestEarthResourcesFilterController {
         final StringWriter jsonResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
-            
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
+
             oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
@@ -144,8 +144,8 @@ public class TestEarthResourcesFilterController {
         final StringWriter jsonResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
-            
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
+
             oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
@@ -183,7 +183,7 @@ public class TestEarthResourcesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
             oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(expectedGML));
@@ -222,7 +222,7 @@ public class TestEarthResourcesFilterController {
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
             oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
             oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(expectedGML));
@@ -264,7 +264,7 @@ public class TestEarthResourcesFilterController {
             oneOf (mockHttpResponse).setContentType(with(any(String.class)));
             oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
 
-            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL)));
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));

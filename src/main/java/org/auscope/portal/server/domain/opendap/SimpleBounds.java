@@ -8,7 +8,9 @@ import java.io.Serializable;
  *
  */
 public class SimpleBounds implements Serializable {
-    private double from;
+
+	private static final long serialVersionUID = 1L;
+	private double from;
     private double to;
 
     /**

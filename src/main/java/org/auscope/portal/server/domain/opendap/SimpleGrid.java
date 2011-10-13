@@ -9,7 +9,9 @@ import java.util.Arrays;
  */
 public class SimpleGrid extends ViewVariable {
 
-    public static final String TYPE_STRING = "grid";
+	private static final long serialVersionUID = 1L;
+
+	public static final String TYPE_STRING = "grid";
 
     private ViewVariable[] axes;
 

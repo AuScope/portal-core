@@ -10,7 +10,9 @@ import java.awt.Point;
  *
  */
 public class KnownLayerKeywords extends KnownLayer {
-    protected String descriptiveKeyword;
+
+	private static final long serialVersionUID = 1L;
+	protected String descriptiveKeyword;
     protected String iconUrl;
     protected Point iconAnchor;
     protected Dimension iconSize;

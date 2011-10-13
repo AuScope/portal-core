@@ -26,7 +26,9 @@ import org.w3c.dom.NodeList;
  */
 public class DescribeCoverageRecord implements Serializable {
 
-    private final Log logger = LogFactory.getLog(DescribeCoverageRecord.class);
+	private static final long serialVersionUID = 1L;
+
+	private final Log logger = LogFactory.getLog(DescribeCoverageRecord.class);
 
     private String description;
     private String name;

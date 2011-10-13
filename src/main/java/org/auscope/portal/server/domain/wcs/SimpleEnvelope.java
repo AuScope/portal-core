@@ -14,7 +14,8 @@ import org.w3c.dom.NodeList;
  */
 public class SimpleEnvelope implements SpatialDomain  {
 
-    private String srsName;
+	private static final long serialVersionUID = 1L;
+	private String srsName;
     private String type;
     private double southBoundLatitude;
     private double northBoundLatitude;

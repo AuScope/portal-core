@@ -11,7 +11,12 @@ import org.w3c.dom.Node;
  */
 public class Interval implements ValueEnumType {
 
-    private String type;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String type;
 
     private Double min;
     private Double max;

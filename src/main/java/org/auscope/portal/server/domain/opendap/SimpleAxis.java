@@ -7,7 +7,9 @@ package org.auscope.portal.server.domain.opendap;
  */
 public class SimpleAxis extends ViewVariable {
 
-    public static final String TYPE_STRING = "axis";
+	private static final long serialVersionUID = 1L;
+
+	public static final String TYPE_STRING = "axis";
 
     private SimpleBounds dimensionBounds;
     private SimpleBounds valueBounds;
