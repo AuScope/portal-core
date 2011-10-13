@@ -96,7 +96,7 @@ public class VocabController extends BasePortalController {
             String labelString = "";
             String scopeNoteString = "";
             String definitionString = "";
-            if (concepts != null || concepts.length > 0) {
+            if (concepts != null && concepts.length > 0) {
                 labelString = concepts[0].getPreferredLabel();
                 scopeNoteString = concepts[0].getDefinition();  //this is for legacy support
                 definitionString = concepts[0].getDefinition();
