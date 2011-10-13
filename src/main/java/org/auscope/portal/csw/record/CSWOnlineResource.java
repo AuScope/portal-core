@@ -68,7 +68,7 @@ public abstract class CSWOnlineResource {
      * @return
      */
     public abstract String getApplicationProfile();
-    
+
     /**
      * Gets a simplification of the protocol that this online resource represents.
      * @return

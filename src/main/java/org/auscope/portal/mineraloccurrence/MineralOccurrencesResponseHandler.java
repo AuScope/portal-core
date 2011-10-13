@@ -28,7 +28,7 @@ import org.w3c.dom.NodeList;
  */
 @Repository
 public class MineralOccurrencesResponseHandler {
-	protected final Log log = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
 
     public List<Mine> getMines(String mineResponse) throws Exception {
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
@@ -96,7 +96,7 @@ public class MineralOccurrencesResponseHandler {
             Node result = (Node)expr.evaluate(mineralOccurrenceDocument, XPathConstants.NODE);
             return Integer.parseInt(result.getAttributes().getNamedItem("numberOfFeatures").getTextContent());
         } catch (Exception e) {
-        	return 0;
+            return 0;
 
         }
     }

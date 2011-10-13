@@ -18,9 +18,9 @@ import org.w3c.dom.NodeList;
  *
  */
 public class PressureDBExceptionParser {
-    
+
     private static final Log log = LogFactory.getLog(OWSExceptionParser.class);
-    
+
     /**
      * Will attempt to parse an <DataServiceError> element
      *

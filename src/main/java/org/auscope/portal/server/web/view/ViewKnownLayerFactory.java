@@ -2,9 +2,6 @@ package org.auscope.portal.server.web.view;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.auscope.portal.server.web.KnownLayer;
 import org.auscope.portal.server.web.KnownLayerKeywords;
 import org.auscope.portal.server.web.KnownLayerWFS;
@@ -20,39 +17,39 @@ import org.springframework.ui.ModelMap;
 @Repository
 public class ViewKnownLayerFactory {
 
-	private ModelMap toView(Dimension d) {
-		ModelMap obj = new ModelMap();
+    private ModelMap toView(Dimension d) {
+        ModelMap obj = new ModelMap();
 
-		obj.put("width", d.getWidth());
-		obj.put("height", d.getHeight());
+        obj.put("width", d.getWidth());
+        obj.put("height", d.getHeight());
 
-		return obj;
-	}
+        return obj;
+    }
 
-	private ModelMap toView(Point p) {
-		ModelMap obj = new ModelMap();
+    private ModelMap toView(Point p) {
+        ModelMap obj = new ModelMap();
 
-		obj.put("x", p.getX());
-		obj.put("y", p.getY());
+        obj.put("x", p.getX());
+        obj.put("y", p.getY());
 
-		return obj;
-	}
-	
-	private ModelMap baseToView(KnownLayer k) {
-	    ModelMap obj = new ModelMap();
-	    
-	    obj.put("title", k.getTitle());
+        return obj;
+    }
+
+    private ModelMap baseToView(KnownLayer k) {
+        ModelMap obj = new ModelMap();
+
+        obj.put("title", k.getTitle());
         obj.put("hidden", k.isHidden());
         obj.put("description",k.getDescription());
         obj.put("id", k.getId());
         obj.put("group", k.getGroup());
-        
-        
-        return obj;
-	}
 
-	public ModelMap toView(KnownLayerKeywords k) {
-	    ModelMap obj = baseToView(k);
+
+        return obj;
+    }
+
+    public ModelMap toView(KnownLayerKeywords k) {
+        ModelMap obj = baseToView(k);
 
         obj.put("type", "KnownLayerKeywords");
         obj.put("descriptiveKeyword", k.getDescriptiveKeyword());
@@ -69,12 +66,12 @@ public class ViewKnownLayerFactory {
         }
 
         return obj;
-	}
+    }
 
-	public ModelMap toView(KnownLayerWFS k) {
-	    ModelMap obj = baseToView(k);
+    public ModelMap toView(KnownLayerWFS k) {
+        ModelMap obj = baseToView(k);
 
-	    obj.put("type", "KnownLayerWFS");
+        obj.put("type", "KnownLayerWFS");
         obj.put("featureTypeName", k.getFeatureTypeName());
         obj.put("proxyUrl", k.getProxyUrl());
         obj.put("iconUrl", k.getIconUrl());
@@ -101,8 +98,8 @@ public class ViewKnownLayerFactory {
         return obj;
     }
 
-	public ModelMap toView(KnownLayerWMS k) {
-	    ModelMap obj = baseToView(k);
+    public ModelMap toView(KnownLayerWMS k) {
+        ModelMap obj = baseToView(k);
 
         obj.put("type", "KnownLayerWMS");
         obj.put("layerName", k.getLayerName());
@@ -114,20 +111,20 @@ public class ViewKnownLayerFactory {
 
 
 
-	/**
-	 * Converts a KnownFeatureTypeDefinition into its view equivalent
-	 * @param k
-	 * @return
-	 */
-	public ModelMap toView(KnownLayer k) {
-		if (k instanceof KnownLayerWFS) {
-		    return toView((KnownLayerWFS) k);
-		} else if (k instanceof KnownLayerWMS) {
-		    return toView((KnownLayerWMS) k);
-		} else if (k instanceof KnownLayerKeywords) {
+    /**
+     * Converts a KnownFeatureTypeDefinition into its view equivalent
+     * @param k
+     * @return
+     */
+    public ModelMap toView(KnownLayer k) {
+        if (k instanceof KnownLayerWFS) {
+            return toView((KnownLayerWFS) k);
+        } else if (k instanceof KnownLayerWMS) {
+            return toView((KnownLayerWMS) k);
+        } else if (k instanceof KnownLayerKeywords) {
             return toView((KnownLayerKeywords) k);
         } else {
             return baseToView(k);
         }
-	}
+    }
 }

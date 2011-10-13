@@ -2,10 +2,8 @@ package org.auscope.portal.csw.record;
 
 import java.io.Serializable;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.csw.CSWNamespaceContext;
 import org.auscope.portal.server.util.DOMUtil;

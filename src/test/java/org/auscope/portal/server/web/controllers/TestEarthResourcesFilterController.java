@@ -21,7 +21,6 @@ import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.service.CommodityService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
-import org.auscope.portal.server.web.service.BoreholeService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;

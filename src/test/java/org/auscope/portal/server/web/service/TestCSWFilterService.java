@@ -9,7 +9,6 @@ import org.auscope.portal.HttpMethodBaseMatcher;
 import org.auscope.portal.HttpMethodBaseMatcher.HttpMethodType;
 import org.auscope.portal.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.csw.CSWGetRecordResponse;
-import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.csw.CSWThreadExecutor;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

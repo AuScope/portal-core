@@ -18,7 +18,6 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.gsml.YilgarnLocSpecimenRecords;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
-import org.auscope.portal.server.web.controllers.TestDownloadController.MyServletOutputStream;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
 import org.jmock.Mockery;

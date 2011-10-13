@@ -9,8 +9,8 @@ import javax.xml.namespace.NamespaceContext;
 
 public class YilgarnNamespaceContext implements NamespaceContext{
 private Map<String, String> map = new HashMap<String, String>();
-    
-    public YilgarnNamespaceContext() {    
+
+    public YilgarnNamespaceContext() {
         map.put("ogc", "http://www.opengis.net/ogc");
         map.put("omx", "http://www.opengis.net/omx/1.0");
         map.put("sa", "http://www.opengis.net/sampling/1.0");
@@ -31,9 +31,9 @@ private Map<String, String> map = new HashMap<String, String>();
     }
 
     public String getNamespaceURI(String prefix) {
-    	if (prefix == null)
+        if (prefix == null)
             throw new IllegalArgumentException("No prefix provided!");
-        
+
         if (map.containsKey(prefix))
             return map.get(prefix);
         else

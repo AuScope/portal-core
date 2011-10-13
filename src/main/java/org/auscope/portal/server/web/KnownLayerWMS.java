@@ -21,7 +21,7 @@ public class KnownLayerWMS extends KnownLayer {
        this.description = description;
        this.layerName = layerName;
     }
-    
+
     /**
      * @param title The descriptive title of this layer
      * @param description The extended description of this layer
@@ -32,7 +32,7 @@ public class KnownLayerWMS extends KnownLayer {
        this(title, description, layerName);
        this.styleName = styleName;
     }
-    
+
     /**
      * Gets the layerName that identifies which WMS this KnownLayer is identifying
      * @return the layerName
@@ -50,8 +50,8 @@ public class KnownLayerWMS extends KnownLayer {
     }
 
     /**
-     * Gets the optional style name used when requesting this WMS (can be null) 
-     * 
+     * Gets the optional style name used when requesting this WMS (can be null)
+     *
      * @return the styleName
      */
     public String getStyleName() {
@@ -60,7 +60,7 @@ public class KnownLayerWMS extends KnownLayer {
 
     /**
      * Sets the optional style name used when requesting this WMS (can be null)
-     * 
+     *
      * @param styleName the styleName to set (can be null)
      */
     public void setStyleName(String styleName) {
@@ -71,17 +71,17 @@ public class KnownLayerWMS extends KnownLayer {
      * Gets all related layer names (layers that are related to this WMS but should not be used for display)
      * @return
      */
-	public String[] getRelatedLayerNames() {
-		return relatedLayerNames;
-	}
+    public String[] getRelatedLayerNames() {
+        return relatedLayerNames;
+    }
 
-	/**
-	 * Sets all related layer names (layers that are related to this WMS but should not be used for display)
-	 * @param relatedLayerNames
-	 */
-	public void setRelatedLayerNames(String[] relatedLayerNames) {
-		this.relatedLayerNames = relatedLayerNames;
-	}
+    /**
+     * Sets all related layer names (layers that are related to this WMS but should not be used for display)
+     * @param relatedLayerNames
+     */
+    public void setRelatedLayerNames(String[] relatedLayerNames) {
+        this.relatedLayerNames = relatedLayerNames;
+    }
 
-    
+
 }

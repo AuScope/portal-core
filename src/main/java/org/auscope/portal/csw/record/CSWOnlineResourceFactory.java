@@ -3,7 +3,6 @@ package org.auscope.portal.csw.record;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;

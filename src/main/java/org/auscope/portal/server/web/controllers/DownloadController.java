@@ -33,11 +33,11 @@ public class DownloadController {
 
     @Autowired
     public DownloadController(HttpServiceCaller serviceCaller) {
-        this.serviceCaller = serviceCaller;        
+        this.serviceCaller = serviceCaller;
     }
 
     /**
-     * Given a list of URls, this function will collate the responses 
+     * Given a list of URls, this function will collate the responses
      * into a zip file and send the response back to the browser.
      *
      * @param serviceUrls
@@ -69,7 +69,7 @@ public class DownloadController {
             JSONObject jsonObject = null;
             try {
                 responseString = serviceCaller.getMethodResponseAsString(method, client);
-                
+
                 logger.trace("Response: " + responseString);
 
                 jsonObject = JSONObject.fromObject( responseString );
@@ -87,31 +87,31 @@ public class DownloadController {
             Object dataObject = jsonObject.get("data");
             Object messageObject = jsonObject.get("msg"); //This will be used as an error string
             if (messageObject == null) {
-            	messageObject = ""; 
+                messageObject = "";
             }
             if (dataObject != null) {
-            	Object gmlResponseObject = JSONObject.fromObject(dataObject).get("gml");
-            	
-            	if (gmlResponseObject != null) {
-            		gmlBytes = gmlResponseObject.toString().getBytes();
-            	}
+                Object gmlResponseObject = JSONObject.fromObject(dataObject).get("gml");
+
+                if (gmlResponseObject != null) {
+                    gmlBytes = gmlResponseObject.toString().getBytes();
+                }
             }
 
             logger.trace(gmlBytes.length);
 
             if(jsonObject.get("success").toString().equals("false")) {
-            	//The server may have returned an error message, if so, lets include it in the filename
-            	String messageString = messageObject.toString();
-            	if (messageString.length() == 0)
-            		messageString = "operation-failed";
-            	
-            	//"Tidy" up the message
-            	messageString = messageString.replace(' ', '_').replace(".", "");
-            	
-            	zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + "-" + messageString + ".xml"));
+                //The server may have returned an error message, if so, lets include it in the filename
+                String messageString = messageObject.toString();
+                if (messageString.length() == 0)
+                    messageString = "operation-failed";
+
+                //"Tidy" up the message
+                messageString = messageString.replace(' ', '_').replace(".", "");
+
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + "-" + messageString + ".xml"));
             } else {
-                //create a new entry in the zip file with a timestamped name 
-            	zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));               
+                //create a new entry in the zip file with a timestamped name
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
             }
 
             zout.write(gmlBytes);
@@ -124,9 +124,9 @@ public class DownloadController {
     }
 
     /**
-     * Given a list of WMS URL's, this function will collate the responses 
+     * Given a list of WMS URL's, this function will collate the responses
      * into a zip file and send the response back to the browser.
-     * 
+     *
      * @param serviceUrls
      * @param filename
      * @param response
@@ -134,11 +134,11 @@ public class DownloadController {
      */
     @RequestMapping("/downloadDataAsZip.do")
     public void downloadDataAsZip( @RequestParam("serviceUrls") final String[] serviceUrls,
-    				              @RequestParam("filename") final String filename,
+                                  @RequestParam("filename") final String filename,
                                   HttpServletResponse response) throws Exception {
 
-    	String filenameStr = filename == null || filename.length() < 0 ? "DataDownload" : filename;
-    	
+        String filenameStr = filename == null || filename.length() < 0 ? "DataDownload" : filename;
+
         //set the content type for zip files
         response.setContentType("application/zip");
         response.setHeader("Content-Disposition","inline; filename=" + filenameStr + ".zip;");

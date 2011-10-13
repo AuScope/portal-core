@@ -15,12 +15,12 @@ public class SpatialDomainFactory {
     public static SpatialDomain parseFromNode(Node node) throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new WCSNamespaceContext());
-        
+
         if (node.getLocalName().equals("Envelope"))
             return new SimpleEnvelope(node, xPath);
         else if (node.getLocalName().equals("EnvelopeWithTimePeriod"))
             return new SimpleEnvelope(node, xPath);
-        else 
+        else
             throw new IllegalArgumentException("unable to parse " + node.getLocalName());
     }
 }

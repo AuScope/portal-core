@@ -70,8 +70,8 @@ public class ViewVariableFactory {
             for (Dimension d : dimensions) {
                 Variable mappedVariable = d.getGroup().findVariable(d.getName());
                 if (mappedVariable == null) {
-                	//If the dimension doesn't map to a variable, we can't pull much information out of it
-                	//So instead we'll have to introduce an axis that only includes dimension bounds
+                    //If the dimension doesn't map to a variable, we can't pull much information out of it
+                    //So instead we'll have to introduce an axis that only includes dimension bounds
                     log.warn(String.format("Dimension '%1$s' has no matching variable in parent group '%2$s'", d, d.getGroup()));
 
                     SimpleAxis axis = new SimpleAxis(d.getName(), DataType.FLOAT.name(), "????", null, null);
@@ -160,7 +160,7 @@ public class ViewVariableFactory {
      * @throws IOException
      */
     public static ViewVariable[] fromNetCDFDataset(NetcdfDataset ds) throws IOException {
-    	return fromNetCDFDataset(ds, null);
+        return fromNetCDFDataset(ds, null);
     }
 
     /**
@@ -176,11 +176,11 @@ public class ViewVariableFactory {
 
         for (Variable var : ds.getVariables()) {
 
-        	if (variableNameFilter != null) {
-        		if (!var.getName().equals(variableNameFilter)) {
-        			continue;
-        		}
-        	}
+            if (variableNameFilter != null) {
+                if (!var.getName().equals(variableNameFilter)) {
+                    continue;
+                }
+            }
 
             ViewVariable parsedViewVar = parseVariableRecursive(var);
             if (parsedViewVar != null)

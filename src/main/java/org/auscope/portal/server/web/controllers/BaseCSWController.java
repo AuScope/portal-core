@@ -1,7 +1,6 @@
 package org.auscope.portal.server.web.controllers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.auscope.portal.csw.record.CSWRecord;

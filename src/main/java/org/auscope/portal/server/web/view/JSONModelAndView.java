@@ -16,13 +16,13 @@ import org.springframework.web.servlet.ModelAndView;
 public class JSONModelAndView extends ModelAndView {
 
     public JSONModelAndView(ModelMap model) {
-        super(new JSONView(), model);   
+        super(new JSONView(), model);
     }
 
     public JSONModelAndView(JSONArray jsonArray) {
-        super(new JSONView(jsonArray), new ModelMap());   
-    }    
-   
-    
+        super(new JSONView(jsonArray), new ModelMap());
+    }
+
+
 
 }

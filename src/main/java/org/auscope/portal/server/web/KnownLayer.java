@@ -13,7 +13,7 @@ public abstract class KnownLayer implements Serializable {
     protected String id;
     protected boolean hidden;
     protected String group;
-    
+
     /**
      * @return the id
      */
@@ -30,13 +30,13 @@ public abstract class KnownLayer implements Serializable {
 
     /**
      * Gets the human readable title of this layer
-     * 
+     *
      * @return the title
      */
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * Sets the human readable title of this layer
      * @param title the title to set
@@ -44,7 +44,7 @@ public abstract class KnownLayer implements Serializable {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     /**
      * Gets the human readable description of this layer
      * @return the description
@@ -68,7 +68,7 @@ public abstract class KnownLayer implements Serializable {
     }
 
     /**
-     * Set whether this layer should by default be hidden and not available for selection. 
+     * Set whether this layer should by default be hidden and not available for selection.
      */
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
@@ -87,8 +87,8 @@ public abstract class KnownLayer implements Serializable {
     public void setGroup(String group) {
         this.group = group;
     }
-    
-    
-    
-    
+
+
+
+
 }

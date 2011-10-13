@@ -14,10 +14,10 @@ import javax.xml.namespace.NamespaceContext;
 public class NVCLNamespaceContext implements NamespaceContext {
 
     public static final String PUBLISHED_DATASETS_TYPENAME = "nvcl:ScannedBoreholeCollection";
-    
+
     private Map<String, String> map = new HashMap<String, String>();
-    
-    public NVCLNamespaceContext() {    
+
+    public NVCLNamespaceContext() {
         map.put("ogc", "http://www.opengis.net/ogc");
         map.put("sa", "http://www.opengis.net/sampling/1.0");
         map.put("om", "http://www.opengis.net/om/1.0");
@@ -25,7 +25,7 @@ public class NVCLNamespaceContext implements NamespaceContext {
         map.put("wfs", "http://www.opengis.net/wfs");
         map.put("gsml", "urn:cgi:xmlns:CGI:GeoSciML:2.0");
         map.put("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        map.put("gml", "http://www.opengis.net/gml");    
+        map.put("gml", "http://www.opengis.net/gml");
         map.put("ows", "http://www.opengis.net/ows");
         map.put("nvcl", "http://www.auscope.org/nvcl");
 };

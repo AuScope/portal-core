@@ -7,7 +7,7 @@ import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 
 /**
  * Service for operations on Commodity objects.
- * 
+ *
  * @author Jarek Sanders
  * @version $Id$
  */
@@ -20,7 +20,7 @@ public interface CommodityService {
      * @throws Exception
      */
     public Collection<Commodity> getAll(String serviceURL, String commodityName, int maxFeatures) throws Exception;
-    
+
     /**
      * Will return (maximum 200) features in the specified bounding box
      * @param serviceURL

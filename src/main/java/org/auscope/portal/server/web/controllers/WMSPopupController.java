@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Controller that handles GetFeatureInfo WMS requests
- * 
+ *
  * @author Jarek Sanders
  * @version $Id$ - %I%, %G%
  */
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class WMSPopupController {
    protected final Log log = LogFactory.getLog(getClass());
-   
+
    @RequestMapping("/wmsMarkerPopup.do")
    public void wmsUnitPopup(HttpServletRequest request,
                             HttpServletResponse response,
@@ -34,11 +34,11 @@ public class WMSPopupController {
                             @RequestParam("QUERY_LAYERS") String query_layers,
                             @RequestParam("x") String x,
                             @RequestParam("y") String y,
-                            @RequestParam("BBOX") String bbox, 
+                            @RequestParam("BBOX") String bbox,
                             @RequestParam("WIDTH") String width,
                             @RequestParam("HEIGHT") String height,
-                            @RequestParam("INFO_FORMAT") String infoFormat) throws IOException 
-   {   
+                            @RequestParam("INFO_FORMAT") String infoFormat) throws IOException
+   {
       String AMP = "&";
       String url = wms_url;
       // "&" character cannot be passed within url string
@@ -65,9 +65,9 @@ public class WMSPopupController {
 
       HttpServiceCaller serviceCaller = new HttpServiceCaller();
       String responseFromCall = serviceCaller.callHttpUrlGET(new URL(url));
-      
+
       log.debug(responseFromCall);
-      
+
       // Send response back to client
       response.getWriter().write(responseFromCall);
    }

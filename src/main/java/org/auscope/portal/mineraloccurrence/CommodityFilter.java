@@ -14,13 +14,13 @@ public class CommodityFilter extends AbstractFilter {
     private String filterFragment;
 
     public CommodityFilter(String commodityName) {
-        if (commodityName.length() > 0) 
+        if (commodityName.length() > 0)
             this.filterFragment = this.generatePropertyIsEqualToFragment("er:commodityName", commodityName);
         else
             this.filterFragment = "";
     }
 
-    
+
     public String getFilterStringAllRecords() {
         return this.generateFilter(filterFragment);
     }
@@ -28,8 +28,8 @@ public class CommodityFilter extends AbstractFilter {
     public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
         return this.generateFilter(
                 this.generateAndComparisonFragment(
-                        this.generateBboxFragment(bbox, "er:occurrence/er:MiningFeatureOccurrence/er:location"), 
+                        this.generateBboxFragment(bbox, "er:occurrence/er:MiningFeatureOccurrence/er:location"),
                         this.filterFragment));
     }
-    
+
 }

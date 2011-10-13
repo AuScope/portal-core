@@ -71,19 +71,19 @@ public class MineralOccurrence {
             return "";
         }
     }
-    
+
     public Collection<String> getCommodityDescriptionURNs() {
-        
+
         try {
             XPathExpression expr = xPath.compile("er:commodityDescription");
             NodeList commodityNodes = (NodeList)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
-            
+
             ArrayList<String> commodityDescriptionURNs = new ArrayList<String>();
 
             for(int i=0; i < commodityNodes.getLength(); i++) {
                 String URN =
                     commodityNodes.item(i).getAttributes().getNamedItem("xlink:href").getTextContent();
-                
+
                 commodityDescriptionURNs.add(URN);
             }
             return commodityDescriptionURNs;

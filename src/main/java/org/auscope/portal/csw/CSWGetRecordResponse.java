@@ -7,19 +7,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.server.util.DOMUtil;
 import org.auscope.portal.server.web.service.CSWServiceItem;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 
 /**
  * Represents the response from a CSW GetRecord request

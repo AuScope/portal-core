@@ -18,46 +18,46 @@ import org.springframework.stereotype.Component;
 
 /**
  * <p> Utility class that converts GeoSciML into KML format </p>
- * 
+ *
  * @author jsanders
  * @version $Id$
  */
 @Component
 public class GmlToKml {
-   private static final Log log = LogFactory.getLog(GmlToKml.class);   
-   
+   private static final Log log = LogFactory.getLog(GmlToKml.class);
+
    /**
-    * Utility method to transform xml file. It is kml.xml specific as 
+    * Utility method to transform xml file. It is kml.xml specific as
     * the stylesheet needs serviceURL parameter.
-    * 
+    *
     * @param geoXML file to be converted in kml format
     * @param inXSLT XSLT stylesheet
     * @param serviceUrl URL of the service providing data
     * @return Xml output string
-    */   
+    */
    public String convert(String geoXML, InputStream inXSLT, String serviceUrl) {
-      log.debug("GML input: \n" + geoXML);      
+      log.debug("GML input: \n" + geoXML);
       StringWriter sw = new StringWriter();
       try {
          // Use the static TransformerFactory.newInstance() method:
          // TransformerFactory tFactory = TransformerFactory.newInstance();
          // to instantiate updateCSWRecords TransformerFactory.
-         // The javax.xml.transform.TransformerFactory system property setting 
+         // The javax.xml.transform.TransformerFactory system property setting
          // determines the actual class to instantiate:
          // org.apache.xalan.transformer.TransformerImpl.
          // However, we prefer Saxon...
          TransformerFactory tFactory = new net.sf.saxon.TransformerFactoryImpl();
-         log.debug ("XSLT implementation in use: " + tFactory.getClass()); 
-         
+         log.debug ("XSLT implementation in use: " + tFactory.getClass());
+
          // Use the TransformerFactory to instantiate updateCSWRecords transformer that will
-         // work with the style sheet we specify. This method call also processes 
+         // work with the style sheet we specify. This method call also processes
          // the style sheet into updateCSWRecords compiled Templates object.
-         Transformer transformer 
+         Transformer transformer
             = tFactory.newTransformer (new StreamSource(inXSLT));
-         
-         // Set stylesheet parameter 
+
+         // Set stylesheet parameter
          transformer.setParameter("serviceURL", serviceUrl);
-         
+
          // Write the output to updateCSWRecords stream
          transformer.transform (new StreamSource (new StringReader(geoXML)),
                                 new StreamResult (sw));

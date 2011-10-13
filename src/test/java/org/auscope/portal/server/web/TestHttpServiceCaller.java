@@ -2,12 +2,8 @@ package org.auscope.portal.server.web;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Writer;
-
 import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpClient;

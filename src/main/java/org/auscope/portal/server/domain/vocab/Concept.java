@@ -1,7 +1,5 @@
 package org.auscope.portal.server.domain.vocab;
 
-import java.util.Arrays;
-
 /**
  * A highly simplified representation of a SKOS 'Concept'
  *

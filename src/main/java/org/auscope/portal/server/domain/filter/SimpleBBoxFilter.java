@@ -17,7 +17,7 @@ public class SimpleBBoxFilter extends AbstractFilter {
     public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
         if (bbox == null)
             return getFilterStringAllRecords();
-        
+
         return this.generateFilter(this.generateBboxFragment(bbox, null));
     }
 }

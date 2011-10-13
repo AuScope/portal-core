@@ -17,7 +17,7 @@ import org.springframework.web.servlet.view.AbstractView;
  *
  * This class is a JSON spring MVC View class which takes a JSONArray and sends the actual json structure down the
  * wire on the httpResponse
- * 
+ *
  */
 public class JSONView extends AbstractView {
     private JSONArray jsonArray;

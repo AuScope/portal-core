@@ -20,12 +20,12 @@ import org.xml.sax.SAXException;
 
 
 /**
- * This class is a wrapper for er:Mine XML feature  
- * 
+ * This class is a wrapper for er:Mine XML feature
+ *
  * @version $Id$
  */
 public class Mine {
-    
+
     protected final Log log = LogFactory.getLog(getClass());
  // private Document mineDocument;
     private Node mineNode;
@@ -38,8 +38,8 @@ public class Mine {
         xPath = factory.newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
     }
-    
-    
+
+
     /*
      * Find a prefered name or the first name you have in the list.
      */
@@ -93,15 +93,15 @@ public class Mine {
         }
     }
 
-    
+
     public List<String> getRelatedMiningActivities() {
         List<String> result = new ArrayList<String>();
         try {
             // Deal with local pointer reference eg. xlink:href="#er.mine.361023
             XPathExpression expr = xPath.compile("er:occurrence/er:MiningFeatureOccurrence/er:specification[starts-with(@xlink:href,'#']");
-            Object relatedNodes = expr.evaluate(mineNode, XPathConstants.NODESET);            
+            Object relatedNodes = expr.evaluate(mineNode, XPathConstants.NODESET);
             NodeList nodes = (NodeList) relatedNodes;
-            
+
             for (int i = 0; i < nodes.getLength(); i++) {
                 log.debug(i + " : " + nodes.item(i).getNodeValue());
                 result.add(nodes.item(i).getNodeValue());
@@ -111,6 +111,6 @@ public class Mine {
         } catch (Exception e) {
             return result;
         }
-    }    
-    
+    }
+
 }

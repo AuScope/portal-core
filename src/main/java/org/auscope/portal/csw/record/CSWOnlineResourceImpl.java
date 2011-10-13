@@ -13,12 +13,12 @@ public class CSWOnlineResourceImpl extends CSWOnlineResource {
     private String name;
     private String description;
     private String applicationProfile;
-    
+
     public CSWOnlineResourceImpl(URL linkage, String protocol, String name,
             String description) {
         this(linkage, protocol, name, description, "");
     }
-    
+
     public CSWOnlineResourceImpl(URL linkage, String protocol, String name,
             String description, String applicationProfile) {
         super();
@@ -28,11 +28,11 @@ public class CSWOnlineResourceImpl extends CSWOnlineResource {
         this.description = description;
         this.applicationProfile = applicationProfile;
     }
-    
+
     public String getApplicationProfile() {
-    	return applicationProfile;
+        return applicationProfile;
     }
-    
+
     public URL getLinkage() {
         return linkage;
     }
@@ -45,5 +45,5 @@ public class CSWOnlineResourceImpl extends CSWOnlineResource {
     public String getDescription() {
         return description;
     }
-    
+
 }

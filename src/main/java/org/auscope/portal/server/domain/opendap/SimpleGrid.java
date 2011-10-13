@@ -10,9 +10,9 @@ import java.util.Arrays;
 public class SimpleGrid extends ViewVariable {
 
     public static final String TYPE_STRING = "grid";
-    
+
     private ViewVariable[] axes;
-    
+
     /**
      * Gets the list of axes that make up this gridded variable
      * @return
@@ -29,7 +29,7 @@ public class SimpleGrid extends ViewVariable {
         this.axes = axes;
     }
 
-    public SimpleGrid(String name, String dataType, String units, 
+    public SimpleGrid(String name, String dataType, String units,
             ViewVariable[] axes) {
         super();
         this.name = name;

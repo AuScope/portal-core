@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.auscope.portal.server.web.KnownLayer;
-import org.auscope.portal.server.web.view.JSONModelAndView;
 import org.auscope.portal.server.web.view.ViewKnownLayerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

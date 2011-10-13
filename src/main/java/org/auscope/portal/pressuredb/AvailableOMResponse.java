@@ -21,9 +21,9 @@ public class AvailableOMResponse implements Serializable {
     private boolean salinityNacl;
     private boolean salinityCl;
     private boolean temperatureT;
-    
-    
-    
+
+
+
     /**
      * @return the omUrl
      */
@@ -168,6 +168,6 @@ public class AvailableOMResponse implements Serializable {
     public void setTemperatureT(boolean temperatureT) {
         this.temperatureT = temperatureT;
     }
-    
-    
+
+
 }

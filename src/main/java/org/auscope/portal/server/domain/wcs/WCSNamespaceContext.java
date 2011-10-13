@@ -13,8 +13,8 @@ import javax.xml.namespace.NamespaceContext;
  */
 public class WCSNamespaceContext implements NamespaceContext {
     private Map<String, String> map = new HashMap<String, String>();
-    
-    public WCSNamespaceContext() {    
+
+    public WCSNamespaceContext() {
         map.put("wcs", "http://www.opengis.net/wcs");
         map.put("gml", "http://www.opengis.net/gml");
         map.put("xlink", "http://www.w3.org/1999/xlink");

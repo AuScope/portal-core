@@ -3,7 +3,7 @@ package org.auscope.portal.server.web;
 import org.apache.commons.httpclient.HttpMethodBase;
 
 /**
- * Implementors will provide methods that will generate a request that will describe a coverage (as opposed to 
+ * Implementors will provide methods that will generate a request that will describe a coverage (as opposed to
  * returning its raw data).
  * @author vot002
  *

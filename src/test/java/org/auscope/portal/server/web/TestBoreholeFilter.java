@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.server.domain.ogc.FilterTestUtilities;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;

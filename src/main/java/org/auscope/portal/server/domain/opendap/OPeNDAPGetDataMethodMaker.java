@@ -15,7 +15,7 @@ public interface OPeNDAPGetDataMethodMaker {
         ASCII,
         DODS
     }
-    
+
     /**
      * Gets the HTTP Method that will make a get data request
      * @param opendapUrl The url to make the request to

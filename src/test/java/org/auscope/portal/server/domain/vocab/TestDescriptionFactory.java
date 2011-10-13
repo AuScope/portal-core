@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-
 import org.auscope.portal.Util;
 import org.auscope.portal.server.util.DOMUtil;
 import org.junit.Assert;

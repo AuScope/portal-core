@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
  * @version $Id$
  */
 public class Commodity {
-	protected final Log log = LogFactory.getLog(getClass());
+    protected final Log log = LogFactory.getLog(getClass());
     private Node commodityNode;
     private XPath xPath;
 
@@ -48,10 +48,10 @@ public class Commodity {
         } catch (Exception e) {
             return "";
         }
-    }    
-    
+    }
+
     public String getCommodityName() throws XPathExpressionException {
-        
+
         try {
             XPathExpression expr = xPath.compile("er:commodityName");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
@@ -63,7 +63,7 @@ public class Commodity {
     }
 
     public String getCommodityImportance() throws XPathExpressionException {
-        
+
         try {
             XPathExpression expr = xPath.compile("er:commodityImportance");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
@@ -73,7 +73,7 @@ public class Commodity {
             return "";
         }
     }
-    
+
     public String getSource() {
 
         try {

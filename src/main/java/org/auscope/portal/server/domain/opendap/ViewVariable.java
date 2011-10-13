@@ -8,12 +8,12 @@ import java.io.Serializable;
  *
  */
 public abstract class ViewVariable implements Serializable {
-    
+
     /**
      * This should be overridden in any sub classes.
      */
     protected String type = "undefined";
-    
+
     /**
      * The unique (within parent group) name of this variable
      */
@@ -27,12 +27,12 @@ public abstract class ViewVariable implements Serializable {
      * The units that this variable is expressed in (purely descriptive)
      */
     protected String units;
-    
+
     /**
      * The name of the parent group (or empty string representing the root group) that encapsulates this variable
      */
     protected String parentGroupName;
-    
+
     /**
      * Gets the name of the parent group (or empty string representing the root group) that encapsulates this variable
      * @return
@@ -40,7 +40,7 @@ public abstract class ViewVariable implements Serializable {
     public String getParentGroupName() {
         return parentGroupName;
     }
-    
+
     /**
      * Sets the name of the parent group (or empty string representing the root group) that encapsulates this variable
      * @param parentGroupName
@@ -48,7 +48,7 @@ public abstract class ViewVariable implements Serializable {
     public void setParentGroupName(String parentGroupName) {
         this.parentGroupName = parentGroupName;
     }
-    
+
     /**
      * Returns a string identifier of the type of variable this instance represents
      * @return
@@ -56,7 +56,7 @@ public abstract class ViewVariable implements Serializable {
     public String getType() {
         return type;
     }
-    
+
     /**
      * The unique (within parent group) name of this variable
      * @return the name

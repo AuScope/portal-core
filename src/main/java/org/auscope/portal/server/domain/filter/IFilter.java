@@ -3,7 +3,7 @@ package org.auscope.portal.server.domain.filter;
 
 /**
  * an interface for an ogc:Filter class to implement. Implementors must support filtering
- * via a bounding box (on top of whatever filtering they provide nromally). 
+ * via a bounding box (on top of whatever filtering they provide nromally).
  */
 public interface IFilter {
 
@@ -16,8 +16,8 @@ public interface IFilter {
      * @return String
      */
     public String getFilterStringAllRecords();
-    
-    
+
+
     /**
      * The implementation of this method should return a valid
      * ogc:Filter xml blob - http://www.opengeospatial.org/standards/filter
