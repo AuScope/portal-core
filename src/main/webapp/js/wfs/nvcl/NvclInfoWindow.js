@@ -661,7 +661,7 @@ function showDownloadDetails(iWfsServiceUrl, iServerUrl, iDatasetDetails) {
                     xtype  : 'box',
                     autoEl : {
                         tag  : 'div',
-                        html : 'Download Hylogging dataset'
+                        html : 'This data is best viewed in TSG Viewer. Freely available from <a href="http://www.thespectralgeologist.com/tsg_viewer.htm">here</a>.'
                     }
                 }]
             },{
