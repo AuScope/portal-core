@@ -97,9 +97,9 @@ NvclInfoWindow.prototype = {
                     var aId, aName;
 
                     for (var i=0; i < aDataset.length; i++ ) {
-                         aId = GXml.value(aDataset[i].selectSingleNode("*[local-name() = 'DatasetID']"));
-                         aName = GXml.value(aDataset[i].selectSingleNode("*[local-name() = 'DatasetName']"));
-                         omUrl = GXml.value(aDataset[i].selectSingleNode("*[local-name() = 'OmUrl']"));
+                         aId = GXml.value((aDataset[i].getElementsByTagName("DatasetID"))[0]);
+                         aName = GXml.value((aDataset[i].getElementsByTagName("DatasetName"))[0]);
+                         omUrl = GXml.value((aDataset[i].getElementsByTagName("OmUrl"))[0]);
 
                         datasetCol.add(aId, {
                             datasetName : aName,
@@ -983,13 +983,9 @@ function getImageLog(iServerUrl, iDatasetId, iLogName) {
                 throw "EmptyXMLException";
 
             for (var i=0; i < aLog.length; i++ ) {
-                if (GXml.value(aLog[i].selectSingleNode
-                        ("*[local-name() = 'LogName']")) == iLogName) {
-
-                    aLogId = GXml.value(aLog[i].selectSingleNode
-                                    ("*[local-name() = 'LogID']"));
-                    aSampleCount = GXml.value(aLog[i].selectSingleNode
-                                    ("*[local-name() = 'SampleCount']"));
+                if (GXml.value((aLog[i].getElementsByTagName("LogName"))[0]) == iLogName) {
+                    aLogId = GXml.value((aLog[i].getElementsByTagName("LogID"))[0]);
+                    aSampleCount = GXml.value((aLog[i].getElementsByTagName("SampleCount"))[0]);
                 }
             }
         } else {
