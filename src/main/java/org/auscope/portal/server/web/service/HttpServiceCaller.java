@@ -24,7 +24,7 @@ import org.springframework.stereotype.Repository;
 
 
 /**
- * Utility class used to call web service end points
+ * Utility class used to call web service end points.
  *
  * @version $Id$
  */
@@ -41,7 +41,7 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Makes a call to a http GetMethod and returns the response as a string
+     * Makes a call to a http GetMethod and returns the response as a string.
      *
      * @param method
      * @param httpClient
@@ -68,9 +68,9 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Invokes a method and returns the binary response as a stream
+     * Invokes a method and returns the binary response as a stream.
      *
-     * WARNING - ensure you call method.releaseConnection() AFTER you have finished reading the input stream
+     * WARNING - ensure you call method.releaseConnection() AFTER you have finished reading the input stream.
      *
      * @return
      */
@@ -82,7 +82,7 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Invokes a method and returns the binary response
+     * Invokes a method and returns the binary response.
      *
      * @return
      */
@@ -101,7 +101,7 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Invokes a httpmethod and takes care of some error handling
+     * Invokes a httpmethod and takes care of some error handling.
      * @param method
      * @param httpClient
      */
@@ -121,7 +121,7 @@ public class HttpServiceCaller {
             log.error(method.getStatusLine());
 
             //if its unavailable then throw updateCSWRecords connection exception
-            if(statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
+            if (statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
                 throw new ConnectException();
 
             //if the response is not OK then throw an error
@@ -130,7 +130,7 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Returns a header value for a given method and key
+     * Returns a header value for a given method and key.
      *
      * @param method
      * @param header
@@ -141,7 +141,7 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Generate a new httpClient
+     * Generate a new httpClient.
      * @return
      */
     public HttpClient getHttpClient() {
@@ -149,7 +149,7 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Given a URL, call it, convert the response into a String and return
+     * Given a URL, call it, convert the response into a String and return.
      * @param serviceUrl
      * @return
      * @throws IOException
@@ -159,7 +159,7 @@ public class HttpServiceCaller {
     }
 
     /**
-     * Convert a Buffered stream into a String
+     * Convert a Buffered stream into a String.
      * @param stream
      * @return
      * @throws IOException

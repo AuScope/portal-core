@@ -1,20 +1,27 @@
 package org.auscope.portal.server.web;
 
 /**
- * An extension of KnownLayer that specializes it into representing a single WMS
- * @author vot002
+ * An extension of KnownLayer that specialises it into representing a single WMS.
  *
+ * @author vot002
  */
-public class KnownLayerWMS extends KnownLayer {
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	protected String layerName;
-    protected String styleName;
-    protected String[] relatedLayerNames;
+public class KnownLayerWMS extends AbstractKnownLayer {
+
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
+
+    /** The layer name. */
+    private String layerName;
+
+    /** The style name. */
+    private String styleName;
+
+    /** The related layer names. */
+    private String[] relatedLayerNames;
 
     /**
+     * Instantiates a new known layer wms.
+     *
      * @param title The descriptive title of this layer
      * @param description The extended description of this layer
      * @param layerName The layerName that identifies which WMS this KnownLayer is identifying
@@ -27,6 +34,8 @@ public class KnownLayerWMS extends KnownLayer {
     }
 
     /**
+     * Instantiates a new known layer wms.
+     *
      * @param title The descriptive title of this layer
      * @param description The extended description of this layer
      * @param layerName The layerName that identifies which WMS this KnownLayer is identifying
@@ -38,7 +47,8 @@ public class KnownLayerWMS extends KnownLayer {
     }
 
     /**
-     * Gets the layerName that identifies which WMS this KnownLayer is identifying
+     * Gets the layerName that identifies which WMS this KnownLayer is identifying.
+     *
      * @return the layerName
      */
     public String getLayerName() {
@@ -46,7 +56,8 @@ public class KnownLayerWMS extends KnownLayer {
     }
 
     /**
-     * Sets the layerName that identifies which WMS this KnownLayer is identifying
+     * Sets the layerName that identifies which WMS this KnownLayer is identifying.
+     *
      * @param layerName the layerName to set
      */
     public void setLayerName(String layerName) {
@@ -54,7 +65,7 @@ public class KnownLayerWMS extends KnownLayer {
     }
 
     /**
-     * Gets the optional style name used when requesting this WMS (can be null)
+     * Gets the optional style name used when requesting this WMS (can be null).
      *
      * @return the styleName
      */
@@ -63,7 +74,7 @@ public class KnownLayerWMS extends KnownLayer {
     }
 
     /**
-     * Sets the optional style name used when requesting this WMS (can be null)
+     * Sets the optional style name used when requesting this WMS (can be null).
      *
      * @param styleName the styleName to set (can be null)
      */
@@ -72,20 +83,20 @@ public class KnownLayerWMS extends KnownLayer {
     }
 
     /**
-     * Gets all related layer names (layers that are related to this WMS but should not be used for display)
-     * @return
+     * Gets all related layer names (layers that are related to this WMS but should not be used for display).
+     *
+     * @return the related layer names
      */
     public String[] getRelatedLayerNames() {
         return relatedLayerNames;
     }
 
     /**
-     * Sets all related layer names (layers that are related to this WMS but should not be used for display)
-     * @param relatedLayerNames
+     * Sets all related layer names (layers that are related to this WMS but should not be used for display).
+     *
+     * @param relatedLayerNames the new related layer names
      */
     public void setRelatedLayerNames(String[] relatedLayerNames) {
         this.relatedLayerNames = relatedLayerNames;
     }
-
-
 }

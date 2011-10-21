@@ -7,9 +7,9 @@ package org.auscope.portal.server.domain.ows;
  */
 public class OWSException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public OWSException(String message) {
+    public OWSException(String message) {
         super(message);
     }
 

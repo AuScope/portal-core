@@ -27,7 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-public abstract class BaseWFSToKMLController extends BasePortalController {
+public abstract class AbstractBaseWFSToKMLController extends BasePortalController {
 
     protected HttpServiceCaller httpServiceCaller;
     protected GmlToKml gmlToKml;
@@ -92,26 +92,26 @@ public abstract class BaseWFSToKMLController extends BasePortalController {
     }
 
     /**
-     * Exception resolver that maps exceptions to views presented to the user
-     * @param e
-     * @param serviceUrl
+     * Exception resolver that maps exceptions to views presented to the user.
+     * @param e The exception
+     * @param serviceUrl The Url of the actual service
      * @param request Specify the request object that was used to make the HTTP WFS request. Its contents will be included for debug purposes
      * @return ModelAndView object with error message
      */
     protected ModelAndView generateExceptionResponse(Exception e, String serviceUrl, HttpMethodBase request) {
-        log.error(String.format("Exception! serviceUrl='%1$s'", serviceUrl),e);
+        log.error(String.format("Exception! serviceUrl='%1$s'", serviceUrl), e);
 
         // Service down or host down
-        if(e instanceof ConnectException || e instanceof UnknownHostException) {
+        if (e instanceof ConnectException || e instanceof UnknownHostException) {
             return this.generateJSONResponseMAV(false, null, ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION, makeDebugInfoModel(request));
         }
 
         // Timeouts
-        if(e instanceof ConnectTimeoutException) {
+        if (e instanceof ConnectTimeoutException) {
             return this.generateJSONResponseMAV(false, null, ErrorMessages.OPERATION_TIMOUT, makeDebugInfoModel(request));
         }
 
-        if(e instanceof SocketTimeoutException) {
+        if (e instanceof SocketTimeoutException) {
             return this.generateJSONResponseMAV(false, null, ErrorMessages.OPERATION_TIMOUT, makeDebugInfoModel(request));
         }
 

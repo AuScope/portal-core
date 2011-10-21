@@ -8,10 +8,10 @@ import java.awt.Point;
  * @author vot002
  *
  */
-public class KnownLayerWFS extends KnownLayer {
+public class KnownLayerWFS extends AbstractKnownLayer {
 
-	private static final long serialVersionUID = 1L;
-	private String featureTypeName;
+    private static final long serialVersionUID = 1L;
+    private String featureTypeName;
     private String proxyUrl;
     private String iconUrl;
     private String[] serviceEndpoints;

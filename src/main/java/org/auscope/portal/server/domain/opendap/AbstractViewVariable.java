@@ -7,11 +7,11 @@ import java.io.Serializable;
  * @author vot002
  *
  */
-public abstract class ViewVariable implements Serializable {
+public abstract class AbstractViewVariable implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
+    /**
      * This should be overridden in any sub classes.
      */
     protected String type = "undefined";

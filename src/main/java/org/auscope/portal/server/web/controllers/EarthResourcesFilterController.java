@@ -34,7 +34,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @version $Id$
  */
 @Controller
-public class EarthResourcesFilterController extends BaseWFSToKMLController {
+public class EarthResourcesFilterController extends AbstractBaseWFSToKMLController {
 
     // -------------------------------------------------------------- Constants
 

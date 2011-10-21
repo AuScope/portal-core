@@ -9,17 +9,29 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+
+/**
+ * The Class TestYilgarnNamespaceContext.
+ */
 public class TestYilgarnNamespaceContext {
-	
-	private String TEST_PREFIX = "ogc";
-    private String TEST_PREFIX_NOT_EXIST = "uHaHa";
-    private String TEST_NAMESPACE_URI = "http://www.opengis.net/ogc";
-    
+
+    /** The TEST prefix. */
+    private static final String TESTPREFIX = "ogc";
+
+    /** The TEST_FAKE_PREFIX . */
+    private static final String TESTFAKEPREFIX = "uHaHa";
+
+    /** The namespace uri. */
+    private static final String TESTNAMESPACEURI = "http://www.opengis.net/ogc";
+
+    /**
+     * Test constructor.
+     */
     @Test
     public void testConstructor(){
         String s = "";
         try {
-            final Field fields[] = YilgarnNamespaceContext.class.getDeclaredFields();
+            final Field[] fields = YilgarnNamespaceContext.class.getDeclaredFields();
 
             for (int i = 0; i < fields.length; ++i) {
                 if ("map".equals(fields[i].getName())) {
@@ -33,15 +45,18 @@ public class TestYilgarnNamespaceContext {
             Assert.fail(ex.getMessage());
         }
     }
-    
-    
+
+
+    /**
+     * Test context.
+     */
     @Test
     public void testContext() {
 
         NamespaceContext context = new YilgarnNamespaceContext();
-        
-        Assert.assertEquals(TEST_NAMESPACE_URI, context.getNamespaceURI(TEST_PREFIX));
-        Assert.assertEquals(XMLConstants.NULL_NS_URI, context.getNamespaceURI(TEST_PREFIX_NOT_EXIST));
+
+        Assert.assertEquals(TESTNAMESPACEURI, context.getNamespaceURI(TESTPREFIX));
+        Assert.assertEquals(XMLConstants.NULL_NS_URI, context.getNamespaceURI(TESTFAKEPREFIX));
     }
 
 }

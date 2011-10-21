@@ -16,6 +16,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+// TODO: Auto-generated Javadoc
 /**
  * A utility class that provides convenience methods for detecting an ows:Exception response in an
  * arbitrary ows response.
@@ -24,11 +25,13 @@ import org.w3c.dom.NodeList;
  */
 public class OWSExceptionParser {
 
+    /** The Constant log. */
     private static final Log log = LogFactory.getLog(OWSExceptionParser.class);
 
     /**
-     * Returns an XPath object that is configured to read the ows:Namespace
-     * @return
+     * Returns an XPath object that is configured to read the ows:Namespace.
+     *
+     * @return the XPath object
      */
     private static XPath createNamespaceAwareXPath() {
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -48,10 +51,12 @@ public class OWSExceptionParser {
             }
 
             public String getNamespaceURI(String prefix) {
-                if (prefix.equals("ows"))
+                if (prefix.equals("ows")) {
                     return "http://www.opengis.net/ows";
-                else
+                }
+                else {
                     return null;
+                }
             }
         });
 
@@ -59,26 +64,27 @@ public class OWSExceptionParser {
     }
 
     /**
-     * Will attempt to parse an <ows:Exception> element where ows will be http://www.opengis.net/ows
+     * Will attempt to parse an <ows:Exception> element where ows will be http://www.opengis.net/ows.
      *
      * Will throw an OWSException if document does contain an <ows:ExceptionReport>, otherwise it will do nothing
-     * @param doc
-     * @throws OWSException
+     *
+     * @param doc the doc
+     * @throws OWSException the oWS exception
      */
     public static void checkForExceptionResponse(Document doc) throws OWSException {
         XPath xPath = createNamespaceAwareXPath();
 
         try {
             //Check for an exception response
-            NodeList exceptionNodes = (NodeList)xPath.evaluate("/ows:ExceptionReport/ows:Exception", doc, XPathConstants.NODESET);
+            NodeList exceptionNodes = (NodeList) xPath.evaluate("/ows:ExceptionReport/ows:Exception", doc, XPathConstants.NODESET);
             if (exceptionNodes.getLength() > 0) {
                 Node exceptionNode = exceptionNodes.item(0);
 
-                Node exceptionTextNode = (Node)xPath.evaluate("ows:ExceptionText", exceptionNode, XPathConstants.NODE);
+                Node exceptionTextNode = (Node) xPath.evaluate("ows:ExceptionText", exceptionNode, XPathConstants.NODE);
                 String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]" : exceptionTextNode.getTextContent();
-                String exceptionCode = (String)xPath.evaluate("@exceptionCode", exceptionNode, XPathConstants.STRING);
+                String exceptionCode = (String) xPath.evaluate("@exceptionCode", exceptionNode, XPathConstants.STRING);
 
-                throw new OWSException(String.format("Code='%1$s' Message='%2$s'", exceptionCode ,exceptionText));
+                throw new OWSException(String.format("Code='%1$s' Message='%2$s'", exceptionCode, exceptionText));
             }
         } catch (XPathExpressionException ex) {
             //This should *hopefully* never occur

@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
  * @author vot002
  *
  */
-public abstract class FilterTestUtilities {
+public abstract class AbstractFilterTestUtilities {
 
     /**
      * Wraps a string with <test> elements (ogc namespace aware)

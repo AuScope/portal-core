@@ -15,8 +15,8 @@ import org.auscope.portal.csw.CSWGetRecordResponse;
 import org.auscope.portal.csw.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.csw.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.csw.CSWThreadExecutor;
-import org.auscope.portal.csw.record.CSWOnlineResource;
-import org.auscope.portal.csw.record.CSWOnlineResource.OnlineResourceType;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.server.domain.ows.OWSExceptionParser;
 import org.auscope.portal.server.util.DOMUtil;
@@ -220,7 +220,7 @@ public class CSWCacheService {
      * @throws Exception
      */
     private synchronized List<CSWRecord> getFilteredRecords(
-            CSWOnlineResource.OnlineResourceType... types) throws Exception {
+            AbstractCSWOnlineResource.OnlineResourceType... types) throws Exception {
 
         ArrayList<CSWRecord> records = new ArrayList<CSWRecord>();
 
@@ -266,7 +266,7 @@ public class CSWCacheService {
          * @return
          */
         private boolean isFinishedExecution() {
-            synchronized(siblings) {
+            synchronized (siblings) {
                 return finishedExecution;
             }
         }
@@ -276,7 +276,7 @@ public class CSWCacheService {
          * @param finishedExecution
          */
         private void setFinishedExecution(boolean finishedExecution) {
-            synchronized(siblings) {
+            synchronized (siblings) {
                 this.finishedExecution = finishedExecution;
             }
         }

@@ -28,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 
 @Controller
-public class GSMLController extends BaseWFSToKMLController {
+public class GSMLController extends AbstractBaseWFSToKMLController {
     private WFSGetFeatureMethodMaker methodMaker;
     private IFilter filter;
     private GSMLResponseHandler gsmlResponseHandler;

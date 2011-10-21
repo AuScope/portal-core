@@ -14,28 +14,28 @@ import org.w3c.dom.Node;
  */
 public class CSWResponsiblePartyFactory {
 
-    private static final String xPathIndividualName = "gmd:individualName/gco:CharacterString";
-    private static final String xPathOrganisationName = "gmd:organisationName/gco:CharacterString";
+    private static final String XPATHINDIVIDUALNAME = "gmd:individualName/gco:CharacterString";
+    private static final String XPATHORGANISATIONNAME = "gmd:organisationName/gco:CharacterString";
     private static final String xPathPositionName = "gmd:positionName/gco:CharacterString";
     private static final String xPathContactInfo = "gmd:contactInfo/gmd:CI_Contact";
 
     /**
-     * Attempts to parse a gmd:CI_Responsible party node into a CSWResponsibleParty element
+     * Attempts to parse a gmd:CI_Responsible party node into a CSWResponsibleParty element.
      * @param node Must be a gmd:CI_Responsible element
-     * @return
-     * @throws XPathExpressionException
+     * @throws XPathExpressionException invalid xml.
+     * @return CSWResponsibleParty
      */
     public static CSWResponsibleParty generateResponsiblePartyFromNode(Node node) throws XPathExpressionException {
         CSWResponsibleParty rp = new CSWResponsibleParty();
         CSWNamespaceContext nc = new CSWNamespaceContext();
 
         //Parse from each of our fields, we are OK with missing values
-        Node field = (Node) DOMUtil.compileXPathExpr(xPathIndividualName, nc).evaluate(node, XPathConstants.NODE);
+        Node field = (Node) DOMUtil.compileXPathExpr(XPATHINDIVIDUALNAME, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             rp.setIndividualName(field.getTextContent());
         }
 
-        field = (Node) DOMUtil.compileXPathExpr(xPathOrganisationName, nc).evaluate(node, XPathConstants.NODE);
+        field = (Node) DOMUtil.compileXPathExpr(XPATHORGANISATIONNAME, nc).evaluate(node, XPathConstants.NODE);
         if (field != null) {
             rp.setOrganisationName(field.getTextContent());
         }

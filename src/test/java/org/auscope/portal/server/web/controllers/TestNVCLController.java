@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URI;
-import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
@@ -34,25 +34,55 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
+/**
+ * The Class TestNVCLController.
+ * @version: $Id$
+ */
 public class TestNVCLController {
+
+    /** The mock http request. */
     private HttpServletRequest mockHttpRequest;
+
+    /** The mock http response. */
     private HttpServletResponse mockHttpResponse;
+
+    /** The mock gml to kml. */
     private GmlToKml mockGmlToKml;
+
+    /** The mock http session. */
     private HttpSession mockHttpSession;
+
+    /** The mock servlet context. */
     private ServletContext mockServletContext;
+
+    /** The mock http service caller. */
     private HttpServiceCaller mockHttpServiceCaller;
+
+    /** The mock http client. */
     private HttpClient mockHttpClient;
+
+    /** The mock csw service. */
     private CSWCacheService mockCSWService;
+
+    /** The mock wfs method maker. */
     private WFSGetFeatureMethodMaker mockWfsMethodMaker;
+
+    /** The mock borehole service. */
     private BoreholeService mockBoreholeService;
+
+    /** The nvcl controller. */
     private NVCLController nvclController;
 
+    /** The context. */
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
+    /**
+     * Setup.
+     */
     @Before
-    public void setup() {
+    public void setUp() {
 
         this.mockGmlToKml = context.mock(GmlToKml.class);
         this.mockHttpRequest = context.mock(HttpServletRequest.class);
@@ -68,8 +98,9 @@ public class TestNVCLController {
     }
 
     /**
-     * Tests to ensure that a non hylogger request calls the correct functions
-     * @throws Exception
+     * Tests to ensure that a non hylogger request calls the correct functions.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testNonHyloggerFilter() throws Exception {
@@ -86,18 +117,28 @@ public class TestNVCLController {
         final URI httpMethodURI = new URI( "http://example.com", true);
 
         context.checking(new Expectations() {{
-            oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, null);will(returnValue(mockHttpMethodBase));
+            oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, null);
+            will(returnValue(mockHttpMethodBase));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient); will(returnValue(nvclWfsResponse));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(nvclKmlResponse));
+            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
+            will(returnValue(nvclWfsResponse));
 
-            allowing(mockHttpMethodBase).getURI();will(returnValue(httpMethodURI));
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));
+            will(returnValue(nvclKmlResponse));
 
-            allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
-            allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+            allowing(mockHttpMethodBase).getURI();
+            will(returnValue(httpMethodURI));
+
+            allowing(mockHttpRequest).getSession();
+            will(returnValue(mockHttpSession));
+
+            allowing(mockHttpSession).getServletContext();
+            will(returnValue(mockServletContext));
+
+            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
+            will(returnValue(null));
         }});
 
         ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);
@@ -110,7 +151,9 @@ public class TestNVCLController {
     }
 
     /**
-     * Tests that hylogger filter uses the correct functions
+     * Tests that hylogger filter uses the correct functions.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testHyloggerFilter() throws Exception {
@@ -119,30 +162,44 @@ public class TestNVCLController {
         final String custodianFilter = "filterCustodian";
         final String filterDate = "1986-10-09";
         final int maxFeatures = 10;
-        final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1, 2}, new double[] {3,4});
+        final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1, 2}, new double[] {3, 4});
         final String nvclWfsResponse = "wfsResponse";
         final String nvclKmlResponse = "kmlResponse";
         final List<String> restrictedIds = Arrays.asList("ID1", "ID2");
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
-        final URI httpMethodURI = new URI( "http://example.com", true);
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
+        final URI httpMethodURI = new URI("http://example.com", true);
+        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("q", "w", "e", "r", new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getWFSRecords();will(returnValue(cswRecords));
+            oneOf(mockCSWService).getWFSRecords();
+            will(returnValue(cswRecords));
 
-            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);will(returnValue(restrictedIds));
-            oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, restrictedIds);will(returnValue(mockHttpMethodBase));
+            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);
+            will(returnValue(restrictedIds));
 
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient); will(returnValue(nvclWfsResponse));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(nvclKmlResponse));
+            oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, restrictedIds);
+            will(returnValue(mockHttpMethodBase));
 
-            allowing(mockHttpMethodBase).getURI();will(returnValue(httpMethodURI));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpServiceCaller).getHttpClient();
+            will(returnValue(mockHttpClient));
 
-            allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
+            will(returnValue(nvclWfsResponse));
+
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));
+            will(returnValue(nvclKmlResponse));
+
+            allowing(mockHttpMethodBase).getURI();
+            will(returnValue(httpMethodURI));
+
+            allowing(mockHttpRequest).getSession();
+            will(returnValue(mockHttpSession));
+
+            allowing(mockHttpSession).getServletContext();
+            will(returnValue(mockServletContext));
+
             allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
         }});
 
@@ -156,7 +213,9 @@ public class TestNVCLController {
     }
 
     /**
-     * Tests that hylogger filter uses the correct functions when the underlying hylogger lookup fails
+     * Tests that hylogger filter uses the correct functions when the underlying hylogger lookup fails.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testHyloggerFilterError() throws Exception {
@@ -165,30 +224,42 @@ public class TestNVCLController {
         final String custodianFilter = "filterCustodian";
         final String filterDate = "1986-10-09";
         final int maxFeatures = 10;
-        final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1, 2}, new double[] {3,4});
+        final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1, 2}, new double[] {3, 4});
         final String nvclWfsResponse = "wfsResponse";
         final String nvclKmlResponse = "kmlResponse";
-        final List<String> restrictedIds = Arrays.asList("ID1", "ID2");
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
-        final URI httpMethodURI = new URI( "http://example.com", true);
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
+        final URI httpMethodURI = new URI("http://example.com", true);
+        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a", "b", "c", "d", new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getWFSRecords();will(returnValue(cswRecords));
+            oneOf(mockCSWService).getWFSRecords();
+            will(returnValue(cswRecords));
 
-            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);will(throwException(new ConnectException()));
+            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);
+            will(throwException(new ConnectException()));
 
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient); will(returnValue(nvclWfsResponse));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(nvclKmlResponse));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpServiceCaller).getHttpClient();
+            will(returnValue(mockHttpClient));
 
-            allowing(mockHttpMethodBase).getURI();will(returnValue(httpMethodURI));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
+            will(returnValue(nvclWfsResponse));
 
-            allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
-            allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));
+            will(returnValue(nvclKmlResponse));
+
+            allowing(mockHttpMethodBase).getURI();
+            will(returnValue(httpMethodURI));
+
+            allowing(mockHttpRequest).getSession();
+            will(returnValue(mockHttpSession));
+
+            allowing(mockHttpSession).getServletContext();
+            will(returnValue(mockServletContext));
+
+            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
+            will(returnValue(null));
         }});
 
         ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);
@@ -196,7 +267,9 @@ public class TestNVCLController {
     }
 
     /**
-     * Tests that hylogger filter uses the correct functions when the underlying hylogger lookup returns no results
+     * Tests that hylogger filter uses the correct functions when the underlying hylogger lookup returns no results.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testHyloggerFilterNoDatasets() throws Exception {
@@ -205,30 +278,42 @@ public class TestNVCLController {
         final String custodianFilter = "filterCustodian";
         final String filterDate = "1986-10-09";
         final int maxFeatures = 10;
-        final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1, 2}, new double[] {3,4});
+        final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1., 2.}, new double[] {3., 4.});
         final String nvclWfsResponse = "wfsResponse";
         final String nvclKmlResponse = "kmlResponse";
-        final List<String> restrictedIds = Arrays.asList("ID1", "ID2");
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
-        final URI httpMethodURI = new URI( "http://example.com", true);
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a","b","c","d",new CSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
+        final URI httpMethodURI = new URI("http://example.com", true);
+        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a", "b", "c", "d", new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getWFSRecords();will(returnValue(cswRecords));
+            oneOf(mockCSWService).getWFSRecords();
+            will(returnValue(cswRecords));
 
-            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);will(returnValue(new ArrayList<String>()));
+            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);
+            will(returnValue(new ArrayList<String>()));
 
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient); will(returnValue(nvclWfsResponse));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(nvclKmlResponse));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpServiceCaller).getHttpClient();
+            will(returnValue(mockHttpClient));
 
-            allowing(mockHttpMethodBase).getURI();will(returnValue(httpMethodURI));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
+            will(returnValue(nvclWfsResponse));
 
-            allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
-            allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));
+            will(returnValue(nvclKmlResponse));
+
+            allowing(mockHttpMethodBase).getURI();
+            will(returnValue(httpMethodURI));
+
+            allowing(mockHttpRequest).getSession();
+            will(returnValue(mockHttpSession));
+
+            allowing(mockHttpSession).getServletContext();
+            will(returnValue(mockServletContext));
+
+            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
+            will(returnValue(null));
         }});
 
         ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);

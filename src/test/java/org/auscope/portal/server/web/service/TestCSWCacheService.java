@@ -175,7 +175,6 @@ public class TestCSWCacheService extends CSWCacheService {
         final String noMoreRecordsString = org.auscope.portal.Util.loadXML("src/test/resources/cswRecordResponse_NoMoreRecords.xml");
         final ByteArrayInputStream t1r1 = new ByteArrayInputStream(moreRecordsString.getBytes());
         final ByteArrayInputStream t1r2 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
-        final ByteArrayInputStream t2r1 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
         final ByteArrayInputStream t3r1 = new ByteArrayInputStream(moreRecordsString.getBytes());
         final ByteArrayInputStream t3r2 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
 
@@ -203,7 +202,8 @@ public class TestCSWCacheService extends CSWCacheService {
         expectedResult.put("MappedFeature", new Integer(totalRequestsMade));
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            allowing(httpServiceCaller).getHttpClient();
+            will(returnValue(mockHttpClient));
 
             //Thread 1 will make 2 requests
             oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
@@ -262,7 +262,8 @@ public class TestCSWCacheService extends CSWCacheService {
         final Map<String, Integer> expectedResult = new HashMap<String, Integer>();
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            allowing(httpServiceCaller).getHttpClient();
+            will(returnValue(mockHttpClient));
 
             //Thread 1 will throw an exception
             oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
@@ -317,11 +318,10 @@ public class TestCSWCacheService extends CSWCacheService {
 
         context.checking(new Expectations() {{
             //Cant use oneOf as JUnit can't handle exceptions on other threads (see note below)
-            //oneOf(httpServiceCaller).getHttpClient();
-            //oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(delayReturnValue(delay, cswResponse));
 
             allowing(httpServiceCaller).getHttpClient();
-            allowing(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(delayReturnValue(delay, cswResponse));
+            allowing(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
+            will(delayReturnValue(delay, cswResponse));
         }});
 
         final CSWCacheService service = this.cswCacheService;

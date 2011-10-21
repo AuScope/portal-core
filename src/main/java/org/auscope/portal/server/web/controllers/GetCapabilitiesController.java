@@ -10,7 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.csw.record.CSWGeographicElement;
-import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.csw.record.CSWResponsibleParty;
@@ -92,7 +92,7 @@ public class GetCapabilitiesController extends BaseCSWController {
                         geoEls = new CSWGeographicElement[] {bbox};
                     }
 
-                    CSWOnlineResource[] onlineResources = new CSWOnlineResource[1];
+                    AbstractCSWOnlineResource[] onlineResources = new AbstractCSWOnlineResource[1];
                     onlineResources[0] = new CSWOnlineResourceImpl(new URL(capabilitiesRec.getMapUrl()),
                             "OGC:WMS-1.1.1-http-get-map",
                             rec.getName(),

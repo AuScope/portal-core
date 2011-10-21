@@ -23,19 +23,17 @@ import org.xml.sax.SAXException;
 public class Commodity {
     protected final Log log = LogFactory.getLog(getClass());
     private Node commodityNode;
-    private XPath xPath;
 
     public Commodity(Node commodityNode) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         this.commodityNode = commodityNode;
-        log.trace("i m in commodity class" +this.commodityNode +"this was a commodity node");
-        XPathFactory factory = XPathFactory.newInstance();
-        xPath = factory.newXPath();
-        xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
     }
 
     public String getName() {
         String result = "";
         try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
             XPathExpression expr = xPath.compile("gml:name");
             NodeList list = (NodeList)expr.evaluate(commodityNode, XPathConstants.NODESET);
             for (int i = 0; i < list.getLength(); i++) {
@@ -53,6 +51,9 @@ public class Commodity {
     public String getCommodityName() throws XPathExpressionException {
 
         try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
             XPathExpression expr = xPath.compile("er:commodityName");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
             log.trace("commodity class to get text commodity name "+ result.getTextContent() +"was the content");
@@ -65,6 +66,9 @@ public class Commodity {
     public String getCommodityImportance() throws XPathExpressionException {
 
         try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
             XPathExpression expr = xPath.compile("er:commodityImportance");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
             log.trace("commodity class to getCommodityImportance"+ result.getTextContent() +"was the content");
@@ -77,6 +81,9 @@ public class Commodity {
     public String getSource() {
 
         try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
             XPathExpression expr = xPath.compile("er:source");
             Node result = (Node)expr.evaluate(commodityNode, XPathConstants.NODE);
             String search  = "urn:cgi";

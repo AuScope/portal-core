@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
-import org.auscope.portal.server.domain.ogc.FilterTestUtilities;
+import org.auscope.portal.server.domain.ogc.AbstractFilterTestUtilities;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -34,15 +34,15 @@ public class TestMineFilter {
         MineFilter mineFilter = new MineFilter("Dominion Copper Mine");
 
         String filter = mineFilter.getFilterStringAllRecords();
-        Document doc = FilterTestUtilities.parsefilterStringXML(filter);
+        Document doc = AbstractFilterTestUtilities.parsefilterStringXML(filter);
 
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName",
-        		new String[] {"er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 1);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
-        		new String[] {"*", "Dominion Copper Mine"}, 1);
+        AbstractFilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:PropertyName",
+                new String[] {"er:specification/er:Mine/er:mineName/er:MineName/er:mineName"}, 1);
+        AbstractFilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/ogc:Literal",
+                new String[] {"*", "Dominion Copper Mine"}, 1);
 
     }
-    
+
     /**
      * Tests to ensure match case is set to false
      */
@@ -51,8 +51,8 @@ public class TestMineFilter {
         MineFilter mineFilter = new MineFilter("mineNameToTest");
 
         String filter = mineFilter.getFilterStringAllRecords();
-        Document doc = FilterTestUtilities.parsefilterStringXML(filter);
-        FilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/@matchCase", new String[] {"false"}, 1);
+        Document doc = AbstractFilterTestUtilities.parsefilterStringXML(filter);
+        AbstractFilterTestUtilities.runNodeSetValueCheck(doc, "/descendant::ogc:PropertyIsLike/@matchCase", new String[] {"false"}, 1);
     }
 
 }

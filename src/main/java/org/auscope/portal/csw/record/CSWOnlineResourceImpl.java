@@ -7,7 +7,7 @@ import java.net.URL;
  * @author vot002
  *
  */
-public class CSWOnlineResourceImpl extends CSWOnlineResource {
+public class CSWOnlineResourceImpl extends AbstractCSWOnlineResource {
     private URL linkage;
     private String protocol;
     private String name;

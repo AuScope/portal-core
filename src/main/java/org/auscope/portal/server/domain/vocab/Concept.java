@@ -1,31 +1,48 @@
 package org.auscope.portal.server.domain.vocab;
 
 /**
- * A highly simplified representation of a SKOS 'Concept'
+ * A highly simplified representation of a SKOS 'Concept'.
  *
  * @author Josh Vote
- *
  */
 public class Concept {
+
+    /** The urn. */
     private String urn;
+
+    /** The href. */
     private boolean href;
+
+    /** The label. */
     private String label;
+
+    /** The preferred label. */
     private String preferredLabel;
+
+    /** The definition. */
     private String definition;
+
+    /** The broader. */
     private Concept[] broader;
+
+    /** The narrower. */
     private Concept[] narrower;
+
+    /** The related. */
     private Concept[] related;
 
     /**
-     * Creates a new Concept, empty for all but it's URN
-     * @param urn
+     * Creates a new Concept, empty for all but it's URN.
+     *
+     * @param urn the urn
      */
     public Concept(String urn) {
         this(urn, false);
     }
 
     /**
-     * Creates a new Concept, empty for all but it's URN
+     * Creates a new Concept, empty for all but it's URN.
+     *
      * @param urn The unique ID for this concept
      * @param href if set this Concept is only a 'pointer' to concept
      */
@@ -41,72 +58,81 @@ public class Concept {
     }
 
     /**
-     * Gets the rdf:label attached to this concept (if any)
-     * @return
+     * Gets the rdf:label attached to this concept (if any).
+     *
+     * @return the label
      */
     public String getLabel() {
         return label;
     }
 
     /**
-     * Sets the rdf:label attached to this concept (if any)
-     * @param label
+     * Sets the rdf:label attached to this concept (if any).
+     *
+     * @param label the new label
      */
     public void setLabel(String label) {
         this.label = label;
     }
 
     /**
-     * Gets the skos:prefLabel attached to this concept (if any)
-     * @return
+     * Gets the skos:prefLabel attached to this concept (if any).
+     *
+     * @return the preferred label
      */
     public String getPreferredLabel() {
         return preferredLabel;
     }
 
     /**
-     * Sets the skos:prefLabel attached to this concept (if any)
-     * @param preferredLabel
+     * Sets the skos:prefLabel attached to this concept (if any).
+     *
+     * @param preferredLabel the new preferred label
      */
     public void setPreferredLabel(String preferredLabel) {
         this.preferredLabel = preferredLabel;
     }
 
     /**
-     * Gets every concept which is "broader" than this concept
-     * @return
+     * Gets every concept which is "broader" than this concept.
+     *
+     * @return the broader
      */
     public Concept[] getBroader() {
         return broader;
     }
 
     /**
-     * Sets every concept which is "broader" than this concept
-     * @param broader
+     * Sets every concept which is "broader" than this concept.
+     *
+     * @param broader the new broader
      */
     public void setBroader(Concept[] broader) {
         this.broader = broader;
     }
 
     /**
-     * Gets every concept which is "narrower" than this concept
-     * @return
+     * Gets every concept which is "narrower" than this concept.
+     *
+     * @return the narrower
      */
     public Concept[] getNarrower() {
         return narrower;
     }
 
     /**
-     * Sets every concept which is "broader" than this concept
-     * @param narrower
+     * Sets every concept which is "broader" than this concept.
+     *
+     * @param narrower the new narrower
      */
     public void setNarrower(Concept[] narrower) {
         this.narrower = narrower;
     }
 
     /**
-     * Gets the unique URN for this individual
-     * @return
+     * Gets the unique URN for this individual.
+     *
+     * @return the urn
      */
     public String getUrn() {
         return urn;
@@ -114,45 +140,53 @@ public class Concept {
 
 
     /**
-     * Gets every concept which is "related" to this concept
-     * @return
+     * Gets every concept which is "related" to this concept.
+     *
+     * @return the related
      */
     public Concept[] getRelated() {
         return related;
     }
 
     /**
-     * Sets every concept which is "related" to this concept
-     * @param related
+     * Sets every concept which is "related" to this concept.
+     *
+     * @param related the new related
      */
     public void setRelated(Concept[] related) {
         this.related = related;
     }
 
     /**
-     * Gets whether this instance is a fully populated concept or just an empty reference to the URN of the actual concept
-     * @return
+     * Gets whether this instance is a fully populated concept or just an empty reference to the URN of the actual concept.
+     *
+     * @return true, if is href
      */
     public boolean isHref() {
         return href;
     }
 
     /**
-     * Gets the definition of this concept
-     * @return
+     * Gets the definition of this concept.
+     *
+     * @return the definition
      */
     public String getDefinition() {
         return definition;
     }
 
     /**
-     * Sets the definition of this concept
-     * @param definition
+     * Sets the definition of this concept.
+     *
+     * @param definition the new definition
      */
     public void setDefinition(String definition) {
         this.definition = definition;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Concept) {
@@ -165,9 +199,10 @@ public class Concept {
     }
 
     /**
-     * Compares 2 named individuals based on their URN
-     * @param ni
-     * @return
+     * Compares 2 named individuals based on their URN.
+     *
+     * @param concept the concept
+     * @return true, if successful
      */
     public boolean equals(Concept concept) {
         if (concept == null) {
@@ -177,9 +212,10 @@ public class Concept {
     }
 
     /**
-     * Compares a string with this individuals urn
-     * @param urn
-     * @return
+     * Compares a string with this individuals urn.
+     *
+     * @param urn the urn
+     * @return true, if successful
      */
     public boolean equals(String urn) {
         if (this.urn != null && urn != null) {
@@ -189,6 +225,9 @@ public class Concept {
         }
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "Concept [urn=" + urn + ", href=" + href + ", label=" + label

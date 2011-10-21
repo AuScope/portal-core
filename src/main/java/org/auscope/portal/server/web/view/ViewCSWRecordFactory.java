@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.csw.record.CSWGeographicElement;
-import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.csw.record.CSWResponsibleParty;
 import org.springframework.stereotype.Repository;
@@ -43,7 +43,7 @@ public class ViewCSWRecordFactory {
 
         List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object> >();
         if (record.getOnlineResources() != null ) {
-            for (CSWOnlineResource res : record.getOnlineResources()) {
+            for (AbstractCSWOnlineResource res : record.getOnlineResources()) {
                 if (res.getLinkage() != null) {
                     onlineResources.add(this.toView(res));
                 }
@@ -85,7 +85,7 @@ public class ViewCSWRecordFactory {
      * @param res
      * @return
      */
-    public ModelMap toView(CSWOnlineResource res) {
+    public ModelMap toView(AbstractCSWOnlineResource res) {
         ModelMap obj = new ModelMap();
 
         obj.put("url", res.getLinkage().toString());

@@ -9,9 +9,9 @@ package org.auscope.portal.server.web;
  */
 public class DistributedHTTPServiceCallerException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public DistributedHTTPServiceCallerException(Throwable t) {
+    public DistributedHTTPServiceCallerException(Throwable t) {
         super(t);
     }
 }

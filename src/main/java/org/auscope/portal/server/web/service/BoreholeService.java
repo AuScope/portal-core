@@ -10,9 +10,9 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.csw.record.CSWOnlineResource.OnlineResourceType;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
@@ -118,7 +118,7 @@ public class BoreholeService {
         List<String> ids = new ArrayList<String>();
 
         for (CSWRecord record : cswService.getWFSRecords()) {
-            for (CSWOnlineResource resource : record.getOnlineResourcesByType(OnlineResourceType.WFS)) {
+            for (AbstractCSWOnlineResource resource : record.getOnlineResourcesByType(OnlineResourceType.WFS)) {
                 if (resource.getName().equals(NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME)) {
                     try {
                         appendHyloggerBoreholeIDs(resource.getLinkage().toString(), resource.getName(), ids);

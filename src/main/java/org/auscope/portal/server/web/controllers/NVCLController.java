@@ -23,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-public class NVCLController extends BaseWFSToKMLController {
+public class NVCLController extends AbstractBaseWFSToKMLController {
 
     private BoreholeService boreholeService;
     private CSWCacheService cswService;

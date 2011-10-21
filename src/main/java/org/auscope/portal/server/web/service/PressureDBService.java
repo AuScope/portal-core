@@ -32,13 +32,11 @@ public class PressureDBService {
 
     private PressureDBMethodMaker methodMaker;
     private HttpServiceCaller httpServiceCaller;
-    private XPath xPath;
 
     @Autowired
     public PressureDBService(PressureDBMethodMaker methodMaker, HttpServiceCaller httpServiceCaller) {
         this.methodMaker = methodMaker;
         this.httpServiceCaller = httpServiceCaller;
-        this.xPath = XPathFactory.newInstance().newXPath();
     }
 
     private boolean attemptParseBoolean(Object obj) {
@@ -72,18 +70,21 @@ public class PressureDBService {
     }
 
     /**
-     * Shorthand method for extracting boolean responses from an Xpath content
+     * Shorthand method for extracting boolean responses from an Xpath content.
      * @param xPathString
      * @param node
      * @return
      * @throws XPathExpressionException
      */
     private boolean extractBooleanXPath(String xPathString, Node node) throws XPathExpressionException {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+
         return attemptParseBoolean(xPath.evaluate(xPathString, node, XPathConstants.STRING));
     }
 
     /**
-     * Makes a pressure DB getAvailableOM request, parses the response and returns it as a formatted POJO
+     * Makes a pressure DB getAvailableOM request, parses the response and returns it as a formatted POJO.
+     *
      * @param wellID
      * @param serviceUrl
      * @return
@@ -97,7 +98,7 @@ public class PressureDBService {
 
         //Parse our resulting stream into an XML document
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        Document doc = null;;
+        Document doc = null;
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             doc = builder.parse(stream);
@@ -112,8 +113,8 @@ public class PressureDBService {
         AvailableOMResponse response = new AvailableOMResponse();
         XPath xPath = XPathFactory.newInstance().newXPath();
         try {
-            response.setWellID( (String)xPath.evaluate("AvailableOM/Observations/@Well__Id", doc, XPathConstants.STRING));
-            response.setOmUrl( (String)xPath.evaluate("AvailableOM/Observations/omUrl", doc, XPathConstants.STRING));
+            response.setWellID((String) xPath.evaluate("AvailableOM/Observations/@Well__Id", doc, XPathConstants.STRING));
+            response.setOmUrl((String) xPath.evaluate("AvailableOM/Observations/omUrl", doc, XPathConstants.STRING));
             response.setObsTemperature(extractBooleanXPath("AvailableOM/Observations/temperature", doc));
             response.setObsPressureData(extractBooleanXPath("AvailableOM/Observations/pressureData", doc));
             response.setObsSalinity(extractBooleanXPath("AvailableOM/Observations/salinity", doc));
@@ -134,7 +135,8 @@ public class PressureDBService {
     }
 
     /**
-     * Makes a Pressure DB dataservice download request and returns the resulting ZIP stream as an InputStream
+     * Makes a Pressure DB dataservice download request and returns the resulting ZIP stream as an InputStream.
+     *
      * @param wellID
      * @param serviceUrl
      * @param features

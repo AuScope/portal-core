@@ -20,7 +20,7 @@ public abstract class CSWOnlineResourceFactory {
      * @throws XPathExpressionException
      * @throws Exception
      */
-    public static CSWOnlineResource parseFromNode(Node node) throws XPathExpressionException {
+    public static AbstractCSWOnlineResource parseFromNode(Node node) throws XPathExpressionException {
         String urlString = null;
         String name = "";
         String description = "";

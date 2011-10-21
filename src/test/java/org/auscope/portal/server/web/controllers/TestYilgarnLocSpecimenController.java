@@ -28,40 +28,77 @@ import org.junit.Test;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TestYilgarnLocSpecimenController.
+ */
 public class TestYilgarnLocSpecimenController {
 
+    /** The context. */
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
+    /** The http service caller. */
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
+
+    /** The mock http request. */
     private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
+
+    /** The mock http session. */
     private HttpSession mockHttpSession = context.mock(HttpSession.class);
+
+    /** The mock servlet context. */
     private ServletContext mockServletContext = context.mock(ServletContext.class);
+
+    /** The yilgarn loc specimen controller. */
     private YilgarnLocSpecimenController yilgarnLocSpecimenController;
+
+    /** The mock http response. */
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
+
+    /** The mock method maker. */
     private WFSGetFeatureMethodMaker mockMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
 
+    /**
+     * The Class MyServletOutputStream.
+     */
     final class MyServletOutputStream extends ServletOutputStream {
+
+        /** The byte array output stream. */
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
+        /* (non-Javadoc)
+         * @see java.io.OutputStream#write(int)
+         */
         public void write(int i) throws IOException {
             byteArrayOutputStream.write(i);
         }
 
+        /**
+         * Gets the zip input stream.
+         *
+         * @return the zip input stream
+         */
         public ZipInputStream getZipInputStream() {
             return new ZipInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
         }
     };
 
+
     @Before
-    public void setup(){
+    public void setUp() {
         yilgarnLocSpecimenController = new YilgarnLocSpecimenController(httpServiceCaller, mockMethodMaker);
     }
 
 
+    /**
+     * Test located specimen feature.
+     *
+     * @throws Exception the exception
+     */
     @Test
-    public void testLocatedSpecimenFeature() throws Exception{
+    public void testLocatedSpecimenFeature() throws Exception {
 
         final String serviceUrl = "http://fake.com/bob";
         final String layerName = "layer_name";
@@ -72,14 +109,20 @@ public class TestYilgarnLocSpecimenController {
         context.checking(new Expectations() {{
             oneOf(httpServiceCaller).getHttpClient();
             oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(xmlResponse));
-            oneOf(mockMethodMaker).makeMethod(serviceUrl, layerName, featureId);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, layerName, featureId);
+            will(returnValue(mockMethod));
 
-            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
-            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+            oneOf(mockHttpRequest).getSession();
+            will(returnValue(mockHttpSession));
+
+            oneOf(mockHttpSession).getServletContext();
+            will(returnValue(mockServletContext));
+
+            oneOf(mockServletContext).getResourceAsStream(with(any(String.class)));
+            will(returnValue(null));
         }});
 
-        ModelAndView modelAndView = yilgarnLocSpecimenController.doLocatedSpecimenFeature( serviceUrl,layerName, featureId,mockHttpRequest);
+        ModelAndView modelAndView = yilgarnLocSpecimenController.doLocatedSpecimenFeature(serviceUrl, layerName, featureId, mockHttpRequest);
 
         Assert.assertNotNull(modelAndView);
         Map<String, Object> model = modelAndView.getModel();
@@ -92,11 +135,16 @@ public class TestYilgarnLocSpecimenController {
         Assert.assertNotNull(((YilgarnLocSpecimenRecords[]) data.get("records"))[0]);
     }
 
+    /**
+     * Test download loc spec as zip.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testDownloadLocSpecAsZip()throws Exception{
 
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
-        final String serviceUrls[] = {"http://someUrl"};
+        final String[] serviceUrls = {"http://someUrl", };
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\"" + dummyGml + "\"},\"success\":true}";
 
@@ -134,7 +182,9 @@ public class TestYilgarnLocSpecimenController {
 
 
     /**
-     * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data
+     * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testDownloadGMLAsZipWithError() throws Exception {

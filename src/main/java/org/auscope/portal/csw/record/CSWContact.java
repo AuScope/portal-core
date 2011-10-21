@@ -16,7 +16,7 @@ public class CSWContact {
     private String addressCountry;
     private String addressEmail;
 
-    private CSWOnlineResource onlineResource;
+    private AbstractCSWOnlineResource onlineResource;
 
 
     public String getTelephone() {
@@ -83,11 +83,11 @@ public class CSWContact {
         this.addressEmail = addressEmail;
     }
 
-    public CSWOnlineResource getOnlineResource() {
+    public AbstractCSWOnlineResource getOnlineResource() {
         return onlineResource;
     }
 
-    public void setOnlineResource(CSWOnlineResource onlineResource) {
+    public void setOnlineResource(AbstractCSWOnlineResource onlineResource) {
         this.onlineResource = onlineResource;
     }
 

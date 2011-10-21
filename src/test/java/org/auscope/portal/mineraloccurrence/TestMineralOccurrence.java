@@ -40,8 +40,7 @@ public class TestMineralOccurrence {
         DocumentBuilder builder = domFactory.newDocumentBuilder();
         Document mineralOccurrenceDocument = builder.parse(new ByteArrayInputStream(Util.loadXML("src/test/resources/mineralOccurrenceNodeValid.xml").getBytes("UTF-8")));
 
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xPath = factory.newXPath();
+        XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
         XPathExpression expr = xPath.compile("/er:MineralOccurrence");
@@ -82,12 +81,12 @@ public class TestMineralOccurrence {
                 "temperature range 50-7000C, generally below 4000C, pressure 1-3 kbar",
                 validMineralOccurrence.getMineralDepositGroup());
     }
-    
+
     @Test
     public void testGetCommodityDescriptionURNsValid() {
         ArrayList<String> URNs = new ArrayList<String>();
         URNs.add("urn:cgi:feature:PIRSA:MineralCommodity:394deposit:Au");
-        
+
         Assert.assertEquals(
                 "Commodity Description URN is: urn:cgi:feature:PIRSA:MineralCommodity:394deposit:Au",
                 URNs,

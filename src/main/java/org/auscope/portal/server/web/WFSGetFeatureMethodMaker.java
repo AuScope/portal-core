@@ -11,7 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
 /**
- * A class for generating Web Feature Service requests
+ * A class for generating Web Feature Service requests.
  *
  * @author Josh Vote
  */
@@ -22,7 +22,7 @@ public class WFSGetFeatureMethodMaker {
     protected final Log log = LogFactory.getLog(getClass());
 
     /**
-     * Creates a PostMethod given the following parameters
+     * Creates a PostMethod given the following parameters.
      * @param serviceURL - required, exception thrown if not provided
      * @param featureType - required, exception thrown if not provided
      * @param filterString - optional
@@ -35,7 +35,7 @@ public class WFSGetFeatureMethodMaker {
     }
 
     /**
-     * Creates a PostMethod given the following parameters
+     * Creates a PostMethod given the following parameters.
      * @param serviceURL - required, exception thrown if not provided
      * @param featureType - required, exception thrown if not provided
      * @param filterString - optional
@@ -69,7 +69,7 @@ public class WFSGetFeatureMethodMaker {
         sb.append("  <wfs:Query typeName=\""+featureType+"\"");
         if (srsName != null && ! srsName.isEmpty())
             sb.append(" srsName=\"" + srsName + "\"");
-        else if(featureType == "gsml:Borehole"){
+        else if (featureType.equals("gsml:Borehole")) {
             sb.append(" srsName=\"" + "EPSG:4326" + "\"");
         }
         sb.append(">\n");
@@ -81,14 +81,14 @@ public class WFSGetFeatureMethodMaker {
         log.debug("Get Feature Query:\n" + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
-        httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(),null,null));
+        httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(), null, null));
 
 
         return httpMethod;
     }
 
     /**
-     * Generates a method for requesting a specific feature for a specific typeName
+     * Generates a method for requesting a specific feature for a specific typeName.
      * @param serviceUrl The WFS endpoint
      * @param typeName The typeName to query
      * @param featureId The ID of typeName to request

@@ -7,9 +7,9 @@ import java.util.Arrays;
 import org.auscope.portal.csw.record.CSWContact;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.csw.record.CSWGeographicElement;
-import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.csw.record.CSWOnlineResource.OnlineResourceType;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWResponsibleParty;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -23,7 +23,7 @@ public class TestViewCSWRecordFactory {
     }};
 
     private CSWRecord mockCSWRecord = context.mock(CSWRecord.class);
-    private CSWOnlineResource mockOnlineRes = context.mock(CSWOnlineResource.class);
+    private AbstractCSWOnlineResource mockOnlineRes = context.mock(AbstractCSWOnlineResource.class);
     private CSWGeographicBoundingBox mockBbox = context.mock(CSWGeographicBoundingBox.class);
     private CSWResponsibleParty mockResponsibleParty = context.mock(CSWResponsibleParty.class);
     private CSWContact mockContact = context.mock(CSWContact.class);
@@ -87,7 +87,7 @@ public class TestViewCSWRecordFactory {
             allowing(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
             allowing(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
             allowing(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
-            allowing(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
+            allowing(mockCSWRecord).getOnlineResources();will(returnValue(new AbstractCSWOnlineResource[] {mockOnlineRes}));
             allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
@@ -162,7 +162,7 @@ public class TestViewCSWRecordFactory {
             allowing(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
             allowing(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
             allowing(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
-            allowing(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
+            allowing(mockCSWRecord).getOnlineResources();will(returnValue(new AbstractCSWOnlineResource[] {mockOnlineRes}));
             allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
@@ -248,7 +248,7 @@ public class TestViewCSWRecordFactory {
             allowing(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
             allowing(mockCSWRecord).getRecordInfoUrl();will(returnValue(recordInfoUrl));
             allowing(mockCSWRecord).getDataIdentificationAbstract();will(returnValue(dataAbstract));
-            allowing(mockCSWRecord).getOnlineResources();will(returnValue(new CSWOnlineResource[] {mockOnlineRes}));
+            allowing(mockCSWRecord).getOnlineResources();will(returnValue(new AbstractCSWOnlineResource[] {mockOnlineRes}));
             allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));

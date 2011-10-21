@@ -3,7 +3,7 @@ package org.auscope.portal.server.web.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.auscope.portal.server.web.KnownLayer;
+import org.auscope.portal.server.web.AbstractKnownLayer;
 import org.auscope.portal.server.web.view.ViewKnownLayerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +41,7 @@ public class KnownLayerController extends BasePortalController {
     public ModelAndView getKnownLayers() {
         List<ModelMap> viewRepresentations = new ArrayList<ModelMap>();
         for (Object k : knownTypes) {
-            viewRepresentations.add(viewFactory.toView((KnownLayer) k));
+            viewRepresentations.add(viewFactory.toView((AbstractKnownLayer) k));
         }
 
         return generateJSONResponseMAV(true, viewRepresentations, "");

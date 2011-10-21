@@ -3,68 +3,68 @@ package org.auscope.portal.csw.record;
 import java.net.URL;
 
 /**
- * Represents a <gmd:CI_OnlineResource> element in a CSW response
+ * Represents a <gmd:CI_OnlineResource> element in a CSW response.
  * @author vot002
  *
  */
-public abstract class CSWOnlineResource {
+public abstract class AbstractCSWOnlineResource {
 
     /**
-     * A simplification of the protocol
+     * A simplification of the protocol.
      * @author vot002
      *
      */
     public enum OnlineResourceType {
         /**
-         * The type couldnt be determined or is unsupported
+         * The type couldnt be determined or is unsupported.
          */
         Unsupported,
         /**
-         * OGC Web Coverage Service
+         * OGC Web Coverage Service.
          */
         WCS,
         /**
-         * OGC Web Map Service
+         * OGC Web Map Service.
          */
         WMS,
         /**
-         * OGC Web Feature Service
+         * OGC Web Feature Service.
          */
         WFS,
         /**
-         * OpenDAP
+         * OpenDAP.
          */
         OPeNDAP,
 
         /**
-         * A generic web link
+         * A generic web link.
          */
         WWW
     }
 
     /**
-     * Gets the URL location of this online resource
+     * Gets the URL location of this online resource.
      * @return
      */
     public abstract URL getLinkage();
     /**
-     * Gets the protocol of this online resource
+     * Gets the protocol of this online resource.
      * @return
      */
     public abstract String getProtocol();
     /**
-     * Gets the name of this online resource
+     * Gets the name of this online resource.
      * @return
      */
     public abstract String getName();
     /**
-     * Gets a description of this online resource
+     * Gets a description of this online resource.
      * @return
      */
     public abstract String getDescription();
 
     /**
-     * Gets the application profile (if available) of this online resource
+     * Gets the application profile (if available) of this online resource.
      * @return
      */
     public abstract String getApplicationProfile();
@@ -75,8 +75,9 @@ public abstract class CSWOnlineResource {
      */
     public OnlineResourceType getType() {
         String lowerProtocol = getProtocol();
-        if (lowerProtocol == null)
+        if (lowerProtocol == null) {
             return OnlineResourceType.Unsupported;
+        }
 
         lowerProtocol = lowerProtocol.toLowerCase();
         if (lowerProtocol.contains("wfs")) {

@@ -39,8 +39,7 @@ public class TestCommodity {
         DocumentBuilder builder = domFactory.newDocumentBuilder();
         Document mineDocument = builder.parse(new ByteArrayInputStream(Util.loadXML("src/test/resources/commodityNodeValid.xml").getBytes("UTF-8")));
 
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xPath = factory.newXPath();
+        XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
 
         XPathExpression expr = xPath.compile("/er:Commodity");

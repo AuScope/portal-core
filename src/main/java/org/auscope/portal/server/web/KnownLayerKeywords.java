@@ -9,10 +9,10 @@ import java.awt.Point;
  * @author vot002
  *
  */
-public class KnownLayerKeywords extends KnownLayer {
+public class KnownLayerKeywords extends AbstractKnownLayer {
 
-	private static final long serialVersionUID = 1L;
-	protected String descriptiveKeyword;
+    private static final long serialVersionUID = 1L;
+    protected String descriptiveKeyword;
     protected String iconUrl;
     protected Point iconAnchor;
     protected Dimension iconSize;

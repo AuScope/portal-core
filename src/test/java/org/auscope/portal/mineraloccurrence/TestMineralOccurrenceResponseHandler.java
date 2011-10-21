@@ -32,8 +32,8 @@ public class TestMineralOccurrenceResponseHandler {
         Collection<Mine> mines = mineralOccurrencesResponseHandler.getMines(mineGetFeatureResponseXML.toString());
 
         Assert.assertEquals("There are 2 mines", 2, mines.size());
-        Assert.assertEquals("The first mine is WOOLDRIDGE CREEK WORKINGS", "WOOLDRIDGE CREEK WORKINGS", ((Mine)mines.toArray()[0]).getMineNamePreffered());
-        Assert.assertEquals("The second mine is HALL MAGNESITE MINE", "HALL MAGNESITE MINE", ((Mine)mines.toArray()[1]).getMineNamePreffered());
+        Assert.assertEquals("The first mine is WOOLDRIDGE CREEK WORKINGS", "WOOLDRIDGE CREEK WORKINGS", ((Mine) mines.toArray()[0]).getMineNamePreffered());
+        Assert.assertEquals("The second mine is HALL MAGNESITE MINE", "HALL MAGNESITE MINE", ((Mine) mines.toArray()[1]).getMineNamePreffered());
     }
 
     @Test
@@ -52,8 +52,8 @@ public class TestMineralOccurrenceResponseHandler {
             mineralOccurrencesResponseHandler.getCommodities(commodityGetFeatureResponseXML.toString());
 
         Assert.assertEquals("There are 2 commodities", 2, commodities.size());
-        Assert.assertEquals("The first one's name is Gold", "Gold", ((Commodity)commodities.toArray()[0]).getCommodityName());
-        Assert.assertEquals("The second one's MineralOccurrence source is urn:cgi:feature:GSV:MineralOccurrence:361170", "urn:cgi:feature:GSV:MineralOccurrence:361170", ((Commodity)commodities.toArray()[1]).getSource());
+        Assert.assertEquals("The first one's name is Gold", "Gold", ((Commodity) commodities.toArray()[0]).getCommodityName());
+        Assert.assertEquals("The second one's MineralOccurrence source is urn:cgi:feature:GSV:MineralOccurrence:361170", "urn:cgi:feature:GSV:MineralOccurrence:361170", ((Commodity) commodities.toArray()[1]).getSource());
     }
 
     @Test

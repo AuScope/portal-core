@@ -2,7 +2,7 @@ package org.auscope.portal.server.web.view;
 
 import java.awt.Dimension;
 import java.awt.Point;
-import org.auscope.portal.server.web.KnownLayer;
+import org.auscope.portal.server.web.AbstractKnownLayer;
 import org.auscope.portal.server.web.KnownLayerKeywords;
 import org.auscope.portal.server.web.KnownLayerWFS;
 import org.auscope.portal.server.web.KnownLayerWMS;
@@ -35,7 +35,7 @@ public class ViewKnownLayerFactory {
         return obj;
     }
 
-    private ModelMap baseToView(KnownLayer k) {
+    private ModelMap baseToView(AbstractKnownLayer k) {
         ModelMap obj = new ModelMap();
 
         obj.put("title", k.getTitle());
@@ -116,7 +116,7 @@ public class ViewKnownLayerFactory {
      * @param k
      * @return
      */
-    public ModelMap toView(KnownLayer k) {
+    public ModelMap toView(AbstractKnownLayer k) {
         if (k instanceof KnownLayerWFS) {
             return toView((KnownLayerWFS) k);
         } else if (k instanceof KnownLayerWMS) {

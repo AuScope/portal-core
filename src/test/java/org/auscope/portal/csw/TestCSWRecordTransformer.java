@@ -19,9 +19,9 @@ import javax.xml.xpath.XPathFactory;
 import org.auscope.portal.csw.record.CSWContact;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.csw.record.CSWGeographicElement;
-import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.csw.record.CSWOnlineResource.OnlineResourceType;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWResponsibleParty;
 import org.auscope.portal.server.util.DOMUtil;
 import org.junit.Assert;
@@ -84,7 +84,7 @@ public class TestCSWRecordTransformer {
     @Test
     public void testGetServiceUrl() throws XPathExpressionException {
 
-        CSWOnlineResource[] resources = this.records[4].getOnlineResourcesByType(OnlineResourceType.WFS);
+        AbstractCSWOnlineResource[] resources = this.records[4].getOnlineResourcesByType(OnlineResourceType.WFS);
         Assert.assertEquals(1, resources.length);
         Assert.assertEquals(
                 "http://auscope-services-test.arrc.csiro.au/deegree-wfs/services?",
@@ -99,7 +99,7 @@ public class TestCSWRecordTransformer {
 
     @Test
     public void testMultipleOnlineResources() throws Exception {
-        CSWOnlineResource[] resources = this.records[14].getOnlineResources();
+        AbstractCSWOnlineResource[] resources = this.records[14].getOnlineResources();
         Assert.assertEquals(2, resources.length);
 
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS);
@@ -165,7 +165,7 @@ public class TestCSWRecordTransformer {
         Assert.assertEquals("ACT", contact.getAddressAdministrativeArea());
         Assert.assertEquals("2601", contact.getAddressPostalCode());
 
-        CSWOnlineResource contactResource = contact.getOnlineResource();
+        AbstractCSWOnlineResource contactResource = contact.getOnlineResource();
         Assert.assertNotNull(contactResource);
 
         Assert.assertEquals("http://www.em.csiro.au/", contactResource.getLinkage().toString());

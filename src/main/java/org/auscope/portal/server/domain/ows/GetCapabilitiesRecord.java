@@ -1,10 +1,12 @@
 package org.auscope.portal.server.domain.ows;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -17,202 +19,262 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
- * This class represents response to GetCapabilites query
+ * This class represents response to GetCapabilites query.
  *
- * @author JarekSanders
  * @version $Id$
  */
 public class GetCapabilitiesRecord {
 
-    // -------------------------------------------------------------- Constants
+    /** The log. */
+    private final Log log = LogFactory.getLog(getClass());
 
-    protected final Log log = LogFactory.getLog(getClass());
-
-
-    // ----------------------------------------------------- Instance Variables
-
+    /** The service type. */
     private String serviceType = "";
+
+    /** The organisation. */
     private String organisation = "";
+
+    /** The get map url. */
     private String getMapUrl = "";
+
+    /** The layers. */
     private ArrayList<GetCapabilitiesWMSLayerRecord> layers;
+
+    /** The layer srs. */
     private String[] layerSRS = null;
 
-    // ----------------------------------------------------------- Constructors
+    /** The extract organisation expression. */
+    private static final String EXTRACTORGANISATIONEXPRESSION = "/WMT_MS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactOrganization";
+
+    /** The extract layer srs. */
+    private static final String EXTRACTLAYERSRS = "/WMT_MS_Capabilities/Capability/Layer/SRS";
+
+    /** The extract url expression. */
+    private static final String EXTRACTURLEXPRESSION = "/WMT_MS_Capabilities/Capability/Request/GetMap/DCPType/HTTP/Get/OnlineResource";
+
+    /** The extract layer expression. */
+    private static final String EXTRACTLAYEREXPRESSION = "/WMT_MS_Capabilities/Capability/descendant::Layer[@queryable='1']";
+
 
     /**
-     * C'tor
+     * Constructor.
      * @param inXml GetCapabilites string response
      */
     public GetCapabilitiesRecord(String inXml) {
         try {
-            XPath xPath = XPathFactory.newInstance().newXPath();
+            XPath xPathInstance = XPathFactory.newInstance().newXPath();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             InputSource inputSource = new InputSource(new StringReader(inXml));
             Document doc = builder.parse(inputSource);
 
-            getService(xPath, doc);
-            getContactOrg(xPath, doc);
-            getGetMapUrl(xPath, doc);
-            getWMSLayerSRS(xPath, doc);
+            this.serviceType = getService(xPathInstance, doc);
+            this.organisation = getContactOrganisation(xPathInstance, doc);
+            this.getMapUrl = getGetMapUrl(xPathInstance, doc);
+            this.layerSRS = getWMSLayerSRS(xPathInstance, doc);
             if (isWMS()) {
-                getWMSLayers(xPath, doc);
+                this.layers = getWMSLayers(xPathInstance, doc);
             } else {
-                log.info("Adding custom WFSs is not yet implimented");
+                log.debug("Adding non WMS's are not yet implimented");
             }
 
-        } catch (Exception e) {
-            log.error("GetCapabilitiesRecord xml parsing error: " + e.getMessage());
+        } catch (SAXException e) {
+            log.error("Parsing error: " + e.getMessage());
+        } catch (IOException e) {
+            log.error("IO error: " + e.getMessage());
+        } catch (ParserConfigurationException e) {
+            log.error("Parser Config Error: " + e.getMessage());
         }
     }
 
 
     // ------------------------------------------ Attribute Setters and Getters
 
+    /**
+     * Checks if is wFS.
+     *
+     * @return true, if is wFS
+     */
     public boolean isWFS() {
         return this.serviceType.equals("wfs");
     }
 
+    /**
+     * Checks if is wMS.
+     *
+     * @return true, if is wMS
+     */
     public boolean isWMS() {
         return this.serviceType.equals("wms");
     }
 
+    /**
+     * Gets the service type.
+     *
+     * @return the service type
+     */
     public String getServiceType() {
         return this.serviceType;
     }
 
+    /**
+     * Gets the organisation.
+     *
+     * @return the organisation
+     */
     public String getOrganisation() {
         return this.organisation;
     }
 
     /**
-     * Gets the URL that the GetCapabilities response has defined to be used for GetMap requests
-     * @return
+     * Gets the URL that the GetCapabilities response has defined to be used for GetMap requests.
+     *
+     * @return the map url
      */
     public String getMapUrl() {
         return this.getMapUrl;
     }
 
+    /**
+     * Gets the layers.
+     *
+     * @return the layers
+     */
     public ArrayList<GetCapabilitiesWMSLayerRecord> getLayers() {
         return this.layers;
     }
 
-    public String[] getLayerSRS(){
+    /**
+     * Gets the layer srs.
+     *
+     * @return the layer srs
+     */
+    public String[] getLayerSRS() {
         return this.layerSRS;
     }
 
 
     // ------------------------------------------------------ Protected Methods
 
-    private void getService(XPath xPath, Document doc) {
+    /**
+     * Gets the service.
+     *
+     * @param xPath the x path
+     * @param doc the doc
+     * @return serviceUrlString the service endpoint
+     */
+    private String getService(XPath xPath, Document doc) {
+        String serviceUrlString = "";
         try {
-            /* Commented out this code as some services do not follow the
-             * OGC WMS standard ie. <Name> element does not contain "OGC:WMS"
-            String extractServiceExpression = "/WMT_MS_Capabilities/Service/Name";
-            Node tempNode = (Node)xPath.evaluate( extractServiceExpression
-                                                , doc
-                                                , XPathConstants.NODE);
-            final String service = tempNode != null ? tempNode.getTextContent() : "";
-
-            if (service.equals("OGC:WMS")) {
-                this.serviceType = "wms";
-            } else if (service.equals("OGC:WFS")) {
-                this.serviceType = "wfs";
-            }*/
-
-            // The only other way to figure out if the input comes from WMS
-            // is to check for <WMT_MS_Capabilities> node
-            // ASSUMPTION: <WMT_MS_Capabilities> = WMS
-
             int elemCount
                 = Integer.parseInt((String) xPath.evaluate("count(/WMT_MS_Capabilities)", doc));
 
-            if( elemCount != 0) {
-                this.serviceType = "wms";
+            if (elemCount != 0) {
+                serviceUrlString = "wms";
             }
 
         } catch (XPathExpressionException e) {
             log.error("GetCapabilities get service xml parsing error: " + e.getMessage());
         }
+        return serviceUrlString;
     }
 
-    private void getContactOrg(XPath xPath, Document doc) {
-        String extractOrganisationExpression
-            = "/WMT_MS_Capabilities/Service/ContactInformation/ContactPersonPrimary/ContactOrganization";
 
+    /**
+     * Gets the contact organisation.
+     *
+     * @param xPath the x path
+     * @param doc the doc
+     * @return contactOrganisation the contact organisation
+     */
+    private String getContactOrganisation(XPath xPath, Document doc) {
+        String contactOrganisation = "";
         try {
-            Node tempNode = (Node)xPath.evaluate( extractOrganisationExpression
-                                                , doc
-                                                , XPathConstants.NODE);
+            Node tempNode = (Node) xPath.evaluate(
+                    EXTRACTORGANISATIONEXPRESSION, doc, XPathConstants.NODE);
 
-            this.organisation = tempNode != null ? tempNode.getTextContent() : "";
+            contactOrganisation = tempNode != null ? tempNode.getTextContent() : "";
 
         } catch (XPathExpressionException e) {
             log.error("GetCapabilities get organisation xml parsing error: " + e.getMessage());
         }
+        return contactOrganisation;
     }
 
-    private void getGetMapUrl(XPath xPath, Document doc) {
-        String extractUrlExpression
-            = "/WMT_MS_Capabilities/Capability/Request/GetMap/DCPType/HTTP/Get/OnlineResource";
-
+    /**
+     * Gets the gets the map url.
+     *
+     * @param xPath the xpath
+     * @param doc the doc
+     * @return mapUrl the map url String
+     */
+    private String getGetMapUrl(XPath xPath, Document doc) {
+        String mapUrl = "";
         try {
-            Element elem = (Element)xPath.evaluate( extractUrlExpression
-                                                  , doc
-                                                  , XPathConstants.NODE);
+            Element elem = (Element) xPath.evaluate(EXTRACTURLEXPRESSION, doc,
+                    XPathConstants.NODE);
 
-            this.getMapUrl = elem.getAttribute("xlink:href");
+            mapUrl = elem.getAttribute("xlink:href");
 
         } catch (XPathExpressionException e) {
             log.error("GetCapabilities GetMapUrl xml parsing error: " + e.getMessage());
         }
+        return mapUrl;
     }
 
-    private void getWMSLayers(XPath xPath, Document doc) {
-        String extractLayerExpression
-            = "/WMT_MS_Capabilities/Capability/descendant::Layer[@queryable='1']";
-
+    /**
+     * Gets the wMS layers.
+     *
+     * @param xPath the x path
+     * @param doc the doc
+     * @return the wMS layers
+     */
+    private ArrayList<GetCapabilitiesWMSLayerRecord> getWMSLayers(XPath xPath, Document doc) {
+        ArrayList<GetCapabilitiesWMSLayerRecord> mylayerList = new ArrayList<GetCapabilitiesWMSLayerRecord>();
         try {
-            NodeList nodes = (NodeList)xPath.evaluate( extractLayerExpression
-                                                     , doc
-                                                     , XPathConstants.NODESET );
+            NodeList nodes = (NodeList) xPath.evaluate(EXTRACTLAYEREXPRESSION,
+                    doc, XPathConstants.NODESET);
 
             log.debug("Number of layers retrieved from GeoCapabilities: " + nodes.getLength());
 
-            layers = new ArrayList<GetCapabilitiesWMSLayerRecord>();
-
-            for(int i=0; i<nodes.getLength(); i++ ) {
-                layers.add( new GetCapabilitiesWMSLayerRecord(nodes.item(i)) );
-                log.debug("WMS layer " + (i+1) + " : " + layers.get(i).toString());
+            for (int i = 0; i < nodes.getLength(); i++) {
+                mylayerList.add(new GetCapabilitiesWMSLayerRecord(nodes.item(i)));
+                log.debug("WMS layer " + (i + 1) + " : " + mylayerList.get(i).toString());
             }
 
         } catch (XPathExpressionException e) {
             log.error("GetCapabilities - getWMSLayers xml parsing error: " + e.getMessage());
         }
+
+        return mylayerList;
     }
 
-    private void getWMSLayerSRS(XPath xPath, Document doc){
-        String extractLayerSRS
-            = "/WMT_MS_Capabilities/Capability/Layer/SRS";
+    /**
+     * Gets the wMS layer srs.
+     *
+     * @param xPath the x path
+     * @param doc the doc
+     * @return the wMS layer srs
+     */
+    private String[] getWMSLayerSRS(XPath xPath, Document doc) {
+        String[] layerSRSList = null;
+        try {
+            NodeList nodes = (NodeList) xPath.evaluate(EXTRACTLAYERSRS, doc,
+                    XPathConstants.NODESET);
 
-        try{
-            NodeList nodes = (NodeList)xPath.evaluate( extractLayerSRS
-                    , doc
-                    , XPathConstants.NODESET );
+            layerSRSList = new String[nodes.getLength()];
 
-            layerSRS = new String[nodes.getLength()];
-            for(int i =0; i< nodes.getLength(); i++){
+            for (int i = 0; i < nodes.getLength(); i++) {
                 Node srsNode = nodes.item(i);
-                //String tempValue = (nodes.item(i)).getNodeValue();
-                layerSRS[i]= srsNode!= null ? srsNode.getTextContent() : "";
-
+                layerSRSList[i] = srsNode != null ? srsNode.getTextContent() : "";
             }
-        }catch (XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             log.error("GetCapabilities - getLayerSRS xml parsing error: " + e.getMessage());
         }
+        return layerSRSList;
     }
-
 }
 

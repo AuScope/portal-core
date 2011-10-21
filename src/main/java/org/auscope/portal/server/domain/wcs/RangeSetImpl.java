@@ -8,8 +8,8 @@ import org.w3c.dom.NodeList;
 
 public class RangeSetImpl implements RangeSet {
 
-	private static final long serialVersionUID = 1L;
-	private String description;
+    private static final long serialVersionUID = 1L;
+    private String description;
     private String label;
     private String name;
     private ValueEnumType[] nullValues;

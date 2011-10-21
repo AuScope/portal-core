@@ -9,6 +9,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.auscope.portal.server.domain.filter.AbstractFilter;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 
+
 /**
  * Represents a OGC:Filter that will fetch matching records from a CS/W.
  *
@@ -18,24 +19,33 @@ import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /**
-     * How the list of keywords will be used to match records
+     * How the list of keywords will be used to match records.
      */
     public enum KeywordMatchType {
-        /**
-         * Any record that matches ANY of the specified keywords will pass
-         */
+
+        /** Any record that matches ANY of the specified keywords will pass. */
         Any,
-        /**
-         * Any record that matches EACH AND EVERY keyword in the specified list will pass
-         */
+
+        /** Any record that matches EACH AND EVERY keyword in the specified list will pass. */
         All
     }
 
+    /** The any text. */
     private String anyText;
+
+    /** The spatial bounds. */
     private FilterBoundingBox spatialBounds;
+
+    /** The keywords. */
     private String[] keywords;
+
+    /** The capture platform. */
     private String capturePlatform;
+
+    /** The sensor. */
     private String sensor;
+
+    /** The keyword match type. */
     private KeywordMatchType keywordMatchType;
 
     /**
@@ -88,8 +98,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     }
 
     /**
-     * Utility method for generating the body of a filter fragment
-     * @return
+     * Utility method for generating the body of a filter fragment.
+     * @return a filter fragment
      */
     private String generateFilterFragment() {
         List<String> fragments = new ArrayList<String>();
@@ -131,7 +141,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /**
      * Returns an ogc:filter fragment that will fetch all WFS, WMS and WCS
-     * records from a CSW
+     * records from a CSW.
+     *
+     * @return the filter string all records
      */
     @Override
     public String getFilterStringAllRecords() {
@@ -146,33 +158,64 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     }
 
     /**
-     * Not implemented
+     * Not implemented.
+     *
+     * @param bbox the bbox
+     * @return the filter string bounding box
      */
     @Override
     public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
         throw new NotImplementedException();
     }
 
+    /**
+     * Gets the spatial bounds.
+     *
+     * @return the spatial bounds
+     */
     public FilterBoundingBox getSpatialBounds() {
         return spatialBounds;
     }
 
+    /**
+     * Gets the keywords.
+     *
+     * @return the keywords
+     */
     public String[] getKeywords() {
         return keywords;
     }
 
+    /**
+     * Gets the capture platform.
+     *
+     * @return the capture platform
+     */
     public String getCapturePlatform() {
         return capturePlatform;
     }
 
+    /**
+     * Gets the sensor.
+     *
+     * @return the sensor
+     */
     public String getSensor() {
         return sensor;
     }
 
+    /**
+     * Gets the keyword match type.
+     *
+     * @return the keyword match type
+     */
     public KeywordMatchType getKeywordMatchType() {
         return keywordMatchType;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return "CSWGetDataRecordsFilter [spatialBounds=" + spatialBounds

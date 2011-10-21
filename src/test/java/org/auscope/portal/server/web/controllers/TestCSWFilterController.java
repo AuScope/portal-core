@@ -86,12 +86,20 @@ public class TestCSWFilterController {
         context.checking(new Expectations() {{
             oneOf(mockService).getFilteredRecords(with(equal(cswServiceId)), with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)), with(equal(startPosition + 1)));will(returnValue(filteredResponse));
 
-            oneOf(filteredResponse).getRecordsMatched();will(returnValue(response1RecordsMatched));
-            oneOf(filteredResponse).getRecords();will(returnValue(Arrays.asList(filteredRecs[0], filteredRecs[1], filteredRecs[2])));
+            oneOf(filteredResponse).getRecordsMatched();
+            will(returnValue(response1RecordsMatched));
 
-            oneOf(mockViewRecordFactory).toView(filteredRecs[0]);will(returnValue(mockViewRec1));
-            oneOf(mockViewRecordFactory).toView(filteredRecs[1]);will(returnValue(mockViewRec2));
-            oneOf(mockViewRecordFactory).toView(filteredRecs[2]);will(returnValue(mockViewRec3));
+            oneOf(filteredResponse).getRecords();
+            will(returnValue(Arrays.asList(filteredRecs[0], filteredRecs[1], filteredRecs[2])));
+
+            oneOf(mockViewRecordFactory).toView(filteredRecs[0]);
+            will(returnValue(mockViewRec1));
+
+            oneOf(mockViewRecordFactory).toView(filteredRecs[1]);
+            will(returnValue(mockViewRec2));
+
+            oneOf(mockViewRecordFactory).toView(filteredRecs[2]);
+            will(returnValue(mockViewRec3));
         }});
 
         ModelAndView mav = controller.getFilteredCSWRecords(cswServiceId, anyText, west, east, north, south, keywords, KeywordMatchType.All, capturePlatform, sensor, maxRecords, startPosition);
@@ -142,16 +150,30 @@ public class TestCSWFilterController {
         final KeywordMatchType matchType = KeywordMatchType.All;
 
         context.checking(new Expectations() {{
-            oneOf(mockService).getFilteredRecords(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));will(returnValue(filteredResponses));
+            oneOf(mockService).getFilteredRecords(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));
+            will(returnValue(filteredResponses));
 
-            oneOf(filteredResponses[0]).getRecordsMatched();will(returnValue(response1RecordsMatched));
-            oneOf(filteredResponses[1]).getRecordsMatched();will(returnValue(response2RecordsMatched));
-            oneOf(filteredResponses[0]).getRecords();will(returnValue(Arrays.asList(filteredRecs[0])));
-            oneOf(filteredResponses[1]).getRecords();will(returnValue(Arrays.asList(filteredRecs[1], filteredRecs[2])));
+            oneOf(filteredResponses[0]).getRecordsMatched();
+            will(returnValue(response1RecordsMatched));
 
-            oneOf(mockViewRecordFactory).toView(filteredRecs[0]);will(returnValue(mockViewRec1));
-            oneOf(mockViewRecordFactory).toView(filteredRecs[1]);will(returnValue(mockViewRec2));
-            oneOf(mockViewRecordFactory).toView(filteredRecs[2]);will(returnValue(mockViewRec3));
+            oneOf(filteredResponses[1]).getRecordsMatched();
+            will(returnValue(response2RecordsMatched));
+
+            oneOf(filteredResponses[0]).getRecords();
+            will(returnValue(Arrays.asList(filteredRecs[0])));
+
+            oneOf(filteredResponses[1]).getRecords();
+            will(returnValue(Arrays.asList(filteredRecs[1], filteredRecs[2])));
+
+            oneOf(mockViewRecordFactory).toView(filteredRecs[0]);
+            will(returnValue(mockViewRec1));
+
+            oneOf(mockViewRecordFactory).toView(filteredRecs[1]);
+            will(returnValue(mockViewRec2));
+
+            oneOf(mockViewRecordFactory).toView(filteredRecs[2]);
+            will(returnValue(mockViewRec3));
+
         }});
 
         ModelAndView mav = controller.getFilteredCSWRecords(null, anyText, west, east, north, south, keywords, KeywordMatchType.All, capturePlatform, sensor, maxRecords, null);
@@ -238,14 +260,24 @@ public class TestCSWFilterController {
             //Throw an error
             oneOf(mockService).getFilteredRecords(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(CSWFilterController.DEFAULT_MAX_RECORDS)));will(returnValue(filteredResponses));
 
-            oneOf(filteredResponses[0]).getRecordsMatched();will(returnValue(response1RecordsMatched));
-            oneOf(filteredResponses[1]).getRecordsMatched();will(returnValue(response2RecordsMatched));
-            oneOf(filteredResponses[0]).getRecords();will(returnValue(Arrays.asList(filteredRecs[0])));
-            oneOf(filteredResponses[1]).getRecords();will(returnValue(Arrays.asList(filteredRecs[1], filteredRecs[2])));
+            oneOf(filteredResponses[0]).getRecordsMatched();
+            will(returnValue(response1RecordsMatched));
 
-            oneOf(mockViewRecordFactory).toView(filteredRecs[0]);will(returnValue(mockViewRec1));
-            oneOf(mockViewRecordFactory).toView(filteredRecs[1]);will(returnValue(mockViewRec2));
-            oneOf(mockViewRecordFactory).toView(filteredRecs[2]);will(returnValue(mockViewRec3));
+            oneOf(filteredResponses[1]).getRecordsMatched();
+            will(returnValue(response2RecordsMatched));
+
+            oneOf(filteredResponses[0]).getRecords();
+            will(returnValue(Arrays.asList(filteredRecs[0])));
+
+            oneOf(filteredResponses[1]).getRecords();
+            will(returnValue(Arrays.asList(filteredRecs[1], filteredRecs[2])));
+
+            oneOf(mockViewRecordFactory).toView(filteredRecs[0]);
+            will(returnValue(mockViewRec1));
+            oneOf(mockViewRecordFactory).toView(filteredRecs[1]);
+            will(returnValue(mockViewRec2));
+            oneOf(mockViewRecordFactory).toView(filteredRecs[2]);
+            will(returnValue(mockViewRec3));
         }});
 
         ModelAndView mav = controller.getFilteredCSWRecords(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords, startPosition);
@@ -314,7 +346,8 @@ public class TestCSWFilterController {
         final KeywordMatchType matchType = KeywordMatchType.All;
 
         context.checking(new Expectations() {{
-            oneOf(mockService).getFilteredRecordsCount(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));will(returnValue(expectedCount));
+            oneOf(mockService).getFilteredRecordsCount(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));
+            will(returnValue(expectedCount));
         }});
 
         ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
@@ -345,7 +378,8 @@ public class TestCSWFilterController {
         final KeywordMatchType matchType = null;
 
         context.checking(new Expectations() {{
-            oneOf(mockService).getFilteredRecordsCount(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(0)));will(returnValue(expectedCount));
+            oneOf(mockService).getFilteredRecordsCount(with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(0)));
+            will(returnValue(expectedCount));
         }});
 
         ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
@@ -377,7 +411,8 @@ public class TestCSWFilterController {
         final KeywordMatchType matchType = KeywordMatchType.All;
 
         context.checking(new Expectations() {{
-            oneOf(mockService).getFilteredRecordsCount(with(equal(cswServiceId)), with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));will(throwException(new Exception()));
+            oneOf(mockService).getFilteredRecordsCount(with(equal(cswServiceId)), with(aCSWFilter(expectedBBox, keywords, capturePlatform, sensor, matchType)), with(equal(maxRecords)));
+            will(throwException(new Exception()));
         }});
 
         ModelAndView mav = controller.getFilteredCSWRecordsCount(cswServiceId, anyText, west, east, north, south, keywords, matchType, capturePlatform, sensor, maxRecords);
@@ -397,7 +432,8 @@ public class TestCSWFilterController {
         };
 
         context.checking(new Expectations() {{
-            oneOf(mockService).getCSWServiceItems();will(returnValue(expected));
+            oneOf(mockService).getCSWServiceItems();
+            will(returnValue(expected));
         }});
 
         ModelAndView mav = controller.getCSWServices();

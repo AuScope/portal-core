@@ -24,14 +24,14 @@ import org.junit.Test;
  * @version $Id$
  */
 public class TestDownloadController {
-    
+
     /**
      * JMock context
      */
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
-    
+
     /**
      * Mock httpService caller
      */
@@ -41,27 +41,27 @@ public class TestDownloadController {
      * The controller to test
      */
     private DownloadController downloadController;
-    
+
     /**
      * Mock response
      */
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
-    
+
     /**
      * Needed so we can check the contents of our zip file after it is written
      */
     final class MyServletOutputStream extends ServletOutputStream {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        
+
         public void write(int i) throws IOException {
             byteArrayOutputStream.write(i);
         }
-        
+
         public ZipInputStream getZipInputStream() {
             return new ZipInputStream(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
         }
     };
-    
+
     @Before
     public void setup() {
         downloadController = new DownloadController(httpServiceCaller);
@@ -76,7 +76,7 @@ public class TestDownloadController {
         final String[] serviceUrls = {"http://someUrl"};
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\"" + dummyGml + "\"},\"success\":true}";
-        
+
         context.checking(new Expectations() {{
             //setting of the headers for the return content
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
@@ -95,22 +95,22 @@ public class TestDownloadController {
         // Check that the zip file contains the correct data
         ZipInputStream in = servletOutputStream.getZipInputStream();
         ZipEntry ze = in.getNextEntry();
-        
+
         Assert.assertNotNull(ze);
         Assert.assertTrue(ze.getName().endsWith(".xml"));
-        
+
         byte[] uncompressedData = new byte[dummyGml.getBytes().length];
         int dataRead = in.read(uncompressedData);
-        
+
         Assert.assertEquals(dummyGml.getBytes().length, dataRead);
         Assert.assertArrayEquals(dummyGml.getBytes(), uncompressedData);
-        
+
         in.close();
     }
 
     /**
-     * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data 
-     * 
+     * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data
+     *
      * This dummy data is missing the data element but contains a msg property (This added in response to JIRA AUS-1575)
      */
     @Test
@@ -140,17 +140,17 @@ public class TestDownloadController {
         //check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
         ZipEntry ze = zipInputStream.getNextEntry();
-        
+
         Assert.assertNotNull(ze);
         Assert.assertTrue(ze.getName().endsWith(dummyMessage + ".xml"));
-        
+
         ze = zipInputStream.getNextEntry();
         Assert.assertNotNull(ze);
         Assert.assertTrue(ze.getName().endsWith("operation-failed.xml"));
-        
+
         zipInputStream.close();
     }
-    
+
     /**
      * Test that this function makes all of the approriate calls, and see if it returns gml given some dummy data
      */

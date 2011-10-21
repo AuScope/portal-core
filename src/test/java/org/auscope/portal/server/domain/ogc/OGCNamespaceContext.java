@@ -13,8 +13,8 @@ import javax.xml.namespace.NamespaceContext;
  */
 public class OGCNamespaceContext implements NamespaceContext {
     private Map<String, String> map = new HashMap<String, String>();
-    
-    public OGCNamespaceContext() {    
+
+    public OGCNamespaceContext() {
         map.put("ogc", "http://www.opengis.net/wcs");
     }
 

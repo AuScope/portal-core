@@ -5,11 +5,11 @@ package org.auscope.portal.server.domain.opendap;
  * @author vot002
  *
  */
-public class SimpleAxis extends ViewVariable {
+public class SimpleAxis extends AbstractViewVariable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final String TYPE_STRING = "axis";
+    public static final String TYPE_STRING = "axis";
 
     private SimpleBounds dimensionBounds;
     private SimpleBounds valueBounds;

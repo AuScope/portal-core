@@ -15,9 +15,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FilterBoundingBox implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	protected static final Log log = LogFactory.getLog(FilterBoundingBox.class);
+    protected static final Log log = LogFactory.getLog(FilterBoundingBox.class);
 
     private String bboxSrs;
     private double[] lowerCornerPoints;

@@ -22,18 +22,16 @@ import org.xml.sax.SAXException;
  */
 public class MineralOccurrence {
     private Node mineralOccurrenceNode;
-    private XPath xPath;
 
     public MineralOccurrence(Node mineralOccurrenceNode) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
         this.mineralOccurrenceNode = mineralOccurrenceNode;
-
-        XPathFactory factory = XPathFactory.newInstance();
-        xPath = factory.newXPath();
-        xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
     }
 
     public String getURN() {
         try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
             XPathExpression expr = xPath.compile("gml:name");
             NodeList nameNodes = (NodeList)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
 
@@ -52,6 +50,9 @@ public class MineralOccurrence {
     public String getType() {
 
         try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
             XPathExpression expr = xPath.compile("er:type");
             Node result = (Node)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODE);
             return result.getTextContent();
@@ -63,6 +64,9 @@ public class MineralOccurrence {
     public String getMineralDepositGroup() {
 
         try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
             XPathExpression expr =
                 xPath.compile("er:classification/er:MineralDepositModel/er:mineralDepositGroup");
             Node result = (Node)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODE);
@@ -75,16 +79,19 @@ public class MineralOccurrence {
     public Collection<String> getCommodityDescriptionURNs() {
 
         try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            xPath.setNamespaceContext(new MineralOccurrenceNamespaceContext());
+
             XPathExpression expr = xPath.compile("er:commodityDescription");
-            NodeList commodityNodes = (NodeList)expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
+            NodeList commodityNodes = (NodeList) expr.evaluate(mineralOccurrenceNode, XPathConstants.NODESET);
 
             ArrayList<String> commodityDescriptionURNs = new ArrayList<String>();
 
-            for(int i=0; i < commodityNodes.getLength(); i++) {
-                String URN =
+            for(int i = 0; i < commodityNodes.getLength(); i++) {
+                String urn =
                     commodityNodes.item(i).getAttributes().getNamedItem("xlink:href").getTextContent();
 
-                commodityDescriptionURNs.add(URN);
+                commodityDescriptionURNs.add(urn);
             }
             return commodityDescriptionURNs;
         } catch (Exception e) {

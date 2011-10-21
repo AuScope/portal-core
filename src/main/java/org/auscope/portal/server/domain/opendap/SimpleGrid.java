@@ -7,19 +7,19 @@ import java.util.Arrays;
  * @author vot002
  *
  */
-public class SimpleGrid extends ViewVariable {
+public class SimpleGrid extends AbstractViewVariable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public static final String TYPE_STRING = "grid";
+    public static final String TYPE_STRING = "grid";
 
-    private ViewVariable[] axes;
+    private AbstractViewVariable[] axes;
 
     /**
      * Gets the list of axes that make up this gridded variable
      * @return
      */
-    public ViewVariable[] getAxes() {
+    public AbstractViewVariable[] getAxes() {
         return axes;
     }
 
@@ -27,12 +27,12 @@ public class SimpleGrid extends ViewVariable {
      * Sets the list of axes that make up this gridded variable
      * @param axes
      */
-    public void setAxes(ViewVariable[] axes) {
+    public void setAxes(AbstractViewVariable[] axes) {
         this.axes = axes;
     }
 
     public SimpleGrid(String name, String dataType, String units,
-            ViewVariable[] axes) {
+            AbstractViewVariable[] axes) {
         super();
         this.name = name;
         this.dataType = dataType;

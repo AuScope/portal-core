@@ -28,8 +28,7 @@ public class GSMLResponseHandler {
         DocumentBuilder builder = domFactory.newDocumentBuilder();
         Document yilgarnDoc = builder.parse(new ByteArrayInputStream(gsmlResponse.getBytes("UTF-8")));
 
-        XPathFactory factory = XPathFactory.newInstance();
-        XPath xPath = factory.newXPath();
+        XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new YilgarnNamespaceContext());
 
         //Do some rudimentary error testing

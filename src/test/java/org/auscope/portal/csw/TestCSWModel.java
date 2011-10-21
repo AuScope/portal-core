@@ -11,7 +11,7 @@ public class TestCSWModel {
 
     @Test
     public void testGetWMSRecords() {
-           
+
     }
 
     @Test

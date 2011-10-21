@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.auscope.portal.server.web.KnownLayer;
+import org.auscope.portal.server.web.AbstractKnownLayer;
 import org.auscope.portal.server.web.view.ViewKnownLayerFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -27,8 +27,8 @@ public class TestKnownLayerController {
     }};
 
     private ArrayList knownLayerList;
-    private KnownLayer mockDefn1 = context.mock(KnownLayer.class, "defn1");
-    private KnownLayer mockDefn2 = context.mock(KnownLayer.class, "defn2");
+    private AbstractKnownLayer mockDefn1 = context.mock(AbstractKnownLayer.class, "defn1");
+    private AbstractKnownLayer mockDefn2 = context.mock(AbstractKnownLayer.class, "defn2");
     private ViewKnownLayerFactory mockViewFactory = context.mock(ViewKnownLayerFactory.class);
     private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);

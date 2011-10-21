@@ -31,7 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class TestWCSController {
 
     /**
-     * JMock context
+     * JMock context.
      */
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
@@ -84,16 +84,16 @@ public class TestWCSController {
                     with(any(String.class)),
                     with(any(CSWGeographicBoundingBox.class)),
                     with(any(String.class)),
-                    with(any(Map.class)));will(returnValue(mockMethod));
+                    with(any(Map.class))); will(returnValue(mockMethod));
 
             //There MUST be a call to release connection
             oneOf(mockMethod).releaseConnection();
 
             //This will return an input stream to our fake geotiff data
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(new ByteArrayInputStream(dataToBeReturned)));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)), with(any(HttpClient.class))); will(returnValue(new ByteArrayInputStream(dataToBeReturned)));
 
             //This is so we can inject our own fake output stream so we can inspect the result
-            oneOf(mockResponse).getOutputStream();will(returnValue(outStream));
+            oneOf(mockResponse).getOutputStream(); will(returnValue(outStream));
             oneOf(mockResponse).setContentType("application/zip");
             allowing(mockResponse).setHeader(with(any(String.class)), with(any(String.class)));
 
@@ -158,7 +158,7 @@ public class TestWCSController {
         final double southBoundLat = -0.2;
         final double eastBoundLng = 0.3;
         final double westBoundLng = -0.4;
-        final byte[] geotiffData = new byte[] {0,1,2};
+        final byte[] geotiffData = new byte[] {0, 1, 2};
         final String[] timePositions = null;
         final String timePeriodFrom = null;
         final String timePeriodTo = null;
@@ -207,12 +207,13 @@ public class TestWCSController {
         final double southBoundLat = -0.2;
         final double eastBoundLng = 0.3;
         final double westBoundLng = -0.4;
-        final byte[] geotiffData = new byte[] {0,1,2};
+        final byte[] geotiffData = new byte[] {0, 1, 2};
         final String[] timePositions = null;
         final String timePeriodFrom = null;
         final String timePeriodTo = null;
         final String timePeriodResolution = null;
         final String[] customParamValue = null;
+        final double precision = 0.00001;
 
         setupWCSDownloadAsZip(geotiffData);
 
@@ -226,10 +227,10 @@ public class TestWCSController {
                     CSWGeographicBoundingBox bbox, String timeConstraint,
                     Map<String, String> customParams) throws Exception {
 
-                Assert.assertEquals(northBoundLat, bbox.getNorthBoundLatitude(), 0.00001);
-                Assert.assertEquals(southBoundLat, bbox.getSouthBoundLatitude(), 0.00001);
-                Assert.assertEquals(eastBoundLng, bbox.getEastBoundLongitude(), 0.00001);
-                Assert.assertEquals(westBoundLng, bbox.getWestBoundLongitude(), 0.00001);
+                Assert.assertEquals(northBoundLat, bbox.getNorthBoundLatitude(), precision);
+                Assert.assertEquals(southBoundLat, bbox.getSouthBoundLatitude(), precision);
+                Assert.assertEquals(eastBoundLng, bbox.getEastBoundLongitude(), precision);
+                Assert.assertEquals(westBoundLng, bbox.getWestBoundLongitude(), precision);
 
                 return mockGetMethodMaker.makeMethod(serviceUrl, layerName,
                         format, outputCrs, outputWidth, outputHeight,
@@ -274,7 +275,7 @@ public class TestWCSController {
         final String timePeriodTo = null;
         final String timePeriodResolution = null;
         final String[] customParams = null;
-        final byte[] netCdfData = new byte[] {4,1,2};
+        final byte[] netCdfData = new byte[] {4, 1, 2};
 
         setupWCSDownloadAsZip(netCdfData);
 
@@ -322,7 +323,8 @@ public class TestWCSController {
             //Our method maker call should be passed all the correct variables
             oneOf(mockDescribeMethodMaker).makeMethod(
                     with(serviceUrl),
-                    with(layerName));will(returnValue(mockMethod));
+                    with(layerName));
+            will(returnValue(mockMethod));
 
             oneOf(mockMethod).getResponseBodyAsString();will(returnValue(xmlResponse));
 

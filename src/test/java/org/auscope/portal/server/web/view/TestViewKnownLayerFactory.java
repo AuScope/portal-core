@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
 public class TestViewKnownLayerFactory {
-	private Mockery context = new Mockery() {{
+    private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
@@ -30,93 +30,93 @@ public class TestViewKnownLayerFactory {
      */
     @Test
     public void testToViewWFS() throws Exception {
-    	ViewKnownLayerFactory factory = new ViewKnownLayerFactory();
+        ViewKnownLayerFactory factory = new ViewKnownLayerFactory();
 
-    	final String featureTypeName = "ftn";
-    	final String title = "co";
-    	final String description = "asb";
-    	final String proxyUrl = "http://proxy.com";
-    	final String iconUrl = "http://example.com/icon";
-    	final String[] serviceEndpoints = new String[]{"http://endpoint.com"};
-    	final String id = "eyedee";
-    	final boolean disableBboxFiltering = false;
-    	final boolean hidden = false;
-    	final boolean includeEndpoints = true;
-    	final String group = "mygroup";
+        final String featureTypeName = "ftn";
+        final String title = "co";
+        final String description = "asb";
+        final String proxyUrl = "http://proxy.com";
+        final String iconUrl = "http://example.com/icon";
+        final String[] serviceEndpoints = new String[]{"http://endpoint.com"};
+        final String id = "eyedee";
+        final boolean disableBboxFiltering = false;
+        final boolean hidden = false;
+        final boolean includeEndpoints = true;
+        final String group = "mygroup";
 
-    	final double anchorX = 0.1;
-    	final double anchorY = 0.2;
+        final double anchorX = 0.1;
+        final double anchorY = 0.2;
 
-    	final double infoWindowAnchorX = 0.3;
-    	final double infoWindowAnchorY = 0.4;
+        final double infoWindowAnchorX = 0.3;
+        final double infoWindowAnchorY = 0.4;
 
-    	final double iconSizeWidth = 45;
-    	final double iconSizeHeight = 46;
+        final double iconSizeWidth = 45;
+        final double iconSizeHeight = 46;
 
-    	final ModelMap expectation = new ModelMap();
-    	final ModelMap anchorExpectation = new ModelMap();
-    	final ModelMap infoExpectation = new ModelMap();
-    	final ModelMap sizeExpectation = new ModelMap();
-    	final String[] relatedFeatureTypeNames = new String[] {"rft1", "rft2"};
+        final ModelMap expectation = new ModelMap();
+        final ModelMap anchorExpectation = new ModelMap();
+        final ModelMap infoExpectation = new ModelMap();
+        final ModelMap sizeExpectation = new ModelMap();
+        final String[] relatedFeatureTypeNames = new String[] {"rft1", "rft2"};
 
-    	expectation.put("type", "KnownLayerWFS");
-    	expectation.put("featureTypeName", featureTypeName);
-    	expectation.put("hidden", hidden);
-    	expectation.put("title", title);
-    	expectation.put("description", description);
-    	expectation.put("proxyUrl", proxyUrl);
-    	expectation.put("iconUrl", iconUrl);
-    	expectation.put("iconAnchor", anchorExpectation);
-    	expectation.put("infoWindowAnchor", infoExpectation);
-    	expectation.put("iconSize", sizeExpectation);
-    	expectation.put("id", id);
-    	expectation.put("disableBboxFiltering", disableBboxFiltering);
-    	expectation.put("relatedNames", relatedFeatureTypeNames);
-    	expectation.put("serviceEndpoints", serviceEndpoints);
-    	expectation.put("includeEndpoints", includeEndpoints);
-    	expectation.put("group", group);
+        expectation.put("type", "KnownLayerWFS");
+        expectation.put("featureTypeName", featureTypeName);
+        expectation.put("hidden", hidden);
+        expectation.put("title", title);
+        expectation.put("description", description);
+        expectation.put("proxyUrl", proxyUrl);
+        expectation.put("iconUrl", iconUrl);
+        expectation.put("iconAnchor", anchorExpectation);
+        expectation.put("infoWindowAnchor", infoExpectation);
+        expectation.put("iconSize", sizeExpectation);
+        expectation.put("id", id);
+        expectation.put("disableBboxFiltering", disableBboxFiltering);
+        expectation.put("relatedNames", relatedFeatureTypeNames);
+        expectation.put("serviceEndpoints", serviceEndpoints);
+        expectation.put("includeEndpoints", includeEndpoints);
+        expectation.put("group", group);
 
-    	anchorExpectation.put("x", anchorX);
-    	anchorExpectation.put("y", anchorY);
+        anchorExpectation.put("x", anchorX);
+        anchorExpectation.put("y", anchorY);
 
-    	infoExpectation.put("x", infoWindowAnchorX);
-    	infoExpectation.put("y", infoWindowAnchorY);
+        infoExpectation.put("x", infoWindowAnchorX);
+        infoExpectation.put("y", infoWindowAnchorY);
 
-    	sizeExpectation.put("width", iconSizeWidth);
-    	sizeExpectation.put("height", iconSizeHeight);
+        sizeExpectation.put("width", iconSizeWidth);
+        sizeExpectation.put("height", iconSizeHeight);
 
 
-    	context.checking(new Expectations() {{
+        context.checking(new Expectations() {{
 
-    		allowing(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
-    		allowing(mockWFS).getId();will(returnValue(id));
-    		allowing(mockWFS).getTitle();will(returnValue(title));
-    		allowing(mockWFS).getDescription();will(returnValue(description));
-    		allowing(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
-    		allowing(mockWFS).getIconUrl();will(returnValue(iconUrl));
-    		allowing(mockWFS).getIconAnchor();will(returnValue(mockP1));
-    		allowing(mockWFS).getInfoWindowAnchor();will(returnValue(mockP2));
-    		allowing(mockWFS).getIconSize();will(returnValue(mockD1));
-    		allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
-    		allowing(mockWFS).isHidden();will(returnValue(hidden));
-    		allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(relatedFeatureTypeNames));
+            allowing(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
+            allowing(mockWFS).getId();will(returnValue(id));
+            allowing(mockWFS).getTitle();will(returnValue(title));
+            allowing(mockWFS).getDescription();will(returnValue(description));
+            allowing(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
+            allowing(mockWFS).getIconUrl();will(returnValue(iconUrl));
+            allowing(mockWFS).getIconAnchor();will(returnValue(mockP1));
+            allowing(mockWFS).getInfoWindowAnchor();will(returnValue(mockP2));
+            allowing(mockWFS).getIconSize();will(returnValue(mockD1));
+            allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
+            allowing(mockWFS).isHidden();will(returnValue(hidden));
+            allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(relatedFeatureTypeNames));
             allowing(mockWFS).getServiceEndpoints();will(returnValue(serviceEndpoints));
             allowing(mockWFS).includeEndpoints();will(returnValue(includeEndpoints));
             allowing(mockWFS).getGroup();will(returnValue(group));
-            
-    		allowing(mockP1).getX();will(returnValue(anchorX));
-    		allowing(mockP1).getY();will(returnValue(anchorY));
 
-    		allowing(mockP2).getX();will(returnValue(infoWindowAnchorX));
-    		allowing(mockP2).getY();will(returnValue(infoWindowAnchorY));
+            allowing(mockP1).getX();will(returnValue(anchorX));
+            allowing(mockP1).getY();will(returnValue(anchorY));
 
-    		allowing(mockD1).getWidth();will(returnValue(iconSizeWidth));
-    		allowing(mockD1).getHeight();will(returnValue(iconSizeHeight));
+            allowing(mockP2).getX();will(returnValue(infoWindowAnchorX));
+            allowing(mockP2).getY();will(returnValue(infoWindowAnchorY));
+
+            allowing(mockD1).getWidth();will(returnValue(iconSizeWidth));
+            allowing(mockD1).getHeight();will(returnValue(iconSizeHeight));
         }});
 
-    	ModelMap result = factory.toView(mockWFS);
+        ModelMap result = factory.toView(mockWFS);
 
-    	AssertViewUtility.assertModelMapsEqual(expectation,result);
+        AssertViewUtility.assertModelMapsEqual(expectation,result);
     }
 
     /**
@@ -125,59 +125,59 @@ public class TestViewKnownLayerFactory {
      */
     @Test
     public void testToViewWFSOptional() throws Exception {
-    	ViewKnownLayerFactory factory = new ViewKnownLayerFactory();
+        ViewKnownLayerFactory factory = new ViewKnownLayerFactory();
 
-    	final String featureTypeName = "ftn";
-    	final String title = "co";
-    	final String description = "asb";
-    	final String proxyUrl = "http://proxy.com";
-    	final String iconUrl = "http://example.com/icon";
-    	final String[] serviceEndpoints = null;
-    	final String id = "eyedee";
-    	final boolean disableBboxFiltering = true;
-    	final boolean hidden = true;
-    	final String[] relatedFeatureTypeNames = null; 
-    	final String group = "mygroup";
-    	final boolean includeEndpoints = false;
+        final String featureTypeName = "ftn";
+        final String title = "co";
+        final String description = "asb";
+        final String proxyUrl = "http://proxy.com";
+        final String iconUrl = "http://example.com/icon";
+        final String[] serviceEndpoints = null;
+        final String id = "eyedee";
+        final boolean disableBboxFiltering = true;
+        final boolean hidden = true;
+        final String[] relatedFeatureTypeNames = null;
+        final String group = "mygroup";
+        final boolean includeEndpoints = false;
 
-    	final ModelMap expectation = new ModelMap();
+        final ModelMap expectation = new ModelMap();
 
-    	expectation.put("type", "KnownLayerWFS");
-    	expectation.put("hidden", hidden);
-    	expectation.put("featureTypeName", featureTypeName);
-    	expectation.put("title", title);
-    	expectation.put("description", description);
-    	expectation.put("proxyUrl", proxyUrl);
-    	expectation.put("iconUrl", iconUrl);
-    	expectation.put("id", id);
-    	expectation.put("disableBboxFiltering", disableBboxFiltering);
-    	expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
-    	expectation.put("serviceEndpoints", serviceEndpoints);
-    	expectation.put("includeEndpoints", includeEndpoints);
-    	expectation.put("group", group);
-    	
-    	context.checking(new Expectations() {{
+        expectation.put("type", "KnownLayerWFS");
+        expectation.put("hidden", hidden);
+        expectation.put("featureTypeName", featureTypeName);
+        expectation.put("title", title);
+        expectation.put("description", description);
+        expectation.put("proxyUrl", proxyUrl);
+        expectation.put("iconUrl", iconUrl);
+        expectation.put("id", id);
+        expectation.put("disableBboxFiltering", disableBboxFiltering);
+        expectation.put("relatedFeatureTypeNames", relatedFeatureTypeNames);
+        expectation.put("serviceEndpoints", serviceEndpoints);
+        expectation.put("includeEndpoints", includeEndpoints);
+        expectation.put("group", group);
 
-    		allowing(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
-    		allowing(mockWFS).getId();will(returnValue(id));
-    		allowing(mockWFS).getTitle();will(returnValue(title));
-    		allowing(mockWFS).getDescription();will(returnValue(description));
-    		allowing(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
-    		allowing(mockWFS).getIconUrl();will(returnValue(iconUrl));
-    		allowing(mockWFS).getIconAnchor();will(returnValue(null));
-    		allowing(mockWFS).getInfoWindowAnchor();will(returnValue(null));
-    		allowing(mockWFS).getIconSize();will(returnValue(null));
-    		allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
-    		allowing(mockWFS).isHidden();will(returnValue(hidden));
-    		allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(null));
-    		allowing(mockWFS).getServiceEndpoints();will(returnValue(null));
-    		allowing(mockWFS).includeEndpoints();will(returnValue(includeEndpoints));
-    		allowing(mockWFS).getGroup();will(returnValue(group));
+        context.checking(new Expectations() {{
+
+            allowing(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
+            allowing(mockWFS).getId();will(returnValue(id));
+            allowing(mockWFS).getTitle();will(returnValue(title));
+            allowing(mockWFS).getDescription();will(returnValue(description));
+            allowing(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
+            allowing(mockWFS).getIconUrl();will(returnValue(iconUrl));
+            allowing(mockWFS).getIconAnchor();will(returnValue(null));
+            allowing(mockWFS).getInfoWindowAnchor();will(returnValue(null));
+            allowing(mockWFS).getIconSize();will(returnValue(null));
+            allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
+            allowing(mockWFS).isHidden();will(returnValue(hidden));
+            allowing(mockWFS).getRelatedFeatureTypeNames();will(returnValue(null));
+            allowing(mockWFS).getServiceEndpoints();will(returnValue(null));
+            allowing(mockWFS).includeEndpoints();will(returnValue(includeEndpoints));
+            allowing(mockWFS).getGroup();will(returnValue(group));
         }});
 
-    	ModelMap result = factory.toView(mockWFS);
+        ModelMap result = factory.toView(mockWFS);
 
-    	AssertViewUtility.assertModelMapsEqual(expectation,result);
+        AssertViewUtility.assertModelMapsEqual(expectation,result);
     }
 
     @Test
@@ -234,14 +234,14 @@ public class TestViewKnownLayerFactory {
         final boolean hidden = true;
         final String group = "mygroup";
 
-    	final double anchorX = 1.0;
-    	final double anchorY = 1.0;
+        final double anchorX = 1.0;
+        final double anchorY = 1.0;
 
-    	final double iconSizeWidth = 16;
-    	final double iconSizeHeight = 16;
+        final double iconSizeWidth = 16;
+        final double iconSizeHeight = 16;
 
-    	final ModelMap anchorExpectation = new ModelMap();
-    	final ModelMap sizeExpectation = new ModelMap();
+        final ModelMap anchorExpectation = new ModelMap();
+        final ModelMap sizeExpectation = new ModelMap();
 
         final ModelMap expectation = new ModelMap();
 
@@ -252,14 +252,14 @@ public class TestViewKnownLayerFactory {
         expectation.put("description", description);
         expectation.put("id", id);
         expectation.put("iconUrl", iconUrl);
-    	expectation.put("iconAnchor", anchorExpectation);
-    	expectation.put("iconSize", sizeExpectation);
-    	expectation.put("group", group);
+        expectation.put("iconAnchor", anchorExpectation);
+        expectation.put("iconSize", sizeExpectation);
+        expectation.put("group", group);
 
-    	anchorExpectation.put("x", anchorX);
-    	anchorExpectation.put("y", anchorY);
-    	sizeExpectation.put("width", iconSizeWidth);
-    	sizeExpectation.put("height", iconSizeHeight);
+        anchorExpectation.put("x", anchorX);
+        anchorExpectation.put("y", anchorY);
+        sizeExpectation.put("width", iconSizeWidth);
+        sizeExpectation.put("height", iconSizeHeight);
 
         context.checking(new Expectations() {{
 
@@ -273,11 +273,11 @@ public class TestViewKnownLayerFactory {
             allowing(mockKeywords).isHidden();will(returnValue(hidden));
             allowing(mockKeywords).getGroup();will(returnValue(group));
 
-    		allowing(mockP1).getX();will(returnValue(anchorX));
-    		allowing(mockP1).getY();will(returnValue(anchorY));
+            allowing(mockP1).getX();will(returnValue(anchorX));
+            allowing(mockP1).getY();will(returnValue(anchorY));
 
-    		allowing(mockD1).getWidth();will(returnValue(iconSizeWidth));
-    		allowing(mockD1).getHeight();will(returnValue(iconSizeHeight));
+            allowing(mockD1).getWidth();will(returnValue(iconSizeWidth));
+            allowing(mockD1).getHeight();will(returnValue(iconSizeHeight));
         }});
 
         ModelMap result = factory.toView(mockKeywords);

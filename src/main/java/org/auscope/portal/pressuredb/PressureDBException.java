@@ -7,9 +7,9 @@ package org.auscope.portal.pressuredb;
  */
 public class PressureDBException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public PressureDBException() {
+    public PressureDBException() {
         super();
     }
 

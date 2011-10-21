@@ -29,7 +29,7 @@ public class OPeNDAPGetDataMethodMakerImpl implements OPeNDAPGetDataMethodMaker{
      * @param var
      * @throws Exception
      */
-    private void calculateIndexBounds(NetcdfDataset ds, ViewVariable var) throws Exception {
+    private void calculateIndexBounds(NetcdfDataset ds, AbstractViewVariable var) throws Exception {
         if (var instanceof SimpleAxis) {
             calculateIndexBounds(ds, (SimpleAxis) var);
         } else if (var instanceof SimpleGrid) {
@@ -80,7 +80,7 @@ public class OPeNDAPGetDataMethodMakerImpl implements OPeNDAPGetDataMethodMaker{
     }
 
     private void calculateIndexBounds(NetcdfDataset ds, SimpleGrid grid) throws Exception {
-        for (ViewVariable var : grid.getAxes()) {
+        for (AbstractViewVariable var : grid.getAxes()) {
             calculateIndexBounds(ds, var);
         }
     }
@@ -95,10 +95,10 @@ public class OPeNDAPGetDataMethodMakerImpl implements OPeNDAPGetDataMethodMaker{
      * @param vars The list of constraints
      * @return
      */
-    private String generateQueryForConstraints(ViewVariable[] vars) {
+    private String generateQueryForConstraints(AbstractViewVariable[] vars) {
         StringBuilder result = new StringBuilder();
 
-        for (ViewVariable var : vars) {
+        for (AbstractViewVariable var : vars) {
 
             if (result.length() > 0)
                 result.append(",");
@@ -113,7 +113,7 @@ public class OPeNDAPGetDataMethodMakerImpl implements OPeNDAPGetDataMethodMaker{
                 SimpleGrid grid = (SimpleGrid) var;
 
                 StringBuilder sb = new StringBuilder();
-                for (ViewVariable child : grid.getAxes()) {
+                for (AbstractViewVariable child : grid.getAxes()) {
                     if (child instanceof SimpleAxis) {
                         sb.append(simpleBoundsToQuery(((SimpleAxis)child).getDimensionBounds()));
                     } else {
@@ -131,7 +131,7 @@ public class OPeNDAPGetDataMethodMakerImpl implements OPeNDAPGetDataMethodMaker{
     }
 
     public HttpMethodBase getMethod(String opendapUrl,OPeNDAPFormat format, NetcdfDataset ds,
-            ViewVariable[] constraints) throws Exception {
+            AbstractViewVariable[] constraints) throws Exception {
 
         //Generate our base URL (which depends on the format)
         HttpMethodBase method = null;
@@ -149,7 +149,7 @@ public class OPeNDAPGetDataMethodMakerImpl implements OPeNDAPGetDataMethodMaker{
         //We may only have a value constraint (when we need to know the actual index constraints)
         //We can convert from value to index by taking the minimum bounding box.
         if (constraints != null) {
-            for (ViewVariable constraint : constraints) {
+            for (AbstractViewVariable constraint : constraints) {
                 calculateIndexBounds(ds, constraint);
             }
 

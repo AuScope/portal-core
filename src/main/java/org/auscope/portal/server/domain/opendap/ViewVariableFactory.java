@@ -39,7 +39,7 @@ public class ViewVariableFactory {
      * @throws IOException
      * @throws
      */
-    private static ViewVariable parseVariableRecursive(Variable var) throws IOException  {
+    private static AbstractViewVariable parseVariableRecursive(Variable var) throws IOException  {
         List<Dimension> dimensions = var.getDimensions();
 
         //A single dimension means we can parse a SimpleAxis
@@ -64,7 +64,7 @@ public class ViewVariableFactory {
         //Otherwise we have a multi dimensional variable that we can parse as a grid
         } else if (dimensions.size() > 0) {
             SimpleGrid grid = new SimpleGrid(var.getName(), var.getDataType().name(), var.getUnitsString(), null);
-            List<ViewVariable> childAxes = new ArrayList<ViewVariable>();
+            List<AbstractViewVariable> childAxes = new ArrayList<AbstractViewVariable>();
 
             //Recursively parse each dimension (which should map to a variable in the parent group)
             for (Dimension d : dimensions) {
@@ -78,7 +78,7 @@ public class ViewVariableFactory {
                     axis.setDimensionBounds(new SimpleBounds(0, d.getLength() - 1));
                     childAxes.add(axis);
                 } else {
-                    ViewVariable parsedVar = parseVariableRecursive(mappedVariable);
+                    AbstractViewVariable parsedVar = parseVariableRecursive(mappedVariable);
 
                     if (parsedVar != null)
                         childAxes.add(parsedVar);
@@ -86,7 +86,7 @@ public class ViewVariableFactory {
             }
 
             if (childAxes.size() > 0) {
-                grid.setAxes(childAxes.toArray(new ViewVariable[childAxes.size()]));
+                grid.setAxes(childAxes.toArray(new AbstractViewVariable[childAxes.size()]));
                 return grid;
             } else {
                 return null;
@@ -103,7 +103,7 @@ public class ViewVariableFactory {
      * @param obj
      * @return
      */
-    private static ViewVariable parseJSONRecursive(JSONObject obj) {
+    private static AbstractViewVariable parseJSONRecursive(JSONObject obj) {
 
         if (obj == null || obj.isNullObject())
             throw new NullArgumentException("obj");
@@ -133,16 +133,16 @@ public class ViewVariableFactory {
         } else if (type.equals(SimpleGrid.TYPE_STRING)) {
             JSONArray axes = obj.getJSONArray("axes");
             SimpleGrid grid = new SimpleGrid(attemptGetString(obj, "name"), attemptGetString(obj, "dataType"), attemptGetString(obj, "units"), null);
-            List<ViewVariable> childAxes = new ArrayList<ViewVariable>();
+            List<AbstractViewVariable> childAxes = new ArrayList<AbstractViewVariable>();
 
             for (int i = 0; i < axes.size(); i++) {
-                ViewVariable var = parseJSONRecursive(axes.getJSONObject(i));
+                AbstractViewVariable var = parseJSONRecursive(axes.getJSONObject(i));
                 if (var != null)
                     childAxes.add(var);
             }
 
             if (childAxes.size() > 0) {
-                grid.setAxes(childAxes.toArray(new ViewVariable[childAxes.size()]));
+                grid.setAxes(childAxes.toArray(new AbstractViewVariable[childAxes.size()]));
                 return grid;
             } else {
                 return null;
@@ -159,7 +159,7 @@ public class ViewVariableFactory {
      * @return
      * @throws IOException
      */
-    public static ViewVariable[] fromNetCDFDataset(NetcdfDataset ds) throws IOException {
+    public static AbstractViewVariable[] fromNetCDFDataset(NetcdfDataset ds) throws IOException {
         return fromNetCDFDataset(ds, null);
     }
 
@@ -171,8 +171,8 @@ public class ViewVariableFactory {
      * @return
      * @throws IOException
      */
-    public static ViewVariable[] fromNetCDFDataset(NetcdfDataset ds, String variableNameFilter) throws IOException {
-        List<ViewVariable> result = new ArrayList<ViewVariable>();
+    public static AbstractViewVariable[] fromNetCDFDataset(NetcdfDataset ds, String variableNameFilter) throws IOException {
+        List<AbstractViewVariable> result = new ArrayList<AbstractViewVariable>();
 
         for (Variable var : ds.getVariables()) {
 
@@ -182,12 +182,12 @@ public class ViewVariableFactory {
                 }
             }
 
-            ViewVariable parsedViewVar = parseVariableRecursive(var);
+            AbstractViewVariable parsedViewVar = parseVariableRecursive(var);
             if (parsedViewVar != null)
                 result.add(parsedViewVar);
         }
 
-        return result.toArray(new ViewVariable[result.size()]);
+        return result.toArray(new AbstractViewVariable[result.size()]);
     }
 
 
@@ -197,15 +197,15 @@ public class ViewVariableFactory {
      * @param arr
      * @return
      */
-    public static ViewVariable[] fromJSONArray(JSONArray arr) {
-        List<ViewVariable> result = new ArrayList<ViewVariable>();
+    public static AbstractViewVariable[] fromJSONArray(JSONArray arr) {
+        List<AbstractViewVariable> result = new ArrayList<AbstractViewVariable>();
 
         for (int i = 0; i < arr.size(); i++) {
-            ViewVariable parsedViewVar = parseJSONRecursive(arr.getJSONObject(i));
+            AbstractViewVariable parsedViewVar = parseJSONRecursive(arr.getJSONObject(i));
             if (parsedViewVar != null)
                 result.add(parsedViewVar);
         }
 
-        return result.toArray(new ViewVariable[result.size()]);
+        return result.toArray(new AbstractViewVariable[result.size()]);
     }
 }

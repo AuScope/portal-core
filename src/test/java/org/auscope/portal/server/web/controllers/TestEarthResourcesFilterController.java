@@ -65,8 +65,8 @@ public class TestEarthResourcesFilterController {
         this.httpMethodBase = context.mock(HttpMethodBase.class);
         this.mockHttpClient = context.mock(HttpClient.class);
         this.earthResourcesFilterController = new EarthResourcesFilterController(
-        		this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService,
-        		this.mockGmlToKml, this.mockCommodityService, this.mockHttpServiceCaller);
+                this.mineralOccurrencesResponseHandler, this.mineralOccurrenceService,
+                this.mockGmlToKml, this.mockCommodityService, this.mockHttpServiceCaller);
     }
 
     private void testJSONResponse(String json, Boolean success, String gml, String kml) {

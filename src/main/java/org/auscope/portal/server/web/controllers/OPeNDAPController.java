@@ -16,7 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.server.domain.opendap.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.server.domain.opendap.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
-import org.auscope.portal.server.domain.opendap.ViewVariable;
+import org.auscope.portal.server.domain.opendap.AbstractViewVariable;
 import org.auscope.portal.server.domain.opendap.ViewVariableFactory;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.view.JSONModelAndView;
@@ -88,7 +88,7 @@ public class OPeNDAPController extends BasePortalController {
 
         //Attempt to parse our response
         try {
-            ViewVariable[] vars = ViewVariableFactory.fromNetCDFDataset(ds, variableName);
+            AbstractViewVariable[] vars = ViewVariableFactory.fromNetCDFDataset(ds, variableName);
             return generateJSONResponseMAV(true, vars, "");
         } catch (Exception ex) {
             log.error(String.format("Error parsing from '%1$s'", opendapUrl), ex);
@@ -161,7 +161,7 @@ public class OPeNDAPController extends BasePortalController {
         ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
 
         //Parse our constraint list (can be null)
-        ViewVariable[] constraints = new ViewVariable[0];
+        AbstractViewVariable[] constraints = new AbstractViewVariable[0];
         if (constraintsJson != null && !constraintsJson.isEmpty()) {
             JSONObject obj = JSONObject.fromObject(constraintsJson);
             constraints = ViewVariableFactory.fromJSONArray(obj.getJSONArray("constraints"));

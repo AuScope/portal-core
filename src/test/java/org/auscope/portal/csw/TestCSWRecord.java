@@ -3,7 +3,7 @@ package org.auscope.portal.csw;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.auscope.portal.csw.record.CSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.junit.Assert;
@@ -33,9 +33,9 @@ public class TestCSWRecord {
 
     @Test
     public void testContainsAnyOnlineResource() throws MalformedURLException {
-        final CSWOnlineResource[] emptyOnlineResources = new CSWOnlineResource[] {};
-        final CSWOnlineResource[] nullOnlineResources = null;
-        final CSWOnlineResource[] fullOnlineResources = new CSWOnlineResource[] {
+        final AbstractCSWOnlineResource[] emptyOnlineResources = new AbstractCSWOnlineResource[] {};
+        final AbstractCSWOnlineResource[] nullOnlineResources = null;
+        final AbstractCSWOnlineResource[] fullOnlineResources = new AbstractCSWOnlineResource[] {
                 new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", "or1", "or1"),
                 new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", "or2", "or2"),
                 new CSWOnlineResourceImpl(new URL("http://example.com"), "wms", "or3", "or3"),
@@ -46,24 +46,24 @@ public class TestCSWRecord {
 
         record.setOnlineResources(emptyOnlineResources);
         Assert.assertFalse(record.containsAnyOnlineResource());
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WCS));
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WFS));
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WMS));
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WMS, CSWOnlineResource.OnlineResourceType.WFS, CSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WFS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
 
         record.setOnlineResources(nullOnlineResources);
         Assert.assertFalse(record.containsAnyOnlineResource());
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WCS));
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WFS));
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WMS));
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WMS, CSWOnlineResource.OnlineResourceType.WFS, CSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WFS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
 
         record.setOnlineResources(fullOnlineResources);
         Assert.assertFalse(record.containsAnyOnlineResource());
-        Assert.assertFalse(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WCS));
-        Assert.assertTrue(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WFS));
-        Assert.assertTrue(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WMS));
-        Assert.assertTrue(record.containsAnyOnlineResource(CSWOnlineResource.OnlineResourceType.WMS, CSWOnlineResource.OnlineResourceType.WFS, CSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WFS));
+        Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS));
+        Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
     }
 
 }

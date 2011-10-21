@@ -16,8 +16,8 @@ import org.w3c.dom.Node;
  */
 public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElement{
 
-	private static final long serialVersionUID = 1L;
-	double westBoundLongitude;
+    private static final long serialVersionUID = 1L;
+    double westBoundLongitude;
     double eastBoundLongitude;
     double southBoundLatitude;
     double northBoundLatitude;

@@ -62,7 +62,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
 
         OPeNDAPGetDataMethodMakerImpl methodMaker = new OPeNDAPGetDataMethodMakerImpl();
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new ViewVariable[] {a1});
+        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
@@ -72,7 +72,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
 
         //This will ensure that the dimensions bounds are used EVEN if the value bounds are specified
         final SimpleAxis a2 = new SimpleAxis("name2", "FLOAT", "km/h",new SimpleBounds(41, 99), new SimpleBounds(-995, 787));
-        method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new ViewVariable[] {a2});
+        method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a2});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
@@ -107,7 +107,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
             allowing(mockNetCdfDataset).findVariable("/" + a1.name);will(returnValue(mockVariable1));
         }});
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new ViewVariable[] {a1});
+        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
@@ -129,7 +129,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
             allowing(mockNetCdfDataset).findVariable("/" + a2.name);will(returnValue(mockVariable1));
         }});
 
-        method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new ViewVariable[] {a2});
+        method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a2});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
@@ -151,7 +151,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
             allowing(mockNetCdfDataset).findVariable("/" + a3.name);will(returnValue(mockVariable1));
         }});
 
-        method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new ViewVariable[] {a3});
+        method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a3});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
@@ -172,7 +172,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
 
         final SimpleAxis a1 = new SimpleAxis("name1", "FLOAT", "km/h",null, new SimpleBounds(0.7, 2.1));
         final SimpleAxis a2 = new SimpleAxis("name2", "FLOAT", "m^2",null, new SimpleBounds(-3.3, -2));
-        final SimpleGrid g1 = new SimpleGrid("grid1", "FLOAT", "nm", new ViewVariable[] {a1, a2});
+        final SimpleGrid g1 = new SimpleGrid("grid1", "FLOAT", "nm", new AbstractViewVariable[] {a1, a2});
 
         context.checking(new Expectations() {{
             allowing(mockArray1).getDouble(0);will(returnValue(dimensionVals1[0]));
@@ -195,7 +195,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
             allowing(mockNetCdfDataset).findVariable("/" + a2.name);will(returnValue(mockVariable2));
         }});
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new ViewVariable[] {g1});
+        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {g1});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
@@ -238,7 +238,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
             allowing(mockNetCdfDataset).findVariable("/" + a2.name);will(returnValue(mockVariable2));
         }});
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new ViewVariable[] {a1, a2});
+        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1, a2});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
@@ -266,7 +266,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl {
             allowing(mockNetCdfDataset).findVariable("/" + a1.name);will(returnValue(mockVariable1));
         }});
 
-        methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new ViewVariable[] {a1});
+        methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1});
 
     }
 }
