@@ -7,9 +7,17 @@ import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
-public class YilgarnNamespaceContext implements NamespaceContext{
+/**
+ * The Class YilgarnNamespaceContext.
+ */
+public class YilgarnNamespaceContext implements NamespaceContext {
+
+/** The map. */
 private Map<String, String> map = new HashMap<String, String>();
 
+    /**
+     * Instantiates a new yilgarn namespace context.
+     */
     public YilgarnNamespaceContext() {
         map.put("ogc", "http://www.opengis.net/ogc");
         map.put("omx", "http://www.opengis.net/omx/1.0");
@@ -30,20 +38,31 @@ private Map<String, String> map = new HashMap<String, String>();
         map.put("xlink", "http://www.w3.org/1999/xlink");
     }
 
-    public String getNamespaceURI(String prefix) {
-        if (prefix == null)
+    /* (non-Javadoc)
+     * @see javax.xml.namespace.NamespaceContext#getNamespaceURI(java.lang.String)
+     */
+    public String getNamespaceURI(final String prefix) {
+        if (prefix == null) {
             throw new IllegalArgumentException("No prefix provided!");
+        }
 
-        if (map.containsKey(prefix))
+        if (map.containsKey(prefix)) {
             return map.get(prefix);
-        else
+        } else {
             return XMLConstants.NULL_NS_URI;
+        }
     }
 
+    /* (non-Javadoc)
+     * @see javax.xml.namespace.NamespaceContext#getPrefix(java.lang.String)
+     */
     public String getPrefix(String namespaceURI) {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see javax.xml.namespace.NamespaceContext#getPrefixes(java.lang.String)
+     */
     public Iterator<String> getPrefixes(String namespaceURI) {
         return null;
     }

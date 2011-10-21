@@ -11,7 +11,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.auscope.portal.gsml.YilgarnNamespaceContext;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -19,146 +18,234 @@ import javax.xml.xpath.XPathFactory;
 
 
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class YilgarnLocSpecimenRecords.
+ */
 public class YilgarnLocSpecimenRecords {
+
+    /** The Constant logger. */
     private static final Log logger = LogFactory.getLog(YilgarnLocSpecimenRecords.class);
-    String serviceName;
-    String date;
-    String observedMineralName;
-    String preparationDetails;
-    String labDetails;
-    String analyticalMethod;
-    String observedProperty;
-    String analyteName;
-    String analyteValue;
-    String uom;
+
+    /** The service name. */
+    private String serviceName;
+
+    /** The date. */
+    private String date;
+
+    /** The observed mineral name. */
+    private String observedMineralName;
+
+    /** The preparation details. */
+    private String preparationDetails;
+
+    /** The lab details. */
+    private String labDetails;
+
+    /** The analytical method. */
+    private String analyticalMethod;
+
+    /** The observed property. */
+    private String observedProperty;
+
+    /** The analyte name. */
+    private String analyteName;
+
+    /** The analyte value. */
+    private String analyteValue;
+
+    /** The uom. */
+    private String uom;
 
 
-    public YilgarnLocSpecimenRecords(Node node, XPath xPath ) throws XPathExpressionException{
+    /** The Constant timeDateExpression. */
+    private static final String timeDateExpression = "om:Observation/om:samplingTime/gml:TimeInstant/gml:timePosition";
+
+    /** The Constant ObservationProcessExpression. */
+    private static final String ObservationProcessExpression = "om:Observation/om:procedure/omx:ObservationProcess/@gml:id";
+
+    /** The Constant obsProcessDesExpression. */
+    private static final String obsProcessDesExpression = "om:Observation/om:procedure/omx:ObservationProcess/gml:description";
+
+    /** The Constant obsProcessContExpression. */
+    private static final String obsProcessContExpression = "om:Observation/om:procedure/omx:ObservationProcess/sml:contact/@xlink:title";
+
+    /** The Constant obsProcessMethodExpression. */
+    private static final String obsProcessMethodExpression = "om:Observation/om:procedure/omx:ObservationProcess/omx:method";
+
+    /** The Constant observedPropertyExpression. */
+    private static final String observedPropertyExpression = "om:Observation/om:observedProperty/@xlink:href";
+
+    /** The Constant quantityNameExpression. */
+    private static final String quantityNameExpression = "om:Observation/om:result/swe:Quantity/gml:name";
+
+    /** The Constant quantityValueExpression. */
+    private static final String quantityValueExpression = "om:Observation/om:result/swe:Quantity/swe:value";
+
+    /** The Constant uomExpression. */
+    private static final String uomExpression = "om:Observation/om:result/swe:Quantity/swe:uom/@xlink:href";
+
+    /** The Constant omIdExpression. */
+    private static final String omIdExpression = "om:Observation/@gml:id";
+
+
+
+    /**
+     * Instantiates a new yilgarn loc specimen records.
+     *
+     * @param node the node
+     * @param xPath the x path
+     * @throws XPathExpressionException the x path expression exception
+     */
+    public YilgarnLocSpecimenRecords(Node node, XPath xPath) throws XPathExpressionException {
         Node tempNode = null;
         xPath.setNamespaceContext(new YilgarnNamespaceContext());
 
 
-        tempNode = (Node)xPath.evaluate("om:Observation/@gml:id", node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(omIdExpression, node, XPathConstants.NODE);
         serviceName = tempNode != null ? tempNode.getTextContent() : "";
 
-        String timeDateExpression = "om:Observation/om:samplingTime/gml:TimeInstant/gml:timePosition";
-        tempNode = (Node)xPath.evaluate(timeDateExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(timeDateExpression, node, XPathConstants.NODE);
         String dateAndTime = tempNode != null ? tempNode.getTextContent() : "";
 
         String[] dateTime = dateAndTime.split(" ");
         date = dateTime[0];
 
-        String ObservationProcessExpression = "om:Observation/om:procedure/omx:ObservationProcess/@gml:id";
-        tempNode = (Node)xPath.evaluate(ObservationProcessExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(ObservationProcessExpression, node, XPathConstants.NODE);
         observedMineralName = tempNode != null ? tempNode.getTextContent() : "";
 
-        String obsProcessDesExpression = "om:Observation/om:procedure/omx:ObservationProcess/gml:description";
-        tempNode = (Node)xPath.evaluate(obsProcessDesExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(obsProcessDesExpression, node, XPathConstants.NODE);
         preparationDetails = tempNode != null ? tempNode.getTextContent() : "";
 
-        String obsProcessContExpression = "om:Observation/om:procedure/omx:ObservationProcess/sml:contact/@xlink:title";
-        tempNode = (Node)xPath.evaluate(obsProcessContExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(obsProcessContExpression, node, XPathConstants.NODE);
         labDetails = tempNode != null ? tempNode.getTextContent() : "";
 
-        String obsProcessMethodExpression = "om:Observation/om:procedure/omx:ObservationProcess/omx:method";
-        tempNode = (Node)xPath.evaluate(obsProcessMethodExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(obsProcessMethodExpression, node, XPathConstants.NODE);
         analyticalMethod = tempNode != null ? tempNode.getTextContent() : "";
 
-        String observedPropertyExpression = "om:Observation/om:observedProperty/@xlink:href";
-        tempNode = (Node)xPath.evaluate(observedPropertyExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(observedPropertyExpression, node, XPathConstants.NODE);
         observedProperty = tempNode != null ? tempNode.getTextContent() : "";
 
-        String quantityNameExpression = "om:Observation/om:result/swe:Quantity/gml:name";
-        tempNode = (Node)xPath.evaluate(quantityNameExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(quantityNameExpression, node, XPathConstants.NODE);
         analyteName = tempNode != null ? tempNode.getTextContent() : "";
 
-        String quantityValueExpression = "om:Observation/om:result/swe:Quantity/swe:value";
-        tempNode = (Node)xPath.evaluate(quantityValueExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(quantityValueExpression, node, XPathConstants.NODE);
         analyteValue = tempNode != null ? tempNode.getTextContent() : "";
 
-        String uomExpression = "om:Observation/om:result/swe:Quantity/swe:uom/@xlink:href";
-        tempNode = (Node)xPath.evaluate(uomExpression, node, XPathConstants.NODE);
-        String urnUOM = tempNode != null ? tempNode.getTextContent() : "";
-        urnUOM.trim();
+        tempNode = (Node) xPath.evaluate(uomExpression, node, XPathConstants.NODE);
+        String urnUOM = tempNode != null ? tempNode.getTextContent().trim() : "";
 
-        if(urnUOM.indexOf("ppm") != -1){
+        if (urnUOM.contains("ppm")) {
             uom = "ppm";
-        }
-        else if(urnUOM.indexOf("ppb") != -1){
+        } else if (urnUOM.contains("ppb")) {
             uom = "ppb";
-        }
-        else if(urnUOM.indexOf("%") != -1){
+        } else if (urnUOM.contains("%")) {
             uom = "%";
-        }else
+        } else {
             uom = "null";
-
-
+        }
     }
 
-    public String getServiceName()
-    {
+    /**
+     * Gets the service name.
+     *
+     * @return the service name
+     */
+    public String getServiceName() {
         return serviceName;
     }
-    public String getDate()
-    {
+
+    /**
+     * Gets the date.
+     *
+     * @return the date
+     */
+    public String getDate() {
         return date;
     }
-    public String getObservedMineralName()
-    {
+
+    /**
+     * Gets the observed mineral name.
+     *
+     * @return the observed mineral name
+     */
+    public String getObservedMineralName() {
         return observedMineralName;
     }
-    public String getPreparationDetails()
-    {
+
+    /**
+     * Gets the preparation details.
+     *
+     * @return the preparation details
+     */
+    public String getPreparationDetails() {
         return preparationDetails;
     }
-    public String getLabDetails()
-    {
+
+    /**
+     * Gets the lab details.
+     *
+     * @return the lab details
+     */
+    public String getLabDetails() {
         return labDetails;
     }
-    public String getAnalyticalMethod()
-    {
+
+    /**
+     * Gets the analytical method.
+     *
+     * @return the analytical method
+     */
+    public String getAnalyticalMethod() {
         return analyticalMethod;
     }
-    public String getObservedProperty()
-    {
+
+    /**
+     * Gets the observed property.
+     *
+     * @return the observed property
+     */
+    public String getObservedProperty() {
         return observedProperty;
     }
-    public String getAnalyteName()
-    {
+
+    /**
+     * Gets the analyte name.
+     *
+     * @return the analyte name
+     */
+    public String getAnalyteName() {
         return analyteName;
     }
-    public String getAnalyteValue()
-    {
+
+    /**
+     * Gets the analyte value.
+     *
+     * @return the analyte value
+     */
+    public String getAnalyteValue() {
         return analyteValue;
     }
-    public String getUom()
-    {
+
+    /**
+     * Gets the uom.
+     *
+     * @return the uom
+     */
+    public String getUom() {
         return uom;
     }
 
+    /**
+     * Parses the records.
+     *
+     * @param gmlResponse the gml response
+     * @return the yilgarn loc specimen records[]
+     * @throws Exception the exception
+     */
     public static YilgarnLocSpecimenRecords[] parseRecords(String gmlResponse)throws Exception{
         YilgarnLocSpecimenRecords[] records = null;
 
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource inputSource = new InputSource(new StringReader(gmlResponse));
-            Document doc = builder.parse(inputSource);
-
-            XPath xPath = XPathFactory.newInstance().newXPath();
-            xPath.setNamespaceContext(new YilgarnNamespaceContext());
-            NodeList exprResult = (NodeList)xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:relatedObservation | /wfs:FeatureCollection/gml:featureMember/sa:LocatedSpecimen/sa:relatedObservation", doc, XPathConstants.NODESET);
-
-            records = new YilgarnLocSpecimenRecords[exprResult.getLength()];
-            for (int i=0; i < exprResult.getLength(); i++) {
-
-                records[i] = new YilgarnLocSpecimenRecords(exprResult.item(i), xPath);
-            }
-
-            return records;
-    }
-
-    public static String YilgarnLocSpecMaterialDesc(String gmlResponse) throws Exception{
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
@@ -168,9 +255,34 @@ public class YilgarnLocSpecimenRecords {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new YilgarnNamespaceContext());
 
-        Node materialDescriptionNode = (Node)xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:materialClass", doc, XPathConstants.NODE);
+        NodeList exprResult = (NodeList) xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:relatedObservation | /wfs:FeatureCollection/gml:featureMember/sa:LocatedSpecimen/sa:relatedObservation", doc, XPathConstants.NODESET);
+
+        records = new YilgarnLocSpecimenRecords[exprResult.getLength()];
+        for (int i = 0; i < exprResult.getLength(); i++) {
+            records[i] = new YilgarnLocSpecimenRecords(exprResult.item(i), xPath);
+        }
+        return records;
+    }
+
+    /**
+     * Yilgarn loc spec material desc.
+     *
+     * @param gmlResponse the gml response
+     * @return the string
+     * @throws Exception the exception
+     */
+    public static String yilgarnLocSpecMaterialDesc(String gmlResponse) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource inputSource = new InputSource(new StringReader(gmlResponse));
+        Document doc = builder.parse(inputSource);
+
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        xPath.setNamespaceContext(new YilgarnNamespaceContext());
+
+        Node materialDescriptionNode = (Node) xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:materialClass", doc, XPathConstants.NODE);
         String materialDescription = materialDescriptionNode != null ? materialDescriptionNode.getTextContent() : "";
         return materialDescription;
     }
-
 }

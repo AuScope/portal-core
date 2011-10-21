@@ -73,7 +73,7 @@ public class YilgarnLocSpecimenController extends BasePortalController {
         String[] uniqueSpecName = null;
         try{
             records = YilgarnLocSpecimenRecords.parseRecords(gmlResponse);
-            materialDesc = YilgarnLocSpecimenRecords.YilgarnLocSpecMaterialDesc(gmlResponse);
+            materialDesc = YilgarnLocSpecimenRecords.yilgarnLocSpecMaterialDesc(gmlResponse);
             specName = new String[records.length];
             for (int j=0; j<records.length; j++){
                 specName[j] = records[j].getAnalyteName();

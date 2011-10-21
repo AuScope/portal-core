@@ -11,14 +11,18 @@ import org.auscope.portal.csw.CSWNamespaceContext;
 import org.auscope.portal.server.util.DOMUtil;
 import org.w3c.dom.Node;
 
+
+/**
+ * A factory for creating CSWOnlineResource objects.
+ */
 public abstract class CSWOnlineResourceFactory {
+
     /**
      * Parses a Node into its appropriate CSWOnlineResource representation.
+     *
      * @param node Must be a <gmd:CI_OnlineResource> node
-     * @param xPath Must be configured with CSWNamespaceContext
-     * @return
-     * @throws XPathExpressionException
-     * @throws Exception
+     * @return the abstract csw online resource
+     * @throws XPathExpressionException the x path expression exception
      */
     public static AbstractCSWOnlineResource parseFromNode(Node node) throws XPathExpressionException {
         String urlString = null;
@@ -37,7 +41,7 @@ public abstract class CSWOnlineResourceFactory {
 
         try {
             urlString = (String) urlXpath.evaluate(node, XPathConstants.STRING);
-            if(urlString != null) {
+            if (urlString != null) {
                 url = new URL(urlString);
             }
         } catch (MalformedURLException ex) {
