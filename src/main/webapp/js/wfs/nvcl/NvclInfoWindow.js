@@ -72,9 +72,14 @@ NvclInfoWindow.prototype = {
         myMask.show();
 
 
-        GDownloadUrl(url, function(response, responseCode) {
+        Ext.Ajax.request({
+        	url:url,
+        	method: 'GET',
+        	timeout:1800000,
+        	success: function(response, options) {
+        	var responseCode=response.status;
             if (responseCode == 200) {
-                var XmlDoc = GXml.parse(response);
+                var XmlDoc = GXml.parse(response.responseText);
 
                 if (g_IsIE) {
                     XmlDoc.setProperty("SelectionLanguage", "XPath");
@@ -129,7 +134,7 @@ NvclInfoWindow.prototype = {
                 myMask.hide();
                 alert('Remote server returned error code: ' + responseCode);
             }
-        });
+        }});
     },
 
     /*
@@ -297,7 +302,7 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
 
     // List of Scalars
     var scalarStore = new Ext.data.XmlStore({
-        url     : ProxyURL + iServerUrl + LOG_PATH + lDatasetId,
+        url     : 'HttpGetXmlProxy.do?serviceUrl=' + iServerUrl + LOG_PATH + lDatasetId,
         record  : 'Log',
         idPath  : 'LogID',
         fields  : ['LogID','logName']
@@ -355,13 +360,16 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
 
                     //Load our vocab string asynchronously
                     var vocabsQuery = 'getScalar.do?repository=nvcl-scalars&label=' + escape(record.get('logName').replace(' ', '_'));
-                    GDownloadUrl(vocabsQuery, function(pData, pResponseCode) {
+                    Ext.Ajax.request({
+                    	url:vocabsQuery,
+                    	success: function(pData, options) {
+                    	var pResponseCode=pData.status;
                         if(pResponseCode != 200) {
                             tip.body.dom.innerHTML = "ERROR: " + pResponseCode;
                             return;
                         }
 
-                        var response = eval('(' + pData + ')');
+                        var response = eval('(' + pData.responseText + ')');
                         if (!response.success) {
                             tip.body.dom.innerHTML = "ERROR: server returned error";
                             return;
@@ -374,7 +382,7 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
                             tip.body.dom.innerHTML = response.data.scopeNote;
                         else
                             tip.body.dom.innerHTML = 'N/A';
-                      });
+                      }});
                 }
                 //TODO: Commenting this out for now as it causes js errors. Still need to
                 // test whether there is a better solution.

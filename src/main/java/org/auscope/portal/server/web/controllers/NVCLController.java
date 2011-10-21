@@ -1,8 +1,11 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.io.OutputStream;
+import java.net.URL;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
@@ -121,4 +124,22 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
             return this.generateExceptionResponse(e, serviceUrl, method);
         }
     }
+
+    /**
+     * A proxy for handling GET request.
+     *
+     * @param serviceUrl the url of the service to query
+     * @throws Exception
+     */
+	@RequestMapping("HttpGetXmlProxy.do")
+	public void HttpGetXmlProxy(@RequestParam("serviceUrl") String serviceUrl,
+			HttpServletResponse response) throws Exception {
+		// set the content type for xml files
+		response.setContentType("text/xml");
+		// create the output stream
+		OutputStream out = (response.getOutputStream());
+		String xml = httpServiceCaller.callHttpUrlGET(new URL(serviceUrl));
+		out.write(xml.getBytes());
+
+	}
 }
