@@ -41,10 +41,10 @@
     <property name="format" value="\s+$"/>
     <property name="message" value="Line has trailing spaces."/>
   </module>
-  
+
     <module name="TreeWalker">
 
-        <property name="cacheFile" value="${checkstyle.cache.file}"/> 
+        <property name="cacheFile" value="${checkstyle.cache.file}"/>
 
 		<module name="JavadocType"/>
 		<module name="JavadocVariable"/>
@@ -93,7 +93,6 @@
 		</module>
 		<module name="SimplifyBooleanExpression"/>
 		<module name="SimplifyBooleanReturn"/>
-		<module name="DesignForExtension"/>
 		<module name="FinalClass"/>
 		<module name="HideUtilityClassConstructor"/>
 		<module name="InterfaceIsType"/>
