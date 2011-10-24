@@ -131,15 +131,14 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
      * @param serviceUrl the url of the service to query
      * @throws Exception
      */
-	@RequestMapping("HttpGetXmlProxy.do")
-	public void HttpGetXmlProxy(@RequestParam("serviceUrl") String serviceUrl,
-			HttpServletResponse response) throws Exception {
-		// set the content type for xml files
-		response.setContentType("text/xml");
-		// create the output stream
-		OutputStream out = (response.getOutputStream());
-		String xml = httpServiceCaller.callHttpUrlGET(new URL(serviceUrl));
-		out.write(xml.getBytes());
-
-	}
+    @RequestMapping("HttpGetXmlProxy.do")
+    public void HttpGetXmlProxy(@RequestParam("serviceUrl") String serviceUrl,
+            HttpServletResponse response) throws Exception {
+        // set the content type for xml files
+        response.setContentType("text/xml");
+        // create the output stream
+        OutputStream out = (response.getOutputStream());
+        String xml = httpServiceCaller.callHttpUrlGET(new URL(serviceUrl));
+        out.write(xml.getBytes());
+    }
 }
