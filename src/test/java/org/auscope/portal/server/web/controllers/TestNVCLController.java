@@ -322,20 +322,20 @@ public class TestNVCLController {
         Assert.assertFalse((Boolean) response.getModel().get("success"));
     }
 
-	@Test
-	public void testHttpGetXmlProxy() throws Exception {
-		final String response = "<?xml version='1.0' encoding='utf-8'?><LogCollection>"+
-		"<Log><LogID>c842eb6c-2848-43e0-9861-72da4e8969d</LogID>"+
-		"<logName>Min1 uTSAS</logName></Log></LogCollection>";
-		final ServletOutputStream out=context.mock(ServletOutputStream.class);
+    @Test
+    public void testHttpGetXmlProxy() throws Exception {
+        final String response = "<?xml version='1.0' encoding='utf-8'?><LogCollection>"
+                + "<Log><LogID>c842eb6c-2848-43e0-9861-72da4e8969d</LogID>"
+                + "<logName>Min1 uTSAS</logName></Log></LogCollection>";
+        final ServletOutputStream out = context.mock(ServletOutputStream.class);
 
-		context.checking(new Expectations() {{
+        context.checking(new Expectations() {{
             oneOf(mockHttpResponse).setContentType("text/xml");
             oneOf(mockHttpResponse).getOutputStream();will(returnValue(out));
             oneOf(mockHttpServiceCaller).callHttpUrlGET(with(any(URL.class)));will(returnValue(response));
             oneOf(out).write(with(response.getBytes()));
         }});
 
-		this.nvclController.HttpGetXmlProxy("http://www.testUrl.org", mockHttpResponse);
-	}
+        this.nvclController.HttpGetXmlProxy("http://www.testUrl.org", mockHttpResponse);
+    }
 }

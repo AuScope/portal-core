@@ -73,11 +73,11 @@ NvclInfoWindow.prototype = {
 
 
         Ext.Ajax.request({
-        	url:url,
-        	method: 'GET',
-        	timeout:1800000,
-        	success: function(response, options) {
-        	var responseCode=response.status;
+            url:url,
+            method: 'GET',
+            timeout:1800000,
+            success: function(response, options) {
+            var responseCode=response.status;
             if (responseCode == 200) {
                 var XmlDoc = GXml.parse(response.responseText);
 
@@ -361,9 +361,9 @@ function showBoreholeDetails(iServerUrl, iDatasetDetails) {
                     //Load our vocab string asynchronously
                     var vocabsQuery = 'getScalar.do?repository=nvcl-scalars&label=' + escape(record.get('logName').replace(' ', '_'));
                     Ext.Ajax.request({
-                    	url:vocabsQuery,
-                    	success: function(pData, options) {
-                    	var pResponseCode=pData.status;
+                        url:vocabsQuery,
+                        success: function(pData, options) {
+                        var pResponseCode=pData.status;
                         if(pResponseCode != 200) {
                             tip.body.dom.innerHTML = "ERROR: " + pResponseCode;
                             return;
