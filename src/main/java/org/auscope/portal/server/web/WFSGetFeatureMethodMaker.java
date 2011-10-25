@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class WFSGetFeatureMethodMaker {
+    public static final String WFS_VERSION = "1.1.0";
 
     /** Log object for this class. */
     protected final Log log = LogFactory.getLog(getClass());
@@ -57,7 +58,7 @@ public class WFSGetFeatureMethodMaker {
 
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        sb.append("<wfs:GetFeature service=\"WFS\" version=\"1.1.0\"\n");
+        sb.append(String.format("<wfs:GetFeature service=\"WFS\" version=\"%1$s\"\n", WFS_VERSION));
         sb.append("                xmlns:wfs=\"http://www.opengis.net/wfs\"\n");
         sb.append("                xmlns:ogc=\"http://www.opengis.net/ogc\"\n");
         sb.append("                xmlns:gml=\"http://www.opengis.net/gml\"\n");
@@ -103,6 +104,7 @@ public class WFSGetFeatureMethodMaker {
         valuePairs.add(new NameValuePair("request", "GetFeature"));
         valuePairs.add(new NameValuePair("typeName", typeName));
         valuePairs.add(new NameValuePair("featureId", featureId));
+        valuePairs.add(new NameValuePair("version", WFS_VERSION));
 
         //attach them to the method
         method.setQueryString((NameValuePair[]) valuePairs.toArray(new NameValuePair[valuePairs.size()]));
