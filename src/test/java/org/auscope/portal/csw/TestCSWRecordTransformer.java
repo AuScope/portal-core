@@ -44,7 +44,7 @@ public class TestCSWRecordTransformer {
     private XPathExpression exprGetFirstMetadataNode;
 
     @Before
-    public void setup() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+    public void setUp() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 
         CSWNamespaceContext nc = new CSWNamespaceContext();
         exprGetAllMetadataNodes = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata", nc);
@@ -54,7 +54,7 @@ public class TestCSWRecordTransformer {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
-        doc = builder.parse( "src/test/resources/cswRecordResponse.xml" );
+        doc = builder.parse("src/test/resources/cswRecordResponse.xml" );
 
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());
@@ -62,7 +62,7 @@ public class TestCSWRecordTransformer {
         NodeList nodes = (NodeList) exprGetAllMetadataNodes.evaluate(doc, XPathConstants.NODESET);
 
         records = new CSWRecord[nodes.getLength()];
-        for(int i=0; i<nodes.getLength(); i++ ) {
+        for (int i=0; i<nodes.getLength(); i++ ) {
             Node metadataNode = nodes.item(i);
             CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
             records[i] = transformer.transformToCSWRecord();

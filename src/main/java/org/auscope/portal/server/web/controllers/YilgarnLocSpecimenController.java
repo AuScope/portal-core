@@ -40,7 +40,7 @@ public class YilgarnLocSpecimenController extends BasePortalController {
 
     /** Log object for this class. */
 
-    protected final Log logger = LogFactory.getLog(getClass().getName());
+    private final Log logger = LogFactory.getLog(getClass().getName());
     private HttpServiceCaller serviceCaller;
     private WFSGetFeatureMethodMaker methodMaker;
 
@@ -52,18 +52,17 @@ public class YilgarnLocSpecimenController extends BasePortalController {
 
 
     @RequestMapping("/doLocatedSpecimenFeature.do")
-    public ModelAndView doLocatedSpecimenFeature
-                                      (@RequestParam("serviceUrl") final String serviceUrl,
+    public ModelAndView doLocatedSpecimenFeature(@RequestParam("serviceUrl") final String serviceUrl,
                                        @RequestParam("typeName") final String featureType,
                                        @RequestParam("featureId") final String featureId,
                                        HttpServletRequest request) throws Exception {
 
         String gmlResponse = null;
 
-        try{
+        try {
             HttpMethodBase method = methodMaker.makeMethod(serviceUrl, featureType, featureId);
             gmlResponse = serviceCaller.getMethodResponseAsString(method, serviceCaller.getHttpClient());
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("Error occured whilst communicating to remote service", e);
             return generateJSONResponseMAV(false, null, "Error occured whilst communicating to remote service: " + e.getMessage());
         }
@@ -71,27 +70,25 @@ public class YilgarnLocSpecimenController extends BasePortalController {
         String materialDesc = null;
         String[] specName = null;
         String[] uniqueSpecName = null;
-        try{
+        try {
             records = YilgarnLocSpecimenRecords.parseRecords(gmlResponse);
             materialDesc = YilgarnLocSpecimenRecords.yilgarnLocSpecMaterialDesc(gmlResponse);
             specName = new String[records.length];
-            for (int j=0; j<records.length; j++){
+            for (int j = 0; j < records.length; j++) {
                 specName[j] = records[j].getAnalyteName();
             }
             //specName has duplicate values so this is to get Unique values.
             Arrays.sort(specName);
             int k = 0;
-            for(int i = 0; i < specName.length; i++){
-                if(i>0 && specName[i].equals(specName[i-1]))
+            for (int i = 0; i < specName.length; i++) {
+                if (i > 0 && specName[i].equals(specName[i-1])) {
                     continue;
+                }
                 specName[k++] = specName[i];
             }
             uniqueSpecName = new String[k];
             System.arraycopy(specName, 0, uniqueSpecName, 0, k);
-
-
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             logger.warn("Error parsing request", ex);
             return generateJSONResponseMAV(false, null, "Error occured whilst parsing response: " + ex.getMessage());
         }
@@ -100,13 +97,13 @@ public class YilgarnLocSpecimenController extends BasePortalController {
     }
 
     /**
-     * Generates a Model object to send to the view
+     * Generates a Model object to send to the view.
      * @param records
      * @param materialDesc
      * @param uniqueSpecName
      * @return
      */
-    protected ModelMap generateYilgarnModel(YilgarnLocSpecimenRecords[] records, String materialDesc, String[] uniqueSpecName){
+    protected ModelMap generateYilgarnModel(YilgarnLocSpecimenRecords[] records, String materialDesc, String[] uniqueSpecName) {
         ModelMap response = new ModelMap();
         response.put("records", records);
         response.put("materialDesc", materialDesc);
@@ -125,7 +122,7 @@ public class YilgarnLocSpecimenController extends BasePortalController {
      * @throws Exception
      */
     @RequestMapping("/downloadLocSpecAsZip.do")
-    public void downloadLocSpecAsZip( @RequestParam("serviceUrls") final String[] serviceUrls,
+    public void downloadLocSpecAsZip(@RequestParam("serviceUrls") final String[] serviceUrls,
                                   HttpServletResponse response) throws Exception {
 
         //set the content type for zip files
@@ -136,7 +133,7 @@ public class YilgarnLocSpecimenController extends BasePortalController {
         ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
 
 
-        for(int i=0; i<serviceUrls.length; i++) {
+        for (int i=0; i<serviceUrls.length; i++) {
             GetMethod method = new GetMethod(serviceUrls[i]);
             HttpClient client = serviceCaller.getHttpClient();
 
@@ -149,7 +146,7 @@ public class YilgarnLocSpecimenController extends BasePortalController {
 
                 logger.trace("Response: " + responseString);
 
-                jsonObject = JSONObject.fromObject( responseString );
+                jsonObject = JSONObject.fromObject(responseString);
             } catch (Exception ex) {
                 //Replace a failure exception with a JSONObject representing that exception
                 logger.error(ex, ex);
@@ -177,7 +174,7 @@ public class YilgarnLocSpecimenController extends BasePortalController {
 
             logger.trace(gmlBytes.length);
 
-            if(jsonObject.get("success").toString().equals("false")) {
+            if (jsonObject.get("success").toString().equals("false")) {
                 //The server may have returned an error message, if so, lets include it in the filename
                 String messageString = messageObject.toString();
                 if (messageString.length() == 0)
@@ -186,10 +183,10 @@ public class YilgarnLocSpecimenController extends BasePortalController {
                 //"Tidy" up the message
                 messageString = messageString.replace(' ', '_').replace(".", "");
 
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "yyyyMMdd_HHmmss").format(new Date()) + "-" + messageString + ".xml"));
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "yyyyMMdd_HHmmss").format(new Date()) + "-" + messageString + ".xml"));
             } else {
                 //create a new entry in the zip file with a timestamped name
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
             }
 
             zout.write(gmlBytes);

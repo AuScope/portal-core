@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class GetCapabilitiesService {
 
     // -------------------------------------------------------------- Constants
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
 
     // ----------------------------------------------------- Instance variables
@@ -29,7 +29,7 @@ public class GetCapabilitiesService {
 
     // ----------------------------------------------------------- Constructors
     @Autowired
-    public GetCapabilitiesService( HttpServiceCaller serviceCaller) throws Exception {
+    public GetCapabilitiesService(HttpServiceCaller serviceCaller) throws Exception {
         this.serviceCaller = serviceCaller;
     }
 

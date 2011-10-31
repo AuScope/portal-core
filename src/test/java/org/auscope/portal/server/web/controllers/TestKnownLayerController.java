@@ -36,7 +36,7 @@ public class TestKnownLayerController {
 
 
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
         knownLayerList = new ArrayList();
 
         knownLayerList.add(mockDefn1);
@@ -58,8 +58,8 @@ public class TestKnownLayerController {
             oneOf(mockViewFactory).toView(mockDefn2);will(returnValue(record2));
 
             //check that the correct response is getting output
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
 
         //Run the method, get our response rendered as a JSONObject

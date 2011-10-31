@@ -25,7 +25,7 @@ public class MineralOccurrenceService {
 
     // -------------------------------------------------------------- Constants
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     // ----------------------------------------------------- Instance variables
 
@@ -45,9 +45,9 @@ log.info(".......default C'tor");
     }
 */
     @Autowired
-    public MineralOccurrenceService( HttpServiceCaller httpServiceCaller,
+    public MineralOccurrenceService(HttpServiceCaller httpServiceCaller,
                                      MineralOccurrencesResponseHandler respHandler,
-                                     WFSGetFeatureMethodMaker methodMaker ) {
+                                     WFSGetFeatureMethodMaker methodMaker) {
         this.httpServiceCaller = httpServiceCaller;
         this.mineralOccurrencesResponseHandler = respHandler;
         this.methodMaker = methodMaker;
@@ -213,7 +213,7 @@ log.info(".......default C'tor");
      * @param cutOffGradeUOM
      * @return
      */
-    public HttpMethodBase  getMineralOccurrenceGML( String serviceURL,
+    public HttpMethodBase  getMineralOccurrenceGML(String serviceURL,
                                            String commodityName,
                                            String measureType,
                                            String minOreAmount,
@@ -224,7 +224,7 @@ log.info(".......default C'tor");
                                            ) throws Exception {
 
         MineralOccurrenceFilter mineralOccurrenceFilter
-            = new MineralOccurrenceFilter( commodityName,
+            = new MineralOccurrenceFilter(commodityName,
                                            measureType,
                                            minOreAmount,
                                            minOreAmountUOM,
@@ -258,7 +258,7 @@ log.info(".......default C'tor");
      * @param cutOffGradeUOM
      * @return
      */
-    public HttpMethodBase getVisibleMineralOccurrenceGML( String serviceURL,
+    public HttpMethodBase getVisibleMineralOccurrenceGML(String serviceURL,
                                            String commodityName,
                                            String measureType,
                                            String minOreAmount,
@@ -271,12 +271,12 @@ log.info(".......default C'tor");
                                            ) throws Exception {
 
         MineralOccurrenceFilter mineralOccurrenceFilter
-            = new MineralOccurrenceFilter( commodityName,
+            = new MineralOccurrenceFilter(commodityName,
                                            measureType,
                                            minOreAmount,
                                            minOreAmountUOM,
                                            minCommodityAmount,
-                                           minCommodityAmountUOM );
+                                           minCommodityAmountUOM);
 
         log.debug("Mineral Occurence query... url:" + serviceURL);
         log.trace("Mineral Occurence query... filter:" + mineralOccurrenceFilter.getFilterStringBoundingBox(bbox));
@@ -291,7 +291,7 @@ log.info(".......default C'tor");
     }
 
 
-    public HttpMethodBase getMiningActivityGML( String serviceURL,
+    public HttpMethodBase getMiningActivityGML(String serviceURL,
                                         String mineName,
                                         String startDate,
                                         String endDate,
@@ -316,7 +316,7 @@ log.info(".......default C'tor");
         return method;
     }
 
-    public HttpMethodBase getVisibleMiningActivityGML( String serviceURL,
+    public HttpMethodBase getVisibleMiningActivityGML(String serviceURL,
             String mineName,
             String startDate,
             String endDate,

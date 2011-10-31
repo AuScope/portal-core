@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
  */
 public class CSWRecordTransformer {
     public static final String TEMPLATE_FILE = "MD_MetadataTemplate.xml";
-    protected final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
 
     private Document document;
     private Node mdMetadataNode;
@@ -500,7 +500,7 @@ public class CSWRecordTransformer {
 
         //Parse the descriptive keywords
         tempNodeList1 = (NodeList) evalXPathNodeList(this.mdMetadataNode, KEYWORDLISTEXPRESSION);
-        if (tempNodeList1 != null && tempNodeList1.getLength() > 0 ) {
+        if (tempNodeList1 != null && tempNodeList1.getLength() > 0) {
             List<String> keywords = new ArrayList<String>();
             Node keyword;
             for (int j=0; j<tempNodeList1.getLength(); j++) {

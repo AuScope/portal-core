@@ -31,7 +31,7 @@ public class TestGmlToKml {
 
 
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
         final String serviceUrl = "somejunk";
 
         context.checking(new Expectations() {{

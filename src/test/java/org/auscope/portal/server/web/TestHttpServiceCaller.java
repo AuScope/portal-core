@@ -26,7 +26,7 @@ import org.junit.Test;
  * Time: 12:01:57 PM
  */
 public class TestHttpServiceCaller {
-    private Mockery context = new Mockery(){{
+    private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
     private HttpClient mockHttpClient;
@@ -39,7 +39,7 @@ public class TestHttpServiceCaller {
     private static final String FILTER_STRING = "<filter></filter>";
 
     @Before
-    public void setup() {
+    public void setUp() {
         mockHttpClient = context.mock(HttpClient.class);
         mockParams = context.mock(HttpConnectionManagerParams.class);
         httpServiceCaller = new HttpServiceCaller();
@@ -106,10 +106,10 @@ public class TestHttpServiceCaller {
 
 
         context.checking(new Expectations() {{
-            oneOf (mockHttpClient).setHttpConnectionManager(with(any(HttpConnectionManager.class)));
-            oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_OK));
-            oneOf (method).getResponseBodyAsStream(); will(returnValue(InputStream.class));
-            oneOf (method).releaseConnection();
+            oneOf(mockHttpClient).setHttpConnectionManager(with(any(HttpConnectionManager.class)));
+            oneOf(mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_OK));
+            oneOf(method).getResponseBodyAsStream(); will(returnValue(InputStream.class));
+            oneOf(method).releaseConnection();
             allowing(method).getURI();will(returnValue(null));
         }});
 
@@ -127,10 +127,10 @@ public class TestHttpServiceCaller {
         final HttpMethodBase method = context.mock(HttpMethodBase.class);
 
         context.checking(new Expectations() {{
-            oneOf (mockHttpClient).setHttpConnectionManager(with(any(HttpConnectionManager.class)));
-            oneOf (mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));
-            oneOf (method).getStatusLine();//logger
-            oneOf (method).getStatusLine();//exception
+            oneOf(mockHttpClient).setHttpConnectionManager(with(any(HttpConnectionManager.class)));
+            oneOf(mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));
+            oneOf(method).getStatusLine();//logger
+            oneOf(method).getStatusLine();//exception
             allowing(method).getURI();will(returnValue(null));
 
         }});

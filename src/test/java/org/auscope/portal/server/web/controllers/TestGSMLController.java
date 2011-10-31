@@ -87,7 +87,7 @@ public class TestGSMLController {
     private YilgarnGeochemistryFilter mockGeochemFilter = context.mock(YilgarnGeochemistryFilter.class);
 
     @Before
-    public void setup() {
+    public void setUp() {
         gsmlController = new GSMLController(httpServiceCaller, gmlToKml, wfsGetFeatureMethodMaker, mockFilter, gsmlResponseHandler);
     }
     private void testJSONResponse(String json, Boolean success, String gml, String kml) {
@@ -212,10 +212,10 @@ public class TestGSMLController {
 
         context.checking(new Expectations() {{
             oneOf(httpServiceCaller).getHttpClient();
-            oneOf (httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class))); will(returnValue(expectedGML));
+            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class))); will(returnValue(expectedGML));
 
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
             oneOf(wfsGetFeatureMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
@@ -244,8 +244,8 @@ public class TestGSMLController {
             oneOf(httpServiceCaller).getHttpClient();
             oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(expectedGML));
 
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
 
             oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
 
@@ -282,7 +282,7 @@ public class TestGSMLController {
         gsmlController.xsltRestProxy("fake", null, mockHttpResponse);
 
         //check that kmlblob made it through
-        if(kmlBlob.equals(responseString.getBuffer().toString()))
+        if (kmlBlob.equals(responseString.getBuffer().toString()))
             Assert.assertTrue(true);
     }
 

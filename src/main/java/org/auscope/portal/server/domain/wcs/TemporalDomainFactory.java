@@ -17,7 +17,7 @@ public class TemporalDomainFactory {
         xPath.setNamespaceContext(new WCSNamespaceContext());
 
         if (node.getLocalName().equals("timePosition")) {
-            return new SimpleTimePosition(node, xPath);
+            return new SimpleTimePosition(node);
         } else if (node.getLocalName().equals("timePeriod")) {
             return new SimpleTimePeriod(node, xPath);
         } else {

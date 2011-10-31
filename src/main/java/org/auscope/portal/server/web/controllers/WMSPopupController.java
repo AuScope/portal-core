@@ -23,15 +23,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class WMSPopupController {
-   protected final Log log = LogFactory.getLog(getClass());
+   private final Log log = LogFactory.getLog(getClass());
 
    @RequestMapping("/wmsMarkerPopup.do")
    public void wmsUnitPopup(HttpServletRequest request,
                             HttpServletResponse response,
-                            @RequestParam("WMS_URL") String wms_url,
+                            @RequestParam("WMS_URL") String wmsUrl,
                             @RequestParam("lat") String latitude,
                             @RequestParam("lng") String longitude,
-                            @RequestParam("QUERY_LAYERS") String query_layers,
+                            @RequestParam("QUERY_LAYERS") String queryLayers,
                             @RequestParam("x") String x,
                             @RequestParam("y") String y,
                             @RequestParam("BBOX") String bbox,
@@ -40,10 +40,10 @@ public class WMSPopupController {
                             @RequestParam("INFO_FORMAT") String infoFormat) throws IOException
    {
       String AMP = "&";
-      String url = wms_url;
+      String url = wmsUrl;
       // "&" character cannot be passed within url string
       // We need this check for tricky urls such as Geoscience Australia.
-      if ( !url.endsWith("?") || !url.endsWith("&") || !url.endsWith("=")) {
+      if (!url.endsWith("?") || !url.endsWith("&") || !url.endsWith("=")) {
          if (url.contains("?"))
             url += AMP;
          else
@@ -54,10 +54,10 @@ public class WMSPopupController {
       url += "&BBOX=" + bbox;
       url += "&X=" + x + "&Y=" + y;
       url += "&INFO_FORMAT=" + infoFormat;
-      url += "&QUERY_LAYERS=" + query_layers;
+      url += "&QUERY_LAYERS=" + queryLayers;
       url += "&FEATURE_COUNT=50";
       url += "&SRS=EPSG:4326";
-      url += "&LAYERS=" + query_layers;
+      url += "&LAYERS=" + queryLayers;
       url += "&STYLES=";      // Ask server for default style
       url += "&WIDTH=" + width + "&HEIGHT=" + height;
       url += "&FORMAT=image/png";

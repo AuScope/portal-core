@@ -1,5 +1,7 @@
 package org.auscope.portal;
 
+import java.util.logging.Logger;
+
 import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -58,6 +60,8 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpMethodBase> {
             case POST:
                 matches &= method instanceof PostMethod;
                 break;
+            default:
+                break;
             }
         }
 
@@ -76,9 +80,6 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpMethodBase> {
                 matches &= postBody.equals(((StringRequestEntity) entity).getContent());
             }
         }
-
         return matches;
     }
-
-
 }

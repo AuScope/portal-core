@@ -38,7 +38,7 @@ public class TestPortalURIResolver {
     private ServletContext servletContext = context.mock(ServletContext.class);
 
     @Before
-    public void setup() {
+    public void setUp() {
         portalURIResolver = new PortalURIResolver(servletContext);
     }
 
@@ -59,7 +59,7 @@ public class TestPortalURIResolver {
         Source source2 = portalURIResolver.resolve("href", "");
 
         //the two should be the same
-        if(source == source2)
+        if (source == source2)
             Assert.assertTrue(true);
     }
 
@@ -96,7 +96,7 @@ public class TestPortalURIResolver {
         Source source = portalURIResolver.resolve("", "");
 
         //expect a null source
-        if(source == null)
+        if (source == null)
             Assert.assertTrue(true);
 
     }*/

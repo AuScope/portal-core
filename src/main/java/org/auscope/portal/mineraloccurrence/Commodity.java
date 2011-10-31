@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
  * @version $Id$
  */
 public class Commodity {
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
     private Node commodityNode;
 
     public Commodity(Node commodityNode) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {

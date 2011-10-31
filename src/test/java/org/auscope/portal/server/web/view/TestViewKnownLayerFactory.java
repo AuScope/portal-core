@@ -88,14 +88,30 @@ public class TestViewKnownLayerFactory {
 
         context.checking(new Expectations() {{
 
-            allowing(mockWFS).getFeatureTypeName();will(returnValue(featureTypeName));
-            allowing(mockWFS).getId();will(returnValue(id));
-            allowing(mockWFS).getTitle();will(returnValue(title));
-            allowing(mockWFS).getDescription();will(returnValue(description));
-            allowing(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
-            allowing(mockWFS).getIconUrl();will(returnValue(iconUrl));
-            allowing(mockWFS).getIconAnchor();will(returnValue(mockP1));
-            allowing(mockWFS).getInfoWindowAnchor();will(returnValue(mockP2));
+            allowing(mockWFS).getFeatureTypeName();
+            will(returnValue(featureTypeName));
+
+            allowing(mockWFS).getId();
+            will(returnValue(id));
+
+            allowing(mockWFS).getTitle();
+            will(returnValue(title));
+
+            allowing(mockWFS).getDescription();
+            will(returnValue(description));
+
+            allowing(mockWFS).getProxyUrl();
+            will(returnValue(proxyUrl));
+
+            allowing(mockWFS).getIconUrl();
+            will(returnValue(iconUrl));
+
+            allowing(mockWFS).getIconAnchor();
+            will(returnValue(mockP1));
+
+            allowing(mockWFS).getInfoWindowAnchor();
+            will(returnValue(mockP2));
+
             allowing(mockWFS).getIconSize();will(returnValue(mockD1));
             allowing(mockWFS).getDisableBboxFiltering();will(returnValue(disableBboxFiltering));
             allowing(mockWFS).isHidden();will(returnValue(hidden));

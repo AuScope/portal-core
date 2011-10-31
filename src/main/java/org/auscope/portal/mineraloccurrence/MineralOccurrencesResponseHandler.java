@@ -30,7 +30,7 @@ import org.w3c.dom.NodeList;
 public class MineralOccurrencesResponseHandler {
 
     /** The log. */
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     /**
      * Gets the mines.

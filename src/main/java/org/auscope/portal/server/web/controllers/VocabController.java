@@ -42,7 +42,7 @@ import org.xml.sax.InputSource;
  */
 @Controller
 public class VocabController extends BasePortalController {
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     private HttpServiceCaller httpServiceCaller;
     private ConceptFactory conceptFactory;
@@ -76,7 +76,7 @@ public class VocabController extends BasePortalController {
      * @return
      */
     @RequestMapping("/getScalar.do")
-    public ModelAndView getScalarQuery( @RequestParam("repository") final String repository,
+    public ModelAndView getScalarQuery(@RequestParam("repository") final String repository,
                                         @RequestParam("label") final String label) throws Exception {
 
         //Attempt to request and parse our response
@@ -250,7 +250,7 @@ public class VocabController extends BasePortalController {
             dataItems.addAll(denormalisedConcept);
         }
 
-        log.debug(String.format("returning a list of %1$d themes", dataItems.size()));;
+        log.debug(String.format("returning a list of %1$d themes", dataItems.size()));
 
         return generateJSONResponseMAV(true, dataItems, "");
     }

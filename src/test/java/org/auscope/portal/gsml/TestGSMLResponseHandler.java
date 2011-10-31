@@ -15,7 +15,7 @@ public class TestGSMLResponseHandler {
     @Test
     public void testGetNumberOfFeaturesZero() throws Exception {
         File getFeatureResponse = new File("src/test/resources/YilgarnGeochemistryNoFeatureResponse.xml");
-        BufferedReader reader = new BufferedReader( new FileReader(getFeatureResponse) );
+        BufferedReader reader = new BufferedReader(new FileReader(getFeatureResponse) );
         StringBuffer getFeatureResponseXML = new StringBuffer();
 
         String str;
@@ -31,7 +31,7 @@ public class TestGSMLResponseHandler {
     @Test
     public void testGetNumberOfFeaturesTwo() throws Exception {
         File geochemistryGetFeatureResponse = new File("src/test/resources/YilgarnGeochemGetFeatureResponse.xml");
-        BufferedReader reader = new BufferedReader( new FileReader(geochemistryGetFeatureResponse) );
+        BufferedReader reader = new BufferedReader(new FileReader(geochemistryGetFeatureResponse) );
         StringBuffer geochemGetFeatureResponseXML = new StringBuffer();
 
         String str;

@@ -32,7 +32,7 @@ public class TestCommodity {
     private static Commodity invalidCommodity;
 
     @BeforeClass
-    public static void setup() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
+    public static void setUp() throws IOException, SAXException, XPathExpressionException, ParserConfigurationException {
         //create updateCSWRecords valid commodity
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!

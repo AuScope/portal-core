@@ -23,7 +23,7 @@ import org.w3c.dom.NodeList;
  */
 public class DescriptionFactory {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
     private static final VocabNamespaceContext nc = new VocabNamespaceContext();
 
     /**

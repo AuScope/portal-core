@@ -19,7 +19,7 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 public abstract class AbstractFilter implements IFilter {
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     protected enum MatchActionType {
         All,
@@ -106,7 +106,7 @@ public abstract class AbstractFilter implements IFilter {
        }
        sb.append("<gml:Envelope srsName=\"" + bbox.getBboxSrs() + "\">");
        sb.append("<gml:lowerCorner>" + lowerCorner + "</gml:lowerCorner>");
-       sb.append("<gml:upperCorner>" + upperCorner +"</gml:upperCorner>");
+       sb.append("<gml:upperCorner>" + upperCorner + "</gml:upperCorner>");
        sb.append("</gml:Envelope>");
        sb.append("</ogc:BBOX>");
 
@@ -349,7 +349,7 @@ public abstract class AbstractFilter implements IFilter {
     * @return
     */
    protected String generatePropertyIsGreaterThan(String propertyName, String literal) {
-       return generatePropertyIsGreaterThan(propertyName, literal, false ,null);
+       return generatePropertyIsGreaterThan(propertyName, literal, false , null);
    }
 
    /**
@@ -431,7 +431,7 @@ public abstract class AbstractFilter implements IFilter {
     * @return
     */
    protected String generateAndComparisonFragment(String... fragments) {
-       return generateLogicalFragment("ogc:And",2, null, fragments);
+       return generateLogicalFragment("ogc:And", 2, null, fragments);
    }
 
    /**
@@ -444,7 +444,7 @@ public abstract class AbstractFilter implements IFilter {
     * @return
     */
    protected String generateOrComparisonFragment(String... fragments) {
-       return generateLogicalFragment("ogc:Or",2, null, fragments);
+       return generateLogicalFragment("ogc:Or", 2, null, fragments);
    }
 
    /**
@@ -456,7 +456,7 @@ public abstract class AbstractFilter implements IFilter {
     * @return
     */
    protected String generateNotComparisonFragment(String fragment) {
-       return generateLogicalFragment("ogc:Not",1, null, fragment);
+       return generateLogicalFragment("ogc:Not", 1, null, fragment);
    }
 
    /**
@@ -466,7 +466,7 @@ public abstract class AbstractFilter implements IFilter {
     */
    protected String generateFilter(String filterContents, Map<String, String> attributes) {
 
-       return generateLogicalFragment("ogc:Filter",1, attributes,filterContents);
+       return generateLogicalFragment("ogc:Filter", 1, attributes, filterContents);
    }
 
    /**
@@ -476,10 +476,10 @@ public abstract class AbstractFilter implements IFilter {
     */
    protected String generateFilter(String filterContents) {
 
-       return generateLogicalFragment("ogc:Filter",1, null,filterContents);
+       return generateLogicalFragment("ogc:Filter", 1, null, filterContents);
    }
 
-   private String generateLogicalFragment(String logicalComparison,int minParams, Map<String, String> attributes, String... fragments) {
+   private String generateLogicalFragment(String logicalComparison, int minParams, Map<String, String> attributes, String... fragments) {
        StringBuilder sb = new StringBuilder();
 
        int nonEmptyFragmentCount = 0;
@@ -490,9 +490,9 @@ public abstract class AbstractFilter implements IFilter {
        }
 
        if (nonEmptyFragmentCount >= minParams) {
-           if (attributes == null)
+           if (attributes == null) {
                sb.append(String.format("<%1$s>", logicalComparison));
-           else {
+           } else {
                sb.append(String.format("<%1$s ", logicalComparison));
                for (String attName : attributes.keySet()) {
                    sb.append(String.format("%1$s=\"%2$s\" ", attName, attributes.get(attName)));
@@ -521,9 +521,9 @@ public abstract class AbstractFilter implements IFilter {
    private String generatePropertyComparisonFragment(String comparison, Map<String, String> attributes, String propertyName, String literal) {
        StringBuilder sb = new StringBuilder();
 
-       if (attributes == null)
+       if (attributes == null) {
            sb.append(String.format("<%1$s>", comparison));
-       else {
+       } else {
            sb.append(String.format("<%1$s ", comparison));
            for (String attName : attributes.keySet()) {
                sb.append(String.format("%1$s=\"%2$s\" ", attName, attributes.get(attName)));
@@ -531,8 +531,9 @@ public abstract class AbstractFilter implements IFilter {
            sb.append(">");
        }
        sb.append(String.format("<ogc:PropertyName>%1$s</ogc:PropertyName>", propertyName));
-       if (literal != null)
+       if (literal != null) {
            sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", literal));
+       }
        sb.append(String.format("</%1$s>", comparison));
 
        return sb.toString();

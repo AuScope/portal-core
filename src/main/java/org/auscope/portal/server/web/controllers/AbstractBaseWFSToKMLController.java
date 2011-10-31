@@ -65,7 +65,7 @@ public abstract class AbstractBaseWFSToKMLController extends BasePortalControlle
      * @return
      */
     protected ModelAndView makeModelAndViewKML(final String kmlBlob, final String gmlBlob, HttpMethodBase request) {
-        final Map<String,String> data = new HashMap<String,String>();
+        final Map<String,String> data = new HashMap<String, String>();
         data.put("kml", kmlBlob);
         data.put("gml", gmlBlob);
 
@@ -73,7 +73,7 @@ public abstract class AbstractBaseWFSToKMLController extends BasePortalControlle
     }
 
     /**
-     * Generates a failure response with the specified message
+     * Generates a failure response with the specified message.
      * @param message
      * @param method
      */
@@ -83,7 +83,7 @@ public abstract class AbstractBaseWFSToKMLController extends BasePortalControlle
 
 
     /**
-     * Exception resolver that maps exceptions to views presented to the user
+     * Exception resolver that maps exceptions to views presented to the user.
      * @param exception
      * @return ModelAndView object with error message
      */

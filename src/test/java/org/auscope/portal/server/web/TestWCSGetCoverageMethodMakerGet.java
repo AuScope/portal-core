@@ -28,7 +28,7 @@ public class TestWCSGetCoverageMethodMakerGet {
     private WCSGetCoverageMethodMakerGET methodMaker;
 
     @Before
-    public void setup() {
+    public void setUp() {
         methodMaker = new WCSGetCoverageMethodMakerGET();
 
         context.checking(new Expectations() {{

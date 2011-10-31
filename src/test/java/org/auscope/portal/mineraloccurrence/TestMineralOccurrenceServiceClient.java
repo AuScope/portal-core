@@ -31,13 +31,13 @@ public class TestMineralOccurrenceServiceClient {
 
     private WFSGetFeatureMethodMaker methodMaker;
 
-    private Mockery context = new Mockery(){{
+    private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.methodMaker = context.mock(WFSGetFeatureMethodMaker.class);
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.httpServiceCaller = context.mock(HttpServiceCaller.class);
@@ -47,8 +47,8 @@ public class TestMineralOccurrenceServiceClient {
     }
 
     /**
-     * The service client ties various different classes togather, so we are not testing its data integrity,
-     * rather we are testing that it utilises the other classes properly and send us back the right return object
+     * The service client ties various different classes together, so we are not testing its data integrity,
+     * rather we are testing that it utilises the other classes properly and send us back the right return object.
      *
      * @throws Exception
      */
@@ -62,11 +62,18 @@ public class TestMineralOccurrenceServiceClient {
         final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(with(serviceURL), with("er:MiningFeatureOccurrence"),
-                    with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockMineResponse));
-            oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
+            oneOf(methodMaker).makeMethod(with(serviceURL), with("er:MiningFeatureOccurrence"),
+                    with(any(String.class)), with(any(Integer.class)));
+            will(returnValue(mockMethod));
+
+            oneOf(httpServiceCaller).getHttpClient();
+            will(returnValue(mockHttpClient));
+
+            oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
+            will(returnValue(mockMineResponse));
+
+            oneOf(mineralOccurrencesResponseHandler).getMines(mockMineResponse);
+            will(returnValue(mockMines));
         }});
 
         List<Mine> mines = this.mineralOccurrenceService.getAllMines(serviceURL, 0);
@@ -91,10 +98,15 @@ public class TestMineralOccurrenceServiceClient {
         final List<Mine> mockMines = context.mock(List.class);
 
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(serviceURL, "er:MiningFeatureOccurrence", mineFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockMineResponse));
-            oneOf (mineralOccurrencesResponseHandler).getMines(mockMineResponse); will(returnValue(mockMines));
+            oneOf(methodMaker).makeMethod(serviceURL, "er:MiningFeatureOccurrence", mineFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
+            oneOf(httpServiceCaller).getHttpClient();
+            will(returnValue(mockHttpClient));
+
+            oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
+            will(returnValue(mockMineResponse));
+
+            oneOf(mineralOccurrencesResponseHandler).getMines(mockMineResponse);
+            will(returnValue(mockMines));
         }});
 
         List<Mine> mines = this.mineralOccurrenceService.getMineWithSpecifiedName(serviceURL, mineName, 0);
@@ -116,10 +128,10 @@ public class TestMineralOccurrenceServiceClient {
         final Collection<Mine> mockCommodities = (Collection<Mine>)context.mock(Collection.class);
 
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Commodity", ""); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
-            oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(mockCommodities));
+            oneOf(methodMaker).makeMethod(serviceURL, "er:Commodity", ""); will(returnValue(mockMethod));
+            oneOf(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
+            oneOf(mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(mockCommodities));
         }});
 
         Collection<Commodity> commodities = this.commodityService.get(serviceURL, commodityName);
@@ -143,10 +155,10 @@ public class TestMineralOccurrenceServiceClient {
         final Collection<Commodity> mockCommodities = (Collection<Commodity>)context.mock(Collection.class);
 
         context.checking(new Expectations() {{
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString()); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
-            oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(mockCommodities));
+            oneOf(methodMaker).makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString()); will(returnValue(mockMethod));
+            oneOf(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
+            oneOf(mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(mockCommodities));
         }});
 
         Collection<Commodity> commodities = this.commodityService.get(serviceURL, commodityName);
@@ -155,7 +167,7 @@ public class TestMineralOccurrenceServiceClient {
     */
 
     /**
-     * Test for a valid query
+     * Test for a valid query.
      * @throws Exception
      */
     @Test
@@ -173,19 +185,17 @@ public class TestMineralOccurrenceServiceClient {
         final String mockCommodityResponse = new String();
 
         final MineralOccurrenceFilter mineralOccurrenceFilter
-            = new MineralOccurrenceFilter( commodityName,
+            = new MineralOccurrenceFilter(commodityName,
                                            measureType,
                                            minOreAmount,
                                            minOreAmountUOM,
                                            minCommodityAmount,
-                                           minCommodityAmountUOM );
+                                           minCommodityAmountUOM);
 
         context.checking(new Expectations() {{
             //the mineral occurrence query part
-            oneOf (methodMaker).makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
+            oneOf(methodMaker).makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
 
-            /*oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));*/
         }});
 
         this.mineralOccurrenceService.getMineralOccurrenceGML(serviceURL,
@@ -198,56 +208,6 @@ public class TestMineralOccurrenceServiceClient {
                                                               0);
     }
 
-
-    /**
-     * Test for the case that we dont get any results, by mimicking the getCommodity query returning no results
-     *
-    @Test
-    public void testGetMineralOccurrenceGMLNoResults() throws Exception {
-        final String serviceURL = "http://localhost?";
-        final String commodityName = "someName";
-        final String measureType = "";
-        final String minOreAmount = "";
-        final String minOreAmountUOM = "";
-        final String minCommodityAmount = "";
-        final String minCommodityAmountUOM = "";
-        final String cutOffGrade = "";
-        final String cutOffGradeUOM = "";
-
-        final CommodityFilter commodityFilter = new CommodityFilter(commodityName);
-        final GetMethod mockMethod = context.mock(GetMethod.class);
-        final String mockCommodityResponse = new String();
-        final Collection<Commodity> commodities = new ArrayList<Commodity>();
-
-        context.checking(new Expectations() {{
-            //this the get commodities part
-            oneOf (methodMaker).makeMethod(serviceURL, "er:Commodity", commodityFilter.getFilterString()); will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(mockCommodityResponse));
-            oneOf (mineralOccurrencesResponseHandler).getCommodities(mockCommodityResponse); will(returnValue(commodities));
-        }});
-
-        String returnValue = this.mineralOccurrenceService.getMineralOccurrenceGML(serviceURL,
-                                                                    commodityName,
-                                                                    measureType,
-                                                                    minOreAmount,
-                                                                    minOreAmountUOM,
-                                                                    minCommodityAmount,
-                                                                    minCommodityAmountUOM,
-                                                                    cutOffGrade,
-                                                                    cutOffGradeUOM);
-
-        final String expectedValue =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-            "<wfs:FeatureCollection numberOfFeatures=\"0\"" +
-            "    xsi:schemaLocation=\"http://www.opengis.net/wfs\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:wfs=\"http://www.opengis.net/wfs\">" +
-            "    <gml:featureMembers/>" +
-            "</wfs:FeatureCollection>";
-
-        Assert.assertEquals(expectedValue, returnValue);
-    }
-    */
-
     @Test
     public void testGetMiningActivity() throws Exception {
         final Mine mockMine = context.mock(Mine.class);
@@ -256,25 +216,15 @@ public class TestMineralOccurrenceServiceClient {
 
         context.checking(new Expectations() {{
             ignoring(mockMine);
-            oneOf (methodMaker).makeMethod(with(""), with("er:MiningFeatureOccurrence"),
-                    with(any(String.class)), with(any(Integer.class)));will(returnValue(mockMethod));
-            oneOf (httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(methodMaker).makeMethod(with(""), with("er:MiningFeatureOccurrence"),
+                    with(any(String.class)), with(any(Integer.class)));
+            will(returnValue(mockMethod));
+            oneOf(httpServiceCaller).getHttpClient();
+            will(returnValue(mockHttpClient));
             oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
         }});
 
         this.mineralOccurrenceService.getMiningActivityGML("", "", "", "", "", "", "", "", 0);
 
     }
-
-    /*
-    @Test
-    public void testGetMiningActivityNoMines() throws Exception {
-        final List<Mine> mockMineList = Arrays.asList();
-
-        String response = this.mineralOccurrenceService.getMiningActivityGML("", mockMineList, "", "", "", "", "", "");
-
-        //should get updateCSWRecords blank string back
-        Assert.assertEquals("", response);
-    }
-    */
 }

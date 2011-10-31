@@ -38,7 +38,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 public class WCSController extends BasePortalController {
-    protected final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
 
     private HttpServiceCaller serviceCaller;
     private IWCSGetCoverageMethodMaker getCoverageMethodMaker;
@@ -114,8 +114,8 @@ public class WCSController extends BasePortalController {
             message = String.format("An exception occured whilst requesting/parsing your WCS download.\r\n%1$s\r\nMessage=%2$s\r\n%3$s",debugQuery, exceptionToPrint.getMessage(), sw.toString());
         } finally {
             try {
-                if(pw != null)  pw.close();
-                if(sw != null)  sw.close();
+                if (pw != null)  pw.close();
+                if (sw != null)  sw.close();
             } catch (Exception ignore) {}
         }
 

@@ -63,7 +63,7 @@ public class TestDownloadController {
     };
 
     @Before
-    public void setup() {
+    public void setUp() {
         downloadController = new DownloadController(httpServiceCaller);
     }
 

@@ -15,7 +15,7 @@ import java.io.IOException;
 public class Util {
     public static String loadXML(String fileName) throws IOException {
         File mineContents = new File(fileName);
-        BufferedReader reader = new BufferedReader( new FileReader(mineContents) );
+        BufferedReader reader = new BufferedReader(new FileReader(mineContents) );
         StringBuffer mineXML = new StringBuffer();
 
         String str;

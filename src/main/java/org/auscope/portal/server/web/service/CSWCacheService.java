@@ -49,7 +49,7 @@ public class CSWCacheService {
      */
     public static final long CACHE_UPDATE_FREQUENCY_MS = 1000L * 60L * 5L; //Set to 5 minutes
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
 
     protected Map<String, Integer> keywordCache;
@@ -225,7 +225,7 @@ public class CSWCacheService {
         ArrayList<CSWRecord> records = new ArrayList<CSWRecord>();
 
         //Iterate EVERY record for EVERY service URL
-        for(CSWRecord rec : recordCache) {
+        for (CSWRecord rec : recordCache) {
             if ((types == null || rec.containsAnyOnlineResource(types))) {
                 records.add(rec);
             }
@@ -238,7 +238,7 @@ public class CSWCacheService {
      * Our worker class for updating our CSW cache
      */
     private class CSWCacheUpdateThread extends Thread {
-        protected final Log log = LogFactory.getLog(getClass());
+        private final Log log = LogFactory.getLog(getClass());
 
         private CSWCacheService parent;
         private CSWCacheUpdateThread[] siblings; //this is also used as a shared locking object

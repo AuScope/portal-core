@@ -25,7 +25,7 @@ public class TestMiningActivityFilter {
     private List<Mine> mockMineList;
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.mockMine = context.mock(Mine.class);
         this.mockMineList = Arrays.asList(mockMine);
     }
@@ -33,7 +33,7 @@ public class TestMiningActivityFilter {
     @Test
     public void testAssociatedMine() throws Exception {
         context.checking(new Expectations() {{
-            oneOf (mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
+            oneOf(mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
         }});
 
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "", "", "", "", "", "");
@@ -50,8 +50,9 @@ public class TestMiningActivityFilter {
     public void testAssociatedMineDateRange() throws Exception {
         final List<String> activities = Arrays.asList("activity1");
         context.checking(new Expectations() {{
-            oneOf (mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing (mockMine).getRelatedActivities();will(returnValue(activities));
+            oneOf(mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
+            allowing(mockMine).getRelatedActivities();
+            will(returnValue(activities));
         }});
 
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "", "");
@@ -71,8 +72,10 @@ public class TestMiningActivityFilter {
     public void testAssociatedMineDateRangeOre() throws Exception {
         final List<String> activities = Arrays.asList("activity1");
         context.checking(new Expectations() {{
-            oneOf (mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing (mockMine).getRelatedActivities();will(returnValue(activities));
+            oneOf(mockMine).getMineNameURI();
+            will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
+            allowing(mockMine).getRelatedActivities();
+            will(returnValue(activities));
         }});
 
         MiningActivityFilter miningActivityFilter =
@@ -96,8 +99,10 @@ public class TestMiningActivityFilter {
     public void testAssociatedMineDateRangeProducedMaterial() throws Exception {
         final List<String> activities = Arrays.asList("activity1");
         context.checking(new Expectations() {{
-            oneOf (mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing (mockMine).getRelatedActivities();will(returnValue(activities));
+            oneOf(mockMine).getMineNameURI();
+            will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
+            allowing(mockMine).getRelatedActivities();
+            will(returnValue(activities));
         }});
 
         MiningActivityFilter miningActivityFilter =
@@ -123,8 +128,10 @@ public class TestMiningActivityFilter {
     public void testAssociatedMineDateRangeCutOffGrade() throws Exception {
         final List<String> activities = Arrays.asList("activity1");
         context.checking(new Expectations() {{
-            oneOf (mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing (mockMine).getRelatedActivities();will(returnValue(activities));
+            oneOf(mockMine).getMineNameURI();
+            will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
+            allowing(mockMine).getRelatedActivities();
+            will(returnValue(activities));
         }});
 
         MiningActivityFilter miningActivityFilter =
@@ -148,8 +155,10 @@ public class TestMiningActivityFilter {
     public void testAssociatedMineDateRangeProduction() throws Exception {
         final List<String> activities = Arrays.asList("activity1");
         context.checking(new Expectations() {{
-            oneOf (mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing (mockMine).getRelatedActivities();will(returnValue(activities));
+            oneOf(mockMine).getMineNameURI();
+            will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
+            allowing(mockMine).getRelatedActivities();
+            will(returnValue(activities));
         }});
 
         MiningActivityFilter miningActivityFilter =

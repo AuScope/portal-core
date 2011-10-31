@@ -28,7 +28,7 @@ public class TestYilgarnNamespaceContext {
      * Test constructor.
      */
     @Test
-    public void testConstructor(){
+    public void testConstructor() {
         String s = "";
         try {
             final Field[] fields = YilgarnNamespaceContext.class.getDeclaredFields();

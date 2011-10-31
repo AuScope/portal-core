@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class DownloadController {
-    protected final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
     private HttpServiceCaller serviceCaller;
 
     @Autowired
@@ -45,7 +45,7 @@ public class DownloadController {
      * @throws Exception
      */
     @RequestMapping("/downloadGMLAsZip.do")
-    public void downloadGMLAsZip( @RequestParam("serviceUrls") final String[] serviceUrls,
+    public void downloadGMLAsZip(@RequestParam("serviceUrls") final String[] serviceUrls,
                                   HttpServletResponse response) throws Exception {
 
         //set the content type for zip files
@@ -57,7 +57,7 @@ public class DownloadController {
 
         logger.trace("No. of serviceUrls: " + serviceUrls.length);
 
-        for(int i=0; i<serviceUrls.length; i++) {
+        for (int i=0; i<serviceUrls.length; i++) {
 
             GetMethod method = new GetMethod(serviceUrls[i]);
             HttpClient client = serviceCaller.getHttpClient();
@@ -72,7 +72,7 @@ public class DownloadController {
 
                 logger.trace("Response: " + responseString);
 
-                jsonObject = JSONObject.fromObject( responseString );
+                jsonObject = JSONObject.fromObject(responseString);
             } catch (Exception ex) {
                 //Replace a failure exception with a JSONObject representing that exception
                 logger.error(ex, ex);
@@ -99,7 +99,7 @@ public class DownloadController {
 
             logger.trace(gmlBytes.length);
 
-            if(jsonObject.get("success").toString().equals("false")) {
+            if (jsonObject.get("success").toString().equals("false")) {
                 //The server may have returned an error message, if so, lets include it in the filename
                 String messageString = messageObject.toString();
                 if (messageString.length() == 0)
@@ -108,10 +108,10 @@ public class DownloadController {
                 //"Tidy" up the message
                 messageString = messageString.replace(' ', '_').replace(".", "");
 
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + "-" + messageString + ".xml"));
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + "-" + messageString + ".xml"));
             } else {
                 //create a new entry in the zip file with a timestamped name
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
             }
 
             zout.write(gmlBytes);
@@ -133,7 +133,7 @@ public class DownloadController {
      * @throws Exception
      */
     @RequestMapping("/downloadDataAsZip.do")
-    public void downloadDataAsZip( @RequestParam("serviceUrls") final String[] serviceUrls,
+    public void downloadDataAsZip(@RequestParam("serviceUrls") final String[] serviceUrls,
                                   @RequestParam("filename") final String filename,
                                   HttpServletResponse response) throws Exception {
 
@@ -146,7 +146,7 @@ public class DownloadController {
         //create the output stream
         ZipOutputStream zout = new ZipOutputStream(response.getOutputStream());
 
-        for(int i=0; i<serviceUrls.length; i++) {
+        for (int i=0; i<serviceUrls.length; i++) {
 
             GetMethod method = new GetMethod(serviceUrls[i]);
             HttpClient client = serviceCaller.getHttpClient();
@@ -156,10 +156,10 @@ public class DownloadController {
             Header contentType = serviceCaller.getResponseHeader(method, "Content-Type");
 
             //create a new entry in the zip file with a timestamped name
-            if(contentType.getValue().contains("xml"))
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
+            if (contentType.getValue().contains("xml"))
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
             else
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i+1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".png"));
+                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".png"));
 
             zout.write(responseBytes);
             zout.closeEntry();

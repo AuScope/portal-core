@@ -17,7 +17,7 @@ public class OWSException extends Exception {
         super(message, t);
     }
 
-    public OWSException (Throwable t) {
+    public OWSException(Throwable t) {
         super(t);
     }
 }

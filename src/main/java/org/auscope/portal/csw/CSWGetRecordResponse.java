@@ -22,7 +22,7 @@ import org.auscope.portal.server.web.service.CSWServiceItem;
 public class CSWGetRecordResponse {
 
     /** Log object for this class. */
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     private List<CSWRecord> records = null;
     private int recordsReturned = 0;
@@ -61,13 +61,13 @@ public class CSWGetRecordResponse {
         NodeList nodes = (NodeList) exprRecordMetadata.evaluate(getRecordResponse, XPathConstants.NODESET);
         records = new ArrayList<CSWRecord>(nodes.getLength());
 
-        for(int i=0; i<nodes.getLength(); i++ ) {
+        for (int i=0; i<nodes.getLength(); i++ ) {
             Node metadataNode = nodes.item(i);
             CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
             CSWRecord newRecord = transformer.transformToCSWRecord();
             newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);
-            log.trace("GN layer " + (i+1) + " : " + newRecord.toString());
+            log.trace("GN layer " + (i + 1) + " : " + newRecord.toString());
         }
     }
 

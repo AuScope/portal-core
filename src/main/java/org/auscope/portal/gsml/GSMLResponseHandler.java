@@ -19,7 +19,7 @@ import org.w3c.dom.Node;
 @Repository
 public class GSMLResponseHandler {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     public int getNumberOfFeatures(String gsmlResponse) throws Exception {
 

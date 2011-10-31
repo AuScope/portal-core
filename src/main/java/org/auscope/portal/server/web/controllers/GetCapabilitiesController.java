@@ -37,12 +37,12 @@ public class GetCapabilitiesController extends BaseCSWController {
     // ----------------------------------------------------- Instance variables
 
     private GetCapabilitiesService capabilitiesService;
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     // ----------------------------------------------------------- Constructors
 
     @Autowired
-    public GetCapabilitiesController( GetCapabilitiesService capService, ViewCSWRecordFactory viewCSWRecordFactory) {
+    public GetCapabilitiesController(GetCapabilitiesService capService, ViewCSWRecordFactory viewCSWRecordFactory) {
         super(viewCSWRecordFactory);
         this.capabilitiesService = capService;
     }
@@ -59,13 +59,13 @@ public class GetCapabilitiesController extends BaseCSWController {
      * @throws Exception
      */
     @RequestMapping("/getCustomLayers.do")
-    public ModelAndView getCustomLayers( @RequestParam("service_URL") String service_url) throws Exception {
+    public ModelAndView getCustomLayers(@RequestParam("service_URL") String serviceUrl) throws Exception {
 
         CSWRecord[] records;
-        int invalidLayerCount =0;
+        int invalidLayerCount = 0;
         try {
             GetCapabilitiesRecord capabilitiesRec
-                = capabilitiesService.getWmsCapabilities(service_url);
+                = capabilitiesService.getWmsCapabilities(serviceUrl);
 
             List<CSWRecord> cswRecords = new ArrayList<CSWRecord>();
 
@@ -74,8 +74,8 @@ public class GetCapabilitiesController extends BaseCSWController {
                 for (GetCapabilitiesWMSLayerRecord rec : capabilitiesRec.getLayers()) {
                     //to check if layers are EPSG: 4326 SRS
                     String[] uniqueSRSList = getSRSList(capabilitiesRec.getLayerSRS() , rec.getChildLayerSRS());
-                    if(!((Arrays.binarySearch(uniqueSRSList, "EPSG:4326"))>=0 || (Arrays.binarySearch(uniqueSRSList, "epsg:4326"))>=0)){
-                        invalidLayerCount +=1;
+                    if (!((Arrays.binarySearch(uniqueSRSList, "EPSG:4326")) >= 0 || (Arrays.binarySearch(uniqueSRSList, "epsg:4326")) >= 0)) {
+                        invalidLayerCount += 1;
                         continue;
                     }
 
@@ -98,7 +98,7 @@ public class GetCapabilitiesController extends BaseCSWController {
                             rec.getName(),
                             rec.getTitle());
 
-                    CSWRecord newRecord = new CSWRecord(serviceName, fileId, recordInfoUrl, dataAbstract, onlineResources, geoEls );
+                    CSWRecord newRecord = new CSWRecord(serviceName, fileId, recordInfoUrl, dataAbstract, onlineResources, geoEls);
                     newRecord.setContact(responsibleParty);
                     cswRecords.add(newRecord);
                 }
@@ -120,25 +120,26 @@ public class GetCapabilitiesController extends BaseCSWController {
         return mav;
     }
 
-    public String[] getSRSList(String[] layerSRS, String[] childLayerSRS){
+    public String[] getSRSList(String[] layerSRS, String[] childLayerSRS) {
         try{
             int totalLength = layerSRS.length;
-            totalLength += childLayerSRS.length ;
+            totalLength += childLayerSRS.length;
             String[] totalSRS = new String[totalLength];
             System.arraycopy(layerSRS, 0, totalSRS, 0, layerSRS.length);
             System.arraycopy(childLayerSRS, 0, totalSRS, layerSRS.length, childLayerSRS.length);
             Arrays.sort(totalSRS);
 
             int k = 0;
-            for(int i = 0; i < totalSRS.length; i++){
-                if(i>0 && totalSRS[i].equals(totalSRS[i-1]))
+            for (int i = 0; i < totalSRS.length; i++) {
+                if (i > 0 && totalSRS[i].equals(totalSRS[i-1])) {
                     continue;
+                }
                 totalSRS[k++] = totalSRS[i];
             }
             String[] uniqueSRS = new String[k];
             System.arraycopy(totalSRS, 0, uniqueSRS, 0, k);
             return uniqueSRS;
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.debug(e.getMessage());
             return null;
         }

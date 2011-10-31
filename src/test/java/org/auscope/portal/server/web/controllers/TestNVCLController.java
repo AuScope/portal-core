@@ -116,7 +116,7 @@ public class TestNVCLController {
         final String nvclKmlResponse = "kmlResponse";
         final boolean onlyHylogger = false;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
-        final URI httpMethodURI = new URI( "http://example.com", true);
+        final URI httpMethodURI = new URI("http://example.com", true);
 
         context.checking(new Expectations() {{
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, null);

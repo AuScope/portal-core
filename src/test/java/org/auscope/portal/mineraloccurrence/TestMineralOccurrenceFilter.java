@@ -14,7 +14,7 @@ import org.w3c.dom.Document;
  * Time: 3:27:26 PM
  */
 public class TestMineralOccurrenceFilter {
-    private Mockery context = new Mockery(){{
+    private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 

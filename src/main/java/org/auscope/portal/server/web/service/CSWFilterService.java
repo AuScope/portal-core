@@ -31,7 +31,7 @@ import org.w3c.dom.Document;
 @Service
 public class CSWFilterService {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     private HttpServiceCaller serviceCaller;
     private CSWThreadExecutor executor;

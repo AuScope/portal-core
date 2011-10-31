@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
 public class Mine {
 
     /** The log. */
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     /** The mine node. */
     private Node mineNode;
@@ -64,7 +64,7 @@ public class Mine {
         NodeList nameNodes = (NodeList) expr.evaluate(mineNode, XPathConstants.NODESET);
 
         for (int i = 0; i < prefferedNodes.getLength(); i++) {
-            if(prefferedNodes.item(i).getTextContent().equals("true"))
+            if (prefferedNodes.item(i).getTextContent().equals("true"))
                 return nameNodes.item(i).getTextContent();
         }
 

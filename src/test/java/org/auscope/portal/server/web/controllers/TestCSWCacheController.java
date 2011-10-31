@@ -28,41 +28,69 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * User: Mathew Wyatt
- * Date: 27/08/2009
+ * Date: 27/08/2009.
+ *
  * @version $Id$
  */
 public class TestCSWCacheController {
 
+    /** The Constant SUCCESSJSON. */
+    private static final String SUCCESSJSON = "success";
+
     /**
-     * JMock context
+     * JMock context.
      */
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
+    /** The mock csw service. */
     private CSWCacheService mockCSWService = context.mock(CSWCacheService.class);
+
+    /** The mock property configurer. */
     private PortalPropertyPlaceholderConfigurer mockPropertyConfigurer = context.mock(PortalPropertyPlaceholderConfigurer.class);
 
+    /** The mock http request. */
     private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
+
+    /** The mock http response. */
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
+
+    /** The mock view csw record factory. */
     private ViewCSWRecordFactory mockViewCSWRecordFactory = context.mock(ViewCSWRecordFactory.class);
+
+    /** The mock csw record1. */
     private CSWRecord mockCSWRecord1 = context.mock(CSWRecord.class, "mockCSWRecord1");
+
+    /** The mock csw record2. */
     private CSWRecord mockCSWRecord2 = context.mock(CSWRecord.class, "mockCSWRecord2");
 
+    /** The csw controller. */
     private CSWCacheController cswController;
 
+    /**
+     * Setup.
+     *
+     * @throws Exception the exception
+     */
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
         final String serviceUrl = "somejunk";
 
         context.checking(new Expectations() {{
-            oneOf(mockPropertyConfigurer).resolvePlaceholder(with(any(String.class)));will(returnValue(serviceUrl));
+            oneOf(mockPropertyConfigurer).resolvePlaceholder(with(any(String.class)));
+            will(returnValue(serviceUrl));
             oneOf(mockCSWService).updateCache();
         }});
 
         cswController = new CSWCacheController(mockCSWService, mockViewCSWRecordFactory, mockPropertyConfigurer);
     }
 
+    /**
+     * Test get record response_ success.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testGetRecordResponse_Success() throws Exception {
         final StringWriter actualJSONResponse = new StringWriter();
@@ -73,14 +101,18 @@ public class TestCSWCacheController {
         viewCSWRecord2.put("rec2", "val2");
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getRecordCache();will(returnValue(Arrays.asList(mockCSWRecord1, mockCSWRecord2)));
+            oneOf(mockCSWService).getRecordCache();
+            will(returnValue(Arrays.asList(mockCSWRecord1, mockCSWRecord2)));
 
-            oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord1);will(returnValue(viewCSWRecord1));
-            oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord2);will(returnValue(viewCSWRecord2));
+            oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord1);
+            will(returnValue(viewCSWRecord1));
+            oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord2);
+            will(returnValue(viewCSWRecord2));
 
             //check that the correct response is getting output
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter();
+            will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
 
         //Run the method, get our response rendered as a JSONObject
@@ -89,7 +121,7 @@ public class TestCSWCacheController {
         JSONObject jsonObj = JSONObject.fromObject(actualJSONResponse.toString());
 
         //Check our response contains useful info...
-        Assert.assertEquals(true, jsonObj.getBoolean("success"));
+        Assert.assertEquals(true, jsonObj.getBoolean(SUCCESSJSON));
         JSONArray records = jsonObj.getJSONArray("data");
         Assert.assertNotNull(records);
         Assert.assertEquals(2, records.size());
@@ -102,6 +134,11 @@ public class TestCSWCacheController {
     }
 
 
+    /**
+     * Test get record response_ transform error.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testGetRecordResponse_TransformError() throws Exception {
         final StringWriter actualJSONResponse = new StringWriter();
@@ -112,14 +149,18 @@ public class TestCSWCacheController {
         viewCSWRecord2.put("rec2", "val2");
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getRecordCache();will(returnValue(Arrays.asList(mockCSWRecord1, mockCSWRecord2)));
+            oneOf(mockCSWService).getRecordCache();
+            will(returnValue(Arrays.asList(mockCSWRecord1, mockCSWRecord2)));
 
-            oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord1);will(returnValue(viewCSWRecord1));
-            oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord2);will(throwException(new Exception()));
+            oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord1);
+            will(returnValue(viewCSWRecord1));
+            oneOf(mockViewCSWRecordFactory).toView(mockCSWRecord2);
+            will(throwException(new Exception()));
 
             //check that the correct response is getting output
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter();
+            will(returnValue(new PrintWriter(actualJSONResponse)));
         }});
 
         //Run the method, get our response rendered as a JSONObject
@@ -128,7 +169,7 @@ public class TestCSWCacheController {
         JSONObject jsonObj = JSONObject.fromObject(actualJSONResponse.toString());
 
         //Check our response contains useful info...
-        Assert.assertEquals(false, jsonObj.getBoolean("success"));
+        Assert.assertEquals(false, jsonObj.getBoolean(SUCCESSJSON));
         JSONArray records = (JSONArray)jsonObj.get("data");
         Assert.assertNotNull(records);
         Assert.assertEquals(0, records.size());
@@ -136,7 +177,7 @@ public class TestCSWCacheController {
 
     /**
      * Tests that the underlying services are called correctly and the response
-     * is transformed into an appropriate format
+     * is transformed into an appropriate format.
      */
     @Test
     public void testGetKeywords() {
@@ -153,12 +194,13 @@ public class TestCSWCacheController {
         final List<ModelMap> expectedDataObj = Arrays.asList(kw1, kw2);
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getKeywordCache();will(returnValue(expectedKeywords));
+            oneOf(mockCSWService).getKeywordCache();
+            will(returnValue(expectedKeywords));
         }});
 
         ModelAndView mav = cswController.getCSWKeywords();
         Assert.assertNotNull(mav);
-        Assert.assertTrue((Boolean)mav.getModel().get("success"));
+        Assert.assertTrue((Boolean)mav.getModel().get(SUCCESSJSON));
         Assert.assertEquals(expectedDataObj, mav.getModel().get("data"));
     }
 

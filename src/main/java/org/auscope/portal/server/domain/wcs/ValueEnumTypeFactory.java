@@ -16,7 +16,7 @@ public class ValueEnumTypeFactory {
         xPath.setNamespaceContext(new WCSNamespaceContext());
 
         if (node.getLocalName().equals("singleValue")) {
-            return new SingleValue(node, xPath);
+            return new SingleValue(node);
         } else if (node.getLocalName().equals("interval")) {
             return new Interval(node, xPath);
         } else {

@@ -27,7 +27,7 @@ public class TestPressureDBController {
     private HttpServletResponse mockServletResponse = context.mock(HttpServletResponse.class);
 
     @Before
-    public void setup() {
+    public void setUp() {
         controller = new PressureDBController(mockService);
     }
 

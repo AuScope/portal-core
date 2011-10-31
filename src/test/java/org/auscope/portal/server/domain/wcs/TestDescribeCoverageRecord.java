@@ -48,7 +48,7 @@ public class TestDescribeCoverageRecord {
         for (ValueEnumType type : axisDesc.getValues()) {
             Assert.assertEquals("singleValue", type.getType());
 
-            SingleValue sv = (SingleValue) type;;
+            SingleValue sv = (SingleValue) type;
 
             Double.parseDouble(sv.getValue());
         }

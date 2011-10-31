@@ -55,7 +55,7 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
      * @throws Exception
      */
     @RequestMapping("/doBoreholeFilter.do")
-    public ModelAndView doBoreholeFilter( @RequestParam("serviceUrl") String serviceUrl,
+    public ModelAndView doBoreholeFilter(@RequestParam("serviceUrl") String serviceUrl,
                                       @RequestParam(required=false, value="boreholeName", defaultValue="")     String boreholeName,
                                       @RequestParam(required=false, value="custodian", defaultValue="")        String custodian,
                                       @RequestParam(required=false, value="dateOfDrilling", defaultValue="")   String dateOfDrilling,

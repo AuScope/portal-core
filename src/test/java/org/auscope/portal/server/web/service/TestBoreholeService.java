@@ -49,7 +49,7 @@ public class TestBoreholeService {
     private WFSGetFeatureMethodMaker mockMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
 
     /** The Constant GETSCANNEDBOREHOLEXML. */
-    private final static String GETSCANNEDBOREHOLEXML = "src/test/resources/GetScannedBorehole.xml";
+    private static final String GETSCANNEDBOREHOLEXML = "src/test/resources/GetScannedBorehole.xml";
 
     /** The Constant HOLEIDS. */
     private static final String[] HOLEIDS =  new String[] {"http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/WTB5", "http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GSDD006", "http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GDDH7"};
@@ -60,7 +60,7 @@ public class TestBoreholeService {
      * @throws Exception the exception
      */
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
         service = new BoreholeService();
         service.setHttpServiceCaller(mockHttpServiceCaller);
         service.setWFSGetFeatureMethodMakerPOST(mockMethodMaker);

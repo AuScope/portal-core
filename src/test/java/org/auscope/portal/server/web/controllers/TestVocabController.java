@@ -28,55 +28,53 @@ import org.w3c.dom.Node;
 /**
  * User: Michael Stegherr
  * Date: Sep 14, 2009
- * Time: 11:28:47 AM
+ * Time: 11:28:47 AM.
  */
 public class TestVocabController {
 
     /**
-     * JMock context
+     * JMock context.
      */
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
     /**
-     * Main object we are testing
+     * Main object we are testing.
      */
     private VocabController vocabController;
 
     /**
-     * Mock httpService caller
+     * Mock httpService caller.
      */
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
 
     /**
-     * Mock property configurer
+     * Mock property configure-er.
      */
     private PortalPropertyPlaceholderConfigurer propertyConfigurer = context.mock(PortalPropertyPlaceholderConfigurer.class);
 
-    /**
-     * Mock http request
-     */
-    private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
-
-    /**
-     * Mock http response
-     */
-    private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
-
+    /** The mock siss voc method maker. */
     private SISSVocMethodMaker mockSissVocMethodMaker = context.mock(SISSVocMethodMaker.class);
 
+    /** The mock concept factory. */
     private ConceptFactory mockConceptFactory = context.mock(ConceptFactory.class);
 
+    /**
+     * Setup.
+     *
+     * @throws Exception the exception
+     */
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
         this.vocabController = new VocabController(
                 this.httpServiceCaller, mockConceptFactory, this.propertyConfigurer, mockSissVocMethodMaker);
     }
 
     /**
      * Tests the getScalarQuery method is correctly forming a JSON response from an XML chunk received from a remote URL.
-     * @throws Exception
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetScalarQuery() throws Exception {
@@ -121,8 +119,9 @@ public class TestVocabController {
     }
 
     /**
-     * Unit test for getAllCSWThemes method under normal operation
-     * @throws Exception
+     * Unit test for getAllCSWThemes method under normal operation.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetAllCSWThemes() throws Exception {
@@ -212,8 +211,9 @@ public class TestVocabController {
     }
 
     /**
-     * Unit test for getAllCSWThemes method for when vocab service calls fail
-     * @throws Exception
+     * Unit test for getAllCSWThemes method for when vocab service calls fail.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetAllCSWThemesVocabFailure() throws Exception {
@@ -240,8 +240,9 @@ public class TestVocabController {
     }
 
     /**
-     * Unit test for getAllCSWThemes method for when parsing vocab XML fails
-     * @throws Exception
+     * Unit test for getAllCSWThemes method for when parsing vocab XML fails.
+     *
+     * @throws Exception the exception
      */
     @Test
     public void testGetAllCSWThemesParsingError() throws Exception {

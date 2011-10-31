@@ -26,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class MenuController {
 
-   protected final Log logger = LogFactory.getLog(getClass());
+   private final Log logger = LogFactory.getLog(getClass());
 
    @Autowired
    @Qualifier(value = "propertyConfigurer")

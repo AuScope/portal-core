@@ -35,7 +35,7 @@ public class BoreholeService {
 
     // -------------------------------------------------------------- Constants
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     // ----------------------------------------------------- Instance variables
     private HttpServiceCaller httpServiceCaller;

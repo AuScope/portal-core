@@ -29,12 +29,12 @@ public class CSWMethodMakerGetDataRecords {
         Hits
     }
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
     private String serviceUrl;
 
     public CSWMethodMakerGetDataRecords(String serviceUrl) {
         //pretty hard to do a GetFeature query without a serviceURL, so we had better check that we have one
-        if(serviceUrl == null || serviceUrl.isEmpty()) {
+        if (serviceUrl == null || serviceUrl.isEmpty()) {
             throw new IllegalArgumentException("serviceUrl parameter can not be null or empty.");
         }
 
@@ -90,6 +90,9 @@ public class CSWMethodMakerGetDataRecords {
                 break;
             case Results:
                 sb.append(" resultType=\"results\"");
+                break;
+            default:
+                log.error("Request type invalid - sending unconstrained request");
                 break;
             }
         }

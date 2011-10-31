@@ -53,13 +53,13 @@ public class TestCSWFilterService {
      * @throws Exception
      */
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
 
         this.threadExecutor = new CSWThreadExecutor();
 
         //Create our service list
         serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
-        for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++){
+        for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
             serviceUrlList.add(new CSWServiceItem(String.format(IDFORMATSTRING, i), String.format(SERVICEURLFORMATSTRING, i)));
         }
 

@@ -24,7 +24,7 @@ import org.auscope.portal.server.web.service.HttpServiceCaller;
  */
 public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     private List<ServiceCallStatus> statusList;
     private List<Object> additionalInformationObjs;

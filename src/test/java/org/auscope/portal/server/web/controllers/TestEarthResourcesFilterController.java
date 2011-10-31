@@ -52,7 +52,7 @@ public class TestEarthResourcesFilterController {
     }};
 
     @Before
-    public void setup() {
+    public void setUp() {
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.mineralOccurrenceService = context.mock(MineralOccurrenceService.class);
         this.mockGmlToKml = context.mock(GmlToKml.class);
@@ -107,14 +107,14 @@ public class TestEarthResourcesFilterController {
         context.checking(new Expectations() {{
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
 
-            oneOf (mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
+            oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
+            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
 
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
@@ -146,14 +146,14 @@ public class TestEarthResourcesFilterController {
         context.checking(new Expectations() {{
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
 
-            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
+            oneOf(mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
+            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(xmlErrorResponse));
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(jsonResponse)));
 
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
@@ -184,14 +184,14 @@ public class TestEarthResourcesFilterController {
 
         context.checking(new Expectations() {{
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
-            oneOf (mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(expectedGML));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class))); will(returnValue(expectedKML));
+            oneOf(mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(mockMethod));
+            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(expectedGML));
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
 
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             allowing(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
@@ -224,13 +224,13 @@ public class TestEarthResourcesFilterController {
         context.checking(new Expectations() {{
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
             oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(expectedGML));
-            oneOf (mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class))); will(returnValue(expectedKML));
+            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(returnValue(expectedGML));
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class))); will(returnValue(expectedKML));
 
             //check that the correct response is getting output
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
 
 
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
@@ -257,12 +257,12 @@ public class TestEarthResourcesFilterController {
 
         context.checking(new Expectations() {{
             oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(mockMethod));
-            oneOf (mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf (mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(throwException(new ConnectException()));
+            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient); will(throwException(new ConnectException()));
 
             //check that the correct response is getting output
-            oneOf (mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf (mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
 
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
             allowing(mockHttpRequest).getSession();will(returnValue(mockHttpSession));

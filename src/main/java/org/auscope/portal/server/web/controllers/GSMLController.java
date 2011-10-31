@@ -85,8 +85,8 @@ public class GSMLController extends AbstractBaseWFSToKMLController {
 
     @RequestMapping("/doYilgarnGeochemistry.do")
     public ModelAndView doYilgarnGeochemistryFilter(
-            @RequestParam(required=false,	value="serviceUrl") String serviceUrl,
-            @RequestParam(required=false,	value="geologicName") String geologicName,
+            @RequestParam(required=false, value="serviceUrl") String serviceUrl,
+            @RequestParam(required=false, value="geologicName") String geologicName,
             @RequestParam(required=false, value="bbox") String bboxJson,
             @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
             HttpServletRequest request) throws Exception  {

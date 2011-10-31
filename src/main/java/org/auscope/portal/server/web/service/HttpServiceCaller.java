@@ -31,7 +31,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class HttpServiceCaller {
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     private HttpConnectionManagerParams clientParams;
 

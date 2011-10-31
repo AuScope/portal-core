@@ -17,8 +17,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathFactory;
 
 
-
-// TODO: Auto-generated Javadoc
 /**
  * The Class YilgarnLocSpecimenRecords.
  */
@@ -57,36 +55,42 @@ public class YilgarnLocSpecimenRecords {
     /** The uom. */
     private String uom;
 
+    /** The Constant RECORDSETEXPRESSION. */
+    private static final String RECORDSETEXPRESSION = "/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:relatedObservation | /wfs:FeatureCollection/gml:featureMember/sa:LocatedSpecimen/sa:relatedObservation";
+
+    /** The Constant MATERIALCLASSEXPRESSION. */
+    private static final String MATERIALCLASSEXPRESSION ="/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:materialClass";
+
 
     /** The Constant timeDateExpression. */
-    private static final String timeDateExpression = "om:Observation/om:samplingTime/gml:TimeInstant/gml:timePosition";
+    private static final String TIMEDATEEXPRESSION = "om:Observation/om:samplingTime/gml:TimeInstant/gml:timePosition";
 
     /** The Constant ObservationProcessExpression. */
-    private static final String ObservationProcessExpression = "om:Observation/om:procedure/omx:ObservationProcess/@gml:id";
+    private static final String OBSERVATIONPROCESSEXPRESSION = "om:Observation/om:procedure/omx:ObservationProcess/@gml:id";
 
     /** The Constant obsProcessDesExpression. */
-    private static final String obsProcessDesExpression = "om:Observation/om:procedure/omx:ObservationProcess/gml:description";
+    private static final String OBSPROCESSDESEXPRESSION = "om:Observation/om:procedure/omx:ObservationProcess/gml:description";
 
     /** The Constant obsProcessContExpression. */
-    private static final String obsProcessContExpression = "om:Observation/om:procedure/omx:ObservationProcess/sml:contact/@xlink:title";
+    private static final String OBSPROCESSCONTEXPRESSION = "om:Observation/om:procedure/omx:ObservationProcess/sml:contact/@xlink:title";
 
     /** The Constant obsProcessMethodExpression. */
-    private static final String obsProcessMethodExpression = "om:Observation/om:procedure/omx:ObservationProcess/omx:method";
+    private static final String OBSPROCESSMETHODEXPRESSION = "om:Observation/om:procedure/omx:ObservationProcess/omx:method";
 
     /** The Constant observedPropertyExpression. */
-    private static final String observedPropertyExpression = "om:Observation/om:observedProperty/@xlink:href";
+    private static final String OBSERVEDPROPERTYEXPRESSION = "om:Observation/om:observedProperty/@xlink:href";
 
     /** The Constant quantityNameExpression. */
-    private static final String quantityNameExpression = "om:Observation/om:result/swe:Quantity/gml:name";
+    private static final String QUANTITYNAMEEXPRESSION = "om:Observation/om:result/swe:Quantity/gml:name";
 
     /** The Constant quantityValueExpression. */
-    private static final String quantityValueExpression = "om:Observation/om:result/swe:Quantity/swe:value";
+    private static final String QUANTITYVALUEEXPRESSION = "om:Observation/om:result/swe:Quantity/swe:value";
 
     /** The Constant uomExpression. */
-    private static final String uomExpression = "om:Observation/om:result/swe:Quantity/swe:uom/@xlink:href";
+    private static final String UOMEXPRESSION = "om:Observation/om:result/swe:Quantity/swe:uom/@xlink:href";
 
     /** The Constant omIdExpression. */
-    private static final String omIdExpression = "om:Observation/@gml:id";
+    private static final String OMIDEXPRESSION = "om:Observation/@gml:id";
 
 
 
@@ -101,38 +105,37 @@ public class YilgarnLocSpecimenRecords {
         Node tempNode = null;
         xPath.setNamespaceContext(new YilgarnNamespaceContext());
 
-
-        tempNode = (Node) xPath.evaluate(omIdExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(OMIDEXPRESSION, node, XPathConstants.NODE);
         serviceName = tempNode != null ? tempNode.getTextContent() : "";
 
-        tempNode = (Node) xPath.evaluate(timeDateExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(TIMEDATEEXPRESSION, node, XPathConstants.NODE);
         String dateAndTime = tempNode != null ? tempNode.getTextContent() : "";
 
         String[] dateTime = dateAndTime.split(" ");
         date = dateTime[0];
 
-        tempNode = (Node) xPath.evaluate(ObservationProcessExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(OBSERVATIONPROCESSEXPRESSION, node, XPathConstants.NODE);
         observedMineralName = tempNode != null ? tempNode.getTextContent() : "";
 
-        tempNode = (Node) xPath.evaluate(obsProcessDesExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(OBSPROCESSDESEXPRESSION, node, XPathConstants.NODE);
         preparationDetails = tempNode != null ? tempNode.getTextContent() : "";
 
-        tempNode = (Node) xPath.evaluate(obsProcessContExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(OBSPROCESSCONTEXPRESSION, node, XPathConstants.NODE);
         labDetails = tempNode != null ? tempNode.getTextContent() : "";
 
-        tempNode = (Node) xPath.evaluate(obsProcessMethodExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(OBSPROCESSMETHODEXPRESSION, node, XPathConstants.NODE);
         analyticalMethod = tempNode != null ? tempNode.getTextContent() : "";
 
-        tempNode = (Node) xPath.evaluate(observedPropertyExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(OBSERVEDPROPERTYEXPRESSION, node, XPathConstants.NODE);
         observedProperty = tempNode != null ? tempNode.getTextContent() : "";
 
-        tempNode = (Node) xPath.evaluate(quantityNameExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(QUANTITYNAMEEXPRESSION, node, XPathConstants.NODE);
         analyteName = tempNode != null ? tempNode.getTextContent() : "";
 
-        tempNode = (Node) xPath.evaluate(quantityValueExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(QUANTITYVALUEEXPRESSION, node, XPathConstants.NODE);
         analyteValue = tempNode != null ? tempNode.getTextContent() : "";
 
-        tempNode = (Node) xPath.evaluate(uomExpression, node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate(UOMEXPRESSION, node, XPathConstants.NODE);
         String urnUOM = tempNode != null ? tempNode.getTextContent().trim() : "";
 
         if (urnUOM.contains("ppm")) {
@@ -144,6 +147,7 @@ public class YilgarnLocSpecimenRecords {
         } else {
             uom = "null";
         }
+        logger.debug("Parsing YilgarnLocSpecimenRecords complete");
     }
 
     /**
@@ -255,7 +259,7 @@ public class YilgarnLocSpecimenRecords {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new YilgarnNamespaceContext());
 
-        NodeList exprResult = (NodeList) xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:relatedObservation | /wfs:FeatureCollection/gml:featureMember/sa:LocatedSpecimen/sa:relatedObservation", doc, XPathConstants.NODESET);
+        NodeList exprResult = (NodeList) xPath.evaluate(RECORDSETEXPRESSION, doc, XPathConstants.NODESET);
 
         records = new YilgarnLocSpecimenRecords[exprResult.getLength()];
         for (int i = 0; i < exprResult.getLength(); i++) {
@@ -281,7 +285,7 @@ public class YilgarnLocSpecimenRecords {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new YilgarnNamespaceContext());
 
-        Node materialDescriptionNode = (Node) xPath.evaluate("/wfs:FeatureCollection/gml:featureMembers/sa:LocatedSpecimen/sa:materialClass", doc, XPathConstants.NODE);
+        Node materialDescriptionNode = (Node) xPath.evaluate(MATERIALCLASSEXPRESSION, doc, XPathConstants.NODE);
         String materialDescription = materialDescriptionNode != null ? materialDescriptionNode.getTextContent() : "";
         return materialDescription;
     }

@@ -28,7 +28,7 @@ import org.springframework.web.context.support.ServletContextResource;
  */
 public class PortalURIResolver implements URIResolver {
 
-   protected final Log log = LogFactory.getLog(getClass());
+   private final Log log = LogFactory.getLog(getClass());
 
    //Servlet Context to pull the file from
    private ServletContext servletContext;
@@ -43,7 +43,7 @@ public class PortalURIResolver implements URIResolver {
     * Create a URIResolver
     * @param servletContext the javax.servlet.ServletContext
     */
-   public PortalURIResolver(ServletContext servletContext){
+   public PortalURIResolver(ServletContext servletContext) {
       this.servletContext = servletContext;
    }
 

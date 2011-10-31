@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class PressureDBController extends AbstractBaseWFSToKMLController {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     private PressureDBService pressureDBService;
 
@@ -82,7 +82,7 @@ public class PressureDBController extends AbstractBaseWFSToKMLController {
         ServletOutputStream outputStream = response.getOutputStream();
         byte[] buffer = new byte[1024 * 5];
         int numRead;
-        while ( (numRead = inputStream.read(buffer)) >= 0) {
+        while ((numRead = inputStream.read(buffer)) >= 0) {
             outputStream.write(buffer, 0, numRead);
         }
         outputStream.flush();

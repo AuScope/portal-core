@@ -28,7 +28,7 @@ import org.w3c.dom.Node;
 @Service
 public class PressureDBService {
 
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     private PressureDBMethodMaker methodMaker;
     private HttpServiceCaller httpServiceCaller;

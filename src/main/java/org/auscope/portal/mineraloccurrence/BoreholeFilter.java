@@ -24,7 +24,7 @@ public class BoreholeFilter extends AbstractFilter{
     // -------------------------------------------------------------- Constants
 
         /** Log object for this class. */
-        protected final Log log = LogFactory.getLog(getClass());
+        private final Log log = LogFactory.getLog(getClass());
 
 
         // ----------------------------------------------------------- Constructors
@@ -57,15 +57,15 @@ public class BoreholeFilter extends AbstractFilter{
         // -------------------------------------------------------- Private Methods
         private String generateFilterFragment() {
             List<String> parameterFragments = new ArrayList<String>();
-            if(boreholeName != null && !boreholeName.isEmpty()) {
+            if (boreholeName != null && !boreholeName.isEmpty()) {
                 parameterFragments.add(this.generatePropertyIsLikeFragment("gml:name", this.boreholeName));
             }
 
-            if(custodian != null && !custodian.isEmpty()) {
+            if (custodian != null && !custodian.isEmpty()) {
                 parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:title", this.custodian));
             }
 
-            if(dateOfDrilling != null && !dateOfDrilling.isEmpty()) {
+            if (dateOfDrilling != null && !dateOfDrilling.isEmpty()) {
                 parameterFragments.add(this.generatePropertyIsLikeFragment("gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling", this.dateOfDrilling));
             }
 

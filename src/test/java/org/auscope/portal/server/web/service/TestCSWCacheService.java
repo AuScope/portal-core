@@ -64,13 +64,13 @@ public class TestCSWCacheService extends CSWCacheService {
      * @throws Exception
      */
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
 
         this.threadExecutor = new CSWThreadExecutor();
 
           //Create our service list
           ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
-          for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++){
+          for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
               serviceUrlList.add(new CSWServiceItem(String.format("id:%1$s", i + 1) ,String.format(serviceUrlFormatString, i + 1)));
           }
 

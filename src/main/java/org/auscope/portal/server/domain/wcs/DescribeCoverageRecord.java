@@ -64,6 +64,8 @@ public class DescribeCoverageRecord implements Serializable {
     /** The range set. */
     private RangeSet rangeSet;
 
+    private static final String XPATHALLCHILDREN = "./*";
+
     /**
      * Gets the text content or empty string.
      *
@@ -71,7 +73,11 @@ public class DescribeCoverageRecord implements Serializable {
      * @return the text content or empty string
      */
     private String getTextContentOrEmptyString(Node node) {
-        return (node != null) ? node.getTextContent() : "";
+        if (node != null) {
+            return node.getTextContent();
+        } else {
+            return "";
+        }
     }
 
     /**
@@ -139,10 +145,10 @@ public class DescribeCoverageRecord implements Serializable {
 
 
         //Parse our spatial domain (only grab gml:Envelopes and wcs:EnvelopeWithTimePeriod
-        tempNode = (Node) xPath.evaluate ("wcs:domainSet/wcs:spatialDomain", node, XPathConstants.NODE);
+        tempNode = (Node) xPath.evaluate("wcs:domainSet/wcs:spatialDomain", node, XPathConstants.NODE);
         if (tempNode != null) {
             List<SpatialDomain> parsableItems = new ArrayList<SpatialDomain>();
-            tempNodeList = (NodeList) xPath.evaluate("./*", tempNode, XPathConstants.NODESET);
+            tempNodeList = (NodeList) xPath.evaluate(XPATHALLCHILDREN, tempNode, XPathConstants.NODESET);
 
             //Attempt to parse spatial domains (we don't support every type so we may get some exceptions)
             for (int i = 0; i < tempNodeList.getLength(); i++) {
@@ -159,7 +165,7 @@ public class DescribeCoverageRecord implements Serializable {
         //Get the temporal range (which is optional)
         tempNode = (Node) xPath.evaluate("wcs:domainSet/wcs:temporalDomain", node, XPathConstants.NODE);
         if (tempNode != null) {
-            tempNodeList = (NodeList)xPath.evaluate("./*", tempNode, XPathConstants.NODESET);
+            tempNodeList = (NodeList)xPath.evaluate(XPATHALLCHILDREN, tempNode, XPathConstants.NODESET);
             temporalDomain = new TemporalDomain[tempNodeList.getLength()];
             for (int i = 0; i < tempNodeList.getLength(); i++) {
                 temporalDomain[i] = TemporalDomainFactory.parseFromNode(tempNodeList.item(i));
@@ -311,7 +317,7 @@ public class DescribeCoverageRecord implements Serializable {
         NodeList nodes = (NodeList) xPath.evaluate(serviceTitleExpression, doc, XPathConstants.NODESET);
 
         DescribeCoverageRecord[] records = new DescribeCoverageRecord[nodes.getLength()];
-        for(int i = 0; i < nodes.getLength(); i++ ) {
+        for (int i = 0; i < nodes.getLength(); i++ ) {
             records[i] = new DescribeCoverageRecord(nodes.item(i), xPath);
         }
 

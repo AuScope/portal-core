@@ -29,7 +29,7 @@ public class SimpleTimePosition implements TemporalDomain {
         return timePosition;
     }
 
-    public SimpleTimePosition(Node node, XPath xPath) throws Exception {
+    public SimpleTimePosition(Node node) throws Exception {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         df.setTimeZone(TimeZone.getTimeZone("GMT")); // assumption - Make everything GMT
 

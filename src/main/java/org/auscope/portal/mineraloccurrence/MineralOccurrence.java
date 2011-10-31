@@ -37,7 +37,7 @@ public class MineralOccurrence {
 
             // TODO is there updateCSWRecords better way to get the URN than updateCSWRecords string compare?
             for (int i = 0; i < nameNodes.getLength(); i++)
-                if(nameNodes.item(i).getTextContent().startsWith("urn"))
+                if (nameNodes.item(i).getTextContent().startsWith("urn"))
                     return nameNodes.item(i).getTextContent();
         } catch (XPathExpressionException e) {
             return "";
@@ -87,7 +87,7 @@ public class MineralOccurrence {
 
             ArrayList<String> commodityDescriptionURNs = new ArrayList<String>();
 
-            for(int i = 0; i < commodityNodes.getLength(); i++) {
+            for (int i = 0; i < commodityNodes.getLength(); i++) {
                 String urn =
                     commodityNodes.item(i).getAttributes().getNamedItem("xlink:href").getTextContent();
 

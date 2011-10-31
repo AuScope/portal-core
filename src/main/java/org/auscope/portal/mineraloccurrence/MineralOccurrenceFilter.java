@@ -20,7 +20,7 @@ public class MineralOccurrenceFilter extends AbstractFilter {
     public enum MeasureTypes { ENDOWMENT, RESERVE, RESOURCE, ANY, NONE }
 
     /** Log object for this class. */
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
 
     private String commodityName;
     private MeasureTypes measureType;
@@ -34,13 +34,12 @@ public class MineralOccurrenceFilter extends AbstractFilter {
     /**
      * C'tor
      */
-    public MineralOccurrenceFilter( String commodityName,
+    public MineralOccurrenceFilter(String commodityName,
                                     String measureType,
                                     String minOreAmount,
                                     String minOreAmountUOM,
                                     String minCommodityAmount,
-                                    String minCommodityAmountUOM )
-    {
+                                    String minCommodityAmountUOM) {
         this.commodityName         = commodityName == null ? "" : commodityName;
         this.minOreAmount          = minOreAmount;
         this.minOreAmountUOM       = minOreAmountUOM;
@@ -75,23 +74,23 @@ public class MineralOccurrenceFilter extends AbstractFilter {
     private String makeFilter() {
 
         // Case 1. Get All Query
-        if ( (this.measureType == MeasureTypes.NONE) && commodityName.isEmpty()) {
+        if ((this.measureType == MeasureTypes.NONE) && commodityName.isEmpty()) {
             return "";
         }
 
         // Case 2. Commodities Only Query
-        else if ( (this.measureType == MeasureTypes.NONE) && (!commodityName.isEmpty()) ) {
+        else if ((this.measureType == MeasureTypes.NONE) && (!commodityName.isEmpty()) ) {
             return this.generatePropertyIsEqualToFragment("gsml:specification/er:MineralOccurrence/er:commodityDescription/er:Commodity/er:commodityName", commodityName);
         }
 
         // Case 3. Amount Only Query
-        else if ( (this.measureType != MeasureTypes.NONE) && commodityName.isEmpty() ) {
+        else if ((this.measureType != MeasureTypes.NONE) && commodityName.isEmpty() ) {
 
             // Single measure
             if (this.measureType != MeasureTypes.ANY) {
                 if (paramsCount == 0) {
                     return this.generatePropertyIsLikeFragment("gsml:specification/er:MineralOccurrence/er:oreAmount/"+ getMeasureTypeTag(this.measureType) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/er:Commodity/er:commodityName", "*");
-                } else if(paramsCount > 0) {
+                } else if (paramsCount > 0) {
                     return this.generateParametersFragment(getMeasureTypeTag(this.measureType));
                 } else {
                     return "";
@@ -105,7 +104,7 @@ public class MineralOccurrenceFilter extends AbstractFilter {
                     for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
                         fragments.add(this.generatePropertyIsLikeFragment("gsml:specification/er:MineralOccurrence/er:oreAmount/"+ getMeasureTypeTag(measure) +"/er:measureDetails/er:CommodityMeasure/er:commodityOfInterest/er:Commodity/er:commodityName", "*"));
                     }
-                } else if(paramsCount > 0) {
+                } else if (paramsCount > 0) {
                     for (MeasureTypes measure : EnumSet.range(MeasureTypes.RESERVE, MeasureTypes.RESOURCE)) {
                         fragments.add(this.generateParametersFragment(getMeasureTypeTag(measure)));
                     }
@@ -116,7 +115,7 @@ public class MineralOccurrenceFilter extends AbstractFilter {
         }
 
         // Case 4. Commodity + Amount Query
-        else if ( (this.measureType != MeasureTypes.NONE) && !commodityName.isEmpty() ) {
+        else if ((this.measureType != MeasureTypes.NONE) && !commodityName.isEmpty() ) {
 
             // Single Measure
             if (this.measureType != MeasureTypes.ANY) {

@@ -26,14 +26,14 @@ public class TestCSWGetRecordResponse {
      * @throws Exception
      */
     @Before
-    public void setup() throws Exception {
+    public void setUp() throws Exception {
 
         // load CSW record response document
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc =
-            builder.parse( "src/test/resources/cswRecordResponse.xml" );
+            builder.parse("src/test/resources/cswRecordResponse.xml" );
         this.origin = new CSWServiceItem("id", "http://test.com", "http://test.com?uuid=%1$s", "title");
 
         this.recordResponse = new CSWGetRecordResponse(this.origin, doc);

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 
 /**
- * <p> Utility class that converts GeoSciML into KML format </p>
+ * <p> Utility class that converts GeoSciML into KML format.</p>
  *
  * @author jsanders
  * @version $Id$
@@ -47,20 +47,20 @@ public class GmlToKml {
          // org.apache.xalan.transformer.TransformerImpl.
          // However, we prefer Saxon...
          TransformerFactory tFactory = new net.sf.saxon.TransformerFactoryImpl();
-         log.debug ("XSLT implementation in use: " + tFactory.getClass());
+         log.debug("XSLT implementation in use: " + tFactory.getClass());
 
          // Use the TransformerFactory to instantiate updateCSWRecords transformer that will
          // work with the style sheet we specify. This method call also processes
          // the style sheet into updateCSWRecords compiled Templates object.
          Transformer transformer
-            = tFactory.newTransformer (new StreamSource(inXSLT));
+            = tFactory.newTransformer(new StreamSource(inXSLT));
 
          // Set stylesheet parameter
          transformer.setParameter("serviceURL", serviceUrl);
 
          // Write the output to updateCSWRecords stream
-         transformer.transform (new StreamSource (new StringReader(geoXML)),
-                                new StreamResult (sw));
+         transformer.transform(new StreamSource(new StringReader(geoXML)),
+                                new StreamResult(sw));
 
       } catch (TransformerConfigurationException tce) {
          log.error(tce);
@@ -70,15 +70,4 @@ public class GmlToKml {
       log.debug("GML output: \n" + sw.toString());
       return sw.toString();
    }
-
-    /**
-     * Utility method specific to Auscope Portal
-     * @param geoXML
-     * @param httpRequest
-     *
-   public String convert(String geoXML, HttpServletRequest httpRequest) {
-      InputStream inXSLT = httpRequest.getSession().getServletContext().getResourceAsStream("/WEB-INF/xsl/kml.xsl");
-      return this.convert(geoXML, inXSLT);
-   }
-   */
 }

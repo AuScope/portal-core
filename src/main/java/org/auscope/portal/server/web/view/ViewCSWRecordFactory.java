@@ -42,7 +42,7 @@ public class ViewCSWRecordFactory {
         }
 
         List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object> >();
-        if (record.getOnlineResources() != null ) {
+        if (record.getOnlineResources() != null) {
             for (AbstractCSWOnlineResource res : record.getOnlineResources()) {
                 if (res.getLinkage() != null) {
                     onlineResources.add(this.toView(res));
@@ -62,7 +62,7 @@ public class ViewCSWRecordFactory {
 
 
         List<String> descriptiveKeywords = new ArrayList<String>();
-        if (record.getDescriptiveKeywords() != null ) {
+        if (record.getDescriptiveKeywords() != null) {
             for (String s : record.getDescriptiveKeywords()) {
                 descriptiveKeywords.add(s);
             }
@@ -70,7 +70,7 @@ public class ViewCSWRecordFactory {
         obj.put("descriptiveKeywords", descriptiveKeywords);
 
         List<String> constraints = new ArrayList<String>();
-        if(record.getConstraints() != null) {
+        if (record.getConstraints() != null) {
             for (String s : record.getConstraints()) {
                 constraints.add(s);
             }

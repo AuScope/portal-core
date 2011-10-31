@@ -152,15 +152,15 @@ public abstract class BasePortalController {
 
         ModelMap debugInfo = new ModelMap();
         try {
-            debugInfo.put("url",request.getURI().toString());
+            debugInfo.put("url", request.getURI().toString());
         } catch (URIException e) {
             log.debug("Unable to generate URI from request", e);
-            debugInfo.put("url",String.format("Error Generating URI - %1$s", e.getMessage()));
+            debugInfo.put("url", String.format("Error Generating URI - %1$s", e.getMessage()));
         }
         if (request instanceof PostMethod) {
             RequestEntity entity = ((PostMethod) request).getRequestEntity();
             if (entity instanceof StringRequestEntity) {
-                debugInfo.put("info",((StringRequestEntity) entity).getContent());
+                debugInfo.put("info", ((StringRequestEntity) entity).getContent());
             }
         }
 

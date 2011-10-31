@@ -30,7 +30,7 @@ public class WFSPopupController {
     // -------------------------------------------------------------- Constants
 
     /** Log object for this class. */
-    protected final Log log = LogFactory.getLog(getClass());
+    private final Log log = LogFactory.getLog(getClass());
     public static final String DOCTYPE =
         "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \n\t \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">";
 
@@ -45,7 +45,7 @@ public class WFSPopupController {
     // ----------------------------------------------------------- Constructors
 
     @Autowired
-    public WFSPopupController( HttpServiceCaller serviceCaller,
+    public WFSPopupController(HttpServiceCaller serviceCaller,
                                GmlToKml gmlToKml,
                                WFSGetFeatureMethodMaker wfsMethodMaker) {
         this.serviceCaller = serviceCaller;
@@ -67,7 +67,7 @@ public class WFSPopupController {
      * @param featureId
      */
     @RequestMapping("wfsFeaturePopup.do")
-    public void wfsFeaturePopup( HttpServletRequest request,
+    public void wfsFeaturePopup(HttpServletRequest request,
                                  HttpServletResponse response,
                                  @RequestParam("url") String serviceUrl,
                                  @RequestParam(required=false, value="typeName") String typeName,

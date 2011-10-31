@@ -28,7 +28,7 @@ public class TestPressureDBService {
     private InputStream mockStream = context.mock(InputStream.class);
 
     @Before
-    public void setup() {
+    public void setUp() {
         service = new PressureDBService(mockMethodMaker, mockHttpServiceCaller);
     }
 

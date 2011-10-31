@@ -20,7 +20,7 @@ public class TestCSWNamespaceContext {
     private String TEST_NAMESPACE_URI = "http://www.isotc211.org/2005/gmd";
 
     @Test
-    public void testConstructor(){
+    public void testConstructor() {
         String s = "";
         try {
             final Field[] fields = CSWNamespaceContext.class.getDeclaredFields();
