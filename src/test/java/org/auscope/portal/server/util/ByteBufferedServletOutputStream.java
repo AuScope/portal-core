@@ -28,4 +28,8 @@ public class ByteBufferedServletOutputStream extends ServletOutputStream {
     public byte[] toByteArray() {
         return stream.toByteArray();
     }
+
+    public ByteArrayOutputStream getStream(){
+        return this.stream;
+    }
 }

@@ -12,9 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.DelayedReturnValueAction;
+import org.auscope.portal.server.util.ByteBufferedServletOutputStream;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.api.Action;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
@@ -55,18 +58,21 @@ public class TestDownloadController {
     /**
      * Needed so we can check the contents of our zip file after it is written
      */
-    final class MyServletOutputStream extends ServletOutputStream {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-        public void write(int i) throws IOException {
-            byteArrayOutputStream.write(i);
+    final class MyServletOutputStream extends ByteBufferedServletOutputStream {
+        public MyServletOutputStream(int length) {
+            super(length);
         }
 
         public ZipInputStream getZipInputStream() {
             return new ZipInputStream(new ByteArrayInputStream(
-                    byteArrayOutputStream.toByteArray()));
+                    this.getStream().toByteArray()));
         }
-    };
+    }
+
+    private static Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
+        return new DelayedReturnValueAction(msDelay, returnValue);
+    }
+
 
     @Before
     public void setUp() {
@@ -78,7 +84,7 @@ public class TestDownloadController {
         // what we need in 2.6.0
         // Note: DeterministicExecutor is not needed as threadpool will
         // awaitTermination
-        threadPool = Executors.newSingleThreadExecutor();
+        threadPool = Executors.newCachedThreadPool();
 
     }
 
@@ -88,27 +94,22 @@ public class TestDownloadController {
      */
     @Test
     public void testDownloadGMLAsZip() throws Exception {
-        final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
         final String[] serviceUrls = { "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs" };
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
                 + dummyGml + "\"},\"success\":true}";
+        final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyJSONResponse.length());
 
         context.checking(new Expectations() {
             {
                 // setting of the headers for the return content
                 oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-                oneOf(mockHttpResponse).setHeader(with(any(String.class)),
-                        with(any(String.class)));
-                oneOf(mockHttpResponse).getOutputStream();
-                will(returnValue(servletOutputStream));
+                oneOf(mockHttpResponse).setHeader(with(any(String.class)),with(any(String.class)));
+                oneOf(mockHttpResponse).getOutputStream();will(returnValue(servletOutputStream));
 
                 // calling the service
                 oneOf(httpServiceCaller).getHttpClient();
-                oneOf(httpServiceCaller).getMethodResponseAsString(
-                        with(any(HttpMethodBase.class)),
-                        with(any(HttpClient.class)));
-                will(returnValue(dummyJSONResponse));
+                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));will(returnValue(dummyJSONResponse));
             }
         });
 
@@ -141,7 +142,7 @@ public class TestDownloadController {
      */
     @Test
     public void testDownloadGMLAsZipWithJSONError() throws Exception {
-        final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
+
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://www.mrt.tas.gov.au:80/web-services/wfs" };
@@ -149,33 +150,25 @@ public class TestDownloadController {
         final String dummyJSONResponse = "{\"msg\": '" + dummyMessage
                 + "',\"success\":false}";
         final String dummyJSONResponseNoMsg = "{\"success\":false}";
+        final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyJSONResponseNoMsg.length());
 
         context.checking(new Expectations() {
             {
                 // setting of the headers for the return content
-                exactly(2).of(mockHttpResponse).setContentType(
-                        with(any(String.class)));
-                exactly(2).of(mockHttpResponse).setHeader(
-                        with(any(String.class)), with(any(String.class)));
-                exactly(2).of(mockHttpResponse).getOutputStream();
-                will(returnValue(servletOutputStream));
+                exactly(2).of(mockHttpResponse).setContentType(with(any(String.class)));
+                exactly(2).of(mockHttpResponse).setHeader(with(any(String.class)), with(any(String.class)));
+                oneOf(mockHttpResponse).getOutputStream();will(returnValue(servletOutputStream));
 
                 // calling the service
                 exactly(2).of(httpServiceCaller).getHttpClient();
-                oneOf(httpServiceCaller).getMethodResponseAsString(
-                        with(any(HttpMethodBase.class)),
-                        with(any(HttpClient.class)));
-                will(returnValue(dummyJSONResponse));
-                oneOf(httpServiceCaller).getMethodResponseAsString(
-                        with(any(HttpMethodBase.class)),
-                        with(any(HttpClient.class)));
-                will(returnValue(dummyJSONResponseNoMsg));
+                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));will(returnValue(dummyJSONResponse));
+                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class))); will(delayReturnValue(200,dummyJSONResponseNoMsg));
             }
         });
 
         downloadController.downloadGMLAsZip(serviceUrls, mockHttpResponse,
                 threadPool);
-        Thread.sleep(100);
+        Thread.sleep(500);
 
         // check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
@@ -188,7 +181,7 @@ public class TestDownloadController {
         ze = zipInputStream.getNextEntry();
         Assert.assertNotNull(ze);
         names[1] = ze.getName();
-
+        System.out.println(names[0] +"bjdskfafds"+ names[1]);
         if (names[0].endsWith(dummyMessage + ".xml")
                 || names[1].endsWith(dummyMessage + ".xml")) {
             Assert.assertTrue(true);
@@ -212,35 +205,32 @@ public class TestDownloadController {
      */
     @Test
     public void testDownloadGMLAsZipWithError() throws Exception {
-        final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
+
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://www.mrt.tas.gov.au:80/web-services/wfs" };
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
                 + dummyGml + "\"},\"success\":false}";
+        final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyJSONResponse.length());
 
         context.checking(new Expectations() {
             {
                 // setting of the headers for the return content
                 oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-                oneOf(mockHttpResponse).setHeader(with(any(String.class)),
-                        with(any(String.class)));
-                oneOf(mockHttpResponse).getOutputStream();
-                will(returnValue(servletOutputStream));
+                oneOf(mockHttpResponse).setHeader(with(any(String.class)),with(any(String.class)));
+                oneOf(mockHttpResponse).getOutputStream();will(returnValue(servletOutputStream));
 
                 // calling the service
                 exactly(2).of(httpServiceCaller).getHttpClient();
-                exactly(2).of(httpServiceCaller).getMethodResponseAsString(
-                        with(any(HttpMethodBase.class)),
-                        with(any(HttpClient.class)));
-                will(returnValue(dummyJSONResponse));
+                exactly(2).of(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),
+                        with(any(HttpClient.class)));will(delayReturnValue(200,dummyJSONResponse));
             }
         });
 
         downloadController.downloadGMLAsZip(serviceUrls, mockHttpResponse,
                 threadPool);
-        Thread.sleep(100);
+        Thread.sleep(500);
 
         // check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
@@ -257,10 +247,11 @@ public class TestDownloadController {
      */
     @Test
     public void testDownloadDataAsZipWithError() throws Exception {
-        final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
+
         final String[] serviceUrls = { "http://someUrl" };
         final String dummyData = "dummyData";
         final Header header = new Header("Content-Type", "text/xml");
+        final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyData.length());
 
         context.checking(new Expectations() {
             {
@@ -320,10 +311,10 @@ public class TestDownloadController {
      */
     @Test
     public void testDownloadDataAsZipWithPNG() throws Exception {
-        final MyServletOutputStream servletOutputStream = new MyServletOutputStream();
         final String[] serviceUrls = { "http://someUrl" };
         final String dummyData = "dummyData";
         final Header header = new Header("Content-Type", "image/png");
+        final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyData.length());
 
         context.checking(new Expectations() {
             {
