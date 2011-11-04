@@ -40,7 +40,7 @@ public abstract class BasePortalController {
         if (matchedResults != null) {
             model.put("totalResults", matchedResults);
         }
-        model.put("msg", success);
+        model.put("msg", message);
         if (debugInfo != null) {
             model.put("debugInfo", debugInfo);
         }

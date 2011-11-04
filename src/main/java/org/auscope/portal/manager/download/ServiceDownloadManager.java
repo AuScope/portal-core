@@ -15,6 +15,8 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -217,7 +219,7 @@ public class ServiceDownloadManager {
             if (messageObject == null) {
                 messageObject = "";
             }
-            if (dataObject != null) {
+            if (dataObject != null && !JSONNull.getInstance().equals(dataObject)) {
                 Object gmlResponseObject = JSONObject.fromObject(dataObject)
                         .get("gml");
 

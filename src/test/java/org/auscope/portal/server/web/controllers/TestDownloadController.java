@@ -181,7 +181,7 @@ public class TestDownloadController {
         ze = zipInputStream.getNextEntry();
         Assert.assertNotNull(ze);
         names[1] = ze.getName();
-        System.out.println(names[0] +"bjdskfafds"+ names[1]);
+
         if (names[0].endsWith(dummyMessage + ".xml")
                 || names[1].endsWith(dummyMessage + ".xml")) {
             Assert.assertTrue(true);
