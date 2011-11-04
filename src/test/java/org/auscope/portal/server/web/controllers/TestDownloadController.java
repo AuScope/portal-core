@@ -223,8 +223,10 @@ public class TestDownloadController {
 
                 // calling the service
                 exactly(2).of(httpServiceCaller).getHttpClient();
-                exactly(2).of(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),
-                        with(any(HttpClient.class)));will(delayReturnValue(200,dummyJSONResponse));
+                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),
+                        with(any(HttpClient.class)));will(returnValue(dummyJSONResponse));
+                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),
+                        with(any(HttpClient.class)));will(delayReturnValue(100,dummyJSONResponse));
             }
         });
 
