@@ -1,6 +1,8 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,6 +11,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.Header;
@@ -16,6 +19,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.manager.download.DownloadResponse;
 import org.auscope.portal.manager.download.ServiceDownloadManager;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,13 +74,65 @@ public class DownloadController {
 
         logger.trace("No. of serviceUrls: " + serviceUrls.length);
         ServiceDownloadManager downloadManager = new ServiceDownloadManager(
-                serviceUrls, zout, serviceCaller,threadpool);
+                serviceUrls, serviceCaller,threadpool);
         //VT: threadpool is closed within downloadAll();
-        downloadManager.downloadAll();
+        ArrayList<DownloadResponse> gmlDownloads=downloadManager.downloadAll();
+        writeResponseToZip(gmlDownloads,zout);
+
         zout.finish();
         zout.flush();
         zout.close();
     }
+
+    private void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads,ZipOutputStream zout) throws IOException{
+        StringBuilder errorMsg=new StringBuilder();
+
+        for(int i=0;i<gmlDownloads.size();i++){
+            DownloadResponse download=gmlDownloads.get(i);
+            //Check that attempt to request is successful
+            if(!download.hasException()){
+                JSONObject jsonObject = JSONObject.fromObject(download.getResponseAsString());
+                //check that JSON reply is successful
+                if (jsonObject.get("success").toString().equals("false")) {
+                    errorMsg.append("Unsuccessful JSON reply from: " + download.getRequestURL() + "\n");
+
+                    Object messageObject = jsonObject.get("msg");
+                    if(messageObject==null || messageObject.toString().length()==0){
+                        errorMsg.append("No error message\n\n");
+                    }else{
+                        errorMsg.append(messageObject.toString() + "\n\n");
+                    }
+                }else{
+                    byte[] gmlBytes = new byte[] {};
+                    Object dataObject = jsonObject.get("data");
+                    if (dataObject != null && !JSONNull.getInstance().equals(dataObject)) {
+                        Object gmlResponseObject = JSONObject.fromObject(dataObject)
+                                .get("gml");
+
+                        if (gmlResponseObject != null) {
+                            gmlBytes = gmlResponseObject.toString().getBytes();
+                        }
+                    }
+
+                    zout.putNextEntry(new ZipEntry(new SimpleDateFormat(
+                            (i + 1) + "_yyyyMMdd_HHmmss").format(new Date())
+                            + ".xml"));
+                    zout.write(gmlBytes);
+                    zout.closeEntry();
+                }
+
+            }else{
+                errorMsg.append("Exception thrown while attempting to download from: " + download.getRequestURL() + "\n");
+                errorMsg.append(download.getExceptionAsString()+ "\n\n");
+            }
+        }
+        if(errorMsg.length()!=0){
+            zout.putNextEntry(new ZipEntry("error.txt"));
+            zout.write(errorMsg.toString().getBytes());
+            zout.closeEntry();
+        }
+    }
+
 
     /**
      * Given a list of WMS URL's, this function will collate the responses

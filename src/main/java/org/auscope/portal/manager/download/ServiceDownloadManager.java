@@ -1,23 +1,15 @@
 package org.auscope.portal.manager.download;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
-import net.sf.json.JSONNull;
-import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
@@ -46,20 +38,19 @@ public class ServiceDownloadManager {
 
     // VT do not directly access entryCount due to multi threading. Access it
     // via getCount()
-    private int entryCount = 0;
+
     private String[] urls;
-    private ZipOutputStream zout;
     private HttpServiceCaller serviceCaller;
 
-    public ServiceDownloadManager(String[] urls, ZipOutputStream zout,
-            HttpServiceCaller serviceCaller,ExecutorService executer) throws URISyntaxException {
+    public ServiceDownloadManager(String[] urls,
+            HttpServiceCaller serviceCaller, ExecutorService executer)
+            throws URISyntaxException {
         this.urls = urls;
-        this.zout = zout;
         this.serviceCaller = serviceCaller;
-        this.pool=executer;
-        callerId=globalId++;
+        this.pool = executer;
+        callerId = globalId++;
         for (int i = 0; i < urls.length; i++) {
-            String host=this.getHost(urls[i]);
+            String host = this.getHost(urls[i]);
             if (!endpointSemaphores.containsKey(host)) {
                 endpointSemaphores.put(host, new Semaphore(
                         maxThreadPerEndpoint, true));
@@ -67,17 +58,31 @@ public class ServiceDownloadManager {
         }
     }
 
-    public synchronized void downloadAll() throws URISyntaxException, InterruptedException {
+    public synchronized ArrayList<DownloadResponse> downloadAll()
+            throws URISyntaxException, InterruptedException,
+            InCompleteDownloadException {
 
-        Semaphore processSemaphore = new Semaphore(this.maxThreadPerSession, true);
+        Semaphore processSemaphore = new Semaphore(this.maxThreadPerSession,
+                true);
+        ArrayList<GMLDownload> gmlDownloads = new ArrayList<GMLDownload>();
 
         for (int i = 0; i < urls.length; i++) {
             Semaphore sem = endpointSemaphores.get(this.getHost(urls[i]));
-            pool.execute(new GMLZipDownload(urls[i], sem, i,
-                    processSemaphore));
+            GMLDownload gmlDownload = new GMLDownload(urls[i], sem, i,
+                    processSemaphore);
+            gmlDownloads.add(gmlDownload);
+            pool.execute(gmlDownload);
         }
-       pool.shutdown();
-       pool.awaitTermination(ServiceDownloadManager.MAX_WAIT_TIME_MINUTE, TimeUnit.MINUTES);
+        pool.shutdown();
+        pool.awaitTermination(ServiceDownloadManager.MAX_WAIT_TIME_MINUTE,
+                TimeUnit.MINUTES);
+
+        ArrayList<DownloadResponse> responses = new ArrayList<DownloadResponse>();
+        for (GMLDownload gmlDownload : gmlDownloads) {
+            responses.add(gmlDownload.getGMLDownload());
+        }
+
+        return responses;
     }
 
     public String getHost(String url) throws URISyntaxException {
@@ -96,23 +101,20 @@ public class ServiceDownloadManager {
         return map.get("serviceUrl");
     }
 
-    public synchronized int getCount() {
-        return this.entryCount++;
-    }
-
-    public class GMLZipDownload implements Runnable {
+    public class GMLDownload implements Runnable {
         private String url;
-        private JSONObject jsonObject = null;
+        DownloadResponse response;
         private boolean downloadComplete = false;
         private Semaphore endPointSem, processSem;
         private int id;
 
-        public GMLZipDownload(String url, Semaphore sem, int id,
-                Semaphore processSem) {
+        public GMLDownload(String url, Semaphore sem, int id,
+                Semaphore processSem) throws URISyntaxException {
             this.endPointSem = sem;
             this.url = url;
             this.id = id;
             this.processSem = processSem;
+            response=new DownloadResponse(getHost(url));
         }
 
         public void run() {
@@ -151,15 +153,14 @@ public class ServiceDownloadManager {
                     }
                 }
                 logger.debug((callerId + "->Calling service: " + id +" " + url));
-                jsonObject = this.download(url);
+                this.download(response,url);
                 this.downloadComplete = true;
                 logger.info(callerId + "->Download Complete: " + id + " " + url);
-                writeToZipFile(jsonObject);
             } catch (InterruptedException e) {
                 logger.error("No reason for this thread to be interrupted", e);
-            } catch (IOException e) {
-                logger.error(e, e);
-            } finally {
+            } catch(Exception e){
+                e.printStackTrace();
+            }finally {
                 endPointSem.release();
                 processSem.release();
                 logger.debug(callerId + "->semaphore release: " + id);
@@ -167,9 +168,9 @@ public class ServiceDownloadManager {
 
         }
 
-        public JSONObject getGMLDownload() throws InCompleteDownloadException {
+        public DownloadResponse getGMLDownload() throws InCompleteDownloadException {
             if (downloadComplete) {
-                return jsonObject;
+                return response;
             } else {
                 throw new InCompleteDownloadException(
                         "check that download is complete with isDownloadComplete() before calling this method");
@@ -180,80 +181,19 @@ public class ServiceDownloadManager {
             return downloadComplete;
         }
 
-        public JSONObject download(String url) {
+        public void download(DownloadResponse response, String url) {
 
             GetMethod method = new GetMethod(url);
             HttpClient client = serviceCaller.getHttpClient();
 
-            // Our request may fail (due to timeout or otherwise)
-            String responseString = null;
-            JSONObject jsonObject = null;
             try {
-                responseString = serviceCaller.getMethodResponseAsString(
-                        method, client);
-
-                logger.trace("Response: " + responseString);
-
-                jsonObject = JSONObject.fromObject(responseString);
+                // Our request may fail (due to timeout or otherwise)
+                response.setResponseStream(serviceCaller.getMethodResponseAsStream(
+                        method, client));
             } catch (Exception ex) {
-                // Replace a failure exception with a JSONObject representing
-                // that exception
                 logger.error(ex, ex);
-                jsonObject = new JSONObject();
-                jsonObject.put("msg", ex.getMessage());
-                jsonObject.put("success", false);
-                responseString = ex.toString();
+                response.setException(ex);
             }
-            return jsonObject;
-
-        }
-
-        public void writeToZipFile(JSONObject jsonObject) throws IOException {
-            // Extract our data (if it exists)
-            byte[] gmlBytes = new byte[] {}; // The error response is an empty
-            // array
-            Object dataObject = jsonObject.get("data");
-            Object messageObject = jsonObject.get("msg"); // This will be used
-            // as an
-            // error string
-            if (messageObject == null) {
-                messageObject = "";
-            }
-            if (dataObject != null && !JSONNull.getInstance().equals(dataObject)) {
-                Object gmlResponseObject = JSONObject.fromObject(dataObject)
-                        .get("gml");
-
-                if (gmlResponseObject != null) {
-                    gmlBytes = gmlResponseObject.toString().getBytes();
-                }
-            }
-
-            logger.trace(gmlBytes.length);
-
-            if (jsonObject.get("success").toString().equals("false")) {
-                // The server may have returned an error message, if so, lets
-                // include it in the filename
-
-                String messageString = messageObject.toString();
-                if (messageString.length() == 0)
-                    messageString = "operation-failed";
-
-                // "Tidy" up the message
-                messageString = messageString.replace(' ', '_')
-                        .replace(".", "");
-
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat(
-                        (this.id + 1) + "_yyyyMMdd_HHmmss").format(new Date())
-                        + "-" + messageString + ".xml"));
-            } else {
-                // create a new entry in the zip file with a timestamped name
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat(
-                        (this.id + 1) + "_yyyyMMdd_HHmmss").format(new Date())
-                        + ".xml"));
-            }
-
-            zout.write(gmlBytes);
-            zout.closeEntry();
 
         }
     }

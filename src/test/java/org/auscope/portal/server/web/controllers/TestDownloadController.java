@@ -2,13 +2,14 @@ package org.auscope.portal.server.web.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import javax.servlet.ServletOutputStream;
+
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -84,7 +85,7 @@ public class TestDownloadController {
         // what we need in 2.6.0
         // Note: DeterministicExecutor is not needed as threadpool will
         // awaitTermination
-        threadPool = Executors.newCachedThreadPool();
+        threadPool = Executors.newSingleThreadExecutor();
 
     }
 
@@ -99,6 +100,7 @@ public class TestDownloadController {
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
                 + dummyGml + "\"},\"success\":true}";
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyJSONResponse.length());
+        final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
         context.checking(new Expectations() {
             {
@@ -109,13 +111,15 @@ public class TestDownloadController {
 
                 // calling the service
                 oneOf(httpServiceCaller).getHttpClient();
-                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));will(returnValue(dummyJSONResponse));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
+                    will(returnValue(dummyJSONResponseIS));
             }
         });
 
         downloadController.downloadGMLAsZip(serviceUrls, mockHttpResponse,
                 threadPool);
         Thread.sleep(100);
+        dummyJSONResponseIS.close();
 
         // Check that the zip file contains the correct data
         ZipInputStream in = servletOutputStream.getZipInputStream();
@@ -131,6 +135,7 @@ public class TestDownloadController {
         Assert.assertArrayEquals(dummyGml.getBytes(), uncompressedData);
 
         in.close();
+
     }
 
     /**
@@ -151,6 +156,8 @@ public class TestDownloadController {
                 + "',\"success\":false}";
         final String dummyJSONResponseNoMsg = "{\"success\":false}";
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyJSONResponseNoMsg.length());
+        final InputStream dummyJSONResponseNoMsgIS=new ByteArrayInputStream(dummyJSONResponseNoMsg.getBytes());
+        final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
         context.checking(new Expectations() {
             {
@@ -161,40 +168,37 @@ public class TestDownloadController {
 
                 // calling the service
                 exactly(2).of(httpServiceCaller).getHttpClient();
-                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));will(returnValue(dummyJSONResponse));
-                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class))); will(delayReturnValue(200,dummyJSONResponseNoMsg));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
+                will(returnValue(dummyJSONResponseIS));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
+                will(delayReturnValue(300,dummyJSONResponseNoMsgIS));
             }
         });
 
         downloadController.downloadGMLAsZip(serviceUrls, mockHttpResponse,
                 threadPool);
         Thread.sleep(500);
+        dummyJSONResponseNoMsgIS.close();
+        dummyJSONResponseIS.close();
 
         // check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
-        String[] names = new String[2];
-
         ZipEntry ze = zipInputStream.getNextEntry();
         Assert.assertNotNull(ze);
-        names[0] = ze.getName();
+        String name = ze.getName();
+        Assert.assertTrue(name.equals("error.txt"));
 
-        ze = zipInputStream.getNextEntry();
-        Assert.assertNotNull(ze);
-        names[1] = ze.getName();
+        String error="Unsuccessful JSON reply from: http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs\n" +
+                     "hereisadummymessage\n\n" +
+                     "Unsuccessful JSON reply from: http://www.mrt.tas.gov.au:80/web-services/wfs\n" +
+                     "No error message\n\n";
 
-        if (names[0].endsWith(dummyMessage + ".xml")
-                || names[1].endsWith(dummyMessage + ".xml")) {
-            Assert.assertTrue(true);
-        } else {
-            Assert.assertTrue(false);
-        }
 
-        if (names[0].endsWith("operation-failed.xml")
-                || names[1].endsWith("operation-failed.xml")) {
-            Assert.assertTrue(true);
-        } else {
-            Assert.assertTrue(false);
-        }
+        byte[] uncompressedData = new byte[error.getBytes().length];
+        zipInputStream.read(uncompressedData);
+        String s=new String(uncompressedData);
+        Assert.assertTrue(s.contains("hereisadummymessage"));
+        Assert.assertTrue(s.contains("No error message"));
 
         zipInputStream.close();
     }
@@ -204,15 +208,16 @@ public class TestDownloadController {
      * returns gml given some dummy data
      */
     @Test
-    public void testDownloadGMLAsZipWithError() throws Exception {
+    public void testDownloadGMLAsZipWithException() throws Exception {
 
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://www.mrt.tas.gov.au:80/web-services/wfs" };
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
-                + dummyGml + "\"},\"success\":false}";
+                + dummyGml + "\"},\"success\":true}";
         final MyServletOutputStream servletOutputStream = new MyServletOutputStream(dummyJSONResponse.length());
+        final InputStream dummyJSONResponseIS2=new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
         context.checking(new Expectations() {
             {
@@ -223,10 +228,10 @@ public class TestDownloadController {
 
                 // calling the service
                 exactly(2).of(httpServiceCaller).getHttpClient();
-                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),
-                        with(any(HttpClient.class)));will(returnValue(dummyJSONResponse));
-                oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)),
-                        with(any(HttpClient.class)));will(delayReturnValue(100,dummyJSONResponse));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
+                will(throwException(new Exception("Exception test")));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
+                will(delayReturnValue(100,dummyJSONResponseIS2));
             }
         });
 
@@ -234,12 +239,29 @@ public class TestDownloadController {
                 threadPool);
         Thread.sleep(500);
 
+        dummyJSONResponseIS2.close();
+
         // check that the zip file contains the correct data
         ZipInputStream zipInputStream = servletOutputStream.getZipInputStream();
         ZipEntry ze = null;
+        String error="Exception thrown while attempting to download from";
+        int count=0;
         while ((ze = zipInputStream.getNextEntry()) != null) {
-            Assert.assertTrue(ze.getName().endsWith("operation-failed.xml"));
+            count++;
+            if(ze.getName().equals("error.txt")){
+
+                byte[] uncompressedData = new byte[error.getBytes().length];
+                int dataRead = zipInputStream.read(uncompressedData);
+
+                Assert.assertEquals(error.getBytes().length, dataRead);
+                Assert.assertArrayEquals(error.getBytes(), uncompressedData);
+
+
+            }else{
+                Assert.assertTrue(ze.getName().endsWith(".xml"));
+            }
         }
+        Assert.assertEquals(2, count);
         zipInputStream.close();
     }
 

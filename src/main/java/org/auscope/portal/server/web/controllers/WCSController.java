@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.server.domain.wcs.DescribeCoverageRecord;
+import org.auscope.portal.server.util.FileIOUtil;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.IWCSDescribeCoverageMethodMaker;
 import org.auscope.portal.server.web.IWCSGetCoverageMethodMaker;
@@ -105,20 +106,7 @@ public class WCSController extends BasePortalController {
 
     private void closeZipWithError(ZipOutputStream zout,String debugQuery, Exception exceptionToPrint) {
         String message = null;
-        StringWriter sw = null;
-        PrintWriter pw = null;
-        try {
-            sw = new StringWriter();
-            pw = new PrintWriter(sw);
-            exceptionToPrint.printStackTrace(pw);
-            message = String.format("An exception occured whilst requesting/parsing your WCS download.\r\n%1$s\r\nMessage=%2$s\r\n%3$s",debugQuery, exceptionToPrint.getMessage(), sw.toString());
-        } finally {
-            try {
-                if (pw != null)  pw.close();
-                if (sw != null)  sw.close();
-            } catch (Exception ignore) {}
-        }
-
+        message=FileIOUtil.CovertExceptionToString(exceptionToPrint, debugQuery);
         try {
             zout.putNextEntry(new ZipEntry("error.txt"));
 
