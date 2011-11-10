@@ -291,7 +291,7 @@
                 <value>http://geossdi.dmp.wa.gov.au:80/services/wfs</value>
                 <value>http://geology.data.nt.gov.au:80/nvcl/wfs</value>
                 <value>http://auscope.dpi.nsw.gov.au:80/geoserver/wfs</value>
-                <value>http://egate.pir.sa.gov.au:80/nvcl/geoserver/wfs</value>
+                <value>https://egate.pir.sa.gov.au/nvcl/geoserver/wfs</value>
             </list>
         </constructor-arg>
         <constructor-arg name="includeEndpoints" value="true"/>
