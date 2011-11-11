@@ -13,7 +13,7 @@ GenericParser.Factory.LocatedSpecimenFactory = Ext.extend(GenericParser.Factory.
 
     supportsNode : function(domNode) {
         return domNode.namespaceURI === this.XMLNS_SA &&
-               this._getNodeLocalName(domNode) === 'LocatedSpecimen';
+            SimpleDOM.getNodeLocalName(domNode) === 'LocatedSpecimen';
     },
 
     /**
@@ -21,9 +21,9 @@ GenericParser.Factory.LocatedSpecimenFactory = Ext.extend(GenericParser.Factory.
      */
     parseNode : function(domNode, wfsUrl, rootCfg) {
         //Lookup various fields via xPath
-        var gmlId = this._evaluateXPathString(domNode, '@gml:id');
-        var allAnalyteNodes = this._evaluateXPathNodeArray(domNode, 'sa:relatedObservation/om:Observation/om:result/swe:Quantity/gml:name');
-        var materialClass = this._evaluateXPathString(domNode, 'sa:materialClass');
+        var gmlId = SimpleXPath.evaluateXPathString(domNode, '@gml:id');
+        var allAnalyteNodes = SimpleXPath.evaluateXPathNodeArray(domNode, 'sa:relatedObservation/om:Observation/om:result/swe:Quantity/gml:name');
+        var materialClass = SimpleXPath.evaluateXPathString(domNode, 'sa:materialClass');
 
         if (!materialClass) {
             materialClass = '';
@@ -31,7 +31,7 @@ GenericParser.Factory.LocatedSpecimenFactory = Ext.extend(GenericParser.Factory.
 
         var allAnalytes = [];
         for (var i = 0; i < allAnalyteNodes.length; i++) {
-            allAnalytes.push(this._getNodeTextContent(allAnalyteNodes[i]));
+            allAnalytes.push(SimpleDOM.getNodeTextContent(allAnalyteNodes[i]));
         }
 
         //This store will hold our parsed located specimen

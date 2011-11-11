@@ -13,7 +13,7 @@ GenericParser.Factory.GeologicUnitFactory = Ext.extend(GenericParser.Factory.Bas
 
     supportsNode : function(domNode) {
         return domNode.namespaceURI === this.XMLNS_GSML_2 &&
-               this._getNodeLocalName(domNode) === 'GeologicUnit';
+            SimpleDOM.getNodeLocalName(domNode) === 'GeologicUnit';
     },
 
     /**
@@ -21,12 +21,12 @@ GenericParser.Factory.GeologicUnitFactory = Ext.extend(GenericParser.Factory.Bas
      */
     parseNode : function(domNode, wfsUrl, rootCfg) {
         //Lookup various fields via xPath
-        var gmlId = this._evaluateXPathString(domNode, '@gml:id');
-        var coords = this._evaluateXPathString(domNode, 'gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point');
-        var obsMethod = this._evaluateXPathString(domNode, 'gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace=\'www.ietf.org/rfc/rfc1738\']');
-        var rockMaterial = this._evaluateXPathString(domNode, 'gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href');
-        var proportion = this._evaluateXPathString(domNode, 'gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value');
-        var weatheringDesc = this._evaluateXPathString(domNode, 'gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href');
+        var gmlId = SimpleXPath.evaluateXPathString(domNode, '@gml:id');
+        var coords = SimpleXPath.evaluateXPathString(domNode, 'gsml:occurrence/gsml:MappedFeature/gsml:shape/gml:Point');
+        var obsMethod = SimpleXPath.evaluateXPathString(domNode, 'gsml:occurrence/gsml:MappedFeature/gsml:observationMethod/gsml:CGI_TermValue/gsml:value[@codeSpace=\'www.ietf.org/rfc/rfc1738\']');
+        var rockMaterial = SimpleXPath.evaluateXPathString(domNode, 'gsml:composition/gsml:CompositionPart/gsml:material/gsml:RockMaterial/gsml:lithology/@xlink:href');
+        var proportion = SimpleXPath.evaluateXPathString(domNode, 'gsml:composition/gsml:CompositionPart/gsml:proportion/gsml:CGI_TermValue/gsml:value');
+        var weatheringDesc = SimpleXPath.evaluateXPathString(domNode, 'gsml:weatheringCharacter/gsml:WeatheringDescription/gsml:weatheringProduct/gsml:RockMaterial/gsml:lithology/@xlink:href');
 
         //Figure out our located specimen id
         var geoUnitPrefix = 'geologicUnit_';

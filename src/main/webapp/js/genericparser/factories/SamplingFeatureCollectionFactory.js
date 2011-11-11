@@ -13,25 +13,25 @@ GenericParser.Factory.SamplingFeatureCollectionFactory = Ext.extend(GenericParse
 
     supportsNode : function(domNode) {
         return domNode.namespaceURI === this.XMLNS_SA &&
-               this._getNodeLocalName(domNode) === 'SamplingFeatureCollection';
+            SimpleDOM.getNodeLocalName(domNode) === 'SamplingFeatureCollection';
     },
 
     /**
      * Generates a panel containing all located specimen observations
      */
     parseNode : function(domNode, wfsUrl, rootCfg) {
-        var samplingName = this._evaluateXPathString(domNode, 'gml:name');
-        var samplingStart = this._evaluateXPathString(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:samplingTime/gml:TimePeriod/gml:beginPosition');
-        var samplingEnd = this._evaluateXPathString(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:samplingTime/gml:TimePeriod/gml:endPosition');
-        var location = this._evaluateXPathString(domNode, 'sa:member/sa:LocatedSpecimen/sa:samplingLocation/gml:LineString/gml:posList');
-        var allTitles = this._evaluateXPathNodeArray(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:observedProperty/@xlink:title');
-        var allAmounts = this._evaluateXPathNodeArray(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:result');
-        var allUoms = this._evaluateXPathNodeArray(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:result/@uom');
+        var samplingName = SimpleXPath.evaluateXPathString(domNode, 'gml:name');
+        var samplingStart = SimpleXPath.evaluateXPathString(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:samplingTime/gml:TimePeriod/gml:beginPosition');
+        var samplingEnd = SimpleXPath.evaluateXPathString(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:samplingTime/gml:TimePeriod/gml:endPosition');
+        var location = SimpleXPath.evaluateXPathString(domNode, 'sa:member/sa:LocatedSpecimen/sa:samplingLocation/gml:LineString/gml:posList');
+        var allTitles = SimpleXPath.evaluateXPathNodeArray(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:observedProperty/@xlink:title');
+        var allAmounts = SimpleXPath.evaluateXPathNodeArray(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:result');
+        var allUoms = SimpleXPath.evaluateXPathNodeArray(domNode, 'sa:member/sa:LocatedSpecimen/sa:relatedObservation/om:Observation/om:result/@uom');
 
 
         var items = [];
         for (var i = 0; i < allTitles.length; i++) {
-            var uom = this._getNodeTextContent(allUoms[i]);
+            var uom = SimpleDOM.getNodeTextContent(allUoms[i]);
             var prettyUom = uom;
 
             switch(uom) {
@@ -46,8 +46,8 @@ GenericParser.Factory.SamplingFeatureCollectionFactory = Ext.extend(GenericParse
 
             items.push({
                 xtype : 'label',
-                fieldLabel : this._getNodeTextContent(allTitles[i]),
-                html : String.format('<p qtip="Unit of Measurement: {1}">{0} {2}</p>',this._getNodeTextContent(allAmounts[i]), uom, prettyUom)
+                fieldLabel : SimpleDOM.getNodeTextContent(allTitles[i]),
+                html : String.format('<p qtip="Unit of Measurement: {1}">{0} {2}</p>', SimpleDOM.getNodeTextContent(allAmounts[i]), uom, prettyUom)
             });
         }
 

@@ -13,7 +13,7 @@ GenericParser.Factory.BoreholeFactory = Ext.extend(GenericParser.Factory.BaseFac
 
     supportsNode : function(domNode) {
         return domNode.namespaceURI === this.XMLNS_GSML_2 &&
-               this._getNodeLocalName(domNode) === 'Borehole';
+               SimpleDOM.getNodeLocalName(domNode) === 'Borehole';
     },
 
     /**
@@ -21,28 +21,28 @@ GenericParser.Factory.BoreholeFactory = Ext.extend(GenericParser.Factory.BaseFac
      */
     parseNode : function(domNode, wfsUrl, rootCfg) {
         var bf = this;
-        var gmlId = this._evaluateXPathString(domNode, '@gml:id');
-        var allNames = this._evaluateXPathNodeArray(domNode, 'gml:name');
-        var elevationUom = this._evaluateXPathString(domNode, 'gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation/@uomLabels');
-        var elevation = this._evaluateXPathString(domNode, 'gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation');
-        var startDepth = this._evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner');
-        var endDepth = this._evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:upperCorner');
-        var coreCustodian = this._evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:title');
-        var drillingCo = this._evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:driller/@xlink:title');
-        var drillingDate = this._evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling');
-        var drillingMethod = this._evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:drillingMethod');
-        var inclinationType = this._evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:inclinationType');
-        var startPoint = this._evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:startPoint');
+        var gmlId = SimpleXPath.evaluateXPathString(domNode, '@gml:id');
+        var allNames = SimpleXPath.evaluateXPathNodeArray(domNode, 'gml:name');
+        var elevationUom = SimpleXPath.evaluateXPathString(domNode, 'gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation/@uomLabels');
+        var elevation = SimpleXPath.evaluateXPathString(domNode, 'gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation');
+        var startDepth = SimpleXPath.evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner');
+        var endDepth = SimpleXPath.evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:upperCorner');
+        var coreCustodian = SimpleXPath.evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:title');
+        var drillingCo = SimpleXPath.evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:driller/@xlink:title');
+        var drillingDate = SimpleXPath.evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling');
+        var drillingMethod = SimpleXPath.evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:drillingMethod');
+        var inclinationType = SimpleXPath.evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:inclinationType');
+        var startPoint = SimpleXPath.evaluateXPathString(domNode, 'gsml:indexData/gsml:BoreholeDetails/gsml:startPoint');
 
         //For IE we can't apply XPath predicates like gml:name[@codeSpace=\'http://www.ietf.org/rfc/rfc2616\']
         //so we do a manual loop instead over gml:name instead
         var rawId = '';
         var boreholeName = '';
         for (var i = 0; i < allNames.length; i++) {
-            if (this._evaluateXPathString(allNames[i], '@codeSpace') === 'http://www.ietf.org/rfc/rfc2616') {
-                rawId = this._getNodeTextContent(allNames[i]);
+            if (SimpleXPath.evaluateXPathString(allNames[i], '@codeSpace') === 'http://www.ietf.org/rfc/rfc2616') {
+                rawId = SimpleDOM.getNodeTextContent(allNames[i]);
             } else {
-                boreholeName = this._getNodeTextContent(allNames[i]);
+                boreholeName = SimpleDOM.getNodeTextContent(allNames[i]);
             }
         }
 

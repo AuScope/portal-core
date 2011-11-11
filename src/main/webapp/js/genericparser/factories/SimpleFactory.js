@@ -27,7 +27,7 @@ GenericParser.Factory.SimpleFactory = Ext.extend(GenericParser.Factory.BaseFacto
     parseNode : function(domNode, wfsUrl, rootCfg) {
         // Turn our DOM Node in an ExtJS Tree
         var rootNode = this._createTreeNode(domNode);
-        var gmlId = this._evaluateXPathString(domNode, '@gml:id');
+        var gmlId = SimpleXPath.evaluateXPathString(domNode, '@gml:id');
         var sf = this;
         this._parseXmlTree(domNode, rootNode);
         rootNode.expanded = true;
@@ -78,8 +78,8 @@ GenericParser.Factory.SimpleFactory = Ext.extend(GenericParser.Factory.BaseFacto
         var treeNode = null;
 
         // We have a leaf
-        if (this._isLeafNode(documentNode)) {
-            var textContent = this._getNodeTextContent(documentNode);
+        if (SimpleDOM.isLeafNode(documentNode)) {
+            var textContent = SimpleDOM.getNodeTextContent(documentNode);
 
             treeNode = new Ext.tree.TreeNode( {
                 text : documentNode.tagName + " = " + textContent
@@ -109,7 +109,7 @@ GenericParser.Factory.SimpleFactory = Ext.extend(GenericParser.Factory.BaseFacto
     _parseXmlTree : function(xmlDocNode, treeNode) {
         var nodes = [];
         Ext.each(xmlDocNode.childNodes, function(docNodeChild) {
-            if (docNodeChild.nodeType == this.XML_NODE_ELEMENT) {
+            if (docNodeChild.nodeType == SimpleDOM.XML_NODE_ELEMENT) {
                 var treeChildNode = this._createTreeNode(docNodeChild);
                 treeNode.appendChild(treeChildNode);
                 nodes.push(treeNode);
