@@ -10,21 +10,7 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public class SISSVocMethodMaker {
-
-    /**
-     * Concatenates a path element onto the end of url
-     * @param url The base URL (which must be ending in a path)
-     * @param newPath The path to concat
-     * @return
-     */
-    private String urlPathConcat(String url, String newPath) {
-        if (url.charAt(url.length() - 1) != '/') {
-            url = url + "/";
-        }
-
-        return url + newPath;
-    }
+public class SISSVocMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting information about available repositories

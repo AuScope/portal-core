@@ -9,11 +9,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.nvcldataservice.GetDatasetCollectionResponse;
+import org.auscope.portal.server.domain.nvcldataservice.GetLogCollectionResponse;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.web.service.NVCLDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,18 +32,21 @@ import org.springframework.web.servlet.ModelAndView;
 public class NVCLController extends AbstractBaseWFSToKMLController {
 
     private BoreholeService boreholeService;
+    private NVCLDataService dataService;
     private CSWCacheService cswService;
 
     @Autowired
     public NVCLController(GmlToKml gmlToKml,
                             BoreholeService boreholeService,
                             HttpServiceCaller httpServiceCaller,
-                            CSWCacheService cswService) {
+                            CSWCacheService cswService,
+                            NVCLDataService dataService) {
 
         this.boreholeService = boreholeService;
         this.gmlToKml = gmlToKml;
         this.httpServiceCaller = httpServiceCaller;
         this.cswService = cswService;
+        this.dataService = dataService;
     }
 
 
@@ -122,6 +128,46 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
             }
         } catch (Exception e) {
             return this.generateExceptionResponse(e, serviceUrl, method);
+        }
+    }
+
+    /**
+     * Gets the list of datasets for given borehole from the specified NVCL dataservice url.
+     * @param serviceUrl The URL of an NVCL Data service
+     * @param holeIdentifier The unique ID of a borehole
+     * @return
+     */
+    @RequestMapping("getNVCLDatasets.do")
+    public ModelAndView getNVCLDatasets(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("holeIdentifier") String holeIdentifier) {
+        List<GetDatasetCollectionResponse> responseObjs = null;
+        try {
+            responseObjs = dataService.getDatasetCollection(serviceUrl, holeIdentifier);
+
+            return generateJSONResponseMAV(true, responseObjs, "");
+        } catch (Exception ex) {
+            log.warn("Unable to request dataset collection", ex);
+            return generateJSONResponseMAV(false);
+        }
+    }
+
+    /**
+     * Gets the list of logs for given NVCL dataset from the specified NVCL dataservice url.
+     * @param serviceUrl The URL of an NVCL Data service
+     * @param datasetId The unique ID of a dataset
+     * @return
+     */
+    @RequestMapping("getNVCLLogs.do")
+    public ModelAndView getNVCLLogs(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("datasetId") String datasetId) {
+        List<GetLogCollectionResponse> responseObjs = null;
+        try {
+            responseObjs = dataService.getLogCollection(serviceUrl, datasetId);
+
+            return generateJSONResponseMAV(true, responseObjs, "");
+        } catch (Exception ex) {
+            log.warn("Unable to request log collection", ex);
+            return generateJSONResponseMAV(false);
         }
     }
 

@@ -106,4 +106,17 @@ public class DOMUtil {
         xPath.setNamespaceContext(nc);
         return xPath.compile(xPathStr);
     }
+
+    /**
+     * Compiles the specified XPath (as a string) into an XPathExpression.
+     * @param xPathStr A string representing a valid XPath expression
+     * @return
+     * @throws XPathExpressionException
+     */
+    public static XPathExpression compileXPathExpr(String xPathStr) throws XPathExpressionException {
+        //Force the usage of the Saxon XPath library
+        XPathFactory factory = new XPathFactoryImpl();
+        XPath xPath = factory.newXPath();
+        return xPath.compile(xPathStr);
+    }
 }

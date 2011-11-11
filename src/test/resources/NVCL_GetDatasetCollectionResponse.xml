@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DatasetCollection>
+    <Dataset>
+      <DatasetID>6dd70215-fe38-457c-be42-3b165fd98c7</DatasetID>
+      <DatasetName>WTB5</DatasetName>
+      <OmUrl>http://example1/geoserverBH/</OmUrl>
+    </Dataset>
+    <Dataset>
+      <DatasetID>7de74515-ae48-4aac-cd43-3bb45dd78cc</DatasetID>
+      <DatasetName>Name#2</DatasetName>
+      <OmUrl>http://example2/geoserverBH/</OmUrl>
+    </Dataset>
+</DatasetCollection>

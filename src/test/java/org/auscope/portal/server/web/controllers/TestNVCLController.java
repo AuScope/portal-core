@@ -23,11 +23,14 @@ import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.nvcldataservice.GetDatasetCollectionResponse;
+import org.auscope.portal.server.domain.nvcldataservice.GetLogCollectionResponse;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.web.service.NVCLDataService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -72,6 +75,9 @@ public class TestNVCLController {
     /** The mock borehole service. */
     private BoreholeService mockBoreholeService;
 
+    /** The mock dataservice*/
+    private NVCLDataService mockDataService;
+
     /** The nvcl controller. */
     private NVCLController nvclController;
 
@@ -95,8 +101,9 @@ public class TestNVCLController {
         this.mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
         this.mockCSWService = context.mock(CSWCacheService.class);
         this.mockHttpClient = context.mock(HttpClient.class);
+        this.mockDataService = context.mock(NVCLDataService.class);
 
-        this.nvclController = new NVCLController(this.mockGmlToKml, this.mockBoreholeService, this.mockHttpServiceCaller, this.mockCSWService);
+        this.nvclController = new NVCLController(this.mockGmlToKml, this.mockBoreholeService, this.mockHttpServiceCaller, this.mockCSWService, this.mockDataService);
     }
 
     /**
@@ -337,5 +344,81 @@ public class TestNVCLController {
         }});
 
         this.nvclController.HttpGetXmlProxy("http://www.testUrl.org", mockHttpResponse);
+    }
+
+    /**
+     * Tests getting dataset collection succeeds if underlying service succeeds.
+     * @throws Exception
+     */
+    @Test
+    public void testGetDatasetCollection() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String holeIdentifier = "unique-id";
+        final List<GetDatasetCollectionResponse> responseObjs = Arrays.asList(context.mock(GetDatasetCollectionResponse.class));
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getDatasetCollection(serviceUrl, holeIdentifier);will(returnValue(responseObjs));
+        }});
+
+        ModelAndView response = this.nvclController.getNVCLDatasets(serviceUrl, holeIdentifier);
+        Assert.assertNotNull(response);
+        Assert.assertTrue((Boolean)response.getModel().get("success"));
+        Assert.assertSame(responseObjs, response.getModel().get("data"));
+    }
+
+    /**
+     * Tests getting dataset collection fails if underlying service fails.
+     * @throws Exception
+     */
+    @Test
+    public void testGetDatasetCollectionError() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String holeIdentifier = "unique-id";
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getDatasetCollection(serviceUrl, holeIdentifier);will(throwException(new ConnectException()));
+        }});
+
+        ModelAndView response = this.nvclController.getNVCLDatasets(serviceUrl, holeIdentifier);
+        Assert.assertNotNull(response);
+        Assert.assertFalse((Boolean)response.getModel().get("success"));
+    }
+
+    /**
+     * Tests getting dataset collection succeeds if underlying service succeeds.
+     * @throws Exception
+     */
+    @Test
+    public void testGetLogCollection() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String datasetId = "unique-id";
+        final List<GetLogCollectionResponse> responseObjs = Arrays.asList(context.mock(GetLogCollectionResponse.class));
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getLogCollection(serviceUrl, datasetId);will(returnValue(responseObjs));
+        }});
+
+        ModelAndView response = this.nvclController.getNVCLLogs(serviceUrl, datasetId);
+        Assert.assertNotNull(response);
+        Assert.assertTrue((Boolean)response.getModel().get("success"));
+        Assert.assertSame(responseObjs, response.getModel().get("data"));
+    }
+
+    /**
+     * Tests getting dataset collection fails if underlying service fails.
+     * @throws Exception
+     */
+    @Test
+    public void testGetLogCollectionError() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String datasetIdentifier = "unique-id";
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getLogCollection(serviceUrl, datasetIdentifier);will(throwException(new ConnectException()));
+        }});
+
+        ModelAndView response = this.nvclController.getNVCLLogs(serviceUrl, datasetIdentifier);
+        Assert.assertNotNull(response);
+        Assert.assertFalse((Boolean)response.getModel().get("success"));
     }
 }
