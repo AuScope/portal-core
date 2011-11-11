@@ -256,5 +256,19 @@ GenericParser.Factory.BaseFactory = Ext.extend(Ext.util.Observable, {
         var document = domNode.ownerDocument;
         var xpathResult = this._evaluateXPath(document, domNode, xPath, this.XPATH_STRING_TYPE);
         return xpathResult.stringValue;
+    },
+
+    /**
+     * Makes a URL that when queried will cause the backend to proxy a WFS request to wfsUrl for a type with a specific ID.
+     * The resulting XML will be returned.
+     *
+     * @param wfsUrl String - WFS url to query
+     * @param typeName String - WFS type to query
+     * @param featureTypeId String - the ID of the type to query
+     */
+    _makeFeatureRequestUrl : function(wfsUrl, typeName, featureTypeId) {
+        return window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + "requestFeature.do" + "?" +
+            "serviceUrl=" + wfsUrl + "&typeName=" + typeName +
+            "&featureId=" + featureTypeId;
     }
 });

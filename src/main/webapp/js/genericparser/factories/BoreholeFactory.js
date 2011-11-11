@@ -20,7 +20,7 @@ GenericParser.Factory.BoreholeFactory = Ext.extend(GenericParser.Factory.BaseFac
      * Generates a simple tree panel that represents the specified node
      */
     parseNode : function(domNode, wfsUrl, rootCfg) {
-
+        var bf = this;
         var gmlId = this._evaluateXPathString(domNode, '@gml:id');
         var allNames = this._evaluateXPathNodeArray(domNode, 'gml:name');
         var elevationUom = this._evaluateXPathString(domNode, 'gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation/@uomLabels');
@@ -93,9 +93,18 @@ GenericParser.Factory.BoreholeFactory = Ext.extend(GenericParser.Factory.BaseFac
                     fieldLabel : 'Start Point',
                     text : startPoint
                 }]
+            }],
+            buttonAlign : 'right',
+            buttons : [{
+                xtype : 'button',
+                text : 'Download Borehole',
+                iconCls : 'download',
+                handler : function() {
+                    var getXmlUrl = bf._makeFeatureRequestUrl(wfsUrl, 'gsml:Borehole', gmlId);
+                    var url = 'downloadGMLAsZip.do?serviceUrls=' + escape(getXmlUrl);
+                    FileDownloader.downloadFile(url);
+                }
             }]
-            //buttonAlign : 'right',
-            //buttons : []
         });
         return new GenericParser.BaseComponent(rootCfg);
     }
