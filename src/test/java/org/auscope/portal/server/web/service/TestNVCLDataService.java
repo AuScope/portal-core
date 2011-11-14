@@ -1,14 +1,19 @@
 package org.auscope.portal.server.web.service;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.List;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.server.domain.nvcldataservice.GetDatasetCollectionResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetLogCollectionResponse;
+import org.auscope.portal.server.domain.nvcldataservice.MosaicResponse;
+import org.auscope.portal.server.domain.nvcldataservice.PlotScalarResponse;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker;
+import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -94,6 +99,7 @@ public class TestNVCLDataService {
     public void testGetLogCollection() throws Exception {
         final String serviceUrl = "http://example/url";
         final String datasetId = "datasetId";
+        final boolean forMosaicService = true;
         final String responseString = org.auscope.portal.Util.loadXML("src/test/resources/NVCL_GetLogCollectionResponse.xml");
         final ByteArrayInputStream responseStream = new ByteArrayInputStream(responseString.getBytes());
 
@@ -101,17 +107,19 @@ public class TestNVCLDataService {
         context.checking(new Expectations() {{
             allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
 
-            oneOf(mockMethodMaker).getLogCollectionMethod(serviceUrl, datasetId);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).getLogCollectionMethod(serviceUrl, datasetId, forMosaicService);will(returnValue(mockMethod));
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(returnValue(responseStream));
         }});
 
-        List<GetLogCollectionResponse> response = dataService.getLogCollection(serviceUrl, datasetId);
+        List<GetLogCollectionResponse> response = dataService.getLogCollection(serviceUrl, datasetId, forMosaicService);
         Assert.assertNotNull(response);
         Assert.assertEquals(2, response.size());
         Assert.assertEquals("logid-1", response.get(0).getLogId());
         Assert.assertEquals("logname-1", response.get(0).getLogName());
+        Assert.assertEquals(45, response.get(0).getSampleCount());
         Assert.assertEquals("logid-2", response.get(1).getLogId());
         Assert.assertEquals("logname-2", response.get(1).getLogName());
+        Assert.assertEquals(0, response.get(1).getSampleCount());
     }
 
     /**
@@ -122,14 +130,128 @@ public class TestNVCLDataService {
     public void testGetLogCollectionConnectError() throws Exception {
         final String serviceUrl = "http://example/url";
         final String datasetIdentifier = "datasetIdentifier";
+        final boolean forMosaicService = false;
 
         context.checking(new Expectations() {{
             allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
 
-            oneOf(mockMethodMaker).getLogCollectionMethod(serviceUrl, datasetIdentifier);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).getLogCollectionMethod(serviceUrl, datasetIdentifier, forMosaicService);will(returnValue(mockMethod));
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(throwException(new ConnectException()));
         }});
 
-        dataService.getLogCollection(serviceUrl, datasetIdentifier);
+        dataService.getLogCollection(serviceUrl, datasetIdentifier, forMosaicService);
+    }
+
+    /**
+     * Tests parsing of a GetMosaicResponse
+     * @throws Exception
+     */
+    @Test
+    public void testGetMosaic() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String logId = "logId";
+        final Integer width = 10;
+        final Integer startSampleNo = 11;
+        final Integer endSampleNo = 12;
+        final InputStream responseStream = context.mock(InputStream.class);
+        final String contentType = "text/html";
+
+        final Header mockHeader = context.mock(Header.class);
+
+        context.checking(new Expectations() {{
+            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+
+            oneOf(mockMethodMaker).getMosaicMethod(serviceUrl, logId, width, startSampleNo, endSampleNo);will(returnValue(mockMethod));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(returnValue(responseStream));
+            oneOf(mockMethod).getResponseHeader("Content-Type");will(returnValue(mockHeader));
+            oneOf(mockHeader).getValue();will(returnValue(contentType));
+        }});
+
+        MosaicResponse response = dataService.getMosaic(serviceUrl, logId, width, startSampleNo, endSampleNo);
+        Assert.assertNotNull(response);
+        Assert.assertSame(responseStream, response.getResponse());
+        Assert.assertEquals(contentType, response.getContentType());
+    }
+
+    /**
+     * Tests parsing of a GetMosaicResponse fails when we fail to connect to the service
+     * @throws Exception
+     */
+    @Test(expected=ConnectException.class)
+    public void testGetMosaicConnectError() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String logId = "logId";
+        final Integer width = 10;
+        final Integer startSampleNo = 11;
+        final Integer endSampleNo = 12;
+
+        context.checking(new Expectations() {{
+            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+
+            oneOf(mockMethodMaker).getMosaicMethod(serviceUrl, logId, width, startSampleNo, endSampleNo);will(returnValue(mockMethod));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(throwException(new ConnectException()));
+
+        }});
+
+        dataService.getMosaic(serviceUrl, logId, width, startSampleNo, endSampleNo);
+    }
+
+    /**
+     * Tests parsing of a PlotScalarResponse
+     * @throws Exception
+     */
+    @Test
+    public void testGetPlotScalar() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String logId = "logId";
+        final Integer width = 10;
+        final Integer height = 9;
+        final Integer startDepth = 11;
+        final Integer endDepth = 12;
+        final Double samplingInterval = 1.5;
+        final PlotScalarGraphType graphType = PlotScalarGraphType.ScatteredChart;
+        final InputStream responseStream = context.mock(InputStream.class);
+        final String contentType = "text/html";
+
+        final Header mockHeader = context.mock(Header.class);
+
+        context.checking(new Expectations() {{
+            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+
+            oneOf(mockMethodMaker).getPlotScalarMethod(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);will(returnValue(mockMethod));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(returnValue(responseStream));
+            oneOf(mockMethod).getResponseHeader("Content-Type");will(returnValue(mockHeader));
+            oneOf(mockHeader).getValue();will(returnValue(contentType));
+        }});
+
+        PlotScalarResponse response = dataService.getPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);
+        Assert.assertNotNull(response);
+        Assert.assertSame(responseStream, response.getResponse());
+        Assert.assertEquals(contentType, response.getContentType());
+    }
+
+    /**
+     * Tests parsing of a GetMosaicResponse fails when we fail to connect to the service
+     * @throws Exception
+     */
+    @Test(expected=ConnectException.class)
+    public void testGetPlotScalarError() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String logId = "logId";
+        final Integer width = 10;
+        final Integer height = 9;
+        final Integer startDepth = 11;
+        final Integer endDepth = 12;
+        final Double samplingInterval = 1.5;
+        final PlotScalarGraphType graphType = PlotScalarGraphType.ScatteredChart;
+
+        context.checking(new Expectations() {{
+            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+
+            oneOf(mockMethodMaker).getPlotScalarMethod(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);will(returnValue(mockMethod));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(throwException(new ConnectException()));
+        }});
+
+        dataService.getPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);
     }
 }

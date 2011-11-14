@@ -1,6 +1,10 @@
 package org.auscope.portal.server.web.controllers;
 
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -165,5 +169,23 @@ public abstract class BasePortalController {
         }
 
         return debugInfo;
+    }
+
+    /**
+     * Writes output to input via an in memory buffer of a certain size
+     * @param input The input stream
+     * @param output The output stream (will receive input's bytes)
+     * @param bufferSize The size (in bytes) of the in memory buffer
+     * @throws IOException
+     */
+    protected void writeInputToOutputStream(InputStream input, OutputStream output, int bufferSize) throws IOException {
+        byte[] buffer = new byte[bufferSize];
+        int dataRead;
+        do {
+            dataRead = input.read(buffer, 0, buffer.length);
+            if (dataRead > 0) {
+                output.write(buffer, 0, dataRead);
+            }
+        } while (dataRead != -1);
     }
 }

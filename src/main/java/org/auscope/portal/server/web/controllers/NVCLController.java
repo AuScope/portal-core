@@ -1,5 +1,7 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
@@ -8,11 +10,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpStatus;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.nvcldataservice.AbstractStreamResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetDatasetCollectionResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetLogCollectionResponse;
+import org.auscope.portal.server.domain.nvcldataservice.MosaicResponse;
+import org.auscope.portal.server.domain.nvcldataservice.PlotScalarResponse;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.ErrorMessages;
+import org.auscope.portal.server.web.NVCLDataServiceMethodMaker;
+import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
@@ -159,10 +167,11 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
      */
     @RequestMapping("getNVCLLogs.do")
     public ModelAndView getNVCLLogs(@RequestParam("serviceUrl") String serviceUrl,
-            @RequestParam("datasetId") String datasetId) {
+            @RequestParam("datasetId") String datasetId,
+            @RequestParam("mosaicService") Boolean forMosaicService) {
         List<GetLogCollectionResponse> responseObjs = null;
         try {
-            responseObjs = dataService.getLogCollection(serviceUrl, datasetId);
+            responseObjs = dataService.getLogCollection(serviceUrl, datasetId, forMosaicService);
 
             return generateJSONResponseMAV(true, responseObjs, "");
         } catch (Exception ex) {
@@ -172,19 +181,102 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
     }
 
     /**
-     * A proxy for handling GET request.
-     *
-     * @param serviceUrl the url of the service to query
-     * @throws Exception
+     * Utility function for piping the contents of serviceResponse to servletResponse
      */
-    @RequestMapping("HttpGetXmlProxy.do")
-    public void HttpGetXmlProxy(@RequestParam("serviceUrl") String serviceUrl,
+    private void writeStreamResponse(HttpServletResponse servletResponse, AbstractStreamResponse serviceResponse) throws IOException {
+        InputStream serviceInputStream = serviceResponse.getResponse();
+        OutputStream responseOutput = null;
+
+        //write our response
+        try {
+            servletResponse.setContentType(serviceResponse.getContentType());
+            responseOutput = servletResponse.getOutputStream();
+
+            writeInputToOutputStream(serviceInputStream, responseOutput, 1024 * 1024);
+        } finally {
+            if (serviceInputStream != null) {
+                serviceInputStream.close();
+            }
+            if (responseOutput != null) {
+                responseOutput.close();
+            }
+        }
+    }
+
+    /**
+     * Proxies a NVCL Mosaic request for mosaic imagery. Writes directly to the HttpServletResponse
+     * @param serviceUrl The URL of an NVCL Data service
+     * @param logId The unique ID of a log (from a getNVCLLogs.do request)
+     * @return
+     */
+    @RequestMapping("getNVCLMosaic.do")
+    public void getNVCLMosaic(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("logId") String logId,
+            @RequestParam(required=false,value="width") Integer width,
+            @RequestParam(required=false,value="startSampleNo") Integer startSampleNo,
+            @RequestParam(required=false,value="endSampleNo") Integer endSampleNo,
             HttpServletResponse response) throws Exception {
-        // set the content type for xml files
-        response.setContentType("text/xml");
-        // create the output stream
-        OutputStream out = (response.getOutputStream());
-        String xml = httpServiceCaller.callHttpUrlGET(new URL(serviceUrl));
-        out.write(xml.getBytes());
+
+        //Make our request
+        MosaicResponse serviceResponse = null;
+        try {
+            serviceResponse = dataService.getMosaic(serviceUrl, logId, width, startSampleNo, endSampleNo);
+        } catch (Exception ex) {
+            log.warn("Unable to request log collection", ex);
+            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        writeStreamResponse(response, serviceResponse);
+    }
+
+    /**
+     * Proxies a NVCL Plot Scalar request. Writes directly to the HttpServletResponse
+     * @param serviceUrl The URL of an NVCL Data service
+     * @param logId The unique ID of a log (from a getNVCLLogs.do request)
+     * @return
+     */
+    @RequestMapping("getNVCLPlotScalar.do")
+    public void getNVCLPlotScalar(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("logId") String logId,
+            @RequestParam(required=false,value="startDepth") Integer startDepth,
+            @RequestParam(required=false,value="endDepth") Integer endDepth,
+            @RequestParam(required=false,value="width") Integer width,
+            @RequestParam(required=false,value="height") Integer height,
+            @RequestParam(required=false,value="samplingInterval") Double samplingInterval,
+            @RequestParam(required=false,value="graphType") Integer graphTypeInt,
+            HttpServletResponse response) throws Exception {
+
+        //Parse our graph type
+        NVCLDataServiceMethodMaker.PlotScalarGraphType graphType = null;
+        if (graphTypeInt != null) {
+            switch(graphTypeInt) {
+            case 1:
+                graphType = PlotScalarGraphType.StackedBarChart;
+                break;
+            case 2:
+                graphType = PlotScalarGraphType.ScatteredChart;
+                break;
+            case 3:
+                graphType = PlotScalarGraphType.LineChart;
+                break;
+            default:
+                log.warn("Inalid graphType: " + graphTypeInt);
+                response.sendError(HttpStatus.SC_BAD_REQUEST);
+                return;
+            }
+        }
+
+        //Make our request
+        PlotScalarResponse serviceResponse = null;
+        try {
+            serviceResponse = dataService.getPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);
+        } catch (Exception ex) {
+            log.warn("Unable to request log collection", ex);
+            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        writeStreamResponse(response, serviceResponse);
     }
 }

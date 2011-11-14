@@ -1,5 +1,6 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ConnectException;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
@@ -25,7 +27,11 @@ import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.nvcldataservice.GetDatasetCollectionResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetLogCollectionResponse;
+import org.auscope.portal.server.domain.nvcldataservice.MosaicResponse;
+import org.auscope.portal.server.domain.nvcldataservice.PlotScalarResponse;
+import org.auscope.portal.server.util.ByteBufferedServletOutputStream;
 import org.auscope.portal.server.util.GmlToKml;
+import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
@@ -329,23 +335,6 @@ public class TestNVCLController {
         Assert.assertFalse((Boolean) response.getModel().get("success"));
     }
 
-    @Test
-    public void testHttpGetXmlProxy() throws Exception {
-        final String response = "<?xml version='1.0' encoding='utf-8'?><LogCollection>"
-                + "<Log><LogID>c842eb6c-2848-43e0-9861-72da4e8969d</LogID>"
-                + "<logName>Min1 uTSAS</logName></Log></LogCollection>";
-        final ServletOutputStream out = context.mock(ServletOutputStream.class);
-
-        context.checking(new Expectations() {{
-            oneOf(mockHttpResponse).setContentType("text/xml");
-            oneOf(mockHttpResponse).getOutputStream();will(returnValue(out));
-            oneOf(mockHttpServiceCaller).callHttpUrlGET(with(any(URL.class)));will(returnValue(response));
-            oneOf(out).write(with(response.getBytes()));
-        }});
-
-        this.nvclController.HttpGetXmlProxy("http://www.testUrl.org", mockHttpResponse);
-    }
-
     /**
      * Tests getting dataset collection succeeds if underlying service succeeds.
      * @throws Exception
@@ -392,13 +381,14 @@ public class TestNVCLController {
     public void testGetLogCollection() throws Exception {
         final String serviceUrl = "http://example/url";
         final String datasetId = "unique-id";
+        final Boolean mosaicService = true;
         final List<GetLogCollectionResponse> responseObjs = Arrays.asList(context.mock(GetLogCollectionResponse.class));
 
         context.checking(new Expectations() {{
-            oneOf(mockDataService).getLogCollection(serviceUrl, datasetId);will(returnValue(responseObjs));
+            oneOf(mockDataService).getLogCollection(serviceUrl, datasetId, mosaicService);will(returnValue(responseObjs));
         }});
 
-        ModelAndView response = this.nvclController.getNVCLLogs(serviceUrl, datasetId);
+        ModelAndView response = this.nvclController.getNVCLLogs(serviceUrl, datasetId, mosaicService);
         Assert.assertNotNull(response);
         Assert.assertTrue((Boolean)response.getModel().get("success"));
         Assert.assertSame(responseObjs, response.getModel().get("data"));
@@ -412,13 +402,131 @@ public class TestNVCLController {
     public void testGetLogCollectionError() throws Exception {
         final String serviceUrl = "http://example/url";
         final String datasetIdentifier = "unique-id";
+        final Boolean mosaicService = false;
 
         context.checking(new Expectations() {{
-            oneOf(mockDataService).getLogCollection(serviceUrl, datasetIdentifier);will(throwException(new ConnectException()));
+            oneOf(mockDataService).getLogCollection(serviceUrl, datasetIdentifier, mosaicService);will(throwException(new ConnectException()));
         }});
 
-        ModelAndView response = this.nvclController.getNVCLLogs(serviceUrl, datasetIdentifier);
+        ModelAndView response = this.nvclController.getNVCLLogs(serviceUrl, datasetIdentifier, mosaicService);
         Assert.assertNotNull(response);
         Assert.assertFalse((Boolean)response.getModel().get("success"));
     }
+
+    /**
+     * Tests getting mosaic.
+     * @throws Exception
+     */
+    @Test
+    public void testGetMosaic() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String logId = "unique-id";
+        final Integer width = 1;
+        final Integer start = 2;
+        final Integer end = 3;
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+        final String contentType = "image/jpeg";
+        final MosaicResponse mockMosaicResponse = context.mock(MosaicResponse.class);
+
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(data.length);
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getMosaic(serviceUrl, logId, width, start, end);will(returnValue(mockMosaicResponse));
+
+            oneOf(mockHttpResponse).setContentType(contentType);
+            oneOf(mockHttpResponse).getOutputStream();will(returnValue(outputStream));
+
+            allowing(mockMosaicResponse).getContentType();will(returnValue(contentType));
+            allowing(mockMosaicResponse).getResponse();will(returnValue(inputStream));
+        }});
+
+        this.nvclController.getNVCLMosaic(serviceUrl, logId, width, start, end, mockHttpResponse);
+        Assert.assertArrayEquals(data, outputStream.toByteArray());
+    }
+
+    /**
+     * Tests getting mosaic fails gracefully when the service fails.
+     * @throws Exception
+     */
+    @Test
+    public void testGetMosaicConnectException() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String logId = "unique-id";
+        final Integer width = 1;
+        final Integer start = 2;
+        final Integer end = 3;
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getMosaic(serviceUrl, logId, width, start, end);will(throwException(new ConnectException()));
+
+            oneOf(mockHttpResponse).sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        }});
+
+        this.nvclController.getNVCLMosaic(serviceUrl, logId, width, start, end, mockHttpResponse);
+    }
+
+    /**
+     * Tests getting PlotScalar.
+     * @throws Exception
+     */
+    @Test
+    public void testGetPlotScalar() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String logId = "unique-id";
+        final Integer width = 1;
+        final Integer height = 2;
+        final Integer startDepth = 3;
+        final Integer endDepth = 4;
+        final Double samplingInterval = 1.5;
+        final Integer graphTypeInt = 2;
+        final PlotScalarGraphType graphType = PlotScalarGraphType.ScatteredChart;
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+        final String contentType = "image/jpeg";
+        final PlotScalarResponse mockPlotScalarResponse = context.mock(PlotScalarResponse.class);
+
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(data.length);
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);will(returnValue(mockPlotScalarResponse));
+
+            oneOf(mockHttpResponse).setContentType(contentType);
+            oneOf(mockHttpResponse).getOutputStream();will(returnValue(outputStream));
+
+            allowing(mockPlotScalarResponse).getContentType();will(returnValue(contentType));
+            allowing(mockPlotScalarResponse).getResponse();will(returnValue(inputStream));
+        }});
+
+        this.nvclController.getNVCLPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphTypeInt, mockHttpResponse);
+        Assert.assertArrayEquals(data, outputStream.toByteArray());
+    }
+
+    /**
+     * Tests getting PlotScalar fails correctly.
+     * @throws Exception
+     */
+    @Test
+    public void testGetPlotScalarError() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String logId = "unique-id";
+        final Integer width = 1;
+        final Integer height = 2;
+        final Integer startDepth = 3;
+        final Integer endDepth = 4;
+        final Double samplingInterval = 1.5;
+        final Integer graphTypeInt = 1;
+        final PlotScalarGraphType graphType = PlotScalarGraphType.StackedBarChart;
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);will(throwException(new ConnectException()));
+
+            oneOf(mockHttpResponse).sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        }});
+
+        this.nvclController.getNVCLPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphTypeInt, mockHttpResponse);
+    }
+
+
 }

@@ -255,14 +255,7 @@ public class WCSController extends BasePortalController {
             zout.putNextEntry(new ZipEntry(outputFileName));
 
             //Read the input in 1MB chunks and don't stop till we run out of data
-            byte[] buffer = new byte[1024 * 1024];
-            int dataRead;
-            do {
-                dataRead = inData.read(buffer, 0, buffer.length);
-                if (dataRead > 0) {
-                    zout.write(buffer, 0, dataRead);
-                }
-            } while (dataRead != -1);
+            writeInputToOutputStream(inData, zout, 1024 * 1024);
 
             zout.finish();
             zout.flush();

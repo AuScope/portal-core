@@ -3,6 +3,7 @@
     <Log>
       <LogID>logid-1</LogID>
       <logName>logname-1</logName>
+      <SampleCount>45</SampleCount>
     </Log>
     <Log>
       <LogID>logid-2</LogID>

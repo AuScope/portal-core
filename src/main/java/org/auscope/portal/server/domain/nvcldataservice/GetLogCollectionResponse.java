@@ -10,15 +10,18 @@ import java.io.Serializable;
 public class GetLogCollectionResponse implements Serializable {
     String logId;
     String logName;
+    int sampleCount;
 
     /**
      * Creates a new instance
      * @param logId The unique ID for the logged analyte
      * @param logName The logged analyte name
+     * @param sampleCount The logged sample count
      */
-    public GetLogCollectionResponse(String logId, String logName) {
+    public GetLogCollectionResponse(String logId, String logName, int sampleCount) {
         this.logId = logId;
         this.logName = logName;
+        this.sampleCount = sampleCount;
     }
 
     /**
@@ -52,6 +55,23 @@ public class GetLogCollectionResponse implements Serializable {
     public void setLogName(String logName) {
         this.logName = logName;
     }
+
+    /**
+     * Gets the sample count (if specified) otherwise will be 0
+     * @return
+     */
+    public int getSampleCount() {
+        return sampleCount;
+    }
+
+    /**
+     * Sets the sample count. If N/A set to 0
+     * @param sampleCount
+     */
+    public void setSampleCount(int sampleCount) {
+        this.sampleCount = sampleCount;
+    }
+
 
 
 }
