@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ConnectException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,7 @@ import org.auscope.portal.server.domain.nvcldataservice.PlotScalarResponse;
 import org.auscope.portal.server.util.ByteBufferedServletOutputStream;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
+import org.auscope.portal.server.web.KnownLayerWFS;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
@@ -87,6 +89,12 @@ public class TestNVCLController {
     /** The nvcl controller. */
     private NVCLController nvclController;
 
+    /** The known boreholes */
+    private KnownLayerWFS mockBorehole;
+
+    /** The known boreholes2*/
+    private KnownLayerWFS mockBorehole2;
+
     /** The context. */
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
@@ -108,8 +116,12 @@ public class TestNVCLController {
         this.mockCSWService = context.mock(CSWCacheService.class);
         this.mockHttpClient = context.mock(HttpClient.class);
         this.mockDataService = context.mock(NVCLDataService.class);
-
-        this.nvclController = new NVCLController(this.mockGmlToKml, this.mockBoreholeService, this.mockHttpServiceCaller, this.mockCSWService, this.mockDataService);
+        this.mockBorehole = context.mock(KnownLayerWFS.class,"first");
+        this.mockBorehole2 = context.mock(KnownLayerWFS.class,"second");
+        ArrayList<KnownLayerWFS> mockBoreholes=new ArrayList<KnownLayerWFS>();
+        mockBoreholes.add(mockBorehole);
+        mockBoreholes.add(mockBorehole2);
+        this.nvclController = new NVCLController(this.mockGmlToKml, this.mockBoreholeService, this.mockHttpServiceCaller, this.mockCSWService, this.mockDataService,mockBoreholes);
     }
 
     /**
@@ -529,4 +541,94 @@ public class TestNVCLController {
     }
 
 
+
+    /**
+     * Tests to ensure that a serviceFilter request returns correctly.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    public void testServiceFilterReturns() throws Exception {
+        final String serviceUrl = "http://fake.com/wfs";
+        final String serviceFilter="fake.com";
+        final String nameFilter = "filterBob";
+        final String custodianFilter = "filterCustodian";
+        final String filterDate = "1986-10-09";
+        final int maxFeatures = 10;
+        final String nvclWfsResponse = "wfsResponse";
+        final String nvclKmlResponse = "kmlResponse";
+        final String onlyHylogger = "off";
+        final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
+        final URI httpMethodURI = new URI("http://example.com", true);
+
+        context.checking(new Expectations() {{
+            oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, null, null);
+            will(returnValue(mockHttpMethodBase));
+
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
+            will(returnValue(nvclWfsResponse));
+
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));
+            will(returnValue(nvclKmlResponse));
+
+            allowing(mockHttpMethodBase).getURI();
+            will(returnValue(httpMethodURI));
+
+            allowing(mockHttpRequest).getSession();
+            will(returnValue(mockHttpSession));
+
+            allowing(mockHttpSession).getServletContext();
+            will(returnValue(mockServletContext));
+
+            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
+            will(returnValue(null));
+        }});
+
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures,"", onlyHylogger,serviceFilter, mockHttpRequest);
+        Assert.assertTrue((Boolean) response.getModel().get("success"));
+
+        Map data = (Map) response.getModel().get("data");
+        Assert.assertNotNull(data);
+        Assert.assertEquals(nvclWfsResponse, data.get("gml"));
+        Assert.assertEquals(nvclKmlResponse, data.get("kml"));
+    }
+
+    @Test
+    public void testServiceFilterReturnsEmptyMAV() throws Exception {
+        final String serviceUrl = "http://fake.com/wfs";
+        final String serviceFilter="fakeNOT.com";
+        final String nameFilter = "filterBob";
+        final String custodianFilter = "filterCustodian";
+        final String filterDate = "1986-10-09";
+        final int maxFeatures = 10;
+        final String onlyHylogger = "off";
+
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures,"", onlyHylogger,serviceFilter, mockHttpRequest);
+        Map data = (Map) response.getModel().get("data");
+        Assert.assertNull(data);
+    }
+
+    @Test
+    public void testGetBoreholeServices() throws MalformedURLException{
+        final String [] urls={"http://url1.com.au/test","http://url2.com.au/test","http://url3.com.au/test"};
+        final String [] wrongUrls={"http://wrong1.com/no/test","http://wrong2.com/no/test"};
+        final String title="testTitle";
+        context.checking(new Expectations() {{
+         oneOf(mockBorehole).getTitle();
+         will(returnValue(title));
+         oneOf(mockBorehole2).getTitle();
+         will(returnValue("Wrong Title"));
+         oneOf(mockBorehole).getServiceEndpoints();
+         will(returnValue(urls));
+         oneOf(mockBorehole2).getServiceEndpoints();
+         will(returnValue(wrongUrls));
+        }});
+
+        ModelAndView response = this.nvclController.getBoreholeServices(title);
+        ArrayList data = (ArrayList) response.getModel().get("data");
+        Assert.assertEquals(urls.length,data.size());
+
+    }
 }

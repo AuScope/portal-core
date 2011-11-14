@@ -3,7 +3,9 @@ package org.auscope.portal.server.web.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,13 +22,16 @@ import org.auscope.portal.server.domain.nvcldataservice.PlotScalarResponse;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker;
+import org.auscope.portal.server.web.KnownLayerWFS;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.NVCLDataService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -42,22 +47,49 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
     private BoreholeService boreholeService;
     private NVCLDataService dataService;
     private CSWCacheService cswService;
+    private ArrayList<KnownLayerWFS> boreholes;
 
     @Autowired
     public NVCLController(GmlToKml gmlToKml,
                             BoreholeService boreholeService,
                             HttpServiceCaller httpServiceCaller,
                             CSWCacheService cswService,
-                            NVCLDataService dataService) {
+                            NVCLDataService dataService,
+                            @Qualifier("knownTypeBorehole") ArrayList<KnownLayerWFS> boreholes) {
 
         this.boreholeService = boreholeService;
         this.gmlToKml = gmlToKml;
         this.httpServiceCaller = httpServiceCaller;
         this.cswService = cswService;
         this.dataService = dataService;
+        this.boreholes=boreholes;
     }
 
+    /**
+     * Handles the request for all the service urls for boreholes linked to a title
+     *
+     * @param title the title as specified on the UI for the borehole
+     * @return ModelAndView a standard reply of all the service urls
+     * @throws MalformedURLException
+     */
+    @RequestMapping("/getBoreholeServices.do")
+    public ModelAndView getBoreholeServices(@RequestParam("title") String title) throws MalformedURLException{
+        //String title="National Virtual Core Library";
 
+        String[] urls=null;
+        List<ModelMap> response = new ArrayList<ModelMap>();
+        for(KnownLayerWFS borehole:boreholes){
+            if(borehole.getTitle().equals(title) && (urls=borehole.getServiceEndpoints())!=null){
+                for (String url : urls) {
+                    ModelMap modelMap = new ModelMap();
+                    modelMap.put("url", (new URL(url)).getHost());
+                    response.add(modelMap);
+                }
+
+            }
+        }
+        return generateJSONResponseMAV(true, response, "");
+    }
 
     /**
      * Handles the borehole filter queries.
@@ -76,8 +108,12 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
                                       @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
                                       @RequestParam(required=false, value="bbox") String bboxJson,
                                       @RequestParam(required=false, value="onlyHylogger") String onlyHyloggerString,
+                                      @RequestParam(required=false, value="serviceFilter", defaultValue="")String serviceFilter,
                                       HttpServletRequest request) throws Exception {
 
+        if(!serviceFilter.equals("") && !(new URL(serviceUrl).getHost()).equalsIgnoreCase(serviceFilter)){
+            return this.generateJSONResponseMAV(false);
+        }
         boolean onlyHylogger = false;
         if (onlyHyloggerString != null && onlyHyloggerString.length() > 0) {
             if (onlyHyloggerString.equals("on")) {

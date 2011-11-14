@@ -5,10 +5,10 @@
  */
 
 BoreholeFilterForm = function(id) {
-	
-	this.isFormLoaded = true; //We aren't reliant on any remote downloads
-	
-	BoreholeFilterForm.superclass.constructor.call(this, {
+
+    this.isFormLoaded = true; //We aren't reliant on any remote downloads
+
+    BoreholeFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
         border      : false,
         autoScroll  : true,
@@ -27,29 +27,29 @@ BoreholeFilterForm = function(id) {
             autoHeight : true,
             items      : [
             {
-            	anchor     : '95%',
-            	itemId     : 'name-field',
+                anchor     : '95%',
+                itemId     : 'name-field',
                 xtype      : 'textfield',
                 fieldLabel : 'Name',
                 name       : 'boreholeName'
             },
             {
-            	anchor     : '95%',
-            	itemId     : 'custodian-field',
+                anchor     : '95%',
+                itemId     : 'custodian-field',
                 xtype      : 'textfield',
                 fieldLabel : 'Custodian',
                 name       : 'custodian'
             },
             {
-            	anchor     : '95%',
-            	itemId     : 'drillingdate-field',
+                anchor     : '95%',
+                itemId     : 'drillingdate-field',
                 xtype      : 'textfield',
                 fieldLabel : 'Date',
                 name       : 'dateOfDrilling'
             }
             ]
         }]
-	});
+    });
     //return thePanel;
 };
 
