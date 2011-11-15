@@ -50,17 +50,19 @@ public class NVCLDataServiceMethodMaker extends AbstractMethodMaker {
      * Generates a method for making a request for all NVCL logged elements that belong to a particular dataset
      * @param serviceUrl The URL of the NVCLDataService
      * @param datasetId The dataset ID to query
-     * @param forMosaicService indicates if the getLogCollection service should generate a result specifically for the use of a Mosaic Service
+     * @param forMosaicService [Optional] indicates if the getLogCollection service should generate a result specifically for the use of a Mosaic Service
      * @return
      */
-    public HttpMethodBase getLogCollectionMethod(String serviceUrl, String datasetId, boolean forMosaicService) {
+    public HttpMethodBase getLogCollectionMethod(String serviceUrl, String datasetId, Boolean forMosaicService) {
         GetMethod method = new GetMethod(urlPathConcat(serviceUrl, "getLogCollection.html"));
 
         ArrayList<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 
         //set all of the parameters
         valuePairs.add(new NameValuePair("datasetid", datasetId));
-        valuePairs.add(new NameValuePair("mosaicsvc", forMosaicService ? "yes" : "no"));
+        if (forMosaicService != null) {
+            valuePairs.add(new NameValuePair("mosaicsvc", forMosaicService.booleanValue() ? "yes" : "no"));
+        }
 
         //attach them to the method
         method.setQueryString((NameValuePair[]) valuePairs.toArray(new NameValuePair[valuePairs.size()]));
