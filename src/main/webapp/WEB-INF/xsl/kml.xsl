@@ -425,53 +425,6 @@
       </Placemark>
    </xsl:template>
 
-
-   <!-- TEMPLATE FOR TRANSLATING NVCL -->
-   <!-- ================================================================= -->
-   <xsl:template match="gml:featureMembers/gsml:Borehole" priority="100">
-
-      <xsl:variable name="coordinates">
-         <xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
-      </xsl:variable>
-
-      <xsl:variable name="rawId">
-         <xsl:value-of select="./gml:name[@codeSpace='http://www.ietf.org/rfc/rfc2616']"/>
-      </xsl:variable>
-
-      <xsl:variable name="idTokens" select="tokenize($rawId, '/')"/>
-
-      <xsl:variable name="clickyName">
-            <xsl:call-template name="make-popup-url">
-                <xsl:with-param name="friendly-name" select="./gml:name[@codeSpace!='http://www.ietf.org/rfc/rfc2616']"/>
-                <xsl:with-param name="real-url" select="$rawId"/>
-            </xsl:call-template>
-      </xsl:variable>
-
-
-
-
-      <Placemark>
-         <name><xsl:value-of select="$idTokens[last()]"/></name>
-         <description>
-            <xsl:call-template name="start-table"></xsl:call-template>
-            <![CDATA[<tr><td>Borehole Name</td><td>]]><xsl:value-of select="$clickyName"/>
-            <![CDATA[</td></tr><tr><td>Location</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point/gml:pos"/>
-            <![CDATA[</td></tr><tr><td>Elevation (]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation/@uomLabels"/><![CDATA[)</td><td>]]><xsl:value-of select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:elevation"/>
-            <![CDATA[</td></tr><tr><td>Start Depth (m)</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:lowerCorner"/>
-            <![CDATA[</td></tr><tr><td>End Depth (m)</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coredInterval/gml:Envelope/gml:upperCorner"/>
-            <![CDATA[</td></tr><tr><td>Core Custodian</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:coreCustodian/@xlink:title"/>
-            <![CDATA[</td></tr><tr><td>Drilling Co.</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:driller/@xlink:title"/>
-            <![CDATA[</td></tr><tr><td>Drilling Date</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:dateOfDrilling"/>
-            <![CDATA[</td></tr><tr><td>Drilling Method</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:drillingMethod"/>
-            <![CDATA[</td></tr><tr><td>Inclination Type</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:inclinationType"/>
-            <![CDATA[</td></tr><tr><td>Start Point</td><td>]]><xsl:value-of select="./gsml:indexData/gsml:BoreholeDetails/gsml:startPoint"/>
-            <![CDATA[</td></tr></table></div>]]>
-         </description>
-
-         <xsl:apply-templates select="./gsml:collarLocation/gsml:BoreholeCollar/gsml:location/gml:Point"/>
-      </Placemark>
-   </xsl:template>
-
     <!--TEMPLATE FOR TRANSLATING A GENERIC INPUT-->
     <!-- ================================================================= -->
     <xsl:template match="gml:featureMembers/* | gml:featureMember/*" priority="1">

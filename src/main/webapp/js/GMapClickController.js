@@ -1,6 +1,6 @@
 
 //Returns true if the click has originated from a generic parser layer
-var genericParserClickHandler = function (map, overlay, latlng, parentOnlineResource) {
+var genericParserClickHandler = function (map, overlay, latlng, parentKnownLayer, parentCSWRecord, parentOnlineResource) {
     if (overlay === null || !overlay.description) {
         return false;
     }
@@ -24,29 +24,49 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
         //will be rendered to (after it loads)
         var maxWidth = 600;
         var maxHeight = 300;
-        var divId = 'generic-parser-popup';
-        var html = '<html><body><div id="' + divId + '" style="width: ' + maxWidth + 'px; height: ' + maxHeight  +'px;"></div></body></html>';
+        var summaryDivId = 'generic-parser-summary-popup';
+        var detailsDivId = 'generic-parser-details-popup';
+        var htmlFormat = '<html><body><div id="{0}" style="width: {1}px; height: {2}px;"></div></body></html>';
+        var summaryHtml = String.format(htmlFormat, summaryDivId, maxWidth, maxHeight);
+        var detailsHtml = String.format(htmlFormat, detailsDivId, maxWidth, maxHeight);
+
         var loc = null;
         if (overlay instanceof GMarker) {
             loc = overlay;
         } else {
             loc = overlay.getBounds().getCenter();
         }
+
+        var infoWindowContent = [new GInfoWindowTab('Summary', summaryHtml)];
+
+        //Look for additional content associated with this feature type
+        var kp = new GenericParser.KnownLayerParser();
+        var includeDetailsTab = false;
+        if (kp.canParseKnownLayerFeature(gmlID, parentKnownLayer, parentCSWRecord, parentOnlineResource)) {
+            infoWindowContent.push(new GInfoWindowTab('Details', detailsHtml));
+            includeDetailsTab = true;
+        }
+
         var params = {
-            divId : divId,
+            summaryDivId : summaryDivId,
+            detailsDivId : detailsDivId,
             maxWidth : maxWidth,
             maxHeight : maxHeight,
             wfsUrl : wfsUrl,
             wfsTypeName : wfsTypeName,
-            gmlID : gmlID
+            parentKnownLayer : parentKnownLayer,
+            parentCSWRecord : parentCSWRecord,
+            parentOnlineResource : parentOnlineResource,
+            gmlID : gmlID,
+            includeDetailsTab : includeDetailsTab
         };
         var infoWindowParams = undefined;
 
         //When the window opens, render a generic parser Ext JS panel to the div
-        mapInfoWindowManager.openInfoWindow(loc, html,infoWindowParams, function(map, loc, params) {
+        mapInfoWindowManager.openInfoWindow(loc, infoWindowContent,infoWindowParams, function(map, loc, params) {
 
             //Also ensure that the user sees a loading icon instead of a blank popup
-            var loadMask = new Ext.LoadMask(params.divId, {
+            var loadMask = new Ext.LoadMask(params.summaryDivId, {
                 removeMask : true
             });
             loadMask.show();
@@ -57,7 +77,7 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
                 typeName : params.wfsTypeName,
                 featureId : params.gmlID,
                 rootCfg : {
-                    renderTo : params.divId, //This is crucial, it ensures we bind our parsed component to our empty div
+                    renderTo : params.summaryDivId, //This is crucial, it ensures we bind our parsed component to our empty div
                     width : params.maxWidth,
                     height : params.maxHeight,
                     autoScroll : true
@@ -76,6 +96,18 @@ var genericParserClickHandler = function (map, overlay, latlng, parentOnlineReso
                     });
                 }
             });
+
+            //Additional details tab is optional
+            if (params.includeDetailsTab) {
+                var kp = new GenericParser.KnownLayerParser();
+                kp.parseKnownLayerFeature(params.gmlID, params.parentKnownLayer, params.parentCSWRecord, params.parentOnlineResource, {
+                    renderTo : params.detailsDivId, //This is crucial, it ensures we bind our parsed component to our empty div
+                    width : params.maxWidth,
+                    height : params.maxHeight,
+                    autoScroll : true
+                });
+            }
+
         }, params);
 
         return true;
@@ -139,7 +171,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
     }
 
     //Try to handle a generic parser layer click
-    if (genericParserClickHandler(map,overlay,latlng,parentOnlineResource)) {
+    if (genericParserClickHandler(map,overlay,latlng,parentKnownLayer, parentCSWRecord, parentOnlineResource)) {
         return;
     }
 
@@ -152,15 +184,7 @@ var gMapClickController = function(map, overlay, latlng, overlayLatlng, activeLa
 
 
             if (overlay instanceof GMarker) {
-                //This is a really bad hack to split NVCL and PressureDB
-                if (wfsTypeName === "gsml:Borehole" && wfsUrl.indexOf("pressuredb") >= 0) {
-                    var infoWindow = new PressureDbInfoWindow(map,overlay, wfsUrl);
-                    infoWindow.show();
-                } else if (wfsTypeName === "gsml:Borehole") {
-                    var infoWindow = new NvclInfoWindow(map,overlay, wfsUrl);
-                    infoWindow.show();
-                }
-                else if (wfsTypeName == "ngcp:GnssStation") {
+                if (wfsTypeName == "ngcp:GnssStation") {
                     var marker = new GeodesyMarker(wfsUrl, "geodesy:station_observations", overlay.title, overlay, overlay.description);
                     var clickFn = marker.getMarkerClickedFn();
                     clickFn();
