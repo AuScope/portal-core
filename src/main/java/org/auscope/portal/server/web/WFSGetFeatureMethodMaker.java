@@ -96,10 +96,11 @@ public class WFSGetFeatureMethodMaker {
      * Generates a method for requesting a specific feature for a specific typeName.
      * @param serviceUrl The WFS endpoint
      * @param typeName The typeName to query
-     * @param featureId The ID of typeName to request
+     * @param featureId [Optional] The ID of typeName to request
+     * @param maxFeatures [Optional] The maximum number of features to request
      * @return
      */
-    public HttpMethodBase makeMethod(String serviceUrl, String typeName, String featureId) {
+    private HttpMethodBase makeMethod(String serviceUrl, String typeName, String featureId, Integer maxFeatures) {
         GetMethod method = new GetMethod(serviceUrl);
 
         ArrayList<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
@@ -107,12 +108,39 @@ public class WFSGetFeatureMethodMaker {
         //set all of the parameters
         valuePairs.add(new NameValuePair("request", "GetFeature"));
         valuePairs.add(new NameValuePair("typeName", typeName));
-        valuePairs.add(new NameValuePair("featureId", featureId));
+        if (featureId != null) {
+            valuePairs.add(new NameValuePair("featureId", featureId));
+        }
+        if (maxFeatures != null) {
+            valuePairs.add(new NameValuePair("maxFeatures", maxFeatures.toString()));
+        }
         valuePairs.add(new NameValuePair("version", WFS_VERSION));
 
         //attach them to the method
         method.setQueryString((NameValuePair[]) valuePairs.toArray(new NameValuePair[valuePairs.size()]));
 
         return method;
+    }
+
+    /**
+     * Generates a method for requesting a specific feature for a specific typeName.
+     * @param serviceUrl The WFS endpoint
+     * @param typeName The typeName to query
+     * @param featureId [Optional] The ID of typeName to request
+     * @return
+     */
+    public HttpMethodBase makeMethod(String serviceUrl, String typeName, String featureId) {
+        return makeMethod(serviceUrl, typeName, featureId, null);
+    }
+
+    /**
+     * Generates a method for requesting all instances of a specific feature type.
+     * @param serviceUrl The WFS endpoint
+     * @param typeName The typeName to query
+     * @param maxFeatures [Optional] The maximum number of features to request
+     * @return
+     */
+    public HttpMethodBase makeMethod(String serviceUrl, String typeName, Integer maxFeatures) {
+        return makeMethod(serviceUrl, typeName, null, maxFeatures);
     }
 }

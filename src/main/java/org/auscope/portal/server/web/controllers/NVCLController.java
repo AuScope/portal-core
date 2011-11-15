@@ -15,10 +15,15 @@ import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.nvcldataservice.AbstractStreamResponse;
+import org.auscope.portal.server.domain.nvcldataservice.CSVDownloadResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetDatasetCollectionResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetLogCollectionResponse;
 import org.auscope.portal.server.domain.nvcldataservice.MosaicResponse;
 import org.auscope.portal.server.domain.nvcldataservice.PlotScalarResponse;
+import org.auscope.portal.server.domain.nvcldataservice.TSGDownloadResponse;
+import org.auscope.portal.server.domain.nvcldataservice.TSGStatusResponse;
+import org.auscope.portal.server.domain.nvcldataservice.WFSDownloadResponse;
+import org.auscope.portal.server.domain.nvcldataservice.WFSStatusResponse;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker;
@@ -204,7 +209,7 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
     @RequestMapping("getNVCLLogs.do")
     public ModelAndView getNVCLLogs(@RequestParam("serviceUrl") String serviceUrl,
             @RequestParam("datasetId") String datasetId,
-            @RequestParam("mosaicService") Boolean forMosaicService) {
+            @RequestParam(required=false, value="mosaicService") Boolean forMosaicService) {
         List<GetLogCollectionResponse> responseObjs = null;
         try {
             responseObjs = dataService.getLogCollection(serviceUrl, datasetId, forMosaicService);
@@ -258,7 +263,7 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
         try {
             serviceResponse = dataService.getMosaic(serviceUrl, logId, width, startSampleNo, endSampleNo);
         } catch (Exception ex) {
-            log.warn("Unable to request log collection", ex);
+            log.warn("Unable to get mosaic", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -308,7 +313,157 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
         try {
             serviceResponse = dataService.getPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);
         } catch (Exception ex) {
-            log.warn("Unable to request log collection", ex);
+            log.warn("Unable to plot scalar", ex);
+            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        writeStreamResponse(response, serviceResponse);
+    }
+
+    /**
+     * Proxies a CSV download request to a WFS. Writes directly to the HttpServletResponse
+     * @param serviceUrl The URL of an observation and measurements URL (obtained from a getDatasetCollection response)
+     * @param datasetId The dataset to download
+     * @return
+     */
+    @RequestMapping("getNVCLCSVDownload.do")
+    public void getNVCLCSVDownload(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("datasetId") String datasetId,
+            HttpServletResponse response) throws Exception {
+
+        //Make our request
+        CSVDownloadResponse serviceResponse = null;
+        try {
+            serviceResponse = dataService.getCSVDownload(serviceUrl, datasetId);
+        } catch (Exception ex) {
+            log.warn("Unable to request csv download", ex);
+            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        response.setHeader("Content-Disposition","attachment; filename=GETPUBLISHEDSYSTEMTSA.csv");
+        writeStreamResponse(response, serviceResponse);
+    }
+
+    /**
+     * Proxies a NVCL TSG download request. Writes directly to the HttpServletResponse
+     *
+     * One of (but not both) datasetId and matchString must be specified
+     *
+     * @param serviceUrl The URL of the NVCLDataService
+     * @param email The user's email address
+     * @param datasetId [Optional] a dataset id chosen by user (list of dataset id can be obtained thru calling the get log collection service)
+     * @param matchString [Optional] Its value is part or all of a proper drillhole name. The first dataset found to match in the database is downloaded
+     * @param lineScan [Optional] yes or no. If no then the main image component is not downloaded. The default is yes.
+     * @param spectra [Optional] yes or no. If no then the spectral component is not downloaded. The default is yes.
+     * @param profilometer [Optional] yes or no. If no then the profilometer component is not downloaded. The default is yes.
+     * @param trayPics [Optional] yes or no. If no then the individual tray pictures are not downloaded. The default is yes.
+     * @param mosaicPics [Optional] yes or no. If no then the hole mosaic picture is not downloaded. The default is yes.
+     * @param mapPics [Optional] yes or no. If no then the map pictures are not downloaded. The default is yes.
+     * @return
+     */
+    @RequestMapping("getNVCLTSGDownload.do")
+    public void getNVCLTSGDownload(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("email") String email,
+            @RequestParam(required=false, value="datasetId") String datasetId,
+            @RequestParam(required=false, value="matchString") String matchString,
+            @RequestParam(required=false, value="lineScan") Boolean lineScan,
+            @RequestParam(required=false, value="spectra") Boolean spectra,
+            @RequestParam(required=false, value="profilometer") Boolean profilometer,
+            @RequestParam(required=false, value="trayPics") Boolean trayPics,
+            @RequestParam(required=false, value="mosaicPics") Boolean mosaicPics,
+            @RequestParam(required=false, value="mapPics") Boolean mapPics,
+            HttpServletResponse response) throws Exception {
+
+        //It's likely that the GUI (due to its construction) may send multiple email parameters
+        //Spring condenses this into a single CSV string (which is bad)
+        email = email.split(",")[0];
+
+        //Make our request
+        TSGDownloadResponse serviceResponse = null;
+        try {
+            serviceResponse = dataService.getTSGDownload(serviceUrl, email, datasetId, matchString, lineScan, spectra, profilometer, trayPics, mosaicPics, mapPics);
+        } catch (Exception ex) {
+            log.warn("Unable to request tsg download", ex);
+            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        writeStreamResponse(response, serviceResponse);
+    }
+
+    /**
+     * Proxies a NVCL TSG status request. Writes directly to the HttpServletResponse
+     * @param serviceUrl The URL of the NVCLDataService
+     * @param email The user's email address
+     * @return
+     */
+    @RequestMapping("getNVCLTSGDownloadStatus.do")
+    public void getNVCLTSGDownloadStatus(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("email") String email,
+            HttpServletResponse response) throws Exception {
+
+        //Make our request
+        TSGStatusResponse serviceResponse = null;
+        try {
+            serviceResponse = dataService.checkTSGStatus(serviceUrl, email);
+        } catch (Exception ex) {
+            log.warn("Unable to request tsg status", ex);
+            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        writeStreamResponse(response, serviceResponse);
+    }
+
+    /**
+     * Proxies a NVCL WFS download request. Writes directly to the HttpServletResponse
+     * @param serviceUrl The URL of the NVCLDataService
+     * @param email The user's email address
+     * @param boreholeId selected borehole id (use as feature id for filtering purpose)
+     * @param omUrl The valid url for the Observations and Measurements WFS
+     * @param typeName The url parameter for the wfs request
+     * @return
+     */
+    @RequestMapping("getNVCLWFSDownload.do")
+    public void getNVCLWFSDownload(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("email") String email,
+            @RequestParam("boreholeId") String boreholeId,
+            @RequestParam("omUrl") String omUrl,
+            @RequestParam("typeName") String typeName,
+            HttpServletResponse response) throws Exception {
+
+        //Make our request
+        WFSDownloadResponse serviceResponse = null;
+        try {
+            serviceResponse = dataService.getWFSDownload(serviceUrl, email, boreholeId, omUrl, typeName);
+        } catch (Exception ex) {
+            log.warn("Unable to request wfs download", ex);
+            response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        writeStreamResponse(response, serviceResponse);
+    }
+
+    /**
+     * Proxies a NVCL WFS status request. Writes directly to the HttpServletResponse
+     * @param serviceUrl The URL of the NVCLDataService
+     * @param email The user's email address
+     * @return
+     */
+    @RequestMapping("getNVCLWFSDownloadStatus.do")
+    public void getNVCLWFSDownloadStatus(@RequestParam("serviceUrl") String serviceUrl,
+            @RequestParam("email") String email,
+            HttpServletResponse response) throws Exception {
+
+        //Make our request
+        WFSStatusResponse serviceResponse = null;
+        try {
+            serviceResponse = dataService.checkWFSStatus(serviceUrl, email);
+        } catch (Exception ex) {
+            log.warn("Unable to request wfs status", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }

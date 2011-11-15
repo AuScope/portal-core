@@ -26,10 +26,15 @@ import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.nvcldataservice.CSVDownloadResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetDatasetCollectionResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetLogCollectionResponse;
 import org.auscope.portal.server.domain.nvcldataservice.MosaicResponse;
 import org.auscope.portal.server.domain.nvcldataservice.PlotScalarResponse;
+import org.auscope.portal.server.domain.nvcldataservice.TSGDownloadResponse;
+import org.auscope.portal.server.domain.nvcldataservice.TSGStatusResponse;
+import org.auscope.portal.server.domain.nvcldataservice.WFSDownloadResponse;
+import org.auscope.portal.server.domain.nvcldataservice.WFSStatusResponse;
 import org.auscope.portal.server.util.ByteBufferedServletOutputStream;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
@@ -45,6 +50,7 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -540,7 +546,200 @@ public class TestNVCLController {
         this.nvclController.getNVCLPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphTypeInt, mockHttpResponse);
     }
 
+    /**
+     * Tests a CSV download calls the underlying service correctly
+     * @throws Exception
+     */
+    @Test
+    public void testCSVDownload() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String datasetId = "unique-id";
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+        final String contentType = "text/csv";
+        final CSVDownloadResponse mockResponse = context.mock(CSVDownloadResponse.class);
 
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(data.length);
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getCSVDownload(serviceUrl, datasetId);will(returnValue(mockResponse));
+
+            oneOf(mockHttpResponse).setHeader("Content-Disposition", "attachment; filename=GETPUBLISHEDSYSTEMTSA.csv");//ensure we set our content disposition so the end user doesn't get an ambiguous download
+            oneOf(mockHttpResponse).setContentType(contentType);
+            oneOf(mockHttpResponse).getOutputStream();will(returnValue(outputStream));
+
+            allowing(mockResponse).getContentType();will(returnValue(contentType));
+            allowing(mockResponse).getResponse();will(returnValue(inputStream));
+        }});
+
+        this.nvclController.getNVCLCSVDownload(serviceUrl, datasetId, mockHttpResponse);
+        Assert.assertArrayEquals(data, outputStream.toByteArray());
+    }
+
+    /**
+     * Tests a TSG download calls the underlying service correctly
+     * @throws Exception
+     */
+    @Test
+    public void testTSGDownload() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String email = "email@com";
+        final String datasetId = "did";
+        final String matchString = null;
+        final Boolean lineScan = true;
+        final Boolean spectra = false;
+        final Boolean profilometer = null;
+        final Boolean trayPics = true;
+        final Boolean mosaicPics = false;
+        final Boolean mapPics = true;
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+        final String contentType = "text/html";
+        final TSGDownloadResponse mockResponse = context.mock(TSGDownloadResponse.class);
+
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(data.length);
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getTSGDownload(serviceUrl, email, datasetId, matchString, lineScan, spectra, profilometer, trayPics, mosaicPics, mapPics);will(returnValue(mockResponse));
+
+            oneOf(mockHttpResponse).setContentType(contentType);
+            oneOf(mockHttpResponse).getOutputStream();will(returnValue(outputStream));
+
+            allowing(mockResponse).getContentType();will(returnValue(contentType));
+            allowing(mockResponse).getResponse();will(returnValue(inputStream));
+        }});
+
+        this.nvclController.getNVCLTSGDownload(serviceUrl, email, datasetId, matchString, lineScan, spectra, profilometer, trayPics, mosaicPics, mapPics, mockHttpResponse);
+        Assert.assertArrayEquals(data, outputStream.toByteArray());
+    }
+
+    /**
+     * Tests a workaround for spring framework combining multiple parameters (of the same name) into a CSV
+     * @throws Exception
+     */
+    @Test
+    public void testTSGDownload_MultiEmail() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String emailString = "email@com,email@com";
+        final String email = "email@com";
+        final String datasetId = "did";
+        final String matchString = null;
+        final Boolean lineScan = true;
+        final Boolean spectra = false;
+        final Boolean profilometer = null;
+        final Boolean trayPics = true;
+        final Boolean mosaicPics = false;
+        final Boolean mapPics = true;
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+        final String contentType = "text/html";
+        final TSGDownloadResponse mockResponse = context.mock(TSGDownloadResponse.class);
+
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(data.length);
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getTSGDownload(serviceUrl, email, datasetId, matchString, lineScan, spectra, profilometer, trayPics, mosaicPics, mapPics);will(returnValue(mockResponse));
+
+            oneOf(mockHttpResponse).setContentType(contentType);
+            oneOf(mockHttpResponse).getOutputStream();will(returnValue(outputStream));
+
+            allowing(mockResponse).getContentType();will(returnValue(contentType));
+            allowing(mockResponse).getResponse();will(returnValue(inputStream));
+        }});
+
+        this.nvclController.getNVCLTSGDownload(serviceUrl, emailString, datasetId, matchString, lineScan, spectra, profilometer, trayPics, mosaicPics, mapPics, mockHttpResponse);
+        Assert.assertArrayEquals(data, outputStream.toByteArray());
+    }
+
+    /**
+     * Tests a TSG download status calls the underlying service correctly
+     * @throws Exception
+     */
+    @Test
+    public void testTSGDownloadStatus() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String email = "unique@email";
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+        final String contentType = "text/html";
+        final TSGStatusResponse mockResponse = context.mock(TSGStatusResponse.class);
+
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(data.length);
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).checkTSGStatus(serviceUrl, email);will(returnValue(mockResponse));
+
+            oneOf(mockHttpResponse).setContentType(contentType);
+            oneOf(mockHttpResponse).getOutputStream();will(returnValue(outputStream));
+
+            allowing(mockResponse).getContentType();will(returnValue(contentType));
+            allowing(mockResponse).getResponse();will(returnValue(inputStream));
+        }});
+
+        this.nvclController.getNVCLTSGDownloadStatus(serviceUrl, email, mockHttpResponse);
+        Assert.assertArrayEquals(data, outputStream.toByteArray());
+    }
+
+    /**
+     * Tests a WFS download calls the underlying service correctly
+     * @throws Exception
+     */
+    @Test
+    public void testWFSDownload() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String email = "email@com";
+        final String boreholeId = "bid";
+        final String omUrl = "http://test/wfs";
+        final String typeName = "type:Name";
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+        final String contentType = "text/html";
+        final WFSDownloadResponse mockResponse = context.mock(WFSDownloadResponse.class);
+
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(data.length);
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).getWFSDownload(serviceUrl, email, boreholeId, omUrl, typeName);will(returnValue(mockResponse));
+
+            oneOf(mockHttpResponse).setContentType(contentType);
+            oneOf(mockHttpResponse).getOutputStream();will(returnValue(outputStream));
+
+            allowing(mockResponse).getContentType();will(returnValue(contentType));
+            allowing(mockResponse).getResponse();will(returnValue(inputStream));
+        }});
+
+        this.nvclController.getNVCLWFSDownload(serviceUrl, email, boreholeId, omUrl, typeName, mockHttpResponse);
+        Assert.assertArrayEquals(data, outputStream.toByteArray());
+    }
+
+    /**
+     * Tests a WFS download status calls the underlying service correctly
+     * @throws Exception
+     */
+    @Test
+    public void testWFSDownloadStatus() throws Exception {
+        final String serviceUrl = "http://example/url";
+        final String email = "unique@email";
+        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
+        final String contentType = "text/html";
+        final WFSStatusResponse mockResponse = context.mock(WFSStatusResponse.class);
+
+        final ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+        final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(data.length);
+
+        context.checking(new Expectations() {{
+            oneOf(mockDataService).checkWFSStatus(serviceUrl, email);will(returnValue(mockResponse));
+
+            oneOf(mockHttpResponse).setContentType(contentType);
+            oneOf(mockHttpResponse).getOutputStream();will(returnValue(outputStream));
+
+            allowing(mockResponse).getContentType();will(returnValue(contentType));
+            allowing(mockResponse).getResponse();will(returnValue(inputStream));
+        }});
+
+        this.nvclController.getNVCLWFSDownloadStatus(serviceUrl, email, mockHttpResponse);
+        Assert.assertArrayEquals(data, outputStream.toByteArray());
+    }
 
     /**
      * Tests to ensure that a serviceFilter request returns correctly.

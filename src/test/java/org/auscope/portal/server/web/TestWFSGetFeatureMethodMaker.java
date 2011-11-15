@@ -17,27 +17,36 @@ import org.junit.Test;
 public class TestWFSGetFeatureMethodMaker {
 
     /**
-     * Tests that the given HttpMethodBase (representing a WFS request) is making a request
-     * using the specified WFS version
+     * Tests that the given HttpMethodBase (representing a WFS request) contains
+     * a parameter of a specific value
      *
      * Throws an exception if this function cannot decipher the type of HTTP method
-     * @param wfsRequest
-     * @param expectedVersion
+     * @param paramName the parameter to check for
+     * @param paramValue [Optional] if specified, the value of paramName (if not specified the existence of paramName will be tested)
      * @throws URIException
      */
-    private boolean testWFSVersion(HttpMethodBase wfsRequest, String expectedVersion) throws URIException {
+    private boolean testWFSParam(HttpMethodBase wfsRequest, String paramName, String paramValue) throws URIException {
         //Get methods involve finding the request parameter "version=X"
         if (wfsRequest instanceof GetMethod) {
             String uriString = wfsRequest.getURI().toString();
 
-            return uriString.contains(String.format("version=%1$s", expectedVersion));
+            if (paramValue == null) {
+                return uriString.contains(paramName);
+            } else {
+                return uriString.contains(String.format("%1$s=%2$s",paramName, paramValue));
+            }
+
         } else if (wfsRequest instanceof PostMethod) {
             //Post methods involve deciphering the POST body
             RequestEntity entity = ((PostMethod) wfsRequest).getRequestEntity();
             if (entity instanceof StringRequestEntity) {
                 String content = ((StringRequestEntity) entity).getContent();
 
-                return content.contains(String.format("version=\"%1$s\"", expectedVersion));
+                if (paramValue == null) {
+                    return content.contains(paramName);
+                } else {
+                    return content.contains(String.format("%1$s=\"%2$s\"", paramName, paramValue));
+                }
             }
         }
 
@@ -60,8 +69,23 @@ public class TestWFSGetFeatureMethodMaker {
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
-        Assert.assertTrue(testWFSVersion(mm.makeMethod(serviceUrl, typeName, featureId), expectedVersion));
-        Assert.assertTrue(testWFSVersion(mm.makeMethod(serviceUrl, typeName, filterString, maxFeatures), expectedVersion));
-        Assert.assertTrue(testWFSVersion(mm.makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName), expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, featureId),"version", expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, filterString, maxFeatures),"version", expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName),"version", expectedVersion));
+    }
+
+    @Test
+    public void testOptionalParams() throws Exception {
+        final String serviceUrl = "http://example.url";
+        final String typeName = "test:typeName";
+        final String featureId = "featureId";
+
+        WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
+
+        Assert.assertFalse(testWFSParam(mm.makeMethod(serviceUrl, typeName, (Integer)null),"maxFeatures", null));
+        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, 99),"maxFeatures", "99"));
+
+        Assert.assertFalse(testWFSParam(mm.makeMethod(serviceUrl, typeName, (String)null),"featureId", null));
+        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, "id-value"),"featureId", "id-value"));
     }
 }

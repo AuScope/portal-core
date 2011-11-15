@@ -22,6 +22,7 @@ public class TestNVCLDataServiceMethodMaker {
     final String holeIdentifier = "hole-identifier";
     final String logIdentifier = "log-identifier";
     final String datasetId = "dataset-id";
+    final String email = "user@email-notadomain.com";
     private NVCLDataServiceMethodMaker methodMaker;
 
     @Before
@@ -117,4 +118,83 @@ public class TestNVCLDataServiceMethodMaker {
         assertContainsURLParam(uri, "endsampleno", "30");
     }
 
+    /**
+     * Ensure we don't allow a download request with no ID/filter
+     * @throws Exception
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void testGetTSGDownloadNoID() throws Exception {
+        methodMaker.getDownloadTSGMethod(serviceUrl, email, null, null, null, null, null, null, null, null);
+    }
+
+    /**
+     * Ensure we don't allow a download request with both an ID/filter
+     * @throws Exception
+     */
+    @Test(expected=IllegalArgumentException.class)
+    public void testGetTSGDownloadBothIDs() throws Exception {
+        methodMaker.getDownloadTSGMethod(serviceUrl, email, "test", "test", null, null, null, null, null, null);
+    }
+
+    @Test
+    public void testParamValidity_TSGDownload() throws Exception {
+        //Mandatory only
+        URI uri = methodMaker.getDownloadTSGMethod(serviceUrl, email, datasetId, null, null, null, null, null, null, null).getURI();
+        assertContainsURLParam(uri, "datasetid", datasetId);
+        assertContainsURLParam(uri, "email", email);
+        assertDoesntContainURLParam(uri, "match_string");
+        assertDoesntContainURLParam(uri, "linescan");
+        assertDoesntContainURLParam(uri, "spectra");
+        assertDoesntContainURLParam(uri, "profilometer");
+        assertDoesntContainURLParam(uri, "traypics");
+        assertDoesntContainURLParam(uri, "mospic");
+        assertDoesntContainURLParam(uri, "mappics");
+
+        //Optional
+        uri = methodMaker.getDownloadTSGMethod(serviceUrl, email, datasetId, null, false, true, false, true, false, true).getURI();
+        assertContainsURLParam(uri, "datasetid", datasetId);
+        assertContainsURLParam(uri, "email", email);
+        assertDoesntContainURLParam(uri, "match_string");
+        assertContainsURLParam(uri, "linescan", "no");
+        assertContainsURLParam(uri, "spectra", "yes");
+        assertContainsURLParam(uri, "profilometer", "no");
+        assertContainsURLParam(uri, "traypics", "yes");
+        assertContainsURLParam(uri, "mospic", "no");
+        assertContainsURLParam(uri, "mappics", "yes");
+
+        uri = methodMaker.getDownloadTSGMethod(serviceUrl, email, datasetId, null, true, false, true, false, true, false).getURI();
+        assertContainsURLParam(uri, "datasetid", datasetId);
+        assertContainsURLParam(uri, "email", email);
+        assertDoesntContainURLParam(uri, "match_string");
+        assertContainsURLParam(uri, "linescan", "yes");
+        assertContainsURLParam(uri, "spectra", "no");
+        assertContainsURLParam(uri, "profilometer", "yes");
+        assertContainsURLParam(uri, "traypics", "no");
+        assertContainsURLParam(uri, "mospic", "yes");
+        assertContainsURLParam(uri, "mappics", "no");
+    }
+
+    @Test
+    public void testParamValidity_CheckTSG() throws Exception {
+        //Mandatory only
+        URI uri = methodMaker.getCheckTSGStatusMethod(serviceUrl, email).getURI();
+        assertContainsURLParam(uri, "email", email);
+    }
+
+    @Test
+    public void testParamValidity_WFSDownload() throws Exception {
+        //Mandatory only
+        URI uri = methodMaker.getDownloadWFSMethod(serviceUrl, email, "borehole-id", "http://om.service.url", "type:Name").getURI();
+        assertContainsURLParam(uri, "email", email);
+        assertContainsURLParam(uri, "boreholeid", "borehole-id");
+        assertContainsURLParam(uri, "serviceurl", "http://om.service.url");
+        assertContainsURLParam(uri, "typename", "type:Name");
+    }
+
+    @Test
+    public void testParamValidity_CheckWFS() throws Exception {
+        //Mandatory only
+        URI uri = methodMaker.getCheckWFSStatusMethod(serviceUrl, email).getURI();
+        assertContainsURLParam(uri, "email", email);
+    }
 }
