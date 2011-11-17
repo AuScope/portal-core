@@ -117,7 +117,7 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
                                       HttpServletRequest request) throws Exception {
 
         if(!serviceFilter.equals("") && !(new URL(serviceUrl).getHost()).equalsIgnoreCase(serviceFilter)){
-            return this.generateJSONResponseMAV(false);
+            return this.generateJSONResponseMAV(false,null,"Not Queried");
         }
         boolean onlyHylogger = false;
         if (onlyHyloggerString != null && onlyHyloggerString.length() > 0) {
