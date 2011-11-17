@@ -106,7 +106,7 @@ public class WCSController extends BasePortalController {
 
     private void closeZipWithError(ZipOutputStream zout,String debugQuery, Exception exceptionToPrint) {
         String message = null;
-        message=FileIOUtil.CovertExceptionToString(exceptionToPrint, debugQuery);
+        message=FileIOUtil.convertExceptionToString(exceptionToPrint, debugQuery);
         try {
             zout.putNextEntry(new ZipEntry("error.txt"));
 

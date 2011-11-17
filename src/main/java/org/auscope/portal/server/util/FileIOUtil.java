@@ -7,9 +7,14 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 public class FileIOUtil {
 
-    public static String CovertExceptionToString(Exception ex,String debugQuery){
+    protected final static Log log = LogFactory.getLog(FileIOUtil.class);
+
+    public static String convertExceptionToString(Exception ex,String debugQuery) {
         StringWriter sw = null;
         PrintWriter pw = null;
         String message="";
@@ -22,7 +27,11 @@ public class FileIOUtil {
             try {
                 if (pw != null)  pw.close();
                 if (sw != null)  sw.close();
-            } catch (Exception ignore) {}
+            } catch (Exception exception) {
+                //Not really a big deal if we fail to close the writer and shouldn't happen
+                //log a warning if it does.
+                log.warn(exception);
+            }
         }
         return message;
     }

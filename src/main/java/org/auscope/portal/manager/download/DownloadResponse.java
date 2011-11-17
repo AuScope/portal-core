@@ -21,7 +21,7 @@ public class DownloadResponse {
     }
 
     public String getExceptionAsString(){
-        return FileIOUtil.CovertExceptionToString(exception, getRequestURL());
+        return FileIOUtil.convertExceptionToString(exception, getRequestURL());
     }
 
     public void setException(Exception exception) {
