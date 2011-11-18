@@ -31,6 +31,7 @@ import org.auscope.portal.server.web.KnownLayerWFS;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
+import org.auscope.portal.server.web.service.CSWRecordsHostFilter;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.NVCLDataService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,7 +148,7 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
         List<String> hyloggerBoreholeIDs = null;
         if (onlyHylogger) {
             try {
-                hyloggerBoreholeIDs = this.boreholeService.discoverHyloggerBoreholeIDs(this.cswService);
+                hyloggerBoreholeIDs = this.boreholeService.discoverHyloggerBoreholeIDs(this.cswService,new CSWRecordsHostFilter(serviceUrl));
             } catch (Exception e) {
                 log.warn("Error requesting list of hylogger borehole ID's", e);
                 return makeModelAndViewFailure("Failure when identifying which boreholes have Hylogger data.", null);

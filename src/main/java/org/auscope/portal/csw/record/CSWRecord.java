@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.server.web.service.CSWRecordsFilterVisitor;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -389,6 +390,39 @@ public class CSWRecord {
     }
 
     /**
+     * Returns a filtered list of online resource protocols that match at least
+     * one of the specified types.
+     *
+     * @param types
+     *            The list of types you want to filter by
+     * @param visitor visitor to action on the AbstractCSWOnlineResource
+     * @return the online resources by type
+     */
+    public AbstractCSWOnlineResource[] getOnlineResourcesByType(
+            CSWRecordsFilterVisitor visitor,
+            AbstractCSWOnlineResource.OnlineResourceType... types) {
+        List<AbstractCSWOnlineResource> result = new ArrayList<AbstractCSWOnlineResource>();
+
+        for (AbstractCSWOnlineResource r : onlineResources) {
+            boolean matching = false;
+            AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r
+                    .getType();
+            for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
+                if (typeToMatch == type) {
+                    matching = true;
+                    break;
+                }
+            }
+
+            if (matching && r.accept(visitor)) {
+                result.add(r);
+            }
+        }
+
+        return result.toArray(new AbstractCSWOnlineResource[result.size()]);
+    }
+
+    /**
      * Returns true if this CSW Record contains at least 1 onlineResource with ANY of the specified types.
      *
      * @param types the types
@@ -423,4 +457,5 @@ public class CSWRecord {
     public boolean containsKeyword(String str) {
         return Arrays.asList(descriptiveKeywords).contains(str);
     }
+
 }

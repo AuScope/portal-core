@@ -2,6 +2,8 @@ package org.auscope.portal.csw.record;
 
 import java.net.URL;
 
+import org.auscope.portal.server.web.service.CSWRecordsFilterVisitor;
+
 /**
  * Represents a <gmd:CI_OnlineResource> element in a CSW response.
  * @author vot002
@@ -97,5 +99,9 @@ public abstract class AbstractCSWOnlineResource {
         }
 
         return OnlineResourceType.Unsupported;
+    }
+
+    public boolean accept(CSWRecordsFilterVisitor visitor){
+        return visitor.visit(this);
     }
 }

@@ -42,6 +42,8 @@ import org.auscope.portal.server.web.KnownLayerWFS;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
+import org.auscope.portal.server.web.service.CSWRecordsFilterVisitor;
+import org.auscope.portal.server.web.service.CSWRecordsHostFilter;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.NVCLDataService;
 import org.jmock.Expectations;
@@ -208,7 +210,7 @@ public class TestNVCLController {
             oneOf(mockCSWService).getWFSRecords();
             will(returnValue(cswRecords));
 
-            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);
+            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(with(equal(mockCSWService)),with(any(CSWRecordsFilterVisitor.class)));
             will(returnValue(restrictedIds));
 
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, restrictedIds);
@@ -269,7 +271,7 @@ public class TestNVCLController {
             oneOf(mockCSWService).getWFSRecords();
             will(returnValue(cswRecords));
 
-            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);
+            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(with(equal(mockCSWService)),with(any(CSWRecordsFilterVisitor.class)));
             will(throwException(new ConnectException()));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
@@ -323,7 +325,7 @@ public class TestNVCLController {
             oneOf(mockCSWService).getWFSRecords();
             will(returnValue(cswRecords));
 
-            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(mockCSWService);
+            oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(with(equal(mockCSWService)),with(any(CSWRecordsFilterVisitor.class)));
             will(returnValue(new ArrayList<String>()));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));

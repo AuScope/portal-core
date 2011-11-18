@@ -193,7 +193,7 @@ public class TestBoreholeService {
             will(returnValue(successResponse));
         }});
 
-        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService);
+        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService,new CSWRecordsHostFilter(""));
         Assert.assertNotNull(restrictedIDs);
         Assert.assertArrayEquals(HOLEIDS, restrictedIDs.toArray(new String[restrictedIDs.size()]));
     }
@@ -243,7 +243,7 @@ public class TestBoreholeService {
             will(returnValue(successResponse));
         }});
 
-        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService);
+        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService,new CSWRecordsHostFilter(""));
         Assert.assertNotNull(restrictedIDs);
         Assert.assertArrayEquals(HOLEIDS, restrictedIDs.toArray(new String[restrictedIDs.size()]));
     }

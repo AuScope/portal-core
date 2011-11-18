@@ -114,11 +114,11 @@ public class BoreholeService {
      * @param cswService Will be used to find the appropriate service to query
      * @throws Exception
      */
-    public List<String> discoverHyloggerBoreholeIDs(CSWCacheService cswService) throws Exception {
+    public List<String> discoverHyloggerBoreholeIDs(CSWCacheService cswService,CSWRecordsFilterVisitor visitor) throws Exception {
         List<String> ids = new ArrayList<String>();
 
         for (CSWRecord record : cswService.getWFSRecords()) {
-            for (AbstractCSWOnlineResource resource : record.getOnlineResourcesByType(OnlineResourceType.WFS)) {
+            for (AbstractCSWOnlineResource resource : record.getOnlineResourcesByType(visitor,OnlineResourceType.WFS)) {
                 if (resource.getName().equals(NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME)) {
                     try {
                         appendHyloggerBoreholeIDs(resource.getLinkage().toString(), resource.getName(), ids);
