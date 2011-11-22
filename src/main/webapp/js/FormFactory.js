@@ -49,8 +49,8 @@ FormFactory.prototype.getFilterForm = function(activeLayersRecord, map, cswRecor
         if (parentKnownLayer && parentKnownLayer.getType() === 'KnownLayerWFS') {
             //Pick out any known layers specifically by their ID
             switch (parentKnownLayer.getId()) {
-                case 'pressuredb-borehole': return this.internalGenerateResult(new PressureDBFilterForm(id), true);
-                case 'nvcl-borehole': return this.internalGenerateResult(new NvclFilterForm(id), true);
+                case 'pressuredb-borehole': return this.internalGenerateResult(new PressureDBFilterForm(id,activeLayersRecord), true);
+                case 'nvcl-borehole': return this.internalGenerateResult(new NvclFilterForm(id,activeLayersRecord), true);
             }
 
             //Otherwise assign a filter form based on the feature type

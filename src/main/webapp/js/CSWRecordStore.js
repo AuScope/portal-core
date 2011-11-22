@@ -40,6 +40,7 @@ CSWRecordStore = function(url, baseParams) {
             totalProperty   : 'totalResults',
             fields			: [
                 'serviceName',
+                'administrativeArea',
                 'contactOrganisation',
                 'resourceProvider',
                 'fileIdentifier',

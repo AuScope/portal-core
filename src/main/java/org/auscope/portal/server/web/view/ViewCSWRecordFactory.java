@@ -37,6 +37,8 @@ public class ViewCSWRecordFactory {
         CSWResponsibleParty rp = record.getContact();
         if (rp != null) {
             obj.put("contactOrganisation", rp.getOrganisationName());
+            obj.put("administrativeArea", (rp.getContactInfo() == null ? null
+                    : rp.getContactInfo().getAddressAdministrativeArea()));
         } else {
             obj.put("contactOrganisation", "");
         }

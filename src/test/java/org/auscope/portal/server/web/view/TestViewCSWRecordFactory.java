@@ -33,6 +33,7 @@ public class TestViewCSWRecordFactory {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
         final String serviceName = "sn";
+        final String administrativeArea="CSIRO";
         final String contactOrg = "co";
         final String resourceProvider = "MDU";
         final String fileId = "asb";
@@ -58,6 +59,7 @@ public class TestViewCSWRecordFactory {
         final ModelMap geoExpectation = new ModelMap();
 
         expectation.put("serviceName", serviceName);
+        expectation.put("administrativeArea", administrativeArea);
         expectation.put("contactOrganisation", contactOrg);
         expectation.put("resourceProvider", resourceProvider);
         expectation.put("fileIdentifier", fileId);
@@ -103,6 +105,8 @@ public class TestViewCSWRecordFactory {
             allowing(mockOnlineRes).getLinkage();will(returnValue(orUrl));
 
             allowing(mockResponsibleParty).getOrganisationName();will(returnValue(contactOrg));
+            allowing(mockResponsibleParty).getContactInfo();will(returnValue(mockContact));
+            oneOf(mockContact).getAddressAdministrativeArea();will(returnValue(administrativeArea));
         }});
 
         ModelMap result = factory.toView(mockCSWRecord);
@@ -115,6 +119,7 @@ public class TestViewCSWRecordFactory {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
         final String serviceName = "sn";
+        final String administrativeArea="CSIRO";
         final String contactOrg = "co";
         final String resourceProvider = "MDU";
         final String fileId = "asb";
@@ -139,6 +144,7 @@ public class TestViewCSWRecordFactory {
         final ModelMap geoExpectation = new ModelMap();
 
         expectation.put("serviceName", serviceName);
+        expectation.put("administrativeArea", administrativeArea);
         expectation.put("contactOrganisation", contactOrg);
         expectation.put("resourceProvider", resourceProvider);
         expectation.put("fileIdentifier", fileId);
@@ -178,6 +184,8 @@ public class TestViewCSWRecordFactory {
             allowing(mockOnlineRes).getLinkage();will(returnValue(orUrl));
 
             allowing(mockResponsibleParty).getOrganisationName();will(returnValue(contactOrg));
+            allowing(mockResponsibleParty).getContactInfo();will(returnValue(mockContact));
+            oneOf(mockContact).getAddressAdministrativeArea();will(returnValue(administrativeArea));
         }});
 
         ModelMap result = factory.toView(mockCSWRecord);

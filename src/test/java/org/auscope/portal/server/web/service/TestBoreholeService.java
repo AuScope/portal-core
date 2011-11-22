@@ -166,7 +166,7 @@ public class TestBoreholeService {
         final CSWRecord mockRecord2 = context.mock(CSWRecord.class, "mockRecord2"); //has the wrong wfs
         final CSWRecord mockRecord3 = context.mock(CSWRecord.class, "mockRecord3"); //has no wfs
         final CSWCacheService mockCSWService = context.mock(CSWCacheService.class);
-
+        final CSWRecordsHostFilter hostFilter=new CSWRecordsHostFilter("");
         final AbstractCSWOnlineResource mockRecord1Resource1 = new CSWOnlineResourceImpl(new URL("http://record.1.resource.1"), "wfs", "dne", "description");
         final AbstractCSWOnlineResource mockRecord1Resource2 = new CSWOnlineResourceImpl(new URL("http://record.1.resource.2"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "description");
 
@@ -178,13 +178,13 @@ public class TestBoreholeService {
             oneOf(mockCSWService).getWFSRecords();
             will(returnValue(Arrays.asList(mockRecord1, mockRecord2, mockRecord3)));
 
-            oneOf(mockRecord1).getOnlineResourcesByType(OnlineResourceType.WFS);
+            oneOf(mockRecord1).getOnlineResourcesByType(hostFilter,OnlineResourceType.WFS);
             will(returnValue(new AbstractCSWOnlineResource[] {mockRecord1Resource1, mockRecord1Resource2}));
 
-            oneOf(mockRecord2).getOnlineResourcesByType(OnlineResourceType.WFS);
+            oneOf(mockRecord2).getOnlineResourcesByType(hostFilter,OnlineResourceType.WFS);
             will(returnValue(new AbstractCSWOnlineResource[] {mockRecord2Resource1}));
 
-            oneOf(mockRecord3).getOnlineResourcesByType(OnlineResourceType.WFS);
+            oneOf(mockRecord3).getOnlineResourcesByType(hostFilter,OnlineResourceType.WFS);
             will(returnValue(new AbstractCSWOnlineResource[] {}));
 
             oneOf(mockMethodMaker).makeMethod(mockRecord1Resource2.getLinkage().toString(), mockRecord1Resource2.getName(), "", 0);
@@ -193,7 +193,7 @@ public class TestBoreholeService {
             will(returnValue(successResponse));
         }});
 
-        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService,new CSWRecordsHostFilter(""));
+        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService,hostFilter);
         Assert.assertNotNull(restrictedIDs);
         Assert.assertArrayEquals(HOLEIDS, restrictedIDs.toArray(new String[restrictedIDs.size()]));
     }
@@ -211,7 +211,7 @@ public class TestBoreholeService {
         final HttpClient mockHttpClient = context.mock(HttpClient.class);
         final HttpMethodBase mockRecord1Method = context.mock(HttpMethodBase.class, "rec1method");
         final HttpMethodBase mockRecord2Method = context.mock(HttpMethodBase.class, "rec2method");
-
+        final CSWRecordsHostFilter hostFilter=new CSWRecordsHostFilter("");
         final AbstractCSWOnlineResource mockRecord1Resource1 = new CSWOnlineResourceImpl(new URL("http://record.1.resource.1"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "description");
         final AbstractCSWOnlineResource mockRecord2Resource1 = new CSWOnlineResourceImpl(new URL("http://record.2.resource.1"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "description");
 
@@ -221,10 +221,10 @@ public class TestBoreholeService {
             oneOf(mockCSWService).getWFSRecords();
             will(returnValue(Arrays.asList(mockRecord1, mockRecord2)));
 
-            oneOf(mockRecord1).getOnlineResourcesByType(OnlineResourceType.WFS);
+            oneOf(mockRecord1).getOnlineResourcesByType(hostFilter,OnlineResourceType.WFS);
             will(returnValue(new AbstractCSWOnlineResource[] {mockRecord1Resource1}));
 
-            oneOf(mockRecord2).getOnlineResourcesByType(OnlineResourceType.WFS);
+            oneOf(mockRecord2).getOnlineResourcesByType(hostFilter,OnlineResourceType.WFS);
             will(returnValue(new AbstractCSWOnlineResource[] {mockRecord2Resource1}));
 
             oneOf(mockMethodMaker).makeMethod(mockRecord1Resource1.getLinkage().toString(), mockRecord1Resource1.getName(), "", 0);
@@ -243,8 +243,9 @@ public class TestBoreholeService {
             will(returnValue(successResponse));
         }});
 
-        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService,new CSWRecordsHostFilter(""));
+        List<String> restrictedIDs = service.discoverHyloggerBoreholeIDs(mockCSWService,hostFilter);
         Assert.assertNotNull(restrictedIDs);
         Assert.assertArrayEquals(HOLEIDS, restrictedIDs.toArray(new String[restrictedIDs.size()]));
     }
+
 }

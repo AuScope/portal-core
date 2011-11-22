@@ -6,6 +6,8 @@ import java.net.URL;
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
+import org.auscope.portal.server.web.service.CSWRecordsHostFilter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -64,6 +66,32 @@ public class TestCSWRecord {
         Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WFS));
         Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS));
         Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
+    }
+
+    @Test
+    public void testGetOnlineResourcesByType() throws MalformedURLException {
+        final AbstractCSWOnlineResource[] fullOnlineResources = new AbstractCSWOnlineResource[] {
+                new CSWOnlineResourceImpl(new URL("http://example.com/test2"), "wfs", "or1", "or1"),
+                new CSWOnlineResourceImpl(new URL("http://example2.com/test3"), "wfs", "or2", "or2"),
+                new CSWOnlineResourceImpl(new URL("http://example2.com/test4"), "wms", "or3", "or3"),
+                new CSWOnlineResourceImpl(new URL("http://example2.com/test4"), "wms", "or4", "or4"),
+                null,
+                new CSWOnlineResourceImpl(new URL("http://example.com"), "unknown", "or4", "or4"),
+        };
+        CSWRecord record = new CSWRecord("serviceName", "fileId", "http://record.info", "Abstract", null, null);
+        record.setOnlineResources(fullOnlineResources);
+
+        AbstractCSWOnlineResource[]result=record.getOnlineResourcesByType(OnlineResourceType.WFS);
+        Assert.assertEquals(2, result.length);
+
+        result=record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example.com"),OnlineResourceType.WFS);
+        Assert.assertEquals(1, result.length);
+
+        result=record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example2.com"),OnlineResourceType.WMS);
+        Assert.assertEquals(2, result.length);
+
+        result=record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example2.com"),OnlineResourceType.WFS);
+        Assert.assertEquals(1, result.length);
     }
 
 }

@@ -35,17 +35,6 @@
             </list>
         </constructor-arg>
     </bean>
-	
-	  <!-- All elements must be of type org.auscope.portal.server.web.KnownLayer -->
-    <bean id="knownTypeBorehole" class="java.util.ArrayList">
-        <constructor-arg>
-            <list>
-                <ref bean="knownTypeBoreholeNvcl" />
-                <ref bean="knownTypeBoreholePressureDB" />
-                <ref bean="knownTypeGSMLBorehole" />
-            </list>
-        </constructor-arg>
-    </bean>
 
     <bean id="cswServiceList" class="java.util.ArrayList">
         <constructor-arg>

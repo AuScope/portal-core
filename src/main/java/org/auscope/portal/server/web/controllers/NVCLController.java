@@ -53,48 +53,20 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
     private BoreholeService boreholeService;
     private NVCLDataService dataService;
     private CSWCacheService cswService;
-    private ArrayList<KnownLayerWFS> boreholes;
 
     @Autowired
     public NVCLController(GmlToKml gmlToKml,
                             BoreholeService boreholeService,
                             HttpServiceCaller httpServiceCaller,
                             CSWCacheService cswService,
-                            NVCLDataService dataService,
-                            @Qualifier("knownTypeBorehole") ArrayList<KnownLayerWFS> boreholes) {
+                            NVCLDataService dataService) {
 
         this.boreholeService = boreholeService;
         this.gmlToKml = gmlToKml;
         this.httpServiceCaller = httpServiceCaller;
         this.cswService = cswService;
         this.dataService = dataService;
-        this.boreholes=boreholes;
-    }
 
-    /**
-     * Handles the request for all the service urls for boreholes linked to a title
-     *
-     * @param title the title as specified on the UI for the borehole
-     * @return ModelAndView a standard reply of all the service urls
-     * @throws MalformedURLException
-     */
-    @RequestMapping("/getBoreholeServices.do")
-    public ModelAndView getBoreholeServices(@RequestParam("title") String title) throws MalformedURLException{
-        //String title="National Virtual Core Library";
-
-        String[] urls=null;
-        List<ModelMap> response = new ArrayList<ModelMap>();
-        for(KnownLayerWFS borehole:boreholes){
-            if(borehole.getTitle().equals(title) && (urls=borehole.getServiceEndpoints())!=null){
-                for (String url : urls) {
-                    ModelMap modelMap = new ModelMap();
-                    modelMap.put("url", (new URL(url)).getHost());
-                    response.add(modelMap);
-                }
-
-            }
-        }
-        return generateJSONResponseMAV(true, response, "");
     }
 
     /**
@@ -117,7 +89,7 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
                                       @RequestParam(required=false, value="serviceFilter", defaultValue="")String serviceFilter,
                                       HttpServletRequest request) throws Exception {
 
-        if(!serviceFilter.equals("") && !(new URL(serviceUrl).getHost()).equalsIgnoreCase(serviceFilter)){
+        if(!serviceFilter.equals("") && !(new URL(serviceUrl).getHost()).equalsIgnoreCase((new URL(serviceFilter)).getHost())){
             return this.generateJSONResponseMAV(false,null,"Not Queried");
         }
         boolean onlyHylogger = false;

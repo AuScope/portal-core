@@ -22,6 +22,13 @@ CSWRecord = Ext.extend(AbstractRecordWrapper, {
     },
 
     /**
+     * Gets the name of the administrativeArea as a String
+     */
+    getAdministrativeArea : function() {
+        return this.getStringField('administrativeArea');
+    },
+
+    /**
      * Gets the Contact organisation as a String
      */
     getContactOrganisation : function() {
@@ -83,7 +90,7 @@ CSWRecord = Ext.extend(AbstractRecordWrapper, {
      * name : [Set to undefined to not filter] The name to filter by
      * description : [Set to undefined to not filter] The description to filter by
      * url : [Set to undefined to not filter] The url to filter by
-     *
+     * strict: if set to true will filter the full url else only filter the host
      * Returns an Array of Objects in the following form that pass every specified filter
      * {
      *  url                 : String
@@ -93,7 +100,7 @@ CSWRecord = Ext.extend(AbstractRecordWrapper, {
      * }
      * @return
      */
-    getFilteredOnlineResources : function(onlineResourceType, name, description, url) {
+    getFilteredOnlineResources : function(onlineResourceType, name, description, url,strict) {
         var all = this.getOnlineResources();
         var filtered = [];
 
@@ -112,7 +119,11 @@ CSWRecord = Ext.extend(AbstractRecordWrapper, {
                 continue;
             }
 
-            if (url !== undefined && cmp.url !== url) {
+            if (url !== undefined && strict==true && cmp.url !== url) {
+                continue;
+            }
+
+            if (url !== undefined && strict==false && this.getHostname(cmp.url) !== this.getHostname(url)) {
                 continue;
             }
 
@@ -120,6 +131,11 @@ CSWRecord = Ext.extend(AbstractRecordWrapper, {
         }
 
         return filtered;
+    },
+
+    getHostname : function (str) {
+        var re = new RegExp('^(?:f|ht)tp(?:s)?\://([^/]+)', 'im');
+        return str.match(re)[1].toString();
     },
 
     /**

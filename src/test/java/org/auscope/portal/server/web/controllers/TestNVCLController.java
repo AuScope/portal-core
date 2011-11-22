@@ -124,12 +124,7 @@ public class TestNVCLController {
         this.mockCSWService = context.mock(CSWCacheService.class);
         this.mockHttpClient = context.mock(HttpClient.class);
         this.mockDataService = context.mock(NVCLDataService.class);
-        this.mockBorehole = context.mock(KnownLayerWFS.class,"first");
-        this.mockBorehole2 = context.mock(KnownLayerWFS.class,"second");
-        ArrayList<KnownLayerWFS> mockBoreholes=new ArrayList<KnownLayerWFS>();
-        mockBoreholes.add(mockBorehole);
-        mockBoreholes.add(mockBorehole2);
-        this.nvclController = new NVCLController(this.mockGmlToKml, this.mockBoreholeService, this.mockHttpServiceCaller, this.mockCSWService, this.mockDataService,mockBoreholes);
+        this.nvclController = new NVCLController(this.mockGmlToKml, this.mockBoreholeService, this.mockHttpServiceCaller, this.mockCSWService, this.mockDataService);
     }
 
     /**
@@ -751,7 +746,7 @@ public class TestNVCLController {
     @Test
     public void testServiceFilterReturns() throws Exception {
         final String serviceUrl = "http://fake.com/wfs";
-        final String serviceFilter="fake.com";
+        final String serviceFilter="http://fake.com";
         final String nameFilter = "filterBob";
         final String custodianFilter = "filterCustodian";
         final String filterDate = "1986-10-09";
@@ -799,7 +794,7 @@ public class TestNVCLController {
     @Test
     public void testServiceFilterReturnsEmptyMAV() throws Exception {
         final String serviceUrl = "http://fake.com/wfs";
-        final String serviceFilter="fakeNOT.com";
+        final String serviceFilter="http://fakeNOT.com";
         final String nameFilter = "filterBob";
         final String custodianFilter = "filterCustodian";
         final String filterDate = "1986-10-09";
@@ -811,25 +806,4 @@ public class TestNVCLController {
         Assert.assertNull(data);
     }
 
-    @Test
-    public void testGetBoreholeServices() throws MalformedURLException{
-        final String [] urls={"http://url1.com.au/test","http://url2.com.au/test","http://url3.com.au/test"};
-        final String [] wrongUrls={"http://wrong1.com/no/test","http://wrong2.com/no/test"};
-        final String title="testTitle";
-        context.checking(new Expectations() {{
-         oneOf(mockBorehole).getTitle();
-         will(returnValue(title));
-         oneOf(mockBorehole2).getTitle();
-         will(returnValue("Wrong Title"));
-         oneOf(mockBorehole).getServiceEndpoints();
-         will(returnValue(urls));
-         oneOf(mockBorehole2).getServiceEndpoints();
-         will(returnValue(wrongUrls));
-        }});
-
-        ModelAndView response = this.nvclController.getBoreholeServices(title);
-        ArrayList data = (ArrayList) response.getModel().get("data");
-        Assert.assertEquals(urls.length,data.size());
-
-    }
 }

@@ -372,6 +372,9 @@ public class CSWRecord {
         List <AbstractCSWOnlineResource> result = new ArrayList<AbstractCSWOnlineResource>();
 
         for (AbstractCSWOnlineResource r : onlineResources) {
+            if (r == null){
+                continue;
+            }
             boolean matching = false;
             AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
             for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
@@ -391,7 +394,7 @@ public class CSWRecord {
 
     /**
      * Returns a filtered list of online resource protocols that match at least
-     * one of the specified types.
+     * one of the specified types and is accepted by the visitor.
      *
      * @param types
      *            The list of types you want to filter by
@@ -404,6 +407,9 @@ public class CSWRecord {
         List<AbstractCSWOnlineResource> result = new ArrayList<AbstractCSWOnlineResource>();
 
         for (AbstractCSWOnlineResource r : onlineResources) {
+            if (r == null){
+                continue;
+            }
             boolean matching = false;
             AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r
                     .getType();

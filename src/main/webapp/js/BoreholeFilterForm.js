@@ -4,9 +4,53 @@
  * @param {string} the service url for submit
  */
 
-BoreholeFilterForm = function(id) {
+BoreholeFilterForm = function(id,activeLayersRecord) {
 
     this.isFormLoaded = true; //We aren't reliant on any remote downloads
+
+    var serviceEndpoints=activeLayersRecord.getServiceEndpoints();
+    var cswRecords=activeLayersRecord.getCSWRecords();
+    var administrativeAreas=[];
+
+    for(i=0;i<serviceEndpoints.length;i++){
+        for(j=0;j<cswRecords.length;j++){
+            var cswRecord=cswRecords[j].getFilteredOnlineResources(undefined,undefined,undefined,serviceEndpoints[i],false)
+            if(cswRecord.length>0){
+                administrativeAreas.push([cswRecords[j].getAdministrativeArea(),serviceEndpoints[i]]);
+                break;
+            }
+        }
+    };
+
+    var serviceFilterText=new Ext.form.TextField({
+        itemId     : 'serviceFilterText-field',
+        fieldLabel : 'serviceFilterText',
+        name       : 'serviceFilterText',
+        hidden     : true
+    });
+
+     // create the combo instance
+    var serviceCombo = new Ext.form.ComboBox({
+        anchor     : '95%',
+        itemId     : 'serviceFilter-field',
+        fieldLabel : 'Services',
+        name       : 'serviceFilter',
+        typeAhead: true,
+        triggerAction: 'all',
+        lazyRender:true,
+        mode: 'local',
+        store: new Ext.data.ArrayStore({
+            id: 0,
+            fields: [
+                'displayText',
+                'serviceFilter'
+            ],
+            data: administrativeAreas
+        }),
+        valueField: 'serviceFilter',
+        displayField: 'displayText',
+        hiddenName: 'serviceFilter'
+    });
 
     BoreholeFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
@@ -46,7 +90,8 @@ BoreholeFilterForm = function(id) {
                 xtype      : 'textfield',
                 fieldLabel : 'Date',
                 name       : 'dateOfDrilling'
-            }
+            },
+            serviceCombo
             ]
         }]
     });
