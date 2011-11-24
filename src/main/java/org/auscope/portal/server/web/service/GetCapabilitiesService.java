@@ -1,5 +1,6 @@
 package org.auscope.portal.server.web.service;
 
+import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -43,7 +44,7 @@ public class GetCapabilitiesService {
      */
     public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl) throws Exception {
 
-        String response = "";
+        InputStream response = null;
 
         //Check that its a real URL
         //Quick test that it looks like a URL....
@@ -53,7 +54,7 @@ public class GetCapabilitiesService {
         // Do the request
         WMSMethodMaker methodMaker = new WMSMethodMaker(serviceUrl);
         HttpMethodBase method = methodMaker.getCapabilitiesMethod();
-        response = serviceCaller.getMethodResponseAsString(method, serviceCaller.getHttpClient());
+        response = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
 
         return new GetCapabilitiesRecord(response);
     }

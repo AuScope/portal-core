@@ -1,5 +1,7 @@
 package org.auscope.portal.server.domain.ows;
 
+import java.io.InputStream;
+
 import org.auscope.portal.Util;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.junit.Assert;
@@ -23,8 +25,8 @@ public class TestGetCapabilitiesRecord {
     @Test
     public void testParseWMSDocument() throws Exception {
         //Build our record
-        String xmlString = Util.loadXML("src/test/resources/wmsGetCapabilities.xml");
-        GetCapabilitiesRecord rec = new GetCapabilitiesRecord(xmlString);
+        InputStream xmlStream = this.getClass().getResourceAsStream("/wmsGetCapabilities.xml");
+        GetCapabilitiesRecord rec = new GetCapabilitiesRecord(xmlStream);
 
         //Test the overall data
         Assert.assertNotNull(rec);

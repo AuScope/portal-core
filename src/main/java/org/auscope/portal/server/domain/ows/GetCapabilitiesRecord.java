@@ -1,6 +1,7 @@
 package org.auscope.portal.server.domain.ows;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 
@@ -63,13 +64,12 @@ public class GetCapabilitiesRecord {
      * Constructor.
      * @param inXml GetCapabilites string response
      */
-    public GetCapabilitiesRecord(String inXml) {
+    public GetCapabilitiesRecord(InputStream inXml) {
         try {
             XPath xPathInstance = XPathFactory.newInstance().newXPath();
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource inputSource = new InputSource(new StringReader(inXml));
-            Document doc = builder.parse(inputSource);
+            Document doc = builder.parse(inXml);
 
             this.serviceType = getService(xPathInstance, doc);
             this.organisation = getContactOrganisation(xPathInstance, doc);
