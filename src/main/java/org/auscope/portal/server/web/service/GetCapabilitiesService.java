@@ -1,5 +1,6 @@
 package org.auscope.portal.server.web.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -45,18 +46,28 @@ public class GetCapabilitiesService {
     public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl) throws Exception {
 
         InputStream response = null;
+        try{
 
-        //Check that its a real URL
-        //Quick test that it looks like a URL....
+            //Check that its a real URL
+            //Quick test that it looks like a URL....
 
-        URL newUrl = new URL(serviceUrl);
+            URL newUrl = new URL(serviceUrl);
 
-        // Do the request
-        WMSMethodMaker methodMaker = new WMSMethodMaker(serviceUrl);
-        HttpMethodBase method = methodMaker.getCapabilitiesMethod();
-        response = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
+            // Do the request
+            WMSMethodMaker methodMaker = new WMSMethodMaker(serviceUrl);
+            HttpMethodBase method = methodMaker.getCapabilitiesMethod();
+            response = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
 
-        return new GetCapabilitiesRecord(response);
+            return new GetCapabilitiesRecord(response);
+        }finally{
+            try{
+                response.close();
+            }catch(IOException e){
+                //Not a show stopper if stream can't be closed since
+                //most likely it is because it is already closed.
+                log.warn(e);
+            }
+        }
     }
 
 }
