@@ -9,7 +9,6 @@ PressureDBFilterForm = function(id,activeLayersRecord) {
 
     var fieldSet = this.getComponent('borehole-fieldset');
     fieldSet.setTitle('Pressure DB Filter Properties');
-    fieldSet.remove(fieldSet.getComponent('custodian-field'));
     this.doLayout();
 };
 

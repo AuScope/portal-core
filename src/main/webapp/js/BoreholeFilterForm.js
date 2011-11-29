@@ -79,13 +79,6 @@ BoreholeFilterForm = function(id,activeLayersRecord) {
             },
             {
                 anchor     : '95%',
-                itemId     : 'custodian-field',
-                xtype      : 'textfield',
-                fieldLabel : 'Custodian',
-                name       : 'custodian'
-            },
-            {
-                anchor     : '95%',
                 itemId     : 'drillingdate-field',
                 xtype      : 'textfield',
                 fieldLabel : 'Date',

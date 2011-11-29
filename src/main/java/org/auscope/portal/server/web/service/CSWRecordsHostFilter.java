@@ -6,8 +6,16 @@ import java.net.URL;
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWRecord;
 
+/**
+ *
+ * Concrete implementing class of CSWRecordsFilterVisitor. This class filters AbstractCSWOnlineResource
+ * by its host. Eg www.example.com/123 and www.example.com/3344 will match and return.
+ * @author Victor.Tey@csiro.au
+ *
+ */
 public class CSWRecordsHostFilter implements CSWRecordsFilterVisitor {
 
+    //the URL of the host name we want to filter on.
     URL filterUrl;
 
     public CSWRecordsHostFilter(URL url){

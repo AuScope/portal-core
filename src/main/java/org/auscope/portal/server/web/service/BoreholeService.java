@@ -112,6 +112,7 @@ public class BoreholeService {
      * If any of the services queried fail to return valid responses they will be skipped
      *
      * @param cswService Will be used to find the appropriate service to query
+     * @param CSWRecordsFilterVisitor A filter visitor used to perform filter operation on the online resource. Use null if not required
      * @throws Exception
      */
     public List<String> discoverHyloggerBoreholeIDs(CSWCacheService cswService,CSWRecordsFilterVisitor visitor) throws Exception {
