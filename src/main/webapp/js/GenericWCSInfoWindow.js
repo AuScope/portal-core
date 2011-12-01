@@ -607,7 +607,14 @@ function showWCSDownload(serviceUrl, layerName) {
                     triggerAction   : 'all',
                     displayField    : 'crs',
                     anchor          : '-50',
-                    valueField      : 'crs'
+                    valueField      : 'crs',
+                    listeners       : {
+                        'render'    : function(cbx){
+                            if(requestCRSStore.getTotalCount()>0){
+                                cbx.setValue(requestCRSStore.getAt(0).get('crs'));
+                            }
+                         }
+                    }
                 },{
                     xtype			: 'combo',
                     id              : 'downloadFormat',
@@ -622,7 +629,16 @@ function showWCSDownload(serviceUrl, layerName) {
                     allowBlank		: false,
                     displayField    : 'format',
                     anchor          : '-50',
-                    valueField      : 'format'
+                    valueField      : 'format',
+                    listeners       : {
+                        'render'    : function(cbx){
+                            for(i=0;i<downloadFormatStore.getTotalCount();i++){
+                                if(downloadFormatStore.getAt(i).get('format')==='NetCDF3'){
+                                    cbx.setValue(downloadFormatStore.getAt(i).get('format'));
+                                }
+                            }
+                         }
+                    }
                 },{
                     xtype			: 'combo',
                     id              : 'outputCrs',
