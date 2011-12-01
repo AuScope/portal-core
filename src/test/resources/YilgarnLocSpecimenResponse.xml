@@ -34,7 +34,7 @@
                     </om:result>
                 </om:Observation>
             </sa:relatedObservation>
-            <sa:materialClass/>
+            <sa:materialClass>Material-Class</sa:materialClass>
             <sa:samplingTime>
                 <gml:TimeInstant>
                     <gml:description>SamplingDate</gml:description>

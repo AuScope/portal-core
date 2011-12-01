@@ -41,7 +41,6 @@ GenericParser.Factory.LocatedSpecimenFactory = Ext.extend(GenericParser.Factory.
                 timeout:180000,
                 extraParams : {
                     serviceUrl : wfsUrl,
-                    typeName : 'sa:LocatedSpecimen',
                     featureId : gmlId
                 }
             }),
@@ -79,7 +78,6 @@ GenericParser.Factory.LocatedSpecimenFactory = Ext.extend(GenericParser.Factory.
                         callingInstance : this,
                         params : {
                             serviceUrl : wfsUrl,
-                            typeName : 'sa:LocatedSpecimen',
                             featureId : gmlId
                         },
                         failure: function (response, options){

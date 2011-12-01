@@ -103,7 +103,6 @@ gaFeatureTypeIconOff["Avhrr48to72Hours-1404"] = IMAGES_DIR + "/ga_sentinel/avhrr
 gaFeatureTypeIconOff["Modis48to72Hours-1604"] = IMAGES_DIR + "/ga_sentinel/modis48to72_off.png";
 
 var ProxyURL = WEB_CONTEXT + "/restproxy?";
-var kmlProxyUrl = WEB_CONTEXT + "/xsltRestProxy.do?url=";
 
 var gaFeatureTypeProxy = [];
 gaFeatureTypeProxy["Avhrr48to72Hours-1404"] = top.location.protocol + "//" + top.location.host + "/geodesyworkflow/ga/sentinel/proxy?";

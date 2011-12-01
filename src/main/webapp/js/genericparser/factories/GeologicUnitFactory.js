@@ -82,7 +82,7 @@ GenericParser.Factory.GeologicUnitFactory = Ext.extend(GenericParser.Factory.Bas
                         "serviceUrl=" + wfsUrl + "&typeName=" + "gsml:GeologicUnit" +
                         "&featureId=" + gmlId;
 
-                    var url = 'downloadLocSpecAsZip.do?';
+                    var url = 'downloadGMLAsZip.do?';
                     url += '&' + key + '=' + escape(locSpecLink);
                     url += '&' + key + '=' + escape(geoLink);
 
