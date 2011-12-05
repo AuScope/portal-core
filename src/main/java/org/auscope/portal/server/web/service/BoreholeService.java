@@ -16,7 +16,9 @@ import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceTyp
 import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.util.DOMUtil;
+import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class BoreholeService {
     // ----------------------------------------------------- Instance variables
     private HttpServiceCaller httpServiceCaller;
     private WFSGetFeatureMethodMaker methodMaker;
+    private GmlToKml gmlToKml;
 
     // ----------------------------------------------------------- Constructors
 
@@ -55,6 +58,10 @@ public class BoreholeService {
         this.methodMaker = iwfsGetFeatureMethodMaker;
     }
 
+    @Autowired
+    public void setGmlToKml(GmlToKml gmlToKml) {
+        this.gmlToKml = gmlToKml;
+    }
 
     // --------------------------------------------------------- Public Methods
 
@@ -68,7 +75,7 @@ public class BoreholeService {
      * @return
      * @throws Exception
      */
-    public HttpMethodBase getAllBoreholes(String serviceURL, String boreholeName, String custodian, String dateOfDrilling, int maxFeatures, FilterBoundingBox bbox, List<String> restrictToIDList) throws Exception {
+    public WFSKMLResponse getAllBoreholes(String serviceURL, String boreholeName, String custodian, String dateOfDrilling, int maxFeatures, FilterBoundingBox bbox, List<String> restrictToIDList) throws Exception {
         String filterString;
         BoreholeFilter nvclFilter = new BoreholeFilter(boreholeName, custodian, dateOfDrilling, restrictToIDList);
         if (bbox == null) {
@@ -79,9 +86,15 @@ public class BoreholeService {
 
         // Create a GetFeature request with an empty filter - get all
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:Borehole", filterString, maxFeatures);
-        // Call the service, and get all the boreholes
-        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+        try {
+            // Call the service, and get all the boreholes
+            String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+            String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+            return new WFSKMLResponse(responseGml, responseKml, method);
+        } catch (Exception ex) {
+            throw new PortalServiceException(method, ex);
+        }
     }
 
 

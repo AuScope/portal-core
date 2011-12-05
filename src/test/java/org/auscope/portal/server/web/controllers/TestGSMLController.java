@@ -9,18 +9,22 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.URI;
 import org.auscope.portal.gsml.GSMLResponseHandler;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.web.service.WFSService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 /**
  * Unit tests for GSMLController
@@ -38,16 +42,6 @@ public class TestGSMLController {
     }};
 
     /**
-     * Mock httpService caller
-     */
-    private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
-
-    /**
-     * Mock gml to kml converter
-     */
-    private GmlToKml gmlToKml = context.mock(GmlToKml.class);
-
-    /**
      * The controller to test
      */
     private GSMLController gsmlController;
@@ -62,18 +56,20 @@ public class TestGSMLController {
      */
     private HttpSession mockHttpSession = context.mock(HttpSession.class);
 
+
+    private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
+
     /**
      * Mock session
      */
     private ServletContext mockServletContext = context.mock(ServletContext.class);
 
-    private WFSGetFeatureMethodMaker wfsGetFeatureMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
-
+    private WFSService mockWfsService = context.mock(WFSService.class);
     private IFilter mockFilter = context.mock(IFilter.class);
 
     @Before
     public void setUp() {
-        gsmlController = new GSMLController(httpServiceCaller, gmlToKml, wfsGetFeatureMethodMaker, mockFilter);
+        gsmlController = new GSMLController(mockWfsService, mockFilter);
     }
 
     /**
@@ -81,85 +77,92 @@ public class TestGSMLController {
      */
     @Test
     public void testGetAllFeatures() throws Exception {
+        final String gmlBlob = "gmlBlob";
         final String kmlBlob = "kmlBlob";
         final String filterString = "filterStr";
+        final String wfsUrl = "http://service/wfs";
+        final String featureType = "type:name";
+        final int maxFeatures = 1234;
+        final String srs = null; //dont specify this
+        final String bboxJsonString = null;
 
         context.checking(new Expectations() {{
-            oneOf(httpServiceCaller).getHttpClient();
-            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
-
-            oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
-
-            oneOf(wfsGetFeatureMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)), with(any(String.class)));
+            oneOf(mockWfsService).getWfsResponseAsKml(wfsUrl, featureType, filterString, maxFeatures, srs);will(returnValue(new WFSKMLResponse(gmlBlob, kmlBlob, mockMethod)));
 
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
 
             oneOf(mockFilter).getFilterStringAllRecords(); will(returnValue(filterString));
+
+            allowing(mockMethod).getURI();will(returnValue(new URI("http://service.wfs/wfs", false)));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestAllFeatures("fake", "fake", null, 0, mockHttpRequest);
-
-        //check that the kml blob has been put ont he model
-        modelAndView.getModel().get("data").equals(kmlBlob);
-        modelAndView.getModel().get("success").equals(true);
+        ModelAndView modelAndView = gsmlController.requestAllFeatures(wfsUrl, featureType, bboxJsonString, maxFeatures, mockHttpRequest);
+        ModelMap dataObj = (ModelMap) modelAndView.getModel().get("data");
+        Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
+        Assert.assertNotNull(dataObj);
+        Assert.assertEquals(gmlBlob, dataObj.get("gml"));
+        Assert.assertEquals(kmlBlob, dataObj.get("kml"));
     }
 
     @Test
     public void testGetAllFeaturesInBbox() throws Exception {
+        final String gmlBlob = "gmlBlob";
         final String kmlBlob = "kmlBlob";
         final String filterString = "filterStr";
-        final String bboxToParse = "{\"bboxSrs\":\"http://www.opengis.net/gml/srs/epsg.xml%234326\",\"lowerCornerPoints\":[-5,-6],\"upperCornerPoints\":[7,8]}";
-
+        final String wfsUrl = "http://service/wfs";
+        final String featureType = "type:name";
+        final int maxFeatures = 1234;
+        final String srs = null; //dont specify this
+        final String bboxJsonString = "{\"bboxSrs\":\"http://www.opengis.net/gml/srs/epsg.xml%234326\",\"lowerCornerPoints\":[-5,-6],\"upperCornerPoints\":[7,8]}";
 
         context.checking(new Expectations() {{
-            oneOf(httpServiceCaller).getHttpClient();
-            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
-
-            oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
-
-            oneOf(wfsGetFeatureMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)), with(any(String.class)));
+            oneOf(mockWfsService).getWfsResponseAsKml(wfsUrl, featureType, filterString, maxFeatures, srs);will(returnValue(new WFSKMLResponse(gmlBlob, kmlBlob, mockMethod)));
 
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
 
             oneOf(mockFilter).getFilterStringBoundingBox(with(any(FilterBoundingBox.class))); will(returnValue(filterString));
+
+            allowing(mockMethod).getURI();will(returnValue(new URI("http://service.wfs/wfs", false)));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestAllFeatures("fake", "fake", bboxToParse, 0, mockHttpRequest);
-
-        //check that the kml blob has been put ont he model
-        modelAndView.getModel().get("data").equals(kmlBlob);
-        modelAndView.getModel().get("success").equals(true);
+        ModelAndView modelAndView = gsmlController.requestAllFeatures(wfsUrl, featureType, bboxJsonString, maxFeatures, mockHttpRequest);
+        ModelMap dataObj = (ModelMap) modelAndView.getModel().get("data");
+        Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
+        Assert.assertNotNull(dataObj);
+        Assert.assertEquals(gmlBlob, dataObj.get("gml"));
+        Assert.assertEquals(kmlBlob, dataObj.get("kml"));
     }
 
     @Test
     public void testRequestFeature() throws Exception {
+        final String gmlBlob = "gmlBlob";
         final String kmlBlob = "kmlBlob";
-        final String serviceUrl = "http://example.com";
-        final String featureType = "featureType";
-        final String featureId = "featureId";
-        final HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
+        final String filterString = "filterStr";
+        final String wfsUrl = "http://service/wfs";
+        final String featureType = "type:name";
+        final String featureId = "feature-id";
+        final int maxFeatures = 1234;
+        final String srs = null; //dont specify this
 
         context.checking(new Expectations() {{
-            oneOf(httpServiceCaller).getHttpClient();
-            oneOf(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
-
-            oneOf(gmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));will(returnValue(kmlBlob));
-
-            oneOf(wfsGetFeatureMethodMaker).makeMethod(serviceUrl, featureType, featureId);will(returnValue(mockMethod));
+            oneOf(mockWfsService).getWfsResponseAsKml(wfsUrl, featureType, featureId);will(returnValue(new WFSKMLResponse(gmlBlob, kmlBlob, mockMethod)));
 
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+
+            allowing(mockMethod).getURI();will(returnValue(new URI("http://service.wfs/wfs", false)));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestFeature(serviceUrl,featureType, featureId,mockHttpRequest);
-
-        //check that the kml blob has been put ont he model
-        Assert.assertEquals(kmlBlob, ((Map)modelAndView.getModel().get("data")).get("kml"));
-        Assert.assertTrue(modelAndView.getModel().get("success").equals(true));
+        ModelAndView modelAndView = gsmlController.requestFeature(wfsUrl, featureType, featureId, mockHttpRequest);
+        ModelMap dataObj = (ModelMap) modelAndView.getModel().get("data");
+        Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
+        Assert.assertNotNull(dataObj);
+        Assert.assertEquals(gmlBlob, dataObj.get("gml"));
+        Assert.assertEquals(kmlBlob, dataObj.get("kml"));
     }
 }

@@ -12,10 +12,12 @@ import org.auscope.portal.gsml.YilgarnGeochemistryFilter;
 import org.auscope.portal.gsml.YilgarnLocatedSpecimenRecord;
 import org.auscope.portal.gsml.YilgarnObservationRecord;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.web.service.WFSService;
 import org.auscope.portal.server.web.service.YilgarnGeochemistryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,22 +35,19 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-public class YilgarnGeochemistryController extends AbstractBaseWFSToKMLController {
+public class YilgarnGeochemistryController extends BasePortalController {
 
     /** Log object for this class. */
-
     private final Log logger = LogFactory.getLog(getClass().getName());
-    private WFSGetFeatureMethodMaker methodMaker;
+    /** Used for making Yilgarn geochemistry specific requests*/
     private YilgarnGeochemistryService geochemService;
+    /** Used for making general WFS requests*/
+    private WFSService wfsService;
 
 
     @Autowired
-    public YilgarnGeochemistryController(HttpServiceCaller httpServiceCaller,
-                          GmlToKml gmlToKml,
-                          WFSGetFeatureMethodMaker methodMaker, YilgarnGeochemistryService geochemService) {
-        this.httpServiceCaller = httpServiceCaller;
-        this.gmlToKml = gmlToKml;
-        this.methodMaker = methodMaker;
+    public YilgarnGeochemistryController(WFSService wfsService, YilgarnGeochemistryService geochemService) {
+        this.wfsService = wfsService;
         this.geochemService = geochemService;
     }
 
@@ -129,33 +128,27 @@ public class YilgarnGeochemistryController extends AbstractBaseWFSToKMLControlle
             HttpServletRequest request) throws Exception  {
 
 
+        //Build our filter details
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
-
-        HttpMethodBase method = null;
-        try{
-            String filterString;
-            YilgarnGeochemistryFilter yilgarnGeochemistryFilter = new YilgarnGeochemistryFilter(geologicName);
-            if (bbox == null) {
-                filterString = yilgarnGeochemistryFilter.getFilterStringAllRecords();
-            } else {
-                filterString = yilgarnGeochemistryFilter.getFilterStringBoundingBox(bbox);
-            }
-
-            method = methodMaker.makeMethod(serviceUrl, "gsml:GeologicUnit", filterString, maxFeatures);
-            String yilgarnGeochemResponse = httpServiceCaller.getMethodResponseAsString(method,httpServiceCaller.getHttpClient());
-
-            String kmlBlob =  convertToKml(yilgarnGeochemResponse, request, serviceUrl);
-
-            if (kmlBlob == null || kmlBlob.length() == 0) {
-                log.error(String.format("Transform failed serviceUrl='%1$s' gmlBlob='%2$s'",serviceUrl, yilgarnGeochemResponse));
-                return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED ,method);
-            } else {
-                return makeModelAndViewKML(kmlBlob, yilgarnGeochemResponse, method);
-            }
-
-        } catch (Exception e) {
-            return this.generateExceptionResponse(e, serviceUrl, method);
+        String filterString = null;
+        String srs = null;
+        YilgarnGeochemistryFilter yilgarnGeochemistryFilter = new YilgarnGeochemistryFilter(geologicName);
+        if (bbox == null) {
+            filterString = yilgarnGeochemistryFilter.getFilterStringAllRecords();
+        } else {
+            filterString = yilgarnGeochemistryFilter.getFilterStringBoundingBox(bbox);
         }
+
+        //Make our request and get it transformed
+        WFSKMLResponse response = null;
+        try {
+            response = wfsService.getWfsResponseAsKml(serviceUrl, "gsml:GeologicUnit", filterString, maxFeatures, srs);
+        } catch (Exception ex) {
+            log.warn("Unable to request/transform WFS response", ex);
+            return generateExceptionResponse(ex, serviceUrl);
+        }
+
+        return generateJSONResponseMAV(true, response.getGml(), response.getKml(), response.getMethod());
     }
 
 }

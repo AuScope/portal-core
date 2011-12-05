@@ -4,7 +4,11 @@ package org.auscope.portal.server.web.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -12,6 +16,9 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
+import org.auscope.portal.server.web.ErrorMessages;
+import org.auscope.portal.server.web.service.PortalServiceException;
 import org.auscope.portal.server.web.view.JSONView;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
@@ -95,6 +102,31 @@ public abstract class BasePortalController {
      */
     protected ModelAndView generateJSONResponseMAV(boolean success, Object data, String message, Object debugInfo) {
         return generateJSONResponseMAV(success, data, message, null, debugInfo);
+    }
+
+    /**
+     * Generates a JSON response containing WFS response info
+     * @param success The result of the operation
+     * @param gml The raw GML response
+     * @param kml The transformed KML response
+     * @param method The method used to make the request (used for populating debug info)
+     * @return
+     */
+    protected ModelAndView generateJSONResponseMAV(boolean success, String gml, String kml, HttpMethodBase method) {
+
+        if (kml == null || kml.isEmpty()) {
+            log.error(String.format("Transform failed gmlBlob='%1$s'", gml));
+            return generateJSONResponseMAV(false, null, ErrorMessages.OPERATION_FAILED);
+        }
+
+        ModelMap data = new ModelMap();
+
+        data.put("gml", gml);
+        data.put("kml", kml);
+
+        ModelMap debug = makeDebugInfoModel(method);
+
+        return generateJSONResponseMAV(success, data, "", debug);
     }
 
     /**
@@ -187,5 +219,49 @@ public abstract class BasePortalController {
                 output.write(buffer, 0, dataRead);
             }
         } while (dataRead != -1);
+    }
+
+    /**
+     * Exception resolver that maps exceptions to views presented to the user.
+     * @param e The exception
+     * @param serviceUrl The Url of the actual service
+     * @return ModelAndView object with error message
+     */
+    protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl) {
+        return generateExceptionResponse(e, serviceUrl, null);
+    }
+
+    /**
+     * Exception resolver that maps exceptions to views presented to the user.
+     * @param e The exception
+     * @param serviceUrl The Url of the actual service
+     * @param request [Optional] Specify the request object that was used to make the HTTP WFS request. Its contents will be included for debug purposes
+     * @return ModelAndView object with error message
+     */
+    protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl, HttpMethodBase request) {
+        log.error(String.format("Exception! serviceUrl='%1$s'", serviceUrl), e);
+
+        //Portal service exceptions wrap existing exceptions with a culprit HttpMethodBase
+        if (e instanceof PortalServiceException) {
+            PortalServiceException portalServiceEx = (PortalServiceException) e;
+            return generateExceptionResponse(portalServiceEx.getCause(), serviceUrl, portalServiceEx.getRootMethod());
+        }
+
+        // Service down or host down
+        if (e instanceof ConnectException || e instanceof UnknownHostException) {
+            return this.generateJSONResponseMAV(false, null, ErrorMessages.UNKNOWN_HOST_OR_FAILED_CONNECTION, makeDebugInfoModel(request));
+        }
+
+        // Timeouts
+        if (e instanceof ConnectTimeoutException) {
+            return this.generateJSONResponseMAV(false, null, ErrorMessages.OPERATION_TIMOUT, makeDebugInfoModel(request));
+        }
+
+        if (e instanceof SocketTimeoutException) {
+            return this.generateJSONResponseMAV(false, null, ErrorMessages.OPERATION_TIMOUT, makeDebugInfoModel(request));
+        }
+
+        // An error we don't specifically handle or expect
+        return this.generateJSONResponseMAV(false, null, ErrorMessages.FILTER_FAILED, makeDebugInfoModel(request));
     }
 }

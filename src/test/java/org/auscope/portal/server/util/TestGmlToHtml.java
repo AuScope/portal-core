@@ -13,8 +13,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestGmlToKml {
-
+/**
+ * Unit tests for GmlToHtml
+ * @author Josh Vote
+ *
+ */
+public class TestGmlToHtml {
     private Mockery context = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
@@ -22,11 +26,11 @@ public class TestGmlToKml {
     private ServletContext mockServletContext = context.mock(ServletContext.class);
     private PortalXSLTTransformer mockTransformer = context.mock(PortalXSLTTransformer.class);
     private InputStream mockInputStream = context.mock(InputStream.class);
-    private GmlToKml gmlToKml;
+    private GmlToHtml gmlToHtml;
 
     @Before
     public void setup() {
-        gmlToKml = new GmlToKml(mockTransformer, mockServletContext);
+        gmlToHtml = new GmlToHtml(mockTransformer, mockServletContext);
     }
 
     private PropertiesMatcher aProperty(String property, String value) {
@@ -46,11 +50,11 @@ public class TestGmlToKml {
 
 
         context.checking(new Expectations() {{
-            oneOf(mockServletContext).getResourceAsStream(GmlToKml.GML_TO_KML_XSLT);will(returnValue(mockInputStream));
+            oneOf(mockServletContext).getResourceAsStream(GmlToHtml.GML_TO_HTML_XSLT);will(returnValue(mockInputStream));
             oneOf(mockTransformer).convert(with(equal(inputXml)), with(same(mockInputStream)), with(aProperty("serviceURL", serviceUrl)));will(returnValue(outputXml));
         }});
 
-        final String result = gmlToKml.convert(inputXml, serviceUrl);
+        final String result = gmlToHtml.convert(inputXml, serviceUrl);
         Assert.assertEquals(outputXml, result);
     }
 
@@ -65,11 +69,10 @@ public class TestGmlToKml {
 
 
         context.checking(new Expectations() {{
-            oneOf(mockServletContext).getResourceAsStream(GmlToKml.GML_TO_KML_XSLT);will(returnValue(null));
+            oneOf(mockServletContext).getResourceAsStream(GmlToHtml.GML_TO_HTML_XSLT);will(returnValue(null));
         }});
 
-        final String result = gmlToKml.convert(inputXml, serviceUrl);
+        final String result = gmlToHtml.convert(inputXml, serviceUrl);
         Assert.assertEquals(outputXml, result);
     }
-
 }

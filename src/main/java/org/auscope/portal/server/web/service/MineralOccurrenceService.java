@@ -11,6 +11,8 @@ import org.auscope.portal.mineraloccurrence.MineralOccurrenceFilter;
 import org.auscope.portal.mineraloccurrence.MineralOccurrencesResponseHandler;
 import org.auscope.portal.mineraloccurrence.MiningActivityFilter;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
+import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class MineralOccurrenceService {
     // ----------------------------------------------------- Instance variables
 
     private HttpServiceCaller httpServiceCaller;
+    private GmlToKml gmlToKml;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
     private WFSGetFeatureMethodMaker methodMaker;
 
@@ -47,10 +50,12 @@ log.info(".......default C'tor");
     @Autowired
     public MineralOccurrenceService(HttpServiceCaller httpServiceCaller,
                                      MineralOccurrencesResponseHandler respHandler,
-                                     WFSGetFeatureMethodMaker methodMaker) {
+                                     WFSGetFeatureMethodMaker methodMaker,
+                                     GmlToKml gmlToKml) {
         this.httpServiceCaller = httpServiceCaller;
         this.mineralOccurrencesResponseHandler = respHandler;
         this.methodMaker = methodMaker;
+        this.gmlToKml = gmlToKml;
     }
 
 
@@ -65,11 +70,11 @@ log.info(".......default C'tor");
      */
     public List<Mine> getAllMines(String serviceURL, int maxFeatures) throws Exception {
         //get the mines
-        HttpMethodBase method = this.getAllMinesGML(serviceURL, maxFeatures);
-        String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        WFSKMLResponse response = this.getAllMinesGML(serviceURL, maxFeatures);
 
         //convert the response into a nice collection of Mine Nodes
-        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
+        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(response.getGml());
+
         //send it back!
         return mines;
     }
@@ -84,11 +89,11 @@ log.info(".......default C'tor");
      */
     public List<Mine> getAllVisibleMines(String serviceURL, FilterBoundingBox bbox, int maxFeatures) throws Exception {
         //get the mines
-        HttpMethodBase method = this.getAllVisibleMinesGML(serviceURL, bbox, maxFeatures);
-        String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        WFSKMLResponse response = this.getAllVisibleMinesGML(serviceURL, bbox, maxFeatures);
 
         //convert the response into a nice collection of Mine Nodes
-        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
+        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(response.getGml());
+
         //send it back!
         return mines;
     }
@@ -102,7 +107,7 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public HttpMethodBase getAllVisibleMinesGML(String serviceURL, FilterBoundingBox bbox, int maxFeatures) throws Exception {
+    public WFSKMLResponse getAllVisibleMinesGML(String serviceURL, FilterBoundingBox bbox, int maxFeatures) throws Exception {
         MineFilter filter = new MineFilter("");
 
         log.debug("Mine query... url:" + serviceURL);
@@ -110,8 +115,10 @@ log.info(".......default C'tor");
 
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", filter.getFilterStringBoundingBox(bbox), maxFeatures,  bbox.getBboxSrs());
 
-        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+        String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+        return new WFSKMLResponse(responseGml, responseKml, method);
     }
 
     /**
@@ -122,10 +129,10 @@ log.info(".......default C'tor");
      */
     public List<Mine> getMineWithSpecifiedName(String serviceURL, String mineName, int maxFeatures) throws Exception {
         //get the mine
-        HttpMethodBase method = this.getMineWithSpecifiedNameGML(serviceURL, mineName, maxFeatures);
-        String mineResponse = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        WFSKMLResponse response = this.getMineWithSpecifiedNameGML(serviceURL, mineName, maxFeatures);
+
         //convert the response into a collection of Mine Nodes
-        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(mineResponse);
+        List<Mine> mines = this.mineralOccurrencesResponseHandler.getMines(response.getGml());
 
         //send it back!
         return mines;
@@ -137,7 +144,7 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public HttpMethodBase getAllMinesGML(String serviceURL, int maxFeatures) throws Exception {
+    public WFSKMLResponse getAllMinesGML(String serviceURL, int maxFeatures) throws Exception {
         MineFilter filter = new MineFilter("");
 
         log.debug("Mine query... url:" + serviceURL);
@@ -147,8 +154,10 @@ log.info(".......default C'tor");
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", filter.getFilterStringAllRecords(), maxFeatures);
 
         //call the service, and get all the mines
-       //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+        String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+        return new WFSKMLResponse(responseGml, responseKml, method);
     }
 
     /**
@@ -159,7 +168,7 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public HttpMethodBase getMineWithSpecifiedNameGML(String serviceURL, String mineName, int maxFeatures) throws Exception {
+    public WFSKMLResponse getMineWithSpecifiedNameGML(String serviceURL, String mineName, int maxFeatures) throws Exception {
         //create a filter for the specified name
         MineFilter mineFilter = new MineFilter(mineName);
 
@@ -170,8 +179,10 @@ log.info(".......default C'tor");
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", mineFilter.getFilterStringAllRecords(), maxFeatures);
 
         //call the service, and get all the mines
-        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+        String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+        return new WFSKMLResponse(responseGml, responseKml, method);
     }
 
     /**
@@ -184,7 +195,7 @@ log.info(".......default C'tor");
      * @return
      * @throws Exception
      */
-    public HttpMethodBase getVisibleMineWithSpecifiedNameGML(String serviceURL, String mineName, int maxFeatures, FilterBoundingBox bbox) throws Exception {
+    public WFSKMLResponse getVisibleMineWithSpecifiedNameGML(String serviceURL, String mineName, int maxFeatures, FilterBoundingBox bbox) throws Exception {
         //create a filter for the specified name
         MineFilter mineFilter = new MineFilter(mineName);
 
@@ -195,8 +206,10 @@ log.info(".......default C'tor");
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", mineFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
 
         //call the service, and get all the mines
-        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+        String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+        return new WFSKMLResponse(responseGml, responseKml, method);
     }
 
 
@@ -213,7 +226,7 @@ log.info(".......default C'tor");
      * @param cutOffGradeUOM
      * @return
      */
-    public HttpMethodBase  getMineralOccurrenceGML(String serviceURL,
+    public WFSKMLResponse  getMineralOccurrenceGML(String serviceURL,
                                            String commodityName,
                                            String measureType,
                                            String minOreAmount,
@@ -240,8 +253,10 @@ log.info(".......default C'tor");
         //create the method
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), maxFeatures);
 
-        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+        String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+        return new WFSKMLResponse(responseGml, responseKml, method);
     }
 
     /**
@@ -258,7 +273,7 @@ log.info(".......default C'tor");
      * @param cutOffGradeUOM
      * @return
      */
-    public HttpMethodBase getVisibleMineralOccurrenceGML(String serviceURL,
+    public WFSKMLResponse getVisibleMineralOccurrenceGML(String serviceURL,
                                            String commodityName,
                                            String measureType,
                                            String minOreAmount,
@@ -286,12 +301,14 @@ log.info(".......default C'tor");
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
 
         //run the dam query
-        //return httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+        String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+        return new WFSKMLResponse(responseGml, responseKml, method);
     }
 
 
-    public HttpMethodBase getMiningActivityGML(String serviceURL,
+    public WFSKMLResponse getMiningActivityGML(String serviceURL,
                                         String mineName,
                                         String startDate,
                                         String endDate,
@@ -311,12 +328,15 @@ log.info(".......default C'tor");
         //create the method
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", miningActivityFilter.getFilterStringAllRecords(), maxFeatures);
         log.debug("After methodMaker.makeMethod");
-        //run dat query
-        //return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+
+        //run query
+        String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+        return new WFSKMLResponse(responseGml, responseKml, method);
     }
 
-    public HttpMethodBase getVisibleMiningActivityGML(String serviceURL,
+    public WFSKMLResponse getVisibleMiningActivityGML(String serviceURL,
             String mineName,
             String startDate,
             String endDate,
@@ -338,8 +358,10 @@ log.info(".......default C'tor");
         //create the method
         HttpMethodBase method = methodMaker.makeMethod(serviceURL, "er:MiningFeatureOccurrence", miningActivityFilter.getFilterStringBoundingBox(bbox), maxFeatures, bbox.getBboxSrs());
 
-        //run dat query
-        //return this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-        return method;
+        //run query
+        String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        String responseKml = gmlToKml.convert(responseGml, serviceURL);
+
+        return new WFSKMLResponse(responseGml, responseKml, method);
     }
 }

@@ -1,10 +1,7 @@
 package org.auscope.portal.server.web.controllers;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ConnectException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,12 +9,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
@@ -35,16 +30,12 @@ import org.auscope.portal.server.domain.nvcldataservice.TSGDownloadResponse;
 import org.auscope.portal.server.domain.nvcldataservice.TSGStatusResponse;
 import org.auscope.portal.server.domain.nvcldataservice.WFSDownloadResponse;
 import org.auscope.portal.server.domain.nvcldataservice.WFSStatusResponse;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.util.ByteBufferedServletOutputStream;
-import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
-import org.auscope.portal.server.web.KnownLayerWFS;
-import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.service.CSWRecordsFilterVisitor;
-import org.auscope.portal.server.web.service.CSWRecordsHostFilter;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.NVCLDataService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -52,13 +43,13 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
  * The Class TestNVCLController.
  * @version: $Id$
  */
+@SuppressWarnings("rawtypes")
 public class TestNVCLController {
 
     /** The mock http request. */
@@ -67,26 +58,15 @@ public class TestNVCLController {
     /** The mock http response. */
     private HttpServletResponse mockHttpResponse;
 
-    /** The mock gml to kml. */
-    private GmlToKml mockGmlToKml;
-
     /** The mock http session. */
     private HttpSession mockHttpSession;
 
     /** The mock servlet context. */
     private ServletContext mockServletContext;
 
-    /** The mock http service caller. */
-    private HttpServiceCaller mockHttpServiceCaller;
-
-    /** The mock http client. */
-    private HttpClient mockHttpClient;
 
     /** The mock csw service. */
     private CSWCacheService mockCSWService;
-
-    /** The mock wfs method maker. */
-    private WFSGetFeatureMethodMaker mockWfsMethodMaker;
 
     /** The mock borehole service. */
     private BoreholeService mockBoreholeService;
@@ -96,12 +76,6 @@ public class TestNVCLController {
 
     /** The nvcl controller. */
     private NVCLController nvclController;
-
-    /** The known boreholes */
-    private KnownLayerWFS mockBorehole;
-
-    /** The known boreholes2*/
-    private KnownLayerWFS mockBorehole2;
 
     /** The context. */
     private Mockery context = new Mockery() {{
@@ -114,17 +88,14 @@ public class TestNVCLController {
     @Before
     public void setUp() {
 
-        this.mockGmlToKml = context.mock(GmlToKml.class);
         this.mockHttpRequest = context.mock(HttpServletRequest.class);
         this.mockHttpResponse = context.mock(HttpServletResponse.class);
         this.mockBoreholeService = context.mock(BoreholeService.class);
         this.mockHttpSession = context.mock(HttpSession.class);
         this.mockServletContext = context.mock(ServletContext.class);
-        this.mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
         this.mockCSWService = context.mock(CSWCacheService.class);
-        this.mockHttpClient = context.mock(HttpClient.class);
         this.mockDataService = context.mock(NVCLDataService.class);
-        this.nvclController = new NVCLController(this.mockGmlToKml, this.mockBoreholeService, this.mockHttpServiceCaller, this.mockCSWService, this.mockDataService);
+        this.nvclController = new NVCLController(this.mockBoreholeService, this.mockCSWService, this.mockDataService);
     }
 
     /**
@@ -148,15 +119,9 @@ public class TestNVCLController {
 
         context.checking(new Expectations() {{
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, null);
-            will(returnValue(mockHttpMethodBase));
+            will(returnValue(new WFSKMLResponse(nvclWfsResponse, nvclKmlResponse, mockHttpMethodBase)));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
-            will(returnValue(nvclWfsResponse));
-
-            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));
-            will(returnValue(nvclKmlResponse));
 
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
@@ -209,17 +174,9 @@ public class TestNVCLController {
             will(returnValue(restrictedIds));
 
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, restrictedIds);
-            will(returnValue(mockHttpMethodBase));
+            will(returnValue(new WFSKMLResponse(nvclWfsResponse, nvclKmlResponse, mockHttpMethodBase)));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf(mockHttpServiceCaller).getHttpClient();
-            will(returnValue(mockHttpClient));
-
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
-            will(returnValue(nvclWfsResponse));
-
-            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));
-            will(returnValue(nvclKmlResponse));
 
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
@@ -255,8 +212,6 @@ public class TestNVCLController {
         final String filterDate = "1986-10-09";
         final int maxFeatures = 10;
         final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1, 2}, new double[] {3, 4});
-        final String nvclWfsResponse = "wfsResponse";
-        final String nvclKmlResponse = "kmlResponse";
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
         final URI httpMethodURI = new URI("http://example.com", true);
@@ -270,14 +225,6 @@ public class TestNVCLController {
             will(throwException(new ConnectException()));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf(mockHttpServiceCaller).getHttpClient();
-            will(returnValue(mockHttpClient));
-
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
-            will(returnValue(nvclWfsResponse));
-
-            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));
-            will(returnValue(nvclKmlResponse));
 
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
@@ -309,8 +256,6 @@ public class TestNVCLController {
         final String filterDate = "1986-10-09";
         final int maxFeatures = 10;
         final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1., 2.}, new double[] {3., 4.});
-        final String nvclWfsResponse = "wfsResponse";
-        final String nvclKmlResponse = "kmlResponse";
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
         final URI httpMethodURI = new URI("http://example.com", true);
@@ -324,14 +269,6 @@ public class TestNVCLController {
             will(returnValue(new ArrayList<String>()));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf(mockHttpServiceCaller).getHttpClient();
-            will(returnValue(mockHttpClient));
-
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
-            will(returnValue(nvclWfsResponse));
-
-            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)), with(any(String.class)));
-            will(returnValue(nvclKmlResponse));
 
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
@@ -532,7 +469,6 @@ public class TestNVCLController {
         final Double samplingInterval = 1.5;
         final Integer graphTypeInt = 1;
         final PlotScalarGraphType graphType = PlotScalarGraphType.StackedBarChart;
-        final byte[] data = new byte[] {0,1,2,3,4,5,6,7,8,9};
 
         context.checking(new Expectations() {{
             oneOf(mockDataService).getPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);will(throwException(new ConnectException()));
@@ -759,15 +695,10 @@ public class TestNVCLController {
 
         context.checking(new Expectations() {{
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, null, null);
-            will(returnValue(mockHttpMethodBase));
+            will(returnValue(new WFSKMLResponse(nvclWfsResponse, nvclKmlResponse, mockHttpMethodBase)));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockHttpMethodBase, mockHttpClient);
             will(returnValue(nvclWfsResponse));
-
-            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));
-            will(returnValue(nvclKmlResponse));
 
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));

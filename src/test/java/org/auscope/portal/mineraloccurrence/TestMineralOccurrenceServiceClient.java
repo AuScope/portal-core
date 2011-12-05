@@ -7,6 +7,7 @@ import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
@@ -27,6 +28,7 @@ public class TestMineralOccurrenceServiceClient {
     private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
     private HttpClient mockHttpClient;
+    private GmlToKml mockGmlToKml;
     //private CommodityService commodityService;
 
     private WFSGetFeatureMethodMaker methodMaker;
@@ -41,7 +43,8 @@ public class TestMineralOccurrenceServiceClient {
         this.methodMaker = context.mock(WFSGetFeatureMethodMaker.class);
         this.mineralOccurrencesResponseHandler = context.mock(MineralOccurrencesResponseHandler.class);
         this.httpServiceCaller = context.mock(HttpServiceCaller.class);
-        this.mineralOccurrenceService = new MineralOccurrenceService(this.httpServiceCaller, this.mineralOccurrencesResponseHandler, this.methodMaker);
+        this.mockGmlToKml = context.mock(GmlToKml.class);
+        this.mineralOccurrenceService = new MineralOccurrenceService(this.httpServiceCaller, this.mineralOccurrencesResponseHandler, this.methodMaker, this.mockGmlToKml);
         this.mockHttpClient = context.mock(HttpClient.class);
         //this.commodityService = context.mock(CommodityService.class);
     }
@@ -74,6 +77,8 @@ public class TestMineralOccurrenceServiceClient {
 
             oneOf(mineralOccurrencesResponseHandler).getMines(mockMineResponse);
             will(returnValue(mockMines));
+
+            oneOf(mockGmlToKml).convert(mockMineResponse, serviceURL);
         }});
 
         List<Mine> mines = this.mineralOccurrenceService.getAllMines(serviceURL, 0);
@@ -107,6 +112,8 @@ public class TestMineralOccurrenceServiceClient {
 
             oneOf(mineralOccurrencesResponseHandler).getMines(mockMineResponse);
             will(returnValue(mockMines));
+
+            oneOf(mockGmlToKml).convert(mockMineResponse, serviceURL);
         }});
 
         List<Mine> mines = this.mineralOccurrenceService.getMineWithSpecifiedName(serviceURL, mineName, 0);
@@ -196,6 +203,10 @@ public class TestMineralOccurrenceServiceClient {
             //the mineral occurrence query part
             oneOf(methodMaker).makeMethod(serviceURL, "gsml:MappedFeature", mineralOccurrenceFilter.getFilterStringAllRecords(), 0); will(returnValue(mockMethod));
 
+            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);will(returnValue(mockCommodityResponse));
+
+            oneOf(mockGmlToKml).convert(mockCommodityResponse, serviceURL);
         }});
 
         this.mineralOccurrenceService.getMineralOccurrenceGML(serviceURL,
@@ -222,6 +233,8 @@ public class TestMineralOccurrenceServiceClient {
             oneOf(httpServiceCaller).getHttpClient();
             will(returnValue(mockHttpClient));
             oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
+
+            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(String.class)));
         }});
 
         this.mineralOccurrenceService.getMiningActivityGML("", "", "", "", "", "", "", "", 0);

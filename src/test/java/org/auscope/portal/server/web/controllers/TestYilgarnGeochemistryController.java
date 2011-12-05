@@ -1,7 +1,6 @@
 package org.auscope.portal.server.web.controllers;
 
 
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.ConnectException;
@@ -14,13 +13,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.URI;
 import org.auscope.portal.gsml.YilgarnLocatedSpecimenRecord;
 import org.auscope.portal.gsml.YilgarnObservationRecord;
-import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
+import org.auscope.portal.server.web.service.WFSService;
 import org.auscope.portal.server.web.service.YilgarnGeochemistryService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -41,8 +39,6 @@ public class TestYilgarnGeochemistryController {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
-    /** The http service caller. */
-    private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
 
     /** The mock http request. */
     private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
@@ -59,18 +55,18 @@ public class TestYilgarnGeochemistryController {
     /** The mock http response. */
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
 
-    /** The mock method maker. */
-    private WFSGetFeatureMethodMaker mockMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
+    /** The mock Web Feature Service request Service*/
+    private WFSService mockWfsService = context.mock(WFSService.class);
 
-    /** The mock method maker. */
-    private GmlToKml mockGmlToKml = context.mock(GmlToKml.class);
+    /** The mock method*/
+    private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
 
     /** The yilgarn loc specimen controller. */
     private YilgarnGeochemistryController controller;
 
     @Before
     public void setUp() {
-        controller = new YilgarnGeochemistryController(mockHttpServiceCaller, mockGmlToKml, mockMethodMaker, mockGeochemService);
+        controller = new YilgarnGeochemistryController(mockWfsService, mockGeochemService);
     }
 
     /**
@@ -213,27 +209,30 @@ public class TestYilgarnGeochemistryController {
     @Test
     public void testYilgarnGeochemistryFilter() throws Exception{
         final String kmlBlob = "kmlBlob";
+        final String serviceUrl = "http://service/wfs";
+        final String geologicName = "filter info";
+        final int maxFeatures = 0;
+        final String bbox = null;
         final String expectedGML = "<gml/>";
         final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-            oneOf(mockHttpServiceCaller).getHttpClient();
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class))); will(returnValue(expectedGML));
 
             oneOf(mockHttpResponse).setContentType(with(any(String.class)));
             oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
 
-            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(InputStream.class)),with(any(String.class)));will(returnValue(kmlBlob));
-            oneOf(mockMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
+            oneOf(mockWfsService).getWfsResponseAsKml(with(equal(serviceUrl)), with(equal("gsml:GeologicUnit")), with(any(String.class)), with(equal(maxFeatures)), with(equal((String)null)));will(returnValue(new WFSKMLResponse(expectedGML, kmlBlob, mockMethod)));
+
             oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
             oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
             oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
+
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceUrl, true)));
         }});
-        ModelAndView modelAndView = controller.doYilgarnGeochemistryFilter("fake", "fake", null, 0,mockHttpRequest);
+        ModelAndView modelAndView = controller.doYilgarnGeochemistryFilter(serviceUrl, geologicName, bbox, maxFeatures,mockHttpRequest);
         Assert.assertNotNull(modelAndView);
         Map<String, Object> model = modelAndView.getModel();
         Assert.assertEquals(true, model.get("success"));
-
         Assert.assertNotNull(model.get("data"));
     }
 

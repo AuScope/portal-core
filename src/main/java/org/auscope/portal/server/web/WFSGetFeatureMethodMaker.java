@@ -1,5 +1,6 @@
 package org.auscope.portal.server.web;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -45,15 +46,15 @@ public class WFSGetFeatureMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) throws Exception {
+    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
 
         // Make sure the required parameters are given
         if (featureType == null || featureType.equals("")) {
-            throw new Exception("featureType parameter can not be null or empty.");
+            throw new IllegalArgumentException("featureType parameter can not be null or empty.");
         }
 
         if (serviceURL == null || serviceURL.equals("")) {
-            throw new Exception("serviceURL parameter can not be null or empty.");
+            throw new IllegalArgumentException("serviceURL parameter can not be null or empty.");
         }
 
         PostMethod httpMethod = new PostMethod(serviceURL);
@@ -86,7 +87,11 @@ public class WFSGetFeatureMethodMaker {
         log.debug("Get Feature Query:\n" + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
-        httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(), null, null));
+        try {
+            httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(), null, null));
+        } catch (UnsupportedEncodingException e) {
+            log.error("Unsupported encoding", e);
+        }
 
 
         return httpMethod;

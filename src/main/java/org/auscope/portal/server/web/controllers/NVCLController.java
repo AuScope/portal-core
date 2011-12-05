@@ -3,15 +3,12 @@ package org.auscope.portal.server.web.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.nvcldataservice.AbstractStreamResponse;
@@ -24,20 +21,15 @@ import org.auscope.portal.server.domain.nvcldataservice.TSGDownloadResponse;
 import org.auscope.portal.server.domain.nvcldataservice.TSGStatusResponse;
 import org.auscope.portal.server.domain.nvcldataservice.WFSDownloadResponse;
 import org.auscope.portal.server.domain.nvcldataservice.WFSStatusResponse;
-import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.web.ErrorMessages;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker;
-import org.auscope.portal.server.web.KnownLayerWFS;
 import org.auscope.portal.server.web.NVCLDataServiceMethodMaker.PlotScalarGraphType;
 import org.auscope.portal.server.web.service.BoreholeService;
 import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.service.CSWRecordsHostFilter;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.NVCLDataService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -48,22 +40,18 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-public class NVCLController extends AbstractBaseWFSToKMLController {
+public class NVCLController extends BasePortalController {
 
     private BoreholeService boreholeService;
     private NVCLDataService dataService;
     private CSWCacheService cswService;
 
     @Autowired
-    public NVCLController(GmlToKml gmlToKml,
-                            BoreholeService boreholeService,
-                            HttpServiceCaller httpServiceCaller,
+    public NVCLController(BoreholeService boreholeService,
                             CSWCacheService cswService,
                             NVCLDataService dataService) {
 
         this.boreholeService = boreholeService;
-        this.gmlToKml = gmlToKml;
-        this.httpServiceCaller = httpServiceCaller;
         this.cswService = cswService;
         this.dataService = dataService;
 
@@ -123,33 +111,20 @@ public class NVCLController extends AbstractBaseWFSToKMLController {
                 hyloggerBoreholeIDs = this.boreholeService.discoverHyloggerBoreholeIDs(this.cswService,new CSWRecordsHostFilter(serviceUrl));
             } catch (Exception e) {
                 log.warn("Error requesting list of hylogger borehole ID's", e);
-                return makeModelAndViewFailure("Failure when identifying which boreholes have Hylogger data.", null);
+                return generateJSONResponseMAV(false, null, "Failure when identifying which boreholes have Hylogger data.");
             }
 
             if (hyloggerBoreholeIDs.size() == 0) {
                 log.warn("No hylogger boreholes exist (or the services are missing)");
-                return makeModelAndViewFailure("Unable to identify any boreholes with Hylogger data.", null);
+                return generateJSONResponseMAV(false, null, "Unable to identify any boreholes with Hylogger data.");
             }
         }
 
-        HttpMethodBase method = null;
         try {
-            method = this.boreholeService.getAllBoreholes(serviceUrl, boreholeName, custodian, dateOfDrilling, maxFeatures, bbox, hyloggerBoreholeIDs);
-            String gmlBlob = this.httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-
-            String kmlBlob = convertToKml(gmlBlob, request, serviceUrl);
-
-            //log.debug(kmlBlob);
-            // This failure test should be more robust,
-            // it should try to extract an error message
-            if (kmlBlob == null || kmlBlob.length() == 0) {
-                log.error(String.format("Transform failed serviceUrl='%1$s' gmlBlob='%2$s'", serviceUrl, gmlBlob));
-                return makeModelAndViewFailure(ErrorMessages.OPERATION_FAILED, method);
-            } else {
-                return makeModelAndViewKML(kmlBlob, gmlBlob, method);
-            }
+            WFSKMLResponse response = this.boreholeService.getAllBoreholes(serviceUrl, boreholeName, custodian, dateOfDrilling, maxFeatures, bbox, hyloggerBoreholeIDs);
+            return generateJSONResponseMAV(true, response.getGml(), response.getKml(), response.getMethod());
         } catch (Exception e) {
-            return this.generateExceptionResponse(e, serviceUrl, method);
+            return this.generateExceptionResponse(e, serviceUrl);
         }
     }
 

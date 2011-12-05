@@ -7,13 +7,14 @@ import java.util.List;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
-import org.auscope.portal.server.domain.filter.IFilter;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
+import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -22,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestBoreholeService.
  */
@@ -36,17 +36,17 @@ public class TestBoreholeService {
     /** The service. */
     private BoreholeService service;
 
-    /** The mock filter. */
-    private IFilter mockFilter = context.mock(IFilter.class);
-
-    /** The nvcl mock filter. */
-    private BoreholeFilter nvclMockFilter = context.mock(BoreholeFilter.class);
-
     /** The mock http service caller. */
     private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
 
     /** The mock method maker. */
     private WFSGetFeatureMethodMaker mockMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
+
+    /** The mock HTTP method*/
+    private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
+
+    /** The mock GML transformer*/
+    private GmlToKml mockGmlToKml = context.mock(GmlToKml.class);
 
     /** The Constant GETSCANNEDBOREHOLEXML. */
     private static final String GETSCANNEDBOREHOLEXML = "src/test/resources/GetScannedBorehole.xml";
@@ -64,6 +64,7 @@ public class TestBoreholeService {
         service = new BoreholeService();
         service.setHttpServiceCaller(mockHttpServiceCaller);
         service.setWFSGetFeatureMethodMakerPOST(mockMethodMaker);
+        service.setGmlToKml(mockGmlToKml);
     }
 
     /**
@@ -73,28 +74,31 @@ public class TestBoreholeService {
      */
     @Test
     public void testGetAllBoreholesNoBbox() throws Exception {
-        final FilterBoundingBox bbox = new FilterBoundingBox("mySrs", new double[] {0, 1}, new double[] {2, 3});
+        final FilterBoundingBox bbox = null;
         final String serviceURL = "http://example.com";
-        final String filterString = "myFilter";
         final int maxFeatures = 45;
-        final String responseString = "xmlString";
+        final String boreholeName = "borehole-name";
+        final String custodian = "custodian";
+        final String dateOfDrilling = "2011-01-01";
+        final String gmlString = "xmlString";
+        final String kmlString = "kmlString";
         final List<String> restrictedIds = null;
 
         context.checking(new Expectations() {{
-            allowing(mockFilter).getFilterStringBoundingBox(bbox);
-            will(returnValue(filterString));
 
-            oneOf(mockMethodMaker).makeMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)), with(any(Integer.class)));
+            oneOf(mockMethodMaker).makeMethod(with(equal(serviceURL)), with(equal("gsml:Borehole")), with(any(String.class)), with(equal(maxFeatures)));will(returnValue(mockMethod));
+
             oneOf(mockHttpServiceCaller).getHttpClient();
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(gmlString));
 
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
-            will(returnValue(responseString));
+            oneOf(mockGmlToKml).convert(gmlString, serviceURL);will(returnValue(kmlString));
         }});
 
-        HttpMethodBase method = service.getAllBoreholes(serviceURL, "", "", "", 0, bbox, restrictedIds);
-        String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
+        WFSKMLResponse result = service.getAllBoreholes(serviceURL, boreholeName, custodian, dateOfDrilling, maxFeatures, bbox, restrictedIds);
         Assert.assertNotNull(result);
-        Assert.assertEquals(responseString, result);
+        Assert.assertEquals(gmlString, result.getGml());
+        Assert.assertEquals(kmlString, result.getKml());
+        Assert.assertSame(mockMethod, result.getMethod());
     }
 
     /**
@@ -104,26 +108,30 @@ public class TestBoreholeService {
      */
     @Test
     public void testGetAllBoreholesBbox() throws Exception {
+        final FilterBoundingBox bbox = new FilterBoundingBox("mySrs", new double[] {0, 1}, new double[] {2, 3});
         final String serviceURL = "http://example.com";
-        final String filterString = "";
         final int maxFeatures = 45;
-        final String responseString = "xmlString";
+        final String boreholeName = "borehole-name";
+        final String custodian = "custodian";
+        final String dateOfDrilling = "2011-01-01";
+        final String gmlString = "xmlString";
+        final String kmlString = "kmlString";
         final List<String> restrictedIds = null;
 
         context.checking(new Expectations() {{
-            allowing(mockFilter).getFilterStringAllRecords();
-            will(returnValue(filterString));
 
-            oneOf(mockMethodMaker).makeMethod(serviceURL, "gsml:Borehole", filterString, maxFeatures);
+            oneOf(mockMethodMaker).makeMethod(with(equal(serviceURL)), with(equal("gsml:Borehole")), with(any(String.class)), with(equal(maxFeatures)));will(returnValue(mockMethod));
             oneOf(mockHttpServiceCaller).getHttpClient();
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
-            will(returnValue(responseString));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(gmlString));
+
+            oneOf(mockGmlToKml).convert(gmlString, serviceURL);will(returnValue(kmlString));
         }});
 
-        HttpMethodBase method = service.getAllBoreholes(serviceURL, "", "", "", maxFeatures, null, restrictedIds);
-        String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
+        WFSKMLResponse result = service.getAllBoreholes(serviceURL, boreholeName, custodian, dateOfDrilling, maxFeatures, bbox, restrictedIds);
         Assert.assertNotNull(result);
-        Assert.assertEquals(responseString, result);
+        Assert.assertEquals(gmlString, result.getGml());
+        Assert.assertEquals(kmlString, result.getKml());
+        Assert.assertSame(mockMethod, result.getMethod());
     }
 
     /**
@@ -138,21 +146,24 @@ public class TestBoreholeService {
         final String boreholeName = "asda";
         final String custodian = "shaksdhska";
         final String dateOfDrilling = "2010-01-02";
-        final String responseString = "xmlString";
+        final String gmlString = "xmlString";
+        final String kmlString = "kmlString";
         final List<String> restrictedIds = Arrays.asList("id1", "id2", "id3");
         final String filterString = (new BoreholeFilter(boreholeName, custodian, dateOfDrilling, restrictedIds)).getFilterStringAllRecords();
 
         context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).makeMethod(serviceURL, "gsml:Borehole", filterString, maxFeatures);
+            oneOf(mockMethodMaker).makeMethod(serviceURL, "gsml:Borehole", filterString, maxFeatures);will(returnValue(mockMethod));
             oneOf(mockHttpServiceCaller).getHttpClient();
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
-            will(returnValue(responseString));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(gmlString));
+
+            oneOf(mockGmlToKml).convert(gmlString, serviceURL);will(returnValue(kmlString));
         }});
 
-        HttpMethodBase method = service.getAllBoreholes(serviceURL, boreholeName, custodian, dateOfDrilling, maxFeatures, null, restrictedIds);
-        String result = mockHttpServiceCaller.getMethodResponseAsString(method, mockHttpServiceCaller.getHttpClient());
+        WFSKMLResponse result = service.getAllBoreholes(serviceURL, boreholeName, custodian, dateOfDrilling, maxFeatures, null, restrictedIds);
         Assert.assertNotNull(result);
-        Assert.assertEquals(responseString, result);
+        Assert.assertEquals(gmlString, result.getGml());
+        Assert.assertEquals(kmlString, result.getKml());
+        Assert.assertSame(mockMethod, result.getMethod());
     }
 
     /**

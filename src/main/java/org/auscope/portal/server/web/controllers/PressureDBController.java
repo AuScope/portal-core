@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 @Controller
-public class PressureDBController extends AbstractBaseWFSToKMLController {
+public class PressureDBController extends BasePortalController {
 
     private final Log log = LogFactory.getLog(getClass());
 

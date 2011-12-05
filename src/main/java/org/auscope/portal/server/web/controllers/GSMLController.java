@@ -2,12 +2,10 @@ package org.auscope.portal.server.web.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
-import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
+import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
+import org.auscope.portal.server.web.service.WFSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,21 +21,17 @@ import org.springframework.web.servlet.ModelAndView;
  */
 
 @Controller
-public class GSMLController extends AbstractBaseWFSToKMLController {
-    private WFSGetFeatureMethodMaker methodMaker;
+public class GSMLController extends BasePortalController {
+
+    private WFSService wfsService;
     private IFilter filter;
 
     @Autowired
-    public GSMLController(HttpServiceCaller httpServiceCaller,
-                          GmlToKml gmlToKml,
-                          WFSGetFeatureMethodMaker methodMaker,
+    public GSMLController(WFSService wfsService,
                           IFilter filter) {
-        this.httpServiceCaller = httpServiceCaller;
-        this.gmlToKml = gmlToKml;
-        this.methodMaker = methodMaker;
+        this.wfsService = wfsService;
         this.filter = filter;
     }
-
 
     /**
      * Given a service Url and a feature type this will query for all of the features, then convert them into KML,
@@ -59,19 +53,23 @@ public class GSMLController extends AbstractBaseWFSToKMLController {
 
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
 
-        String filterString;
-
+        String filterString = null;
+        String srs = null;
         if (bbox == null) {
             filterString = filter.getFilterStringAllRecords();
         } else {
             filterString = filter.getFilterStringBoundingBox(bbox);
         }
-        HttpMethodBase method = methodMaker.makeMethod(serviceUrl, featureType, filterString, maxFeatures, "http://www.opengis.net/gml/srs/epsg.xml#4326");
 
-        String gmlResponse = httpServiceCaller.getMethodResponseAsString(method,
-                                                                     httpServiceCaller.getHttpClient());
+        WFSKMLResponse response = null;
+        try {
+            response = wfsService.getWfsResponseAsKml(serviceUrl, featureType, filterString, maxFeatures, srs);
+        } catch (Exception ex) {
+            log.warn("Unable to request/transform WFS response", ex);
+            return generateExceptionResponse(ex, serviceUrl);
+        }
 
-        return makeModelAndViewKML(convertToKml(gmlResponse, request, serviceUrl), gmlResponse, method);
+        return generateJSONResponseMAV(true, response.getGml(), response.getKml(), response.getMethod());
     }
 
 
@@ -89,9 +87,14 @@ public class GSMLController extends AbstractBaseWFSToKMLController {
                                        @RequestParam("typeName") final String featureType,
                                        @RequestParam("featureId") final String featureId,
                                        HttpServletRequest request) throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod(serviceUrl, featureType, featureId);
-        String gmlResponse = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+        WFSKMLResponse response = null;
+        try {
+            response = wfsService.getWfsResponseAsKml(serviceUrl, featureType, featureId);
+        } catch (Exception ex) {
+            log.warn("Unable to request/transform WFS response", ex);
+            return generateExceptionResponse(ex, serviceUrl);
+        }
 
-        return makeModelAndViewKML(convertToKml(gmlResponse, request, serviceUrl), gmlResponse);
+        return generateJSONResponseMAV(true, response.getGml(), response.getKml(), response.getMethod());
     }
 }

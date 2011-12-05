@@ -12,44 +12,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.ServletContextResource;
 
-
 /**
- * <p> Utility class that converts GeoSciML into KML format.</p>
- *
- * @author jsanders
+ * Utility class for converting Gml to a 'pretty' HTML representation
  * @author Josh Vote
+ *
  */
 @Component
-public class GmlToKml {
-    /** The location of the WFS response -> KML XSLT */
-    public static final String GML_TO_KML_XSLT = "/WEB-INF/xsl/kml.xsl";
+public class GmlToHtml {
+    /** The location of the WFS response -> HTML XSLT */
+    public static final String GML_TO_HTML_XSLT = "/WEB-INF/xsl/WfsToHtml.xsl";
 
     private final Log log = LogFactory.getLog(this.getClass());
     private PortalXSLTTransformer transformer;
     private ServletContext servletContext;
 
     @Autowired
-    public GmlToKml(PortalXSLTTransformer transformer, ServletContext servletContext) {
+    public GmlToHtml(PortalXSLTTransformer transformer, ServletContext servletContext) {
         this.transformer = transformer;
         this.servletContext = servletContext;
     }
 
     /**
-     * Utility method to transform a gml file into a 'pretty' HTML equivalent
+     * Utility method to transform xml file. It is kml.xsl specific as the
+     * stylesheet needs serviceURL parameter.
      *
-     * @param geoXML file to be converted in html format
+     * @param geoXML file to be converted in kml format
      * @param serviceUrl URL of the service providing data
      * @return Xml output string
-     * @throws
      */
     public String convert(String geoXML, String serviceUrl) {
-        log.debug("GML input: \n" + geoXML);
 
         InputStream inXSLT;
         try {
-            inXSLT = new ServletContextResource(servletContext, GML_TO_KML_XSLT).getInputStream();
+            inXSLT = new ServletContextResource(servletContext, GML_TO_HTML_XSLT).getInputStream();
         } catch (IOException ex) {
-            log.error("Couldn't find/read source GML->KML XSLT at " + GML_TO_KML_XSLT, ex);
+            log.error("Couldn't find source GML->HTML XSLT at " + GML_TO_HTML_XSLT, ex);
             return "";
         }
 
