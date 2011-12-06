@@ -12,7 +12,8 @@ ActiveLayersStore = function() {
                 {   name	: 'title'           },	//String: Text appears under the title column
                 {   name	: 'description'     },	//String: Text that appears when the row is 'expanded'
                 {   name	: 'cswRecords'      },	//[CSWRecord]: Objects that represent the content of this layer
-                {	name	: 'proxyUrl'		},	//String: The raw URL that references the location the active layer should query
+                {	name	: 'proxyFetchUrl'}, //String: The raw URL that references the location the active layer should query for records
+                {   name    : 'proxyCountUrl'}, //String: The raw URL that references the location the active layer should query for a count of records
                 {   name	: 'iconUrl'         },	//String: The raw URL pointing to an appropriate image icon (used for WFS)
                 {   name    : 'serviceEndpoints'},  //String[]: The list of service endpoints that will be included/excluded from the layer
                 {   name    : 'includeEndpoints'},  //boolean: The flag indicating whether the listed endpoints will be included or excluded
@@ -58,7 +59,8 @@ Ext.extend(ActiveLayersStore, Ext.data.Store, {
             id			: cswRecord.getFileIdentifier(),
             title		: cswRecord.getServiceName(),
             description	: cswRecord.getDataIdentificationAbstract(),
-            proxyUrl	: null,
+            proxyFetchUrl	: null,
+            proxyCountUrl : null,
             cswRecords	: [cswRecord],
             iconUrl		: null,
             serviceEndpoints : null,
@@ -91,7 +93,8 @@ Ext.extend(ActiveLayersStore, Ext.data.Store, {
             id			: knownLayerRecord.getId(),
             title		: knownLayerRecord.getTitle(),
             description	: knownLayerRecord.getDescription(),
-            proxyUrl	: knownLayerRecord.getProxyUrl(),
+            proxyFetchUrl	: knownLayerRecord.getProxyFetchUrl(),
+            proxyCountUrl : knownLayerRecord.getProxyCountUrl(),
             cswRecords	: linkedCSWRecords,
             iconUrl		: knownLayerRecord.getIconUrl(),
             serviceEndpoints: knownLayerRecord.getServiceEndpoints(),

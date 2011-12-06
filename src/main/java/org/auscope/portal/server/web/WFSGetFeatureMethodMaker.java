@@ -20,6 +20,21 @@ import org.springframework.stereotype.Repository;
 public class WFSGetFeatureMethodMaker {
     public static final String WFS_VERSION = "1.1.0";
 
+    /**
+     * An enumeration of the values that can be used for the 'resultType' parameter
+     *
+     */
+    public enum ResultType {
+        /**
+         * Requests the full set of results be returned
+         */
+        Results,
+        /**
+         * Requests that only the count of the results be returned
+         */
+        Hits
+    }
+
     /** Log object for this class. */
     private final Log log = LogFactory.getLog(getClass());
 
@@ -33,7 +48,20 @@ public class WFSGetFeatureMethodMaker {
      * @throws Exception if service URL or featureType is not provided
      */
     public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
-        return makeMethod(serviceURL, featureType, filterString, maxFeatures, null);
+        return makeMethod(serviceURL, featureType, filterString, maxFeatures, null, null);
+    }
+
+    /**
+     * Creates a PostMethod given the following parameters.
+     * @param serviceURL - required, exception thrown if not provided
+     * @param featureType - required, exception thrown if not provided
+     * @param filterString - optional
+     * @param resultType - Can be null - The type of response set you wish to request (default is Results)
+     * @return
+     * @throws Exception if service URL or featureType is not provided
+     */
+    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
+        return makeMethod(serviceURL, featureType, filterString, 0, null, resultType);
     }
 
     /**
@@ -47,6 +75,21 @@ public class WFSGetFeatureMethodMaker {
      * @throws Exception if service URL or featureType is not provided
      */
     public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
+        return makeMethod(serviceURL, featureType, filterString, 0, srsName, null);
+    }
+
+    /**
+     * Creates a PostMethod given the following parameters.
+     * @param serviceURL - required, exception thrown if not provided
+     * @param featureType - required, exception thrown if not provided
+     * @param filterString - optional
+     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
+     * @param srsName - Can be null or empty
+     * @param resultType - Can be null - The type of response set you wish to request (default is Results)
+     * @return
+     * @throws Exception if service URL or featureType is not provided
+     */
+    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
 
         // Make sure the required parameters are given
         if (featureType == null || featureType.equals("")) {
@@ -69,6 +112,18 @@ public class WFSGetFeatureMethodMaker {
         sb.append("                xmlns:gsml=\"urn:cgi:xmlns:CGI:GeoSciML:2.0\"\n");
         if (maxFeatures > 0) {
             sb.append("                maxFeatures=\"" + Integer.toString(maxFeatures) + "\"");
+        }
+        if (resultType != null) {
+            switch (resultType) {
+            case Hits:
+                sb.append("                resultType=\"hits\"\n");
+                break;
+            case Results:
+                sb.append("                resultType=\"results\"\n");
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown resultType " + resultType);
+            }
         }
 
         sb.append(">\n");
@@ -135,7 +190,7 @@ public class WFSGetFeatureMethodMaker {
      * @return
      */
     public HttpMethodBase makeMethod(String serviceUrl, String typeName, String featureId) {
-        return makeMethod(serviceUrl, typeName, featureId, null);
+        return makeMethod(serviceUrl, typeName, featureId, (Integer) null);
     }
 
     /**
@@ -146,6 +201,6 @@ public class WFSGetFeatureMethodMaker {
      * @return
      */
     public HttpMethodBase makeMethod(String serviceUrl, String typeName, Integer maxFeatures) {
-        return makeMethod(serviceUrl, typeName, null, maxFeatures);
+        return makeMethod(serviceUrl, typeName, null, (Integer) maxFeatures);
     }
 }

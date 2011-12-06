@@ -779,17 +779,6 @@ Ext.onReady(function() {
                     if (filterPanel.getLayout().activeItem != filterPanel.getComponent(0)) {
                         filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
                     }
-
-                    // limit our feature request to 200 so we don't overwhelm the browser
-                    if (Ext.isNumber(MAX_FEATURES)) {
-                        filterParameters.maxFeatures = MAX_FEATURES;
-                    } else {
-                        filterParameters.maxFeatures = 200;
-                    }
-                    filterParameters.bbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map)); // This line activates bbox support AUS-1597
-                    if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
-                        filterParameters.bbox = null; //some WFS layer groupings may wish to disable bounding boxes
-                    }
                 }
                 activeLayerRecord.setLastFilterParameters(filterParameters);
 
@@ -797,7 +786,12 @@ Ext.onReady(function() {
                 filterParameters.serviceUrl = wfsOnlineResource.url;
                 filterParameters.typeName = wfsOnlineResource.name;
 
-                handleQuery(activeLayerRecord, cswRecords[i], wfsOnlineResource, filterParameters, function() {
+                var visibleMapBounds = fetchVisibleMapBounds(map);
+                if (parentKnownLayer && parentKnownLayer.getDisableBboxFiltering()) {
+                    visibleMapBounds = null; //some WFS layer groupings may wish to disable bounding boxes
+                }
+
+                handleQuery(activeLayerRecord, cswRecords[i], wfsOnlineResource, filterParameters, visibleMapBounds, function() {
                     //decrement the counter
                     finishedLoadingCounter--;
 
@@ -839,7 +833,7 @@ Ext.onReady(function() {
     /**
      * internal helper method for Handling WFS filter queries via a proxyUrl and adding them to the map.
      */
-    var handleQuery = function(activeLayerRecord, cswRecord, onlineResource, filterParameters, finishedLoadingHandler) {
+    var handleQuery = function(activeLayerRecord, cswRecord, onlineResource, filterParameters, visibleMapBounds, finishedLoadingHandler) {
 
         var responseTooltip = activeLayerRecord.getResponseToolTip();
         responseTooltip.addResponse(filterParameters.serviceUrl, "Loading...");
@@ -848,24 +842,29 @@ Ext.onReady(function() {
 
         var knownLayer = activeLayerRecord.getParentKnownLayer();
 
-        //If we don't have a proxy URL specified, use the generic 'getAllFeatures.do'
-        var url = activeLayerRecord.getProxyUrl();
-        if (!url) {
-            url = 'getAllFeatures.do';
+        //If we don't have a proxy URL specified, use the generic 'getAllFeatures.do' or 'getFeatureCount.do'
+        var url = 'getAllFeatures.do';
+        var countUrl = 'getFeatureCount.do';
+        if (activeLayerRecord.getProxyFetchUrl()) {
+            url = activeLayerRecord.getProxyFetchUrl();
+            countUrl = activeLayerRecord.getProxyCountUrl(); //always use this, even if null - the layer may not have a counter specified
         }
 
-        Ext.Ajax.request({
-            url			: url,
-            params		: filterParameters,
-            timeout		: 1000 * 60 * 20, //20 minute timeout
-            failure		: function(response) {
-                responseTooltip.addResponse(filterParameters.serviceUrl, 'ERROR ' + response.status + ':' + response.statusText);
-                finishedLoadingHandler();
-            },
-            success		: function(response) {
-                var jsonResponse = Ext.util.JSON.decode(response.responseText);
+        var threshold = 200;
+        if (Ext.isNumber(MAX_FEATURES)) {
+            threshold = MAX_FEATURES;
+        }
 
-                if (jsonResponse.success) {
+        //The download manager will handle requesting feature counts
+        var downloadManager = new FeatureDownloadManager({
+            visibleMapBounds : visibleMapBounds,
+            proxyFetchUrl : url,
+            proxyCountUrl : countUrl,
+            serviceUrl : onlineResource.url,
+            featureSetSizeThreshold : threshold,
+            filterParams : filterParameters,
+            listeners : {
+                success : function(dm, data, debugInfo) {
                     var icon = new GIcon(G_DEFAULT_ICON, activeLayerRecord.getIconUrl());
 
                     //Assumption - we are only interested in the first (if any) KnownLayer
@@ -891,7 +890,7 @@ Ext.onReady(function() {
                     icon.shadow = null;
 
                     //Parse our KML
-                    var parser = new KMLParser(jsonResponse.data.kml);
+                    var parser = new KMLParser(data.kml);
                     parser.makeMarkers(icon, function(marker) {
                         marker.activeLayerRecord = activeLayerRecord.internalRecord;
                         marker.cswRecord = cswRecord.internalRecord;
@@ -910,8 +909,7 @@ Ext.onReady(function() {
                     overlayManager.markerManager.refresh();
 
                     //Store some debug info
-                    var debugInfo = jsonResponse.debugInfo.info;
-                    debuggerData.addResponse(jsonResponse.debugInfo.url,debugInfo);
+                    debuggerData.addResponse(debugInfo.url, debugInfo);
 
                     //store the status
                     responseTooltip.addResponse(filterParameters.serviceUrl, (markers.length + overlays.length) + " record(s) retrieved.");
@@ -920,20 +918,32 @@ Ext.onReady(function() {
                         activeLayerRecord.setHasData(true);
                     }
 
-                } else {
+                    //we are finished
+                    finishedLoadingHandler();
+                },
+                error : function(dm, message, debugInfo) {
                     //store the status
-                    responseTooltip.addResponse(filterParameters.serviceUrl, jsonResponse.msg);
-                    if(jsonResponse.debugInfo === undefined) {
-                        debuggerData.addResponse(filterParameters.serviceUrl, jsonResponse.msg);
+                    responseTooltip.addResponse(filterParameters.serviceUrl, message);
+                    if(debugInfo) {
+                        debuggerData.addResponse(filterParameters.serviceUrl, message + debugInfo.info);
                     } else {
-                        debuggerData.addResponse(filterParameters.serviceUrl, jsonResponse.msg +jsonResponse.debugInfo.info);
+                        debuggerData.addResponse(filterParameters.serviceUrl, message);
                     }
-                }
 
-                //we are finished
-                finishedLoadingHandler();
+                    //we are finished
+                    finishedLoadingHandler();
+                },
+                cancelled : function(dm) {
+                    //store the status
+                    responseTooltip.addResponse(filterParameters.serviceUrl, 'Request cancelled by user.');
+
+                    //we are finished
+                    finishedLoadingHandler();
+                }
             }
         });
+
+        downloadManager.startDownload();
     };
 
     var wmsHandler = function(activeLayerRecord) {
@@ -1336,7 +1346,7 @@ Ext.onReady(function() {
                         }
                         var bbox = filterParameters.bbox;
                         var boundingbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map));
-                        var proxyUrl = activeLayerRecord.getProxyUrl()!== null ? activeLayerRecord.getProxyUrl() : 'getAllFeatures.do';
+                        var proxyUrl = activeLayerRecord.getProxyFetchUrl()!== null ? activeLayerRecord.getProxyFetchUrl() : 'getAllFeatures.do';
                         var prefixUrl = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?";
 
                         if(bbox === null || bbox === undefined){

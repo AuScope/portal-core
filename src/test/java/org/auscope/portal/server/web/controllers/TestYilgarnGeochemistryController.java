@@ -6,12 +6,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URI;
 import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.gsml.YilgarnLocatedSpecimenRecord;
 import org.auscope.portal.gsml.YilgarnObservationRecord;
+import org.auscope.portal.server.domain.wfs.WFSCountResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
+import org.auscope.portal.server.web.service.PortalServiceException;
 import org.auscope.portal.server.web.service.WFSService;
 import org.auscope.portal.server.web.service.YilgarnGeochemistryService;
 import org.jmock.Expectations;
@@ -26,7 +30,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class TestYilgarnGeochemistryController extends PortalTestClass {
 
-    /** The mock servlet context. */
+
+    /** Mock geochemistry service*/
     private YilgarnGeochemistryService mockGeochemService = context.mock(YilgarnGeochemistryService.class);
 
     /** The mock Web Feature Service request Service*/
@@ -202,6 +207,50 @@ public class TestYilgarnGeochemistryController extends PortalTestClass {
     }
 
 
+    /**
+     * Test doing geochemistry filter and getting the count of all values
+     */
+    @Test
+    public void testYilgarnGeochemistryFilterCount() throws Exception{
+        final String serviceUrl = "http://service/wfs";
+        final String geologicName = "filter info";
+        final int maxFeatures = 134;
+        final String bbox = null;
+        final int numberOfFeatures = 123;
+
+        context.checking(new Expectations() {{
+            oneOf(mockWfsService).getWfsFeatureCount(with(equal(serviceUrl)), with(equal("gsml:GeologicUnit")), with(any(String.class)), with(equal(maxFeatures)));will(returnValue(new WFSCountResponse(numberOfFeatures)));
+
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceUrl, true)));
+        }});
+        ModelAndView modelAndView = controller.doYilgarnGeochemistryCount(serviceUrl, geologicName, bbox, maxFeatures);
+        Assert.assertNotNull(modelAndView);
+        Map<String, Object> model = modelAndView.getModel();
+        Assert.assertEquals(true, model.get("success"));
+        Assert.assertNotNull(model.get("data"));
+        Assert.assertEquals(new Integer(numberOfFeatures), model.get("data"));
+    }
+
+    /**
+     * Test doing geochemistry filter and getting the count of all values fails gracefully
+     */
+    @Test
+    public void testYilgarnGeochemistryFilterCountError() throws Exception{
+        final String serviceUrl = "http://service/wfs";
+        final String geologicName = "filter info";
+        final int maxFeatures = 134;
+        final String bbox = null;
+
+        context.checking(new Expectations() {{
+            oneOf(mockWfsService).getWfsFeatureCount(with(equal(serviceUrl)), with(equal("gsml:GeologicUnit")), with(any(String.class)), with(equal(maxFeatures)));will(throwException(new PortalServiceException(mockMethod, new ConnectException())));
+
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceUrl, true)));
+        }});
+        ModelAndView modelAndView = controller.doYilgarnGeochemistryCount(serviceUrl, geologicName, bbox, maxFeatures);
+        Assert.assertNotNull(modelAndView);
+        Map<String, Object> model = modelAndView.getModel();
+        Assert.assertEquals(false, model.get("success"));
+    }
 }
 
 

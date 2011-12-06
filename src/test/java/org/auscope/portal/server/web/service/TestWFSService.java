@@ -1,16 +1,21 @@
 package org.auscope.portal.server.web.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.ConnectException;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.auscope.portal.PortalTestClass;
+import org.auscope.portal.Util;
+import org.auscope.portal.server.domain.wfs.WFSCountResponse;
 import org.auscope.portal.server.domain.wfs.WFSHTMLResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.util.GmlToHtml;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
+import org.auscope.portal.server.web.WFSGetFeatureMethodMaker.ResultType;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -106,7 +111,7 @@ public class TestWFSService extends PortalTestClass {
             oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
             oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(returnValue(responseString));
 
-            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Results);will(returnValue(mockMethod));
 
             oneOf(mockGmlToKml).convert(responseString, serviceUrl);will(returnValue(responseKml));
 
@@ -134,7 +139,7 @@ public class TestWFSService extends PortalTestClass {
             oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
             oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(throwException(exceptionThrown));
 
-            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Results);will(returnValue(mockMethod));
         }});
 
         try {
@@ -241,6 +246,61 @@ public class TestWFSService extends PortalTestClass {
         } catch (PortalServiceException ex) {
             Assert.assertSame(exceptionThrown, ex.getCause());
             Assert.assertTrue(ex.getRootMethod() instanceof GetMethod);
+        }
+    }
+
+    /**
+     * Tests the count request works as expected
+     */
+    @Test
+    public void testGetWfsCount() throws Exception {
+        final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
+        final String serviceUrl = "http://service/wfs";
+        final String srsName = null;
+        final int maxFeatures = 12321;
+        final String typeName = "type:Name";
+        final InputStream responseStream = new ByteArrayInputStream(Util.loadXML("src/test/resources/GetWFSFeatureCount.xml").getBytes());
+        final int expectedCount = 161;
+
+        context.checking(new Expectations() {{
+            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockClient);will(returnValue(responseStream));
+
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits);will(returnValue(mockMethod));
+
+        }});
+
+        WFSCountResponse response = service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures);
+        Assert.assertNotNull(response);
+        Assert.assertEquals(expectedCount, response.getNumberOfFeatures());
+    }
+
+    /**
+     * Tests the count request fails as expected
+     */
+    @Test
+    public void testGetWfsCountError() throws Exception {
+        final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
+        final String serviceUrl = "http://service/wfs";
+        final String srsName = null;
+        final ConnectException exceptionThrown = new ConnectException();
+        final int maxFeatures = 12321;
+        final String typeName = "type:Name";
+
+        context.checking(new Expectations() {{
+            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockClient);will(throwException(exceptionThrown));
+
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits);will(returnValue(mockMethod));
+
+        }});
+
+        try {
+            service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures);
+            Assert.fail("Exception should have been thrown");
+        } catch (PortalServiceException ex) {
+            Assert.assertSame(exceptionThrown, ex.getCause());
+            Assert.assertSame(mockMethod, ex.getRootMethod());
         }
     }
 }

@@ -30,7 +30,8 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         final String featureTypeName = "ftn";
         final String title = "co";
         final String description = "asb";
-        final String proxyUrl = "http://proxy.com";
+        final String proxyFetchUrl = "recordFetch.do";
+        final String proxyCountUrl = "recordCount.do";
         final String iconUrl = "http://example.com/icon";
         final String[] serviceEndpoints = new String[]{"http://endpoint.com"};
         final String id = "eyedee";
@@ -59,7 +60,8 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         expectation.put("hidden", hidden);
         expectation.put("title", title);
         expectation.put("description", description);
-        expectation.put("proxyUrl", proxyUrl);
+        expectation.put("proxyFetchUrl", proxyFetchUrl);
+        expectation.put("proxyCountUrl", proxyCountUrl);
         expectation.put("iconUrl", iconUrl);
         expectation.put("iconAnchor", anchorExpectation);
         expectation.put("infoWindowAnchor", infoExpectation);
@@ -95,8 +97,11 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
             allowing(mockWFS).getDescription();
             will(returnValue(description));
 
-            allowing(mockWFS).getProxyUrl();
-            will(returnValue(proxyUrl));
+            allowing(mockWFS).getProxyFetchUrl();
+            will(returnValue(proxyFetchUrl));
+
+            allowing(mockWFS).getProxyCountUrl();
+            will(returnValue(proxyCountUrl));
 
             allowing(mockWFS).getIconUrl();
             will(returnValue(iconUrl));
@@ -141,7 +146,8 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         final String featureTypeName = "ftn";
         final String title = "co";
         final String description = "asb";
-        final String proxyUrl = "http://proxy.com";
+        final String proxyFetchUrl = "recordFetch.do";
+        final String proxyCountUrl = "recordCount.do";
         final String iconUrl = "http://example.com/icon";
         final String[] serviceEndpoints = null;
         final String id = "eyedee";
@@ -158,7 +164,8 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         expectation.put("featureTypeName", featureTypeName);
         expectation.put("title", title);
         expectation.put("description", description);
-        expectation.put("proxyUrl", proxyUrl);
+        expectation.put("proxyFetchUrl", proxyFetchUrl);
+        expectation.put("proxyCountUrl", proxyCountUrl);
         expectation.put("iconUrl", iconUrl);
         expectation.put("id", id);
         expectation.put("disableBboxFiltering", disableBboxFiltering);
@@ -173,7 +180,8 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
             allowing(mockWFS).getId();will(returnValue(id));
             allowing(mockWFS).getTitle();will(returnValue(title));
             allowing(mockWFS).getDescription();will(returnValue(description));
-            allowing(mockWFS).getProxyUrl();will(returnValue(proxyUrl));
+            allowing(mockWFS).getProxyFetchUrl();will(returnValue(proxyFetchUrl));
+            allowing(mockWFS).getProxyCountUrl();will(returnValue(proxyCountUrl));
             allowing(mockWFS).getIconUrl();will(returnValue(iconUrl));
             allowing(mockWFS).getIconAnchor();will(returnValue(null));
             allowing(mockWFS).getInfoWindowAnchor();will(returnValue(null));

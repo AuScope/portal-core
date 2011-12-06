@@ -5,6 +5,7 @@ import org.apache.commons.httpclient.URI;
 import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
+import org.auscope.portal.server.domain.wfs.WFSCountResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.service.WFSService;
 import org.jmock.Expectations;
@@ -101,6 +102,7 @@ public class TestGSMLController extends PortalTestClass {
         final String wfsUrl = "http://service/wfs";
         final String featureType = "type:name";
         final String featureId = "feature-id";
+
         context.checking(new Expectations() {{
             oneOf(mockWfsService).getWfsResponseAsKml(wfsUrl, featureType, featureId);will(returnValue(new WFSKMLResponse(gmlBlob, kmlBlob, mockMethod)));
 
@@ -113,5 +115,54 @@ public class TestGSMLController extends PortalTestClass {
         Assert.assertNotNull(dataObj);
         Assert.assertEquals(gmlBlob, dataObj.get("gml"));
         Assert.assertEquals(kmlBlob, dataObj.get("kml"));
+    }
+
+    /**
+     * Tests get feature count works as expected
+     * @throws Exception
+     */
+    @Test
+    public void testGetFeatureCount() throws Exception {
+        final String wfsUrl = "http://service/wfs";
+        final String featureType = "type:name";
+        final String filterString = "fake-filter-string";
+        final String bboxJsonString = "{\"bboxSrs\":\"http://www.opengis.net/gml/srs/epsg.xml%234326\",\"lowerCornerPoints\":[-5,-6],\"upperCornerPoints\":[7,8]}";
+        final int maxFeatures = 12315;
+        final int featureCount = 21;
+
+        context.checking(new Expectations() {{
+            oneOf(mockFilter).getFilterStringBoundingBox(with(any(FilterBoundingBox.class))); will(returnValue(filterString));
+            oneOf(mockWfsService).getWfsFeatureCount(wfsUrl, featureType, filterString, maxFeatures);will(returnValue(new WFSCountResponse(featureCount)));
+        }});
+        ModelAndView modelAndView = gsmlController.requestFeatureCount(wfsUrl, featureType, bboxJsonString, maxFeatures);
+        Integer dataObj = (Integer) modelAndView.getModel().get("data");
+        Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
+        Assert.assertNotNull(dataObj);
+        Assert.assertEquals(new Integer(featureCount), dataObj);
+    }
+
+    /**
+     * Tests get feature count works as expected
+     * @throws Exception
+     */
+    @Test
+    public void testGetFeatureCountException() throws Exception {
+        final String wfsUrl = "http://service/wfs";
+        final String featureType = "type:name";
+        final String filterString = "fake-filter-string";
+        final String bboxJsonString = "{\"bboxSrs\":\"http://www.opengis.net/gml/srs/epsg.xml%234326\",\"lowerCornerPoints\":[-5,-6],\"upperCornerPoints\":[7,8]}";
+        final int maxFeatures = 12315;
+        final int featureCount = 21;
+
+        context.checking(new Expectations() {{
+            oneOf(mockFilter).getFilterStringBoundingBox(with(any(FilterBoundingBox.class))); will(returnValue(filterString));
+
+            oneOf(mockWfsService).getWfsFeatureCount(wfsUrl, featureType, filterString, maxFeatures);will(returnValue(new WFSCountResponse(featureCount)));
+        }});
+        ModelAndView modelAndView = gsmlController.requestFeatureCount(wfsUrl, featureType, bboxJsonString, maxFeatures);
+        Integer dataObj = (Integer) modelAndView.getModel().get("data");
+        Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
+        Assert.assertNotNull(dataObj);
+        Assert.assertEquals(new Integer(featureCount), dataObj);
     }
 }

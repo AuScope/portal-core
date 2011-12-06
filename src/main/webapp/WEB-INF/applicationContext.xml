@@ -63,7 +63,8 @@
         <constructor-arg name="featureTypeName" value="er:Mine"/>
         <constructor-arg name="title" value="Earth Resource Mine"/>
         <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:Mine"/>
-        <constructor-arg name="proxyUrl" value="doMineFilter.do"/>
+        <constructor-arg name="proxyFetchUrl" value="doMineFilter.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
@@ -95,7 +96,8 @@
         <constructor-arg name="featureTypeName" value="er:MineralOccurrence"/>
         <constructor-arg name="title" value="Earth Resource Mineral Occurrence"/>
         <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:MineralOccurence"/>
-        <constructor-arg name="proxyUrl" value="doMineralOccurrenceFilter.do"/>
+        <constructor-arg name="proxyFetchUrl" value="doMineralOccurrenceFilter.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/purple-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
@@ -127,7 +129,8 @@
         <constructor-arg name="featureTypeName" value="er:MiningActivity"/>
         <constructor-arg name="title" value="Earth Resource Mining Activity"/>
         <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:MiningActivity"/>
-        <constructor-arg name="proxyUrl" value="doMiningActivityFilter.do"/>
+        <constructor-arg name="proxyFetchUrl" value="doMiningActivityFilter.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
@@ -159,7 +162,8 @@
         <constructor-arg name="featureTypeName" value="ngcp:GnssStation"/>
         <constructor-arg name="title" value="Geodesy"/>
         <constructor-arg name="description" value="A collection of continuous operating Global Navigation Satellite Systems (GNSS) stations in Australia, its Territories and the South Pacific."/>
-        <constructor-arg name="proxyUrl" value="getAllFeatures.do"/>
+        <constructor-arg name="proxyFetchUrl" value="getAllFeatures.do"/>
+        <constructor-arg name="proxyCountUrl" value="getFeatureCount.do"/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/wht-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
@@ -190,7 +194,8 @@
         <constructor-arg name="featureTypeName" value="Geochron:geochronology"/>
         <constructor-arg name="title" value="Geochronology"/>
         <constructor-arg name="description" value=""/>
-        <constructor-arg name="proxyUrl" value="getAllFeatures.do"/>
+        <constructor-arg name="proxyFetchUrl" value="getAllFeatures.do"/>
+        <constructor-arg name="proxyCountUrl" value="getFeatureCount.do"/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/red-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
@@ -246,7 +251,8 @@
         <constructor-arg name="featureTypeName" value="gsml:GeologicUnit"/>
         <constructor-arg name="title" value="Yilgarn Laterite Geochemistry"/>
         <constructor-arg name="description" value="A collection of detailed information about all analytes that were detected at a specific location"/>
-        <constructor-arg name="proxyUrl" value="doYilgarnGeochemistry.do"/>
+        <constructor-arg name="proxyFetchUrl" value="doYilgarnGeochemistry.do"/>
+        <constructor-arg name="proxyCountUrl" value="doYilgarnGeochemistryCount.do"/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/grn-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
@@ -279,7 +285,8 @@
         <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
         <constructor-arg name="title" value="National Virtual Core Library"/>
         <constructor-arg name="description" value="A collection of services implementing the National Virtual Core Library Profile v1 for gsml:Borehole and a collection of observations"/>
-        <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
+        <constructor-arg name="proxyFetchUrl" value="doBoreholeFilter.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/blu-blank.png"/>
         <constructor-arg name="serviceEndpoints">
             <list>
@@ -329,7 +336,8 @@
         <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
         <constructor-arg name="title" value="Pressure DB"/>
         <constructor-arg name="description" value="A collection of services implementing the Pressure DB Profile for gsml:Borehole and a collection of observations"/>
-        <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
+        <constructor-arg name="proxyFetchUrl" value="doBoreholeFilter.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"/>
         <constructor-arg name="serviceEndpoints">
             <list>
@@ -376,7 +384,8 @@
         <constructor-arg name="featureTypeName" value="gsml:Borehole"/>
         <constructor-arg name="title" value="All Boreholes"/>
         <constructor-arg name="description" value="A collection of services that support the GeoSciML Borehole feature type."/>
-        <constructor-arg name="proxyUrl" value="doBoreholeFilter.do"/>
+        <constructor-arg name="proxyFetchUrl" value="doBoreholeFilter.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/ylw-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">

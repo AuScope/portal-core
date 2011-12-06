@@ -2,6 +2,7 @@ package org.auscope.portal.server.web.controllers;
 
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
+import org.auscope.portal.server.domain.wfs.WFSCountResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.service.WFSService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,5 +93,39 @@ public class GSMLController extends BasePortalController {
         }
 
         return generateJSONResponseMAV(true, response.getGml(), response.getKml(), response.getMethod());
+    }
+
+    /**
+     * Given a WFS service Url and a feature type this will query for the count of all of the features
+     * that optionally lie within a bounding box
+     *
+     * @param serviceUrl The WFS endpoint
+     * @param featureType The feature type name to query
+     * @param boundingBox [Optional] A JSON encoding of a FilterBoundingBox instance
+     * @param maxFeatures [Optional] The maximum number of features to query
+     */
+    @RequestMapping("/getFeatureCount.do")
+    public ModelAndView requestFeatureCount(@RequestParam("serviceUrl") final String serviceUrl,
+                                           @RequestParam("typeName") final String featureType,
+                                           @RequestParam(required=false, value="bbox") final String bboxJSONString,
+                                           @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures) throws Exception {
+
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
+        String filterString = null;
+        if (bbox == null) {
+            filterString = filter.getFilterStringAllRecords();
+        } else {
+            filterString = filter.getFilterStringBoundingBox(bbox);
+        }
+
+        WFSCountResponse response = null;
+        try {
+            response = wfsService.getWfsFeatureCount(serviceUrl, featureType, filterString, maxFeatures);
+        } catch (Exception ex) {
+            log.warn("Unable to request/transform WFS response", ex);
+            return generateExceptionResponse(ex, serviceUrl);
+        }
+
+        return generateJSONResponseMAV(true, new Integer(response.getNumberOfFeatures()), "");
     }
 }

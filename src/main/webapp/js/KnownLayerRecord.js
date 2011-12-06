@@ -77,8 +77,15 @@ KnownLayerRecord = Ext.extend(AbstractRecordWrapper, {
     /**
      * Gets the proxy URL as a String. Only valid if type=='KnownLayerWFS'
      */
-    getProxyUrl : function() {
-        return this.getStringField('proxyUrl');
+    getProxyFetchUrl : function() {
+        return this.getStringField('proxyFetchUrl');
+    },
+
+    /**
+     * Gets the proxy URL for record counts as a String. Only valid if type=='KnownLayerWFS'
+     */
+    getProxyCountUrl : function() {
+        return this.getStringField('proxyCountUrl');
     },
 
     /**

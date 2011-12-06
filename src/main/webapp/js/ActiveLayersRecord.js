@@ -35,8 +35,17 @@ ActiveLayersRecord = Ext.extend(AbstractRecordWrapper, {
      *
      * The Proxy URL is the url that should be queried instead of the onlineResource URL.
      */
-    getProxyUrl : function() {
-        return this.internalRecord.get('proxyUrl');
+    getProxyFetchUrl : function() {
+        return this.internalRecord.get('proxyFetchUrl');
+    },
+
+    /**
+     * Gets the Proxy URL for counting records of this active layer as a String (or null)
+     *
+     * The Proxy URL is the url that should be queried instead of the onlineResource URL.
+     */
+    getProxyCountUrl : function() {
+        return this.internalRecord.get('proxyCountUrl');
     },
 
     /**

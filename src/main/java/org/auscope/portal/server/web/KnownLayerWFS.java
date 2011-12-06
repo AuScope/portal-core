@@ -12,7 +12,8 @@ public class KnownLayerWFS extends AbstractKnownLayer {
 
     private static final long serialVersionUID = 1L;
     private String featureTypeName;
-    private String proxyUrl;
+    private String proxyFetchUrl;
+    private String proxyCountUrl;
     private String iconUrl;
     private String[] serviceEndpoints;
     private boolean includeEndpoints;
@@ -36,15 +37,17 @@ public class KnownLayerWFS extends AbstractKnownLayer {
      * @param featureTypeName The feature type name used to identify members of this layer
      * @param title The descriptive title of this layer
      * @param description The extended description of this layer
-     * @param proxyUrl The URL that filter requests should be made through
+     * @param proxyFetchUrl The URL that filter requests should be made through for the entire record set
+     * @param proxyCountUrl The URL that filter requests should be made through for the count of records
      * @param iconUrl The Icon that will be used to render this feature on the map
      */
     public KnownLayerWFS(String featureTypeName, String title,
-            String description, String proxyUrl, String iconUrl) {
+            String description, String proxyFetchUrl, String proxyCountUrl, String iconUrl) {
         this(featureTypeName, title);
         this.title = title;
         this.description = description;
-        this.proxyUrl = proxyUrl;
+        this.proxyFetchUrl = proxyFetchUrl;
+        this.proxyCountUrl = proxyCountUrl;
         this.iconUrl = iconUrl;
         this.disableBboxFiltering = false;
     }
@@ -53,7 +56,8 @@ public class KnownLayerWFS extends AbstractKnownLayer {
      * @param featureTypeName The feature type name used to identify members of this layer
      * @param title The descriptive title of this layer
      * @param description The extended description of this layer
-     * @param proxyUrl The URL that filter requests should be made through
+     * @param proxyFetchUrl The URL that filter requests should be made through for the entire record set
+     * @param proxyCountUrl The URL that filter requests should be made through for the count of records
      * @param iconUrl The Icon that will be used to render this feature on the map
      * @param iconAnchor  The pixel coordinate relative to the top left corner of
      *  the icon image at which this icon is anchored to the map.
@@ -62,9 +66,9 @@ public class KnownLayerWFS extends AbstractKnownLayer {
      * @param iconSize  The size of the icon in pixels
      */
     public KnownLayerWFS(String featureTypeName, String title,
-            String description, String proxyUrl, String iconUrl, Point iconAnchor,
+            String description, String proxyFetchUrl, String proxyCountUrl, String iconUrl, Point iconAnchor,
             Point infoWindowAnchor, Dimension iconSize) {
-        this(featureTypeName, title, description, proxyUrl, iconUrl, null, false, iconAnchor,
+        this(featureTypeName, title, description, proxyFetchUrl, proxyCountUrl, iconUrl, null, false, iconAnchor,
              infoWindowAnchor, iconSize, false);
     }
 
@@ -72,7 +76,8 @@ public class KnownLayerWFS extends AbstractKnownLayer {
      * @param featureTypeName The feature type name used to identify members of this layer
      * @param title The descriptive title of this layer
      * @param description The extended description of this layer
-     * @param proxyUrl The URL that filter requests should be made through
+     * @param proxyFetchUrl The URL that filter requests should be made through for the entire record set
+     * @param proxyCountUrl The URL that filter requests should be made through for the count of records
      * @param iconUrl The Icon that will be used to render this feature on the map
      * @param serviceEndpoints A list of the end points that will either be included or
      *  excluded from the WFS, depending on the value of includeEndpoints
@@ -86,10 +91,10 @@ public class KnownLayerWFS extends AbstractKnownLayer {
      * @param disableBboxFiltering if true, the GUI will be instructed NOT to use to bounding box filters for this WFS collection
      */
     public KnownLayerWFS(String featureTypeName, String title,
-            String description, String proxyUrl, String iconUrl, String[] serviceEndpoints,
+            String description, String proxyFetchUrl, String proxyCountUrl, String iconUrl, String[] serviceEndpoints,
             boolean includeEndpoints, Point iconAnchor,
             Point infoWindowAnchor, Dimension iconSize, boolean disableBboxFiltering) {
-        this(featureTypeName, title, description, proxyUrl, iconUrl);
+        this(featureTypeName, title, description, proxyFetchUrl, proxyCountUrl, iconUrl);
         this.iconAnchor = iconAnchor;
         this.infoWindowAnchor = infoWindowAnchor;
         this.iconSize = iconSize;
@@ -110,8 +115,12 @@ public class KnownLayerWFS extends AbstractKnownLayer {
         return description;
     }
 
-    public String getProxyUrl() {
-        return proxyUrl;
+    public String getProxyFetchUrl() {
+        return proxyFetchUrl;
+    }
+
+    public String getProxyCountUrl() {
+        return proxyCountUrl;
     }
 
     public String getIconUrl() {
@@ -173,11 +182,17 @@ public class KnownLayerWFS extends AbstractKnownLayer {
     /**
      * Gets whether bounding box filtering should be disabled for this collection
      * of services
-     *
-     * @return size in pixels of the icon.
      */
     public boolean getDisableBboxFiltering() {
         return this.disableBboxFiltering;
+    }
+
+    /**
+     * Sets whether bounding box filtering should be disabled for this collection
+     * of services
+     */
+    public void setDisableBboxFiltering(boolean disableBboxFiltering) {
+        this.disableBboxFiltering = disableBboxFiltering;
     }
 
     /**

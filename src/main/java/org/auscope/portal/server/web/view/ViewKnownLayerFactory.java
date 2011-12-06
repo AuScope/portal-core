@@ -74,7 +74,8 @@ public class ViewKnownLayerFactory {
 
         obj.put("type", "KnownLayerWFS");
         obj.put("featureTypeName", k.getFeatureTypeName());
-        obj.put("proxyUrl", k.getProxyUrl());
+        obj.put("proxyFetchUrl", k.getProxyFetchUrl());
+        obj.put("proxyCountUrl", k.getProxyCountUrl());
         obj.put("iconUrl", k.getIconUrl());
         obj.put("serviceEndpoints", k.getServiceEndpoints());
         obj.put("includeEndpoints", k.includeEndpoints());
