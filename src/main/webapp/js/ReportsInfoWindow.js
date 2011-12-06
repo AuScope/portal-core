@@ -50,7 +50,7 @@ ReportsInfoWindow.prototype = {
         }
 
         if (this.overlay instanceof GPolygon) {
-            this.map.openInfoWindowHtml(this.overlay.getBounds().getCenter(), sHtml, {
+            mapInfoWindowManager.openInfoWindow(this.overlay.getBounds().getCenter(), sHtml, {
                 maxWidth:maxWidth,
                 //maxHeight:maxHeight,
                 autoScroll:true,
@@ -58,7 +58,7 @@ ReportsInfoWindow.prototype = {
                 onCloseFn : destroyReportsPanel.createDelegate(this)
             });
         } else if (this.overlay instanceof GMarker) {
-            this.map.openInfoWindowHtml(this.overlay.getPoint(), sHtml,{
+            mapInfoWindowManager.openInfoWindow(this.overlay, sHtml,{
                 maxWidth:maxWidth,
                 //maxHeight:maxHeight,
                 autoScroll:true,

@@ -33,7 +33,7 @@ BoreholeFilterForm = function(id,activeLayersRecord) {
     var serviceCombo = new Ext.form.ComboBox({
         anchor     : '95%',
         itemId     : 'serviceFilter-field',
-        fieldLabel : 'Services',
+        fieldLabel : 'Provider',
         name       : 'serviceFilter',
         typeAhead: true,
         triggerAction: 'all',
