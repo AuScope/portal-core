@@ -16,7 +16,6 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.service.PortalServiceException;
 import org.auscope.portal.server.web.view.JSONView;

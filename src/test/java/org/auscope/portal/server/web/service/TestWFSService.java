@@ -227,17 +227,12 @@ public class TestWFSService extends PortalTestClass {
      */
     @Test
     public void testGetWfsResponseAsHtmlUrlConnectException() throws Exception {
-        final String responseString = "<wfs:response/>"; //we aren't testing the validity of this
-        final String responseKml = "<kml:response/>"; //we aren't testing the validity of this
         final ConnectException exceptionThrown = new ConnectException();
         final String serviceUrl = "http://service/wfs?request=GetFeature";
 
         context.checking(new Expectations() {{
             oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
             oneOf(mockServiceCaller).getMethodResponseAsString(with(any(GetMethod.class)), with(any(HttpClient.class)));will(throwException(exceptionThrown));
-
-            oneOf(mockGmlToHtml).convert(responseString, serviceUrl);will(returnValue(responseKml));
-
         }});
 
         try {

@@ -1,12 +1,7 @@
 package org.auscope.portal.mineraloccurrence;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.ogc.AbstractFilterTestUtilities;
-import org.jmock.Expectations;
-import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -17,21 +12,8 @@ import org.w3c.dom.Document;
  */
 public class TestMiningActivityFilter extends PortalTestClass {
 
-    private Mine mockMine;
-    private List<Mine> mockMineList;
-
-    @Before
-    public void setUp() {
-        this.mockMine = context.mock(Mine.class);
-        this.mockMineList = Arrays.asList(mockMine);
-    }
-
     @Test
     public void testAssociatedMine() throws Exception {
-        context.checking(new Expectations() {{
-            oneOf(mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-        }});
-
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "", "", "", "", "", "");
         String filter = miningActivityFilter.getFilterStringAllRecords();
         Document doc = AbstractFilterTestUtilities.parsefilterStringXML(filter);
@@ -44,12 +26,6 @@ public class TestMiningActivityFilter extends PortalTestClass {
 
     @Test
     public void testAssociatedMineDateRange() throws Exception {
-        final List<String> activities = Arrays.asList("activity1");
-        context.checking(new Expectations() {{
-            oneOf(mockMine).getMineNameURI();will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing(mockMine).getRelatedActivities();
-            will(returnValue(activities));
-        }});
 
         MiningActivityFilter miningActivityFilter = new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "", "");
         String filter = miningActivityFilter.getFilterStringAllRecords();
@@ -66,13 +42,6 @@ public class TestMiningActivityFilter extends PortalTestClass {
 
     @Test
     public void testAssociatedMineDateRangeOre() throws Exception {
-        final List<String> activities = Arrays.asList("activity1");
-        context.checking(new Expectations() {{
-            oneOf(mockMine).getMineNameURI();
-            will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing(mockMine).getRelatedActivities();
-            will(returnValue(activities));
-        }});
 
         MiningActivityFilter miningActivityFilter =
             new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "28", "", "", "");
@@ -93,13 +62,6 @@ public class TestMiningActivityFilter extends PortalTestClass {
 
     @Test
     public void testAssociatedMineDateRangeProducedMaterial() throws Exception {
-        final List<String> activities = Arrays.asList("activity1");
-        context.checking(new Expectations() {{
-            oneOf(mockMine).getMineNameURI();
-            will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing(mockMine).getRelatedActivities();
-            will(returnValue(activities));
-        }});
 
         MiningActivityFilter miningActivityFilter =
             new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "Gold", "", "");
@@ -122,13 +84,6 @@ public class TestMiningActivityFilter extends PortalTestClass {
 
     @Test
     public void testAssociatedMineDateRangeCutOffGrade() throws Exception {
-        final List<String> activities = Arrays.asList("activity1");
-        context.checking(new Expectations() {{
-            oneOf(mockMine).getMineNameURI();
-            will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing(mockMine).getRelatedActivities();
-            will(returnValue(activities));
-        }});
 
         MiningActivityFilter miningActivityFilter =
             new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "10.14", "");
@@ -149,13 +104,6 @@ public class TestMiningActivityFilter extends PortalTestClass {
 
     @Test
     public void testAssociatedMineDateRangeProduction() throws Exception {
-        final List<String> activities = Arrays.asList("activity1");
-        context.checking(new Expectations() {{
-            oneOf(mockMine).getMineNameURI();
-            will(returnValue("urn:cgi:feature:GSV:Mine:361068"));
-            allowing(mockMine).getRelatedActivities();
-            will(returnValue(activities));
-        }});
 
         MiningActivityFilter miningActivityFilter =
             new MiningActivityFilter("urn:cgi:feature:GSV:Mine:361068", "01/JAN/1870", "31/DEC/1885", "", "", "", "1");

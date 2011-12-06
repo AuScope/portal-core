@@ -1,8 +1,6 @@
 package org.auscope.portal.server.domain.wcs;
 
 
-import javax.xml.xpath.XPath;
-
 import org.w3c.dom.Node;
 
 /**

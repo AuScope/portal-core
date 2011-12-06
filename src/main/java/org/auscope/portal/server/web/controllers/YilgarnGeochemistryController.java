@@ -3,9 +3,6 @@ package org.auscope.portal.server.web.controllers;
 
 import java.util.Arrays;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.gsml.YilgarnGeochemistryFilter;
@@ -13,10 +10,6 @@ import org.auscope.portal.gsml.YilgarnLocatedSpecimenRecord;
 import org.auscope.portal.gsml.YilgarnObservationRecord;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
-import org.auscope.portal.server.util.GmlToKml;
-import org.auscope.portal.server.web.ErrorMessages;
-import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
-import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.WFSService;
 import org.auscope.portal.server.web.service.YilgarnGeochemistryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,8 +117,7 @@ public class YilgarnGeochemistryController extends BasePortalController {
             @RequestParam(required=false, value="serviceUrl") String serviceUrl,
             @RequestParam(required=false, value="geologicName") String geologicName,
             @RequestParam(required=false, value="bbox") String bboxJson,
-            @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
-            HttpServletRequest request) throws Exception  {
+            @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures) throws Exception  {
 
 
         //Build our filter details

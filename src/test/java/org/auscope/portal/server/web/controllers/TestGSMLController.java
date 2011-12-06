@@ -1,9 +1,5 @@
 package org.auscope.portal.server.web.controllers;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URI;
 import org.auscope.portal.PortalTestClass;
@@ -30,23 +26,8 @@ public class TestGSMLController extends PortalTestClass {
      */
     private GSMLController gsmlController;
 
-    /**
-     * Mock request
-     */
-    private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
-
-    /**
-     * Mock session
-     */
-    private HttpSession mockHttpSession = context.mock(HttpSession.class);
-
 
     private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
-
-    /**
-     * Mock session
-     */
-    private ServletContext mockServletContext = context.mock(ServletContext.class);
 
     private WFSService mockWfsService = context.mock(WFSService.class);
     private IFilter mockFilter = context.mock(IFilter.class);
@@ -73,16 +54,12 @@ public class TestGSMLController extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockWfsService).getWfsResponseAsKml(wfsUrl, featureType, filterString, maxFeatures, srs);will(returnValue(new WFSKMLResponse(gmlBlob, kmlBlob, mockMethod)));
 
-            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
-            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
-
             oneOf(mockFilter).getFilterStringAllRecords(); will(returnValue(filterString));
 
             allowing(mockMethod).getURI();will(returnValue(new URI("http://service.wfs/wfs", false)));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestAllFeatures(wfsUrl, featureType, bboxJsonString, maxFeatures, mockHttpRequest);
+        ModelAndView modelAndView = gsmlController.requestAllFeatures(wfsUrl, featureType, bboxJsonString, maxFeatures);
         ModelMap dataObj = (ModelMap) modelAndView.getModel().get("data");
         Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
         Assert.assertNotNull(dataObj);
@@ -104,16 +81,12 @@ public class TestGSMLController extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockWfsService).getWfsResponseAsKml(wfsUrl, featureType, filterString, maxFeatures, srs);will(returnValue(new WFSKMLResponse(gmlBlob, kmlBlob, mockMethod)));
 
-            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
-            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
-
             oneOf(mockFilter).getFilterStringBoundingBox(with(any(FilterBoundingBox.class))); will(returnValue(filterString));
 
             allowing(mockMethod).getURI();will(returnValue(new URI("http://service.wfs/wfs", false)));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestAllFeatures(wfsUrl, featureType, bboxJsonString, maxFeatures, mockHttpRequest);
+        ModelAndView modelAndView = gsmlController.requestAllFeatures(wfsUrl, featureType, bboxJsonString, maxFeatures);
         ModelMap dataObj = (ModelMap) modelAndView.getModel().get("data");
         Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
         Assert.assertNotNull(dataObj);
@@ -125,24 +98,16 @@ public class TestGSMLController extends PortalTestClass {
     public void testRequestFeature() throws Exception {
         final String gmlBlob = "gmlBlob";
         final String kmlBlob = "kmlBlob";
-        final String filterString = "filterStr";
         final String wfsUrl = "http://service/wfs";
         final String featureType = "type:name";
         final String featureId = "feature-id";
-        final int maxFeatures = 1234;
-        final String srs = null; //dont specify this
-
         context.checking(new Expectations() {{
             oneOf(mockWfsService).getWfsResponseAsKml(wfsUrl, featureType, featureId);will(returnValue(new WFSKMLResponse(gmlBlob, kmlBlob, mockMethod)));
-
-            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
-            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
 
             allowing(mockMethod).getURI();will(returnValue(new URI("http://service.wfs/wfs", false)));
         }});
 
-        ModelAndView modelAndView = gsmlController.requestFeature(wfsUrl, featureType, featureId, mockHttpRequest);
+        ModelAndView modelAndView = gsmlController.requestFeature(wfsUrl, featureType, featureId);
         ModelMap dataObj = (ModelMap) modelAndView.getModel().get("data");
         Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
         Assert.assertNotNull(dataObj);

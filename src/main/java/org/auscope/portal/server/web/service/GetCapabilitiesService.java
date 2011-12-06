@@ -2,7 +2,6 @@ package org.auscope.portal.server.web.service;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.commons.httpclient.HttpMethodBase;

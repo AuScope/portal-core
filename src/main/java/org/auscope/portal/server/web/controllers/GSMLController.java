@@ -1,7 +1,5 @@
 package org.auscope.portal.server.web.controllers;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
@@ -47,8 +45,7 @@ public class GSMLController extends BasePortalController {
     public ModelAndView requestAllFeatures(@RequestParam("serviceUrl") final String serviceUrl,
                                            @RequestParam("typeName") final String featureType,
                                            @RequestParam(required=false, value="bbox") final String bboxJSONString,
-                                           @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
-                                           HttpServletRequest request) throws Exception {
+                                           @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures) throws Exception {
 
 
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJSONString);
@@ -85,8 +82,7 @@ public class GSMLController extends BasePortalController {
     @RequestMapping("/requestFeature.do")
     public ModelAndView requestFeature(@RequestParam("serviceUrl") final String serviceUrl,
                                        @RequestParam("typeName") final String featureType,
-                                       @RequestParam("featureId") final String featureId,
-                                       HttpServletRequest request) throws Exception {
+                                       @RequestParam("featureId") final String featureId) throws Exception {
         WFSKMLResponse response = null;
         try {
             response = wfsService.getWfsResponseAsKml(serviceUrl, featureType, featureId);

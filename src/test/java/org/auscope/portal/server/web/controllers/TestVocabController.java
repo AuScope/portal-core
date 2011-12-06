@@ -253,8 +253,6 @@ public class TestVocabController extends PortalTestClass {
             //One call to remote service
             oneOf(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             oneOf(httpServiceCaller).getMethodResponseAsStream(mockHttpMethod,mockHttpClient);will(returnValue(docStringStream));
-
-            oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));will(throwException(new RuntimeException()));
         }});
 
         ModelAndView mav = this.vocabController.getAllCSWThemes();

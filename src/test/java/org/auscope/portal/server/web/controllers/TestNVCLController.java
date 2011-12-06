@@ -2,25 +2,17 @@ package org.auscope.portal.server.web.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.net.ConnectException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.auscope.portal.PortalTestClass;
-import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
-import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
-import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.nvcl.NVCLNamespaceContext;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.nvcldataservice.CSVDownloadResponse;
 import org.auscope.portal.server.domain.nvcldataservice.GetDatasetCollectionResponse;
@@ -51,18 +43,9 @@ import org.springframework.web.servlet.ModelAndView;
 @SuppressWarnings("rawtypes")
 public class TestNVCLController extends PortalTestClass {
 
-    /** The mock http request. */
-    private HttpServletRequest mockHttpRequest;
 
     /** The mock http response. */
     private HttpServletResponse mockHttpResponse;
-
-    /** The mock http session. */
-    private HttpSession mockHttpSession;
-
-    /** The mock servlet context. */
-    private ServletContext mockServletContext;
-
 
     /** The mock csw service. */
     private CSWCacheService mockCSWService;
@@ -81,12 +64,8 @@ public class TestNVCLController extends PortalTestClass {
      */
     @Before
     public void setUp() {
-
-        this.mockHttpRequest = context.mock(HttpServletRequest.class);
         this.mockHttpResponse = context.mock(HttpServletResponse.class);
         this.mockBoreholeService = context.mock(BoreholeService.class);
-        this.mockHttpSession = context.mock(HttpSession.class);
-        this.mockServletContext = context.mock(ServletContext.class);
         this.mockCSWService = context.mock(CSWCacheService.class);
         this.mockDataService = context.mock(NVCLDataService.class);
         this.nvclController = new NVCLController(this.mockBoreholeService, this.mockCSWService, this.mockDataService);
@@ -115,22 +94,12 @@ public class TestNVCLController extends PortalTestClass {
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, null);
             will(returnValue(new WFSKMLResponse(nvclWfsResponse, nvclKmlResponse, mockHttpMethodBase)));
 
-            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
 
-            allowing(mockHttpRequest).getSession();
-            will(returnValue(mockHttpSession));
-
-            allowing(mockHttpSession).getServletContext();
-            will(returnValue(mockServletContext));
-
-            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
-            will(returnValue(null));
         }});
 
-        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger);
         Assert.assertTrue((Boolean) response.getModel().get("success"));
 
         Map data = (Map) response.getModel().get("data");
@@ -158,33 +127,19 @@ public class TestNVCLController extends PortalTestClass {
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
         final URI httpMethodURI = new URI("http://example.com", true);
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("q", "w", "e", "r", new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getWFSRecords();
-            will(returnValue(cswRecords));
-
             oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(with(equal(mockCSWService)),with(any(CSWRecordsFilterVisitor.class)));
             will(returnValue(restrictedIds));
 
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, restrictedIds);
             will(returnValue(new WFSKMLResponse(nvclWfsResponse, nvclKmlResponse, mockHttpMethodBase)));
 
-            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
-
-            allowing(mockHttpRequest).getSession();
-            will(returnValue(mockHttpSession));
-
-            allowing(mockHttpSession).getServletContext();
-            will(returnValue(mockServletContext));
-
-            allowing(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
         }});
 
-        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger);
         Assert.assertTrue((Boolean) response.getModel().get("success"));
 
         Map data = (Map) response.getModel().get("data");
@@ -209,31 +164,16 @@ public class TestNVCLController extends PortalTestClass {
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
         final URI httpMethodURI = new URI("http://example.com", true);
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a", "b", "c", "d", new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getWFSRecords();
-            will(returnValue(cswRecords));
-
             oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(with(equal(mockCSWService)),with(any(CSWRecordsFilterVisitor.class)));
             will(throwException(new ConnectException()));
 
-            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
-
-            allowing(mockHttpRequest).getSession();
-            will(returnValue(mockHttpSession));
-
-            allowing(mockHttpSession).getServletContext();
-            will(returnValue(mockServletContext));
-
-            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
-            will(returnValue(null));
         }});
 
-        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger);
         Assert.assertFalse((Boolean) response.getModel().get("success"));
     }
 
@@ -253,31 +193,16 @@ public class TestNVCLController extends PortalTestClass {
         final boolean onlyHylogger = true;
         final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
         final URI httpMethodURI = new URI("http://example.com", true);
-        final CSWRecord[] cswRecords = new CSWRecord[] {new CSWRecord("a", "b", "c", "d", new AbstractCSWOnlineResource[] {new CSWOnlineResourceImpl(new URL("http://example.com"), "wfs", NVCLNamespaceContext.PUBLISHED_DATASETS_TYPENAME, "desc")}, null)};
 
         context.checking(new Expectations() {{
-            oneOf(mockCSWService).getWFSRecords();
-            will(returnValue(cswRecords));
-
             oneOf(mockBoreholeService).discoverHyloggerBoreholeIDs(with(equal(mockCSWService)),with(any(CSWRecordsFilterVisitor.class)));
             will(returnValue(new ArrayList<String>()));
 
-            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
-
-            allowing(mockHttpRequest).getSession();
-            will(returnValue(mockHttpSession));
-
-            allowing(mockHttpSession).getServletContext();
-            will(returnValue(mockServletContext));
-
-            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
-            will(returnValue(null));
         }});
 
-        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger);
         Assert.assertFalse((Boolean) response.getModel().get("success"));
     }
 
@@ -691,23 +616,11 @@ public class TestNVCLController extends PortalTestClass {
             oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, null, null);
             will(returnValue(new WFSKMLResponse(nvclWfsResponse, nvclKmlResponse, mockHttpMethodBase)));
 
-            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            will(returnValue(nvclWfsResponse));
-
             allowing(mockHttpMethodBase).getURI();
             will(returnValue(httpMethodURI));
-
-            allowing(mockHttpRequest).getSession();
-            will(returnValue(mockHttpSession));
-
-            allowing(mockHttpSession).getServletContext();
-            will(returnValue(mockServletContext));
-
-            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
-            will(returnValue(null));
         }});
 
-        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures,"", onlyHylogger,serviceFilter, mockHttpRequest);
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures,"", onlyHylogger,serviceFilter);
         Assert.assertTrue((Boolean) response.getModel().get("success"));
 
         Map data = (Map) response.getModel().get("data");
@@ -726,7 +639,7 @@ public class TestNVCLController extends PortalTestClass {
         final int maxFeatures = 10;
         final String onlyHylogger = "off";
 
-        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures,"", onlyHylogger,serviceFilter, mockHttpRequest);
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures,"", onlyHylogger,serviceFilter);
         Map data = (Map) response.getModel().get("data");
         Assert.assertNull(data);
     }

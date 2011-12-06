@@ -318,8 +318,6 @@ public class TestWCSController extends PortalTestClass {
                     with(layerName));
             will(returnValue(mockMethod));
 
-            oneOf(mockMethod).getResponseBodyAsString();will(returnValue(xmlResponse));
-
             oneOf(mockServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));will(returnValue(xmlResponse));
             oneOf(mockServiceCaller).getHttpClient();
          }});

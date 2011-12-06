@@ -4,7 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
-import org.auscope.portal.csw.record.CSWRecord;
 
 /**
  *

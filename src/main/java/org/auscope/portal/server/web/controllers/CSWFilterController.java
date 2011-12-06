@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.auscope.portal.csw.CSWGetDataRecordsFilter;
+import org.auscope.portal.csw.CSWGetDataRecordsFilter.KeywordMatchType;
 import org.auscope.portal.csw.CSWGetRecordResponse;
 import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.csw.CSWGetDataRecordsFilter.KeywordMatchType;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.web.service.CSWFilterService;
 import org.auscope.portal.server.web.service.CSWServiceItem;

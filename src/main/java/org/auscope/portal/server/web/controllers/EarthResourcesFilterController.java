@@ -1,7 +1,5 @@
 package org.auscope.portal.server.web.controllers;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;

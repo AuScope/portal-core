@@ -2,6 +2,7 @@ package org.auscope.portal.server.web.view;
 
 import java.awt.Dimension;
 import java.awt.Point;
+
 import org.auscope.portal.server.web.AbstractKnownLayer;
 import org.auscope.portal.server.web.KnownLayerKeywords;
 import org.auscope.portal.server.web.KnownLayerWFS;

@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpStatus;
@@ -74,8 +73,7 @@ public class NVCLController extends BasePortalController {
                                       @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
                                       @RequestParam(required=false, value="bbox") String bboxJson,
                                       @RequestParam(required=false, value="onlyHylogger") String onlyHyloggerString,
-                                      @RequestParam(required=false, value="serviceFilter", defaultValue="")String serviceFilter,
-                                      HttpServletRequest request) throws Exception {
+                                      @RequestParam(required=false, value="serviceFilter", defaultValue="")String serviceFilter) throws Exception {
 
         if(!serviceFilter.equals("") && !(new URL(serviceUrl).getHost()).equalsIgnoreCase((new URL(serviceFilter)).getHost())){
             return this.generateJSONResponseMAV(false,null,"Not Queried");
@@ -90,7 +88,7 @@ public class NVCLController extends BasePortalController {
         }
 
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
-        return doBoreholeFilter(serviceUrl,boreholeName, custodian, dateOfDrilling, maxFeatures,bbox, onlyHylogger, request);
+        return doBoreholeFilter(serviceUrl,boreholeName, custodian, dateOfDrilling, maxFeatures,bbox, onlyHylogger);
     }
 
     /**
@@ -104,7 +102,7 @@ public class NVCLController extends BasePortalController {
      */
     public ModelAndView doBoreholeFilter(String serviceUrl,String boreholeName,String custodian,
                                         String dateOfDrilling,int maxFeatures,FilterBoundingBox bbox,
-                                        boolean onlyHylogger,HttpServletRequest request) throws Exception {
+                                        boolean onlyHylogger) throws Exception {
         List<String> hyloggerBoreholeIDs = null;
         if (onlyHylogger) {
             try {

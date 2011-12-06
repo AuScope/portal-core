@@ -1,17 +1,10 @@
 package org.auscope.portal.server.web.controllers;
 
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URI;
@@ -33,21 +26,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public class TestYilgarnGeochemistryController extends PortalTestClass {
 
-
-    /** The mock http request. */
-    private HttpServletRequest mockHttpRequest = context.mock(HttpServletRequest.class);
-
-    /** The mock http session. */
-    private HttpSession mockHttpSession = context.mock(HttpSession.class);
-
-    /** The mock servlet context. */
-    private ServletContext mockServletContext = context.mock(ServletContext.class);
-
     /** The mock servlet context. */
     private YilgarnGeochemistryService mockGeochemService = context.mock(YilgarnGeochemistryService.class);
-
-    /** The mock http response. */
-    private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
 
     /** The mock Web Feature Service request Service*/
     private WFSService mockWfsService = context.mock(WFSService.class);
@@ -208,22 +188,13 @@ public class TestYilgarnGeochemistryController extends PortalTestClass {
         final int maxFeatures = 0;
         final String bbox = null;
         final String expectedGML = "<gml/>";
-        final StringWriter actualJSONResponse = new StringWriter();
 
         context.checking(new Expectations() {{
-
-            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
-            oneOf(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
-
             oneOf(mockWfsService).getWfsResponseAsKml(with(equal(serviceUrl)), with(equal("gsml:GeologicUnit")), with(any(String.class)), with(equal(maxFeatures)), with(equal((String)null)));will(returnValue(new WFSKMLResponse(expectedGML, kmlBlob, mockMethod)));
-
-            oneOf(mockHttpRequest).getSession();will(returnValue(mockHttpSession));
-            oneOf(mockHttpSession).getServletContext();will(returnValue(mockServletContext));
-            oneOf(mockServletContext).getResourceAsStream(with(any(String.class))); will(returnValue(null));
 
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceUrl, true)));
         }});
-        ModelAndView modelAndView = controller.doYilgarnGeochemistryFilter(serviceUrl, geologicName, bbox, maxFeatures,mockHttpRequest);
+        ModelAndView modelAndView = controller.doYilgarnGeochemistryFilter(serviceUrl, geologicName, bbox, maxFeatures);
         Assert.assertNotNull(modelAndView);
         Map<String, Object> model = modelAndView.getModel();
         Assert.assertEquals(true, model.get("success"));
