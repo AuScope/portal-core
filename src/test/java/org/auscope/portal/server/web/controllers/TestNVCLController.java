@@ -99,6 +99,56 @@ public class TestNVCLController {
     }
 
     /**
+     * This test is designed to fail in order to test a possible issue with JMock
+     *
+     * It is built from a perfectly normal test but with additional expectation that should fail
+     */
+    @Test
+    public void testThisTestShouldFail() throws Exception {
+        final String serviceUrl = "http://fake.com/wfs";
+        final String nameFilter = "filterBob";
+        final String custodianFilter = "filterCustodian";
+        final String filterDate = "1986-10-09";
+        final int maxFeatures = 10;
+        final FilterBoundingBox bbox = new FilterBoundingBox("EPSG:4326", new double[] {1, 2}, new double[] {3,4});
+        final String nvclWfsResponse = "wfsResponse";
+        final String nvclKmlResponse = "kmlResponse";
+        final boolean onlyHylogger = false;
+        final HttpMethodBase mockHttpMethodBase = context.mock(HttpMethodBase.class);
+        final URI httpMethodURI = new URI("http://example.com", true);
+
+        context.checking(new Expectations() {{
+            oneOf(mockBoreholeService).getAllBoreholes(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, null);
+            will(returnValue(new WFSKMLResponse(nvclWfsResponse, nvclKmlResponse, mockHttpMethodBase)));
+
+            oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+
+            allowing(mockHttpMethodBase).getURI();
+            will(returnValue(httpMethodURI));
+
+            allowing(mockHttpRequest).getSession();
+            will(returnValue(mockHttpSession));
+
+            allowing(mockHttpSession).getServletContext();
+            will(returnValue(mockServletContext));
+
+            allowing(mockServletContext).getResourceAsStream(with(any(String.class)));
+            will(returnValue(null));
+
+            //This should never occur - hence this test should fail
+            oneOf(mockDataService).checkWFSStatus(with(any(String.class)), with(any(String.class)));
+        }});
+
+        ModelAndView response = this.nvclController.doBoreholeFilter(serviceUrl, nameFilter, custodianFilter, filterDate, maxFeatures, bbox, onlyHylogger, mockHttpRequest);
+        Assert.assertTrue((Boolean) response.getModel().get("success"));
+
+        Map data = (Map) response.getModel().get("data");
+        Assert.assertNotNull(data);
+        Assert.assertEquals(nvclWfsResponse, data.get("gml"));
+        Assert.assertEquals(nvclKmlResponse, data.get("kml"));
+    }
+
+    /**
      * Tests to ensure that a non hylogger request calls the correct functions.
      *
      * @throws Exception the exception
