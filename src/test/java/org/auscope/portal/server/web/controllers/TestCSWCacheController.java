@@ -70,8 +70,6 @@ public class TestCSWCacheController extends PortalTestClass {
         final String serviceUrl = "somejunk";
 
         context.checking(new Expectations() {{
-            oneOf(mockPropertyConfigurer).resolvePlaceholder(with(any(String.class)));
-            will(returnValue(serviceUrl));
             oneOf(mockCSWService).updateCache();
         }});
 

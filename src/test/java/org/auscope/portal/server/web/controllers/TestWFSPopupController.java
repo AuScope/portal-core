@@ -49,18 +49,12 @@ public class TestWFSPopupController extends PortalTestClass {
         final String serviceUrl = "http://example.com/wfs";
         final String typeName = "wfs:typeName";
         final String featureId = "idString";
-        final String wfsToHtmlUrl = "/WEB-INF/xsl/WfsToHtml.xsl";
         final String convertedData = "gmlToKMLResult";
         final String wfsResponse = "wfsResponseString";
         final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(convertedData.getBytes().length);
 
         context.checking(new Expectations() {{
-
-            oneOf(mockMethod).getURI();will(returnValue(new URI(serviceUrl, false)));
-
-            oneOf(mockRequest).getSession();will(returnValue(mockSession));
-            oneOf(mockSession).getServletContext();will(returnValue(mockServletContext));
-            oneOf(mockServletContext).getResourceAsStream(wfsToHtmlUrl);will(returnValue(mockInputStream));
+            allowing(mockMethod).getURI();will(returnValue(new URI(serviceUrl, false)));
 
             allowing(mockResponse).setContentType(with(any(String.class)));
 
@@ -83,17 +77,11 @@ public class TestWFSPopupController extends PortalTestClass {
         final String serviceUrl = "http://example.com/wfs";
         final String typeName = null;
         final String featureId = null;
-        final String wfsToHtmlUrl = "/WEB-INF/xsl/WfsToHtml.xsl";
         final String convertedData = "gmlToKMLResult";
         final String wfsResponse = "wfsResponseString";
         final ByteBufferedServletOutputStream outputStream = new ByteBufferedServletOutputStream(convertedData.getBytes().length);
 
         context.checking(new Expectations() {{
-
-            oneOf(mockRequest).getSession();will(returnValue(mockSession));
-            oneOf(mockSession).getServletContext();will(returnValue(mockServletContext));
-            oneOf(mockServletContext).getResourceAsStream(wfsToHtmlUrl);will(returnValue(mockInputStream));
-
             allowing(mockResponse).setContentType(with(any(String.class)));
 
             oneOf(mockWfsService).getWfsResponseAsHtml(serviceUrl);will(returnValue(new WFSHTMLResponse(wfsResponse, convertedData, mockMethod)));
