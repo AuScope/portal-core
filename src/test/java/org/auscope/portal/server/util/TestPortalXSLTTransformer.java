@@ -11,9 +11,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.auscope.portal.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +24,7 @@ import org.xml.sax.InputSource;
  * @author Josh Vote
  *
  */
-public class TestPortalXSLTTransformer {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestPortalXSLTTransformer extends PortalTestClass {
 
     private PortalXSLTTransformer transformer;
 

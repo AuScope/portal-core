@@ -15,6 +15,7 @@ import javax.xml.xpath.XPathFactory;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.Util;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,7 +28,7 @@ import org.xml.sax.SAXException;
  * Date: 30/03/2009
  * Time: 3:27:26 PM
  */
-public class TestMineralOccurrence {
+public class TestMineralOccurrence extends PortalTestClass {
 
     private static MineralOccurrence validMineralOccurrence;
     private static MineralOccurrence invalidMineralOccurrence;

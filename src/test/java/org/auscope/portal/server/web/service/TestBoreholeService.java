@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
@@ -17,8 +18,6 @@ import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,12 +25,7 @@ import org.junit.Test;
 /**
  * The Class TestBoreholeService.
  */
-public class TestBoreholeService {
-
-    /** The context. */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestBoreholeService extends PortalTestClass {
 
     /** The service. */
     private BoreholeService service;

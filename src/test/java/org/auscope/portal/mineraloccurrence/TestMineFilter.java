@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.ogc.AbstractFilterTestUtilities;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -13,7 +14,7 @@ import org.w3c.dom.Document;
  * Date: 25/03/2009
  * Time: 8:23:09 AM
  */
-public class TestMineFilter {
+public class TestMineFilter extends PortalTestClass {
 
     /**
      * Test without mine name. If there is no name specified then all of the mines should be queried.

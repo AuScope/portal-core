@@ -16,12 +16,13 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.auscope.portal.PortalTestClass;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWContact;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.csw.record.CSWGeographicElement;
-import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWResponsibleParty;
 import org.auscope.portal.server.util.DOMUtil;
 import org.junit.Assert;
@@ -34,7 +35,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-public class TestCSWRecordTransformer {
+public class TestCSWRecordTransformer extends PortalTestClass  {
     private CSWRecord[] records;
     private Document doc;
 

@@ -8,10 +8,9 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,14 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @author jac24m
  */
-public class TestGeotransectsController {
-
-    /**
-     * JMock context
-     */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestGeotransectsController extends PortalTestClass {
 
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
 

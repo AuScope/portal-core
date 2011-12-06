@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
@@ -38,8 +39,6 @@ import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.service.CSWRecordsFilterVisitor;
 import org.auscope.portal.server.web.service.NVCLDataService;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,7 +49,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @version: $Id$
  */
 @SuppressWarnings("rawtypes")
-public class TestNVCLController {
+public class TestNVCLController extends PortalTestClass {
 
     /** The mock http request. */
     private HttpServletRequest mockHttpRequest;
@@ -76,11 +75,6 @@ public class TestNVCLController {
 
     /** The nvcl controller. */
     private NVCLController nvclController;
-
-    /** The context. */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
 
     /**
      * Setup.

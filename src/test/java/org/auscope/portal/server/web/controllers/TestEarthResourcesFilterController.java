@@ -4,11 +4,10 @@ import java.net.ConnectException;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URI;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,13 +18,9 @@ import org.springframework.web.servlet.ModelAndView;
  * @author san218
  * @version $Id$
  */
-public class TestEarthResourcesFilterController {
+public class TestEarthResourcesFilterController extends PortalTestClass {
     private EarthResourcesFilterController earthResourcesFilterController;
     private MineralOccurrenceService mineralOccurrenceService;
-
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
 
     @Before
     public void setUp() {

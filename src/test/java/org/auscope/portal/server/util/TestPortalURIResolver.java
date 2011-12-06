@@ -6,9 +6,8 @@ import javax.servlet.ServletContext;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
+import org.auscope.portal.PortalTestClass;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,14 +17,7 @@ import org.junit.Test;
  * Date: 28/08/2009
  * @version $Id$
  */
-public class TestPortalURIResolver {
-
-    /**
-     * JMock context
-     */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestPortalURIResolver extends PortalTestClass {
 
     /**
      * Portal URI resolver to test

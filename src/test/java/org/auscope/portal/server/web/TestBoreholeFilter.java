@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.mineraloccurrence.BoreholeFilter;
 import org.auscope.portal.server.domain.ogc.AbstractFilterTestUtilities;
 import org.junit.Assert;
@@ -15,7 +16,7 @@ import org.w3c.dom.Document;
  * @author Josh Vote
  *
  */
-public class TestBoreholeFilter {
+public class TestBoreholeFilter extends PortalTestClass {
 
     /**
      * Tests that null params will NOT generate exceptions and are equivelant to empty params

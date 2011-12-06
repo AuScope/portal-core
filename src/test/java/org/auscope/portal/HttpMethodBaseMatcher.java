@@ -1,7 +1,5 @@
 package org.auscope.portal;
 
-import java.util.logging.Logger;
-
 import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpMethodBase;

@@ -1,5 +1,6 @@
 package org.auscope.portal.server.domain.vocab;
 
+import org.auscope.portal.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -8,7 +9,7 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestConcept {
+public class TestConcept extends PortalTestClass {
     /**
      * Sanity checks for equals of the various object types
      */

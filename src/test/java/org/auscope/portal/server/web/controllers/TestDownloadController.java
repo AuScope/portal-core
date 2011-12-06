@@ -13,13 +13,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.DelayedReturnValueAction;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.util.ByteBufferedServletOutputStream;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.api.Action;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,17 +24,8 @@ import org.junit.Test;
 /**
  * @version $Id$
  */
-public class TestDownloadController {
+public class TestDownloadController extends PortalTestClass {
     private ExecutorService threadPool;
-
-    /**
-     * JMock context
-     */
-    private Mockery context = new Mockery() {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
 
     /**
      * Mock httpService caller
@@ -69,11 +57,6 @@ public class TestDownloadController {
                     this.getStream().toByteArray()));
         }
     }
-
-    private static Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
-        return new DelayedReturnValueAction(msDelay, returnValue);
-    }
-
 
     @Before
     public void setUp() {

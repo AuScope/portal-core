@@ -1,9 +1,8 @@
 package org.auscope.portal.mineraloccurrence;
 
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.ogc.AbstractFilterTestUtilities;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
@@ -13,13 +12,7 @@ import org.w3c.dom.Document;
  * Date: 30/03/2009
  * Time: 3:27:26 PM
  */
-public class TestMineralOccurrenceFilter {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
-
-
-
+public class TestMineralOccurrenceFilter extends PortalTestClass {
 
     @Test
     public void testWithNameAndMinimumOreAmount() throws Exception {

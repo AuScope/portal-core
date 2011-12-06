@@ -1,5 +1,6 @@
 package org.auscope.portal.csw;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.CSWGetDataRecordsFilter.KeywordMatchType;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.junit.Assert;
@@ -10,7 +11,7 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestCSWGetDataRecordsFilter {
+public class TestCSWGetDataRecordsFilter extends PortalTestClass {
 
     /**
      * Performs a dirt simple test that optional fields don't generate exceptions or

@@ -5,14 +5,11 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.auscope.portal.HttpMethodBaseMatcher;
-import org.auscope.portal.HttpMethodBaseMatcher.HttpMethodType;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.csw.CSWGetRecordResponse;
 import org.auscope.portal.csw.CSWThreadExecutor;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,21 +19,13 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestCSWFilterService {
+public class TestCSWFilterService extends PortalTestClass {
     //determines the size of the test + congestion
     static final int CONCURRENT_THREADS_TO_RUN = 3;
 
     //These determine the correct numbers for a single read of the test file
     static final int RECORD_COUNT_TOTAL = 15;
     static final int RECORD_MATCH_TOTAL = 30;
-
-    /**
-     * JMock context
-     */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
-
 
     private CSWFilterService cswFilterService;
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
@@ -64,11 +53,6 @@ public class TestCSWFilterService {
         }
 
         this.cswFilterService = new CSWFilterService(threadExecutor, httpServiceCaller, serviceUrlList);
-    }
-
-    private static HttpMethodBaseMatcher aHttpMethodBase(HttpMethodType type, String url,
-            String postBody) {
-        return new HttpMethodBaseMatcher(type, url, postBody);
     }
 
     /**

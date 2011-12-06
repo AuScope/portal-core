@@ -1,6 +1,7 @@
 package org.auscope.portal.server.web;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,7 +10,7 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestWMSMethodMaker {
+public class TestWMSMethodMaker extends PortalTestClass {
 
     /**
      * Tests that the basic parameters make it into every request

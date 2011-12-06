@@ -1,23 +1,16 @@
 package org.auscope.portal.server.util;
 
 import java.io.InputStream;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import org.auscope.portal.PropertiesMatcher;
+import org.auscope.portal.PortalTestClass;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestGmlToKml {
-
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestGmlToKml extends PortalTestClass {
 
     private ServletContext mockServletContext = context.mock(ServletContext.class);
     private PortalXSLTTransformer mockTransformer = context.mock(PortalXSLTTransformer.class);
@@ -27,12 +20,6 @@ public class TestGmlToKml {
     @Before
     public void setup() {
         gmlToKml = new GmlToKml(mockTransformer, mockServletContext);
-    }
-
-    private PropertiesMatcher aProperty(String property, String value) {
-        Properties prop = new Properties();
-        prop.setProperty(property, value);
-        return new PropertiesMatcher(prop);
     }
 
     /**

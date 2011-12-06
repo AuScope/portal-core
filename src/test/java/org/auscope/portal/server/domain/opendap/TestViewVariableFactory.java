@@ -12,10 +12,9 @@ import junit.framework.Assert;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.web.view.JSONModelAndView;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
 import ucar.ma2.Array;
@@ -30,11 +29,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author vot002
  *
  */
-public class TestViewVariableFactory {
-
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestViewVariableFactory extends PortalTestClass {
 
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
 

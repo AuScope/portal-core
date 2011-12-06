@@ -6,20 +6,16 @@ import java.io.InputStream;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.pressuredb.AvailableOMResponse;
 import org.auscope.portal.pressuredb.PressureDBException;
 import org.auscope.portal.server.web.PressureDBMethodMaker;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestPressureDBService {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestPressureDBService extends PortalTestClass {
     private PressureDBService service;
     private PressureDBMethodMaker mockMethodMaker = context.mock(PressureDBMethodMaker.class);
     private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);

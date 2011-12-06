@@ -5,13 +5,12 @@ import java.net.ConnectException;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.gsml.YilgarnLocatedSpecimenRecord;
 import org.auscope.portal.gsml.YilgarnObservationRecord;
 import org.auscope.portal.server.domain.ows.OWSException;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,12 +20,7 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestYilgarnGeochemistryService {
-
-    /** The context. */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestYilgarnGeochemistryService extends PortalTestClass {
 
     private HttpClient mockClient = context.mock(HttpClient.class);
     private WFSGetFeatureMethodMaker mockMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);

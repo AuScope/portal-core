@@ -1,10 +1,11 @@
 package org.auscope.portal.server.domain.ows;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.util.DOMUtil;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-public class TestOWSExceptionParser {
+public class TestOWSExceptionParser extends PortalTestClass {
 
     private void check(String path) throws Exception {
         final String xmlString = org.auscope.portal.Util.loadXML(path);

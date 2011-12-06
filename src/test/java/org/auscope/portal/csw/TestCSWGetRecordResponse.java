@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.server.web.service.CSWServiceItem;
 import org.junit.Assert;
@@ -16,7 +18,7 @@ import org.w3c.dom.Document;
  * @author Josh Vote
  *
  */
-public class TestCSWGetRecordResponse {
+public class TestCSWGetRecordResponse extends PortalTestClass  {
 
     private CSWGetRecordResponse recordResponse;
     private CSWServiceItem origin;

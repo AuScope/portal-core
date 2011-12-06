@@ -3,10 +3,11 @@ package org.auscope.portal.csw;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWOnlineResourceImpl;
 import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.server.web.service.CSWRecordsHostFilter;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +17,7 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestCSWRecord {
+public class TestCSWRecord extends PortalTestClass  {
 
     /**
      * Tests that containsKeyword returns valid results

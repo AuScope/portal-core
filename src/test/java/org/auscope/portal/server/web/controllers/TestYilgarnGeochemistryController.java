@@ -15,14 +15,13 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URI;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.gsml.YilgarnLocatedSpecimenRecord;
 import org.auscope.portal.gsml.YilgarnObservationRecord;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.service.WFSService;
 import org.auscope.portal.server.web.service.YilgarnGeochemistryService;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,12 +31,7 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * The Class TestYilgarnLocSpecimenController.
  */
-public class TestYilgarnGeochemistryController {
-
-    /** The context. */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestYilgarnGeochemistryController extends PortalTestClass {
 
 
     /** The mock http request. */

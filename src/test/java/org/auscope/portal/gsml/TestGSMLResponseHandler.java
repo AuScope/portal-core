@@ -6,9 +6,10 @@ import java.io.FileReader;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.junit.Test;
 
-public class TestGSMLResponseHandler {
+public class TestGSMLResponseHandler extends PortalTestClass  {
     GSMLResponseHandler gsmlResponseHandler = new GSMLResponseHandler();
 
 

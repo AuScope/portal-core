@@ -15,8 +15,8 @@ import javax.xml.xpath.XPathFactory;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.Util;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -31,7 +31,7 @@ import org.xml.sax.SAXException;
  * Date: 24/03/2009
  * Time: 9:01:48 AM
  */
-public class TestMine {
+public class TestMine extends PortalTestClass {
     /** The Document  */
     private static final String MINEDOCUMENT = "src/test/resources/mineNode.xml";
 

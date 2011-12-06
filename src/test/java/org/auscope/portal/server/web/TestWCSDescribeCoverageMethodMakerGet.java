@@ -1,10 +1,11 @@
 package org.auscope.portal.server.web;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestWCSDescribeCoverageMethodMakerGet {
+public class TestWCSDescribeCoverageMethodMakerGet extends PortalTestClass {
     @Test(expected=IllegalArgumentException.class)
     public void testBadLayer() throws Exception {
         new WCSDescribeCoverageMethodMakerGET().makeMethod("http://fake.com", "");

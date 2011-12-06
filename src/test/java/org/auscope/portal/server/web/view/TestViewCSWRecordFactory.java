@@ -4,24 +4,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.auscope.portal.PortalTestClass;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
+import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWContact;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.auscope.portal.csw.record.CSWGeographicElement;
-import org.auscope.portal.csw.record.AbstractCSWOnlineResource;
 import org.auscope.portal.csw.record.CSWRecord;
-import org.auscope.portal.csw.record.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.csw.record.CSWResponsibleParty;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
-public class TestViewCSWRecordFactory {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
-
+public class TestViewCSWRecordFactory extends PortalTestClass {
     private CSWRecord mockCSWRecord = context.mock(CSWRecord.class);
     private AbstractCSWOnlineResource mockOnlineRes = context.mock(AbstractCSWOnlineResource.class);
     private CSWGeographicBoundingBox mockBbox = context.mock(CSWGeographicBoundingBox.class);

@@ -5,14 +5,13 @@ import java.net.ConnectException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.wfs.WFSHTMLResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.util.GmlToHtml;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,13 +21,7 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestWFSService {
-
-    /** The context. */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
-
+public class TestWFSService extends PortalTestClass {
     private GmlToKml mockGmlToKml = context.mock(GmlToKml.class);
     private GmlToHtml mockGmlToHtml = context.mock(GmlToHtml.class);
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);

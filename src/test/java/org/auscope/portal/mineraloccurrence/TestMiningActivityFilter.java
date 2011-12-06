@@ -3,10 +3,9 @@ package org.auscope.portal.mineraloccurrence;
 import java.util.Arrays;
 import java.util.List;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.ogc.AbstractFilterTestUtilities;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -16,10 +15,7 @@ import org.w3c.dom.Document;
  * Date: 25/03/2009
  * Time: 9:07:20 AM
  */
-public class TestMiningActivityFilter {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestMiningActivityFilter extends PortalTestClass {
 
     private Mine mockMine;
     private List<Mine> mockMineList;

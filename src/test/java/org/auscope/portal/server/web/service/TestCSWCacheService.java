@@ -10,16 +10,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.DelayedReturnValueAction;
-import org.auscope.portal.HttpMethodBaseMatcher;
 import org.auscope.portal.HttpMethodBaseMatcher.HttpMethodType;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.csw.CSWThreadExecutor;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
 import org.jmock.Sequence;
-import org.jmock.api.Action;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +24,7 @@ import org.junit.Test;
  * Unit tests for CSWCacheService
  * @author Josh Vote
  */
-public class TestCSWCacheService extends CSWCacheService {
+public class TestCSWCacheService extends PortalTestClass {
   //determines the size of the test + congestion
     static final int CONCURRENT_THREADS_TO_RUN = 3;
 
@@ -38,17 +34,6 @@ public class TestCSWCacheService extends CSWCacheService {
     static final int RECORD_COUNT_WMS = 2;
     static final int RECORD_COUNT_WFS = 12;
     static final int RECORD_COUNT_ERMINE_RECORDS = 2;
-
-    public TestCSWCacheService() throws Exception {
-        super(null, null, new ArrayList());
-    }
-
-    /**
-     * JMock context
-     */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
 
 
     private CSWCacheService cswCacheService;
@@ -75,10 +60,6 @@ public class TestCSWCacheService extends CSWCacheService {
           }
 
         this.cswCacheService = new CSWCacheService(threadExecutor, httpServiceCaller, serviceUrlList);
-    }
-
-    private static HttpMethodBaseMatcher aHttpMethodBase(HttpMethodType type, String url, String postBody) {
-        return new HttpMethodBaseMatcher(type, url, postBody);
     }
 
     /**
@@ -301,10 +282,6 @@ public class TestCSWCacheService extends CSWCacheService {
 
         //Ensure that our internal state is set to NOT RUNNING AN UPDATE
         Assert.assertFalse(this.cswCacheService.updateRunning);
-    }
-
-    private static Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
-        return new DelayedReturnValueAction(msDelay, returnValue);
     }
 
     /**

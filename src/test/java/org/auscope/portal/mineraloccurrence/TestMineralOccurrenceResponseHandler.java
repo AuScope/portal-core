@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.junit.Test;
 
 /**
@@ -14,7 +15,7 @@ import org.junit.Test;
  * Date: 24/03/2009
  * Time: 10:24:29 AM
  */
-public class TestMineralOccurrenceResponseHandler {
+public class TestMineralOccurrenceResponseHandler extends PortalTestClass {
     MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler = new MineralOccurrencesResponseHandler();
 
     @Test

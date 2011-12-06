@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.ogc.AbstractFilterTestUtilities;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -14,7 +15,7 @@ import org.w3c.dom.Document;
  * Date: 30/03/2009
  * Time: 3:14:31 PM
  */
-public class TestCommodityFilter {
+public class TestCommodityFilter extends PortalTestClass {
 
     /**
      * Test without commodity name and group. If there is nothing specified then all of the commodities should be queried.

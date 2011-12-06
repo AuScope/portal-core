@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+
 import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -12,10 +13,9 @@ import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,10 +25,7 @@ import org.junit.Test;
  * Date: Jun 3, 2009
  * Time: 12:01:57 PM
  */
-public class TestHttpServiceCaller {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestHttpServiceCaller extends PortalTestClass {
     private HttpClient mockHttpClient;
     private HttpConnectionManagerParams mockParams;
     private WFSGetFeatureMethodMaker methodMaker;

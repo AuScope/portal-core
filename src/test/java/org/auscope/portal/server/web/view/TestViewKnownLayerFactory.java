@@ -3,20 +3,15 @@ package org.auscope.portal.server.web.view;
 import java.awt.Dimension;
 import java.awt.Point;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.web.KnownLayerKeywords;
 import org.auscope.portal.server.web.KnownLayerWFS;
 import org.auscope.portal.server.web.KnownLayerWMS;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
-public class TestViewKnownLayerFactory {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
-
+public class TestViewKnownLayerFactory extends PortalTestClass {
     private KnownLayerWFS mockWFS = context.mock(KnownLayerWFS.class);
     private KnownLayerWMS mockWMS = context.mock(KnownLayerWMS.class);
     private KnownLayerKeywords mockKeywords = context.mock(KnownLayerKeywords.class);

@@ -12,9 +12,9 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 import junit.framework.Assert;
-
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.Util;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -25,7 +25,7 @@ import org.w3c.dom.Node;
  * @author Josh Vote
  *
  */
-public class TestDOMUtil {
+public class TestDOMUtil extends PortalTestClass {
     /**
      * Simple test to ensure that the 2 DOM util methods are reversible
      * @throws Exception

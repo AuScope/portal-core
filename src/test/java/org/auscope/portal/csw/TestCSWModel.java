@@ -1,5 +1,6 @@
 package org.auscope.portal.csw;
 
+import org.auscope.portal.PortalTestClass;
 import org.junit.Test;
 
 /**
@@ -7,7 +8,7 @@ import org.junit.Test;
  * Date: 12/07/2009
  * Time: 5:12:30 PM
  */
-public class TestCSWModel {
+public class TestCSWModel extends PortalTestClass  {
 
     @Test
     public void testGetWMSRecords() {

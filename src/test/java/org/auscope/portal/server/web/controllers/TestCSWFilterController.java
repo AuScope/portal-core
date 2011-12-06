@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.auscope.portal.CSWGetDataRecordsFilterMatcher;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.CSWGetDataRecordsFilter.KeywordMatchType;
 import org.auscope.portal.csw.CSWGetRecordResponse;
 import org.auscope.portal.csw.record.CSWRecord;
@@ -13,8 +14,6 @@ import org.auscope.portal.server.web.service.CSWFilterService;
 import org.auscope.portal.server.web.service.CSWServiceItem;
 import org.auscope.portal.server.web.view.ViewCSWRecordFactory;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +25,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @author Josh Vote
  *
  */
-public class TestCSWFilterController {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestCSWFilterController extends PortalTestClass {
 
     private ViewCSWRecordFactory mockViewRecordFactory;
     private CSWFilterService mockService;

@@ -7,13 +7,14 @@ import javax.xml.namespace.NamespaceContext;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.junit.Test;
 
 /**
  * @author san218
  * @version $Id$
  */
-public class TestCSWNamespaceContext {
+public class TestCSWNamespaceContext extends PortalTestClass  {
 
     private String TEST_PREFIX = "gmd";
     private String TEST_PREFIX_NOT_EXIST = "uHaHa";

@@ -14,6 +14,7 @@ import javax.xml.xpath.XPathFactory;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.Util;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,7 +27,7 @@ import org.xml.sax.SAXException;
  * Date: 30/03/2009
  * Time: 3:14:31 PM
  */
-public class TestCommodity {
+public class TestCommodity extends PortalTestClass {
 
     private static Commodity validCommodity;
     private static Commodity invalidCommodity;

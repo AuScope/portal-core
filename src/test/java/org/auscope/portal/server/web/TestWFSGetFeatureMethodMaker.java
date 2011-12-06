@@ -6,6 +6,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.auscope.portal.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,7 +15,7 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestWFSGetFeatureMethodMaker {
+public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
     /**
      * Tests that the given HttpMethodBase (representing a WFS request) contains

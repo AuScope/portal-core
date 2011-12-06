@@ -10,21 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.web.AbstractKnownLayer;
 import org.auscope.portal.server.web.view.ViewKnownLayerFactory;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
-public class TestKnownLayerController {
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestKnownLayerController extends PortalTestClass {
 
     private ArrayList knownLayerList;
     private AbstractKnownLayer mockDefn1 = context.mock(AbstractKnownLayer.class, "defn1");

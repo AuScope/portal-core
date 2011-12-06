@@ -13,13 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
 import org.auscope.portal.server.web.service.CSWCacheService;
 import org.auscope.portal.server.web.view.ViewCSWRecordFactory;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,17 +31,10 @@ import org.springframework.web.servlet.ModelAndView;
  *
  * @version $Id$
  */
-public class TestCSWCacheController {
+public class TestCSWCacheController extends PortalTestClass {
 
     /** The Constant SUCCESSJSON. */
     private static final String SUCCESSJSON = "success";
-
-    /**
-     * JMock context.
-     */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
 
     /** The mock csw service. */
     private CSWCacheService mockCSWService = context.mock(CSWCacheService.class);

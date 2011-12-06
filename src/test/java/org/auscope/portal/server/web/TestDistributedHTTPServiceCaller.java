@@ -14,23 +14,16 @@ import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.DelayedReturnValueAction;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 
-public class TestDistributedHTTPServiceCaller implements Thread.UncaughtExceptionHandler {
-
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestDistributedHTTPServiceCaller extends PortalTestClass implements Thread.UncaughtExceptionHandler {
 
     private HttpMethodBase mockMethod1 = context.mock(HttpMethodBase.class, "method1");
     private HttpMethodBase mockMethod2 = context.mock(HttpMethodBase.class, "method2");
@@ -45,10 +38,6 @@ public class TestDistributedHTTPServiceCaller implements Thread.UncaughtExceptio
     private InputStream mockInputStream1 = context.mock(InputStream.class, "stream1");
     private InputStream mockInputStream2 = context.mock(InputStream.class, "stream2");
     private InputStream mockInputStream3 = context.mock(InputStream.class, "stream3");
-
-    private static Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
-        return new DelayedReturnValueAction(msDelay, returnValue);
-    }
 
     private static Calendar timerCalendar;
     private static void startTimer() {

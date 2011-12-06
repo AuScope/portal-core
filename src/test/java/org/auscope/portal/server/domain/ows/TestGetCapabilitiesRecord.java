@@ -2,7 +2,7 @@ package org.auscope.portal.server.domain.ows;
 
 import java.io.InputStream;
 
-import org.auscope.portal.Util;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.junit.Assert;
 import org.junit.Test;
@@ -12,7 +12,7 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestGetCapabilitiesRecord {
+public class TestGetCapabilitiesRecord extends PortalTestClass {
     /**
      * Precision used in the xml file.
      */

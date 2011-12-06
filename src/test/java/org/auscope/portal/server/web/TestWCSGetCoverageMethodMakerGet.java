@@ -5,21 +5,14 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestWCSGetCoverageMethodMakerGet {
-    /**
-     * JMock context
-     */
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+public class TestWCSGetCoverageMethodMakerGet extends PortalTestClass {
 
     private CSWGeographicBoundingBox mockBbox = context.mock(CSWGeographicBoundingBox.class, "simpleBbox");
     private CSWGeographicBoundingBox mockAntiMeridianBbox = context.mock(CSWGeographicBoundingBox.class, "amBbox");

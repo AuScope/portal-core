@@ -7,13 +7,14 @@ import javax.xml.namespace.NamespaceContext;
 
 import junit.framework.Assert;
 
+import org.auscope.portal.PortalTestClass;
 import org.junit.Test;
 
 
 /**
  * The Class TestYilgarnNamespaceContext.
  */
-public class TestYilgarnNamespaceContext {
+public class TestYilgarnNamespaceContext extends PortalTestClass  {
 
     /** The TEST prefix. */
     private static final String TESTPREFIX = "ogc";

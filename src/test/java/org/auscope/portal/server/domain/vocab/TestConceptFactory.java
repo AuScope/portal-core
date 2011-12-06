@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.xml.xpath.XPathConstants;
 
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.Util;
 import org.auscope.portal.server.util.DOMUtil;
 import org.junit.Assert;
@@ -18,7 +19,7 @@ import org.w3c.dom.Node;
  * @author Josh Vote
  *
  */
-public class TestConceptFactory {
+public class TestConceptFactory extends PortalTestClass {
 
     private void assertSameConcept(Concept[] expected, Concept[] actual, List<String> traversedUrns) {
         String errMsg = String.format("%1$s != %2$s", Arrays.toString(expected), Arrays.toString(actual));

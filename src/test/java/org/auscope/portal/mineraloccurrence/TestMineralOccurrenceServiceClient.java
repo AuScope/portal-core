@@ -7,13 +7,12 @@ import junit.framework.Assert;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.util.GmlToKml;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ import org.junit.Test;
  * Date: Jun 4, 2009
  * @version: $Id$
  */
-public class TestMineralOccurrenceServiceClient {
+public class TestMineralOccurrenceServiceClient extends PortalTestClass {
     private MineralOccurrenceService mineralOccurrenceService;
     private HttpServiceCaller httpServiceCaller;
     private MineralOccurrencesResponseHandler mineralOccurrencesResponseHandler;
@@ -32,10 +31,6 @@ public class TestMineralOccurrenceServiceClient {
     //private CommodityService commodityService;
 
     private WFSGetFeatureMethodMaker methodMaker;
-
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
 
 
     @Before
