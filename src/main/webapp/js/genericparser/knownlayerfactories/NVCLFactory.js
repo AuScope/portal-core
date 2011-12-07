@@ -663,10 +663,10 @@ GenericParser.KnownLayerFactory.NVCLFactory = Ext.extend(GenericParser.KnownLaye
                                 var downloadForm = Ext.getCmp('nvclDownloadFrm').getForm();
                                 sUrl += '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="';
                                 sUrl += 'getNVCLWFSDownload.do?';
-                                sUrl += 'boreholeid=sa.samplingfeaturecollection.' + datasetId;
+                                sUrl += 'boreholeId=sa.samplingfeaturecollection.' + datasetId;
                                 sUrl += '&omUrl=' + escape(omUrl);
                                 sUrl += '&serviceUrl=' + escape(nvclDownloadServiceUrl);
-                                sUrl += '&typename=sa:SamplingFeatureCollection';
+                                sUrl += '&typeName=sa:SamplingFeatureCollection';
                                 sUrl += '&email=' + escape(sEmail);
                                 sUrl += '"></iframe>';
                                 //alert(sUrl);
