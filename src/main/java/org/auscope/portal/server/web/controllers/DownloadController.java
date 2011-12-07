@@ -127,7 +127,7 @@ public class DownloadController {
             }
         }
         if(errorMsg.length()!=0){
-            zout.putNextEntry(new ZipEntry("error.txt"));
+            zout.putNextEntry(new ZipEntry("downloadInfo.txt"));
             zout.write(errorMsg.toString().getBytes());
             zout.closeEntry();
         }

@@ -169,7 +169,7 @@ public class TestDownloadController extends PortalTestClass {
         ZipEntry ze = zipInputStream.getNextEntry();
         Assert.assertNotNull(ze);
         String name = ze.getName();
-        Assert.assertTrue(name.equals("error.txt"));
+        Assert.assertTrue(name.equals("downloadInfo.txt"));
 
         String error="Unsuccessful JSON reply from: http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs\n" +
                      "hereisadummymessage\n\n" +
@@ -231,7 +231,7 @@ public class TestDownloadController extends PortalTestClass {
         int count=0;
         while ((ze = zipInputStream.getNextEntry()) != null) {
             count++;
-            if(ze.getName().equals("error.txt")){
+            if(ze.getName().equals("downloadInfo.txt")){
 
                 byte[] uncompressedData = new byte[error.getBytes().length];
                 int dataRead = zipInputStream.read(uncompressedData);
