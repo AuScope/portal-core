@@ -145,8 +145,8 @@ public class TestDownloadController extends PortalTestClass {
         context.checking(new Expectations() {
             {
                 // setting of the headers for the return content
-                exactly(2).of(mockHttpResponse).setContentType(with(any(String.class)));
-                exactly(2).of(mockHttpResponse).setHeader(with(any(String.class)), with(any(String.class)));
+                oneOf(mockHttpResponse).setContentType(with(any(String.class)));
+                oneOf(mockHttpResponse).setHeader(with(any(String.class)), with(any(String.class)));
                 oneOf(mockHttpResponse).getOutputStream();will(returnValue(servletOutputStream));
 
                 // calling the service
