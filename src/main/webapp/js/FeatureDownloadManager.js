@@ -25,7 +25,7 @@ FeatureDownloadManager = Ext.extend(Ext.util.Observable, {
      * }
      *
      * Registers the following events
-     *  success : function(FeatureDownloadManager this, Object data, Object debugInfo)
+     *  success : function(FeatureDownloadManager this, Object filterParamsUsed, Object data, Object debugInfo)
      *  error : function(FeatureDownloadManager this, [Optional] String message, [Optional] Object debugInfo)
      *  cancelled : function(FeatureDownloadManager this)
      */
@@ -55,26 +55,6 @@ FeatureDownloadManager = Ext.extend(Ext.util.Observable, {
     },
 
     /**
-     * Dispatches an AJAX response to the appropriate success/error handler
-     */
-    _handleDownloadFinish : function(options, success, response) {
-        if (success) {
-            var jsonResponse = Ext.util.JSON.decode(response.responseText);
-            if (jsonResponse) {
-                if (jsonResponse.success) {
-                    this.fireEvent('success', this, jsonResponse.data, jsonResponse.debugInfo);
-                } else {
-                    this.fireEvent('error', this, jsonResponse.msg, jsonResponse.debugInfo);
-                }
-            } else {
-                this.fireEvent('error', this, 'Bad JSON response.', null);
-            }
-        } else {
-            this.fireEvent('error', this, 'AJAX feature request failed.', null);
-        }
-    },
-
-    /**
      * Utility function for building an Object containing parameters to be sent. Bounding box is optional
      */
     _buildRequestParams : function(boundingBox, maxFeatures) {
@@ -94,10 +74,26 @@ FeatureDownloadManager = Ext.extend(Ext.util.Observable, {
      * @param boundingBox [Optional] String bounding box encoded as a string
      */
     _doDownload : function (boundingBox, maxFeatures) {
+        var params = this._buildRequestParams(boundingBox, maxFeatures);
         Ext.Ajax.request({
             url : this._proxyFetchUrl,
-            params : this._buildRequestParams(boundingBox, maxFeatures),
-            callback : this._handleDownloadFinish,
+            params : params,
+            callback : function(options, success, response) {
+                if (success) {
+                    var jsonResponse = Ext.util.JSON.decode(response.responseText);
+                    if (jsonResponse) {
+                        if (jsonResponse.success) {
+                            this.fireEvent('success', this, params, jsonResponse.data, jsonResponse.debugInfo);
+                        } else {
+                            this.fireEvent('error', this, jsonResponse.msg, jsonResponse.debugInfo);
+                        }
+                    } else {
+                        this.fireEvent('error', this, 'Bad JSON response.', null);
+                    }
+                } else {
+                    this.fireEvent('error', this, 'AJAX feature request failed.', null);
+                }
+            },
             timeout : this._timeout,
             scope : this
         });

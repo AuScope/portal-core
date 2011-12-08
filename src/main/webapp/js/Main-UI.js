@@ -780,7 +780,6 @@ Ext.onReady(function() {
                         filterParameters = filterPanel.getLayout().activeItem.getForm().getValues();
                     }
                 }
-                activeLayerRecord.setLastFilterParameters(filterParameters);
 
                 //Generate our filter parameters for this service
                 filterParameters.serviceUrl = wfsOnlineResource.url;
@@ -835,11 +834,6 @@ Ext.onReady(function() {
      */
     var handleQuery = function(activeLayerRecord, cswRecord, onlineResource, filterParameters, visibleMapBounds, finishedLoadingHandler) {
 
-        var responseTooltip = activeLayerRecord.getResponseToolTip();
-        responseTooltip.addResponse(filterParameters.serviceUrl, "Loading...");
-
-        var debuggerData = activeLayerRecord.getDebuggerData();
-
         var knownLayer = activeLayerRecord.getParentKnownLayer();
 
         //If we don't have a proxy URL specified, use the generic 'getAllFeatures.do' or 'getFeatureCount.do'
@@ -855,6 +849,11 @@ Ext.onReady(function() {
             threshold = MAX_FEATURES;
         }
 
+        var responseTooltip = activeLayerRecord.getResponseToolTip();
+        responseTooltip.addResponse(filterParameters.serviceUrl, "Loading...");
+
+        var debuggerData = activeLayerRecord.getDebuggerData();
+
         //The download manager will handle requesting feature counts
         var downloadManager = new FeatureDownloadManager({
             visibleMapBounds : visibleMapBounds,
@@ -864,8 +863,14 @@ Ext.onReady(function() {
             featureSetSizeThreshold : threshold,
             filterParams : filterParameters,
             listeners : {
-                success : function(dm, data, debugInfo) {
+                //The filterParameters may be appended with filter specific info
+                //the actual filter parameters that gets used in the request is returned via
+                //the success handler
+                success : function(dm, actualFilterParams, data, debugInfo) {
                     var icon = new GIcon(G_DEFAULT_ICON, activeLayerRecord.getIconUrl());
+
+                    //We need to remember exactly how we filtered
+                    activeLayerRecord.setLastFilterParameters(actualFilterParams);
 
                     //Assumption - we are only interested in the first (if any) KnownLayer
                     if (knownLayer) {
@@ -912,7 +917,7 @@ Ext.onReady(function() {
                     debuggerData.addResponse(debugInfo.url, debugInfo);
 
                     //store the status
-                    responseTooltip.addResponse(filterParameters.serviceUrl, (markers.length + overlays.length) + " record(s) retrieved.");
+                    responseTooltip.addResponse(url, (markers.length + overlays.length) + " record(s) retrieved.");
 
                     if(markers.length > 0 || overlays.length > 0) {
                         activeLayerRecord.setHasData(true);
@@ -923,11 +928,11 @@ Ext.onReady(function() {
                 },
                 error : function(dm, message, debugInfo) {
                     //store the status
-                    responseTooltip.addResponse(filterParameters.serviceUrl, message);
+                    responseTooltip.addResponse(url, message);
                     if(debugInfo) {
-                        debuggerData.addResponse(filterParameters.serviceUrl, message + debugInfo.info);
+                        debuggerData.addResponse(url, message + debugInfo.info);
                     } else {
-                        debuggerData.addResponse(filterParameters.serviceUrl, message);
+                        debuggerData.addResponse(url, message);
                     }
 
                     //we are finished
@@ -935,7 +940,7 @@ Ext.onReady(function() {
                 },
                 cancelled : function(dm) {
                     //store the status
-                    responseTooltip.addResponse(filterParameters.serviceUrl, 'Request cancelled by user.');
+                    responseTooltip.addResponse(url, 'Request cancelled by user.');
 
                     //we are finished
                     finishedLoadingHandler();
