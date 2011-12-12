@@ -917,7 +917,7 @@ Ext.onReady(function() {
                     debuggerData.addResponse(debugInfo.url, debugInfo);
 
                     //store the status
-                    responseTooltip.addResponse(url, (markers.length + overlays.length) + " record(s) retrieved.");
+                    responseTooltip.addResponse(onlineResource.url, (markers.length + overlays.length) + " record(s) retrieved.");
 
                     if(markers.length > 0 || overlays.length > 0) {
                         activeLayerRecord.setHasData(true);
@@ -928,11 +928,11 @@ Ext.onReady(function() {
                 },
                 error : function(dm, message, debugInfo) {
                     //store the status
-                    responseTooltip.addResponse(url, message);
+                    responseTooltip.addResponse(onlineResource.url, message);
                     if(debugInfo) {
-                        debuggerData.addResponse(url, message + debugInfo.info);
+                        debuggerData.addResponse(onlineResource.url, message + debugInfo.info);
                     } else {
-                        debuggerData.addResponse(url, message);
+                        debuggerData.addResponse(onlineResource.url, message);
                     }
 
                     //we are finished
@@ -940,7 +940,7 @@ Ext.onReady(function() {
                 },
                 cancelled : function(dm) {
                     //store the status
-                    responseTooltip.addResponse(url, 'Request cancelled by user.');
+                    responseTooltip.addResponse(onlineResource.url, 'Request cancelled by user.');
 
                     //we are finished
                     finishedLoadingHandler();

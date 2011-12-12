@@ -105,6 +105,11 @@ FeatureDownloadManager = Ext.extend(Ext.util.Observable, {
     _doCount : function(options, success, response, alreadyPrompted) {
         if (success) {
             var jsonResponse = Ext.util.JSON.decode(response.responseText);
+            if (!jsonResponse.success) {
+                this.fireEvent('error', this, jsonResponse.msg, jsonResponse.debugInfo);
+                return;
+            }
+
             if (jsonResponse.data > this._featureSetSizeThreshold) {
                 var win = null;
                 var callingInstance = this;
