@@ -12,12 +12,14 @@ BoreholeFilterForm = function(id,activeLayersRecord) {
     var cswRecords=activeLayersRecord.getCSWRecords();
     var administrativeAreas=[];
 
-    for(i=0;i<serviceEndpoints.length;i++){
-        for(j=0;j<cswRecords.length;j++){
-            var cswRecord=cswRecords[j].getFilteredOnlineResources(undefined,undefined,undefined,serviceEndpoints[i],false)
-            if(cswRecord.length>0){
-                administrativeAreas.push([cswRecords[j].getAdministrativeArea(),serviceEndpoints[i]]);
-                break;
+    if(serviceEndpoints != null  && serviceEndpoints!= undefined){
+        for(i=0;i<serviceEndpoints.length;i++){
+            for(j=0;j<cswRecords.length;j++){
+                var cswRecord=cswRecords[j].getFilteredOnlineResources(undefined,undefined,undefined,serviceEndpoints[i],false)
+                if(cswRecord.length>0){
+                    administrativeAreas.push([cswRecords[j].getAdministrativeArea(),serviceEndpoints[i]]);
+                    break;
+                }
             }
         }
     };
