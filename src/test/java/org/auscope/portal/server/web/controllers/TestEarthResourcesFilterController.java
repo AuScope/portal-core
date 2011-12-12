@@ -1,12 +1,12 @@
 package org.auscope.portal.server.web.controllers;
 
-import java.net.ConnectException;
-
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URI;
 import org.auscope.portal.PortalTestClass;
+import org.auscope.portal.server.domain.wfs.WFSCountResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.service.MineralOccurrenceService;
+import org.auscope.portal.server.web.service.PortalServiceException;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,6 +51,21 @@ public class TestEarthResourcesFilterController extends PortalTestClass {
         }
     }
 
+    private void testMAVResponseCount(ModelAndView mav, Boolean success, Integer count) {
+        ModelMap model = mav.getModelMap();
+
+
+        if (success != null) {
+            Assert.assertEquals(success.booleanValue(), model.get("success"));
+        }
+
+        if (count != null) {
+            Integer data = (Integer) model.get("data");
+            Assert.assertNotNull(data);
+            Assert.assertEquals(count, data);
+        }
+    }
+
     /**
      * Test doing a mine filter and getting all mines
      * @throws Exception
@@ -59,13 +74,12 @@ public class TestEarthResourcesFilterController extends PortalTestClass {
     public void testDoMineFilterSpecificError() throws Exception {
         final String mineName = "testMine";
         final String serviceURL = "http://testblah.com";
-        final ConnectException minOccurenceServiceEx = new ConnectException();
         final HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
 
         context.checking(new Expectations() {{
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
 
-            oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(throwException(minOccurenceServiceEx));
+            oneOf(mineralOccurrenceService).getMinesGml(serviceURL, mineName, null, 0);will(throwException(new PortalServiceException(mockMethod)));
         }});
 
         ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null, 0);
@@ -82,14 +96,15 @@ public class TestEarthResourcesFilterController extends PortalTestClass {
     public void testDoMineFilterAnyError() throws Exception {
         final String serviceURL = "http://testblah.com";
         final String expectedKML = "";
+        final String mineName = "mineName";
         final HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
         final String xmlErrorResponse = org.auscope.portal.Util.loadXML("src/test/resources/GetMineError.xml");
 
         context.checking(new Expectations() {{
-            oneOf(mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(new WFSKMLResponse(xmlErrorResponse, expectedKML, mockMethod)));
+            oneOf(mineralOccurrenceService).getMinesGml(serviceURL, mineName, null, 0);will(returnValue(new WFSKMLResponse(xmlErrorResponse, expectedKML, mockMethod)));
         }});
 
-        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, "", null, 0);
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilter(serviceURL, mineName, null, 0);
 
         //Ensure that we get a response that says failure
         testMAVResponse(modelAndView, new Boolean(false), null, null);
@@ -109,7 +124,7 @@ public class TestEarthResourcesFilterController extends PortalTestClass {
 
         context.checking(new Expectations() {{
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
-            oneOf(mineralOccurrenceService).getAllMinesGML(serviceURL, 0);will(returnValue(new WFSKMLResponse(expectedGML, expectedKML, mockMethod)));
+            oneOf(mineralOccurrenceService).getMinesGml(serviceURL, mineName, null, 0);will(returnValue(new WFSKMLResponse(expectedGML, expectedKML, mockMethod)));
         }});
 
         //call with updateCSWRecords dud url
@@ -133,7 +148,7 @@ public class TestEarthResourcesFilterController extends PortalTestClass {
 
         context.checking(new Expectations() {{
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceURL, true)));
-            oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(returnValue(new WFSKMLResponse(expectedGML, expectedKML, mockMethod)));
+            oneOf(mineralOccurrenceService).getMinesGml(serviceURL, mineName, null, 0);will(returnValue(new WFSKMLResponse(expectedGML, expectedKML, mockMethod)));
         }});
 
         //call with updateCSWRecords dud url
@@ -149,7 +164,7 @@ public class TestEarthResourcesFilterController extends PortalTestClass {
         final String mineName = "mineName"; //to get all mines
 
         context.checking(new Expectations() {{
-            oneOf(mineralOccurrenceService).getMineWithSpecifiedNameGML(serviceURL, mineName, 0);will(throwException(new ConnectException()));
+            oneOf(mineralOccurrenceService).getMinesGml(serviceURL, mineName, null, 0);will(throwException(new PortalServiceException(null)));
         }});
 
         //call with updateCSWRecords dud url
@@ -157,7 +172,74 @@ public class TestEarthResourcesFilterController extends PortalTestClass {
 
         //Ensure that we get a valid response
         testMAVResponse(modelAndView, new Boolean(false), null, null);
-
     }
 
+    /**
+     * Tests using the mine count service
+     * @throws Exception
+     */
+    @Test
+    public void testMineCount() throws Exception {
+        final String serviceURL = "http://localhost?";
+        final String mineName = "mineName"; //to get all mines
+        final int maxFeatures = 21341;
+        final int responseCount = 21;
+
+        context.checking(new Expectations() {{
+            oneOf(mineralOccurrenceService).getMinesCount(serviceURL, mineName, null, maxFeatures);will(returnValue(new WFSCountResponse(responseCount)));
+        }});
+
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineFilterCount(serviceURL, mineName, null, maxFeatures);
+        testMAVResponseCount(modelAndView, new Boolean(true), responseCount);
+    }
+
+    /**
+     * Tests using the mineral occurrence count service
+     * @throws Exception
+     */
+    @Test
+    public void testMineralOccurrenceCount() throws Exception {
+        final String serviceUrl = "http://localhost?";
+        final int maxFeatures = 21341;
+        final int responseCount = 21;
+        final String commodityName = "cn";
+        final String measureType = "mt";
+        final String minOreAmount = "1";
+        final String minOreAmountUOM = "2";
+        final String minCommodityAmount = "3";
+        final String minCommodityAmountUOM = "4";
+
+        context.checking(new Expectations() {{
+            oneOf(mineralOccurrenceService).getMineralOccurrenceCount(serviceUrl, commodityName, measureType, minOreAmount, minOreAmountUOM, minCommodityAmount, minCommodityAmountUOM, maxFeatures, null);
+            will(returnValue(new WFSCountResponse(responseCount)));
+        }});
+
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMineralOccurrenceFilterCount(serviceUrl, commodityName, measureType, minOreAmount, minOreAmountUOM, minCommodityAmount, minCommodityAmountUOM, null, maxFeatures);
+        testMAVResponseCount(modelAndView, new Boolean(true), responseCount);
+    }
+
+    /**
+     * Tests using the mine activity count service
+     * @throws Exception
+     */
+    @Test
+    public void testMineActivityCount() throws Exception {
+        final String serviceURL = "http://localhost?";
+        final int maxFeatures = 21341;
+        final int responseCount = 21;
+        final String mineName = "mineName"; //to get all mines
+        final String startDate = "2010-01-01";
+        final String endDate = "2011-01-01";
+        final String oreProcessed = "3";
+        final String producedMaterial = "pm";
+        final String cutOffGrade = "55";
+        final String production = "prod";
+        context.checking(new Expectations() {{
+            oneOf(mineralOccurrenceService).getMiningActivityCount(serviceURL, mineName, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production, maxFeatures, null);
+            will(returnValue(new WFSCountResponse(responseCount)));
+        }});
+
+        ModelAndView modelAndView = this.earthResourcesFilterController.doMiningActivityFilterCount(serviceURL, mineName, startDate, endDate, oreProcessed, producedMaterial, cutOffGrade, production, null, maxFeatures);
+        testMAVResponseCount(modelAndView, new Boolean(true), responseCount);
+    }
 }
