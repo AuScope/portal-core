@@ -61,7 +61,9 @@ public class GetCapabilitiesService {
             return new GetCapabilitiesRecord(response);
         }finally{
             try{
-                response.close();
+                if (response != null) {
+                    response.close();
+                }
             }catch(IOException e){
                 //Not a show stopper if stream can't be closed since
                 //most likely it is because it is already closed.

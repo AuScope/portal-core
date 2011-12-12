@@ -14,16 +14,8 @@ import org.springframework.stereotype.Repository;
  *
  */
 @Repository
-public class PressureDBMethodMaker {
+public class PressureDBMethodMaker extends AbstractMethodMaker {
 
-    private String makeMethodUrl(String serviceUrl, String pathSuffix) {
-        String methodUrl = serviceUrl;
-        if (methodUrl.charAt(methodUrl.length() - 1) != '/') {
-            methodUrl += '/';
-        }
-
-        return methodUrl + pathSuffix;
-    }
 
     /**
      * Makes a HTTP method for a pressure db getAvailableOM request.
@@ -32,7 +24,7 @@ public class PressureDBMethodMaker {
      * @return
      */
     public HttpMethodBase makeGetAvailableOMMethod(String serviceUrl, String wellID) {
-        GetMethod method = new GetMethod(makeMethodUrl(serviceUrl, "getAvailableOM.html"));
+        GetMethod method = new GetMethod(urlPathConcat(serviceUrl, "getAvailableOM.html"));
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         params.add(new NameValuePair("wellid", wellID));
@@ -49,7 +41,7 @@ public class PressureDBMethodMaker {
      * @return
      */
     public HttpMethodBase makeDownloadMethod(String serviceUrl, String wellID, String[] features) {
-        GetMethod method = new GetMethod(makeMethodUrl(serviceUrl, "download.html"));
+        GetMethod method = new GetMethod(urlPathConcat(serviceUrl, "download.html"));
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         params.add(new NameValuePair("wellid", wellID));

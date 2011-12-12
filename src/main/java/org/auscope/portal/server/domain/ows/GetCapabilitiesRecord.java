@@ -4,16 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.server.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -64,17 +61,14 @@ public class GetCapabilitiesRecord {
      */
     public GetCapabilitiesRecord(InputStream inXml) {
         try {
-            XPath xPathInstance = XPathFactory.newInstance().newXPath();
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = builder.parse(inXml);
+            Document doc = DOMUtil.buildDomFromStream(inXml);
 
-            this.serviceType = getService(xPathInstance, doc);
-            this.organisation = getContactOrganisation(xPathInstance, doc);
-            this.getMapUrl = getGetMapUrl(xPathInstance, doc);
-            this.layerSRS = getWMSLayerSRS(xPathInstance, doc);
+            this.serviceType = getService(doc);
+            this.organisation = getContactOrganisation(doc);
+            this.getMapUrl = getGetMapUrl(doc);
+            this.layerSRS = getWMSLayerSRS(doc);
             if (isWMS()) {
-                this.layers = getWMSLayers(xPathInstance, doc);
+                this.layers = getWMSLayers(doc);
             } else {
                 log.debug("Adding non WMS's are not yet implimented");
             }
@@ -164,11 +158,10 @@ public class GetCapabilitiesRecord {
      * @param doc the doc
      * @return serviceUrlString the service endpoint
      */
-    private String getService(XPath xPath, Document doc) {
+    private String getService(Document doc) {
         String serviceUrlString = "";
         try {
-            int elemCount
-                = Integer.parseInt((String) xPath.evaluate("count(/WMT_MS_Capabilities)", doc));
+            int elemCount = Integer.parseInt((String) DOMUtil.compileXPathExpr("count(/WMT_MS_Capabilities)").evaluate(doc, XPathConstants.STRING));
 
             if (elemCount != 0) {
                 serviceUrlString = "wms";
@@ -188,11 +181,10 @@ public class GetCapabilitiesRecord {
      * @param doc the doc
      * @return contactOrganisation the contact organisation
      */
-    private String getContactOrganisation(XPath xPath, Document doc) {
+    private String getContactOrganisation(Document doc) {
         String contactOrganisation = "";
         try {
-            Node tempNode = (Node) xPath.evaluate(
-                    EXTRACTORGANISATIONEXPRESSION, doc, XPathConstants.NODE);
+            Node tempNode = (Node) DOMUtil.compileXPathExpr(EXTRACTORGANISATIONEXPRESSION).evaluate(doc, XPathConstants.NODE);
 
             contactOrganisation = tempNode != null ? tempNode.getTextContent() : "";
 
@@ -209,11 +201,10 @@ public class GetCapabilitiesRecord {
      * @param doc the doc
      * @return mapUrl the map url String
      */
-    private String getGetMapUrl(XPath xPath, Document doc) {
+    private String getGetMapUrl(Document doc) {
         String mapUrl = "";
         try {
-            Element elem = (Element) xPath.evaluate(EXTRACTURLEXPRESSION, doc,
-                    XPathConstants.NODE);
+            Element elem = (Element) DOMUtil.compileXPathExpr(EXTRACTURLEXPRESSION).evaluate(doc, XPathConstants.NODE);
 
             mapUrl = elem.getAttribute("xlink:href");
 
@@ -230,11 +221,11 @@ public class GetCapabilitiesRecord {
      * @param doc the doc
      * @return the wMS layers
      */
-    private ArrayList<GetCapabilitiesWMSLayerRecord> getWMSLayers(XPath xPath, Document doc) {
+    private ArrayList<GetCapabilitiesWMSLayerRecord> getWMSLayers(Document doc) {
         ArrayList<GetCapabilitiesWMSLayerRecord> mylayerList = new ArrayList<GetCapabilitiesWMSLayerRecord>();
         try {
-            NodeList nodes = (NodeList) xPath.evaluate(EXTRACTLAYEREXPRESSION,
-                    doc, XPathConstants.NODESET);
+
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYEREXPRESSION).evaluate(doc, XPathConstants.NODESET);
 
             log.debug("Number of layers retrieved from GeoCapabilities: " + nodes.getLength());
 
@@ -257,11 +248,10 @@ public class GetCapabilitiesRecord {
      * @param doc the doc
      * @return the wMS layer srs
      */
-    private String[] getWMSLayerSRS(XPath xPath, Document doc) {
+    private String[] getWMSLayerSRS(Document doc) {
         String[] layerSRSList = null;
         try {
-            NodeList nodes = (NodeList) xPath.evaluate(EXTRACTLAYERSRS, doc,
-                    XPathConstants.NODESET);
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYERSRS).evaluate(doc, XPathConstants.NODESET);
 
             layerSRSList = new String[nodes.getLength()];
 
