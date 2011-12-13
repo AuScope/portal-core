@@ -64,7 +64,7 @@
         <constructor-arg name="title" value="Earth Resource Mine"/>
         <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:Mine"/>
         <constructor-arg name="proxyFetchUrl" value="doMineFilter.do"/>
-        <constructor-arg name="proxyCountUrl" value="doMineFilterCount.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/pink-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
@@ -97,7 +97,7 @@
         <constructor-arg name="title" value="Earth Resource Mineral Occurrence"/>
         <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:MineralOccurence"/>
         <constructor-arg name="proxyFetchUrl" value="doMineralOccurrenceFilter.do"/>
-        <constructor-arg name="proxyCountUrl" value="doMineralOccurrenceFilterCount.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/purple-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
@@ -130,7 +130,7 @@
         <constructor-arg name="title" value="Earth Resource Mining Activity"/>
         <constructor-arg name="description" value="A collection of services that implement the AuScope EarthResourceML v1 Profile for er:MiningActivity"/>
         <constructor-arg name="proxyFetchUrl" value="doMiningActivityFilter.do"/>
-        <constructor-arg name="proxyCountUrl" value="doMiningActivityFilterCount.do"/>
+        <constructor-arg name="proxyCountUrl" value=""/>
         <constructor-arg name="iconUrl" value="http://maps.google.com/mapfiles/kml/paddle/orange-blank.png"/>
         <constructor-arg name="iconAnchor">
             <bean class="java.awt.Point">
