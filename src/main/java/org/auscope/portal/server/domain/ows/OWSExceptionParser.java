@@ -1,8 +1,6 @@
 package org.auscope.portal.server.domain.ows;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
@@ -12,6 +10,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.server.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -39,9 +38,6 @@ public class OWSExceptionParser {
         //use our own bodgy namespace context that just recognizes xmlns:ows
         xPath.setNamespaceContext(new NamespaceContext() {
 
-            private Map<String, String> map = new HashMap<String, String>();
-
-
             public Iterator getPrefixes(String namespaceURI) {
                 return null; //not used
             }
@@ -53,14 +49,34 @@ public class OWSExceptionParser {
             public String getNamespaceURI(String prefix) {
                 if (prefix.equals("ows")) {
                     return "http://www.opengis.net/ows";
-                }
-                else {
+                } else {
                     return null;
                 }
             }
         });
 
         return xPath;
+    }
+
+    /**
+     * Will attempt to parse an <ows:Exception> element where ows will be http://www.opengis.net/ows.
+     *
+     * Will throw an OWSException if document does contain an <ows:ExceptionReport>, otherwise it will do nothing
+     *
+     * @param doc a string containing valid XML, this will be parsed into a W3C DOM document
+     * @throws OWSException the oWS exception
+     */
+    public static void checkForExceptionResponse(String xmlString) throws OWSException {
+        Document doc = null;
+        try {
+            doc = DOMUtil.buildDomFromString(xmlString);
+        } catch (Exception ex) {
+            //This should *hopefully* never occur
+            log.error("Error whilst attempting to parse xmlString for errors", ex);
+            throw new OWSException("Unable to parse xmlString", ex);
+        }
+
+        checkForExceptionResponse(doc);
     }
 
     /**

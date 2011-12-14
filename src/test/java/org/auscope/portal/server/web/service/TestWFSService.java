@@ -9,6 +9,7 @@ import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.Util;
+import org.auscope.portal.server.domain.ows.OWSException;
 import org.auscope.portal.server.domain.wfs.WFSCountResponse;
 import org.auscope.portal.server.domain.wfs.WFSHTMLResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
@@ -45,7 +46,7 @@ public class TestWFSService extends PortalTestClass {
      */
     @Test
     public void testGetWfsResponseAsKmlSingleFeature() throws Exception {
-        final String responseString = "<wfs:response/>"; //we aren't testing the validity of this
+        final String responseString = Util.loadXML("src/test/resources/EmptyWFSResponse.xml");
         final String responseKml = "<kml:response/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs";
         final String featureId = "feature-Id-string";
@@ -95,11 +96,36 @@ public class TestWFSService extends PortalTestClass {
     }
 
     /**
+     * Tests the 'single feature' request transformation fails if an OWS exception response is returned
+     */
+    @Test
+    public void testGetWfsResponseAsKmlOWSException() throws Exception {
+        final String responseString = Util.loadXML("src/test/resources/OWSExceptionSample1.xml");
+        final String serviceUrl = "http://service/wfs";
+        final String featureId = "feature-Id-string";
+        final String typeName = "type:Name";
+
+        context.checking(new Expectations() {{
+            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
+            oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(returnValue(responseString));
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, featureId);will(returnValue(mockMethod));
+        }});
+
+        try {
+            service.getWfsResponseAsKml(serviceUrl, typeName, featureId);
+            Assert.fail("Exception should have been thrown");
+        } catch (PortalServiceException ex) {
+            Assert.assertTrue(ex.getCause() instanceof OWSException);
+            Assert.assertSame(mockMethod, ex.getRootMethod());
+        }
+    }
+
+    /**
      * Tests the 'multi feature' request transformation
      */
     @Test
     public void testGetWfsResponseAsKmlMultiFeature() throws Exception {
-        final String responseString = "<wfs:response/>"; //we aren't testing the validity of this
+        final String responseString = Util.loadXML("src/test/resources/EmptyWFSResponse.xml");
         final String responseKml = "<kml:response/>"; //we aren't testing the validity of this
         final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs";
@@ -152,11 +178,40 @@ public class TestWFSService extends PortalTestClass {
     }
 
     /**
+     * Tests the 'multi feature' request transformation fails if an OWS exception response is returned
+     */
+    @Test
+    public void testGetWfsMultiFeatureResponseAsKmlOWSException() throws Exception {
+
+        final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
+        final String serviceUrl = "http://service/wfs";
+        final String srsName = "srsName";
+        final String responseString = Util.loadXML("src/test/resources/OWSExceptionSample1.xml");
+        final int maxFeatures = 12321;
+        final String typeName = "type:Name";
+
+        context.checking(new Expectations() {{
+            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
+            oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(returnValue(responseString));
+
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Results);will(returnValue(mockMethod));
+        }});
+
+        try {
+            service.getWfsResponseAsKml(serviceUrl, typeName, filterString, maxFeatures, srsName);
+            Assert.fail("Exception should have been thrown");
+        } catch (PortalServiceException ex) {
+            Assert.assertTrue(ex.getCause() instanceof OWSException);
+            Assert.assertSame(mockMethod, ex.getRootMethod());
+        }
+    }
+
+    /**
      * Tests the 'single feature' request transformation
      */
     @Test
     public void testGetWfsResponseAsHtmlSingleFeature() throws Exception {
-        final String responseString = "<wfs:response/>"; //we aren't testing the validity of this
+        final String responseString = Util.loadXML("src/test/resources/EmptyWFSResponse.xml");
         final String responseHtml = "<html/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs";
         final String featureId = "feature-Id-string";
@@ -205,11 +260,36 @@ public class TestWFSService extends PortalTestClass {
     }
 
     /**
+     * Tests the 'single feature' request transformation fails if an OWS exception response is returned
+     */
+    @Test
+    public void testGetWfsResponseAsHtmlOWSException() throws Exception {
+        final String responseString = Util.loadXML("src/test/resources/OWSExceptionSample1.xml");
+        final String serviceUrl = "http://service/wfs";
+        final String featureId = "feature-Id-string";
+        final String typeName = "type:Name";
+
+        context.checking(new Expectations() {{
+            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
+            oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(returnValue(responseString));
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, featureId);will(returnValue(mockMethod));
+        }});
+
+        try {
+            service.getWfsResponseAsHtml(serviceUrl, typeName, featureId);
+            Assert.fail("Exception should have been thrown");
+        } catch (PortalServiceException ex) {
+            Assert.assertTrue(ex.getCause() instanceof OWSException);
+            Assert.assertSame(mockMethod, ex.getRootMethod());
+        }
+    }
+
+    /**
      * Tests the 'url' request transformation works as expected
      */
     @Test
     public void testGetWfsResponseAsHtmlUrl() throws Exception {
-        final String responseString = "<wfs:response/>"; //we aren't testing the validity of this
+        final String responseString = Util.loadXML("src/test/resources/EmptyWFSResponse.xml");
         final String responseKml = "<kml:response/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs?request=GetFeature";
 
@@ -246,6 +326,29 @@ public class TestWFSService extends PortalTestClass {
         } catch (PortalServiceException ex) {
             Assert.assertSame(exceptionThrown, ex.getCause());
             Assert.assertTrue(ex.getRootMethod() instanceof GetMethod);
+        }
+    }
+
+    /**
+     * Tests the 'single feature' request transformation fails if an OWS exception response is returned
+     */
+    @Test
+    public void testGetWfsResponseAsHtmlUrlOWSException() throws Exception {
+        final String serviceUrl = "http://service/wfs";
+        final String responseString = Util.loadXML("src/test/resources/OWSExceptionSample1.xml");
+
+        context.checking(new Expectations() {{
+            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
+            oneOf(mockServiceCaller).getMethodResponseAsString(with(any(GetMethod.class)), with(any(HttpClient.class)));will(returnValue(responseString));
+        }});
+
+
+        try {
+            service.getWfsResponseAsHtml(serviceUrl);
+            Assert.fail("Exception should have been thrown");
+        } catch (PortalServiceException ex) {
+            Assert.assertTrue(ex.getCause() instanceof OWSException);
+            Assert.assertNotNull(ex.getRootMethod());
         }
     }
 
@@ -301,6 +404,34 @@ public class TestWFSService extends PortalTestClass {
         } catch (PortalServiceException ex) {
             Assert.assertSame(exceptionThrown, ex.getCause());
             Assert.assertSame(mockMethod, ex.getRootMethod());
+        }
+    }
+
+    /**
+     * Tests the count request fails as expected
+     */
+    @Test
+    public void testGetWfsCountOWSError() throws Exception {
+        final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
+        final String serviceUrl = "http://service/wfs";
+        final String srsName = null;
+        final int maxFeatures = 12321;
+        final String typeName = "type:Name";
+        final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml");
+
+        context.checking(new Expectations() {{
+            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockClient);will(returnValue(responseStream));
+
+            oneOf(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits);will(returnValue(mockMethod));
+        }});
+
+        try {
+            service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures);
+            Assert.fail("Exception should have been thrown");
+        } catch (PortalServiceException ex) {
+            Assert.assertTrue(ex.getCause() instanceof OWSException);
+            Assert.assertNotNull(ex.getRootMethod());
         }
     }
 }

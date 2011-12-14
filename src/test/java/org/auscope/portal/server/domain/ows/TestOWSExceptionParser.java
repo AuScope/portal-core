@@ -12,6 +12,8 @@ public class TestOWSExceptionParser extends PortalTestClass {
 
         Document doc = DOMUtil.buildDomFromString(xmlString);
 
+        //Test both the string and document versions
+        OWSExceptionParser.checkForExceptionResponse(xmlString);
         OWSExceptionParser.checkForExceptionResponse(doc);
     }
 

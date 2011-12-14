@@ -6,6 +6,8 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.auscope.portal.server.domain.ows.OWSException;
+import org.auscope.portal.server.domain.ows.OWSExceptionParser;
 import org.auscope.portal.server.domain.wfs.WFSCountResponse;
 import org.auscope.portal.server.domain.wfs.WFSHTMLResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
@@ -83,6 +85,7 @@ public abstract class BaseWFSService {
             //Make the request and parse the response
             InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method, httpServiceCaller.getHttpClient());
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+            checkForOWSException(responseDoc);
 
             XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures", new WFSNamespaceContext());
             Node numNode = (Node) xPath.evaluate(responseDoc, XPathConstants.NODE);
@@ -107,6 +110,7 @@ public abstract class BaseWFSService {
         try {
             //Make the request and transform the response
             String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+            checkForOWSException(responseGml);
             String responseKml = gmlToKml.convert(responseGml, wfsUrl);
 
             return new WFSKMLResponse(responseGml, responseKml, method);
@@ -128,11 +132,32 @@ public abstract class BaseWFSService {
         try {
             //Make the request and transform the response
             String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+            checkForOWSException(responseGml);
             String responseHtml = gmlToHtml.convert(responseGml, wfsUrl);
 
             return new WFSHTMLResponse(responseGml, responseHtml, method);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
+    }
+
+    /**
+     * Checks the specified xmlString for any OWS exceptions. An OWSException is thrown if xmlString contains said exception.
+     *
+     * @param xmlString the string to check, must contain valid XML
+     * @throws OWSException
+     */
+    protected void checkForOWSException(String xmlString) throws OWSException {
+        OWSExceptionParser.checkForExceptionResponse(xmlString);
+    }
+
+    /**
+     * Checks the specified xml document for any OWS exceptions. An OWSException is thrown if the doc contains said exception.
+     *
+     * @param doc the document to check
+     * @throws OWSException
+     */
+    protected void checkForOWSException(Document doc) throws OWSException {
+        OWSExceptionParser.checkForExceptionResponse(doc);
     }
 }

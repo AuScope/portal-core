@@ -187,7 +187,7 @@ public class TestMineralOccurrenceServiceClient extends PortalTestClass {
         final String minCommodityAmountUOM = "";
         final FilterBoundingBox bbox = null;
         final GetMethod mockMethod = context.mock(GetMethod.class);
-        final String mockCommodityResponse = new String();
+        final String mockCommodityResponse = Util.loadXML("src/test/resources/commodityGetFeatureResponse.xml");
 
         final MineralOccurrenceFilter mineralOccurrenceFilter
             = new MineralOccurrenceFilter(commodityName,
@@ -223,20 +223,23 @@ public class TestMineralOccurrenceServiceClient extends PortalTestClass {
         final Mine mockMine = context.mock(Mine.class);
         final GetMethod mockMethod = context.mock(GetMethod.class);
         final FilterBoundingBox bbox = null;
+        final String serviceUrl = "http://service/url";
+        final String mockActivityResponse = Util.loadXML("src/test/resources/commodityGetFeatureResponse.xml"); //any wfs response is fine - we aren't testing contents of node
 
         context.checking(new Expectations() {{
             ignoring(mockMine);
-            oneOf(methodMaker).makeMethod(with(""), with("er:MiningFeatureOccurrence"),
+            oneOf(methodMaker).makeMethod(with(serviceUrl), with("er:MiningFeatureOccurrence"),
                     with(any(String.class)), with(any(Integer.class)), with((String) null), with(ResultType.Results));
             will(returnValue(mockMethod));
             oneOf(httpServiceCaller).getHttpClient();
             will(returnValue(mockHttpClient));
             oneOf(httpServiceCaller).getMethodResponseAsString(mockMethod, mockHttpClient);
+            will(returnValue(mockActivityResponse));
 
-            oneOf(mockGmlToKml).convert(with(any(String.class)), with(any(String.class)));
+            oneOf(mockGmlToKml).convert(mockActivityResponse, serviceUrl);
         }});
 
-        this.mineralOccurrenceService.getMiningActivityGml("", "", "", "", "", "", "", "", 0, bbox);
+        this.mineralOccurrenceService.getMiningActivityGml(serviceUrl, "", "", "", "", "", "", "", 0, bbox);
     }
 
     /**
