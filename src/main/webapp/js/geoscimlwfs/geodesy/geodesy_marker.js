@@ -1020,13 +1020,13 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
     }
 
     // Parse the XML for "featureMembers"
-    var featureMembers = rootNode.selectNodes(".//*[local-name() = 'featureMember']");
+    var featureMembers = SimpleXPath.evaluateXPathNodeArray(rootNode,".//*[local-name() = 'featureMember']");
 
     if (featureMembers.length !== 0) {
          // Each of these contain updateCSWRecords "geodesy:ob_date" and "geodesy:url" child node.
         for(var i=0; i < featureMembers.length; i++) {
-        var fullDate = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'ob_date']"));
-        var url = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'url']"));
+        var fullDate = SimpleXPath.evaluateXPathString(featureMembers[i],".//*[local-name() = 'ob_date']");
+        var url = SimpleXPath.evaluateXPathString(featureMembers[i],".//*[local-name() = 'url']");
         if (fullDate==="" || url==="") {
           continue;
         } else {

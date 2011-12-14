@@ -1,6 +1,6 @@
-/** 
+/**
 * @fileoverview This file declares the Class GeodesyStation.
-* An object of GeodesyStation will be maintained in GeodesyMarker object. 
+* An object of GeodesyStation will be maintained in GeodesyMarker object.
 */
 
 /**
@@ -50,7 +50,7 @@ GeodesyStation.prototype.parseXmlElement = GeodesyStation_parseXmlElement;
 */
 function GeodesyStation_parseXmlElement(pGeodesyStationNode) {
   var nodeGeodesyStation = pGeodesyStationNode;
-  
+
   if (g_IsIE) {
     nodeGeodesyStation.setProperty("SelectionLanguage", "XPath");
   }
@@ -71,19 +71,19 @@ function GeodesyStation_parseXmlElement(pGeodesyStationNode) {
   *   </geodesy:location>
   *  </geodesy:stations>
   * </gml:featureMember>
-  */  
+  */
   var sId = null;
   var sName = null;
   var sLogUrl = null;
   var oLocation = null;
 
   // Extract all the data about the GeodesyStation from the WFS
-  sId = GXml.value(nodeGeodesyStation.selectSingleNode("*[local-name() = 'station_id']"));
-  sName = GXml.value(nodeGeodesyStation.selectSingleNode("*[local-name() = 'name']"));
-  sLogUrl = GXml.value(nodeGeodesyStation.selectSingleNode("*[local-name() = 'url']"));
+  sId = SimpleXPath.evaluateXPathString(nodeGeodesyStation,"*[local-name() = 'station_id']");
+  sName = SimpleXPath.evaluateXPathString(nodeGeodesyStation,"*[local-name() = 'name']");
+  sLogUrl = SimpleXPath.evaluateXPathString(nodeGeodesyStation,"*[local-name() = 'url']");
 
   // geodesy:stations contains updateCSWRecords gsml:pos node
-  oLocation = new Coordinates(nodeGeodesyStation.selectSingleNode(".//*[local-name() = 'Point']"));
+  oLocation = new Coordinates(SimpleXPath.evaluateXPathNodeArray(rootNode,".//*[local-name() = 'Point']"));
 
   // Populate the arrays for the object.
   this.msId = sId;
