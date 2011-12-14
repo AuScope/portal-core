@@ -319,7 +319,7 @@ function GeodesyMarker_getWfsYearUrl(pYear) {
 
   var station = this.stationId;//this.moGeodesyStation.msId;
   var sUrl = this.msWfsUrl + "?request=GetFeature&outputFormat=GML2&typeName=" + encodeURI(this.msDataLayerName);
-  sUrl= sUrl + "&PropertyName=geodesy:date,geodesy:url";
+  sUrl= sUrl + "&PropertyName=geodesy:ob_date,geodesy:url";
 
   // Use pYear and nextYear to query all data in between the two.
   var nextYear = pYear+1;
@@ -617,8 +617,8 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
   var month;
 
   for (var m=1; m<=12; m++) {
-  	month = gaMonths[m];
-  	this.createDataArraysForMonth(year, month);
+      month = gaMonths[m];
+      this.createDataArraysForMonth(year, month);
   }
 
   // Get the html checkbox object
@@ -653,12 +653,12 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
     }
 
     // Parse the XML for "stations" or "geodesy:stations"
-    var featureMembers = rootNode.selectNodes(".//*[local-name() = 'featureMember']");
+    var featureMembers = SimpleXPath.evaluateXPathNodeArray(rootNode,".//*[local-name() = 'featureMember']");
 
-  	for(var i=0; i < featureMembers.length; i++) {
-  	  // Extract date and url from each featureMember
-      var fullDate = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'ob_date']"));
-      var url = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'url']"));
+      for(var i=0; i < featureMembers.length; i++) {
+        // Extract date and url from each featureMember
+      var fullDate = SimpleXPath.evaluateXPathString(featureMembers[i],".//*[local-name() = 'ob_date']");
+      var url = SimpleXPath.evaluateXPathString(featureMembers[i],".//*[local-name() = 'url']");
       if (fullDate==="" || url==="") {
         continue;
       } else {
@@ -684,9 +684,9 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
       month = gaMonths[m];
       geodesyMarker.maYearMonthWfsUrlQueried[year][month] = true;
     }
-  	// Now call the onclick function associated with the year href
-  	// This is so that the user can see the list of months for his currently checked year
-  	geodesyMarker.yearClicked(year, yearHrefId, monthsDivId, datesDivId, true);
+      // Now call the onclick function associated with the year href
+      // This is so that the user can see the list of months for his currently checked year
+      geodesyMarker.yearClicked(year, yearHrefId, monthsDivId, datesDivId, true);
 
   });
 }
@@ -1014,7 +1014,7 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
     var monthChkObj = document.getElementById(monthChkId);
 
     // The checked state of the month should be propogated to all the dates belonging to the month
-	var checkedState = false;
+    var checkedState = false;
     if (monthChkObj) {
       checkedState = monthChkObj.checked;
     }
@@ -1023,8 +1023,8 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
     var featureMembers = rootNode.selectNodes(".//*[local-name() = 'featureMember']");
 
     if (featureMembers.length !== 0) {
-   	  // Each of these contain updateCSWRecords "geodesy:ob_date" and "geodesy:url" child node.
-  	  for(var i=0; i < featureMembers.length; i++) {
+         // Each of these contain updateCSWRecords "geodesy:ob_date" and "geodesy:url" child node.
+        for(var i=0; i < featureMembers.length; i++) {
         var fullDate = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'ob_date']"));
         var url = GXml.value(featureMembers[i].selectSingleNode(".//*[local-name() = 'url']"));
         if (fullDate==="" || url==="") {
@@ -1167,12 +1167,12 @@ function GeodesyMarker_dateClicked (pYear, pMonth, pDate, pDateHrefId) {
   var num_urls =  this.maStationDataForDate[year][month][date].length;
 
   for (var url_index=0; url_index<num_urls; url_index++) {
-	var dataUrlChkId = "date_url_chk_" + station + "_" + year + "_" + month + "_" + date + "_" + url_index;
-	var dataUrlHrefId = "date_url_href_" + station + "_" + year + "_" + month + "_" + date + "_" + url_index;
-	innerHTML += '<tr>';
-	innerHTML += '<td bgcolor="#e9f1f1" align="left"><input type="checkbox" id="' + dataUrlChkId+ '" value="' + this.maStationDataForDate[year][month][date][url_index]+ '">';
-	innerHTML += '<a id="'+ dataUrlHrefId +'" style="color:red" href="' + this.maStationDataForDate[year][month][date][url_index] + '">&nbsp;' + this.maStationDataForDate[year][month][date][url_index] + '</a>';
-	innerHTML += '</input></td></tr>';
+    var dataUrlChkId = "date_url_chk_" + station + "_" + year + "_" + month + "_" + date + "_" + url_index;
+    var dataUrlHrefId = "date_url_href_" + station + "_" + year + "_" + month + "_" + date + "_" + url_index;
+    innerHTML += '<tr>';
+    innerHTML += '<td bgcolor="#e9f1f1" align="left"><input type="checkbox" id="' + dataUrlChkId+ '" value="' + this.maStationDataForDate[year][month][date][url_index]+ '">';
+    innerHTML += '<a id="'+ dataUrlHrefId +'" style="color:red" href="' + this.maStationDataForDate[year][month][date][url_index] + '">&nbsp;' + this.maStationDataForDate[year][month][date][url_index] + '</a>';
+    innerHTML += '</input></td></tr>';
   }
   innerHTML += '</table></td></tr></table>';
   dateUrlsDivObj.innerHTML = innerHTML;
@@ -1212,7 +1212,7 @@ function GeodesyMarker_getDataUrlCheckedFn(pYear, pMonth, pDate, pIndex, pDataUr
   var oGeodesyMarker = this;
 
   return function () {
-	  oGeodesyMarker.dataUrlChecked(pYear, pMonth, pDate, pIndex, pDataUrlChkId);
+      oGeodesyMarker.dataUrlChecked(pYear, pMonth, pDate, pIndex, pDataUrlChkId);
   };
 }
 
