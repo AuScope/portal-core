@@ -366,7 +366,8 @@ public class CSWCacheService {
                     }
                 } while (startPosition > 0);
             } catch (Exception ex) {
-                log.warn("Error updating keyword cache", ex);
+                log.warn(String.format("Error updating keyword cache for '%1$s': %2$s",this.endpoint.getServiceUrl(), ex));
+                log.debug("Exception: ", ex);
             } finally {
                 attemptCleanup();
             }

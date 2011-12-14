@@ -54,7 +54,8 @@ public class CSWCacheController extends BaseCSWController {
         try {
             records = this.cswService.getRecordCache();
         } catch (Exception e) {
-            log.error("error getting data records", e);
+            log.error(String.format("error getting data records: %1$s", e));
+            log.debug("Exception:", e);
             return generateJSONResponseMAV(false, new CSWRecord[] {}, "Error getting data records");
         }
         return generateJSONResponseMAV(records.toArray(new CSWRecord[records.size()]));
@@ -70,7 +71,8 @@ public class CSWCacheController extends BaseCSWController {
             this.cswService.updateCache();
             return generateJSONResponseMAV(true);
         } catch (Exception e) {
-            log.warn("Error updating CSW cache", e);
+            log.warn(String.format("Error updating CSW cache: %1$s", e));
+            log.debug("Exception:", e);
             return generateJSONResponseMAV(false);
         }
     }

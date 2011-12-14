@@ -224,7 +224,8 @@ public class VocabController extends BasePortalController {
             XPathExpression rdfExpression = DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext());
             response = (Node) rdfExpression.evaluate(doc, XPathConstants.NODE);
         } catch (Exception ex) {
-            log.warn("Error querying SISSVoc service", ex);
+            log.warn(String.format("Error querying SISSVoc service '%1$s': %2$s",url, ex));
+            log.debug("Exception: ", ex);
             return generateJSONResponseMAV(false);
         }
 
@@ -233,7 +234,8 @@ public class VocabController extends BasePortalController {
         try {
             concepts = conceptFactory.parseFromRDF(response);
         } catch (Exception ex) {
-            log.warn("Error parsing SISSVoc response", ex);
+            log.warn(String.format("Error parsing SISSVoc response from '%1$s': %2$s",url, ex));
+            log.debug("Exception: ", ex);
             return generateJSONResponseMAV(false);
         }
 

@@ -68,7 +68,8 @@ public class EarthResourcesFilterController extends BasePortalController {
 
             return generateJSONResponseMAV(true, response.getGml(), response.getKml(), response.getMethod());
         } catch (Exception e) {
-            log.warn("Error performing mine filter: ", e);
+            log.warn(String.format("Error performing filter for '%1$s': %2$s", serviceUrl, e));
+            log.debug("Exception: ", e);
             return this.generateExceptionResponse(e, serviceUrl);
         }
     }
@@ -98,7 +99,8 @@ public class EarthResourcesFilterController extends BasePortalController {
             WFSCountResponse response = this.mineralOccurrenceService.getMinesCount(serviceUrl, mineName, bbox, maxFeatures);
             return generateJSONResponseMAV(true, new Integer(response.getNumberOfFeatures()), "");
         } catch (Exception e) {
-            log.warn("Error performing mine count: ", e);
+            log.warn(String.format("Error performing filter for '%1$s': %2$s", serviceUrl, e));
+            log.debug("Exception: ", e);
             return this.generateExceptionResponse(e, serviceUrl);
         }
     }
@@ -149,7 +151,8 @@ public class EarthResourcesFilterController extends BasePortalController {
 
             return generateJSONResponseMAV(true, response.getGml(), response.getKml(), response.getMethod());
         } catch (Exception e) {
-            log.warn("Error performing mineral occurrence filter: ", e);
+            log.warn(String.format("Error performing filter for '%1$s': %2$s", serviceUrl, e));
+            log.debug("Exception: ", e);
             return this.generateExceptionResponse(e, serviceUrl);
 
         }
@@ -200,7 +203,8 @@ public class EarthResourcesFilterController extends BasePortalController {
 
             return generateJSONResponseMAV(true, new Integer(response.getNumberOfFeatures()), "");
         } catch (Exception e) {
-            log.warn("Error performing mineral occurrence count: ", e);
+            log.warn(String.format("Error performing filter for '%1$s': %2$s", serviceUrl, e));
+            log.debug("Exception: ", e);
             return this.generateExceptionResponse(e, serviceUrl);
 
         }
@@ -256,7 +260,8 @@ public class EarthResourcesFilterController extends BasePortalController {
 
             return generateJSONResponseMAV(true, response.getGml(), response.getKml(), response.getMethod());
         } catch (Exception e) {
-            log.warn("Error performing mining activity filter: ", e);
+            log.warn(String.format("Error performing filter for '%1$s': %2$s", serviceUrl, e));
+            log.debug("Exception: ", e);
             return this.generateExceptionResponse(e, serviceUrl);
         }
     }
@@ -309,7 +314,8 @@ public class EarthResourcesFilterController extends BasePortalController {
 
             return generateJSONResponseMAV(true, new Integer(response.getNumberOfFeatures()), "");
         } catch (Exception e) {
-            log.warn("Error performing mining activity count: ", e);
+            log.warn(String.format("Error performing filter for '%1$s': %2$s", serviceUrl, e));
+            log.debug("Exception: ", e);
             return this.generateExceptionResponse(e, serviceUrl);
         }
     }

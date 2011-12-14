@@ -61,7 +61,8 @@ public class YilgarnGeochemistryController extends BasePortalController {
         try {
             locSpecimenRecord = geochemService.getLocatedSpecimens(serviceUrl, featureId);
         } catch (Exception ex) {
-            log.warn("Error fetching located specimen recprds", ex);
+            log.warn(String.format("error requesting loc spec records for '%1$s' from '%2$s': %3$s",featureId, serviceUrl, ex));
+            log.debug("Exception: ", ex);
             return generateJSONResponseMAV(false);
         }
         if (locSpecimenRecord == null) {
@@ -151,7 +152,8 @@ public class YilgarnGeochemistryController extends BasePortalController {
         try {
             response = wfsService.getWfsResponseAsKml(serviceUrl, "gsml:GeologicUnit", filterString, maxFeatures, null);
         } catch (Exception ex) {
-            log.warn("Unable to request/transform WFS response", ex);
+            log.warn(String.format("Unable to request/transform WFS response for '%1$s' from '%2$s': %3$s",geologicName, serviceUrl, ex));
+            log.debug("Exception: ", ex);
             return generateExceptionResponse(ex, serviceUrl);
         }
 
@@ -183,7 +185,8 @@ public class YilgarnGeochemistryController extends BasePortalController {
         try {
             response = wfsService.getWfsFeatureCount(serviceUrl, "gsml:GeologicUnit", filterString, maxFeatures);
         } catch (Exception ex) {
-            log.warn("Unable to request/transform WFS response", ex);
+            log.warn(String.format("Unable to request/transform WFS response for '%1$s' from '%2$s': %3$s",geologicName, serviceUrl, ex));
+            log.debug("Exception: ", ex);
             return generateExceptionResponse(ex, serviceUrl);
         }
 

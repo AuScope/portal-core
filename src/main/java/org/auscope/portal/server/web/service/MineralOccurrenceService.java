@@ -101,8 +101,9 @@ public class MineralOccurrenceService extends BaseWFSService {
     public List<Mine> getMines(String serviceUrl, String mineName, FilterBoundingBox bbox, int maxFeatures) throws PortalServiceException {
         MineFilter filter = new MineFilter(mineName);
         String filterString = generateFilterString(filter, bbox);
+        String srs = bbox == null ? null : bbox.getBboxSrs();
 
-        HttpMethodBase method = generateWFSRequest(serviceUrl, MINE_FEATURE_TYPE, null, filterString, maxFeatures, null, ResultType.Results);
+        HttpMethodBase method = generateWFSRequest(serviceUrl, MINE_FEATURE_TYPE, null, filterString, maxFeatures, srs, ResultType.Results);
         try {
             String response = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
             return mineralOccurrencesResponseHandler.getMines(response);

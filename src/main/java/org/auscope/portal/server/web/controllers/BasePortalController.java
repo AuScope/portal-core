@@ -238,7 +238,7 @@ public abstract class BasePortalController {
      * @return ModelAndView object with error message
      */
     protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl, HttpMethodBase request) {
-        log.error(String.format("Exception! serviceUrl='%1$s'", serviceUrl), e);
+        log.debug(String.format("Exception! serviceUrl='%1$s'", serviceUrl), e);
 
         //Portal service exceptions wrap existing exceptions with a culprit HttpMethodBase
         if (e instanceof PortalServiceException) {

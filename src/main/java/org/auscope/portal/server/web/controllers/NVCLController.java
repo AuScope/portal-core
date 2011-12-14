@@ -108,7 +108,8 @@ public class NVCLController extends BasePortalController {
             try {
                 hyloggerBoreholeIDs = this.boreholeService.discoverHyloggerBoreholeIDs(this.cswService,new CSWRecordsHostFilter(serviceUrl));
             } catch (Exception e) {
-                log.warn("Error requesting list of hylogger borehole ID's", e);
+                log.warn(String.format("Error requesting list of hylogger borehole ID's from %1$s: %2$s",serviceUrl, e));
+                log.debug("Exception:", e);
                 return generateJSONResponseMAV(false, null, "Failure when identifying which boreholes have Hylogger data.");
             }
 
@@ -141,7 +142,8 @@ public class NVCLController extends BasePortalController {
 
             return generateJSONResponseMAV(true, responseObjs, "");
         } catch (Exception ex) {
-            log.warn("Unable to request dataset collection", ex);
+            log.warn(String.format("Error requesting dataset collection for hole '%1$s' from %2$s: %3$s", holeIdentifier, serviceUrl, ex));
+            log.debug("Exception:", ex);
             return generateJSONResponseMAV(false);
         }
     }
@@ -162,7 +164,8 @@ public class NVCLController extends BasePortalController {
 
             return generateJSONResponseMAV(true, responseObjs, "");
         } catch (Exception ex) {
-            log.warn("Unable to request log collection", ex);
+            log.warn(String.format("Error requesting log collection for dataset '%1$s' from %2$s: %3$s", datasetId, serviceUrl, ex));
+            log.debug("Exception:", ex);
             return generateJSONResponseMAV(false);
         }
     }
@@ -209,7 +212,8 @@ public class NVCLController extends BasePortalController {
         try {
             serviceResponse = dataService.getMosaic(serviceUrl, logId, width, startSampleNo, endSampleNo);
         } catch (Exception ex) {
-            log.warn("Unable to get mosaic", ex);
+            log.warn(String.format("Error requesting mosaic for logid '%1$s' from %2$s: %3$s", logId, serviceUrl, ex));
+            log.debug("Exception:", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -259,7 +263,8 @@ public class NVCLController extends BasePortalController {
         try {
             serviceResponse = dataService.getPlotScalar(serviceUrl, logId, startDepth, endDepth, width, height, samplingInterval, graphType);
         } catch (Exception ex) {
-            log.warn("Unable to plot scalar", ex);
+            log.warn(String.format("Error requesting scalar plot for logid '%1$s' from %2$s: %3$s", logId, serviceUrl, ex));
+            log.debug("Exception:", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -283,7 +288,8 @@ public class NVCLController extends BasePortalController {
         try {
             serviceResponse = dataService.getCSVDownload(serviceUrl, datasetId);
         } catch (Exception ex) {
-            log.warn("Unable to request csv download", ex);
+            log.warn(String.format("Error requesting csw download for datasetId '%1$s' from %2$s: %3$s", datasetId, serviceUrl, ex));
+            log.debug("Exception:", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -331,7 +337,8 @@ public class NVCLController extends BasePortalController {
         try {
             serviceResponse = dataService.getTSGDownload(serviceUrl, email, datasetId, matchString, lineScan, spectra, profilometer, trayPics, mosaicPics, mapPics);
         } catch (Exception ex) {
-            log.warn("Unable to request tsg download", ex);
+            log.warn(String.format("Error requesting tsg download from %1$s: %2$s", serviceUrl, ex));
+            log.debug("Exception:", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -355,7 +362,8 @@ public class NVCLController extends BasePortalController {
         try {
             serviceResponse = dataService.checkTSGStatus(serviceUrl, email);
         } catch (Exception ex) {
-            log.warn("Unable to request tsg status", ex);
+            log.warn(String.format("Error requesting tsg status from %1$s: %2$s", serviceUrl, ex));
+            log.debug("Exception:", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -385,7 +393,8 @@ public class NVCLController extends BasePortalController {
         try {
             serviceResponse = dataService.getWFSDownload(serviceUrl, email, boreholeId, omUrl, typeName);
         } catch (Exception ex) {
-            log.warn("Unable to request wfs download", ex);
+            log.warn(String.format("Error requesting %1$s download from omUrl '%2$s' for borehole '%3$s' and nvcl dataservice %4$s: %5$s", typeName,omUrl, boreholeId, serviceUrl, ex));
+            log.debug("Exception:", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -409,7 +418,8 @@ public class NVCLController extends BasePortalController {
         try {
             serviceResponse = dataService.checkWFSStatus(serviceUrl, email);
         } catch (Exception ex) {
-            log.warn("Unable to request wfs status", ex);
+            log.warn(String.format("Error requesting wfs status from %1$s: %2$s", serviceUrl, ex));
+            log.debug("Exception:", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
             return;
         }

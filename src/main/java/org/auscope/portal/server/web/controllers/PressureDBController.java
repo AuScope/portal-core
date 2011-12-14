@@ -49,7 +49,8 @@ public class PressureDBController extends BasePortalController {
 
            return generateJSONResponseMAV(true, new AvailableOMResponse[] {response}, "");
         } catch (Exception e) {
-            log.warn("Error making pressure-db service request", e);
+            log.warn(String.format("Error making pressure-db service request for '%1$s' to '%2$s': %3$s", wellID, serviceUrl, e));
+            log.debug("Exception: ", e);
             return generateJSONResponseMAV(false, null, "Failure communicating with Pressure DB data service");
         }
     }
@@ -71,7 +72,8 @@ public class PressureDBController extends BasePortalController {
         try {
            inputStream = pressureDBService.makeDownloadRequest(wellID, serviceUrl, feature);
         } catch (Exception e) {
-            log.warn("Error making pressure-db service request", e);
+            log.warn(String.format("Error making pressure-db download request for '%1$s' to '%2$s': %3$s",wellID, serviceUrl, e));
+            log.debug("Exception: ", e);
             response.sendError(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return;
         }

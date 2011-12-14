@@ -78,7 +78,8 @@ public class WFSPopupController {
 
             outputStream.write(htmlResponse.getHtml().getBytes());
         } catch (Exception ex) {
-            log.warn("Internal error requesting/writing popup contents", ex);
+            log.warn(String.format("Internal error requesting/writing popup for '%1$s' from '%2$s': %3$s",typeName, serviceUrl, ex));
+            log.debug("Exception: ", ex);
             response.sendError(HttpStatus.SC_INTERNAL_SERVER_ERROR);
         }
     }
