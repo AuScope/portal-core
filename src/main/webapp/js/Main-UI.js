@@ -914,7 +914,7 @@ Ext.onReady(function() {
                     overlayManager.markerManager.refresh();
 
                     //Store some debug info
-                    debuggerData.addResponse(debugInfo.url, debugInfo);
+                    debuggerData.addResponse(debugInfo.url, debugInfo.info);
 
                     //store the status
                     responseTooltip.addResponse(onlineResource.url, (markers.length + overlays.length) + " record(s) retrieved.");
