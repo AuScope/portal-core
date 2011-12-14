@@ -132,7 +132,7 @@ public class TestGSMLController extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockFilter).getFilterStringBoundingBox(with(any(FilterBoundingBox.class))); will(returnValue(filterString));
-            oneOf(mockWfsService).getWfsFeatureCount(wfsUrl, featureType, filterString, maxFeatures);will(returnValue(new WFSCountResponse(featureCount)));
+            oneOf(mockWfsService).getWfsFeatureCount(wfsUrl, featureType, filterString, maxFeatures, null);will(returnValue(new WFSCountResponse(featureCount)));
         }});
         ModelAndView modelAndView = gsmlController.requestFeatureCount(wfsUrl, featureType, bboxJsonString, maxFeatures);
         Integer dataObj = (Integer) modelAndView.getModel().get("data");
@@ -157,7 +157,7 @@ public class TestGSMLController extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockFilter).getFilterStringBoundingBox(with(any(FilterBoundingBox.class))); will(returnValue(filterString));
 
-            oneOf(mockWfsService).getWfsFeatureCount(wfsUrl, featureType, filterString, maxFeatures);will(returnValue(new WFSCountResponse(featureCount)));
+            oneOf(mockWfsService).getWfsFeatureCount(wfsUrl, featureType, filterString, maxFeatures, null);will(returnValue(new WFSCountResponse(featureCount)));
         }});
         ModelAndView modelAndView = gsmlController.requestFeatureCount(wfsUrl, featureType, bboxJsonString, maxFeatures);
         Integer dataObj = (Integer) modelAndView.getModel().get("data");

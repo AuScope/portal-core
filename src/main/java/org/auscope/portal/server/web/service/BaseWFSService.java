@@ -28,6 +28,11 @@ import org.w3c.dom.Node;
  * @author Josh Vote
  */
 public abstract class BaseWFSService {
+    /**
+     * The default spatial reference system to be used if none is specified
+     */
+    public static final String DEFAULT_SRS = "EPSG:4326";
+
     protected HttpServiceCaller httpServiceCaller;
     protected WFSGetFeatureMethodMaker wfsMethodMaker;
     protected GmlToKml gmlToKml;
@@ -57,13 +62,18 @@ public abstract class BaseWFSService {
      * @param featureId [optional] - A unique ID of a single feature type to query
      * @param filterString [optional] - A OGC filter string to constrain the request
      * @param maxFeatures [optional] - A maximum number of features to request
-     * @param srs [optional] - The spatial reference system the response should be encoded to
+     * @param srs [optional] - The spatial reference system the response should be encoded to. If unspecified BaseWFSService.DEFAULT_SRS will be used
      * @param resultType [optional] - Whether to request all features (default) or just the count
      * @return
      * @throws Exception
      */
     protected HttpMethodBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType) {
         int max = maxFeatures == null ? 0 : maxFeatures.intValue();
+
+        //apply default value for srs
+        if (srs == null || srs.isEmpty()) {
+            srs = DEFAULT_SRS;
+        }
 
         if (featureId == null) {
             return wfsMethodMaker.makeMethod(wfsUrl, featureType, filterString, max, srs, resultType);

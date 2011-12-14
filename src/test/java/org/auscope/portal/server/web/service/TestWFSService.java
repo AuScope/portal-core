@@ -150,6 +150,33 @@ public class TestWFSService extends PortalTestClass {
     }
 
     /**
+     * Tests the 'multi feature' request transformation uses the correct default srs if none is specified
+     */
+    @Test
+    public void testGetWfsResponseAsKmlDefaultSRS() throws Exception {
+        final String responseString = Util.loadXML("src/test/resources/EmptyWFSResponse.xml");
+        final String responseKml = "<kml:response/>"; //we aren't testing the validity of this
+        final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
+        final String serviceUrl = "http://service/wfs";
+        final int maxFeatures = 12321;
+        final String typeName = "type:Name";
+
+        context.checking(new Expectations() {{
+            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
+            allowing(mockServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(returnValue(responseString));
+
+            allowing(mockMethodMaker).makeMethod(serviceUrl, typeName, filterString, maxFeatures, BaseWFSService.DEFAULT_SRS, ResultType.Results);will(returnValue(mockMethod));
+
+            allowing(mockGmlToKml).convert(responseString, serviceUrl);will(returnValue(responseKml));
+        }});
+
+        //Our test is ensuring that only the DEFAULT_SRS is passed to the mock method maker
+        service.getWfsResponseAsKml(serviceUrl, typeName, filterString, maxFeatures, null);
+        service.getWfsResponseAsKml(serviceUrl, typeName, filterString, maxFeatures, "");
+
+    }
+
+    /**
      * Tests the 'multi feature' request transformation
      */
     @Test
@@ -359,7 +386,7 @@ public class TestWFSService extends PortalTestClass {
     public void testGetWfsCount() throws Exception {
         final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs";
-        final String srsName = null;
+        final String srsName = "srsName";
         final int maxFeatures = 12321;
         final String typeName = "type:Name";
         final InputStream responseStream = new ByteArrayInputStream(Util.loadXML("src/test/resources/GetWFSFeatureCount.xml").getBytes());
@@ -373,7 +400,7 @@ public class TestWFSService extends PortalTestClass {
 
         }});
 
-        WFSCountResponse response = service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures);
+        WFSCountResponse response = service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures, srsName);
         Assert.assertNotNull(response);
         Assert.assertEquals(expectedCount, response.getNumberOfFeatures());
     }
@@ -385,7 +412,7 @@ public class TestWFSService extends PortalTestClass {
     public void testGetWfsCountError() throws Exception {
         final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs";
-        final String srsName = null;
+        final String srsName = "srsName";
         final ConnectException exceptionThrown = new ConnectException();
         final int maxFeatures = 12321;
         final String typeName = "type:Name";
@@ -399,7 +426,7 @@ public class TestWFSService extends PortalTestClass {
         }});
 
         try {
-            service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures);
+            service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures, srsName);
             Assert.fail("Exception should have been thrown");
         } catch (PortalServiceException ex) {
             Assert.assertSame(exceptionThrown, ex.getCause());
@@ -414,7 +441,7 @@ public class TestWFSService extends PortalTestClass {
     public void testGetWfsCountOWSError() throws Exception {
         final String filterString = "<ogc:filter/>"; //we aren't testing the validity of this
         final String serviceUrl = "http://service/wfs";
-        final String srsName = null;
+        final String srsName = "srsName";
         final int maxFeatures = 12321;
         final String typeName = "type:Name";
         final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml");
@@ -427,7 +454,7 @@ public class TestWFSService extends PortalTestClass {
         }});
 
         try {
-            service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures);
+            service.getWfsFeatureCount(serviceUrl, typeName, filterString, maxFeatures, srsName);
             Assert.fail("Exception should have been thrown");
         } catch (PortalServiceException ex) {
             Assert.assertTrue(ex.getCause() instanceof OWSException);

@@ -219,7 +219,7 @@ public class TestYilgarnGeochemistryController extends PortalTestClass {
         final int numberOfFeatures = 123;
 
         context.checking(new Expectations() {{
-            oneOf(mockWfsService).getWfsFeatureCount(with(equal(serviceUrl)), with(equal("gsml:GeologicUnit")), with(any(String.class)), with(equal(maxFeatures)));will(returnValue(new WFSCountResponse(numberOfFeatures)));
+            oneOf(mockWfsService).getWfsFeatureCount(with(equal(serviceUrl)), with(equal("gsml:GeologicUnit")), with(any(String.class)), with(equal(maxFeatures)), with((String) null));will(returnValue(new WFSCountResponse(numberOfFeatures)));
 
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceUrl, true)));
         }});
@@ -242,7 +242,7 @@ public class TestYilgarnGeochemistryController extends PortalTestClass {
         final String bbox = null;
 
         context.checking(new Expectations() {{
-            oneOf(mockWfsService).getWfsFeatureCount(with(equal(serviceUrl)), with(equal("gsml:GeologicUnit")), with(any(String.class)), with(equal(maxFeatures)));will(throwException(new PortalServiceException(mockMethod, new ConnectException())));
+            oneOf(mockWfsService).getWfsFeatureCount(with(equal(serviceUrl)), with(equal("gsml:GeologicUnit")), with(any(String.class)), with(equal(maxFeatures)), with((String) null));will(throwException(new PortalServiceException(mockMethod, new ConnectException())));
 
             allowing(mockMethod).getURI();will(returnValue(new URI(serviceUrl, true)));
         }});

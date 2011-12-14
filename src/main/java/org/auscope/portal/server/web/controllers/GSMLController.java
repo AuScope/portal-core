@@ -122,7 +122,7 @@ public class GSMLController extends BasePortalController {
 
         WFSCountResponse response = null;
         try {
-            response = wfsService.getWfsFeatureCount(serviceUrl, featureType, filterString, maxFeatures);
+            response = wfsService.getWfsFeatureCount(serviceUrl, featureType, filterString, maxFeatures, null);
         } catch (Exception ex) {
             log.warn(String.format("Exception getting '%2$s' from '%1$s': %3$s", serviceUrl, featureType, ex));
             log.debug("Exception: ", ex);

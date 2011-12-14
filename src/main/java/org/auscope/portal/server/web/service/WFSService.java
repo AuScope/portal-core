@@ -57,7 +57,7 @@ public class WFSService extends BaseWFSService {
      * @param featureType the type name
      * @param filterString A OGC filter string to constrain the request
      * @param maxFeatures  A maximum number of features to request
-     * @param srs The spatial reference system the response should be encoded to
+     * @param srs [Optional] The spatial reference system the response should be encoded to @param srsName - will use BaseWFSService.DEFAULT_SRS if unspecified
      * @return
      * @throws Exception
      */
@@ -74,11 +74,12 @@ public class WFSService extends BaseWFSService {
      * @param featureType the type name
      * @param filterString A OGC filter string to constrain the request
      * @param maxFeatures  A maximum number of features to request
+     * @param srsName [Optional] the SRS to make the WFS request using - will use BaseWFSService.DEFAULT_SRS if unspecified
      * @return
      * @throws PortalServiceException
      */
-    public WFSCountResponse getWfsFeatureCount(String wfsUrl, String featureType, String filterString, Integer maxFeatures) throws PortalServiceException {
-        HttpMethodBase method = generateWFSRequest(wfsUrl, featureType, null, filterString, maxFeatures, null, ResultType.Hits);
+    public WFSCountResponse getWfsFeatureCount(String wfsUrl, String featureType, String filterString, Integer maxFeatures, String srsName) throws PortalServiceException {
+        HttpMethodBase method = generateWFSRequest(wfsUrl, featureType, null, filterString, maxFeatures, srsName, ResultType.Hits);
         return getWfsFeatureCount(method);
     }
 

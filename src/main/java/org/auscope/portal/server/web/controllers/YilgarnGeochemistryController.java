@@ -183,7 +183,7 @@ public class YilgarnGeochemistryController extends BasePortalController {
         //Make our request and get it transformed
         WFSCountResponse response = null;
         try {
-            response = wfsService.getWfsFeatureCount(serviceUrl, "gsml:GeologicUnit", filterString, maxFeatures);
+            response = wfsService.getWfsFeatureCount(serviceUrl, "gsml:GeologicUnit", filterString, maxFeatures, null);
         } catch (Exception ex) {
             log.warn(String.format("Unable to request/transform WFS response for '%1$s' from '%2$s': %3$s",geologicName, serviceUrl, ex));
             log.debug("Exception: ", ex);
