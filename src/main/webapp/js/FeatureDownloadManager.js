@@ -114,50 +114,24 @@ FeatureDownloadManager = Ext.extend(Ext.util.Observable, {
                 var win = null;
                 var callingInstance = this;
 
-                //If we have already prompted the user and they selected to only get the visible records
-                //AND there are still too many records, lets be 'smart' about how we proceed
-                if (alreadyPrompted) {
-                    Ext.MessageBox.show({
-                        buttons:{yes:'Download Visible', no:'Abort Download'},
-                        fn:function (buttonId) {
-                            if (buttonId == 'yes') {
-                                callingInstance._doDownload(callingInstance.currentBoundingBox);
-                            } else if (buttonId == 'no') {
-                                callingInstance.fireEvent('cancelled', callingInstance);
-                            }
-                        },
-                        modal : true,
-                        msg : String.format('<p>There will still be {0} features visible. Would you still like to download the visible feature set?</p><br/><p>Alternatively you can cancel this download, adjust your zoom level and try again.</p>', jsonResponse.data),
-                        title : 'Warning: Large feature set'
-                    });
-                }else {
-                    //Only give the user of selecting visible bounds IF we have some visible bounds to filter on
-                    var buttons = {yes:'Download All', no:'Download Visible', cancel:'Abort Download'};
-                    var message = String.format('You are about to fetch {0} features, doing so could make the portal run extremely slowly. Would you like to download only the visible markers instead?', jsonResponse.data);
-                    if (!this._visibleMapBounds) {
-                        buttons.no = undefined;
-                        message = String.format('You are about to fetch {0} features, doing so could make the portal run extremely slowly. Unfortunately the selected layer doesn\'t support any spatial subsetting, would you still like to continue?', jsonResponse.data);
-                    }
-                    Ext.MessageBox.show({
-                        buttons : buttons,
-                        fn : function (buttonId) {
-                            if (buttonId == 'yes') {
-                                callingInstance._doDownload(callingInstance.currentBoundingBox);
-                            } else if (buttonId == 'no') {
-                                callingInstance._startDownload(callingInstance._visibleMapBounds, true);
-                            } else if (buttonId == 'cancel') {
-                                callingInstance.fireEvent('cancelled', callingInstance);
-                            }
-                        },
-                        modal : true,
-                        msg : message,
-                        title : 'Warning: Large feature set'
-                    });
-                }
+                //If we have too many features, tell the user
+                Ext.MessageBox.show({
+                    buttons:{yes:'Download Features', no:'Abort Download'},
+                    fn:function (buttonId) {
+                        if (buttonId == 'yes') {
+                            callingInstance._doDownload(callingInstance._visibleMapBounds);
+                        } else if (buttonId == 'no') {
+                            callingInstance.fireEvent('cancelled', callingInstance);
+                        }
+                    },
+                    modal : true,
+                    msg : String.format('<p>You are about to fetch {0} features, doing so could make the portal run extremely slowly. Would you still like to continue?</p><br/><p>Alternatively you can abort this download, adjust your zoom/filter and try again.</p>', jsonResponse.data),
+                    title : 'Warning: Large feature set'
+                });
 
             } else {
                 //If we have an acceptable number of records, this is how we shall proceed
-                this._doDownload(this.currentBoundingBox);
+                this._doDownload(this._visibleMapBounds);
             }
         } else {
             //If the count download fails,
@@ -166,40 +140,23 @@ FeatureDownloadManager = Ext.extend(Ext.util.Observable, {
     },
 
     /**
-     * Starts a new count/download sequence that may be constrained to a specific bounds
+     * Function for starting a download through this FeatureDownloadManager
      */
-    _startDownload : function(boundingBox, alreadyPrompted) {
-        this.currentBoundingBox = boundingBox;
-
-        if (alreadyPrompted == null || alreadyPrompted == undefined)
-            alreadyPrompted = false;
-
-
-
+    startDownload : function() {
         //Firstly attempt to discern how many records are available, this will affect how we proceed
         //If we dont have a proxy for doing this, then just download everything
         if (this._proxyCountUrl && this._proxyCountUrl.length > 0) {
             Ext.Ajax.request({
                 url : this._proxyCountUrl,
-                params : this._buildRequestParams(boundingBox),
+                params : this._buildRequestParams(this._visibleMapBounds),
                 scope : this,
                 timeout : this._timeout,
-                callback : function(options, success, response) {
-                    this._doCount(options, success, response, alreadyPrompted);
-                }
+                callback : this._doCount
             });
         } else {
             //if we dont have a URL to proxy our count requests through then just
             //attempt to download all visible features (it's better than grabbing thousands of features)
             this._doDownload(this._visibleMapBounds, this._featureSetSizeThreshold);
         }
-    },
-
-    /**
-     * Function for starting a download through this FeatureDownloadManager
-     */
-    startDownload : function() {
-        //Start our download by calling internal function with no parameters
-        this._startDownload();
     }
 });
