@@ -116,7 +116,7 @@ FeatureDownloadManager = Ext.extend(Ext.util.Observable, {
 
                 //If we have too many features, tell the user
                 Ext.MessageBox.show({
-                    buttons:{yes: String.format('Get {0} features', jsonResponse.data), no:'Abort operation'},
+                    buttons:{yes: String.format('Display {0} features', jsonResponse.data), no:'Abort operation'},
                     fn:function (buttonId) {
                         if (buttonId == 'yes') {
                             callingInstance._doDownload(callingInstance._visibleMapBounds);
@@ -125,7 +125,7 @@ FeatureDownloadManager = Ext.extend(Ext.util.Observable, {
                         }
                     },
                     modal : true,
-                    msg : String.format('<p>You are about to fetch <b>{0}</b> features, doing so could make the portal run extremely slowly. Would you still like to continue?</p><br/><p>Alternatively you can abort this operation, adjust your zoom/filter and then try again.</p>', jsonResponse.data),
+                    msg : String.format('<p>You are about to display <b>{0}</b> features, doing so could make the portal run extremely slowly. Would you still like to continue?</p><br/><p>Alternatively you can abort this operation, adjust your zoom/filter and then try again.</p>', jsonResponse.data),
                     title : 'Warning: Large feature set'
                 });
 
