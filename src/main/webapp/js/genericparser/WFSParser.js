@@ -63,17 +63,8 @@ GenericParser.WFSParser = Ext.extend(Ext.util.Observable, {
 
                 // Load our xml string into DOM
                 var xmlString = jsonResponse.data.gml;
-                var xmlDocument = null;
-                if(window.DOMParser) {
-                    //browser supports DOMParser
-                    var parser = new DOMParser();
-                    xmlDocument = parser.parseFromString(xmlString, "text/xml");
-                } else if(window.ActiveXObject) {
-                    //IE
-                    xmlDocument = new ActiveXObject("Microsoft.XMLDOM");
-                    xmlDocument.async="false";
-                    xmlDocument.loadXML(xmlString);
-                } else {
+                var xmlDocument = SimpleDOM.parseStringToDOM(xmlString);
+               if(xmlDocument == null){
                     alert('Your web browser doesn\'t seem to support any form of XML to DOM parsing. Functionality will be affected');
                     callback(wfsParser, null);
                     return;

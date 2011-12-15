@@ -89,3 +89,24 @@ SimpleDOM.getMatchingAttributes = function(domNode, attributeNamespaceURI, attri
 SimpleDOM.getNodeTextContent = function(domNode) {
     return domNode.textContent ? domNode.textContent : domNode.text;
 };
+
+/**
+ * Parse string to DOM
+ */
+SimpleDOM.parseStringToDOM = function(xmlString){
+    // Load our xml string into DOM
+    var xmlDocument = null;
+    if(window.DOMParser) {
+        //browser supports DOMParser
+        var parser = new DOMParser();
+        xmlDocument = parser.parseFromString(xmlString, "text/xml");
+    } else if(window.ActiveXObject) {
+        //IE
+        xmlDocument = new ActiveXObject("Microsoft.XMLDOM");
+        xmlDocument.async="false";
+        xmlDocument.loadXML(xmlString);
+    } else {
+        return null;
+    }
+    return xmlDocument;
+};

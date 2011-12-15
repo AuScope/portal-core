@@ -633,11 +633,7 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
 
   // Download renix files for this year
   GDownloadUrl(sStationDataUrl, function(xmlData, pResponseCode) {
-    var xmlDoc = GXml.parse(xmlData);
-
-    if (g_IsIE) {
-      xmlDoc.setProperty("SelectionLanguage", "XPath");
-    }
+    var xmlDoc = SimpleDOM.parseStringToDOM(xmlData);
 
     var rootNode = xmlDoc.documentElement;
     if (!rootNode) {
@@ -653,12 +649,12 @@ function GeodesyMarker_yearChecked (pYear, pYearChkId, pYearHrefId, pMonthsDivId
     }
 
     // Parse the XML for "stations" or "geodesy:stations"
-    var featureMembers = SimpleXPath.evaluateXPathNodeArray(rootNode,".//*[local-name() = 'featureMember']");
+    var featureMembers = SimpleXPath.evaluateXPathNodeArray(rootNode,"gml:featureMember");
 
       for(var i=0; i < featureMembers.length; i++) {
         // Extract date and url from each featureMember
-      var fullDate = SimpleXPath.evaluateXPathString(featureMembers[i],".//*[local-name() = 'ob_date']");
-      var url = SimpleXPath.evaluateXPathString(featureMembers[i],".//*[local-name() = 'url']");
+      var fullDate = SimpleXPath.evaluateXPathString(featureMembers[i],"geodesy:station_observations/geodesy:ob_date");
+      var url = SimpleXPath.evaluateXPathString(featureMembers[i],"geodesy:station_observations/geodesy:url");
       if (fullDate==="" || url==="") {
         continue;
       } else {
@@ -1000,9 +996,7 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
   // Download the renix files by making the wfs call
   GDownloadUrl(sStationDataUrl, function(xmlData, pResponseCode) {
 
-    var xmlDoc = GXml.parse(xmlData);
-    if (g_IsIE)
-      xmlDoc.setProperty("SelectionLanguage", "XPath");
+    var xmlDoc = SimpleDOM.parseStringToDOM(xmlData);
 
     var rootNode = xmlDoc.documentElement;
     if (!rootNode) {
@@ -1020,13 +1014,13 @@ function GeodesyMarker_setDataForSelectedMonth(pYear, pMonth, pDatesDivObj) {
     }
 
     // Parse the XML for "featureMembers"
-    var featureMembers = SimpleXPath.evaluateXPathNodeArray(rootNode,".//*[local-name() = 'featureMember']");
+    var featureMembers = SimpleXPath.evaluateXPathNodeArray(rootNode,"gml:featureMember");
 
     if (featureMembers.length !== 0) {
          // Each of these contain updateCSWRecords "geodesy:ob_date" and "geodesy:url" child node.
         for(var i=0; i < featureMembers.length; i++) {
-        var fullDate = SimpleXPath.evaluateXPathString(featureMembers[i],".//*[local-name() = 'ob_date']");
-        var url = SimpleXPath.evaluateXPathString(featureMembers[i],".//*[local-name() = 'url']");
+        var fullDate = SimpleXPath.evaluateXPathString(featureMembers[i],"geodesy:station_observations/geodesy:ob_date");
+        var url = SimpleXPath.evaluateXPathString(featureMembers[i],"geodesy:station_observations/geodesy:url");
         if (fullDate==="" || url==="") {
           continue;
         } else {
