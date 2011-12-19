@@ -765,8 +765,16 @@ GenericParser.KnownLayerFactory.NVCLFactory = Ext.extend(GenericParser.KnownLaye
                     singleSelect:true
                 }),
                 listeners : {
+                    //When our grid is rendered - load the datastore and select the first row
                     afterrender : function(grid) {
-                        grid.getStore().load();
+                        grid.getStore().load({
+                            callback : function() {
+                                var sm = grid.getSelectionModel();
+                                if (sm) {
+                                    sm.selectFirstRow();
+                                }
+                            }
+                        });
                     }
                 },
                 viewConfig : {
