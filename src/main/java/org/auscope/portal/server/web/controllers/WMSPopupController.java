@@ -1,17 +1,11 @@
 package org.auscope.portal.server.web.controllers;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.server.util.FileIOUtil;
 import org.auscope.portal.server.web.WMSMethodMaker;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class WMSPopupController extends BasePortalController {
-   private final Log log = LogFactory.getLog(getClass());
 
    private HttpServiceCaller serviceCaller;
 
