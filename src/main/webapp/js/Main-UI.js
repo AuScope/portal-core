@@ -1334,9 +1334,6 @@ Ext.onReady(function() {
             //this is the column for download link icons
             else if (col.cellIndex == '5') {
                 if(activeLayerRecord.hasData()) {
-                    var keys = [];
-                    var values = [];
-
                     var wfsRecords = activeLayerRecord.getCSWRecordsWithType('WFS');
                     var wcsRecords = activeLayerRecord.getCSWRecordsWithType('WCS');
                     var wmsRecords = activeLayerRecord.getCSWRecordsWithType('WMS');
@@ -1351,24 +1348,22 @@ Ext.onReady(function() {
                         }
                         var bbox = filterParameters.bbox;
                         var boundingbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map));
-                        var proxyUrl = activeLayerRecord.getProxyFetchUrl()!== null ? activeLayerRecord.getProxyFetchUrl() : 'getAllFeatures.do';
-                        var prefixUrl = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?";
 
                         if(bbox === null || bbox === undefined){
-                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, null, keys, values);
+                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, null);
                         }
                         else{
                             if(bbox === boundingbox){
-                                downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values);
+                                downloadWFS(cswRecords, activeLayerRecord, filterParameters, bbox);
                             }
                             else{
                                 Ext.MessageBox.show({
                                     buttons:{yes:'Use current', no:'Use original'},
                                     fn:function (buttonId) {
                                         if (buttonId === 'yes') {
-                                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, boundingbox, keys, values);
+                                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, boundingbox);
                                         } else if (buttonId === 'no') {
-                                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values);
+                                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, bbox);
                                         }
                                     },
                                     modal:true,
@@ -1390,6 +1385,10 @@ Ext.onReady(function() {
                     //For WMS we download every WMS
                     if (wfsRecords.length === 0 && wcsRecords.length === 0 && wmsRecords.length !== 0) {
                         cswRecords = wmsRecords;
+                        var downloadParameters = {
+                            serviceUrls : [],
+                            filename : 'WMSDownload'
+                        };
                         for (var i = 0; i < cswRecords.length; i++) {
                             var wmsOnlineResources = cswRecords[i].getFilteredOnlineResources('WMS');
                             for (var j = 0; j < wmsOnlineResources.length; j++) {
@@ -1430,12 +1429,11 @@ Ext.onReady(function() {
                                  url += "&WIDTH=" + map.getSize().width;
                                  url += "&HEIGHT=" + map.getSize().height;
 
-                                 keys.push('serviceUrls');
-                                 values.push(url);
+                                 downloadParameters.serviceUrls.push(url);
                             }
-                        }
 
-                        openWindowWithPost("downloadDataAsZip.do?", 'WMS_Layer_Download', keys, values);
+                            FileDownloader.downloadFile('downloadDataAsZip.do', downloadParameters);
+                        }
                         return;
                     }
                 }
@@ -1444,33 +1442,47 @@ Ext.onReady(function() {
     });
 
 
-    var downloadWFS = function( cswRecords, activeLayerRecord, filterParameters, prefixUrl, bbox, keys, values){
+    /**
+     * Given a list of records associated with an active layer, generate a list of service URL's
+     * for downloading all data from all WFS's that match filterParameters
+     *
+     * The actual download request will be routed through an internal proxy for returning the
+     * responses as a single zip file that the user will be prompted to download
+     *
+     * @param bbox [Optional] optional bounding box
+     */
+    var downloadWFS = function(cswRecords, activeLayerRecord, filterParameters, bbox) {
+        //We have a set of parameters that will be passed to our download proxy
+        var downloadParameters = {
+            serviceUrls : []
+        };
+        var proxyUrl = activeLayerRecord.getProxyFetchUrl() &&  activeLayerRecord.getProxyFetchUrl().length > 0 ? activeLayerRecord.getProxyFetchUrl() : 'getAllFeatures.do';
+        var prefixUrl = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?";
+
 
         for (var i = 0; i < cswRecords.length; i++) {
             var wfsOnlineResources = cswRecords[i].getFilteredOnlineResources('WFS');
             var cswWfsRecordCount = cswRecords.length;
-            var WfsOnlineResourceCount = wfsOnlineResources.length;
 
             for (var j = 0; j < wfsOnlineResources.length; j++) {
                 //Generate our filter parameters (or just grab the last set used
                 var url = wfsOnlineResources[j].url;
+                var currentFilterParameters = copy_obj(filterParameters);
 
-                filterParameters.serviceUrl = wfsOnlineResources[j].url;
-                filterParameters.typeName = wfsOnlineResources[j].name;
-                filterParameters.maxFeatures = 0;
+                currentFilterParameters.serviceUrl = wfsOnlineResources[j].url;
+                currentFilterParameters.typeName = wfsOnlineResources[j].name;
+                currentFilterParameters.maxFeatures = 0;
+                currentFilterParameters.bbox = bbox;
 
                 if(activeLayerRecord.getServiceEndpoints() === null ||
-                        includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {
-                        var currentFilterParameters = copy_obj(filterParameters);
-                        currentFilterParameters.bbox = bbox;
-                        keys.push('serviceUrls');
-                        values.push(Ext.urlEncode(currentFilterParameters, prefixUrl));
+                   includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {
+                    downloadParameters.serviceUrls.push(Ext.urlEncode(currentFilterParameters, prefixUrl));
                 }
             }
         }
 
-        openWindowWithPost("downloadGMLAsZip.do?", 'WFS_Layer_Download_'+new Date().getTime(), keys, values);
-        return;
+        //download the service URLs through our zipping proxy
+        FileDownloader.downloadFile('downloadGMLAsZip.do', downloadParameters);
     }
 
    /** This function copy an object to another by value and not by reference**/
@@ -1482,47 +1494,6 @@ Ext.onReady(function() {
         }
         return obj;
   };
-
-
-
-    /**
-     * Opens a new window to the specified URL and passes URL parameters like so keys[x]=values[x]
-     *
-     * @param {String} url
-     * @param {String} name
-     * @param {Array}  keys
-     * @param {Array} values
-     */
-    var openWindowWithPost = function(url, name, keys, values)
-    {
-        if (keys && values && (keys.length == values.length)) {
-            for (var i = 0; i < keys.length; i++) {
-                url += '&' + keys[i] + '=' + escape(values[i]);
-            }
-            url += '&filename=' + escape(name);
-        }
-        downloadFile(url);
-    };
-
-    //downloads given specified file.
-    downloadFile = function(url) {
-        var body = Ext.getBody();
-        var frame = body.createChild({
-            tag:'iframe',
-            cls:'x-hidden',
-            id:'iframe',
-            name:'iframe'
-        });
-        var form = body.createChild({
-            tag:'form',
-            cls:'x-hidden',
-            id:'form',
-            target:'iframe',
-            method:'POST'
-        });
-        form.dom.action = url;
-        form.dom.submit();
-    };
 
     // basic tabs 1, built from existing content
     var tabsPanel = new Ext.TabPanel({
