@@ -717,6 +717,10 @@ GenericParser.KnownLayerFactory.NVCLFactory = Ext.extend(GenericParser.KnownLaye
 
         //NVCL URL's are discovered by doing some 'tricky' URL rewriting
         var baseUrl = this.getBaseUrl(parentOnlineResource.url);
+        if (baseUrl.indexOf('pir.sa.gov.au') >= 0) {
+            baseUrl += '/nvcl'; //AUS-2144 - PIRSA specific fix
+        }
+
         var nvclDataServiceUrl = baseUrl + '/NVCLDataServices/';
         var nvclDownloadServiceUrl = baseUrl + '/NVCLDownloadServices/';
 
