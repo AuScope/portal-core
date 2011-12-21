@@ -1,12 +1,20 @@
 package org.auscope.portal;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Properties;
+
+import junit.framework.Assert;
 
 import org.auscope.portal.HttpMethodBaseMatcher.HttpMethodType;
 import org.jmock.Mockery;
 import org.jmock.api.Action;
+import org.jmock.api.ExpectationError;
 import org.jmock.integration.junit4.JMock;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 
 /**
@@ -18,7 +26,42 @@ import org.junit.runner.RunWith;
  *
  */
 @RunWith(JMock.class)
-public abstract class PortalTestClass {
+public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler {
+
+    /** A list of errors arising through the thread uncaught exception handler*/
+    private List<ExpectationError> expectationErrors;
+    /** For use with the timer utility methods*/
+    private Calendar timerCalendar;
+
+    /**
+     * Handles any uncaught ExceptionException's on a seperate thread. Any ExpectationException's are loaded
+     * into an internal list and checked during teardownUncaughtExceptionHandler
+     */
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {
+        if (e instanceof ExpectationError) {
+            expectationErrors.add((ExpectationError)e);
+        }
+    }
+
+    /**
+     * Initialises this class as the default uncaught exception handler
+     */
+    @Before
+    public void initialiseUncaughtExceptionHandler() {
+        expectationErrors = new ArrayList<ExpectationError>();
+        Thread.setDefaultUncaughtExceptionHandler(this);
+    }
+
+    /**
+     * This is to ensure that no expectation errors on seperate threads go unnoticed
+     */
+    @After
+    public void teardownUncaughtExceptionHandler() {
+        if (!expectationErrors.isEmpty()) {
+            Assert.fail(expectationErrors.get(0).toString());
+        }
+    }
 
     /**
      * used for generating/testing mock objects and their expectations
@@ -61,5 +104,24 @@ public abstract class PortalTestClass {
         Properties prop = new Properties();
         prop.setProperty(property, value);
         return new PropertiesMatcher(prop);
+    }
+
+    /**
+     * Starts an inbuilt timer - to get the elapsed time call endTimer(). Subsequent calls to this function
+     * will reset the timer
+     */
+    protected void startTimer() {
+        timerCalendar = Calendar.getInstance();
+    }
+
+    /**
+     * Gets the elapsed time since startTimer() was called (in milli seconds).
+     * @return
+     */
+    protected long endTimer() {
+        if (timerCalendar == null) {
+            return -1;
+        }
+        return (Calendar.getInstance().getTimeInMillis() - timerCalendar.getTimeInMillis());
     }
 }

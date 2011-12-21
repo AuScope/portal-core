@@ -89,6 +89,85 @@ public class TestServiceDownloadManager extends PortalTestClass  {
                 Assert.assertNull(response.getException());
             }
         }
+    }
 
+    /**
+     * A complicated scenario that sees 3 requests being firing off to 2 shared resources.
+     *
+     * note - this test is built on the assumption maxThreadPerEndpoint=1 and maxThreadPerSession=2
+     *        if these values change then this test will be invalid
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testServiceFairness() throws Exception {
+        final String[] serviceUrls = {
+            "http://localhost/portal?serviceUrl=http://domain1/wfs",
+            "http://localhost/portal?serviceUrl=http://domain1/wfs",
+            "http://localhost/portal?serviceUrl=http://domain2/wfs",
+        };
+        final InputStream[] responseStreams = {
+            context.mock(InputStream.class, "is-1"),
+            context.mock(InputStream.class, "is-2"),
+            context.mock(InputStream.class, "is-3"),
+        };
+        final long[] responseDelays = {
+            400,
+            800,
+            600
+        };
+
+        //The service should hit url 0 and 2 simultaneously and when one returns
+        //make a further request to url 1.
+        //Because our responses all take specific amounts of time we can expect
+        //that the overall processing will take a fixed amount of time
+        //
+        //The rough formula is
+        //0ms      Request url0, Request url2
+        //400ms    Response url0, Request url1
+        //600ms    Response url2
+        //1200ms   Response url1
+        context.checking(new Expectations() {{
+            allowing(mockServiceCaller).getHttpClient();//We aren't testing this
+
+            //It's too difficult to test a sequence as at step 1 it is undefined
+            //as to whether url0/url2 will be requested first (they will be requested at roughly the same time).
+            //It's also too difficult to use a JMock state for the same reason - we are stuck comparing execution times
+
+            //first request
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)), with(any(HttpClient.class)));
+            will(delayReturnValue(responseDelays[0], responseStreams[0]));
+
+            //second request
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[2], null)), with(any(HttpClient.class)));
+            will(delayReturnValue(responseDelays[2], responseStreams[2]));
+
+            //third request
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)), with(any(HttpClient.class)));
+            will(delayReturnValue(responseDelays[1], responseStreams[1]));
+        }});
+
+        //We have a pretty good idea of what the processing time and margin of error should be
+        long processingTime = Math.min(responseDelays[0], responseDelays[2]) + responseDelays[1];
+        long marginOfError = Math.min(Math.min(responseDelays[0], responseDelays[1]), responseDelays[2]) / 10;
+        long minProcessingTime = processingTime - 1;
+        long maxProcessingTime = processingTime + marginOfError;
+
+        //Create our service downloader
+        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool);
+
+        startTimer();
+        ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
+        long elapsedTime = endTimer();
+
+        //Given our processing order we expect a specific response time (and no errors).
+        //This will indicate our requests are run in a 'fair' order
+        Assert.assertTrue(String.format("elapsedTime %1$s is not in the range [%2$s, %3$s]", elapsedTime, minProcessingTime, maxProcessingTime),
+                elapsedTime >= minProcessingTime && elapsedTime <= maxProcessingTime);
+        Assert.assertNotNull(gmlDownloads);
+        for (DownloadResponse dr : gmlDownloads) {
+            Assert.assertNotNull(dr);
+            Assert.assertFalse(dr.hasException());
+        }
     }
 }

@@ -1,15 +1,12 @@
 package org.auscope.portal.server.web.service;
 
 import java.io.ByteArrayInputStream;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.HttpMethodBaseMatcher.HttpMethodType;
 import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.CSWGetDataRecordsFilter;
@@ -25,7 +22,7 @@ import org.junit.Test;
  * @author Josh Vote
  */
 public class TestCSWCacheService extends PortalTestClass {
-  //determines the size of the test + congestion
+    //determines the size of the test + congestion
     static final int CONCURRENT_THREADS_TO_RUN = 3;
 
     //These determine the correct numbers for a single read of the test file
@@ -39,7 +36,6 @@ public class TestCSWCacheService extends PortalTestClass {
     private CSWCacheService cswCacheService;
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
     private CSWThreadExecutor threadExecutor;
-    private CSWGetDataRecordsFilter mockFilter = context.mock(CSWGetDataRecordsFilter.class);
     private HttpClient mockHttpClient = context.mock(HttpClient.class);
 
     private static final String serviceUrlFormatString = "http://cswservice.%1$s.url/";
@@ -236,30 +232,16 @@ public class TestCSWCacheService extends PortalTestClass {
      */
     @Test
     public void testMultiUpdateAllErrors() throws Exception {
-        final Sequence t1Sequence = context.sequence("t1Sequence");
-        final Sequence t2Sequence = context.sequence("t2Sequence");
-        final Sequence t3Sequence = context.sequence("t3Sequence");
-
         final Map<String, Integer> expectedResult = new HashMap<String, Integer>();
 
         context.checking(new Expectations() {{
             allowing(httpServiceCaller).getHttpClient();
             will(returnValue(mockHttpClient));
 
-            //Thread 1 will throw an exception
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
-            inSequence(t1Sequence);
-            will(throwException(new Exception()));
-
-            //Thread 2 will throw an exception
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)), with(any(HttpClient.class)));
-            inSequence(t2Sequence);
-            will(throwException(new Exception()));
-
-            //Thread 3 will throw an exception
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)), with(any(HttpClient.class)));
-            inSequence(t3Sequence);
-            will(throwException(new Exception()));
+            for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, i + 1), null)), with(mockHttpClient));
+                will(throwException(new Exception()));
+            }
         }});
 
         //Start our updating and wait for our threads to finish
@@ -291,61 +273,28 @@ public class TestCSWCacheService extends PortalTestClass {
     @Test
     public void testSingleUpdate() throws Exception {
         final long delay = 1000;
-        final String cswResponse = "<?xml version=\"1.0\"?><node></node>";
+        final String cswResponse = org.auscope.portal.Util.loadXML("src/test/resources/cswRecordResponse_NoMoreRecords.xml");
+
 
         context.checking(new Expectations() {{
-            //Cant use oneOf as JUnit can't handle exceptions on other threads (see note below)
+            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
+            for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(serviceUrlFormatString, i + 1), null)), with(mockHttpClient));
+                will(delayReturnValue(delay, new ByteArrayInputStream(cswResponse.getBytes())));
+            }
 
-            allowing(httpServiceCaller).getHttpClient();
-            allowing(httpServiceCaller).getMethodResponseAsString(with(any(HttpMethodBase.class)), with(any(HttpClient.class)));
-            will(delayReturnValue(delay, cswResponse));
         }});
 
-        final CSWCacheService service = this.cswCacheService;
+        //Only one of these should trigger an update (the other should return immediately
+        cswCacheService.updateCache();
+        cswCacheService.updateCache();
 
-        Runnable r = new Runnable() {
-            public void run() {
-                try {
-                    service.updateCache();
-                } catch(Exception e) {
-                    Assert.fail(e.toString());
-                }
-            }
-        };
-
-        Calendar start = Calendar.getInstance();
-
-        //Only one of these threads should actually make a service call
-        //otherwise our expectations will fail
-        UncaughtExceptionHandler eh = new UncaughtExceptionHandler() {
-
-            public void uncaughtException(Thread t, Throwable e) {
-                Assert.fail(e.toString());
-            }
-        };
-        Thread[] threadList = new Thread[5];
-        Thread.setDefaultUncaughtExceptionHandler(eh);
-        for (int i = 0; i < threadList.length; i++) {
-            threadList[i] = new Thread(r);
-            threadList[i].setUncaughtExceptionHandler(eh);
-            threadList[i].start();
+        try {
+            threadExecutor.getExecutorService().shutdown();
+            threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
+        } catch (Exception ex) {
+            threadExecutor.getExecutorService().shutdownNow();
+            Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
         }
-
-        //Wait for each thread to terminate (we expect the first
-        //thread will wait for the full delay whilst all other threads
-        //should return immediately)
-        //
-        //NOTE - JUnit won't pickup the Mock Object exceptions on the other threads
-        //     - Workaround - We still work on the assumption that only a single
-        //                    Thread will delay and all others will return immediately
-        //                    So we just measure the time and as long as it is less than
-        //                    threadList.length * delay we are OK
-        for (Thread t : threadList) {
-            t.join();
-        }
-
-        Calendar finish = Calendar.getInstance();
-        long totalTime = finish.getTimeInMillis() - start.getTimeInMillis();
-        Assert.assertTrue("Test took too long, assuming other threads are NOT returning immediately", totalTime < (delay * 2));
     }
 }

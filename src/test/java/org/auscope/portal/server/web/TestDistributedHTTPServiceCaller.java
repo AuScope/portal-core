@@ -2,7 +2,6 @@ package org.auscope.portal.server.web;
 
 import java.io.InputStream;
 import java.net.ConnectException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -18,12 +17,11 @@ import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.web.service.HttpServiceCaller;
 import org.jmock.Expectations;
 import org.jmock.api.ExpectationError;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 
-public class TestDistributedHTTPServiceCaller extends PortalTestClass implements Thread.UncaughtExceptionHandler {
+public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     private HttpMethodBase mockMethod1 = context.mock(HttpMethodBase.class, "method1");
     private HttpMethodBase mockMethod2 = context.mock(HttpMethodBase.class, "method2");
@@ -34,42 +32,13 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass implements
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private HttpClient mockHttpClient = context.mock(HttpClient.class);
     private ExecutorService threadPool;
-    private List<ExpectationError> expectationErrors;
     private InputStream mockInputStream1 = context.mock(InputStream.class, "stream1");
     private InputStream mockInputStream2 = context.mock(InputStream.class, "stream2");
     private InputStream mockInputStream3 = context.mock(InputStream.class, "stream3");
 
-    private static Calendar timerCalendar;
-    private static void startTimer() {
-        timerCalendar = Calendar.getInstance();
-    }
-
-    private static long endTimer() {
-        return (Calendar.getInstance().getTimeInMillis() - timerCalendar.getTimeInMillis());
-    }
-
     @Before
     public void initialise() {
         threadPool = Executors.newFixedThreadPool(5); //don't adjust this, most of the tests are built on the assumption of 5 threads
-        expectationErrors = new ArrayList<ExpectationError>();
-        Thread.setDefaultUncaughtExceptionHandler(this);
-    }
-
-    /**
-     * This is to ensure that no expectation errors on seperate threads go unnoticed
-     */
-    @After
-    public void teardown() {
-        if (!expectationErrors.isEmpty()) {
-            Assert.fail(expectationErrors.get(0).toString());
-        }
-    }
-
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        if (e instanceof ExpectationError) {
-            expectationErrors.add((ExpectationError)e);
-        }
     }
 
     /**
