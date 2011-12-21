@@ -54,6 +54,10 @@ BoreholeFilterForm = function(id,activeLayersRecord) {
         hiddenName: 'serviceFilter'
     });
 
+    if(!serviceEndpoints){
+        serviceCombo=[];
+    }
+
     BoreholeFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
         border      : false,
