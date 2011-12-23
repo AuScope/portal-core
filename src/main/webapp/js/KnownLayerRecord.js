@@ -35,7 +35,7 @@ KnownLayerRecord = Ext.extend(AbstractRecordWrapper, {
      * Gets whether this known layer should be hidden from the user as a boolean
      */
     getHidden : function() {
-        return this.getStringField('hidden');
+        return this.getBooleanField('hidden');
     },
 
     /**

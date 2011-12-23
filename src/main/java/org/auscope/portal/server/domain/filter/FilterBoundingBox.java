@@ -150,23 +150,53 @@ public class FilterBoundingBox implements Serializable {
      * @throws Exception the exception
      */
     public static FilterBoundingBox parseFromJSON(JSONObject obj) throws Exception {
-        FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
+        //Our filter bbox can come in a couple of formats
+        if (obj.containsKey("lowerCornerPoints") && obj.containsKey("upperCornerPoints")) {
+            FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
 
-        JSONArray lowerCornerPoints = obj.getJSONArray("lowerCornerPoints");
-        JSONArray upperCornerPoints = obj.getJSONArray("upperCornerPoints");
+            JSONArray lowerCornerPoints = obj.getJSONArray("lowerCornerPoints");
+            JSONArray upperCornerPoints = obj.getJSONArray("upperCornerPoints");
 
-        result.lowerCornerPoints = new double[lowerCornerPoints.size()];
-        result.upperCornerPoints = new double[upperCornerPoints.size()];
+            result.lowerCornerPoints = new double[lowerCornerPoints.size()];
+            result.upperCornerPoints = new double[upperCornerPoints.size()];
 
-        for (int i = 0; i < lowerCornerPoints.size(); i++) {
-            result.lowerCornerPoints[i] = lowerCornerPoints.getDouble(i);
+            for (int i = 0; i < lowerCornerPoints.size(); i++) {
+                result.lowerCornerPoints[i] = lowerCornerPoints.getDouble(i);
+            }
+
+            for (int i = 0; i < upperCornerPoints.size(); i++) {
+                result.upperCornerPoints[i] = upperCornerPoints.getDouble(i);
+            }
+
+            return result;
+        } else if (obj.containsKey("eastBoundLongitude") && obj.containsKey("westBoundLongitude") &&
+                obj.containsKey("northBoundLatitude") && obj.containsKey("southBoundLatitude")) {
+            FilterBoundingBox result = new FilterBoundingBox(obj.getString("crs"), null, null);
+
+            double eastBoundLongitude = obj.getDouble("eastBoundLongitude");
+            double westBoundLongitude = obj.getDouble("westBoundLongitude");
+            double northBoundLatitude = obj.getDouble("northBoundLatitude");
+            double southBoundLatitude = obj.getDouble("southBoundLatitude");
+
+            double adjustedWestBoundLong = westBoundLongitude;
+            double adjustedEastBoundLong = eastBoundLongitude;
+
+            //this is so we can fetch data when our bbox is crossing the anti meridian
+            //Otherwise our bbox wraps around the WRONG side of the planet
+            if (adjustedWestBoundLong <= 0 && adjustedEastBoundLong >= 0 ||
+                adjustedWestBoundLong >= 0 && adjustedEastBoundLong <= 0) {
+                adjustedWestBoundLong = (westBoundLongitude < 0) ? (180 - westBoundLongitude) : westBoundLongitude;
+                adjustedEastBoundLong = (eastBoundLongitude < 0) ? (180 - eastBoundLongitude) : eastBoundLongitude;
+            }
+
+            result.lowerCornerPoints = new double[] {Math.min(adjustedWestBoundLong, adjustedEastBoundLong), Math.min(northBoundLatitude, southBoundLatitude)};
+            result.upperCornerPoints = new double[] {Math.max(adjustedWestBoundLong, adjustedEastBoundLong), Math.max(northBoundLatitude, southBoundLatitude)};
+
+            return result;
         }
 
-        for (int i = 0; i < upperCornerPoints.size(); i++) {
-            result.upperCornerPoints[i] = upperCornerPoints.getDouble(i);
-        }
+        throw new IllegalArgumentException("obj cannot be decoded");
 
-        return result;
     }
 
     /**

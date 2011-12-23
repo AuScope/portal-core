@@ -42,6 +42,11 @@ import org.xml.sax.InputSource;
  */
 @Controller
 public class VocabController extends BasePortalController {
+    /** The name of the SISSVoc repository for ERML commodities */
+    public static final String COMMODITY_REPOSITORY = "commodity_vocab";
+    /** repository name for the Geoscience Australia darwin theme vocabulary*/
+    public static final String DARWIN_REPOSITORY = "ga-darwin";
+
     private final Log log = LogFactory.getLog(getClass());
 
     private HttpServiceCaller httpServiceCaller;
@@ -135,7 +140,7 @@ public class VocabController extends BasePortalController {
         try {
             //Do the request
             String url = portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.vocabService.url");
-            HttpMethodBase method = sissVocMethodMaker.getCommodityMethod(url, "commodity_vocab", "urn:cgi:classifierScheme:GA:commodity");
+            HttpMethodBase method = sissVocMethodMaker.getCommodityMethod(url, COMMODITY_REPOSITORY, "urn:cgi:classifierScheme:GA:commodity");
             response = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
 
             // Parse the response
@@ -214,7 +219,7 @@ public class VocabController extends BasePortalController {
     public ModelAndView getAllCSWThemes() throws Exception {
         //Make our method for querying SISVoc for all GA themes
         String url = portalPropertyPlaceholderConfigurer.resolvePlaceholder("HOST.vocabService.url");
-        HttpMethodBase method = sissVocMethodMaker.getConceptByLabelMethod(url, "ga-darwin", "*");
+        HttpMethodBase method = sissVocMethodMaker.getConceptByLabelMethod(url, DARWIN_REPOSITORY, "*");
 
         //Make the request, parse it into a document
         Node response = null;

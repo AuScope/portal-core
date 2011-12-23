@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
@@ -86,12 +87,23 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
     /**
      * A JMock Matcher for testing for a HttpMethodBase matching a few simplified terms
      * @param type If not null, the type of method to match for
-     * @param url If not null the URL to match for
-     * @param postBody If not null (and a PostMethod) the body of the post to match for
+     * @param url If not null the URL to match for (exact match required)
+     * @param postBody If not null (and a PostMethod) the body of the post to match for (exact match required)
      * @return
      */
     protected HttpMethodBaseMatcher aHttpMethodBase(HttpMethodType type, String url, String postBody) {
         return new HttpMethodBaseMatcher(type, url, postBody);
+    }
+
+    /**
+     * A JMock Matcher for testing for a HttpMethodBase matching a few simplified terms
+     * @param type If not null, the type of method to match for
+     * @param urlPattern If not null the URL pattern to match for
+     * @param postBodyPattern If not null (and a PostMethod) the pattern to match against the body of the post.
+     * @return
+     */
+    protected HttpMethodBaseMatcher aHttpMethodBase(HttpMethodType type, Pattern urlPattern, Pattern postBodyPattern) {
+        return new HttpMethodBaseMatcher(type, urlPattern, postBodyPattern);
     }
 
     /**

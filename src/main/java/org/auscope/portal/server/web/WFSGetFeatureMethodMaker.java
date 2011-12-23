@@ -166,6 +166,7 @@ public class WFSGetFeatureMethodMaker {
         ArrayList<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 
         //set all of the parameters
+        valuePairs.add(new NameValuePair("service", "WFS"));
         valuePairs.add(new NameValuePair("request", "GetFeature"));
         valuePairs.add(new NameValuePair("typeName", typeName));
         if (featureId != null) {

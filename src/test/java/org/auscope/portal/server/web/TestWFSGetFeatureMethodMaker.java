@@ -87,6 +87,21 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits),"version", expectedVersion));
     }
 
+    /**
+     * Ensure we are always specifying service=WFS
+     * @throws Exception
+     */
+    @Test
+    public void testServiceParam() throws Exception {
+        final String serviceUrl = "http://example.url";
+        final String typeName = "test:typeName";
+        final String featureId = "featureId";
+
+        WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
+
+        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, featureId),"service", "WFS"));
+    }
+
     @Test
     public void testOptionalParams() throws Exception {
         final String serviceUrl = "http://example.url";

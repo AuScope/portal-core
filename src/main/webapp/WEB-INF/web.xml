@@ -4,7 +4,7 @@
     xmlns="http://java.sun.com/xml/ns/j2ee"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
-						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+                        http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     version="2.4">
 
    <display-name>AuScope Portal</display-name>
@@ -57,6 +57,11 @@
       <url-pattern>*.kml</url-pattern>
    </servlet-mapping>
 
+   <servlet-mapping>
+      <servlet-name>annotationsDispatcher</servlet-name>
+      <url-pattern>*.diag</url-pattern>
+   </servlet-mapping>
+
    <welcome-file-list>
       <welcome-file>index.jsp</welcome-file>
    </welcome-file-list>
@@ -65,4 +70,39 @@
       <error-code>403</error-code>
       <location>/access_error.html</location>
    </error-page>
+
+
+   <!-- Security for admin page below this comment -->
+
+   <security-constraint>
+        <display-name>Admin User URLs</display-name>
+        <web-resource-collection>
+            <web-resource-name>Admin User URLs</web-resource-name>
+            <url-pattern>/admin.html</url-pattern>
+            <url-pattern>*.diag</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>manager</role-name>
+            <role-name>admin</role-name>
+            <role-name>tomcat</role-name>
+        </auth-constraint>
+    </security-constraint>
+
+    <security-role>
+        <role-name>manager</role-name>
+    </security-role>
+
+    <security-role>
+        <role-name>tomcat</role-name>
+    </security-role>
+
+    <security-role>
+        <role-name>admin</role-name>
+    </security-role>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>AuScope Portal</realm-name>
+    </login-config>
+
 </web-app>

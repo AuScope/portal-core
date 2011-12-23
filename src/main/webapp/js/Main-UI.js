@@ -367,34 +367,14 @@ Ext.onReady(function() {
                                                     showBoundsCSWRecord,
                                                     moveToBoundsCSWRecord);
 
-    //Returns an object
-    //{
-    //    bboxSrs : 'EPSG:4326'
-    //    lowerCornerPoints : [numbers]
-    //    upperCornerPoints : [numbers]
-    //}
+    //Returns BBox object
     var fetchVisibleMapBounds = function(gMapInstance) {
         var mapBounds = gMapInstance.getBounds();
         var sw = mapBounds.getSouthWest();
         var ne = mapBounds.getNorthEast();
         var center = mapBounds.getCenter();
 
-        var adjustedSWLng = sw.lng();
-        var adjustedNELng = ne.lng();
-
-        //this is so we can fetch data when our bbox is crossing the anti meridian
-        //Otherwise our bbox wraps around the WRONG side of the planet
-        if (adjustedSWLng <= 0 && adjustedNELng >= 0 ||
-            adjustedSWLng >= 0 && adjustedNELng <= 0) {
-            adjustedSWLng = (sw.lng() < 0) ? (180 - sw.lng()) : sw.lng();
-            adjustedNELng = (ne.lng() < 0) ? (180 - ne.lng()) : ne.lng();
-        }
-
-        return {
-                bboxSrs : 'EPSG:4326',
-                lowerCornerPoints : [Math.min(adjustedSWLng, adjustedNELng), Math.min(sw.lat(), ne.lat())],
-                upperCornerPoints : [Math.max(adjustedSWLng, adjustedNELng), Math.max(sw.lat(), ne.lat())]
-        };
+        return new BBox(ne.lat(), sw.lat(), ne.lng(), sw.lng());
     };
 
     var filterButton = new Ext.Button({

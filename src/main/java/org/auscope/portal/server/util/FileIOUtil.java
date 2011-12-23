@@ -46,4 +46,19 @@ public class FileIOUtil {
         is.close();
         return sb.toString();
     }
+
+    /**
+     * Utility function for closing a stream quietly (with no exceptions being raised)
+     * @param s The stream to close
+     */
+    public static void closeQuietly(InputStream s) {
+        if (s != null) {
+            try {
+                s.close();
+            } catch (IOException ioe) {
+                log.warn(String.format("Error closing stream - %1$s", ioe));
+                log.debug("Exception: ", ioe);
+            }
+        }
+    }
 }
