@@ -3,7 +3,9 @@ package org.auscope.portal.server.web.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -73,11 +75,14 @@ public class NVCLController extends BasePortalController {
                                       @RequestParam(required=false, value="maxFeatures", defaultValue="0") int maxFeatures,
                                       @RequestParam(required=false, value="bbox") String bboxJson,
                                       @RequestParam(required=false, value="onlyHylogger") String onlyHyloggerString,
-                                      @RequestParam(required=false, value="serviceFilter", defaultValue="")String serviceFilter) throws Exception {
+                                      @RequestParam(required=false, value="serviceFilter", defaultValue="") String serviceFilter) throws Exception {
 
-        if(!serviceFilter.equals("") && !(new URL(serviceUrl).getHost()).equalsIgnoreCase((new URL(serviceFilter)).getHost())){
+        String [] serviceFilterArray=serviceFilter.split(",");
+
+        if(!serviceFilter.equals("") && !(containHost(serviceUrl,serviceFilterArray))){
             return this.generateJSONResponseMAV(false,null,"Not Queried");
         }
+
         boolean onlyHylogger = false;
         if (onlyHyloggerString != null && onlyHyloggerString.length() > 0) {
             if (onlyHyloggerString.equals("on")) {
@@ -89,6 +94,17 @@ public class NVCLController extends BasePortalController {
 
         FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson);
         return doBoreholeFilter(serviceUrl,boreholeName, custodian, dateOfDrilling, maxFeatures,bbox, onlyHylogger);
+    }
+
+    private boolean containHost(String url,String[]filterUrls) throws MalformedURLException{
+       String urlHost=new URL(url).getHost();
+       for(String filterUrl:filterUrls){
+           String filterHost=new URL(filterUrl).getHost();
+           if(urlHost.equalsIgnoreCase(filterHost)){
+               return true;
+           }
+       }
+       return false;
     }
 
     /**

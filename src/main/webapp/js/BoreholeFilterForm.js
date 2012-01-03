@@ -10,18 +10,38 @@ BoreholeFilterForm = function(id,activeLayersRecord) {
 
     var serviceEndpoints=activeLayersRecord.getServiceEndpoints();
     var cswRecords=activeLayersRecord.getCSWRecords();
-    var administrativeAreas=[];
+    var administrativeAreas={};
+    var areas=[];
 
-    if(serviceEndpoints != null  && serviceEndpoints!= undefined){
+
+    if(serviceEndpoints){
         for(i=0;i<serviceEndpoints.length;i++){
             for(j=0;j<cswRecords.length;j++){
                 var cswRecord=cswRecords[j].getFilteredOnlineResources(undefined,undefined,undefined,serviceEndpoints[i],false)
                 if(cswRecord.length>0){
-                    administrativeAreas.push([cswRecords[j].getAdministrativeArea(),serviceEndpoints[i]]);
+                    //administrativeAreas.push([cswRecords[j].getAdministrativeArea(),[serviceEndpoints[i]]]);
+                    var key=cswRecords[j].getAdministrativeArea();
+                    administrativeAreas[key] = [serviceEndpoints[i]];
                     break;
                 }
             }
         }
+    }else{
+        for(j=0;j<cswRecords.length;j++){
+            var cswRecord=cswRecords[j].getOnlineResources();
+            if(cswRecord.length>0){
+                var key=cswRecords[j].getAdministrativeArea();
+                if(administrativeAreas[key]){
+                    administrativeAreas[key] = administrativeAreas[key].concat([cswRecord[0].url]);
+                }else{
+                    administrativeAreas[key] = [cswRecord[0].url];
+                }
+            }
+        }
+    };
+
+    for(key in administrativeAreas){
+        areas.push([key,administrativeAreas[key]]);
     };
 
     var serviceFilterText=new Ext.form.TextField({
@@ -47,16 +67,12 @@ BoreholeFilterForm = function(id,activeLayersRecord) {
                 'displayText',
                 'serviceFilter'
             ],
-            data: administrativeAreas
+            data: areas
         }),
         valueField: 'serviceFilter',
         displayField: 'displayText',
         hiddenName: 'serviceFilter'
     });
-
-    if(!serviceEndpoints){
-        serviceCombo=[];
-    }
 
     BoreholeFilterForm.superclass.constructor.call(this, {
         id          : String.format('{0}',id),
