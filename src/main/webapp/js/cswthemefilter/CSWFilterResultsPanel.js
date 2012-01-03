@@ -129,7 +129,6 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
                             cswRecord : selectedRecord
                         });
 
-                        //var popup = new CSWRecordDescriptionWindow(selectedRecord);
                         popup.show(this);
                     }
                 },

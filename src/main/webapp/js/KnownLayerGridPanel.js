@@ -13,20 +13,20 @@
  *
  */
 KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cswRecordStore, addLayerHandler, visibleLayerHandler, showBoundsHandler, moveToBoundsHandler) {
-	this.addLayerHandler = addLayerHandler;
+    this.addLayerHandler = addLayerHandler;
 
-	//This is so we can reference our search panel
-	var searchPanelId = id + '-search-panel';
+    //This is so we can reference our search panel
+    var searchPanelId = id + '-search-panel';
 
-	var rowExpander = new Ext.grid.RowExpander({
+    var rowExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template('<p>{description} </p><br>')
     });
 
-	var dsCopy = new KnownLayerStore();
-	knownFeatureTypeStore.on('datachanged', this.internalOnDataChanged, this);
-	dsCopy.copyFrom(knownFeatureTypeStore, this.knownLayerRecordFilter);
+    var dsCopy = new KnownLayerStore();
+    knownFeatureTypeStore.on('datachanged', this.internalOnDataChanged, this);
+    dsCopy.copyFrom(knownFeatureTypeStore, this.knownLayerRecordFilter);
 
-	KnownLayerGridPanel.superclass.constructor.call(this, {
+    KnownLayerGridPanel.superclass.constructor.call(this, {
         stripeRows       : true,
         autoExpandColumn : 'title',
         plugins          : [ rowExpander ],
@@ -52,44 +52,44 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
                 sortable: true,
                 dataIndex: 'title'
             },{
-            	id : 'knownType',
-            	header : '',
-            	width: 18,
-            	dataIndex: 'styleName', //this isn't actually rendered in this column
-            	renderer: function(value, metadata, record) {
-            		var knownLayerRecord = new KnownLayerRecord(record);
+                id : 'knownType',
+                header : '',
+                width: 18,
+                dataIndex: 'styleName', //this isn't actually rendered in this column
+                renderer: function(value, metadata, record) {
+                    var knownLayerRecord = new KnownLayerRecord(record);
 
-            		var linkedCSWRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
+                    var linkedCSWRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
 
-            		if (linkedCSWRecords.length === 0) {
-            			return '<div style="text-align:center"><img src="img/cross.png" width="16" height="16" align="CENTER"/></div>';
-            		}
+                    if (linkedCSWRecords.length === 0) {
+                        return '<div style="text-align:center"><img src="img/cross.png" width="16" height="16" align="CENTER"/></div>';
+                    }
 
-            		for (var i = 0; i < linkedCSWRecords.length; i++) {
-            			var onlineResources = linkedCSWRecords[i].getOnlineResources();
-	            		for (var j = 0; j < onlineResources.length; j++) {
-	            			if (onlineResources[j].onlineResourceType == 'WCS' ||
-	            				onlineResources[j].onlineResourceType == 'WFS') {
-	            				return '<div style="text-align:center"><img src="img/binary.png" width="16" height="16" align="CENTER"/></div>';
-	            			}
-	            		}
-            		}
+                    for (var i = 0; i < linkedCSWRecords.length; i++) {
+                        var onlineResources = linkedCSWRecords[i].getOnlineResources();
+                        for (var j = 0; j < onlineResources.length; j++) {
+                            if (onlineResources[j].onlineResourceType == 'WCS' ||
+                                onlineResources[j].onlineResourceType == 'WFS') {
+                                return '<div style="text-align:center"><img src="img/binary.png" width="16" height="16" align="CENTER"/></div>';
+                            }
+                        }
+                    }
 
-            		return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
-            	}
+                    return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
+                }
             },{
-            	id:'search',
-            	header: '',
-            	width: 45,
-            	dataIndex: 'proxyUrl', //this isn't actually rendered in this column
-            	resizable: false,
-            	menuDisabled: true,
-            	sortable: false,
-            	fixed: true,
-            	renderer: function (value, metadata, record) {
-            		//Assume every known feature type will have at least one visible bbox
-            		return '<img src="img/magglass.gif"/>';
-            	}
+                id:'search',
+                header: '',
+                width: 45,
+                dataIndex: 'proxyUrl', //this isn't actually rendered in this column
+                resizable: false,
+                menuDisabled: true,
+                sortable: false,
+                fixed: true,
+                renderer: function (value, metadata, record) {
+                    //Assume every known feature type will have at least one visible bbox
+                    return '<img src="img/magglass.gif"/>';
+                }
             },{
                 id:'groupCol',
                 width: 160,
@@ -121,53 +121,53 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
                    text     :'Visible',
                    tooltip  :'Display only layers in present view window',
                    handler:function() {
-               	   		var searchPanel = Ext.getCmp(searchPanelId);
-               	   		searchPanel.runCustomFilter('<visible layers>', function(rec) {
-               	   			return visibleLayerHandler(new KnownLayerRecord(rec));
-               	   		});
-               		}
+                              var searchPanel = Ext.getCmp(searchPanelId);
+                              searchPanel.runCustomFilter('<visible layers>', function(rec) {
+                                  return visibleLayerHandler(new KnownLayerRecord(rec));
+                              });
+                       }
                })
            ],
         listeners: {
-           	cellclick : function (grid, rowIndex, colIndex, e) {
-               	var fieldName = grid.getColumnModel().getDataIndex(colIndex);
-               	var knownLayerRecord = grid.getStore().getKnownLayerAt(rowIndex);
-               	if (fieldName === 'proxyUrl') {
-               		e.stopEvent();
+               cellclick : function (grid, rowIndex, colIndex, e) {
+                   var fieldName = grid.getColumnModel().getDataIndex(colIndex);
+                   var knownLayerRecord = grid.getStore().getKnownLayerAt(rowIndex);
+                   if (fieldName === 'proxyUrl') {
+                       e.stopEvent();
 
-                   	showBoundsHandler(knownLayerRecord);
-               	} else if (fieldName === 'styleName') {
-               		e.stopEvent();
-               		var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
+                       showBoundsHandler(knownLayerRecord);
+                   } else if (fieldName === 'styleName') {
+                       e.stopEvent();
+                       var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
 
-               		//Can show service info if there are no linked records
-               		if (cswRecords.length === 0) {
-               			return;
-               		}
+                       //Can show service info if there are no linked records
+                       if (cswRecords.length === 0) {
+                           return;
+                       }
 
-            		//Close an existing popup
-            		if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
-            			this.onlineResourcesPopup.close();
-            		}
+                    //Close an existing popup
+                    if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
+                        this.onlineResourcesPopup.close();
+                    }
 
-            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords, knownLayerRecord);
-            		this.onlineResourcesPopup.show(e.getTarget());
-               	}
-           	},
+                    this.onlineResourcesPopup = new CSWRecordDescriptionWindow({cswRecords : cswRecords, knownLayerRecord : knownLayerRecord});
+                    this.onlineResourcesPopup.show(e.getTarget());
+                   }
+               },
 
-           	celldblclick : function (grid, rowIndex, colIndex, e) {
-               	var record = grid.getStore().getAt(rowIndex);
-               	var fieldName = grid.getColumnModel().getDataIndex(colIndex);
-               	if (fieldName !== 'proxyUrl') {
-               		return;
-               	}
+               celldblclick : function (grid, rowIndex, colIndex, e) {
+                   var record = grid.getStore().getAt(rowIndex);
+                   var fieldName = grid.getColumnModel().getDataIndex(colIndex);
+                   if (fieldName !== 'proxyUrl') {
+                       return;
+                   }
 
-               	e.stopEvent();
+                   e.stopEvent();
 
-               	moveToBoundsHandler(grid.getStore().getKnownLayerAt(rowIndex));
-           	},
+                   moveToBoundsHandler(grid.getStore().getKnownLayerAt(rowIndex));
+               },
 
-           	mouseover : function(e, t) {
+               mouseover : function(e, t) {
                 e.stopEvent();
 
                 var row = e.getTarget('.x-grid3-row');
@@ -185,13 +185,13 @@ KnownLayerGridPanel = function(id, title, description, knownFeatureTypeStore, cs
 
                     //This is for the 'record type' column
                     if (col.cellIndex == '2') {
-                    	var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
-                    	var text = 'Click for detailed information about the web services this layer utilises';
-                    	if (cswRecords.length === 0) {
-                    		text = 'This layer currently has no services that it can utilise. Please try reloading the page later.';
-                    	}
+                        var cswRecords = knownLayerRecord.getLinkedCSWRecords(cswRecordStore);
+                        var text = 'Click for detailed information about the web services this layer utilises';
+                        if (cswRecords.length === 0) {
+                            text = 'This layer currently has no services that it can utilise. Please try reloading the page later.';
+                        }
 
-                    	this.currentToolTip = new Ext.ToolTip({
+                        this.currentToolTip = new Ext.ToolTip({
                             target: e.target ,
                             title: 'Service Information',
                             autoHide : true,
@@ -238,14 +238,14 @@ KnownLayerGridPanel.prototype.addLayerHandler = null;
 
 Ext.extend(KnownLayerGridPanel, Ext.grid.GridPanel, {
 
-	knownLayerRecordFilter : function(knownLayerRecord) {
-		return !knownLayerRecord.getHidden();
-	},
+    knownLayerRecordFilter : function(knownLayerRecord) {
+        return !knownLayerRecord.getHidden();
+    },
 
-	/**
-	 * Whenever the internal datastore changes, update our filtered copy
-	 */
-	internalOnDataChanged : function(store) {
-		this.getStore().copyFrom(this.initialConfig.originalStore, this.knownLayerRecordFilter);
-	}
+    /**
+     * Whenever the internal datastore changes, update our filtered copy
+     */
+    internalOnDataChanged : function(store) {
+        this.getStore().copyFrom(this.initialConfig.originalStore, this.knownLayerRecordFilter);
+    }
 });

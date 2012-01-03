@@ -78,14 +78,17 @@ CSWResourcesGrid = Ext.extend(Ext.grid.GridPanel, {
             hideHeaders : true,
             autoHeight: true,
             autoExpandColumn: 'text',
-            viewConfig : {
+            view : new Ext.grid.GroupingView({
+                groupTextTpl: '{text}',
+                showGroupName: false,
                 templates: {
                     cell: new Ext.Template(
                         '<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} x-selectable {css}" style="{style}" tabIndex="0" {cellAttr}>',
                         '<div class="x-grid3-cell-inner x-grid3-col-{id}" {attr}>{value}</div>',
-                        '</td>')
+                        '</td>'
+                    )
                 }
-            },
+            }),
             columns: [{
                 id : 'text',
                 header : 'Text',
@@ -104,30 +107,18 @@ CSWResourcesGrid = Ext.extend(Ext.grid.GridPanel, {
                         name = '&gt;Untitled&lt;';
                     }
 
-                    //Adjust our name with our service type (if appopriate)
-                    switch(record.get('type')) {
-                    case 'WFS':
-                        name += ' [Web Feature Service]';
-                        break;
-                    case 'WMS':
-                        name += ' [Web Map Service]';
-                        break;
-                    case 'WCS':
-                        name += ' [Web Coverage Service]';
-                        break;
-                    }
-
                     //Truncate description
                     var maxLength = 190;
                     if (description.length > maxLength) {
                         description = description.substring(0, maxLength) + '...';
                     }
 
+                    //Render our HTML
                     switch(record.get('type')) {
                     case 'WWW':
-                        return '<a target="_blank" href="' + onlineRes.url + '"><b>' + name + '</b></a><br/><span style="color:#555;">' + description + '</span>';
+                        return String.format('<a target="_blank" href="{0}"><b>{1}</b></a><br/><span style="color:#555;">{2}</span>', onlineRes.url, name, description);
                     default:
-                        return '<b>' + name + '</b><br/><span style="color:#555;">' + description + '</span>';
+                        return String.format('<b>{0}</b><br/><span style="color:#555;">{1}<br/>{2}</span>', name, onlineRes.url, description);
                     }
                 }
             },{
@@ -194,6 +185,25 @@ CSWResourcesGrid = Ext.extend(Ext.grid.GridPanel, {
                     default :
                         return '';
                     }
+                }
+            },{
+                id : 'type',
+                header : 'Service Type',
+                dataIndex: 'type',
+                hidden: true,
+                renderer : function(value) {
+                    switch (value) {
+                    case 'WWW':
+                        return 'Web Link';
+                    case 'WFS':
+                        return 'OGC Web Feature Service 1.1.0';
+                    case 'WMS':
+                        return 'OGC Web Map Service 1.1.1';
+                    case 'WCS':
+                        return 'OGC Web Coverage Service 1.0.0';
+                    }
+
+                    return '';
                 }
             }]
         });

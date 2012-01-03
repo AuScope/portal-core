@@ -1263,9 +1263,9 @@ Ext.onReady(function() {
                 var cswRecords = activeLayerRecord.getCSWRecords();
                 if (activeLayerRecord.getSource() === 'KnownLayer'){
                     var knownLayerRecord = knownLayersStore.getKnownLayerById(activeLayerRecord.getId());
-                    this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords, knownLayerRecord);
-                }else{
-                    this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecords);
+                    this.onlineResourcesPopup = new CSWRecordDescriptionWindow({cswRecords : cswRecords, knownLayerRecord : knownLayerRecord});
+                } else {
+                    this.onlineResourcesPopup = new CSWRecordDescriptionWindow({cswRecords : cswRecords});
                 }
                 this.onlineResourcesPopup.show(e.getTarget());
 

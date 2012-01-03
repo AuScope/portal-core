@@ -15,14 +15,14 @@
  *
  */
 CustomLayersGridPanel = function(id, title, description, cswRecordStore, addLayerHandler, showBoundsHandler, moveToBoundsHandler) {
-	this.addLayerHandler = addLayerHandler;
+    this.addLayerHandler = addLayerHandler;
 
-	var rowExpander = new Ext.grid.RowExpander({
+    var rowExpander = new Ext.grid.RowExpander({
         tpl : new Ext.Template('<p>{dataIdentificationAbstract}</p><br>')
     });
 
-	CustomLayersGridPanel.superclass.constructor.call(this, {
-		id				 : id,
+    CustomLayersGridPanel.superclass.constructor.call(this, {
+        id				 : id,
         stripeRows       : true,
         autoExpandColumn : 'title',
         plugins          : [ rowExpander ],
@@ -43,29 +43,29 @@ CustomLayersGridPanel = function(id, title, description, cswRecordStore, addLaye
                 sortable: true,
                 dataIndex: 'serviceName'
             },{
-            	id : 'recordType',
-            	header : '',
-            	width: 18,
-            	dataIndex: 'onlineResources',
-            	renderer: function(value, metadata, record) {
-            		return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
-            	}
+                id : 'recordType',
+                header : '',
+                width: 18,
+                dataIndex: 'onlineResources',
+                renderer: function(value, metadata, record) {
+                    return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
+                }
             }, {
-            	id:'search',
-            	header: '',
-            	width: 45,
-            	dataIndex: 'geographicElements',
-            	resizable: false,
-            	menuDisabled: true,
-            	sortable: false,
-            	fixed: true,
-            	renderer: function (value) {
-            		if (value.length > 0) {
-            			return '<img src="img/magglass.gif"/>';
-            		} else {
-            			return '';
-            		}
-            	}
+                id:'search',
+                header: '',
+                width: 45,
+                dataIndex: 'geographicElements',
+                resizable: false,
+                menuDisabled: true,
+                sortable: false,
+                fixed: true,
+                renderer: function (value) {
+                    if (value.length > 0) {
+                        return '<img src="img/magglass.gif"/>';
+                    } else {
+                        return '';
+                    }
+                }
             }
         ],
         tbar: [
@@ -73,16 +73,16 @@ CustomLayersGridPanel = function(id, title, description, cswRecordStore, addLaye
             'style="color:#15428B; font-weight:bold">Enter WMS Url:</span>',
             ' ',
             {
-            	xtype:'button',
-            	text:'<font color=#ff0000><b>?</b> </font>',
-            	qtip: 'You will need to enter the fully qualified URL of a WMS. Any layers that can be projected in EPSG:4326 will then be made available for display.',
-        	   	handler: function(){
-            		Ext.Msg.show({
-            			title:'Hint',
-            			msg: 'You will need to enter the fully qualified URL of a WMS. Any layers that can be projected in EPSG:4326 will then be made available for display.',
-            			buttons: Ext.Msg.OK
-            		});
-            	}
+                xtype:'button',
+                text:'<font color=#ff0000><b>?</b> </font>',
+                qtip: 'You will need to enter the fully qualified URL of a WMS. Any layers that can be projected in EPSG:4326 will then be made available for display.',
+                   handler: function(){
+                    Ext.Msg.show({
+                        title:'Hint',
+                        msg: 'You will need to enter the fully qualified URL of a WMS. Any layers that can be projected in EPSG:4326 will then be made available for display.',
+                        buttons: Ext.Msg.OK
+                    });
+                }
 
             },
             new Ext.ux.form.SearchTwinTriggerField({
@@ -101,41 +101,41 @@ CustomLayersGridPanel = function(id, title, description, cswRecordStore, addLaye
             region :'south',
             scope : this,
             handler: function() {
-	        	var cswRecordToAdd = new CSWRecord(this.getSelectionModel().getSelected());
-	    		addLayerHandler(cswRecordToAdd);
+                var cswRecordToAdd = new CSWRecord(this.getSelectionModel().getSelected());
+                addLayerHandler(cswRecordToAdd);
             }
         }],
         listeners: {
-        	cellclick : function (grid, rowIndex, colIndex, e) {
-            	var fieldName = grid.getColumnModel().getDataIndex(colIndex);
-            	var cswRecord = grid.getStore().getCSWRecordAt(rowIndex);
-            	if (fieldName === 'geographicElements') {
-            		e.stopEvent();
-	            	showBoundsHandler(cswRecord);
-            	}else if (fieldName === 'onlineResources') {
-            		e.stopEvent();
+            cellclick : function (grid, rowIndex, colIndex, e) {
+                var fieldName = grid.getColumnModel().getDataIndex(colIndex);
+                var cswRecord = grid.getStore().getCSWRecordAt(rowIndex);
+                if (fieldName === 'geographicElements') {
+                    e.stopEvent();
+                    showBoundsHandler(cswRecord);
+                }else if (fieldName === 'onlineResources') {
+                    e.stopEvent();
 
-            		//Close an existing popup
-            		if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
-            			this.onlineResourcesPopup.close();
-            		}
+                    //Close an existing popup
+                    if (this.onlineResourcesPopup && this.onlineResourcesPopup.isVisible()) {
+                        this.onlineResourcesPopup.close();
+                    }
 
-            		this.onlineResourcesPopup = new CSWRecordDescriptionWindow(cswRecord);
-            		this.onlineResourcesPopup.show(e.getTarget());
-            	}
-        	},
+                    this.onlineResourcesPopup = new CSWRecordDescriptionWindow({cswRecords : cswRecord});
+                    this.onlineResourcesPopup.show(e.getTarget());
+                }
+            },
 
-        	celldblclick : function (grid, rowIndex, colIndex, e) {
-            	var record = grid.getStore().getAt(rowIndex);
-            	var fieldName = grid.getColumnModel().getDataIndex(colIndex);
-            	if (fieldName === 'geographicElements') {
-            		e.stopEvent();
+            celldblclick : function (grid, rowIndex, colIndex, e) {
+                var record = grid.getStore().getAt(rowIndex);
+                var fieldName = grid.getColumnModel().getDataIndex(colIndex);
+                if (fieldName === 'geographicElements') {
+                    e.stopEvent();
 
-                	moveToBoundsHandler(grid.getStore().getCSWRecordAt(rowIndex));
-            	}
-        	},
+                    moveToBoundsHandler(grid.getStore().getCSWRecordAt(rowIndex));
+                }
+            },
 
-        	mouseover : function(e, t) {
+            mouseover : function(e, t) {
                 e.stopEvent();
 
                 var row = e.getTarget('.x-grid3-row');
@@ -155,7 +155,7 @@ CustomLayersGridPanel = function(id, title, description, cswRecordStore, addLaye
                     if (col.cellIndex == '2') {
 
 
-                    	this.currentToolTip = new Ext.ToolTip({
+                        this.currentToolTip = new Ext.ToolTip({
                             target: e.target ,
                             title: 'Service Information for ' + cswRecord.getServiceName(),
                             autoHide : true,
@@ -174,24 +174,24 @@ CustomLayersGridPanel = function(id, title, description, cswRecordStore, addLaye
                     }
                     //this is the status icon column
                     else if (col.cellIndex == '3') {
-                    	if(cswRecord.internalRecord.data.geographicElements.length > 0){
-	                        this.currentToolTip = new Ext.ToolTip({
-	                            target: e.target ,
-	                            title: 'Bounds Information',
-	                            autoHide : true,
-	                            html: 'Click to see the bounds of this layer',
-	                            anchor: 'bottom',
-	                            trackMouse: true,
-	                            showDelay:60,
-	                            autoHeight:true,
-	                            autoWidth: autoWidth,
-	                            listeners : {
-	                                hide : function(component) {
-	                                    component.destroy();
-	                                }
-	                            }
-	                        });
-                    	}
+                        if(cswRecord.internalRecord.data.geographicElements.length > 0){
+                            this.currentToolTip = new Ext.ToolTip({
+                                target: e.target ,
+                                title: 'Bounds Information',
+                                autoHide : true,
+                                html: 'Click to see the bounds of this layer',
+                                anchor: 'bottom',
+                                trackMouse: true,
+                                showDelay:60,
+                                autoHeight:true,
+                                autoWidth: autoWidth,
+                                listeners : {
+                                    hide : function(component) {
+                                        component.destroy();
+                                    }
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -203,12 +203,12 @@ CustomLayersGridPanel.prototype.addLayerHandler = null;
 
 
 Ext.extend(CustomLayersGridPanel, Ext.grid.GridPanel, {
-	/**
-	 * Whenever the internal datastore changes, update our filtered copy
-	 * @param store
-	 * @return
-	 */
-	internalOnDataChanged	: function(store) {
-		this.getStore().copyFrom(store, this.cswRecordFilter);
-	}
+    /**
+     * Whenever the internal datastore changes, update our filtered copy
+     * @param store
+     * @return
+     */
+    internalOnDataChanged	: function(store) {
+        this.getStore().copyFrom(store, this.cswRecordFilter);
+    }
 });
