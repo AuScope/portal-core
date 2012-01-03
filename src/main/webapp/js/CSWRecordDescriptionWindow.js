@@ -37,8 +37,8 @@ CSWRecordDescriptionWindow = Ext.extend(Ext.Window, {
             autoHeight : autoHeight,
             autoScroll : true,
             height : height,
-            width : 800,
-        })
+            width : 800
+        });
 
         //Set our 'always override' values
         Ext.apply(cfg, {
