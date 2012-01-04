@@ -363,6 +363,33 @@ ActiveLayersRecord = Ext.extend(AbstractRecordWrapper, {
      */
     setWFSRequestTransIdUrl : function(transIdUrl) {
         this.internalRecord.transIdUrl = transIdUrl;
+    },
+
+    /**
+     * Gets a Boolean indicating whether the String endpoint (a URL) is explicitly/implicitly included/excluded
+     *
+     * If no endpoint inclusion/exclusions are specified this function returns true
+     *
+     * If true the endpoint has not been excluded and is OK to use
+     * If false the endpoint should not be used for any visualisation/download purposes.
+     */
+    isEndpointIncluded : function(endpoint) {
+        var endpoints = this.getServiceEndpoints();
+
+        //No inclusions/exclusions
+        if (!endpoints || endpoints.length === 0) {
+            return true;
+        }
+
+        //Look for an explicit inclusion/exclusion
+        for(var i = 0; i < endpoints.length; i++) {
+            if(endpoints[i].indexOf(endpoint) >= 0) {
+                return this.includeEndpoints();
+            }
+        }
+
+        //otherwise we have an implicit inclusion/exclusion
+        return !this.includeEndpoints();
     }
 });
 

@@ -186,6 +186,28 @@ Ext.onReady(function() {
         return false;
     };
 
+    //Given an Array of BBox objects, show on the map a temporary highlight of those regions
+    //bboxList - an array of BBox objects
+    //bboxOverlayManager - an OverlayManager which will receive the polygons before being cleared
+    var showBounds = function(bboxList, bboxOverlayManager) {
+        //Iterate our geographic els to get our list of bboxes
+        for (var i = 0; i < bboxList.length; i++) {
+            var polygonList = bboxList[i].toGMapPolygon('00FF00', 0, 0.7,'#00FF00', 0.6);
+
+            for (var j = 0; j < polygonList.length; j++) {
+                polygonList[j].title = 'bbox';
+                bboxOverlayManager.addOverlay(polygonList[j]);
+            }
+        }
+
+        //Make the bbox disappear after a short while
+        var clearTask = new Ext.util.DelayedTask(function(){
+            bboxOverlayManager.clearOverlays();
+        });
+
+        clearTask.delay(2000);
+    };
+
     //Given a CSWRecord, show (on the map) the list of bboxes associated with that record temporarily
     //bboxOverlayManager - if specified, will be used to store the overlays, otherwise the cswRecord's
     //                      bboxOverlayManager will be used
@@ -203,24 +225,15 @@ Ext.onReady(function() {
         }
 
         //Iterate our geographic els to get our list of bboxes
+        var bboxList = [];
         for (var i = 0; i < geoEls.length; i++) {
             var geoEl = geoEls[i];
             if (geoEl instanceof BBox) {
-                var polygonList = geoEl.toGMapPolygon('00FF00', 0, 0.7,'#00FF00', 0.6);
-
-                for (var j = 0; j < polygonList.length; j++) {
-                    polygonList[j].title = 'bbox';
-                    bboxOverlayManager.addOverlay(polygonList[j]);
-                }
+                bboxList.push(geoEl);
             }
         }
 
-        //Make the bbox disappear after a short while
-        var clearTask = new Ext.util.DelayedTask(function(){
-            bboxOverlayManager.clearOverlays();
-        });
-
-        clearTask.delay(2000);
+        showBounds(bboxList, bboxOverlayManager);
     };
 
     //Pans/Zooms the map so the specified BBox object is visible
@@ -746,9 +759,7 @@ Ext.onReady(function() {
 
             //Proceed with the query only if the resource url is contained in the list
             //of service endpoints for the known layer, or if the list is null.
-            if(activeLayerRecord.getServiceEndpoints() == null  ||
-                    includeEndpoint(activeLayerRecord.getServiceEndpoints(),
-                            wfsOnlineResource.url, activeLayerRecord.includeEndpoints())) {
+            if(activeLayerRecord.isEndpointIncluded(wfsOnlineResource.url)) {
 
                 //Generate our filter parameters for this service (or use the override values if specified)
                 var filterParameters = { };
@@ -794,19 +805,6 @@ Ext.onReady(function() {
         }
         activeLayerRecord.setWFSRequestTransId(transId);
         activeLayerRecord.setWFSRequestTransIdUrl(transIdUrl);
-    };
-
-    /**
-     * determines whether or not a particular endpoint should be included when loading
-     * a layer
-     */
-    var includeEndpoint = function(endpoints, endpoint, includeEndpoints) {
-        for(var i = 0; i < endpoints.length; i++) {
-            if(endpoints[i].indexOf(endpoint) >= 0) {
-                return includeEndpoints;
-            }
-        }
-        return !includeEndpoints;
     };
 
     /**
@@ -1322,48 +1320,50 @@ Ext.onReady(function() {
                     //So lets find the first record with a type we can choose (Prioritise WFS -> WCS -> WMS)
                     var cswRecords = wfsRecords;
                     if (cswRecords.length !== 0) {
-                        var filterParameters = activeLayerRecord.getLastFilterParameters();
-                        if (!filterParameters) {
-                            filterParameters = {};
-                        }
-                        var bbox = filterParameters.bbox;
-                        var boundingbox = Ext.util.JSON.encode(fetchVisibleMapBounds(map));
-
-                        if(bbox === null || bbox === undefined){
-                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, null);
-                        }
-                        else{
-                            if(bbox === boundingbox){
-                                downloadWFS(cswRecords, activeLayerRecord, filterParameters, bbox);
-                            }
-                            else{
-                                Ext.MessageBox.show({
-                                    buttons:{yes:'Use current', no:'Use original'},
-                                    fn:function (buttonId) {
-                                        if (buttonId === 'yes') {
-                                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, boundingbox);
-                                        } else if (buttonId === 'no') {
-                                            downloadWFS(cswRecords, activeLayerRecord, filterParameters, bbox);
+                        var downloadWindow = new WFS.DownloadWindow({
+                            width : 550,
+                            height : 200,
+                            activeLayerRecord : activeLayerRecord,
+                            currentVisibleBounds : fetchVisibleMapBounds(map),
+                            modal : true,
+                            listeners : {
+                                renderbbox : function(downloadWindow, bbox) {
+                                    var bboxOverlayManager = null;
+                                    if (activeLayerRecord.getSource() === 'KnownLayer') {
+                                        var knownLayerRecord = knownLayersStore.getKnownLayerById(activeLayerRecord.getId());
+                                        bboxOverlayManager = knownLayerRecord.getBboxOverlayManager();
+                                        if (bboxOverlayManager) {
+                                            bboxOverlayManager.clearOverlays();
+                                        } else {
+                                            bboxOverlayManager = new OverlayManager(map);
+                                            knownLayerRecord.setBboxOverlayManager(bboxOverlayManager);
                                         }
-                                    },
-                                    modal:true,
-                                    msg:'The visible bounds have changed since you added this layer. Would you like to download using the original or the current visible bounds?',
-                                    title:'Warning: Changed Visible Bounds!'
-                                });
-                            }
-                        }
-                    }
+                                    } else {
+                                        var cswRecord = cswRecordStore.getCSWRecordById(activeLayerRecord.getId());
+                                        bboxOverlayManager = cswRecord.getBboxOverlayManager();
+                                        if (bboxOverlayManager) {
+                                            bboxOverlayManager.clearOverlays();
+                                        } else {
+                                            bboxOverlayManager = new OverlayManager(map);
+                                            cswRecord.setBboxOverlayManager(bboxOverlayManager);
+                                        }
+                                    }
 
-                    if (wfsRecords.length === 0 && wcsRecords.length !== 0) {
+                                    showBounds([bbox], bboxOverlayManager);
+                                },
+                                scrolltobbox : function(downloadWindow, bbox) {
+                                    moveMapToBounds(bbox);
+                                }
+                            }
+                        });
+                        downloadWindow.show();
+                    } else if (wcsRecords.length !== 0) {
                         cswRecords = wcsRecords;
                         //Assumption - we only expect 1 WCS
                         var wcsOnlineResource = cswRecords[0].getFilteredOnlineResources('WCS')[0];
                         showWCSDownload(wcsOnlineResource.url, wcsOnlineResource.name);
                         return;
-                    }
-
-                    //For WMS we download every WMS
-                    if (wfsRecords.length === 0 && wcsRecords.length === 0 && wmsRecords.length !== 0) {
+                    } else if (wmsRecords.length !== 0) {
                         cswRecords = wmsRecords;
                         var downloadParameters = {
                             serviceUrls : [],
@@ -1420,60 +1420,6 @@ Ext.onReady(function() {
             }
         }
     });
-
-
-    /**
-     * Given a list of records associated with an active layer, generate a list of service URL's
-     * for downloading all data from all WFS's that match filterParameters
-     *
-     * The actual download request will be routed through an internal proxy for returning the
-     * responses as a single zip file that the user will be prompted to download
-     *
-     * @param bbox [Optional] optional bounding box
-     */
-    var downloadWFS = function(cswRecords, activeLayerRecord, filterParameters, bbox) {
-        //We have a set of parameters that will be passed to our download proxy
-        var downloadParameters = {
-            serviceUrls : []
-        };
-        var proxyUrl = activeLayerRecord.getProxyFetchUrl() &&  activeLayerRecord.getProxyFetchUrl().length > 0 ? activeLayerRecord.getProxyFetchUrl() : 'getAllFeatures.do';
-        var prefixUrl = window.location.protocol + "//" + window.location.host + WEB_CONTEXT + "/" + proxyUrl + "?";
-
-
-        for (var i = 0; i < cswRecords.length; i++) {
-            var wfsOnlineResources = cswRecords[i].getFilteredOnlineResources('WFS');
-            var cswWfsRecordCount = cswRecords.length;
-
-            for (var j = 0; j < wfsOnlineResources.length; j++) {
-                //Generate our filter parameters (or just grab the last set used
-                var url = wfsOnlineResources[j].url;
-                var currentFilterParameters = copy_obj(filterParameters);
-
-                currentFilterParameters.serviceUrl = wfsOnlineResources[j].url;
-                currentFilterParameters.typeName = wfsOnlineResources[j].name;
-                currentFilterParameters.maxFeatures = 0;
-                currentFilterParameters.bbox = bbox;
-
-                if(activeLayerRecord.getServiceEndpoints() === null ||
-                   includeEndpoint(activeLayerRecord.getServiceEndpoints(), url, activeLayerRecord.includeEndpoints())) {
-                    downloadParameters.serviceUrls.push(Ext.urlEncode(currentFilterParameters, prefixUrl));
-                }
-            }
-        }
-
-        //download the service URLs through our zipping proxy
-        FileDownloader.downloadFile('downloadGMLAsZip.do', downloadParameters);
-    }
-
-   /** This function copy an object to another by value and not by reference**/
-   var copy_obj = function(objToCopy) {
-        var obj = new Object();
-
-        for (var e in objToCopy) {
-          obj[e] = objToCopy[e];
-        }
-        return obj;
-  };
 
     // basic tabs 1, built from existing content
     var tabsPanel = new Ext.TabPanel({
