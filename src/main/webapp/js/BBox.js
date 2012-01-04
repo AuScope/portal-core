@@ -125,7 +125,7 @@ BBox.prototype.internalSplitBboxes = function(bbox, resultList) {
     }
 
     //SPLIT CASE 2: Polygon crossing anti meridian
-    if (bbox.westBoundLongitude < 0 && bbox.eastBoundLongitude > 0) {
+    if (bbox.westBoundLongitude > 0 && bbox.eastBoundLongitude < 0) {
         var splits = bbox.splitAt(-180);
         for (var i = 0; i < splits.length; i++) {
             this.internalSplitBboxes(splits[i], resultList);
