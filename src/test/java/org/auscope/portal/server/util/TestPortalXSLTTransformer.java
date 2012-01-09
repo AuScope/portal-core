@@ -71,4 +71,53 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
         counter = (Double) xPath.evaluate("count(Document/Placemark/MultiGeometry/Point/Style/IconStyle/Icon/href)", root, XPathConstants.NUMBER);
         Assert.assertEquals(8.0, counter.doubleValue(),0);
     }
+
+
+    /**
+     * Unit test for testing the basic features of the transformer with the kml.xsl XSLT
+     * @throws Exception
+     */
+    @Test
+    public void testFeatureMemberEncoding() throws Exception {
+        final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/commodityGetFeatureResponse.xml");
+        final InputStream inputStream = new FileInputStream("src/main/webapp/WEB-INF/xsl/WfsToHtml.xsl");
+        final Properties properties = new Properties();
+
+        properties.setProperty("serviceURL", "fake-service-url");
+
+        String convertedText = transformer.convert(testXml, inputStream, properties);
+
+        //Check we have data
+        Assert.assertNotNull(convertedText);
+        Assert.assertTrue(convertedText.length() > 0);
+
+        Assert.assertTrue(convertedText.contains("urn:cgi:feature:GSV:Commodity:361169:AU"));
+        Assert.assertTrue(convertedText.contains("urn:cgi:feature:GSV:Commodity:361170:AU"));
+
+    }
+
+    /**
+     * Unit test for testing the basic features of the transformer with the kml.xsl XSLT
+     * @throws Exception
+     */
+    @Test
+    public void testFeatureMembersEncoding() throws Exception {
+        final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/mineGetFeatureResponse.xml");
+        final InputStream inputStream = new FileInputStream("src/main/webapp/WEB-INF/xsl/WfsToHtml.xsl");
+        final Properties properties = new Properties();
+
+        properties.setProperty("serviceURL", "fake-service-url");
+
+        String convertedText = transformer.convert(testXml, inputStream, properties);
+
+        //Check we have data
+        Assert.assertNotNull(convertedText);
+        Assert.assertTrue(convertedText.length() > 0);
+
+        Assert.assertTrue(convertedText.contains("WOOLDRIDGE CREEK WORKINGS"));
+        Assert.assertTrue(convertedText.contains("HALL MAGNESITE MINE"));
+        Assert.assertTrue(convertedText.contains("http://services-test.auscope.org/resource/feature/pirsa/mine/95"));
+        Assert.assertTrue(convertedText.contains("http://services-test.auscope.org/resource/feature/pirsa/mine/217"));
+
+    }
 }
