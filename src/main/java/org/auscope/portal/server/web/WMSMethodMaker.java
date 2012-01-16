@@ -177,7 +177,6 @@ public class WMSMethodMaker {
         options.add(new NameValuePair("service", "WMS"));
         options.add(new NameValuePair("request", "GetFeatureInfo"));
         options.add(new NameValuePair("version", "1.1.1"));
-        options.add(new NameValuePair("format", format));
         options.add(new NameValuePair("layers", layer));
         options.add(new NameValuePair("layer", layer));
         options.add(new NameValuePair("BBOX", bboxString));
