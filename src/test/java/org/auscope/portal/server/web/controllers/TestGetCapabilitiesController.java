@@ -46,7 +46,7 @@ public class TestGetCapabilitiesController extends PortalTestClass {
             List ls=(List) mv.getModelMap().get("data");
             Assert.assertEquals(21,ls.size());
             ModelMap mm=(ModelMap) ls.get(0);
-            Assert.assertTrue(mm.get("contactOrganisation").equals("Test organization"));
+            Assert.assertTrue(mm.get("contactOrg").equals("Test organization"));
         }finally{
             try{
                 is.close();

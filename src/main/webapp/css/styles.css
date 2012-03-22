@@ -15,7 +15,7 @@
     }
 
     #body-container {
-    	position: fixed;
+        position: fixed;
         top: 100px;
         bottom: 0px;
         width: 100%;
@@ -90,15 +90,15 @@
     }
 
     #auscopePre {
-		white-space: pre-wrap;       /* css-3 */
-		white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-		white-space: -pre-wrap;      /* Opera 4-6 */
-		white-space: -o-pre-wrap;    /* Opera 7 */
-		word-wrap: break-word;       /* Internet Explorer 5.5+ */
+        white-space: pre-wrap;       /* css-3 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
         width: 99%;
     }
 
-    #filterpanelbox {
+    .centeredlabel {
          margin:15px;
          padding:15px;
          border:1px dotted #999;
@@ -109,8 +109,8 @@
 
     <!-- AUS-1466 - disable red triangles - they confuse people -->
     .x-grid-dirty-cell {
-    	background-image:none ! important;
-	}
-	.x-grid3-dirty-cell {
-    	background-image:none ! important;
-	}
+        background-image:none ! important;
+    }
+    .x-grid3-dirty-cell {
+        background-image:none ! important;
+    }

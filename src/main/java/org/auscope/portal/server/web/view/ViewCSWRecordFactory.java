@@ -28,20 +28,23 @@ public class ViewCSWRecordFactory {
     public ModelMap toView(CSWRecord record) {
         ModelMap obj = new ModelMap();
 
-        obj.put("serviceName", record.getServiceName());
+        obj.put("name", record.getServiceName());
         obj.put("resourceProvider", record.getResourceProvider());
-        obj.put("fileIdentifier", record.getFileIdentifier());
+        obj.put("id", record.getFileIdentifier());
         obj.put("recordInfoUrl", record.getRecordInfoUrl());
-        obj.put("dataIdentificationAbstract", record.getDataIdentificationAbstract());
+        obj.put("description", record.getDataIdentificationAbstract());
 
         CSWResponsibleParty rp = record.getContact();
+        String adminArea = null;
+        String contactOrg = "Unknown";
         if (rp != null) {
-            obj.put("contactOrganisation", rp.getOrganisationName());
-            obj.put("administrativeArea", (rp.getContactInfo() == null ? null
-                    : rp.getContactInfo().getAddressAdministrativeArea()));
-        } else {
-            obj.put("contactOrganisation", "");
+            if (rp.getOrganisationName() != null && !rp.getOrganisationName().isEmpty()) {
+                contactOrg = rp.getOrganisationName();
+            }
+            adminArea = (rp.getContactInfo() == null ? null : rp.getContactInfo().getAddressAdministrativeArea());
         }
+        obj.put("adminArea", adminArea);
+        obj.put("contactOrg", contactOrg);
 
         List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object> >();
         if (record.getOnlineResources() != null) {
@@ -91,7 +94,7 @@ public class ViewCSWRecordFactory {
         ModelMap obj = new ModelMap();
 
         obj.put("url", res.getLinkage().toString());
-        obj.put("onlineResourceType", res.getType().name());
+        obj.put("type", res.getType().name());
         obj.put("name", res.getName());
         obj.put("description", res.getDescription().toString());
 

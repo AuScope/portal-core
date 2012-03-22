@@ -36,6 +36,8 @@ public class GetCapabilitiesRecord {
     /** The get map url. */
     private String getMapUrl = "";
 
+    private String[] getMapFormats = new String[] {};
+
     /** The layers. */
     private ArrayList<GetCapabilitiesWMSLayerRecord> layers;
 
@@ -50,6 +52,8 @@ public class GetCapabilitiesRecord {
 
     /** The extract url expression. */
     private static final String EXTRACTURLEXPRESSION = "/WMT_MS_Capabilities/Capability/Request/GetMap/DCPType/HTTP/Get/OnlineResource";
+
+    private static final String EXTRACTGETMAPFORMATEXPRESSION = "/WMT_MS_Capabilities/Capability/Request/GetMap/Format";
 
     /** The extract layer expression. */
     private static final String EXTRACTLAYEREXPRESSION = "/WMT_MS_Capabilities/Capability/descendant::Layer[@queryable='1']";
@@ -67,6 +71,7 @@ public class GetCapabilitiesRecord {
             this.organisation = getContactOrganisation(doc);
             this.getMapUrl = getGetMapUrl(doc);
             this.layerSRS = getWMSLayerSRS(doc);
+            this.getMapFormats = getWMSGetMapFormats(doc);
             if (isWMS()) {
                 this.layers = getWMSLayers(doc);
             } else {
@@ -146,6 +151,15 @@ public class GetCapabilitiesRecord {
      */
     public String[] getLayerSRS() {
         return this.layerSRS;
+    }
+
+    /**
+     * Returns an array of MIME strings representing the valid format
+     * for the GetMap operation
+     * @return
+     */
+    public String[] getGetMapFormats() {
+        return getMapFormats;
     }
 
 
@@ -263,6 +277,30 @@ public class GetCapabilitiesRecord {
             log.error("GetCapabilities - getLayerSRS xml parsing error: " + e.getMessage());
         }
         return layerSRSList;
+    }
+
+    /**
+     * Gets the WMS layer GetMap formats.
+     *
+     * @param xPath the x path
+     * @param doc the doc
+     * @return the wMS layer srs
+     */
+    private String[] getWMSGetMapFormats(Document doc) {
+        String[] formatList = null;
+        try {
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTGETMAPFORMATEXPRESSION).evaluate(doc, XPathConstants.NODESET);
+
+            formatList = new String[nodes.getLength()];
+
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node formatNode = nodes.item(i);
+                formatList[i] = formatNode != null ? formatNode.getTextContent() : "";
+            }
+        } catch (XPathExpressionException e) {
+            log.error("GetCapabilities - getWMSGetMapFormats xml parsing error: " + e.getMessage());
+        }
+        return formatList;
     }
 }
 

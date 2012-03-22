@@ -5,6 +5,7 @@ import org.apache.commons.httpclient.URI;
 import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.server.domain.filter.FilterBoundingBox;
 import org.auscope.portal.server.domain.filter.IFilter;
+import org.auscope.portal.server.domain.filter.SimplePropertyFilter;
 import org.auscope.portal.server.domain.wfs.WFSCountResponse;
 import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.web.service.WFSService;
@@ -110,6 +111,31 @@ public class TestGSMLController extends PortalTestClass {
         }});
 
         ModelAndView modelAndView = gsmlController.requestFeature(wfsUrl, featureType, featureId);
+        ModelMap dataObj = (ModelMap) modelAndView.getModel().get("data");
+        Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
+        Assert.assertNotNull(dataObj);
+        Assert.assertEquals(gmlBlob, dataObj.get("gml"));
+        Assert.assertEquals(kmlBlob, dataObj.get("kml"));
+    }
+
+    @Test
+    public void testRequestFeatureByProperty() throws Exception {
+        final String gmlBlob = "gmlBlob";
+        final String kmlBlob = "kmlBlob";
+        final String wfsUrl = "http://service/wfs";
+        final String featureType = "type:name";
+        final String featureProperty = "feature/property";
+        final String propertyValue = "comparison value";
+
+        final String filterString = new SimplePropertyFilter(featureProperty, propertyValue).getFilterStringAllRecords();
+
+        context.checking(new Expectations() {{
+            oneOf(mockWfsService).getWfsResponseAsKml(wfsUrl, featureType, filterString, null, null);will(returnValue(new WFSKMLResponse(gmlBlob, kmlBlob, mockMethod)));
+
+            allowing(mockMethod).getURI();will(returnValue(new URI("http://service.wfs/wfs", false)));
+        }});
+
+        ModelAndView modelAndView = gsmlController.requestFeatureByProperty(wfsUrl, featureType, featureProperty, propertyValue);
         ModelMap dataObj = (ModelMap) modelAndView.getModel().get("data");
         Assert.assertTrue((Boolean) modelAndView.getModel().get("success"));
         Assert.assertNotNull(dataObj);

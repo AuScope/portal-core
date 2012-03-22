@@ -33,6 +33,8 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
         Assert.assertEquals("wms", rec.getServiceType());
         Assert.assertEquals("Contact Org", rec.getOrganisation());
         Assert.assertEquals("http://my.server/getmap/wms", rec.getMapUrl());
+        Assert.assertArrayEquals(new String[] {"image/bmp", "image/jpeg",
+                "image/tiff", }, rec.getGetMapFormats());
         Assert.assertArrayEquals(new String[] {"CRS:84", "EPSG:4326",
                 "EPSG:4283", }, rec.getLayerSRS());
 

@@ -67,11 +67,11 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.10</version>
-				<configuration>
-					<parallel>methods</parallel>
-					<threadCount>10</threadCount>
-					<redirectTestOutputToFile>true</redirectTestOutputToFile>
-				</configuration>
+                <configuration>
+                    <parallel>methods</parallel>
+                    <threadCount>10</threadCount>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -149,7 +149,7 @@
                 <configuration>
                     <excludes>
                         <!-- Exclude Ext JS -->
-                        <exclude>js/external/**</exclude>
+                        <exclude>js/ext-*/**</exclude>
                     </excludes>
                     <nosuffix>true</nosuffix>
                 </configuration>
@@ -168,15 +168,15 @@
                     </execution>
                 </executions>
             </plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
-					<cacheFile>checkstyle.cache</cacheFile>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <cacheFile>checkstyle.cache</cacheFile>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <reporting>
@@ -199,13 +199,6 @@
             <id>geotoolkit</id>
             <name>Geo Toolkit Repository</name>
             <url>http://maven.geotoolkit.org/</url>
-        </repository>
-
-        <!-- The new home of RESTPROXY - its world readable -->
-        <repository>
-            <id>cgsrv8.arrc.csiro.au</id>
-            <name>cgsrv8.arrc.csiro.au-releases</name>
-            <url>https://cgsrv8.arrc.csiro.au/artifactory/PortalRepo</url>
         </repository>
     </repositories>
     <!-- Dependencies -->
@@ -314,12 +307,6 @@
             <groupId>net.sf.saxon</groupId>
             <artifactId>saxon-xom</artifactId>
             <version>8.7</version>
-        </dependency>
-        <dependency>
-            <groupId>RestProxy</groupId>
-            <artifactId>RestProxy</artifactId>
-            <version>1.1</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

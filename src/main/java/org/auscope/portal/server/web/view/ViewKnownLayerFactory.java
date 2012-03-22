@@ -3,20 +3,47 @@ package org.auscope.portal.server.web.view;
 import java.awt.Dimension;
 import java.awt.Point;
 
-import org.auscope.portal.server.web.AbstractKnownLayer;
-import org.auscope.portal.server.web.KnownLayerKeywords;
-import org.auscope.portal.server.web.KnownLayerWFS;
-import org.auscope.portal.server.web.KnownLayerWMS;
 import org.springframework.stereotype.Repository;
 import org.springframework.ui.ModelMap;
 
 /**
- * A factory class containing methods for generating view representations of the KnownFeatureTypeDefinition
- * @author vot002
+ * A factory class containing methods for generating view representations of the KnownLayer
+ * @author Josh Vote
  *
  */
 @Repository
 public class ViewKnownLayerFactory {
+
+    public ModelMap toView(KnownLayer k) {
+        ModelMap obj = new ModelMap();
+
+        obj.put("name", k.getName());
+        obj.put("hidden", k.isHidden());
+        obj.put("description",k.getDescription());
+        obj.put("id", k.getId());
+        obj.put("proxyUrl", k.getProxyUrl());
+        obj.put("proxyCountUrl", k.getProxyCountUrl());
+
+        if (k.getIconUrl() != null) {
+            obj.put("iconUrl", k.getIconUrl());
+        }
+
+        if (k.getIconAnchor() != null) {
+            obj.put("iconAnchor", toView(k.getIconAnchor()));
+        }
+
+        if (k.getIconSize() != null) {
+            obj.put("iconSize", toView(k.getIconSize()));
+        }
+
+        String group = "Others";
+        if (k.getGroup() != null && !k.getGroup().isEmpty()) {
+            group = k.getGroup();
+        }
+        obj.put("group", group);
+
+        return obj;
+    }
 
     private ModelMap toView(Dimension d) {
         ModelMap obj = new ModelMap();
@@ -34,99 +61,5 @@ public class ViewKnownLayerFactory {
         obj.put("y", p.getY());
 
         return obj;
-    }
-
-    private ModelMap baseToView(AbstractKnownLayer k) {
-        ModelMap obj = new ModelMap();
-
-        obj.put("title", k.getTitle());
-        obj.put("hidden", k.isHidden());
-        obj.put("description",k.getDescription());
-        obj.put("id", k.getId());
-        obj.put("group", k.getGroup());
-
-
-        return obj;
-    }
-
-    public ModelMap toView(KnownLayerKeywords k) {
-        ModelMap obj = baseToView(k);
-
-        obj.put("type", "KnownLayerKeywords");
-        obj.put("descriptiveKeyword", k.getDescriptiveKeyword());
-        obj.put("iconUrl", k.getIconUrl());
-
-        Point iconAnchor =  k.getIconAnchor();
-        if (iconAnchor != null) {
-            obj.put("iconAnchor", toView(iconAnchor));
-        }
-
-        Dimension iconSize = k.getIconSize();
-        if (iconSize != null) {
-            obj.put("iconSize", toView(iconSize));
-        }
-
-        return obj;
-    }
-
-    public ModelMap toView(KnownLayerWFS k) {
-        ModelMap obj = baseToView(k);
-
-        obj.put("type", "KnownLayerWFS");
-        obj.put("featureTypeName", k.getFeatureTypeName());
-        obj.put("proxyFetchUrl", k.getProxyFetchUrl());
-        obj.put("proxyCountUrl", k.getProxyCountUrl());
-        obj.put("iconUrl", k.getIconUrl());
-        obj.put("serviceEndpoints", k.getServiceEndpoints());
-        obj.put("includeEndpoints", k.includeEndpoints());
-        obj.put("disableBboxFiltering", k.getDisableBboxFiltering());
-        obj.put("relatedNames", k.getRelatedFeatureTypeNames());
-
-        Point iconAnchor =  k.getIconAnchor();
-        if (iconAnchor != null) {
-            obj.put("iconAnchor", toView(iconAnchor));
-        }
-
-        Point infoWindowAnchor = k.getInfoWindowAnchor();
-        if (infoWindowAnchor != null) {
-            obj.put("infoWindowAnchor", toView(infoWindowAnchor));
-        }
-
-        Dimension iconSize = k.getIconSize();
-        if (iconSize != null) {
-            obj.put("iconSize", toView(iconSize));
-        }
-
-        return obj;
-    }
-
-    public ModelMap toView(KnownLayerWMS k) {
-        ModelMap obj = baseToView(k);
-
-        obj.put("type", "KnownLayerWMS");
-        obj.put("layerName", k.getLayerName());
-        obj.put("styleName", k.getStyleName());
-        obj.put("relatedNames", k.getRelatedLayerNames());
-
-        return obj;
-    }
-
-
-
-    /**
-     * Converts a KnownFeatureTypeDefinition into its view equivalent
-     * @param k
-     * @return
-     */
-    public ModelMap toView(AbstractKnownLayer k) {
-        if (k instanceof KnownLayerWFS) {
-            return toView((KnownLayerWFS) k);
-        } else if (k instanceof KnownLayerWMS) {
-            return toView((KnownLayerWMS) k);
-        } else if (k instanceof KnownLayerKeywords) {
-            return toView((KnownLayerKeywords) k);
-        } else {
-            return baseToView(k);
-        }
     }
 }

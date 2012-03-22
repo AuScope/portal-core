@@ -133,6 +133,27 @@ public class DownloadController {
         }
     }
 
+    /**
+     * Converts a mime type to a 'well known' file extension. If the
+     * mime type is unknown then an empty string will be returned
+     * @param mime The mime to examine
+     * @return
+     */
+    private String mimeTypeToFileExtension(String mime) {
+        if (mime.startsWith("image/")) {
+            String suffix = mime.substring("image/".length());
+            return suffix.split("\\+")[0];
+        } else if (mime.startsWith("text/")) {
+            String suffix = mime.substring("text/".length());
+            return suffix.split("\\+")[0];
+        } else if (mime.contains("kml")) {
+            return "kml";
+        } else if (mime.contains("xml")) {
+            return "xml";
+        }
+
+        return "";
+    }
 
     /**
      * Given a list of WMS URL's, this function will collate the responses
@@ -167,10 +188,13 @@ public class DownloadController {
             Header contentType = serviceCaller.getResponseHeader(method, "Content-Type");
 
             //create a new entry in the zip file with a timestamped name
-            if(contentType.getValue().contains("xml"))
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml"));
-            else
-                zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".png"));
+            String mime = contentType.getValue();
+            String fileExtension = mimeTypeToFileExtension(mime);
+            if (fileExtension != null && !fileExtension.isEmpty()) {
+                fileExtension = "." + fileExtension;
+            }
+            zout.putNextEntry(new ZipEntry(new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + fileExtension));
+
 
             zout.write(responseBytes);
             zout.closeEntry();

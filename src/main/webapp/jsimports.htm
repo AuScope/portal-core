@@ -1,149 +1,133 @@
 <!-- Bring in the ExtJs Libraries and CSS -->
-<script type="text/javascript" src="js/XPathFixFirefox.js"></script>
 
-<!-- First of javascript includes must be an adapter... -->
-<script type="text/javascript" src="js/external/extjs/adapter/ext/ext-base.js"></script>
+<!-- link extjs 4 -->
+<script type="text/javascript" src="js/extjs-4.1.0-rc1/ext-all-debug.js"></script>
 
-<!-- ...then you need the Ext itself, either debug or production version. -->
-<script type="text/javascript" src="js/external/extjs/ext-all.js"></script>
+<!-- link extjs 4 - user extensions -->
+<script type="text/javascript" src="js/extjs-4.1.0-rc1/examples/ux/form/SearchField.js"></script>
+<script type="text/javascript" src="js/extjs-4.1.0-rc1/examples/ux/CheckColumn.js"></script>
+<script type="text/javascript" src="js/extjs-4.1.0-rc1/examples/ux/RowExpander.js"></script>
 
-<!-- XML and XPath -->
-<script type="text/javascript" src="js/external/javeline/javeline_xpath.js"></script>
-<script type="text/javascript" src="js/xml/SimpleDOM.js"></script>
-<script type="text/javascript" src="js/xml/SimpleXPath.js"></script>
+<!-- Link other external libraries -->
+<script type="text/javascript" src="js/epoly/epoly.js"></script>
+<script type="text/javascript" src="js/javeline/javeline_xpath.js"></script>
+<script type="text/javascript" src="js/dragzoom/dragzoom.js"></script>
 
-<!-- ExtJS extensions -->
-<script type="text/javascript" src="js/external/extjs/ux/ux-all.js"></script>
-<script type="text/javascript" src="js/widgets/ClientSearchField.js"></script>
-<script type="text/javascript" src="js/widgets/ClearableComboBox.js"></script>
-<script type="text/javascript" src="js/widgets/LiveTextField.js"></script>
-<script type="text/javascript" src="js/widgets/LiveNumberField.js"></script>
-<script type="text/javascript" src="js/widgets/LinkLabel.js"></script>
-
-<script type="text/javascript" src="js/FileDownloader.js"></script>
-
-<script type="text/javascript" src="js/csw/CSWResourcesGrid.js"></script>
-<script type="text/javascript" src="js/csw/CSWMetadataPanel.js"></script>
-<script type="text/javascript" src="js/csw/CSWRecordMetadataWindow.js"></script>
-
-<script type="text/javascript" src="js/genericparser/knownlayerfactories/BaseFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/knownlayerfactories/NVCLFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/knownlayerfactories/PressureDBFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/factories/BaseFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/factories/GeologicUnitFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/factories/GeophysicsAnomaliesFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/factories/LocatedSpecimenFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/factories/BoreholeFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/factories/SamplingFeatureCollectionFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/factories/SimpleFactory.js"></script>
-<script type="text/javascript" src="js/genericparser/BaseComponent.js"></script>
-<script type="text/javascript" src="js/genericparser/KnownLayerParser.js"></script>
-<script type="text/javascript" src="js/genericparser/Parser.js"></script>
-<script type="text/javascript" src="js/genericparser/WFSParser.js"></script>
-
-<script type="text/javascript" src="js/external/extjs/epoly.js"></script>
-
-<script src="js/Clone.js" type="text/javascript"></script>
-
-<!-- Application javascript files -->
-
-<script src="js/external/geoxml/geoxml.js" type="text/javascript"></script>
-
-<!-- Scripts for interpreting the geosciml -->
-<script src="js/geoscimlwfs/utility_functions.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/feature_types/location.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/feature_types/coordinates.js" type="text/javascript"></script>
-
-<!--
-<script src="js/geoscimlwfs/feature_types/sampling_curve.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/feature_types/borehole.js" type="text/javascript"></script>
--->
-
-<script src="js/geoscimlwfs/feature_types/bushfire.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/feature_types/geodesy_stations.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/feature_types/sampling_point.js" type="text/javascript"></script>
-
-<script src="js/geoscimlwfs/ga_sentinel/ga_sentinel_marker.js" type="text/javascript"></script>
-
-<script src="js/geoscimlwfs/geodesy/geodesy_calendar.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/geodesy/geodesy_marker.js" type="text/javascript"></script>
-
-<script src="js/geoscimlwfs/global_variables.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/gnss/gnss_marker.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/gzoom.js" type="text/javascript"></script>
-<script src="js/geoscimlwfs/station_group.js" type="text/javascript"></script>
-
-<!-- Bounding box selection -->
-<script src="js/external/MPolyDragControl/MPolyDragControl.js" type="text/javascript"></script>
-<script src="js/external/MPolyDragControl/MStatusControl.js" type="text/javascript"></script>
-<script src="js/external/MPolyDragControl/elabel.js" type="text/javascript"></script>
-
-<!-- CSW Theme Filter -->
-<script src="js/cswthemefilter/components/BaseComponent.js" type="text/javascript"></script>
-<script src="js/cswthemefilter/components/Keywords.js" type="text/javascript"></script>
-<script src="js/cswthemefilter/components/Spatial.js" type="text/javascript"></script>
-<script src="js/cswthemefilter/components/Text.js" type="text/javascript"></script>
-<script src="js/cswthemefilter/CSWThemeFilterForm.js" type="text/javascript"></script>
-<script src="js/cswthemefilter/CSWFilterResultsPanel.js" type="text/javascript"></script>
-<script src="js/cswthemefilter/MultiCSWFilterResultsPanel.js" type="text/javascript"></script>
-
-<!-- Page specific javascript -->
-<script src="js/FeatureDownloadManager.js" type="text/javascript"></script>
-<script src="js/AbstractRecordWrapper.js" type="text/javascript"></script>
-<script src="js/BaseFilterForm.js" type="text/javascript"></script>
-<script src="js/BoreholeFilterForm.js" type="text/javascript"></script>
-<script src="js/CSWRecord.js" type="text/javascript"></script>
-<script src="js/CSWRecordGridPanel.js" type="text/javascript"></script>
-<script src="js/CSWRecordStore.js" type="text/javascript"></script>
-<script src="js/CSWRecordDescriptionWindow.js" type="text/javascript"></script>
-<script src="js/CustomLayersGridPanel.js" type="text/javascript"></script>
-<script src="js/ActiveLayersRecord.js" type="text/javascript"></script>
-<script src="js/ActiveLayersGridPanel.js" type="text/javascript"></script>
-<script src="js/ActiveLayersStore.js" type="text/javascript"></script>
-<script src="js/KnownLayerRecord.js" type="text/javascript"></script>
-<script src="js/KnownLayerGridPanel.js" type="text/javascript"></script>
-<script src="js/KnownLayerStore.js" type="text/javascript"></script>
-<script src="js/GMapInfoWindowManager.js" type="text/javascript"></script>
-<script src="js/BBox.js" type="text/javascript"></script>
-<script src="js/OverlayManager.js" type="text/javascript"></script>
-<script src="js/EventCheckColumn.js" type="text/javascript"></script>
-<script src="js/GridDragDropRowOrder.js" type="text/javascript"></script>
-<script src="js/FormFactory.js" type="text/javascript"></script>
-<script src="js/GMapClickController.js" type="text/javascript"></script>
-<script src="js/KMLParser.js" type="text/javascript"></script>
+<!-- Main Startup Page -->
 <script src="js/Main-UI.js" type="text/javascript"></script>
-<script src="js/MineFilterForm.js" type="text/javascript"></script>
-<script src="js/WMSLayerFilterForm.js" type="text/javascript"></script>
-<script src="js/MiningActivityFilterForm.js" type="text/javascript"></script>
-<script src="js/MineralOccurrenceFilterForm.js" type="text/javascript"></script>
-<script src="js/ReportFilterForm.js" type="text/javascript"></script>
-<script src="js/ResponseTooltip.js" type="text/javascript"></script>
-<script src="js/LinkButton.js" type="text/javascript"></script>
-<script src="js/SearchTwinTriggerField.js" type="text/javascript"></script>
-<script src="js/DebuggerData.js" type="text/javascript"></script>
-<script src="js/ReportsInfoWindow.js" type="text/javascript"></script>
-<script src="js/YilgarnGeochemistryFilterForm.js" type="text/javascript"></script>
-<script src="js/MapStateSerializer.js" type="text/javascript"></script>
-<script src="js/PermanentLinkWindow.js" type="text/javascript"></script>
-<script src="js/Base64.js" type="text/javascript"></script>
-<script src="js/NvclFilterForm.js" type="text/javascript"></script>
-<script src="js/PressureDBFilterForm.js" type="text/javascript"></script>
-<script src="js/wfs/DownloadWindow.js" type="text/javascript"></script>
-<!--  Do we need this?
-<script src="js/external/jhashtable/jshashtable.js" type="text/javascript"></script>
 
+<!-- load the portal javascript -->
+<script src="js/portal/util/gmap/ClickController.js" type="text/javascript"></script>
+<script src="js/portal/util/gmap/GWMSTileLayer.js" type="text/javascript"></script>
+<script src="js/portal/util/gmap/GMapWrapper.js" type="text/javascript"></script>
+<script src="js/portal/util/gmap/OverlayManager.js" type="text/javascript"></script>
+<script src="js/portal/util/gmap/TileInformation.js" type="text/javascript"></script>
+<script src="js/portal/util/permalink/serializers/BaseSerializer.js" type="text/javascript"></script>
+<script src="js/portal/util/permalink/serializers/SerializerV0.js" type="text/javascript"></script>
+<script src="js/portal/util/permalink/serializers/SerializerV1.js" type="text/javascript"></script>
+<script src="js/portal/util/permalink/serializers/SerializerV2.js" type="text/javascript"></script>
+<script src="js/portal/util/permalink/DeserializationHandler.js" type="text/javascript"></script>
+<script src="js/portal/util/permalink/MapStateSerializer.js" type="text/javascript"></script>
+<script src="js/portal/util/xml/SimpleDOM.js" type="text/javascript"></script>
+<script src="js/portal/util/xml/SimpleXPath.js" type="text/javascript"></script>
+<script src="js/portal/util/Base64.js" type="text/javascript"></script>
+<script src="js/portal/util/BBoxType.js" type="text/javascript"></script>
+<script src="js/portal/util/BBox.js" type="text/javascript"></script>
+<script src="js/portal/util/FileDownloader.js" type="text/javascript"></script>
+<script src="js/portal/util/ObservableMap.js" type="text/javascript"></script>
+<script src="js/portal/util/UnimplementedFunction.js" type="text/javascript"></script>
+<script src="js/portal/util/URL.js" type="text/javascript"></script>
 
--->
-<script type="text/javascript" src="js/external/xml2json.js"></script>
+<script src="js/portal/csw/OnlineResourceType.js" type="text/javascript"></script>
+<script src="js/portal/csw/OnlineResource.js" type="text/javascript"></script>
+<script src="js/portal/csw/CSWRecordType.js" type="text/javascript"></script>
+<script src="js/portal/csw/CSWRecord.js" type="text/javascript"></script>
 
-<script src="js/external/dragzoom/dragzoom.js" type="text/javascript"></script>
+<script src="js/portal/knownlayer/geodesy/Observation.js" type="text/javascript"></script>
+<script src="js/portal/knownlayer/nvcl/Dataset.js" type="text/javascript"></script>
+<script src="js/portal/knownlayer/nvcl/Log.js" type="text/javascript"></script>
+<script src="js/portal/knownlayer/yilgarngeochem/LocatedSpecimen.js" type="text/javascript"></script>
+<script src="js/portal/knownlayer/KnownLayer.js" type="text/javascript"></script>
 
-<!-- WCS imports -->
-<script src="js/GenericOPeNDAPInfoWindow.js" type="text/javascript"></script>
-<script src="js/GenericWCSInfoWindow.js" type="text/javascript"></script>
+<script src="js/portal/layer/downloader/Downloader.js" type="text/javascript"></script>
+<script src="js/portal/layer/downloader/coverage/WCSDownloader.js" type="text/javascript"></script>
+<script src="js/portal/layer/downloader/coverage/OPeNDAPDownloader.js" type="text/javascript"></script>
+<script src="js/portal/layer/downloader/wfs/WFSDownloader.js" type="text/javascript"></script>
+<script src="js/portal/layer/downloader/wms/WMSDownloader.js" type="text/javascript"></script>
 
-<!-- WMS imports -->
-<script src="js/wms/LegendManager.js" type="text/javascript"></script>
-<script src="js/wms/gmap-wms.js" type="text/javascript"></script>
-<script src="js/wms/tile.js" type="text/javascript"></script>
-<script src="js/wms/GeotransectsInfoWindow.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/BaseFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/BoreholeFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/EmptyFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/MineFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/MineralOccurrenceFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/MiningActivityFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/NvclFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/PressureDBFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/ReportFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/YilgarnGeochemistryFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/forms/WMSLayerFilterForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/Filterer.js" type="text/javascript"></script>
+<script src="js/portal/layer/filterer/FormFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/legend/BaseComponent.js" type="text/javascript"></script>
+<script src="js/portal/layer/legend/Legend.js" type="text/javascript"></script>
+<script src="js/portal/layer/legend/wfs/WFSLegend.js" type="text/javascript"></script>
+<script src="js/portal/layer/legend/wms/WMSLegend.js" type="text/javascript"></script>
+<script src="js/portal/layer/legend/wms/WMSLegendForm.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/BaseComponent.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/Querier.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/QueryTarget.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/QueryTargetHandler.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/csw/CSWQuerier.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/BaseFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/BoreholeFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/GeophysicsAnomaliesFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/GnssStationFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/MappedFeatureFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/MiningFeatureOccurrence.Factory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/GeologicUnitFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/LocatedSpecimenFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/SamplingFeatureCollectionFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/factories/SimpleFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/knownlayerfactories/BaseFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/knownlayerfactories/GeodesyFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/knownlayerfactories/NVCLFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/knownlayerfactories/PressureDBFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/FeatureSource.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/featuresources/WFSFeatureSource.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/featuresources/WFSFeatureByPropertySource.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/KnownLayerParser.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/Parser.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wfs/WFSQuerier.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wms/WMSQuerier.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/coverage/WCSQuerier.js" type="text/javascript"></script>
+<script src="js/portal/layer/querier/wms/GeotransectQuerier.js" type="text/javascript"></script>
+<script src="js/portal/layer/renderer/RenderDebuggerData.js" type="text/javascript"></script>
+<script src="js/portal/layer/renderer/Renderer.js" type="text/javascript"></script>
+<script src="js/portal/layer/renderer/RenderStatus.js" type="text/javascript"></script>
+<script src="js/portal/layer/renderer/wfs/FeatureDownloadManager.js" type="text/javascript"></script>
+<script src="js/portal/layer/renderer/wfs/FeatureRenderer.js" type="text/javascript"></script>
+<script src="js/portal/layer/renderer/wfs/KMLParser.js" type="text/javascript"></script>
+<script src="js/portal/layer/renderer/csw/CSWRenderer.js" type="text/javascript"></script>
+
+<script src="js/portal/layer/renderer/wms/LayerRenderer.js" type="text/javascript"></script>
+<script src="js/portal/layer/Layer.js" type="text/javascript"></script>
+<script src="js/portal/layer/LayerFactory.js" type="text/javascript"></script>
+<script src="js/portal/layer/LayerStore.js" type="text/javascript"></script>
+
+<script src="js/portal/widgets/field/ClearableComboBox.js" type="text/javascript"></script>
+<script src="js/portal/widgets/field/ClientSearchField.js" type="text/javascript"></script>
+<script src="js/portal/widgets/grid/column/ClickColumn.js" type="text/javascript"></script>
+<script src="js/portal/widgets/grid/column/RenderableCheckColumn.js" type="text/javascript"></script>
+<script src="js/portal/widgets/grid/plugin/CellTips.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/BaseRecordPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/CSWConstraintsPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/CSWMetadataPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/CSWRecordPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/CustomRecordPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/FilterPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/KnownLayerPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/LayerPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/panel/OnlineResourcesPanel.js" type="text/javascript"></script>
+<script src="js/portal/widgets/window/CSWRecordConstraintsWindow.js" type="text/javascript"></script>
+<script src="js/portal/widgets/window/CSWRecordDescriptionWindow.js" type="text/javascript"></script>
+<script src="js/portal/widgets/window/PermanentLinkWindow.js" type="text/javascript"></script>

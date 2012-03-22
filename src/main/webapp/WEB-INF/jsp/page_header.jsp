@@ -12,8 +12,8 @@
          </ul>
       </div>
       <span id="latlng" class="input-text"></span>
-      <div id="permalinkicon"><a href="javascript:void(0)" onclick="permaLinkClickHandler()"><img src="img/link.png" width="16" height="16"/></a></div>
-      <div id="permalink"><a href="javascript:void(0)" onclick="permaLinkClickHandler()">Permanent Link</a></div>
-      
-      
+      <div id="permalinkicon"><a href="javascript:void(0)"><img src="img/link.png" width="16" height="16"/></a></div>
+      <div id="permalink"><a href="javascript:void(0)">Permanent Link</a></div>
+
+
    </div>

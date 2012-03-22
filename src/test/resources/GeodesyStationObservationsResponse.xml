@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection numberOfFeatures="3" timeStamp="2012-03-21T11:39:19.032+08:00" xsi:schemaLocation="http://www.auscope.org/geodesy http://services.auscope.org:80/geodesy/wfs?service=WFS&amp;version=1.1.0&amp;request=DescribeFeatureType&amp;typeName=geodesy%3Astation_observations http://www.opengis.net/wfs http://services.auscope.org:80/geodesy/schemas/wfs/1.1.0/wfs.xsd" xmlns:ngcp="http://www.auscope.org/ngcp" xmlns:ogc="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml" xmlns:geodesy="http://www.auscope.org/geodesy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ows="http://www.opengis.net/ows" xmlns:wfs="http://www.opengis.net/wfs">
+    <gml:featureMembers>
+        <geodesy:station_observations gml:id="station_observations.fid--29e8b1bc_13633273df8_15a1">
+            <gml:location>
+                <gml:Point srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4326">
+                    <gml:pos>-53.137 -70.87989999999999</gml:pos>
+                </gml:Point>
+            </gml:location>
+            <geodesy:station_id>parc</geodesy:station_id>
+            <geodesy:ob_date>1999-12-06Z</geodesy:ob_date>
+            <geodesy:url>http://siss2.anu.edu.au/geodesy-mirror/daily/1999/99341/parc3410.99d.Z</geodesy:url>
+        </geodesy:station_observations>
+        <geodesy:station_observations gml:id="station_observations.fid--29e8b1bc_13633273df8_15a2">
+            <gml:location>
+                <gml:Point srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4326">
+                    <gml:pos>-31.8019 115.88520000000001</gml:pos>
+                </gml:Point>
+            </gml:location>
+            <geodesy:station_id>pert</geodesy:station_id>
+            <geodesy:ob_date>1999-11-01Z</geodesy:ob_date>
+            <geodesy:url>http://siss2.anu.edu.au/geodesy-mirror/daily/1999/99341/pert3410.99d.Z</geodesy:url>
+        </geodesy:station_observations>
+        <geodesy:station_observations gml:id="station_observations.fid--29e8b1bc_13633273df8_15a3">
+            <gml:location>
+                <gml:Point srsDimension="2" srsName="urn:x-ogc:def:crs:EPSG:4326">
+                    <gml:pos>53.066700000000004 158.607</gml:pos>
+                </gml:Point>
+            </gml:location>
+            <geodesy:station_id>petp</geodesy:station_id>
+            <geodesy:ob_date>1999-12-06Z</geodesy:ob_date>
+            <geodesy:url>http://siss2.anu.edu.au/geodesy-mirror/daily/1999/99341/petp3410.99d.Z</geodesy:url>
+        </geodesy:station_observations>
+    </gml:featureMembers>
+</wfs:FeatureCollection>

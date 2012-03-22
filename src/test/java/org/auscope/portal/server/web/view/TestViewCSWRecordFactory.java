@@ -53,15 +53,14 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final ModelMap onlineResExpectation = new ModelMap();
         final ModelMap geoExpectation = new ModelMap();
 
-        expectation.put("serviceName", serviceName);
-        expectation.put("administrativeArea", administrativeArea);
-        expectation.put("contactOrganisation", contactOrg);
+        expectation.put("name", serviceName);
+        expectation.put("adminArea", administrativeArea);
+        expectation.put("contactOrg", contactOrg);
         expectation.put("resourceProvider", resourceProvider);
-        expectation.put("fileIdentifier", fileId);
+        expectation.put("id", fileId);
         expectation.put("recordInfoUrl", recordInfoUrl);
-        expectation.put("dataIdentificationAbstract", dataAbstract);
+        expectation.put("description", dataAbstract);
         expectation.put("onlineResources", Arrays.asList(onlineResExpectation));
-        expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
@@ -69,7 +68,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
         onlineResExpectation.put("description", orDesc);
-        onlineResExpectation.put("onlineResourceType", orType.name());
+        onlineResExpectation.put("type", orType.name());
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -138,13 +137,13 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final ModelMap expectation = new ModelMap();
         final ModelMap geoExpectation = new ModelMap();
 
-        expectation.put("serviceName", serviceName);
-        expectation.put("administrativeArea", administrativeArea);
-        expectation.put("contactOrganisation", contactOrg);
+        expectation.put("name", serviceName);
+        expectation.put("adminArea", administrativeArea);
+        expectation.put("contactOrg", contactOrg);
         expectation.put("resourceProvider", resourceProvider);
-        expectation.put("fileIdentifier", fileId);
+        expectation.put("id", fileId);
         expectation.put("recordInfoUrl", recordInfoUrl);
-        expectation.put("dataIdentificationAbstract", dataAbstract);
+        expectation.put("description", dataAbstract);
         expectation.put("onlineResources", new ArrayList<ModelMap>());
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
@@ -221,14 +220,14 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final ModelMap onlineResExpectation = new ModelMap();
         final ModelMap geoExpectation = new ModelMap();
 
-        expectation.put("serviceName", serviceName);
-        expectation.put("contactOrganisation", contactOrg);
+        expectation.put("name", serviceName);
+        expectation.put("adminArea", null);
+        expectation.put("contactOrg", "Unknown");
         expectation.put("resourceProvider", resourceProvider);
-        expectation.put("fileIdentifier", fileId);
+        expectation.put("id", fileId);
         expectation.put("recordInfoUrl", recordInfoUrl);
-        expectation.put("dataIdentificationAbstract", dataAbstract);
+        expectation.put("description", dataAbstract);
         expectation.put("onlineResources", Arrays.asList(onlineResExpectation));
-        expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
@@ -236,7 +235,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
         onlineResExpectation.put("description", orDesc);
-        onlineResExpectation.put("onlineResourceType", orType.name());
+        onlineResExpectation.put("type", orType.name());
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);

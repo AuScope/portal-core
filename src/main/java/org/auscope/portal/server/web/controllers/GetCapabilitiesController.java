@@ -20,6 +20,7 @@ import org.auscope.portal.server.web.service.GetCapabilitiesService;
 import org.auscope.portal.server.web.view.ViewCSWRecordFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -143,6 +144,29 @@ public class GetCapabilitiesController extends BaseCSWController {
             log.debug(e.getMessage());
             return null;
         }
+    }
 
+    /**
+     * Gets all the valid GetMap formats that a service defines
+     * @param serviceUrl The WMS URL to query
+     */
+    @RequestMapping("/getLayerFormats.do")
+    public ModelAndView getLayerFormats(@RequestParam("serviceUrl") String serviceUrl) throws Exception {
+        try {
+            GetCapabilitiesRecord capabilitiesRec = capabilitiesService.getWmsCapabilities(serviceUrl);
+
+            List<ModelMap> data = new ArrayList<ModelMap>();
+            for (String format : capabilitiesRec.getGetMapFormats()) {
+                ModelMap formatItem = new ModelMap();
+                formatItem.put("format", format);
+                data.add(formatItem);
+            }
+
+            return generateJSONResponseMAV(true, data, "");
+        } catch (Exception e) {
+            log.warn(String.format("Unable to download WMS layer formats for '%1$s'", serviceUrl));
+            log.debug(e);
+            return generateJSONResponseMAV(false, "Unable to process request", null);
+        }
     }
 }
