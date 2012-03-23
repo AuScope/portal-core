@@ -150,6 +150,7 @@
                     <excludes>
                         <!-- Exclude Ext JS -->
                         <exclude>js/ext-*/**</exclude>
+                        <exclude>js/extjs-*/**</exclude>
                     </excludes>
                     <nosuffix>true</nosuffix>
                 </configuration>
