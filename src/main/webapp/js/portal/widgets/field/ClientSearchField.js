@@ -8,10 +8,6 @@ Ext.define('portal.widgets.field.ClientSearchField', {
 
     initComponent : function() {
         this.callParent(arguments);
-
-        /*this.on('afterrender', function(cmp) {
-            cmp.doComponentLayout();
-        });*/
     },
 
     /**
@@ -60,6 +56,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
             return;
         }
 
+        this.store.clearFilter(false);
         this.store.filter(this.fieldName, v, true, false);
         this.hasSearch = true;
         this.triggerCell.item(0).setDisplayed(true);
