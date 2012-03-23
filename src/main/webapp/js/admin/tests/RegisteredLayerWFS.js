@@ -1,13 +1,10 @@
-Ext.ns('Admin.Tests');
+
 
 /**
  * A test for ensuring that the WFS's that are in the registry but not part of a Known Layer are working as expected
  */
-Admin.Tests.RegisteredLayerWFS = Ext.extend(Admin.Tests.SingleAJAXTest, {
-
-    constructor : function(cfg) {
-        Admin.Tests.RegisteredLayerWFS.superclass.constructor.call(this, cfg);
-    },
+Ext.define('admin.tests.RegisteredLayerWFS', {
+    extend : 'admin.tests.SingleAJAXTest',
 
     getTitle : function() {
         return 'Registered layer WFS availability';
@@ -16,7 +13,7 @@ Admin.Tests.RegisteredLayerWFS = Ext.extend(Admin.Tests.SingleAJAXTest, {
     getDescription : function() {
         var baseDescription = 'This tests the backend connection to all web feature services that are in the registry but NOT part of a known layer. A simple GetFeature request is made both with and without a bounding box.';
 
-        baseDescription += Admin.Tests.RegisteredLayerWFS.superclass.getDescription.call(this);
+        baseDescription += this.callParent(arguments);
 
         return baseDescription;
     },
@@ -27,24 +24,29 @@ Admin.Tests.RegisteredLayerWFS = Ext.extend(Admin.Tests.SingleAJAXTest, {
      */
     startTest : function() {
         //Init our params
-        var bbox = new BBox(-31, -32, 116, 115); //rough bounds near Perth, Western Australia
+        var bbox = Ext.create('portal.util.BBox',{
+            eastBoundLongitude : 116,
+            westBoundLongitude : 115,
+            northBoundLatitude : -31,
+            southBoundLatitude : -32
+        }); //rough bounds near Perth, WA
         var typeNames = [];
         var serviceUrls = [];
 
-        var onlineResources = this._getRegisteredLayerOnlineResources('WFS');
+        var onlineResources = this._getCSWRecordOnlineResources('WFS');
         if (onlineResources.length == 0) {
-            this._changeStatus(Admin.Tests.TestStatus.Unavailable);
+            this._changeStatus(admin.tests.TestStatus.Unavailable);
             return;
         }
 
         for (var i = 0; i < onlineResources.length; i++) {
-            typeNames.push(onlineResources[i].name);
-            serviceUrls.push(onlineResources[i].url);
+            typeNames.push(onlineResources[i].get('name'));
+            serviceUrls.push(onlineResources[i].get('url'));
         }
 
         //Run our test
         this._singleAjaxTest('testWFS.diag', {
-            bbox : Ext.util.JSON.encode(bbox),
+            bbox : Ext.JSON.encode(bbox),
             serviceUrls : serviceUrls,
             typeNames : typeNames
         });

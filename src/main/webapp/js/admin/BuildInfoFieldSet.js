@@ -1,8 +1,9 @@
 /**
  * Displays information about the build system.
  */
-Ext.ns('Admin');
-Admin.BuildInfoFieldSet = Ext.extend(Ext.form.FieldSet, {
+Ext.define('admin.BuildInfoFieldSet', {
+    extend : 'Ext.form.FieldSet',
+    alias : 'widget.buildinfofieldset',
 
     _manifest : null,
 
@@ -19,45 +20,43 @@ Admin.BuildInfoFieldSet = Ext.extend(Ext.form.FieldSet, {
         Ext.apply(cfg, {
             title : 'Build Information',
             defaults : {
-                labelStyle : 'font-weight:bold;',
+                labelStyle : 'font-weight:bold;'
             },
             items : [{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Version',
-                text : this._manifest.implementationVersion
+                value : this._manifest.implementationVersion
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Revision',
-                text : this._manifest.implementationBuild
+                value : this._manifest.implementationBuild
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Build Date',
-                text : this._manifest.buildDate
+                value : this._manifest.buildDate
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Build JDK',
-                text : this._manifest.buildJdk
+                value : this._manifest.buildJdk
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Java Vendor',
-                text : this._manifest.javaVendor
+                value : this._manifest.javaVendor
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Built by',
-                text : this._manifest.builtBy
+                value : this._manifest.builtBy
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'OS Name',
-                text : this._manifest.osName
+                value : this._manifest.osName
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'OS Version',
-                text : this._manifest.osVersion
+                value : this._manifest.osVersion
             }]
         });
 
-        Admin.BuildInfoFieldSet.superclass.constructor.call(this, cfg);
+        this.callParent(arguments);
     }
 });
-
-Ext.reg('buildinfofieldset', Admin.BuildInfoFieldSet);

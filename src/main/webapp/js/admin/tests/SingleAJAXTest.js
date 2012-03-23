@@ -1,20 +1,15 @@
-Ext.ns('Admin.Tests');
-
 /**
  * An abstract specialisation of BaseTest that involves running a test entirely through a single
  * AJAX call to the backend and then rendering the response.
  */
-Admin.Tests.SingleAJAXTest = Ext.extend(Admin.Tests.BaseTest, {
-
-    constructor : function(cfg) {
-        Admin.Tests.SingleAJAXTest.superclass.constructor.call(this, cfg);
-    },
+Ext.define('admin.tests.SingleAJAXTest', {
+    extend : 'admin.tests.BaseTest',
 
     /**
      * The entirety of our test is making a request to the controller and parsing the response
      */
     _singleAjaxTest : function(url, params) {
-        this._changeStatus(Admin.Tests.TestStatus.Running);
+        this._changeStatus(admin.tests.TestStatus.Running);
 
         Ext.Ajax.request({
             url : url,
@@ -24,11 +19,11 @@ Admin.Tests.SingleAJAXTest = Ext.extend(Admin.Tests.BaseTest, {
             callback : function(options, success, response) {
                 if (!success) {
                     this._errors.push(response.responseText);
-                    this._changeStatus(Admin.Tests.TestStatus.Unavailable);
+                    this._changeStatus(admin.tests.TestStatus.Unavailable);
                     return;
                 }
 
-                var responseObj = Ext.util.JSON.decode(response.responseText);
+                var responseObj = Ext.JSON.decode(response.responseText);
                 this._handleAdminControllerResponse(responseObj);
             }
         })

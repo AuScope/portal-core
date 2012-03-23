@@ -6,19 +6,15 @@
     <head>
         <title>Administration Diagnostics</title>
 
-        <link rel="stylesheet" type="text/css" href="js/external/extjs/resources/css/ext-all.css">
+        <%-- Google Maps imports --%>
+        <script src="http://maps.google.com/maps?file=api&amp;v=2.X&amp;key=${googleKey}" type="text/javascript"></script>
 
         <%-- Framework imports - relative paths back to the webapp directory --%>
         <jsp:include page="../../frameworkimports.htm"/>
-
-        <script type="text/javascript" src="js/portal/csw/CSWRecord.js"></script>
-        <script type="text/javascript" src="js/portal/csw/CSWRecordType.js"></script>
-        <script type="text/javascript" src="js/portal/csw/OnlineResource.js"></script>
-        <script type="text/javascript" src="js/portal/csw/OnlineResourceType.js"></script>
-
-        <script type="text/javascript" src="js/portal/knownlayer/KnownLayer.js"></script>
-
-        <script type="text/javascript" src="js/portal/util/BBox.js"></script>
+        <%-- CSS imports - relative paths back to the webapp directory--%>
+        <jsp:include page="../../cssimports.htm"/>
+        <%-- JS imports - relative paths back to the webapp directory --%>
+        <jsp:include page="../../jsimports.htm"/>
 
         <script type="text/javascript" src="js/admin/tests/TestStatus.js"></script>
         <script type="text/javascript" src="js/admin/tests/BaseTest.js"></script>
@@ -58,13 +54,13 @@
         };
 
         Ext.onReady(function() {
-            var viewport = new Ext.Viewport({
+            var viewport = Ext.create('Ext.container.Viewport', {
                 layout:'border',
                 margins: '5 5 5 5',
                 items:[{
                       xtype : 'form',
                       region : 'west',
-                      title : String.format('Manifest Details for \'{0}\'', manifest.specificationTitle),
+                      title : Ext.util.Format.format('Manifest Details for \'{0}\'', manifest.specificationTitle),
                       collapsible : true,
                       autoScroll: true,
                       width : 350,
@@ -84,9 +80,9 @@
                     region : 'center',
                     title : 'Diagnostic Tests',
                     autoScroll : true,
+                    layout : 'fit',
                     items : [{
-                        xtype : 'testresultspanel',
-                        autoHeight : true,
+                        xtype : 'testresultspanel'
                     }]
                 }]
             });

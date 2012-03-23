@@ -1,13 +1,8 @@
-Ext.ns('Admin.Tests');
-
 /**
  * Tests that certain globally accessable URL's are available via HTTP and HTTPS
  */
-Admin.Tests.ExternalConnectivity = Ext.extend(Admin.Tests.SingleAJAXTest, {
-
-    constructor : function(cfg) {
-        Admin.Tests.ExternalConnectivity.superclass.constructor.call(this, cfg);
-    },
+Ext.define('admin.tests.ExternalConnectivity', {
+    extend : 'admin.tests.SingleAJAXTest',
 
     getTitle : function() {
         return 'External connectivity';
@@ -16,7 +11,7 @@ Admin.Tests.ExternalConnectivity = Ext.extend(Admin.Tests.SingleAJAXTest, {
     getDescription : function() {
         var baseDescription = 'This test seeks to connect the backend server to a globally accessable URL via HTTP and HTTPS.';
 
-        baseDescription += Admin.Tests.ExternalConnectivity.superclass.getDescription.call(this);
+        baseDescription += this.callParent(arguments);
 
         return baseDescription;
     },

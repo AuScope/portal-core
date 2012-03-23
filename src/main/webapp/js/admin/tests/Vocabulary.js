@@ -1,13 +1,8 @@
-Ext.ns('Admin.Tests');
-
 /**
  * Tests that configured vocab services are responding to basic SISSVoc requests
  */
-Admin.Tests.Vocabulary = Ext.extend(Admin.Tests.SingleAJAXTest, {
-
-    constructor : function(cfg) {
-        Admin.Tests.Vocabulary.superclass.constructor.call(this, cfg);
-    },
+Ext.define('admin.tests.Vocabulary', {
+    extend : 'admin.tests.SingleAJAXTest',
 
     getTitle : function() {
         return 'Vocabulary Service';
@@ -16,7 +11,7 @@ Admin.Tests.Vocabulary = Ext.extend(Admin.Tests.SingleAJAXTest, {
     getDescription : function() {
         var baseDescription = 'This test ensures that the backend is capable of making basic SISSVoc requests to all configured vocabulary services. The responses are also tested for validity.';
 
-        baseDescription += Admin.Tests.Vocabulary.superclass.getDescription.call(this);
+        baseDescription += this.callParent(arguments);
 
         return baseDescription;
     },

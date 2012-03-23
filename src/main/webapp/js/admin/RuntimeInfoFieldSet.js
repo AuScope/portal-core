@@ -1,8 +1,9 @@
 /**
  * Displays information about the runtime system.
  */
-Ext.ns('Admin');
-Admin.RuntimeInfoFieldSet = Ext.extend(Ext.form.FieldSet, {
+Ext.define('admin.RuntimeInfoFieldSet', {
+    extend : 'Ext.form.FieldSet',
+    alias : 'widget.runtimeinfofieldset',
 
     _manifest : null,
 
@@ -19,45 +20,43 @@ Admin.RuntimeInfoFieldSet = Ext.extend(Ext.form.FieldSet, {
         Ext.apply(cfg, {
             title : 'Runtime Information',
             defaults : {
-                labelStyle : 'font-weight:bold;',
+                labelStyle : 'font-weight:bold;'
             },
             items : [{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Server Name',
-                text : this._manifest.serverName
+                value : this._manifest.serverName
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Server Info',
-                text : this._manifest.serverInfo
+                value : this._manifest.serverInfo
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Server Java Version',
-                text : this._manifest.serverJavaVersion
+                value : this._manifest.serverJavaVersion
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Server Java Vendor',
-                text : this._manifest.serverJavaVendor
+                value : this._manifest.serverJavaVendor
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Java Home',
-                text : this._manifest.javaHome
+                value : this._manifest.javaHome
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Server OS Architecture',
-                text : this._manifest.serverOsArch
+                value : this._manifest.serverOsArch
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Server OS Name',
-                text : this._manifest.serverOsName
+                value : this._manifest.serverOsName
             },{
-                xtype : 'label',
+                xtype : 'displayfield',
                 fieldLabel : 'Server OS Version',
-                text : this._manifest.serverOsVersion
+                value : this._manifest.serverOsVersion
             }]
         });
 
-        Admin.RuntimeInfoFieldSet.superclass.constructor.call(this, cfg);
+        this.callParent(arguments);
     }
 });
-
-Ext.reg('runtimeinfofieldset', Admin.RuntimeInfoFieldSet);

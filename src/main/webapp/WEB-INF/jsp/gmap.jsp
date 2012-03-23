@@ -30,6 +30,8 @@
       <%-- JS imports - relative paths back to the webapp directory --%>
       <jsp:include page="../../jsimports.htm"/>
 
+      <script src="js/portal/Main-UI.js" type="text/javascript"></script>
+
       <!-- To enable text selection within a Ext JS GridPanel -->
       <style type="text/css">
         .x-selectable, .x-selectable * {

@@ -1,8 +1,10 @@
 /**
  * Collates a series of Admin.Tests.BaseTest extensions into a panel for running the tests and visualising the results.
  */
-Ext.ns('Admin');
-Admin.TestResultsPanel = Ext.extend(Ext.grid.GridPanel, {
+Ext.define('admin.TestResultsPanel', {
+    extend : 'Ext.grid.Panel',
+    alias : 'widget.testresultspanel',
+
     /**
      * Contains the Admin.Tests.BaseTest objects mapped by their ID
      */
@@ -14,41 +16,69 @@ Admin.TestResultsPanel = Ext.extend(Ext.grid.GridPanel, {
     _knownLayerStore : null,
 
     /**
-     * Accepts all the configuration options of a Ext.grid.GridPanel with the following additions
+     * Accepts all the configuration options of a Ext.grid.Panel with the following additions
      * {
      * }
      */
     constructor : function(cfg) {
-        var testStore = new Ext.data.Store({
-            reader      : new Ext.data.JsonReader({
-                idProperty      : 'id',
-                root            : 'data',
-                fields          : [
-                    {name : 'id'},  //String: The unique ID of this test.
-                    {name : 'title'},  //String: Text appears under the title column
-                    {name : 'description'},  //String: Text that appears when the row is 'expanded'
-                    {name : 'status'},  //Admin.Tests.TestStatus: The current test status
-                ]
-            })
+        var testStore = Ext.create('Ext.data.Store', {
+            fields: [
+                {name : 'id'},  //String: The unique ID of this test.
+                {name : 'title'},  //String: Text appears under the title column
+                {name : 'description'},  //String: Text that appears when the row is 'expanded'
+                {name : 'status'},  //Admin.Tests.TestStatus: The current test status
+            ],
+            proxy : {
+                type : 'memory',
+                reader : {
+                    type : 'json',
+                    idProperty : 'id',
+                    root : 'data'
+                }
+            }
         });
 
-        this._cswRecordStore = new CSWRecordStore('getCSWRecords.do');
-        this._knownLayerStore = new KnownLayerStore('getKnownLayers.do');
-
-        var rowExpander = new Ext.grid.RowExpander({
-            tpl : new Ext.Template('<p>{description}</p><br>'),
-            enableCaching : false
+        this._cswRecordStore = Ext.create('Ext.data.Store', {
+            model : 'portal.csw.CSWRecord',
+            groupField: 'contactOrg',
+            proxy : {
+                type : 'ajax',
+                url : 'getUnmappedCSWRecords.do',
+                reader : {
+                    type : 'json',
+                    root : 'data'
+                }
+            }
         });
 
+        this._knownLayerStore = Ext.create('Ext.data.Store', {
+            model : 'portal.knownlayer.KnownLayer',
+            groupField: 'group',
+            proxy : {
+                type : 'ajax',
+                url : 'getKnownLayers.do',
+                reader : {
+                    type : 'json',
+                    root : 'data'
+                }
+            }
+        });
+
+        //Configure our test results panel
         Ext.apply(cfg, {
-            plugins : [rowExpander],
             store : testStore,
-            autoExpandColumn : 'title',
-            columns: [
-                rowExpander,
-                {
+            plugins: [{
+                ptype: 'rowexpander',
+                rowBodyTpl : [
+                    '<p>{description}</p><br>'
+                ]
+            },{
+                ptype: 'celltips'
+            }],
+            columns: [{
                     id : 'title',
                     header : 'Test',
+                    flex : 1,
                     dataIndex : 'title'
                 },{
                     id : 'status',
@@ -56,18 +86,23 @@ Admin.TestResultsPanel = Ext.extend(Ext.grid.GridPanel, {
                     width: 44,
                     dataIndex: 'status',
                     align: 'center',
+                    hasTip : true,
+                    tipRenderer : Ext.bind(function(value, testObj, column, tip) {
+                        var test = this._testMap[testObj.get('id')];
+                        return test.getStatusTip();
+                    }, this),
                     renderer: function(value, metaData, record) {
                         switch(value) {
-                        case Admin.Tests.TestStatus.Success:
+                        case admin.tests.TestStatus.Success:
                             return '<img src="img/tick.png">';
-                        case Admin.Tests.TestStatus.Warning:
+                        case admin.tests.TestStatus.Warning:
                             return '<img src="img/warning.png">';
-                        case Admin.Tests.TestStatus.Error:
+                        case admin.tests.TestStatus.Error:
                             return '<img src="img/exclamation.png">';
-                        case Admin.Tests.TestStatus.Running:
-                            return '<img src="js/external/extjs/resources/images/default/grid/loading.gif">';
-                        case Admin.Tests.TestStatus.Initialising:
-                            return '<img src="js/external/extjs/resources/images/default/grid/nowait.gif">';
+                        case admin.tests.TestStatus.Running:
+                            return '<img src="img/loading.gif">';
+                        case admin.tests.TestStatus.Initialising:
+                            return '<img src="img/notloading.gif">';
                         default:
                             return '<img src="img/cross.png">';
                         }
@@ -75,61 +110,25 @@ Admin.TestResultsPanel = Ext.extend(Ext.grid.GridPanel, {
                 }
             ],
             listeners : {
-                afterrender : this._initialise,
-                mouseover : this._onMouseover
+                afterrender : this._initialise
             }
         });
 
-        Admin.TestResultsPanel.superclass.constructor.call(this, cfg);
+        this.callParent(arguments);
     },
 
     /**
      * Called whenever a test changes status
      */
     _onTestStatusChange : function(test, status) {
-        var testRecord = this.getStore().getById(test.getId());
+        var store = this.getStore();
+        var testRecord = store.getById(test.getId());
         if (testRecord) {
             testRecord.set('description', test.getDescription());
             testRecord.set('status', status);
+
+            store.sort('id', 'ASC'); //workaround to force recalculation of description in row expander
             this.doLayout();
-        }
-    },
-
-    /**
-     * Called when the user mouseovers a test
-     */
-    _onMouseover :  function(e, t) {
-        e.stopEvent();
-
-        var row = e.getTarget('.x-grid3-row');
-        var col = e.getTarget('.x-grid3-col');
-
-        //if there is no visible tooltip then create one, if on is visible already we dont want to layer another one on top
-        if (col !== null && (!this.currentToolTip || !this.currentToolTip.isVisible())) {
-            //get the actual data record
-            var theRow = this.getView().findRow(row);
-            var testObj = this.getStore().getAt(theRow.rowIndex);
-            var test = this._testMap[testObj.get('id')];
-            var autoWidth = !Ext.isIE6 && !Ext.isIE7;
-
-            //This is for the 'record type' column
-            if (col.cellIndex == '2') {
-                this.currentToolTip = new Ext.ToolTip({
-                    target: e.target,
-                    autoHide : true,
-                    html: test.getStatusTip(),
-                    anchor: 'bottom',
-                    trackMouse: true,
-                    showDelay:60,
-                    autoHeight:true,
-                    autoWidth: autoWidth,
-                    listeners : {
-                        hide : function(component) {
-                            component.destroy();
-                        }
-                    }
-                });
-            }
         }
     },
 
@@ -147,13 +146,13 @@ Admin.TestResultsPanel = Ext.extend(Ext.grid.GridPanel, {
             cswRecordStore : this._cswRecordStore,
             knownLayerStore : this._knownLayerStore
         };
-        addTestFn(this, new Admin.Tests.ExternalConnectivity(cfg));
-        addTestFn(this, new Admin.Tests.RegistryConnectivity(cfg));
-        addTestFn(this, new Admin.Tests.Vocabulary(cfg));
-        addTestFn(this, new Admin.Tests.KnownLayerWFS(cfg));
-        addTestFn(this, new Admin.Tests.KnownLayerWMS(cfg));
-        addTestFn(this, new Admin.Tests.RegisteredLayerWMS(cfg));
-        addTestFn(this, new Admin.Tests.RegisteredLayerWFS(cfg));
+        addTestFn(this, Ext.create('admin.tests.ExternalConnectivity', cfg));
+        addTestFn(this, Ext.create('admin.tests.RegistryConnectivity', cfg));
+        addTestFn(this, Ext.create('admin.tests.Vocabulary', cfg));
+        addTestFn(this, Ext.create('admin.tests.KnownLayerWFS', cfg));
+        addTestFn(this, Ext.create('admin.tests.KnownLayerWMS', cfg));
+        addTestFn(this, Ext.create('admin.tests.RegisteredLayerWMS', cfg));
+        addTestFn(this, Ext.create('admin.tests.RegisteredLayerWFS', cfg));
     },
 
     /**
@@ -161,24 +160,22 @@ Admin.TestResultsPanel = Ext.extend(Ext.grid.GridPanel, {
      */
     _loadTestStore : function() {
         //Load them into the datastore
-        var dataObj = {
-            data : []
-        };
+        var data = [];
         for (var testId in this._testMap) {
             var test = this._testMap[testId];
 
             //Create our fake JSON objects to push into the datastore
-            dataObj.data.push({
+            data.push({
                 id : testId,
                 title : test.getTitle(),
                 description : test.getDescription(),
-                status : Admin.Tests.TestStatus.Initialising //our default status
+                status : admin.tests.TestStatus.Initialising //our default status
             });
         }
 
         //Load our data store
         var ds = this.getStore();
-        ds.loadData(dataObj);
+        ds.loadData(data);
     },
 
     /**
@@ -214,5 +211,3 @@ Admin.TestResultsPanel = Ext.extend(Ext.grid.GridPanel, {
         }});
     }
 });
-
-Ext.reg('testresultspanel', Admin.TestResultsPanel);
