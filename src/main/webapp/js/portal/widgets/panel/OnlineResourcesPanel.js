@@ -66,11 +66,11 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         Ext.apply(cfg, {
             features : [groupingFeature],
             store : Ext.create('Ext.data.Store', {
-                groupField      : 'group',
+                groupField : 'group',
                 fields : [
                     {name : 'group', type: 'string'},
                     {name : 'onlineResource', type: 'auto'},
-                    {name : 'cswRecord', type: 'auto'},
+                    {name : 'cswRecord', type: 'auto'}
                 ],
                 data : dataItems
             }),

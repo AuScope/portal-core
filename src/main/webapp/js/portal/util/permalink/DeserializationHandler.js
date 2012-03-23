@@ -58,7 +58,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                         icon : Ext.window.MessageBox.WARNING,
                         msg : 'The web browser you are using (Internet Explorer) has likely truncated the permanent link you are using which will probably render it unuseable. The AuScope portal will attempt to restore the saved state anyway.',
                         buttons : Ext.window.MessageBox.OK,
-                        multiline : false,
+                        multiline : false
                     });
                 }
 

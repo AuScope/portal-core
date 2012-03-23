@@ -20,22 +20,24 @@
          var NVCL_WEB_SERVICE_IP = "${nvclWebServiceIP}";
          var MAX_FEATURES = "${maxFeatureValue}";
          var WEB_CONTEXT = '<%= request.getContextPath() %>';
-         
+
       </script>
 
+      <%-- Framework imports - relative paths back to the webapp directory --%>
+      <jsp:include page="../../frameworkimports.htm"/>
       <%-- CSS imports - relative paths back to the webapp directory--%>
       <jsp:include page="../../cssimports.htm"/>
       <%-- JS imports - relative paths back to the webapp directory --%>
       <jsp:include page="../../jsimports.htm"/>
-      
+
       <!-- To enable text selection within a Ext JS GridPanel -->
-	  <style type="text/css">
-	    .x-selectable, .x-selectable * {
-	        -moz-user-select: text!important;
-	        -khtml-user-select: text!important;
-	    }
-  	  </style>
-      
+      <style type="text/css">
+        .x-selectable, .x-selectable * {
+            -moz-user-select: text!important;
+            -khtml-user-select: text!important;
+        }
+        </style>
+
       <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
    </head>
 

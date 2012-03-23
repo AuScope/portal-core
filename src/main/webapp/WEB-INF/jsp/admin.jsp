@@ -8,16 +8,17 @@
 
         <link rel="stylesheet" type="text/css" href="js/external/extjs/resources/css/ext-all.css">
 
-        <script type="text/javascript" src="js/external/extjs/adapter/ext/ext-base.js"></script>
-        <script type="text/javascript" src="js/external/extjs/ext-all.js"></script>
-        <script type="text/javascript" src="js/widgets/RowExpander.js"></script>
+        <%-- Framework imports - relative paths back to the webapp directory --%>
+        <jsp:include page="../../frameworkimports.htm"/>
 
-        <script type="text/javascript" src="js/AbstractRecordWrapper.js"></script>
-        <script type="text/javascript" src="js/CSWRecord.js"></script>
-        <script type="text/javascript" src="js/CSWRecordStore.js"></script>
-        <script type="text/javascript" src="js/KnownLayerRecord.js"></script>
-        <script type="text/javascript" src="js/KnownLayerStore.js"></script>
-        <script type="text/javascript" src="js/BBox.js"></script>
+        <script type="text/javascript" src="js/portal/csw/CSWRecord.js"></script>
+        <script type="text/javascript" src="js/portal/csw/CSWRecordType.js"></script>
+        <script type="text/javascript" src="js/portal/csw/OnlineResource.js"></script>
+        <script type="text/javascript" src="js/portal/csw/OnlineResourceType.js"></script>
+
+        <script type="text/javascript" src="js/portal/knownlayer/KnownLayer.js"></script>
+
+        <script type="text/javascript" src="js/portal/util/BBox.js"></script>
 
         <script type="text/javascript" src="js/admin/tests/TestStatus.js"></script>
         <script type="text/javascript" src="js/admin/tests/BaseTest.js"></script>

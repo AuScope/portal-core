@@ -69,7 +69,7 @@ portal.util.xml.SimpleDOM.filterNodeArray = function(nodeArray, nodeType, namesp
             continue;
         }
 
-        if (nodeName && nodeName !== node.localName) {
+        if (nodeName && nodeName !== portal.util.xml.SimpleDOM.getNodeLocalName(node)) {
             continue;
         }
 

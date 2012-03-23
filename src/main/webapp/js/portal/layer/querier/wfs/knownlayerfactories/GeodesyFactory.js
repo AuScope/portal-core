@@ -103,7 +103,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.GeodesyFactory', {
                     //Title column
                     text : 'Date',
                     dataIndex : 'date',
-                    width : 100,
+                    width : 100
                 },{
                     //Service information column
                     text : 'URL',

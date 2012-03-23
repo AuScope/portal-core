@@ -80,7 +80,7 @@ Ext.define('portal.layer.querier.wms.GeotransectQuerier', {
                     readOnly : true,
                     anchor : '100%',
                     height : 200,
-                    value :  description,
+                    value :  description
                 },{
                     xtype : 'displayfield',
                     fieldLabel : 'HighRes Service URL',

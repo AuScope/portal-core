@@ -230,7 +230,7 @@ Ext.application({
             knownLayerStore : knownLayerStore,
             cswRecordStore : unmappedCSWRecordStore,
             layerStore : layerStore,
-            map : map,
+            map : map
         });
     }
 });

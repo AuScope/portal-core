@@ -112,7 +112,7 @@ Ext.define('portal.layer.downloader.wms.WMSDownloader', {
                 store : formatStore,
                 displayField : 'format',
                 valueField : 'format'
-            }],
+            }]
         }).show();
     }
 });

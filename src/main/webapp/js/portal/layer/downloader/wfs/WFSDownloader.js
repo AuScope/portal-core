@@ -140,7 +140,7 @@ Ext.define('portal.layer.downloader.wfs.WFSDownloader', {
                         checked : !isDifferentBBox && originallyVisibleBBox === null
                     }]
                 }]
-            }],
+            }]
         }).show();
     },
 
