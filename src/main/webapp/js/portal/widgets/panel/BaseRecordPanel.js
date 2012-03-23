@@ -70,6 +70,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 dataIndex : 'serviceInformation',
                 width: 32,
                 renderer : this._serviceInformationRenderer,
+                hasTip : true,
+                tipRenderer : function(value, layer, column, tip) {
+                    return 'Click for detailed information about the web services this layer utilises.';
+                },
                 listeners : {
                     columnclick : Ext.bind(this._serviceInformationClickHandler, this)
                 }
@@ -79,6 +83,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 dataIndex : 'spatialBoundsRenderer',
                 width: 32,
                 renderer : this._spatialBoundsRenderer,
+                hasTip : true,
+                tipRenderer : function(value, layer, column, tip) {
+                    return 'Click to see the bounds of this layer, double click to pan the map to those bounds.';
+                },
                 listeners : {
                     columnclick : Ext.bind(this._spatialBoundsClickHandler, this),
                     columndblclick : Ext.bind(this._spatialBoundsDoubleClickHandler, this)
@@ -89,6 +97,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 rowBodyTpl : [
                     '<p>{description}</p><br>'
                 ]
+            },{
+                ptype: 'celltips'
             }],
             buttonAlign : 'right',
             bbar: [{
