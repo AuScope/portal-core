@@ -32,12 +32,17 @@ Ext.define('portal.layer.renderer.RenderDebuggerData', {
      */
     renderHtml : function() {
         var htmlString = '<br/>' ;
+        var parametersAdded = 0;
 
         for(i in this.parameters) {
             var unescapedXml = this.parameters[i];
             var escapedXml = unescapedXml.replace(/</g, '&lt;');
 
+            parametersAdded = parametersAdded + 1;
             htmlString += '<b>'+ i + '</b>' + '<br/> ' + escapedXml +'<br/><br/>';
+        }
+        if (parametersAdded === 0) {
+            htmlString += 'No information has yet been recorded...';
         }
         htmlString += '<br/>' ;
         return htmlString;

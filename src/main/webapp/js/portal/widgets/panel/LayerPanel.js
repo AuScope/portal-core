@@ -8,11 +8,13 @@ Ext.define('portal.widgets.panel.LayerPanel', {
     alias: 'widget.layerpanel',
 
     map : null, //instance of portal.util.gmap.GMapWrapper
+    allowDebugWindow : false, //whether this panel will show the debug window if clicked by the user
 
     constructor : function(cfg) {
         var me = this;
 
         this.map = cfg.map;
+        this.allowDebugWindow = cfg.allowDebugWindow ? true : false;
         this.addEvents('removelayerrequest');
 
         Ext.apply(cfg, {
@@ -34,9 +36,13 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 width: 32
             },{
                 //Layer name column
+                xtype : 'clickcolumn',
                 text : 'Layer Name',
                 dataIndex : 'name',
-                flex : 1
+                flex : 1,
+                listeners : {
+                    columnclick : Ext.bind(this._nameClickHandler, this)
+                }
             },{
                 //Visibility column
                 xtype : 'renderablecheckcolumn',
@@ -176,6 +182,47 @@ Ext.define('portal.widgets.panel.LayerPanel', {
         });
 
         return renderer.renderStatus.renderHtml();
+    },
+
+    /**
+     * Raised whenever the name column is clicked
+     */
+    _nameClickHandler : function(column, layer, rowIndex, colIndex) {
+        if (!this.allowDebugWindow) {
+            return;
+        }
+
+        //Show off the rendering debug information
+        var debugData = layer.get('renderer').getRendererDebuggerData();
+        if (!debugData) {
+            return;
+        }
+
+        //Raised whenever the underlying debug information changes
+        //designed to update an already showing window
+        var onChange = function(debugData, keys, eOpts) {
+            eOpts.win.body.update(debugData.renderHtml());
+            eOpts.win.doLayout();
+        };
+
+        //if the window gets closed - stop listening for change events
+        var onClose = function(debugWin, eOpts) {
+            debugData.un('change', onChange, this);
+        };
+
+        //Simplistic window
+        var debugWin = Ext.create('Ext.window.Window', {
+            title : 'Renderer Debug Information',
+            autoScroll : true,
+            width : 500,
+            height : 300,
+            html : debugData.renderHtml()
+        });
+
+        debugData.on('change', onChange, this, {win : debugWin});
+        debugWin.on('beforeclose', onClose, this);
+
+        debugWin.show();
     },
 
     /**

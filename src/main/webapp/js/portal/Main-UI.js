@@ -11,6 +11,9 @@ Ext.application({
             'Accept-Encoding': 'gzip, deflate' //This ensures we use gzip for most of our requests (where available)
         };
 
+        var urlParams = Ext.Object.fromQueryString(window.location.search.substring(1));
+        var isDebugMode = urlParams.debug;
+
         //Create our CSWRecord store (holds all CSWRecords not mapped by known layers)
         var unmappedCSWRecordStore = Ext.create('Ext.data.Store', {
             model : 'portal.csw.CSWRecord',
@@ -80,6 +83,7 @@ Ext.application({
             region : 'center',
             store : layerStore,
             map : map,
+            allowDebugWindow : isDebugMode,
             listeners : {
                 //On selection, update our filter panel
                 select : function(rowModel, record, index) {

@@ -156,5 +156,12 @@ Ext.define('portal.layer.renderer.Renderer', {
      */
     getProxyCountUrl : function() {
         return this.proxyCountUrl;
+    },
+
+    /**
+     * Gets the portal.layer.renderer.RendererDebuggerData used by this renderer
+     */
+    getRendererDebuggerData : function() {
+        return this.renderDebuggerData;
     }
 });
