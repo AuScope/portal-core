@@ -30,11 +30,11 @@ portal.util.xml.SimpleDOM.getClassList = function(domNode) {
         return domNode.classList;
     } else if (domNode['class']) {
         return domNode['class'].split(' ');
-    } else if (domNode['className']) {
-        return domNode['className'].split(' ');
+    } else if (domNode.className) {
+        return domNode.className.split(' ');
     }
     return [];
-}
+};
 
 /**
  * Figure out if domNode is a leaf or not
@@ -43,7 +43,7 @@ portal.util.xml.SimpleDOM.getClassList = function(domNode) {
 portal.util.xml.SimpleDOM.isLeafNode = function(domNode) {
     var isLeaf = true;
     for ( var i = 0; i < domNode.childNodes.length && isLeaf; i++) {
-        isLeaf = domNode.childNodes[i].nodeType != portal.util.xml.SimpleDOM.XML_NODE_ELEMENT;
+        isLeaf = domNode.childNodes[i].nodeType !== portal.util.xml.SimpleDOM.XML_NODE_ELEMENT;
     }
 
     return isLeaf;
@@ -86,7 +86,7 @@ portal.util.xml.SimpleDOM.filterNodeArray = function(nodeArray, nodeType, namesp
  */
 portal.util.xml.SimpleDOM.getMatchingChildNodes = function(domNode, childNamespaceURI, childNodeName) {
     return portal.util.xml.SimpleDOM.filterNodeArray(domNode.childNodes, portal.util.xml.SimpleDOM.XML_NODE_ELEMENT, childNamespaceURI, childNodeName);
-},
+};
 
 /**
  * Gets all Attributes of domNode as an Array that match the specified filter parameters

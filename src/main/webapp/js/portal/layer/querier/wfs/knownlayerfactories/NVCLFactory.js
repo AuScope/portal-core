@@ -32,7 +32,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
             resizable   : false,
             modal       : true,
             plain       : false,
-            title       : 'Borehole Id: '+ datasetName,
+            title       : 'Borehole Id: ' + datasetName,
             height      : 600,
             width       : 820,
             items:[{
@@ -83,7 +83,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                 }
 
                 //Add our mosaic tab (if available)
-                if (mosaicRecord != null) {
+                if (mosaicRecord !== null) {
                     tp.add({
                         title : ' Mosaic ',
                         layout : 'fit',
@@ -94,7 +94,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                 }
 
                 //Add our imagery tab (if available)
-                if (imageryRecord != null) {
+                if (imageryRecord !== null) {
                     var startSampleNo   = 0;
                     var endSampleNo     = 100;
                     var sampleIncrement = 100;
@@ -142,7 +142,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                             text: 'Next >',
                             handler: Ext.bind(cardNav, this, [100])
                         }]
-                   });
+                    });
                 }
 
                 //Add our scalars tab (this always exists
@@ -246,7 +246,6 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                             items:[{
                                 xtype       : 'fieldset',
                                 title       : 'List of Scalars',
-                                layout      : 'anchor',
                                 anchor      : '100%',
                                 //autoHeight  : true,
                                 height      : 500,
@@ -351,7 +350,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                                             sHtml += '&width=' + width;
                                             sHtml += '&height=' + height;
                                             sHtml += '&serviceUrl=';
-                                            sHtml += escape(nvclDataServiceUrl)
+                                            sHtml += escape(nvclDataServiceUrl);
                                             sHtml += '" ';
                                             sHtml += 'onload="Ext.getCmp(\'plWindow\').doLayout();"';
                                             sHtml += '/>';
@@ -386,7 +385,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                     }
                 });
 
-                if (mosaicRecord != null || imageryRecord != null) {
+                if (mosaicRecord !== null || imageryRecord !== null) {
                     win.show();
                     win.center();
                 } else {
@@ -515,7 +514,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                             iconCls : 'info',
                             handler: function() {
                                 var sEmail = Ext.getCmp('tsgEmailAddress').getValue();
-                                if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
+                                if (sEmail === 'Your.Name@csiro.au' || sEmail === '') {
                                     Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
                                     Ext.getCmp('tsgEmailAddress').markInvalid();
                                     return;
@@ -622,7 +621,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                             iconCls : 'info',
                             handler : function() {
                                 var sEmail = Ext.getCmp('omEmailAddress').getValue();
-                                if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
+                                if (sEmail === 'Your.Name@csiro.au' || sEmail === '') {
                                     Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
                                     Ext.getCmp('omEmailAddress').markInvalid();
                                     return;
@@ -654,7 +653,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                             handler: function(button) {
                                 var sUrl = '';
                                 var sEmail = Ext.getCmp('omEmailAddress').getValue();
-                                if (sEmail == 'Your.Name@csiro.au' || sEmail == '') {
+                                if (sEmail === 'Your.Name@csiro.au' || sEmail === '') {
                                     Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
                                     Ext.getCmp('omEmailAddress').markInvalid();
                                     return;

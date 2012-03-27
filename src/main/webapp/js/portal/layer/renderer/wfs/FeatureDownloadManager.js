@@ -51,7 +51,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureDownloadManager', {
             'cancelled' : true
         });
         this.listeners = cfg.listeners;
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
     /**

@@ -6,7 +6,7 @@ Ext.define('portal.layer.querier.csw.CSWQuerier', {
     extend: 'portal.layer.querier.Querier',
 
     constructor: function(config){
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
     /**

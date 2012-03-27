@@ -77,14 +77,14 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
         for (var i = 0; i < cswRecords.length; i++) {
             if ((titleFilter === '' || regexp.test(cswRecords[i].get('name'))) &&
                     (keywordFilter === '' || cswRecords[i].containsKeywords(keywordFilter)) &&
-                    (resourceProviderFilter === '' || cswRecords[i].get('resourceProvider') == resourceProviderFilter)) {
+                    (resourceProviderFilter === '' || cswRecords[i].get('resourceProvider') === resourceProviderFilter)) {
                 numRecords++;
                 var geoEls = cswRecords[i].get('geographicElements');
                 for (var j = 0; j < geoEls.length; j++) {
                     var geoEl = geoEls[j];
                     if (geoEl instanceof portal.util.BBox) {
-                        if(geoEl.eastBoundLongitude == geoEl.westBoundLongitude &&
-                            geoEl.southBoundLatitude == geoEl.northBoundLatitude) {
+                        if(geoEl.eastBoundLongitude === geoEl.westBoundLongitude &&
+                            geoEl.southBoundLatitude === geoEl.northBoundLatitude) {
                             //We only have a point
                             var point = new GLatLng(parseFloat(geoEl.southBoundLatitude),
                                     parseFloat(geoEl.eastBoundLongitude));

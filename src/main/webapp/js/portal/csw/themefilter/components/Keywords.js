@@ -192,7 +192,7 @@ CSWThemeFilter.Keywords = Ext.extend(CSWThemeFilter.BaseComponent, {
                 xtype : 'spacer',
                 width : 20,
                 height : this.spacerHeight
-            })
+            });
         }
 
         this.keywordIDCounter++;

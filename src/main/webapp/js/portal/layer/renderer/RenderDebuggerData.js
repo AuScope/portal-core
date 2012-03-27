@@ -34,7 +34,7 @@ Ext.define('portal.layer.renderer.RenderDebuggerData', {
         var htmlString = '<br/>' ;
 
         for(i in this.parameters) {
-            var unescapedXml = new String(this.parameters[i]);
+            var unescapedXml = this.parameters[i];
             var escapedXml = unescapedXml.replace(/</g, '&lt;');
 
             htmlString += '<b>'+ i + '</b>' + '<br/> ' + escapedXml +'<br/><br/>';

@@ -52,7 +52,7 @@ MultiCSWFilterResultsPanel = Ext.extend(Ext.TabPanel, {
      */
     getSelectedCSWRecords : function() {
         var activeTab = this.getActiveTab();
-        if (activeTab == null) {
+        if (activeTab === null) {
             return [];
         }
 

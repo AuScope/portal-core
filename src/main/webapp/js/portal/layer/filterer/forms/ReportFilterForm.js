@@ -9,7 +9,7 @@ Ext.define('portal.layer.filterer.forms.ReportFilterForm', {
      */
     constructor : function(config) {
         //First build our keyword/resource data from our list of CSWRecords
-        var cswRecords = config.layer.get('cswRecords');;
+        var cswRecords = config.layer.get('cswRecords');
         var keywordData = {}; //store the counts of keywords keyed by the keyword name
         var resourceData = {}; //sotre the counts of providers keyed by provider names
         for (var i = 0; i < cswRecords.length; i++) {

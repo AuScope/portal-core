@@ -5,7 +5,7 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
     extend: 'portal.layer.querier.Querier',
 
     constructor: function(config){
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
     statics : {

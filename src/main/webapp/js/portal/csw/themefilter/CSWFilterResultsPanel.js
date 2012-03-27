@@ -29,7 +29,7 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
         var initialLoadParams = Ext.apply(this.filterParams, {
             limit : 10,
             start : 0
-        })
+        });
         this.cswRecordStore.load(initialLoadParams);
 
         //Build our configuration object
@@ -48,8 +48,8 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
                 dataIndex: 'onlineResources',
                 renderer: function(value, metadata, record) {
                     for (var i = 0; i < value.length; i++) {
-                        if (value[i].onlineResourceType == 'WCS' ||
-                            value[i].onlineResourceType == 'WFS') {
+                        if (value[i].onlineResourceType === portal.csw.OnlineResource.WCS ||
+                            value[i].onlineResourceType === portal.csw.OnlineResource.WFS) {
                             return '<div style="text-align:center"><img src="img/binary.png" width="16" height="16" align="CENTER"/></div>';
                         }
                     }
@@ -151,7 +151,7 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
                         var autoWidth = !Ext.isIE6 && !Ext.isIE7;
 
                         //This is for the 'record type' column
-                        if (col.cellIndex == '1') {
+                        if (col.cellIndex === '1') {
 
                             this.currentToolTip = new Ext.ToolTip({
                                 target: e.target ,

@@ -78,7 +78,6 @@ Ext.application({
             region : 'center',
             store : layerStore,
             map : map,
-            filterPanel : filterPanel,
             listeners : {
                 //On selection, update our filter panel
                 select : function(rowModel, record, index) {

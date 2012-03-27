@@ -162,9 +162,9 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
 
         //delete our checkbox group (if it exists)
         var parentFieldSet = this.findByType('fieldset')[0];
-        var checkBoxItems = parentFieldSet.findByType('checkboxgroup');
-        for (var i = 0; i < checkBoxItems.length; i++) {
-            var cmp = checkBoxItems[i];
+        var checkBoxGroupItems = parentFieldSet.findByType('checkboxgroup');
+        for (var i = 0; i < checkBoxGroupItems.length; i++) {
+            var cmp = checkBoxGroupItems[i];
             var parent = cmp.ownerCt;
             parent.remove(cmp);
         }

@@ -10,5 +10,5 @@ Ext.define('portal.util.UnimplementedFunction', {
             console.error('This function is not implemented yet', arguments);
         }
         throw 'NotImplemented';
-    }
+    };
 });

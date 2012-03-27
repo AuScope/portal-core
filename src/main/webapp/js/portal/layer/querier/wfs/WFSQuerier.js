@@ -23,7 +23,7 @@ Ext.define('portal.layer.querier.wfs.WFSQuerier', {
         this.knownLayerParser = Ext.create('portal.layer.querier.wfs.KnownLayerParser', {});
 
         // Call our superclass constructor to complete construction process.
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
 

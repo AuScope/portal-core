@@ -79,8 +79,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 tpl: new Ext.Template(
                         '<td class="x-grid-cell x-grid-cell-gridcolumn-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
                         '<div class="x-grid-cell-inner x-selectable" {attr}>{value}</div>',
-                        '</td>'
-                    )
+                        '</td>')
             },
             columns: [{
                 //Title column
@@ -157,7 +156,6 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 href : url + '.html',
                 html : 'OPeNDAP Data access form'
             });
-            break;
         case portal.csw.OnlineResource.WMS:
             //Form the WMS url
             var getMapUrl = url + this.internalURLSeperator(url) + 'SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + name;
@@ -225,7 +223,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         var lastChar = url[url.length - 1];
         if (lastChar == '?') {
             return '';
-        } else if (lastChar == '&') {
+        } else if (lastChar === '&') {
             return '';
         } else if (url.indexOf('?') >= 0) {
             return '&';

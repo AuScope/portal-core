@@ -42,8 +42,8 @@ Ext.define('portal.layer.renderer.Renderer', {
         this.map = config.map;
         this.parentLayer = config.parentLayer;
         this.overlayManager = this.map.createOverlayManager();
-        this.renderStatus = Ext.create('portal.layer.renderer.RenderStatus', {}), //for maintaining the status of rendering,
-        this.renderDebuggerData = Ext.create('portal.layer.renderer.RenderDebuggerData', {}), //for maintaining debug info about underlying requests
+        this.renderStatus = Ext.create('portal.layer.renderer.RenderStatus', {}); //for maintaining the status of rendering,
+        this.renderDebuggerData = Ext.create('portal.layer.renderer.RenderDebuggerData', {}); //for maintaining debug info about underlying requests
 
         // Call our superclass constructor to complete construction process.
         this.callParent(arguments);

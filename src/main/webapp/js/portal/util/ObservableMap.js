@@ -22,7 +22,7 @@ Ext.define('portal.util.ObservableMap', {
         this.parameters = {};
 
         // Call our superclass constructor to complete construction process.
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
     /**

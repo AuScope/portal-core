@@ -13,7 +13,6 @@ Ext.define('portal.widgets.panel.LayerPanel', {
         var me = this;
 
         this.map = cfg.map;
-        this.filterPanel = cfg.filterPanel;
 
         Ext.apply(cfg, {
             columns : [{
@@ -195,11 +194,9 @@ Ext.define('portal.widgets.panel.LayerPanel', {
             currentFilterForm.writeToFilterer(currentFilterer);
 
             //Finally pass off the download handling to the appropriate downloader (if it exists)
-            var downloader = layer.get('downloader');
-            if (downloader) {
-                var onlineResources = layer.getAllOnlineResources();
-                downloader.downloadData(layer, onlineResources, renderedFilterer, currentFilterer);
-            }
+            var onlineResources = layer.getAllOnlineResources();
+            downloader.downloadData(layer, onlineResources, renderedFilterer, currentFilterer);
+
         }
     },
 

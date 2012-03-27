@@ -38,14 +38,14 @@ Ext.define('portal.widgets.field.ClearableComboBox', {
         this.triggerEl.replaceWith(this.triggerConfig);
         this.triggerEl.on('mouseup', function(e) {
 
-            if (e.target.name == "trigger1" + id) {
+            if (e.target.name === "trigger1" + id) {
                 this.onTriggerClick();
-            } else if (e.target.name == "trigger2" + id) {
+            } else if (e.target.name === "trigger2" + id) {
                 this.reset();
                 if (this.spObj !== '' && this.spExtraParam !== '') {
                     Ext.getCmp(this.spObj).store.setExtraParam(
                             this.spExtraParam, '');
-                    Ext.getCmp(this.spObj).store.load()
+                    Ext.getCmp(this.spObj).store.load();
                 }
                 if (this.spForm !== '') {
                     Ext.getCmp(this.spForm).getForm().reset();

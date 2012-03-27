@@ -16,7 +16,7 @@ Ext.define('portal.layer.legend.Legend', {
         this.listeners = config.listeners;
 
         // Call our superclass constructor to complete construction process.
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
     /**

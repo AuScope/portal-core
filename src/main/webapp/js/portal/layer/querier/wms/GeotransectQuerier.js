@@ -193,9 +193,9 @@ Ext.define('portal.layer.querier.wms.GeotransectQuerier', {
                 cmpList.push(this._getDownloadTab(urlList, 'Seismic Data'));
 
                 //Lookup segy data
-                this._queryForSegyDatasets(queryTarget, callback, gtServiceUrl, lineId, cmpList)
+                this._queryForSegyDatasets(queryTarget, callback, gtServiceUrl, lineId, cmpList);
             }
-      });
+        });
     },
 
     /**

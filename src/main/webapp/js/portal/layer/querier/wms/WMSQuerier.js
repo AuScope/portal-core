@@ -6,7 +6,7 @@ Ext.define('portal.layer.querier.wms.WMSQuerier', {
 
     constructor: function(config){
         // Call our superclass constructor to complete construction process.
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
     /**
@@ -119,7 +119,7 @@ Ext.define('portal.layer.querier.wms.WMSQuerier', {
                     });
                 }
 
-                if (cmp != null) {
+                if (cmp !== null) {
                     callback(this, [cmp], queryTarget);
                 } else {
                     callback(this, [], queryTarget);

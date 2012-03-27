@@ -86,7 +86,7 @@ GWMSTileLayer.prototype.dd2MercMetersLat = function(latitude) {
 };
 
 GWMSTileLayer.prototype.isPng = function() {
-   return this.format == "image/png";
+   return this.format === "image/png";
 };
 
 GWMSTileLayer.prototype.getOpacity = function() {
@@ -105,56 +105,54 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
 
     var boundBox = null;
     var srs = null;
-   if (this.mercZoomLevel !== 0 && zoom < this.mercZoomLevel) {
-      boundBox = this.dd2MercMetersLng(lowerLeft.lng()) + "," +
-                     this.dd2MercMetersLat(lowerLeft.lat()) + "," +
-                     this.dd2MercMetersLng(upperRight.lng()) + "," +
-                     this.dd2MercMetersLat(upperRight.lat());
+    if (this.mercZoomLevel !== 0 && zoom < this.mercZoomLevel) {
+        boundBox = this.dd2MercMetersLng(lowerLeft.lng()) + "," +
+                   this.dd2MercMetersLat(lowerLeft.lat()) + "," +
+                   this.dd2MercMetersLng(upperRight.lng()) + "," +
+                   this.dd2MercMetersLat(upperRight.lat());
         // Change for GeoServer - 41001 is mercator and installed by default.
-      srs = "EPSG:41001";
-   } else {
-       boundBox = lowerLeft.lng() + "," +
-                      lowerLeft.lat() + "," +
-                      upperRight.lng() + "," +
-                      upperRight.lat();
+        srs = "EPSG:41001";
+    } else {
+        boundBox = lowerLeft.lng() + "," +
+                   lowerLeft.lat() + "," +
+                   upperRight.lng() + "," +
+                   upperRight.lat();
 
-       srs = "EPSG:4326";
+        srs = "EPSG:4326";
     }
 
-   // Build GetMap request URL
-   var url = this.baseURL;
+    // Build GetMap request URL
+    var url = this.baseURL;
 
-   var last_char = url.charAt(url.length - 1);
-   if ((last_char !== "?") && (last_char !== "&")) {
-      if (url.indexOf('?') == -1) {
-         url += "?";
-      } else {
-         url += "&";
-      }
-   }
+    var last_char = url.charAt(url.length - 1);
+    if ((last_char !== "?") && (last_char !== "&")) {
+        if (url.indexOf('?') === -1) {
+            url += "?";
+        } else {
+            url += "&";
+        }
+    }
 
-   url += "REQUEST=GetMap";
-   url += "&SERVICE=WMS";
-   url += "&VERSION=1.1.1";
-   if (this.layers) {
-      url += "&LAYERS=" + this.layers;
-   }
-   url += "&STYLES=";
-   if (this.styles) {
-      url += this.styles;
-   }
-   if (this.sld) {
-      url += "&SLD=" + this.sld;
-   }
-   url += "&FORMAT=" + this.format;
-   url += "&BGCOLOR=0xFFFFFF";
-   url += "&TRANSPARENT=TRUE";
-   url += "&SRS=" + srs;
-   url += "&BBOX=" + boundBox;
-   url += "&WIDTH=" + tileSize;
-   url += "&HEIGHT=" + tileSize;
+    url += "REQUEST=GetMap";
+    url += "&SERVICE=WMS";
+    url += "&VERSION=1.1.1";
+    if (this.layers) {
+        url += "&LAYERS=" + this.layers;
+    }
+    url += "&STYLES=";
+    if (this.styles) {
+        url += this.styles;
+    }
+    if (this.sld) {
+        url += "&SLD=" + this.sld;
+    }
+    url += "&FORMAT=" + this.format;
+    url += "&BGCOLOR=0xFFFFFF";
+    url += "&TRANSPARENT=TRUE";
+    url += "&SRS=" + srs;
+    url += "&BBOX=" + boundBox;
+    url += "&WIDTH=" + tileSize;
+    url += "&HEIGHT=" + tileSize;
 
-    // For debugging purposes
-    // document.getElementById("location3").innerHTML = url;
     return url;
 };

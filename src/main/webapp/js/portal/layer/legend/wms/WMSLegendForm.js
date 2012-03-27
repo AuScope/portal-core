@@ -19,8 +19,8 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
 
         Ext.apply(config, {
             html    : html
-         })
-         this.callParent(arguments);
+        });
+        this.callParent(arguments);
     }
 
-})
+});

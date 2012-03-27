@@ -22,8 +22,8 @@ Ext.define('portal.util.BBox', {
      * Returns true if the bounding box spans the entire planet
      */
     isGlobal : function() {
-        return this.eastBoundLongitude == 180 && this.northBoundLatitude == 90 &&
-        this.southBoundLatitude == -90 && this.westBoundLongitude == -180;
+        return this.eastBoundLongitude === 180 && this.northBoundLatitude === 90 &&
+        this.southBoundLatitude === -90 && this.westBoundLongitude === -180;
     },
 
     /**

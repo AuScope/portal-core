@@ -19,7 +19,7 @@ Ext.define('portal.layer.filterer.Filterer', {
     },
 
     constructor: function(config){
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
 

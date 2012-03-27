@@ -90,7 +90,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
 
         //Add our single points and overlays to the overlay manager (which will add them to the map)
         this.overlayManager.addMarkers(parser.getMarkers());
-        this.overlayManager.addOverlays(parser.getOverlays())
+        this.overlayManager.addOverlays(parser.getOverlays());
 
         //Store some debug info
         if (debugInfo) {

@@ -35,7 +35,7 @@ Ext.define('portal.layer.filterer.BaseFilterForm', {
         this.map = config.map;
         this.layer = config.layer;
         this.setIsFormLoaded(false);
-        this.delayedFormLoading = config.delayedFormLoading
+        this.delayedFormLoading = config.delayedFormLoading;
         this.addEvents({
             'formloaded' : true
         });

@@ -36,7 +36,7 @@ Ext.define('portal.layer.filterer.forms.BoreholeFilterForm', {
                 displayText : key,
                 serviceFilter : adminAreasMap[key]
             });
-        };
+        }
 
         var adminAreasStore = Ext.create('Ext.data.Store', {
             fields: ['displayText', 'serviceFilter'],

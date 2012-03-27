@@ -32,8 +32,8 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
                     };
                 } else {
                     obj.valueBounds = {
-                            from        : parseFloat(fromField.getValue()),
-                            to          : parseFloat(toField.getValue())
+                        from        : parseFloat(fromField.getValue()),
+                        to          : parseFloat(toField.getValue())
                     };
                 }
 
@@ -68,7 +68,7 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
         for (var i = 0; i < frm.items.getCount(); i++) {
             var component = frm.items.get(i);
 
-            if(component && !component.disabled && (component.checkboxToggle != true || component.collapsed == false)) {
+            if(component && !component.disabled && (component.checkboxToggle !== true || component.collapsed === false)) {
                 var constraint = generateConstraints(component);
                 if (constraint) {
                     variableConstraints.push(constraint);

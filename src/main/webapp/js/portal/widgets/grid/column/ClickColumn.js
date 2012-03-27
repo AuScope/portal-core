@@ -42,13 +42,13 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
      * Process and refire events routed from the GridView's processEvent method.
      */
     processEvent: function(type, view, cell, recordIndex, cellIndex, e) {
-        if (type == 'mousedown' || (type == 'keydown' && (e.getKey() == e.ENTER || e.getKey() == e.SPACE))) {
+        if (type == 'mousedown' || (type == 'keydown' && (e.getKey() === e.ENTER || e.getKey() === e.SPACE))) {
             var record = view.panel.store.getAt(recordIndex);
 
             this.fireEvent('columnclick', this, record, recordIndex, cellIndex);
             // cancel selection.
             return false;
-        } else if (type == 'dblclick') {
+        } else if (type === 'dblclick') {
             var record = view.panel.store.getAt(recordIndex);
             this.fireEvent('columndblclick', this, record, recordIndex, cellIndex);
             return false;

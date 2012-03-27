@@ -56,7 +56,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.PressureDBFactory', {
     parseKnownLayerFeature : function(featureId, parentKnownLayer, parentOnlineResource) {
         var me = this;
         var pressureDbUrl = this.getBaseUrl(parentOnlineResource.get('url')) + '/pressuredb-dataservices'; //This is a hack - somehow this needs to make it to the registry
-        var featureId = featureId.replace('gsml.borehole.', '');
+        var actualFeatureId = featureId.replace('gsml.borehole.', '');
 
         //Load the form in full - when it renders we'll actually check what is available.
         //The user won't be able to interact with the form prior to load due to the loading mask
@@ -71,7 +71,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.PressureDBFactory', {
                     afterrender : function(form) {
                         form.loadMask = new Ext.LoadMask(form.el, {});
                         form.loadMask.show();
-                        me.retrieveAvailableOM(form, featureId, pressureDbUrl);
+                        me.retrieveAvailableOM(form, actualFeatureId, pressureDbUrl);
                     }
                 },
                 items : [{
@@ -134,7 +134,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.PressureDBFactory', {
                     handler : function() {
                         var form = this.findParentByType('form');
                         form.loadMask.show();
-                        me.retrieveAvailableOM(form, featureId, pressureDbUrl);
+                        me.retrieveAvailableOM(form, actualFeatureId, pressureDbUrl);
                     }
                 },{
                     xtype : 'button',
@@ -143,7 +143,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.PressureDBFactory', {
                         //We need to generate our download URL
                         var url = 'pressuredb-download.do';
                         var params = {
-                            wellID : featureId,
+                            wellID : actualFeatureId,
                             serviceUrl : pressureDbUrl,
                             feature : []
                         };

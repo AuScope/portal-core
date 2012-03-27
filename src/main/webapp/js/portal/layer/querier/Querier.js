@@ -18,7 +18,7 @@ Ext.define('portal.layer.querier.Querier', {
         this.map = config.map;
 
         // Call our superclass constructor to complete construction process.
-        this.callParent(arguments)
+        this.callParent(arguments);
     },
 
     /**

@@ -67,7 +67,7 @@ Ext.define('portal.layer.querier.wfs.factories.SimpleFactory', {
                     });
                 }
             }]
-         });
+        });
     },
 
     /**
