@@ -97,5 +97,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         //Activate the filter button (if appropriate)
         this._filterButton.setDisabled(renderOnAdd || !filterForm);
+    },
+
+    clearFilter : function(){
+        var layout = this.getLayout();
+        layout.setActiveItem(this._emptyCard);
     }
 });

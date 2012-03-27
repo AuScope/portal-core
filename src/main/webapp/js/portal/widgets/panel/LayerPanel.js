@@ -13,6 +13,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
         var me = this;
 
         this.map = cfg.map;
+        this.addEvents('removelayerrequest');
 
         Ext.apply(cfg, {
             columns : [{
@@ -82,6 +83,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                     if (selectedRecords && selectedRecords.length > 0) {
                         var store = grid.getStore();
                         store.remove(selectedRecords);
+                        grid.fireEvent('removelayerrequest', this, selectedRecords[0]);//only support single selection
                     }
                 }
             }]

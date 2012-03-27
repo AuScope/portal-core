@@ -84,6 +84,9 @@ Ext.application({
                 //On selection, update our filter panel
                 select : function(rowModel, record, index) {
                     filterPanel.showFilterForLayer(record);
+                },
+                removelayerrequest: function(sourceGrid, record) {
+                    filterPanel.clearFilter();
                 }
             }
         });
