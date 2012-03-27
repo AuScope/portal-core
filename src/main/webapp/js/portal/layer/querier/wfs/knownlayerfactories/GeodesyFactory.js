@@ -21,7 +21,8 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.GeodesyFactory', {
         var from = fieldSet.getComponent('from');
 
         var formatDate = function(date) {
-            return Ext.util.Format.format('{0}-{1}-{2}Z', date.getFullYear(), date.getMonth(), date.getDate());
+            //VT: date.getMonth return month from 0-11
+            return Ext.util.Format.format('{0}-{1}-{2}Z', date.getFullYear(), date.getMonth()+1, date.getDate());
         };
 
         store.setProxy({
