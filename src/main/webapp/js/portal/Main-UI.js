@@ -1,4 +1,6 @@
 Ext.application({
+    name : 'portal',
+
     //Here we build our GUI from existing components - this function should only be assembling the GUI
     //Any processing logic should be managed in dedicated classes - don't let this become a
     //monolithic 'do everything' function
