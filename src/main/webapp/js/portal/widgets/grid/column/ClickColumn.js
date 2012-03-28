@@ -17,7 +17,7 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
         this.addEvents(
             /**
              * @event columnclick
-             * Fires when a row is clicked and that click lies within this column
+             * Fires when a row is clicked and that click lies within this column. Return false to cancel this event propagating
              * @param {portal.widgets.grid.column.ClickColumn} this
              * @param {Ext.data.Model} The selected data record
              * @param {Number} rowIndex The row index clicked
@@ -26,7 +26,7 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
             'columnclick',
             /**
              * @event columndblclick
-             * Fires when a row is double clicked and that click lies within this column
+             * Fires when a row is double clicked and that click lies within this column. Return false to cancel this event propagating
              * @param {portal.widgets.grid.column.ClickColumn} this
              * @param {Ext.data.Model} The selected data record
              * @param {Number} rowIndex The row index clicked
@@ -45,13 +45,11 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
         if (type == 'mousedown' || (type == 'keydown' && (e.getKey() === e.ENTER || e.getKey() === e.SPACE))) {
             var record = view.panel.store.getAt(recordIndex);
 
-            this.fireEvent('columnclick', this, record, recordIndex, cellIndex);
             // cancel selection.
-            return false;
+            return this.fireEvent('columnclick', this, record, recordIndex, cellIndex);
         } else if (type === 'dblclick') {
             var record = view.panel.store.getAt(recordIndex);
-            this.fireEvent('columndblclick', this, record, recordIndex, cellIndex);
-            return false;
+            return this.fireEvent('columndblclick', this, record, recordIndex, cellIndex);
         } else {
             return this.callParent(arguments);
         }
