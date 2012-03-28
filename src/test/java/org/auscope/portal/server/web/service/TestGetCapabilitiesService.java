@@ -63,10 +63,10 @@ public class TestGetCapabilitiesService extends PortalTestClass {
 
         List<GetCapabilitiesWMSLayerRecord> layers = record.getLayers();
         Assert.assertNotNull(layers);
-        Assert.assertEquals(21, layers.size());
+        Assert.assertEquals(22, layers.size());
 
-        //Test our first
-        GetCapabilitiesWMSLayerRecord layer = layers.get(0);
+        //Test our second
+        GetCapabilitiesWMSLayerRecord layer = layers.get(1);
         CSWGeographicBoundingBox bbox = layer.getBoundingBox();
         Assert.assertEquals("An Abstract", layer.getAbstract());
         Assert.assertEquals(3, bbox.getEastBoundLongitude(), 0.01);
@@ -78,7 +78,7 @@ public class TestGetCapabilitiesService extends PortalTestClass {
         Assert.assertEquals("A sample ArcGrid file", layer.getTitle());
 
         //And our last record
-        layer = layers.get(20);
+        layer = layers.get(21);
         bbox = layer.getBoundingBox();
         Assert.assertEquals("Layer-Group type layer: tiger-ny", layer.getAbstract());
         Assert.assertEquals(-73.907005, bbox.getEastBoundLongitude(), 0.00001);

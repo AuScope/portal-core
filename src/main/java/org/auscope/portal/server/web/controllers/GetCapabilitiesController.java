@@ -80,6 +80,10 @@ public class GetCapabilitiesController extends BaseCSWController {
                         continue;
                     }
 
+                    if (rec.getName() == null || rec.getName().isEmpty()) {
+                        continue;
+                    }
+
                     String serviceName = rec.getTitle();
                     String fileId = "unique-id-" + rec.getName();
                     String recordInfoUrl = null;

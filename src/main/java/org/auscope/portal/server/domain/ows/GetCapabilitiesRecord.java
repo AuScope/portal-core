@@ -56,7 +56,7 @@ public class GetCapabilitiesRecord {
     private static final String EXTRACTGETMAPFORMATEXPRESSION = "/WMT_MS_Capabilities/Capability/Request/GetMap/Format";
 
     /** The extract layer expression. */
-    private static final String EXTRACTLAYEREXPRESSION = "/WMT_MS_Capabilities/Capability/descendant::Layer[@queryable='1']";
+    private static final String EXTRACTLAYEREXPRESSION = "/WMT_MS_Capabilities/Capability/descendant::Layer";
 
 
     /**
