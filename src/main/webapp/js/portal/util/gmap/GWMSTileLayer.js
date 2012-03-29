@@ -123,36 +123,28 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
 
     // Build GetMap request URL
     var url = this.baseURL;
-
-    var last_char = url.charAt(url.length - 1);
-    if ((last_char !== "?") && (last_char !== "&")) {
-        if (url.indexOf('?') === -1) {
-            url += "?";
-        } else {
-            url += "&";
-        }
-    }
-
-    url += "REQUEST=GetMap";
-    url += "&SERVICE=WMS";
-    url += "&VERSION=1.1.1";
+    var params = {
+        'REQUEST' : 'GetMap',
+        'SERVICE' : 'WMS',
+        'VERSION' : '1.1.1',
+        'FORMAT' : this.format,
+        'BGCOLOR' : '0xFFFFFF',
+        'TRANSPARENT' : 'TRUE',
+        'SRS' : srs,
+        'BBOX' : boundBox,
+        'WIDTH' : tileSize,
+        'HEIGHT' : tileSize
+    };
     if (this.layers) {
-        url += "&LAYERS=" + this.layers;
+        params['LAYERS'] = this.layers;
     }
-    url += "&STYLES=";
     if (this.styles) {
-        url += this.styles;
+        params['STYLES'] = this.styles;
     }
     if (this.sld) {
-        url += "&SLD=" + this.sld;
+        params['SLD'] = this.sld;
     }
-    url += "&FORMAT=" + this.format;
-    url += "&BGCOLOR=0xFFFFFF";
-    url += "&TRANSPARENT=TRUE";
-    url += "&SRS=" + srs;
-    url += "&BBOX=" + boundBox;
-    url += "&WIDTH=" + tileSize;
-    url += "&HEIGHT=" + tileSize;
+    var queryString = Ext.Object.toQueryString(params);
 
-    return url;
+    return Ext.urlAppend(url, queryString);
 };
