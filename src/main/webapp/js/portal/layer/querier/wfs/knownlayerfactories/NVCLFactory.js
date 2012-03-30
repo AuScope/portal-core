@@ -750,6 +750,9 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                         }
                     }
                 }),
+                plugins : [{
+                    ptype : 'selectablegrid'
+                }],
                 hideHeaders : true,
                 //Show just the dataset names
                 columns : [{
@@ -757,7 +760,21 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', {
                     dataIndex : 'datasetName',
                     flex : 1,
                     renderer : function(value, p, record) {
-                        return Ext.util.Format.format('<div class="x-selectable"><b>{0}</b><br/><span style="color:#555;">{1}</span></div>', value, record.get('datasetId'));
+                        return Ext.DomHelper.markup({
+                            tag : 'div',
+                            children : [{
+                                tag : 'b',
+                                html : value
+                            },{
+                                tag : 'br'
+                            },{
+                                tag : 'span',
+                                style : {
+                                    color : '#555'
+                                },
+                                html : record.get('datasetId')
+                            }]
+                        });
                     }
                 }],
                 listeners : {

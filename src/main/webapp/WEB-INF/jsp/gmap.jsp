@@ -32,14 +32,6 @@
 
       <script src="js/portal/Main-UI.js" type="text/javascript"></script>
 
-      <!-- To enable text selection within a Ext JS GridPanel -->
-      <style type="text/css">
-        .x-selectable, .x-selectable * {
-            -moz-user-select: text!important;
-            -khtml-user-select: text!important;
-        }
-        </style>
-
       <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
    </head>
 

@@ -74,13 +74,10 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 ],
                 data : dataItems
             }),
+            plugins : [{
+                ptype : 'selectablegrid'
+            }],
             hideHeaders : true,
-            viewConfig : {
-                tpl: new Ext.Template(
-                        '<td class="x-grid-cell x-grid-cell-gridcolumn-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
-                        '<div class="x-grid-cell-inner x-selectable" {attr}>{value}</div>',
-                        '</td>')
-            },
             columns: [{
                 //Title column
                 dataIndex: 'onlineResource',
@@ -119,9 +116,46 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         //Render our HTML
         switch(onlineResource.get('type')) {
         case portal.csw.OnlineResource.WWW:
-            return Ext.util.Format.format('<div class="x-selectable"><a target="_blank" href="{0}"><b>{1}</b></a><br/><span style="color:#555;">{2}</span></div>', url, name, description);
+            return Ext.DomHelper.markup({
+                tag : 'div',
+                children : [{
+                    tag : 'a',
+                    target : '_blank',
+                    href : url,
+                    children : [{
+                        tag : 'b',
+                        html : name
+                    }]
+                },{
+                    tag : 'br'
+                },{
+                    tag : 'span',
+                    style : {
+                        color : '#555'
+                    },
+                    html : description
+                }]
+            });
         default:
-            return Ext.util.Format.format('<div class="x-selectable"><b>{0}</b><br/><span style="color:#555;">{1}<br/>{2}</span></div>', name, url, description);
+            return Ext.DomHelper.markup({
+                tag : 'div',
+                children : [{
+                    tag : 'b',
+                    html : name
+                },{
+                    tag : 'br'
+                },{
+                    tag : 'span',
+                    style : {
+                        color : '#555'
+                    },
+                    children : [{
+                        html : url
+                    },{
+                        html : description
+                    }]
+                }]
+            });
         }
     },
 
