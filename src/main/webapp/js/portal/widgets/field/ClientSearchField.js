@@ -6,6 +6,8 @@ Ext.define('portal.widgets.field.ClientSearchField', {
     extend : 'Ext.ux.form.SearchField',
     alias : 'widget.clientsearchfield',
 
+    wordListSplitString : ' ', //Will be used to split our searches into a series of words
+
     initComponent : function() {
         this.callParent(arguments);
     },
@@ -57,12 +59,40 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         }
 
         this.store.clearFilter(false);
-        this.store.filter(this.fieldName, v, true, false);
+
+
+        this.store.filterBy(Ext.bind(this.filterByWord, this, [v.split(this.wordListSplitString)], true));
+        //this.store.filter(this.fieldName, v, true, false);
+
+
         this.hasSearch = true;
         this.triggerCell.item(0).setDisplayed(true);
         this.doComponentLayout();
     },
 
+    filterByWord : function(record, id, wordsToFind) {
+        var wordList = record.get(this.fieldName).split(this.wordListSplitString);
+
+        //Function for testing if a list of words contains a particular word (or prefix)
+        var containsMatch = function(wordList, word) {
+            for (var i = 0; i < wordList.length; i++) {
+                var lowerMatchWord = Ext.String.trim(wordList[i].toLowerCase());
+                var lowerWord = Ext.String.trim(word.toLowerCase());
+
+                if (lowerMatchWord === lowerWord || lowerMatchWord.indexOf(lowerWord) === 0) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        for (var i = 0; i < wordsToFind.length; i++) {
+            if (!containsMatch(wordList, wordsToFind[i])) {
+                return false;
+            }
+        }
+        return true;
+    },
 
     /**
      * text : The text to include in the box (to indicate that a custom filter has been run)
