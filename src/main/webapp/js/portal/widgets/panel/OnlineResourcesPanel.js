@@ -191,9 +191,6 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 html : 'OPeNDAP Data access form'
             });
         case portal.csw.OnlineResource.WMS:
-            //Form the WMS url
-            var getMapUrl = url + this.internalURLSeperator(url) + 'SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=' + name;
-            getMapUrl += '&SRS=EPSG:4326&FORMAT=image/png&STYLES=';
 
             //To generate the url we will need to use the bounding box to make the request
             //To avoid distortion, we also scale the width height independently
@@ -204,20 +201,11 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     superBbox = superBbox.combine(geoEls[i]);
                 }
 
-                var superBboxStr = superBbox.westBoundLongitude + "," +
-                                    superBbox.southBoundLatitude + "," +
-                                    superBbox.eastBoundLongitude + "," +
-                                    superBbox.northBoundLatitude;
-
                 //Set our width to a constant and scale the height appropriately
                 var heightRatio = (superBbox.northBoundLatitude - superBbox.southBoundLatitude) /
                                   (superBbox.eastBoundLongitude - superBbox.westBoundLongitude);
                 var width = 512;
                 var height = Math.floor(width * heightRatio);
-
-                getMapUrl += '&WIDTH=' + width;
-                getMapUrl += '&HEIGHT=' + height;
-                getMapUrl += '&BBOX=' + superBboxStr;
 
                 var thumbWidth = width;
                 var thumbHeight = height;
@@ -227,6 +215,8 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     thumbWidth = 128;
                     thumbHeight = thumbWidth * heightRatio;
                 }
+
+                var getMapUrl = portal.map.primitives.BaseWMSPrimitive.getWmsUrl(url, name, superBbox, width, height);
 
                 return Ext.DomHelper.markup({
                     tag : 'a',

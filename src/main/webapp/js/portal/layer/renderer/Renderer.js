@@ -13,7 +13,7 @@
 Ext.define('portal.layer.renderer.Renderer', {
     extend: 'Ext.util.Observable',
 
-    map : null, //portal.util.gmap.GMapWrapper
+    map : null, //portal.map.BaseMap
     visible : true, //whether the render is currently 'visible' or not,
     hasData : false, //whether the renderer has rendered any data or not,
     proxyUrl : '',  //a url to proxy data requests through (implementation specific)
@@ -21,7 +21,7 @@ Ext.define('portal.layer.renderer.Renderer', {
     parentLayer : null, // a reference to the portal.layer.Layer that owns this renderer
     renderDebuggerData : null,
     renderStatus : null,
-    overlayManager : null,
+    primitiveManager : null,
 
     /**
      * Expects a Ext.util.Observable config with the following additions
@@ -41,7 +41,7 @@ Ext.define('portal.layer.renderer.Renderer', {
         this.listeners = config.listeners;
         this.map = config.map;
         this.parentLayer = config.parentLayer;
-        this.overlayManager = this.map.createOverlayManager();
+        this.primitiveManager = this.map.makePrimitiveManager();
         this.renderStatus = Ext.create('portal.layer.renderer.RenderStatus', {}); //for maintaining the status of rendering,
         this.renderDebuggerData = Ext.create('portal.layer.renderer.RenderDebuggerData', {}); //for maintaining debug info about underlying requests
 

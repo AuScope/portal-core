@@ -68,7 +68,7 @@ Ext.application({
         //We need something to handle the clicks on the map
         var queryTargetHandler = Ext.create('portal.layer.querier.QueryTargetHandler', {});
 
-        var map = Ext.create('portal.util.gmap.GMapWrapper', {
+        var map = Ext.create('portal.map.gmap.GoogleMap', {
             container : null,   //We will be performing a delayed render of this map
             layerStore : layerStore,
             listeners : {

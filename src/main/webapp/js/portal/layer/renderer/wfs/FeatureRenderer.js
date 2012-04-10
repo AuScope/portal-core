@@ -6,18 +6,10 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
     extend: 'portal.layer.renderer.Renderer',
 
     config : {
-        //Information about the icon that is used to represent point locations of this WFS
-        iconCfg : {
-            url : null, //string - the URL of icon image that will be used
-            size : {
-                width : null, //width of the icon in pixels
-                height : null //height of the icon in pixels
-            },
-            anchor : {
-                x : null, //the x offset of where the icon should be anchored to the map
-                y : null //the y offset of where the icon should be anchored to the map
-            }
-        }
+        /**
+         * portal.map.Icon - Information about the icon that is used to represent point locations of this WFS
+         */
+        icon : null
     },
 
     legend : null,
@@ -26,7 +18,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
     constructor: function(config) {
         this.currentRequestCount = 0;//how many requests are still running
         this.legend = Ext.create('portal.layer.legend.wfs.WFSLegend', {
-            iconUrl : config.iconCfg ? config.iconCfg.url : ''
+            iconUrl : config.icon ? config.icon.getUrl() : ''
         });
         this.allDownloadManagers = [];
 
@@ -39,11 +31,11 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
      *
      * You can optionally pass in an array of markers/overlays that were rendered
      */
-    _finishDownloadManagerResponse : function(markerList, overlayList) {
+    _finishDownloadManagerResponse : function(primitiveList) {
         //If we haven't had any data come back yet from another response (and we have data now)
         //update the boolean indicating that we've had data
-        if (markerList || overlayList) {
-            this.hasData = (markerList.length > 0) || (overlayList.length > 0);
+        if (primitiveList) {
+            this.hasData = (primitiveList.length > 0);
         }
 
         this.currentRequestCount--;
@@ -86,11 +78,10 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
         var me = this;
         //Parse our KML into a set of overlays and markers
         var parser = Ext.create('portal.layer.renderer.wfs.KMLParser', {kml : data.kml, map : me.map});
-        parser.makeMarkers(icon, onlineResource, layer);
+        var primitives = parser.makePrimitives(icon, onlineResource, layer);
 
         //Add our single points and overlays to the overlay manager (which will add them to the map)
-        this.overlayManager.addMarkers(parser.getMarkers());
-        this.overlayManager.addOverlays(parser.getOverlays());
+        this.primitiveManager.addPrimitives(primitives);
 
         //Store some debug info
         if (debugInfo) {
@@ -98,10 +89,10 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
         }
 
         //store the status
-        this.renderStatus.updateResponse(onlineResource.get('url'), (parser.getMarkers().length + parser.getOverlays().length) + " record(s) retrieved.");
+        this.renderStatus.updateResponse(onlineResource.get('url'), (primitives.length) + " record(s) retrieved.");
 
         //we are finished
-        this._finishDownloadManagerResponse(parser.getMarkers(), parser.getOverlays());
+        this._finishDownloadManagerResponse(primitives);
     },
 
     /**
@@ -133,17 +124,6 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
         }
         this.renderStatus.initialiseResponses(urls, 'Loading...');
 
-        //this icon will be shared by all features with a point based geometry
-        var icon = new GIcon(G_DEFAULT_ICON, this.iconCfg.url);
-        icon.shadow = null;
-        if (this.iconCfg.size && this.iconCfg.size.width && this.iconCfg.size.height) {
-            icon.iconSize = new GSize(this.iconCfg.size.width, this.iconCfg.size.height);
-        }
-        if (this.iconCfg.anchor && this.iconCfg.anchor.x && this.iconCfg.anchor.y) {
-            icon.iconAnchor = new GPoint(this.iconCfg.anchor.x, this.iconCfg.anchor.y);
-            icon.infoWindowAnchor = new GPoint(this.iconCfg.anchor.x, this.iconCfg.anchor.y);
-        }
-
         //alert any listeners that we are about to start rendering
         this.fireEvent('renderstarted', this, wfsResources, filterer);
         this.currentRequestCount = wfsResources.length; //this will be decremented as requests return
@@ -169,7 +149,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
                     //Please note that the following bindings override args as ExtJS events append
                     //the listeners object to fired events (we don't want that) so we are forced to override
                     //that parameter using the appendArgs argument in Ext.bind
-                    success : Ext.bind(this._handleDownloadManagerSuccess, this, [onlineResource, this.parentLayer, icon], 4), //Override args from the 4th argument
+                    success : Ext.bind(this._handleDownloadManagerSuccess, this, [onlineResource, this.parentLayer, this.icon], 4), //Override args from the 4th argument
                     error : Ext.bind(this._handleDownloadManagerError, this, [onlineResource, this.parentLayer], 3), //Override args from the 3rd
                     cancelled : Ext.bind(this._handleDownloadManagerCancelled, this, [onlineResource, this.parentLayer], 1) //Override args from the 1st
                 }
@@ -206,7 +186,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
      * returns - void
      */
     removeData : function() {
-        this.overlayManager.clearOverlays();
+        this.primitiveManager.clearPrimitives();
     },
 
     /**

@@ -5,22 +5,11 @@
 Ext.define('portal.layer.renderer.csw.CSWRenderer', {
     extend: 'portal.layer.renderer.Renderer',
     config : {
-        //Information about the icon that is used to represent point locations of this WFS
-        iconCfg : {
-            url : null, //string - the URL of icon image that will be used
-            size : {
-                width : null, //width of the icon in pixels
-                height : null //height of the icon in pixels
-            },
-            anchor : {
-                x : null, //the x offset of where the icon should be anchored to the map
-                y : null //the y offset of where the icon should be anchored to the map
-            }
-        }
+        icon : null
     },
     constructor: function(config) {
         this.legend = Ext.create('portal.layer.legend.wfs.WFSLegend', {
-            iconUrl : config.iconCfg ? config.iconCfg.url : ''
+            iconUrl : config.icon ? config.icon.getUrl() : ''
         });
         this.callParent(arguments);
     },
@@ -72,8 +61,9 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
         this.fireEvent('renderstarted', this, resources, filterer);
 
 
-        var cswRecords=this.parentLayer.get('cswRecords');
+        var cswRecords = this.parentLayer.get('cswRecords');
         var numRecords = 0;
+        var primitives = [];
         for (var i = 0; i < cswRecords.length; i++) {
             if ((titleFilter === '' || regexp.test(cswRecords[i].get('name'))) &&
                     (keywordFilter === '' || cswRecords[i].containsKeywords(keywordFilter)) &&
@@ -86,39 +76,26 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
                         if(geoEl.eastBoundLongitude === geoEl.westBoundLongitude &&
                             geoEl.southBoundLatitude === geoEl.northBoundLatitude) {
                             //We only have a point
-                            var point = new GLatLng(parseFloat(geoEl.southBoundLatitude),
-                                    parseFloat(geoEl.eastBoundLongitude));
+                            var point = Ext.create('portal.map.Point', {
+                                latitude : geoEl.southBoundLatitude,
+                                longitude : geoEl.eastBoundLongitude
+                            });
 
-                            var icon = new GIcon(G_DEFAULT_ICON, this.iconCfg.url);
-                            icon.shadow = null;
-
-                            if (this.iconCfg.size.width && this.iconCfg.size.height) {
-                                icon.iconSize = new GSize(this.iconCfg.size.width, this.iconCfg.size.height);
-                            }
-                            if (this.iconCfg.anchor.x && this.iconCfg.anchor.y) {
-                                icon.iconAnchor = new GPoint(this.iconCfg.anchor.x, this.iconCfg.anchor.y);
-                                icon.infoWindowAnchor = new GPoint(this.iconCfg.anchor.x, this.iconCfg.anchor.y);
-                            }
-
-                            var marker = portal.util.gmap.GMapWrapper.makeMarker(cswRecords[i].get('id'), cswRecords[i].get('name'),
-                                    cswRecords[i],undefined, this.parentLayer, point, icon);
-
-                            //Add our single point
-                            this.overlayManager.markerManager.addMarker(marker, 0);
-
+                            primitives.push(this.map.makeMarker(cswRecords[i].get('id'), cswRecords[i].get('name'), cswRecords[i], undefined, this.parentLayer, point, this.getIcon()));
                         } else { //polygon
-                            var polygonList = geoEl.toGMapPolygon('#0003F9', 4, 0.75,'#0055FE', 0.4, undefined,
+                            var polygonList = geoEl.toPolygon(this.map, '#0003F9', 4, 0.75,'#0055FE', 0.4, undefined,
                                     cswRecords[i].get('id'), cswRecords[i], undefined, this.parentLayer);
 
                             for (var k = 0; k < polygonList.length; k++) {
-                                this.overlayManager.addOverlay(polygonList[k]);
+                                primitives.push(polygonList[k]);
                             }
                         }
                     }
                 }
             }
         }
-        this.overlayManager.markerManager.refresh();
+
+        this.primitiveManager.addPrimitives(primitives);
         this.fireEvent('renderfinished', this);
     },
 
@@ -147,7 +124,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
      * returns - void
      */
     removeData : function() {
-        this.overlayManager.clearOverlays();
+        this.primitiveManager.clearPrimitives();
     },
 
     /**

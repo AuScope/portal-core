@@ -2,17 +2,20 @@
  * Static methods for converting clicks on a map into portal.layer.querier.QueryTarget
  * objects that can be tested against various layer's querier instances for more information
  */
-Ext.define('portal.util.gmap.ClickController', {
+Ext.define('portal.map.gmap.ClickController', {
 
     statics : {
         /**
          * Utility for turning a click on a feature into a single QueryTarget
          */
         _marker : function(marker, overlayLatLng) {
-            var id = portal.util.gmap.GMapWrapper.getOverlayId(marker);
-            var onlineResource = portal.util.gmap.GMapWrapper.getOverlayOnlineResource(marker);
-            var layer = portal.util.gmap.GMapWrapper.getOverlayLayer(marker);
-            var cswRecord = portal.util.gmap.GMapWrapper.getOverlayCSWRecord(marker);
+
+            var basePrim = marker._portalBasePrimitive;
+
+            var id = basePrim.getId();
+            var onlineResource = basePrim.getOnlineResource();
+            var layer = basePrim.getLayer();
+            var cswRecord = basePrim.getCswRecord();
 
             return [Ext.create('portal.layer.querier.QueryTarget', {
                 id : id,
@@ -36,18 +39,20 @@ Ext.define('portal.util.gmap.ClickController', {
             for (var i = 0; i < layerStore.getCount(); i++) {
                 var layer = layerStore.getAt(i);
                 var renderer = layer.data.renderer;
-                var overlayManager = renderer.overlayManager;
+                var primitiveManager = renderer.primitiveManager;
 
                 //Do this by diving straight into every renderer's list of polygons
-                for (var j = 0; j < overlayManager.overlayList.length; j++) {
-                    var overlayToTest =  overlayManager.overlayList[j];
+                for (var j = 0; j < primitiveManager.primitiveList.length; j++) {
+                    var overlayToTest =  primitiveManager.primitiveList[j];
                     if (overlayToTest instanceof GPolygon &&
                         overlayToTest.Contains(point)) {
 
-                        var id = portal.util.gmap.GMapWrapper.getOverlayId(overlayToTest);
-                        var onlineResource = portal.util.gmap.GMapWrapper.getOverlayOnlineResource(overlayToTest);
-                        var layer = portal.util.gmap.GMapWrapper.getOverlayLayer(overlayToTest);
-                        var cswRecord = portal.util.gmap.GMapWrapper.getOverlayCSWRecord(overlayToTest);
+                        var basePrim = overlayToTest._portalBasePrimitive;
+
+                        var id = basePrim.getId();
+                        var onlineResource = basePrim.getOnlineResource();
+                        var layer = basePrim.getLayer();
+                        var cswRecord = basePrim.getCswRecord();
 
                         queryTargets.push(Ext.create('portal.layer.querier.QueryTarget', {
                             id : id,
@@ -146,11 +151,11 @@ Ext.define('portal.util.gmap.ClickController', {
          */
         generateQueryTargets : function(overlay, latlng, overlayLatlng, layerStore) {
             if (!overlay) {
-                return portal.util.gmap.ClickController._nonExplicit(latlng, layerStore);
+                return portal.map.gmap.ClickController._nonExplicit(latlng, layerStore);
             } else if (overlay instanceof GMarker) {
-                return portal.util.gmap.ClickController._marker(overlay, overlayLatlng);
+                return portal.map.gmap.ClickController._marker(overlay, overlayLatlng);
             } else if (overlay instanceof GPolygon) {
-                return portal.util.gmap.ClickController._polygon(overlay, latlng, overlayLatlng, layerStore);
+                return portal.map.gmap.ClickController._polygon(overlay, latlng, overlayLatlng, layerStore);
             } else {
                 return []; //unable to handle clicks on other geometry types
             }

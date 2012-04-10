@@ -136,7 +136,8 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
         //Update our map location to the specified bounds
         this.map.setZoom(s.mapState.zoom);
-        this.map.setCenter(s.mapState.center.lat, s.mapState.center.lng);
+        var centerPoint = Ext.create('portal.map.Point', {latitude : s.mapState.center.lat, longitude : s.mapState.center.lng});
+        this.map.setCenter(centerPoint);
 
         //Add the layers, attempt to load whatever layers are available
         //but warn the user if some layers no longer exist

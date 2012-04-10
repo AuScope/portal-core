@@ -86,27 +86,27 @@ Ext.define('portal.layer.LayerFactory', {
      * Creates a new instance of renderer based on the specified values
      */
     _generateRenderer : function(wfsResources, wmsResources, proxyUrl, proxyCountUrl, iconUrl, iconSize, iconAnchor) {
+        var icon = Ext.create('portal.map.Icon', {
+            url : iconUrl,
+            width : iconSize ? iconSize.width : 16,
+            height : iconSize ? iconSize.height : 16,
+            anchorOffsetX : iconAnchor ? iconAnchor.x : 0,
+            anchorOffsetY : iconAnchor ? iconAnchor.y : 0
+        });
+
         if (wmsResources.length > 0) {
             return Ext.create('portal.layer.renderer.wms.LayerRenderer', {map : this.map});
         } else if (wfsResources.length > 0) {
             return Ext.create('portal.layer.renderer.wfs.FeatureRenderer', {
                 map : this.map,
-                iconCfg : {
-                    url : iconUrl,
-                    size : iconSize,
-                    anchor : iconAnchor
-                },
+                icon : icon,
                 proxyUrl : proxyUrl ? proxyUrl : 'getAllFeatures.do',
                 proxyCountUrl : proxyCountUrl
             });
         }else{
             return Ext.create('portal.layer.renderer.csw.CSWRenderer', {
                 map : this.map,
-                iconCfg : {
-                    url : iconUrl,
-                    size : iconSize,
-                    anchor : iconAnchor
-                }
+                icon : icon
             });
         }
     },

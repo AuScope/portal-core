@@ -153,11 +153,13 @@ Ext.define('portal.util.BBox', {
     },
 
     /**
-     * Converts a portal bbox into an array of GMap Polygon's
+     * Converts a portal bbox into an array of portal.map.primitives.Polygon objects as instantiated
+     * by the specified portal.map.BaseMap
      *
      * Normally a single polygon is returned but if the polygon wraps around the antimeridian, it will be split
      * around the meridians.
      *
+     * @param baseMap A portal.map.BaseMap instance
      * @param strokeColor String The color of the vertices (CSS color string)
      * @param strokeWeight Number The width of the vertices
      * @param strokeOpacity Number The transparency of the vertices [0, 1]
@@ -169,19 +171,19 @@ Ext.define('portal.util.BBox', {
      * @param sourceOnlineResource [Optional] portal.csw.OnlineResource parent of these polygons
      * @param sourceLayer [Optional] portal.layer.Layer parent of these polygons
      */
-    toGMapPolygon : function(strokeColor, strokeWeight, strokeOpacity, fillColor, fillOpacity, opts,
+    toPolygon : function(baseMap, strokeColor, strokeWeight, strokeOpacity, fillColor, fillOpacity, opts,
                              id, cswRecord, sourceOnlineResource, sourceLayer) {
         var splits = this._splitBboxes(this, []);
         var result = [];
 
         for (var i = 0; i < splits.length; i++) {
             var splitBbox = splits[i];
-            var ne = new GLatLng(splitBbox.northBoundLatitude, splitBbox.eastBoundLongitude);
-            var se = new GLatLng(splitBbox.southBoundLatitude, splitBbox.eastBoundLongitude);
-            var sw = new GLatLng(splitBbox.southBoundLatitude, splitBbox.westBoundLongitude);
-            var nw = new GLatLng(splitBbox.northBoundLatitude, splitBbox.westBoundLongitude);
+            var ne = Ext.create('portal.map.Point', {latitude : splitBbox.northBoundLatitude, longitude : splitBbox.eastBoundLongitude});
+            var se = Ext.create('portal.map.Point', {latitude : splitBbox.southBoundLatitude, longitude : splitBbox.eastBoundLongitude});
+            var sw = Ext.create('portal.map.Point', {latitude : splitBbox.southBoundLatitude, longitude : splitBbox.westBoundLongitude});
+            var nw = Ext.create('portal.map.Point', {latitude : splitBbox.northBoundLatitude, longitude : splitBbox.westBoundLongitude});
 
-            result.push(portal.util.gmap.GMapWrapper.makePolygon(id, cswRecord, sourceOnlineResource, sourceLayer,
+            result.push(baseMap.makePolygon(id, cswRecord, sourceOnlineResource, sourceLayer,
                     [sw, nw, ne, se, sw], strokeColor, strokeWeight, strokeOpacity, fillColor, fillOpacity, opts));
         }
 
@@ -190,20 +192,24 @@ Ext.define('portal.util.BBox', {
 
     /**
      * Returns true IFF both bboxes share the same CRS and that they intersect one another.
-     *
+     * Algorithm sourced from - http://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
      */
     intersects : function(bbox) {
         if (this.crs !== bbox.crs) {
             return false;
         }
 
-        //reuse the gmap intersects functionality
-        var bboxBounds = new GLatLngBounds(new GLatLng(bbox.southBoundLatitude, bbox.westBoundLongitude),
-                                           new GLatLng(bbox.northBoundLatitude, bbox.eastBoundLongitude));
-        var thisBounds = new GLatLngBounds(new GLatLng(this.southBoundLatitude, this.westBoundLongitude),
-                                           new GLatLng(this.northBoundLatitude, this.eastBoundLongitude));
+        //Get the 'width'/'height' in 'units'
+        var thisWidth = this.eastBoundLongitude - this.westBoundLongitude;
+        var thisHeight = this.northBoundLatitude - this.southBoundLatitude;
+        var bboxWidth = bbox.eastBoundLongitude - bbox.westBoundLongitude;
+        var bboxHeight = bbox.northBoundLatitude - bbox.southBoundLatitude;
 
-        return bboxBounds.intersects(thisBounds);
+        //In English: On each axis, check to see if the centers of the boxes are close enough that they'll intersect.
+        //If they intersect on both axes, then the boxes intersect. If they don't, then they don't.
+        //NOTE - This will only work for axis aligned bounding boxes
+        return Math.abs(this.westBoundLongitude - bbox.westBoundLongitude) * 2 < (thisWidth + bboxWidth) &&
+               Math.abs(this.northBoundLatitude - bbox.northBoundLatitude) * 2 < (thisHeight + bboxHeight)
     },
 
     /**

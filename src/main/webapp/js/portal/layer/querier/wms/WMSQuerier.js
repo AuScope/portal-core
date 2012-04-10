@@ -65,7 +65,8 @@ Ext.define('portal.layer.querier.wms.WMSQuerier', {
      * @param infoFormat a String representing a MIME type
      */
     generateWmsProxyQuery : function(queryTarget, infoFormat) {
-        var tileInfo = this.map.getTileInformation(queryTarget.get('lat'), queryTarget.get('lng'));
+        var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
+        var tileInfo = this.map.getTileInformationForPoint(point);
         var layer = queryTarget.get('layer');
         var wmsOnlineResource = queryTarget.get('onlineResource');
 
@@ -83,8 +84,8 @@ Ext.define('portal.layer.querier.wms.WMSQuerier', {
         //Build our proxy URL
         var queryString = Ext.Object.toQueryString({
             WMS_URL : serviceUrl,
-            lat : queryTarget.get('lat'),
-            lng : queryTarget.get('lng'),
+            lat : point.getLatitude(),
+            lng : point.getLongitude(),
             QUERY_LAYERS : typeName,
             x : tileInfo.getOffset().x,
             y : tileInfo.getOffset().y,

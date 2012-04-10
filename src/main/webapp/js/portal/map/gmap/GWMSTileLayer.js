@@ -53,15 +53,15 @@
  */
 
 //--- Constructor function
-function GWMSTileLayer(mapWrapper, copyrights,  minResolution,  maxResolution) {
+function GWMSTileLayer(map, copyrights,  minResolution,  maxResolution) {
 
    // GWMSTileLayer inherits from GTileLayer
     GTileLayer.call(this, copyrights, minResolution, maxResolution);
 
-   // Attributes
-    this.mapWrapper = mapWrapper;
+    // Attributes
+    this.map = map;
     this.format = "image/png";   // Use PNG by default
-   this.opacity = 1.0;
+    this.opacity = 1.0;
 
    // Google Maps Zoom level at which we switch from Mercator to Lat/Long.
     this.mercZoomLevel = 4;
@@ -94,7 +94,7 @@ GWMSTileLayer.prototype.getOpacity = function() {
 };
 
 GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
-    var mapType = this.mapWrapper.map.getCurrentMapType();
+    var mapType = this.map.getCurrentMapType();
     var proj = mapType.getProjection();
     var tileSize = mapType.getTileSize();
 
@@ -106,45 +106,22 @@ GWMSTileLayer.prototype.getTileUrl = function(point, zoom) {
     var boundBox = null;
     var srs = null;
     if (this.mercZoomLevel !== 0 && zoom < this.mercZoomLevel) {
-        boundBox = this.dd2MercMetersLng(lowerLeft.lng()) + "," +
-                   this.dd2MercMetersLat(lowerLeft.lat()) + "," +
-                   this.dd2MercMetersLng(upperRight.lng()) + "," +
-                   this.dd2MercMetersLat(upperRight.lat());
-        // Change for GeoServer - 41001 is mercator and installed by default.
-        srs = "EPSG:41001";
+        boundBox = Ext.create('portal.util.BBox', {
+           crs : 'EPSG:41001',
+           westBoundLongitude : this.dd2MercMetersLng(lowerLeft.lng()),
+           southBoundLatitude : this.dd2MercMetersLat(lowerLeft.lat()),
+           eastBoundLongitude : this.dd2MercMetersLng(upperRight.lng()),
+           northBoundLatitude : this.dd2MercMetersLat(upperRight.lat())
+        });
     } else {
-        boundBox = lowerLeft.lng() + "," +
-                   lowerLeft.lat() + "," +
-                   upperRight.lng() + "," +
-                   upperRight.lat();
-
-        srs = "EPSG:4326";
+        boundBox = Ext.create('portal.util.BBox', {
+            crs : 'EPSG:4326',
+            westBoundLongitude : lowerLeft.lng(),
+            southBoundLatitude : lowerLeft.lat(),
+            eastBoundLongitude : upperRight.lng(),
+            northBoundLatitude : upperRight.lat()
+         });
     }
 
-    // Build GetMap request URL
-    var url = this.baseURL;
-    var params = {
-        'REQUEST' : 'GetMap',
-        'SERVICE' : 'WMS',
-        'VERSION' : '1.1.1',
-        'FORMAT' : this.format,
-        'BGCOLOR' : '0xFFFFFF',
-        'TRANSPARENT' : 'TRUE',
-        'SRS' : srs,
-        'BBOX' : boundBox,
-        'WIDTH' : tileSize,
-        'HEIGHT' : tileSize
-    };
-    if (this.layers) {
-        params['LAYERS'] = this.layers;
-    }
-    if (this.styles) {
-        params['STYLES'] = this.styles;
-    }
-    if (this.sld) {
-        params['SLD'] = this.sld;
-    }
-    var queryString = Ext.Object.toQueryString(params);
-
-    return Ext.urlAppend(url, queryString);
+    return portal.map.primitives.BaseWMSPrimitive.getWmsUrl(this.baseURL, this.layers, boundBox, tileSize, tileSize, this.format);
 };

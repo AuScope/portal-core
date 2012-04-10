@@ -36,14 +36,17 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
 
         this.fireEvent('renderstarted', this, wmsResources, filterer);
 
+        var primitives = [];
         for (var i = 0; i < wmsResources.length; i++) {
-            var tileLayer = new GWMSTileLayer(this.map, new GCopyrightCollection(""), 1, 17);
-            tileLayer.baseURL = wmsResources[i].get('url');
-            tileLayer.layers = wmsResources[i].get('name');
-            tileLayer.opacity = filterer.getParameter('opacity');
-            this.overlayManager.addOverlay(new GTileLayerOverlay(tileLayer));
+            var wmsUrl = wmsResources[i].get('url');
+            var wmsLayer = wmsResources[i].get('name');
+            var wmsOpacity = filterer.getParameter('opacity');
+
+            primitives.push(this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity));
+
         }
 
+        this.primitiveManager.addPrimitives(primitives);
         this.hasData = true;
         this.fireEvent('renderfinished', this);
     },
@@ -73,7 +76,7 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
      * returns - void
      */
     removeData : function() {
-        this.overlayManager.clearOverlays();
+        this.primitiveManager.clearPrimitives();
     },
 
     /**

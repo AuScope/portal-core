@@ -1,7 +1,7 @@
 /**
- * Represents information about a point on a single Tile from a Google Map viewport.
+ * Represents information about a point on a single Tile from a Map
  */
-Ext.define('portal.util.gmap.TileInformation', {
+Ext.define('portal.map.TileInformation', {
 
     config : {
         width : 0,  //Number - width of the tile in pixels
@@ -15,5 +15,10 @@ Ext.define('portal.util.gmap.TileInformation', {
 
     constructor : function(cfg) {
         this.callParent(arguments);
+
+        this.setWidth(cfg.width);
+        this.setHeight(cfg.height);
+        this.setOffset(cfg.offset);
+        this.setTileBounds(cfg.tileBounds);
     }
 });

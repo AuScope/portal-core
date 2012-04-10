@@ -59,11 +59,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         }
 
         this.store.clearFilter(false);
-
-
         this.store.filterBy(Ext.bind(this.filterByWord, this, [v.split(this.wordListSplitString)], true));
-        //this.store.filter(this.fieldName, v, true, false);
-
 
         this.hasSearch = true;
         this.triggerCell.item(0).setDisplayed(true);
