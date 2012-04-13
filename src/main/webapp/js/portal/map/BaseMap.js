@@ -165,17 +165,6 @@ Ext.define('portal.map.BaseMap', {
     scrollToBounds : Ext.util.UnimplementedFunction,
 
     /**
-     * Causes the map to highlight the specified bounding box by drawing an overlay
-     * over it. The highlight will disappear after a short period of time
-     *
-     * function(bboxes, delay)
-     *
-     * @param bboxes an instance of portal.util.BBox or an array of portal.util.BBox objects
-     * @param delay [Optional] a delay in ms before the highlight is hidden. Defaults to 2000
-     */
-    highlightBounds : Ext.util.UnimplementedFunction,
-
-    /**
      * Gets the numerical zoom level of the current map as a Number
      *
      * function()
@@ -240,6 +229,35 @@ Ext.define('portal.map.BaseMap', {
     getPixelFromLatLng : Ext.util.UnimplementedFunction,
 
     ////////////////// Base functionality
+
+    /**
+     * Causes the map to highlight the specified bounding box by drawing an overlay
+     * over it. The highlight will disappear after a short period of time
+     *
+     * function(bboxes, delay)
+     *
+     * @param bboxes an instance of portal.util.BBox or an array of portal.util.BBox objects
+     * @param delay [Optional] a delay in ms before the highlight is hidden. Defaults to 2000
+     */
+    highlightBounds : function(bboxes, delay) {
+        //Setup our inputs
+        delay = delay ? delay : 2000;
+        if (!Ext.isArray(bboxes)) {
+            bboxes = [bboxes];
+        }
+
+        for (var i = 0; i < bboxes.length; i++) {
+            var polygonList = bboxes[i].toPolygon(this, '00FF00', 0, 0.7,'#00FF00', 0.6);
+            this.highlightPrimitiveManager.addPrimitives(polygonList);
+        }
+
+        //Make the bbox disappear after a short while
+        var clearTask = new Ext.util.DelayedTask(Ext.bind(function(){
+            this.highlightPrimitiveManager.clearPrimitives();
+        }, this));
+
+        clearTask.delay(delay);
+    },
 
     /**
      * Opens a context menu on the map at the specified coordinates

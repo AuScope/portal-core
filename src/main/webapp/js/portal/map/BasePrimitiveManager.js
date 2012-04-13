@@ -12,6 +12,11 @@ Ext.define('portal.map.BasePrimitiveManager', {
     extend: 'Ext.util.Observable',
 
     /**
+     * portal.map.BaseMap - The map instance that created this primitive manager
+     */
+    baseMap : null,
+
+    /**
      * {
      *  baseMap : portal.map.BaseMap - The map instance that created this primitive manager
      * }

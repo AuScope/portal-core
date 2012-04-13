@@ -15,6 +15,11 @@
       <script src="http://gmaps-utility-library.googlecode.com/svn/trunk/markermanager/release/src/markermanager.js"
              type="text/javascript"></script>
 
+      <%-- Open Layers Imports --%>
+      <link rel="stylesheet" href="js/OpenLayers-2.11/theme/default/style.css" type="text/css">
+      <script src="js/OpenLayers-2.11/OpenLayers.js" type="text/javascript"></script>
+
+
       <script type="text/javascript">
          var VOCAB_SERVICE_URL = "${vocabServiceUrl}";
          var NVCL_WEB_SERVICE_IP = "${nvclWebServiceIP}";

@@ -268,7 +268,18 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      */
     _spatialBoundsClickHandler : function(column, record, rowIndex, colIndex) {
         var spatialBoundsArray = this.getSpatialBoundsForRecord(record);
-        this.map.highlightBounds(spatialBoundsArray);
+        var nonPointBounds = [];
+
+        //No point showing a highlight for bboxes that are points
+        for (var i = 0; i < spatialBoundsArray.length; i++) {
+            var bbox = spatialBoundsArray[i];
+            if (bbox.southBoundLatitude !== bbox.northBoundLatitude ||
+                bbox.eastBoundLongitude !== bbox.westBoundLongitude) {
+                nonPointBounds.push(bbox);
+            }
+        }
+
+        this.map.highlightBounds(nonPointBounds);
     },
 
     /**

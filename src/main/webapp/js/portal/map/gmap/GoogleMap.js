@@ -287,29 +287,6 @@ Ext.define('portal.map.gmap.GoogleMap', {
     /**
      * See parent class
      */
-    highlightBounds : function(bboxes, delay) {
-        //Setup our inputs
-        delay = delay ? delay : 2000;
-        if (!Ext.isArray(bboxes)) {
-            bboxes = [bboxes];
-        }
-
-        for (var i = 0; i < bboxes.length; i++) {
-            var polygonList = bboxes[i].toPolygon(this, '00FF00', 0, 0.7,'#00FF00', 0.6);
-            this.highlightPrimitiveManager.addPrimitives(polygonList);
-        }
-
-        //Make the bbox disappear after a short while
-        var clearTask = new Ext.util.DelayedTask(Ext.bind(function(){
-            this.highlightPrimitiveManager.clearPrimitives();
-        }, this));
-
-        clearTask.delay(delay);
-    },
-
-    /**
-     * See parent class
-     */
     getZoom : function() {
         return this.map.getZoom();
     },

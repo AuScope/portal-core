@@ -68,7 +68,9 @@ Ext.application({
         //We need something to handle the clicks on the map
         var queryTargetHandler = Ext.create('portal.layer.querier.QueryTargetHandler', {});
 
-        var map = Ext.create('portal.map.gmap.GoogleMap', {
+
+        //Create our map implementations
+        var mapCfg = {
             container : null,   //We will be performing a delayed render of this map
             layerStore : layerStore,
             listeners : {
@@ -76,7 +78,14 @@ Ext.application({
                     queryTargetHandler.handleQueryTargets(mapWrapper, queryTargets);
                 }
             }
-        });
+        };
+        var urlParams = Ext.Object.fromQueryString(window.location.search.substring(1));
+        var map = null;
+        if (urlParams && urlParams.map && urlParams.map === 'openlayers') {
+            map = Ext.create('portal.map.openlayers.OpenLayersMap', mapCfg);
+        } else {
+            map = Ext.create('portal.map.gmap.GoogleMap', mapCfg);
+        }
 
         var layersPanel = Ext.create('portal.widgets.panel.LayerPanel', {
             title : 'Active Layers',
