@@ -4,8 +4,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -171,17 +173,16 @@ public class TestCSWCacheController extends PortalTestClass {
      */
     @Test
     public void testGetKeywords() {
-        final Map<String, Integer> expectedKeywords = new HashMap<String, Integer>();
-        expectedKeywords.put("keyword1", 5);
-        expectedKeywords.put("keyword2", 17);
+        final Map<String, Set<CSWRecord>> expectedKeywords = new HashMap<String, Set<CSWRecord>>();
+        expectedKeywords.put("keyword1", new HashSet<CSWRecord>(Arrays.asList(new CSWRecord("a"), new CSWRecord("b"))));
+        expectedKeywords.put("keyword1", new HashSet<CSWRecord>(Arrays.asList(new CSWRecord("c"), new CSWRecord("b"), new CSWRecord("a"))));
 
         ModelMap kw1 = new ModelMap();
         kw1.put("keyword", "keyword1");
-        kw1.put("count", 5);
+        kw1.put("count", 2);
         ModelMap kw2 = new ModelMap();
         kw2.put("keyword", "keyword2");
-        kw2.put("count", 17);
-        final List<ModelMap> expectedDataObj = Arrays.asList(kw1, kw2);
+        kw2.put("count", 3);
 
         context.checking(new Expectations() {{
             oneOf(mockCSWService).getKeywordCache();
@@ -191,7 +192,16 @@ public class TestCSWCacheController extends PortalTestClass {
         ModelAndView mav = cswController.getCSWKeywords();
         Assert.assertNotNull(mav);
         Assert.assertTrue((Boolean)mav.getModel().get(SUCCESSJSON));
-        Assert.assertEquals(expectedDataObj, mav.getModel().get("data"));
+
+        List<ModelMap> data = (List<ModelMap>) mav.getModel().get("data");
+        Assert.assertEquals(expectedKeywords.size(), data.size());
+        for (ModelMap kwResponse : data) {
+
+            String keyword = (String) kwResponse.get("keyword");
+            Integer count = (Integer)kwResponse.get("count");
+
+            Assert.assertEquals(expectedKeywords.get(keyword).size(), count.intValue());
+        }
     }
 
 }

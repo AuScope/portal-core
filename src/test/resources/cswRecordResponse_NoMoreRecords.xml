@@ -326,7 +326,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
         <gco:CharacterString>1.1</gco:CharacterString>
       </gmd:metadataStandardVersion>
       <gmd:identificationInfo>
-        <srv:SV_ServiceIdentification>
+        <gmd:MD_DataIdentification>
 
           <gmd:citation>
             <gmd:CI_Citation>
@@ -500,7 +500,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
 
           </srv:couplingType>
           <srv:containsOperations />
-        </srv:SV_ServiceIdentification>
+        </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
       <gmd:distributionInfo>
         <gmd:MD_Distribution>
@@ -846,7 +846,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
 
       </gmd:metadataStandardVersion>
       <gmd:identificationInfo>
-        <srv:SV_ServiceIdentification>
+        <gmd:MD_DataIdentification>
           <gmd:citation>
             <gmd:CI_Citation>
               <gmd:title>
@@ -998,7 +998,7 @@ The site quality database contains statistical quantities for each site for each
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
-        </srv:SV_ServiceIdentification>
+        </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
       <gmd:distributionInfo>
         <gmd:MD_Distribution>
@@ -1111,7 +1111,7 @@ The site quality database contains statistical quantities for each site for each
         <gco:CharacterString>1.0</gco:CharacterString>
       </gmd:metadataStandardVersion>
       <gmd:identificationInfo>
-        <srv:SV_ServiceIdentification>
+        <gmd:MD_DataIdentification>
 
           <gmd:citation>
             <gmd:CI_Citation>
@@ -1240,7 +1240,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
-        </srv:SV_ServiceIdentification>
+        </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
 
       <gmd:distributionInfo>
@@ -1342,7 +1342,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
       </gmd:metadataStandardVersion>
       <gmd:identificationInfo>
 
-        <srv:SV_ServiceIdentification>
+        <gmd:MD_DataIdentification>
           <gmd:citation>
             <gmd:CI_Citation>
               <gmd:title>
@@ -1515,7 +1515,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
 
           </srv:couplingType>
           <srv:containsOperations />
-        </srv:SV_ServiceIdentification>
+        </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
       <gmd:distributionInfo>
         <gmd:MD_Distribution>
@@ -3213,7 +3213,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
         <gco:CharacterString>1.0</gco:CharacterString>
       </gmd:metadataStandardVersion>
       <gmd:identificationInfo>
-        <srv:SV_ServiceIdentification>
+        <gmd:MD_DataIdentification>
           <gmd:citation>
             <gmd:CI_Citation>
 
@@ -3382,7 +3382,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
             <srv:SV_CouplingType codeListValue="tight" codeList="http://www.isotc211.org/2005/iso19119/resources/Codelist/gmxCodelists.xml#SV_CouplingType" />
           </srv:couplingType>
           <srv:containsOperations />
-        </srv:SV_ServiceIdentification>
+        </gmd:MD_DataIdentification>
       </gmd:identificationInfo>
       <gmd:distributionInfo>
         <gmd:MD_Distribution>

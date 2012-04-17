@@ -2,13 +2,17 @@ package org.auscope.portal.server.web.service;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.csw.CSWGetRecordResponse;
@@ -38,6 +42,17 @@ import org.w3c.dom.Document;
 public class CSWCacheService {
 
     /**
+     * Any records containing keywords prefixed by this value we be merged with other
+     * records containing the same keyword.
+     *
+     * This is AuScope's workaround for a lack of functionality for supporting related
+     * or associated services.
+     *
+     * See also - https://jira.csiro.au/browse/SISS-1292
+     */
+    public static final String KEYWORD_MERGE_PREFIX = "association:";
+
+    /**
      * The maximum number of records that will be requested from a CSW at a given time.
      *
      * If a CSW has more records than this value then multiple requests will be made
@@ -52,7 +67,9 @@ public class CSWCacheService {
     private final Log log = LogFactory.getLog(getClass());
 
 
-    protected Map<String, Integer> keywordCache;
+    /** A map of the records keyed by their keywords. For the full (non duplicate) set of CSWRecords see recordCache*/
+    protected Map<String, Set<CSWRecord>> keywordCache;
+    /** A list  of records representing the most recent snapshot of all CSW's*/
     protected List<CSWRecord> recordCache;
     protected HttpServiceCaller serviceCaller;
     protected CSWThreadExecutor executor;
@@ -77,7 +94,7 @@ public class CSWCacheService {
         this.updateRunning = false;
         this.executor = executor;
         this.serviceCaller = serviceCaller;
-        this.keywordCache = new HashMap<String, Integer>();
+        this.keywordCache = new HashMap<String, Set<CSWRecord>>();
         this.recordCache = new ArrayList<CSWRecord>();
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
         for (int i = 0; i < cswServiceList.size(); i++) {
@@ -106,7 +123,7 @@ public class CSWCacheService {
      * if newKeywordCache is NOT null it will update the internal cache.
      * if newRecordCache is NOT null it will update the internal cache.
      */
-    private synchronized void updateFinished(Map<String, Integer> newKeywordCache, List<CSWRecord> newRecordCache) {
+    private synchronized void updateFinished(Map<String, Set<CSWRecord>> newKeywordCache, List<CSWRecord> newRecordCache) {
         this.updateRunning = false;
         if (newKeywordCache != null) {
             this.keywordCache = newKeywordCache;
@@ -132,12 +149,12 @@ public class CSWCacheService {
     }
 
     /**
-     * Returns an unmodifiable Map of keyword names to integer counts
+     * Returns an unmodifiable Map of keyword names to matching CSWRecords
      *
      * This function may trigger a cache update to begin on a seperate thread.
      * @return
      */
-    public synchronized Map<String, Integer> getKeywordCache() {
+    public synchronized Map<String, Set<CSWRecord>> getKeywordCache() {
         updateCacheIfRequired();
 
         return Collections.unmodifiableMap(this.keywordCache);
@@ -167,7 +184,7 @@ public class CSWCacheService {
         }
 
         //This will be our new cache
-        Map<String, Integer> newKeywordCache = new HashMap<String, Integer>();
+        Map<String, Set<CSWRecord>> newKeywordCache = new HashMap<String, Set<CSWRecord>>();
         List<CSWRecord> newRecordCache = new ArrayList<CSWRecord>();
 
         //Create our worker threads (ensure they are all aware of eachother)
@@ -243,14 +260,14 @@ public class CSWCacheService {
         private CSWCacheService parent;
         private CSWCacheUpdateThread[] siblings; //this is also used as a shared locking object
         private CSWServiceItem endpoint;
-        private Map<String, Integer> newKeywordCache;
+        private Map<String, Set<CSWRecord>> newKeywordCache;
         private List<CSWRecord> newRecordCache;
         private HttpServiceCaller serviceCaller;
         private boolean finishedExecution;
 
         public CSWCacheUpdateThread(CSWCacheService parent,
                 CSWCacheUpdateThread[] siblings, CSWServiceItem endpoint,
-                Map<String, Integer> newKeywordCache, List<CSWRecord> newRecordCache, HttpServiceCaller serviceCaller) {
+                Map<String, Set<CSWRecord>> newKeywordCache, List<CSWRecord> newRecordCache, HttpServiceCaller serviceCaller) {
             super();
             this.parent = parent;
             this.siblings = siblings;
@@ -310,6 +327,47 @@ public class CSWCacheService {
             }
         }
 
+        /**
+         * adds record to keyword cache if it DNE
+         * @param keyword
+         * @param record
+         */
+        private void addToKeywordCache(String keyword, CSWRecord record, Map<String, Set<CSWRecord>> keywordCache) {
+            if (keyword == null || keyword.isEmpty()) {
+                return;
+            }
+
+            Set<CSWRecord> existingRecsWithKeyword = keywordCache.get(keyword);
+            if (existingRecsWithKeyword == null) {
+                existingRecsWithKeyword = new HashSet<CSWRecord>();
+                keywordCache.put(keyword, existingRecsWithKeyword);
+            }
+
+            existingRecsWithKeyword.add(record);
+        }
+
+        /**
+         * Merges the contents of source into destination
+         * @param destination Will received source's contents
+         * @param source Will have it's contents merged into destination
+         * @param keywordCache will be updated with destination referenced by source's keywords
+         */
+        private void mergeRecords(CSWRecord destination, CSWRecord source, Map<String, Set<CSWRecord>> keywordCache) {
+            //Merge onlineresources
+            AbstractCSWOnlineResource[] merged = (AbstractCSWOnlineResource[]) ArrayUtils.addAll(destination.getOnlineResources(), source.getOnlineResources());
+            destination.setOnlineResources(merged);
+
+            //Merge keywords (get rid of duplicates)
+            Set<String> keywordSet = new HashSet<String>();
+            keywordSet.addAll(Arrays.asList(destination.getDescriptiveKeywords()));
+            keywordSet.addAll(Arrays.asList(source.getDescriptiveKeywords()));
+            destination.setDescriptiveKeywords(keywordSet.toArray(new String[keywordSet.size()]));
+
+            for (String sourceKeyword : source.getDescriptiveKeywords()) {
+                addToKeywordCache(sourceKeyword, destination, keywordCache);
+            }
+        }
+
         @Override
         public void run() {
             try {
@@ -333,23 +391,39 @@ public class CSWCacheService {
                     synchronized(newKeywordCache) {
                         synchronized(newRecordCache) {
                             for (CSWRecord record : response.getRecords()) {
-                                //Update records
-                                newRecordCache.add(record);
+                                boolean recordMerged = false;
 
-                                //Update keywords
+                                //Firstly we may possibly merge this
+                                //record into an existing record IF particular keywords
+                                //are present. In this case, record will be discarded (it's contents
+                                //already found their way into an existing record)
+                                //Hence - we need to perform this step first
                                 for (String keyword : record.getDescriptiveKeywords()) {
                                     if (keyword == null || keyword.isEmpty()) {
                                         continue;
                                     }
 
-                                    Integer count = newKeywordCache.get(keyword);
-                                    if (count == null) {
-                                        count = new Integer(1);
-                                        newKeywordCache.put(keyword, count);
-                                    } else {
-                                        count = count + 1;
-                                        newKeywordCache.put(keyword, count);
+                                    //If we have an 'association keyword', look for existing records
+                                    //to merge this record's contents in to.
+                                    if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
+                                        Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
+                                        if (existingRecs != null && !existingRecs.isEmpty()) {
+                                            mergeRecords(existingRecs.iterator().next(), record, newKeywordCache);
+                                            recordMerged = true;
+                                        }
                                     }
+                                }
+
+                                //If the record was NOT merged into an existing record we then
+                                //actually update our record cache
+                                if (!recordMerged) {
+                                    //Actually update the keyword cache
+                                    for (String keyword : record.getDescriptiveKeywords()) {
+                                        addToKeywordCache(keyword, record, newKeywordCache);
+                                    }
+
+                                    //Add record to record list
+                                    newRecordCache.add(record);
                                 }
                             }
                         }

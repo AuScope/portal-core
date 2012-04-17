@@ -65,6 +65,14 @@ public class CSWRecord {
     private String dataQualityStatement;
 
     /**
+     * Instantiates a new empty CSWRecord
+     * @param fileIdentifier
+     */
+    public CSWRecord(String fileIdentifier) {
+        this(null, fileIdentifier, null, null, null, null);
+    }
+
+    /**
      * Instantiates a new cSW record.
      *
      * @param serviceName the service name
@@ -466,4 +474,23 @@ public class CSWRecord {
         return Arrays.asList(descriptiveKeywords).contains(str);
     }
 
+    /**
+     * Tests equality of a CSWRecord based on file identifier
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof CSWRecord) {
+            return this.getFileIdentifier().equals(((CSWRecord)o).getFileIdentifier());
+        } else {
+            return super.equals(o);
+        }
+    }
+
+    /**
+     * Creates a hashcode based on this record's file identifier
+     */
+    @Override
+    public int hashCode() {
+        return this.fileIdentifier.hashCode();
+    }
 }

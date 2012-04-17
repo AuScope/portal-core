@@ -3,6 +3,7 @@ package org.auscope.portal.server.web.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.auscope.portal.csw.record.CSWRecord;
 import org.auscope.portal.server.util.PortalPropertyPlaceholderConfigurer;
@@ -83,13 +84,13 @@ public class CSWCacheController extends BaseCSWController {
      */
     @RequestMapping("/getCSWKeywords.do")
     public ModelAndView getCSWKeywords() {
-        Map<String, Integer> keywords = this.cswService.getKeywordCache();
+        Map<String, Set<CSWRecord>> keywords = this.cswService.getKeywordCache();
 
         List<ModelMap> response = new ArrayList<ModelMap>();
         for (String keyword : keywords.keySet()) {
             ModelMap modelMap = new ModelMap();
             modelMap.put("keyword", keyword);
-            modelMap.put("count", keywords.get(keyword));
+            modelMap.put("count", keywords.get(keyword).size());
             response.add(modelMap);
         }
 

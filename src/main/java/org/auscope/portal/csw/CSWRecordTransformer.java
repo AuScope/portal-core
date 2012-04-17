@@ -444,7 +444,7 @@ public class CSWRecordTransformer {
     public final CSWRecord transformToCSWRecord() throws XPathExpressionException {
         CSWRecord record = new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0], new CSWGeographicElement[0]);
 
-        NodeList tempNodeList1 = null;
+        NodeList tempNodeList = null;
 
         //Parse our simple strings
         record.setServiceName(evalXPathString(this.mdMetadataNode, SERVICETITLEEXPRESSION));
@@ -471,11 +471,11 @@ public class CSWRecordTransformer {
         }
 
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        tempNodeList1 = (NodeList)evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
+        tempNodeList = (NodeList)evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
         List<AbstractCSWOnlineResource> resources = new ArrayList<AbstractCSWOnlineResource>();
-        for (int i = 0; i < tempNodeList1.getLength(); i++) {
+        for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
-                Node onlineNode = tempNodeList1.item(i);
+                Node onlineNode = tempNodeList.item(i);
                 resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
             } catch (IllegalArgumentException ex) {
                 logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",record.getServiceName(), ex));
@@ -484,12 +484,12 @@ public class CSWRecordTransformer {
         record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
-        tempNodeList1 = (NodeList)evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
-        if (tempNodeList1 != null && tempNodeList1.getLength() > 0) {
+        tempNodeList = (NodeList)evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
             List<CSWGeographicElement> elList = new ArrayList<CSWGeographicElement>();
-            for (int i = 0; i < tempNodeList1.getLength(); i++) {
+            for (int i = 0; i < tempNodeList.getLength(); i++) {
                 try {
-                    Node geographyNode = tempNodeList1.item(i);
+                    Node geographyNode = tempNodeList.item(i);
                     elList.add(CSWGeographicBoundingBox.fromGeographicBoundingBoxNode(geographyNode));
                 } catch (Exception ex) {
                     logger.debug(String.format("Unable to parse CSWGeographicBoundingBox resource for serviceName='%1$s' %2$s",record.getServiceName(), ex));
@@ -499,12 +499,12 @@ public class CSWRecordTransformer {
         }
 
         //Parse the descriptive keywords
-        tempNodeList1 = (NodeList) evalXPathNodeList(this.mdMetadataNode, KEYWORDLISTEXPRESSION);
-        if (tempNodeList1 != null && tempNodeList1.getLength() > 0) {
+        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, KEYWORDLISTEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
             List<String> keywords = new ArrayList<String>();
             Node keyword;
-            for (int j=0; j<tempNodeList1.getLength(); j++) {
-                keyword = tempNodeList1.item(j);
+            for (int j=0; j<tempNodeList.getLength(); j++) {
+                keyword = tempNodeList.item(j);
                 keywords.add(keyword.getTextContent());
             }
             record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()]));
@@ -521,12 +521,12 @@ public class CSWRecordTransformer {
         }
 
         //Parse any legal constraints
-        tempNodeList1 = (NodeList) evalXPathNodeList(this.mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
-        if (tempNodeList1 != null && tempNodeList1.getLength() > 0) {
+        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
             List<String> constraintsList = new ArrayList<String>();
             Node constraint;
-            for (int j = 0; j < tempNodeList1.getLength(); j++) {
-                constraint = tempNodeList1.item(j);
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+                constraint = tempNodeList.item(j);
                 constraintsList.add(constraint.getTextContent());
             }
             record.setConstraints(constraintsList.toArray(new String[constraintsList.size()]));

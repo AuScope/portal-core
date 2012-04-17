@@ -99,6 +99,13 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     }
 
     @Test
+    public void testDescriptiveKeywords() throws XPathExpressionException {
+        String[] actual = this.records[0].getDescriptiveKeywords();
+        String[] expected = new String[] {"WFS", "GeologicUnit", "MappedFeature", "gsml:GeologicUnit", "gsml:MappedFeature"};
+        Assert.assertArrayEquals(expected, actual);
+    }
+
+    @Test
     public void testMultipleOnlineResources() throws Exception {
         AbstractCSWOnlineResource[] resources = this.records[14].getOnlineResources();
         Assert.assertEquals(2, resources.length);
