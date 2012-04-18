@@ -148,7 +148,8 @@
                 <version>1.2</version>
                 <configuration>
                     <excludes>
-                        <!-- Exclude Ext JS -->
+                        <!-- Exclude some base frameworks -->
+                        <exclude>js/OpenLayers-*/**</exclude>
                         <exclude>js/ext-*/**</exclude>
                         <exclude>js/extjs-*/**</exclude>
                     </excludes>
