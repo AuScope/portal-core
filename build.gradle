@@ -2,6 +2,8 @@ apply plugin: "war"
 apply plugin: "jetty"
 apply plugin: "eclipse"
 apply plugin: "eclipse-wtp"
+apply plugin: "checkstyle"
+apply plugin: "findbugs"
 
 project.sourceCompatibility = 1.6
 project.version = "2.9"
