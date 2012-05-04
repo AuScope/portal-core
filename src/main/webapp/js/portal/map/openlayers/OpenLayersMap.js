@@ -6,7 +6,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
     map : null, //Instance of OpenLayers.Map
     vectorLayer : null,
-    markerLayer : null,
     selectControl : null,
 
     constructor : function(cfg) {
@@ -80,10 +79,140 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         });
     },
 
-    _onClick : function(e) {
+    _makeQueryTargetsPolygon : function(polygon, layerStore, longitude, latitude) {
+        var queryTargets = [];
+        var lonLat = new OpenLayers.LonLat(longitude, latitude);
+
+        //Iterate all features on the map, those that intersect the given lat/lon should
+        //have query targets generated for them as it isn't clear which one the user meant
+        //to click
+        for (var i = 0; i < this.vectorLayer.features.length; i++) {
+            var featureToTest = this.vectorLayer.features[i];
+            if (featureToTest.geometry.atPoint(lonLat)) {
+                var primitiveToTest = featureToTest.attributes['portalBasePrimitive'];
+                if (primitiveToTest) {
+                    var id = primitiveToTest.getId();
+                    var onlineResource = primitiveToTest.getOnlineResource();
+                    var layer = primitiveToTest.getLayer();
+                    var cswRecord = primitiveToTest.getCswRecord();
+
+                    queryTargets.push(Ext.create('portal.layer.querier.QueryTarget', {
+                        id : id,
+                        lat : latitude,
+                        lng : longitude,
+                        onlineResource : onlineResource,
+                        layer : layer,
+                        cswRecord : cswRecord,
+                        explicit : true
+                    }));
+                }
+            }
+        }
+
+        return queryTargets;
+    },
+
+    _makeQueryTargetsVector : function(primitive, longitude, latitude) {
+        var id = primitive.getId();
+        var onlineResource = primitive.getOnlineResource();
+        var layer = primitive.getLayer();
+        var cswRecord = primitive.getCswRecord();
+
+        return [Ext.create('portal.layer.querier.QueryTarget', {
+            id : id,
+            lat : latitude,
+            lng : longitude,
+            onlineResource : onlineResource,
+            layer : layer,
+            cswRecord : cswRecord,
+            explicit : true
+        })];
+    },
+
+    _makeQueryTargetsMap : function(layerStore, longitude, latitude) {
+        var queryTargets = [];
+        //Iterate everything with WMS/WCS - no way around this :(
+        for (var i = 0; i < layerStore.getCount(); i++) {
+            var layer = layerStore.getAt(i);
+
+            var cswRecords = layer.get('cswRecords');
+            for(var j = 0; j < cswRecords.length; j++){
+                var cswRecord = cswRecords[j];
+
+                //ensure this click lies within this CSW record
+                var containsPoint = false;
+                var geoEls = cswRecord.get('geographicElements');
+                for (var k = 0; k < geoEls.length; k++) {
+                    if (geoEls[k] instanceof portal.util.BBox &&
+                        geoEls[k].contains(latitude, longitude)) {
+                        containsPoint = true;
+                        break;
+                    }
+                }
+
+                //If it doesn't, don't consider this point for examination
+                if (!containsPoint) {
+                    continue;
+                }
+
+                //Finally we don't include WMS query targets if we
+                //have WCS queries for the same record
+                var allResources = cswRecord.get('onlineResources');
+                var wmsResources = portal.csw.OnlineResource.getFilteredFromArray(allResources, portal.csw.OnlineResource.WMS);
+                var wcsResources = portal.csw.OnlineResource.getFilteredFromArray(allResources, portal.csw.OnlineResource.WCS);
+                var resourcesToIterate = [];
+                if (wcsResources.length > 0) {
+                    resourcesToIterate = wcsResources;
+                } else {
+                    resourcesToIterate = wmsResources;
+                }
+
+                //Generate our query targets for WMS/WCS layers
+                for (var k = 0; k < resourcesToIterate.length; k++) {
+                    var type = resourcesToIterate[k].get('type');
+                    if (type === portal.csw.OnlineResource.WMS ||
+                        type === portal.csw.OnlineResource.WCS) {
+                        queryTargets.push(Ext.create('portal.layer.querier.QueryTarget', {
+                            id : '',
+                            lat : latitude,
+                            lng : longitude,
+                            cswRecord   : cswRecord,
+                            onlineResource : resourcesToIterate[k],
+                            layer : layer,
+                            explicit : true
+                        }));
+                    }
+                }
+            }
+        }
+
+        return queryTargets;
+    },
+
+    /**
+     * Handler for click events
+     *
+     * @param vector [Optional] OpenLayers.Feature.Vector the clicked feature (if any)
+     * @param e Event The click event that caused this handler to fire
+     */
+    _onClick : function(vector, e) {
+        var primitive = vector ? vector.attributes['portalBasePrimitive'] : null;
         var lonlat = this.map.getLonLatFromViewPortPx(e.xy);
-        console.log("You clicked near " + lonlat.lat + " N, " +
+        var longitude = lonlat.lon;
+        var latitude = lonlat.lat;
+        console.log("You clicked primitive: ", primitive, " near " + lonlat.lat + " N, " +
                                   + lonlat.lon + " E and the arguments are: ", arguments);
+
+        var queryTargets = [];
+        if (primitive && primitive instanceof portal.map.openlayers.primitives.Polygon) {
+            queryTargets = this._makeQueryTargetsPolygon(primitive, this.layerStore, longitude, latitude);
+        } else if (primitive) {
+            queryTargets = this._makeQueryTargetsVector(primitive, longitude, latitude);
+        } else {
+            queryTargets = this._makeQueryTargetsMap(this.layerStore, longitude, latitude);
+        }
+
+        this.fireEvent('query', this, queryTargets);
     },
 
     _onPrimitivesAdded : function(primManager) {
@@ -119,39 +248,24 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         this.map.addLayer(baseLayer);
 
         this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {});
-        this.markerLayer = new OpenLayers.Layer.Markers("Markers", {});
         this.map.addLayer(this.vectorLayer);
-        this.map.addLayer(this.markerLayer);
 
         this.map.zoomTo(4);
         this.map.panTo(new OpenLayers.LonLat(133.3, -26));
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
+        this.container = container;
         this.rendered = true;
 
-        //Control for handling click events at an X/Y location
-        var clickControl = new portal.map.openlayers.ClickControl({trigger : this._onClick});
+        //Control for handling click events on the map
+        var clickableLayers = [this.vectorLayer];
+        var clickControl = new portal.map.openlayers.ClickControl(clickableLayers, {
+            map : this.map,
+            trigger : Ext.bind(this._onClick, this)
+        });
+
         this.map.addControl(clickControl);
         clickControl.activate();
-
-        //Control for handling click events on vectors
-        /*this.selectControl = new OpenLayers.Control.SelectFeature(
-            [this.vectorLayer],
-            {
-                clickout: true,
-                toggle: false,
-                box : false,
-                multiple: true,
-                hover: false,
-                toggleKey: "ctrlKey", // ctrl key removes from selection
-                multipleKey: "shiftKey", // shift key adds to selection
-                box: true,
-                onSelect : function() {
-                    console.log('on select: ', arguments);
-                }
-        });
-        this.map.addControl(this.selectControl);
-        this.selectControl.activate();*/
     },
 
     /**
@@ -179,8 +293,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     makePrimitiveManager : function() {
         return Ext.create('portal.map.openlayers.PrimitiveManager', {
             baseMap : this,
-            vectorLayer : this.vectorLayer,
-            markerLayer : this.markerLayer
+            vectorLayer : this.vectorLayer
         });
     },
 
@@ -195,7 +308,44 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * content - Mixed - A HTML string representing the content of the window OR a Ext.container.Container object OR an Array of the previous types
      * initFunction - [Optional] function(portal.map.BaseMap map, Mixed content) a function that will be called when the info window actually opens
      */
-    openInfoWindow : Ext.util.UnimplementedFunction,
+    openInfoWindow : function(windowLocation, width, height, content, initFunction) {
+        //Firstly create a popup with a chunk of placeholder HTML - we will render an ExtJS container inside that
+        var popupId = Ext.id();
+        var location = new OpenLayers.LonLat(windowLocation.getLongitude(), windowLocation.getLatitude());
+        var size = new OpenLayers.Size(width, height);
+        var divId = Ext.id();
+        var divHtml = Ext.util.Format.format('<html><body><div id="{0}" style="width: {1}px; height: {2}px;"></div></body></html>', divId, width, height);
+        var popup = new OpenLayers.Popup.Anchored(popupId, location, size, divHtml, null, true, null);
+        this.map.addPopup(popup, true);
+
+        //next create an Ext.Container to house our content, render it to the HTML created above
+        if (!Ext.isArray(content)) {
+            content = [content];
+        }
+
+        var tabPanelItems = [];
+        for (var i = 0; i < content.length; i++) {
+            if (Ext.isString(content[i])) {
+                tabPanelItems.push({
+                    title : '',
+                    html : content[i]
+                });
+            } else {
+                tabPanelItems.push({
+                    title : content[i].tabTitle,
+                    items : [content[i]]
+                });
+            }
+        }
+
+        Ext.create('Ext.tab.Panel', {
+            width : width,
+            height : height,
+            renderTo : divId,
+            activeTab: 0,
+            items : tabPanelItems
+        });
+    },
 
     /**
      * Causes the map to scroll/zoom so that the specified bounding box is visible
@@ -261,30 +411,33 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      *
      * @param point portal.map.Point to get tile information
      */
-    getTileInformationForPoint : Ext.util.UnimplementedFunction,
+    getTileInformationForPoint : portal.util.UnimplementedFunction,
 
     /**
      * Returns an portal.map.Size object representing the map size in pixels in the form
      *
      * function()
      */
-    getMapSizeInPixels : Ext.util.UnimplementedFunction,
+    getMapSizeInPixels : function() {
+        var size = this.map.getCurrentSize();
+        return Ext.create('portal.map.Size', {
+            width : size.w,
+            height : size.h
+        });
+    },
 
     /**
-     * Converts a latitude/longitude into a pixel coordinate based on the
-     * on the current viewport
-     *
-     * returns an object in the form
-     * {
-     *  x : number - offset in x direction
-     *  y : number - offset in y direction
-     * }
-     *
-     * function(point)
-     *
-     * @param point portal.map.Point location to query
+     * See parent class for information
      */
-    getPixelFromLatLng : Ext.util.UnimplementedFunction,
+    getPixelFromLatLng : function(point) {
+        var layerPixel = this.map.getLayerPxFromLonLat(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()));
+        var viewportPixel = this.map.getViewPortPxFromLayerPx(layerPixel);
+
+        return {
+            x : viewportPixel.x,
+            y : viewportPixel.y
+        }
+    },
 
     ////////////////// Base functionality
 

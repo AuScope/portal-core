@@ -6,6 +6,11 @@ Ext.define('portal.map.BaseMap', {
     extend : 'Ext.util.Observable',
 
     /**
+     * Instance of portal.layer.LayerStore
+     */
+    layerStore : null,
+
+    /**
      * An instance of portal.map.BasePrimitiveManager for managing any temporary highlights
      * on the map
      */

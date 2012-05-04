@@ -7,9 +7,9 @@ Ext.define('portal.map.openlayers.primitives.Marker', {
 
     config : {
         /**
-         * Instance of OpenLayers.Marker
+         * Instance of OpenLayers.Feature.Vector
          */
-        marker : null
+        vector : null
     },
 
     /**
@@ -25,26 +25,34 @@ Ext.define('portal.map.openlayers.primitives.Marker', {
         var point = this.getPoint();
         var icon = this.getIcon();
 
-        var olPoint = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
-        var olIconSize = undefined;
-        var olIconOffset = undefined;
+        //Style info about the icon
+        var iconWidth = undefined;
+        var iconHeight = undefined;
+        var iconOffsetX = undefined;
+        var iconOffsetY = undefined;
         if (Ext.isNumber(icon.getWidth()) && Ext.isNumber(icon.getHeight())) {
-            olIconSize = {
-                w : icon.getWidth(),
-                h : icon.getHeight()
-            };
+            iconWidth = icon.getWidth();
+            iconHeight = icon.getHeight();
         }
         if (Ext.isNumber(icon.getAnchorOffsetX()) && Ext.isNumber(icon.getAnchorOffsetY())) {
-            olIconOffset = {
-                x : (0 - icon.getAnchorOffsetX()),
-                y : (0 - icon.getAnchorOffsetY())
-            };
+            iconOffsetX = (0 - icon.getAnchorOffsetX());
+            iconOffsetY = (0 - icon.getAnchorOffsetY());
         }
-        var olIcon = new OpenLayers.Icon(icon.getUrl(), olIconSize, olIconOffset);
 
-        var marker = new OpenLayers.Marker(olPoint, olIcon);
-        marker._portalBasePrimitive = this;
+        //Construct our feature
+        var olPoint = new OpenLayers.Geometry.Point(point.getLongitude(), point.getLatitude());
+        var vector = new OpenLayers.Feature.Vector(olPoint, {
+            portalBasePrimitive : this
+        }, {
+            externalGraphic : icon.getUrl(),
+            graphicWidth : iconWidth,
+            graphicHeight : iconHeight,
+            graphicXOffset : iconOffsetX,
+            graphicYOffset : iconOffsetY
+        });
 
-        this.setMarker(marker);
+        this.setVector(vector);
+
+
     }
 });

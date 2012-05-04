@@ -5,28 +5,23 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
     extend: 'portal.map.BasePrimitiveManager',
 
     vectorLayer : null,
-    markerLayer : null,
 
     layers : null,
     vectors : null,
-    markers : null,
 
     /**
      * {
      *  baseMap : portal.map.BaseMap - The map instance that created this primitive manager,
      *  vectorLayer : OpenLayers.Layer.Vector - where vectors will be added
-     *  markerLayer : OpenLayers.Layer.Markers - where markers will be added
      * }
      */
     constructor : function(config) {
         this.callParent(arguments);
 
         this.vectorLayer = config.vectorLayer;
-        this.markerLayer = config.markerLayer;
 
         this.layers = [];
         this.vectors = [];
-        this.markers = [];
     },
 
     /**
@@ -37,12 +32,6 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
             this.layers[i].destroy();
         }
         this.layers = [];
-
-        for (var i = 0; i < this.markers.length; i++) {
-            this.markerLayer.removeMarker(this.markers[i]);
-            this.markers[i].destroy();
-        }
-        this.markers = [];
 
         this.vectorLayer.removeFeatures(this.vectors);
         for (var i = 0; i < this.vectors.length; i++) {
@@ -60,25 +49,18 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
         var markers = [];
         var vectors = [];
 
+        //sort our primitives into vectors and markers
         for (var i = 0; i < primitives.length; i++) {
             var prim = primitives[i];
 
-            if (prim instanceof portal.map.openlayers.primitives.Marker) {
-                markers.push(prim.getMarker());
-            } else if (prim instanceof portal.map.openlayers.primitives.Polygon ||
-                       prim instanceof portal.map.openlayers.primitives.Polyline) {
+            if (prim instanceof portal.map.openlayers.primitives.Marker ||
+                    prim instanceof portal.map.openlayers.primitives.Polygon ||
+                    prim instanceof portal.map.openlayers.primitives.Polyline) {
                 vectors.push(prim.getVector())
             } else if (prim instanceof portal.map.openlayers.primitives.WMSOverlay) {
                 var layer = prim.getWmsLayer();
                 this.layers.push(layer);
                 this.baseMap.map.addLayer(layer);
-            }
-        }
-
-        if (markers.length > 0) {
-            for (var i = 0; i < markers.length; i++) {
-                this.markerLayer.addMarker(markers[i]);
-                this.markers.push(markers[i]);
             }
         }
 

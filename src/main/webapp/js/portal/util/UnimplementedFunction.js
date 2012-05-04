@@ -7,7 +7,8 @@ Ext.define('portal.util.UnimplementedFunction', {
 }, function() {
     portal.util.UnimplementedFunction = function() {
         if (window.console) {
-            console.error('This function is not implemented yet', arguments);
+            console.error('The following function is calling an Unimplemented function with Arguments: ', arguments);
+            console.error(arguments.callee.caller.toString());
         }
         throw 'NotImplemented';
     };
