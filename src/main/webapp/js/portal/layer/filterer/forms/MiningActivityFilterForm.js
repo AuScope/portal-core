@@ -45,7 +45,7 @@ Ext.define('portal.layer.filterer.forms.MiningActivityFilterForm', {
                 },{
                     xtype : 'combo',
                     anchor: '100%',
-                    name: 'producedMaterialDisplayed', /* this just returns the values from displayField! */
+                    name: 'producedMaterial', /* this just returns the values from displayField! */
                     hiddenName: 'producedMaterial',    /* this returns the values from valueField! */
                     fieldLabel: 'Produced Material',
                     labelAlign: 'right',
