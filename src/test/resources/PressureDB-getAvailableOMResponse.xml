@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AvailableOM>
+	<Observations Well__Id="123">
+		<temperature>Y</temperature>
+		<pressureData>y</pressureData>
+		<salinity>n</salinity>
+		<omUrl>http://example.com/pressure-db</omUrl>
+	</Observations>
+	<PressureFeature>
+		<rft>0</rft>
+
+		<dst>3</dst>
+		<fitp>0</fitp>
+	</PressureFeature>
+	<SalinityFeature>
+		<tds>1</tds>
+		<nacl>2</nacl>
+		<cl>1</cl>
+	</SalinityFeature>
+	<TemperatureFeature>
+
+		<t>6</t>
+	</TemperatureFeature>
+</AvailableOM>

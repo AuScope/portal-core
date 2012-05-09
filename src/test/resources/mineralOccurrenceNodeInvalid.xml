@@ -1,0 +1,113 @@
+<er:MineralOccurrence gml:id="mo.mineral.occurrence.394deposit" xmlns:gco="http://www.isotc211.org/2005/gco"
+					  xmlns:gmd="http://www.isotc211.org/2005/gmd"
+					  xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" 
+					  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink"
+					  xmlns:wfs="http://www.opengis.net/wfs" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
+					  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					  xmlns:gml="http://www.opengis.net/gml"
+					  xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
+	<hiddenSoThatWeCanTestXPathErrors>
+        <gml:name codeSpace="http://localhost:8080/deegree-wfs/services">urn:cgi:feature:PIRSA:MineralOccurrence:394deposit</gml:name>
+        <gml:name codeSpace="http://localhost:8080/deegree-wfs/services">TARCOOLA PERSEVERANCE</gml:name>
+        <gml:name codeSpace="http://localhost:8080/deegree-wfs/services">PERSEVERENCE</gml:name>
+        <gml:name codeSpace="http://localhost:8080/deegree-wfs/services">LAST RESOURCE</gml:name>
+        <gml:boundedBy>
+            <gml:Envelope srsName="EPSG:4283">
+                <gml:pos srsDimension="2">134.5295215 -30.7076572</gml:pos>
+                <gml:pos srsDimension="2">134.5295215 -30.7076572</gml:pos>
+            </gml:Envelope>
+        </gml:boundedBy>
+        <gsml:observationMethod>
+            <gsml:CGI_TermValue>
+                <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
+            </gsml:CGI_TermValue>
+        </gsml:observationMethod>
+        <gsml:purpose>instance</gsml:purpose>
+
+        <gsml:occurrence>
+            <gsml:MappedFeature gml:id="mo.gsml.mappedfeature.210432">
+                <gml:name codeSpace="http://localhost:8080/deegree-wfs/services">urn:cgi:feature:PIRSA:MappedFeature:210432</gml:name>
+                <gml:boundedBy>
+                    <gml:Envelope srsName="EPSG:4283">
+                        <gml:pos srsDimension="2">134.5295215 -30.7076572</gml:pos>
+                        <gml:pos srsDimension="2">134.5295215 -30.7076572</gml:pos>
+                    </gml:Envelope>
+                </gml:boundedBy>
+                <gsml:observationMethod>
+                    <gsml:CGI_TermValue>
+                        <gsml:value codeSpace="urn:cgi:classifierScheme:PIRSA:ObservationMethod">(DISUSED) Map Plot</gsml:value>
+                    </gsml:CGI_TermValue>
+
+                </gsml:observationMethod>
+                <gsml:positionalAccuracy>
+                    <gsml:CGI_TermValue>
+                        <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
+                    </gsml:CGI_TermValue>
+                </gsml:positionalAccuracy>
+                <gsml:samplingFrame xlink:href="urn:cgi:feature:CGI:EarthNaturalSurface" />
+                <gsml:specification
+                    xlink:href="urn:cgi:feature:PIRSA:MineralOccurrence:394deposit" />
+                <gsml:shape>
+                    <gml:Point srsName="EPSG:4283">
+                        <gml:pos srsDimension="2">134.5295215 -30.7076572</gml:pos>
+                    </gml:Point>
+                </gsml:shape>
+            </gsml:MappedFeature>
+        </gsml:occurrence>
+
+        <er:sourceReference>
+            <gmd:CI_Citation id="gmd.ci.citation.9832">
+                <gmd:title>
+                    <gco:CharacterString>Tarcoola Goldfield geological investigations. Drilling and geological studies.</gco:CharacterString>
+                </gmd:title>
+                <gmd:date>
+                    <gmd:CI_Date>
+                        <gmd:date>
+                            <gco:Date>1988</gco:Date>
+                        </gmd:date>
+                        <gmd:dateType>
+                            <gmd:CI_DateTypeCode codeList="CI_DateTypeCode"
+                                codeListValue="publication" />
+                        </gmd:dateType>
+                    </gmd:CI_Date>
+                </gmd:date>
+
+            </gmd:CI_Citation>
+        </er:sourceReference>
+        <er:sourceReference>
+            <gmd:CI_Citation id="gmd.ci.citation.12111">
+                <gmd:title>
+                    <gco:CharacterString>Tarcoola. Progress reports for the period 19/7/84 to 6/12/90.</gco:CharacterString>
+                </gmd:title>
+                <gmd:date>
+                    <gmd:CI_Date>
+                        <gmd:date>
+                            <gco:Date xsi:nil="true" />
+                        </gmd:date>
+                        <gmd:dateType>
+                            <gmd:CI_DateTypeCode codeList="CI_DateTypeCode"
+                                codeListValue="publication" />
+                        </gmd:dateType>
+                    </gmd:CI_Date>
+
+                </gmd:date>
+            </gmd:CI_Citation>
+        </er:sourceReference>
+        <er:form>
+            <gsml:CGI_TermValue>
+                <gsml:value codeSpace="urn:cgi:classifierScheme:PIRSA:DepositType">Fault Contact</gsml:value>
+            </gsml:CGI_TermValue>
+        </er:form>
+        <er:classification>
+            <er:MineralDepositModel>
+                <er:mineralDepositGroup
+                    codeSpace="urn:cgi:classifierScheme:PIRSA:DepositStyle:Genetic">Hydrothermal: precipitation of ore and gangue from watery fluids of diverse origin, temperature range 50-7000C, generally below 4000C, pressure 1-3 kbar</er:mineralDepositGroup>
+            </er:MineralDepositModel>
+        </er:classification>
+        <er:commodityDescriptionChangedSoICanTestErrorHandling
+            xlink:href="urn:cgi:feature:PIRSA:MineralCommodity:394deposit:Au" />
+        <er:child xlink:href="urn:cgi:feature:PIRSA:MineralOccurrence:394zone" />
+
+        <er:type>ore deposit</er:type>
+    </hiddenSoThatWeCanTestXPathErrors>
+</er:MineralOccurrence>

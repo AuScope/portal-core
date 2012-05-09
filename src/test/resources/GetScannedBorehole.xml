@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection numberOfFeatures="1" timeStamp="2011-04-18T16:16:20.991+10:00" xsi:schemaLocation="http://www.auscope.org/nvcl http://nvcl.csiro.au/schema/nvcl.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd" xmlns:ogc="http://www.opengis.net/ogc" xmlns:sa="http://www.opengis.net/sampling/1.0" xmlns:om="http://www.opengis.net/om/1.0" xmlns:wfs="http://www.opengis.net/wfs" xmlns:nvcl="http://www.auscope.org/nvcl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" xmlns:ows="http://www.opengis.net/ows" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <gml:featureMembers>
+        <nvcl:ScannedBoreholeCollection gml:id="nvcl.scannedboreholecollection.1">
+            <nvcl:scannedBorehole xlink:href="http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/WTB5" xlink:title="WTB5"/>
+            <nvcl:scannedBorehole xlink:href="http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GSDD006" xlink:title="GSDD006"/>
+            <nvcl:scannedBorehole xlink:href="http://nvclwebservices.vm.csiro.au/resource/feature/CSIRO/borehole/GDDH7" xlink:title="GDDH7"/>
+        </nvcl:ScannedBoreholeCollection>
+    </gml:featureMembers>
+</wfs:FeatureCollection>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+   
+    <!-- All elements must be of type org.auscope.portal.server.web.KnownLayer -->
+    <bean id="knownTypes" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <ref bean="knownTypeMine" />
+                <ref bean="knownTypeMineralOccurrence" />
+                <ref bean="knownTypeMiningActivity" />
+                <ref bean="knownTypeBoreholeNvcl" />
+                <ref bean="knownTypeBoreholePressureDB" />
+                <ref bean="knownTypeGSMLBorehole" />
+                <ref bean="knownTypeGeodesy" />
+                <ref bean="knownTypeGeochron" />
+                <ref bean="knownTypeReports" />
+                <ref bean="knownTypeGeotransects" />
+                <ref bean="knownTypeYilgarnGeochemistry"/>
+                <ref bean="knownTypeSamplingPoint"/>
+                <ref bean="knownTypeFeatureCollection"/>
+                <ref bean="knownTypeLateriteYilgarnGeoChem"/>
+                <ref bean="knownTypeHighPSiteFeatureType"/>
+                <ref bean="knownTypeHighPFeatureType"/>
+                <ref bean="knownTypeHighPREIronLayer"/>
+                <ref bean="knownTypeHighPREPhosLayer"/>
+                <ref bean="knownTypeHighPSiteIronLayer"/>
+                <ref bean="knownTypeHighPSitePhosLayer"/>
+                <ref bean="geodesyWorkflowPortal"/>
+                <ref bean="c3dmmPortal"/>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="cswServiceList" class="java.util.ArrayList">
+        <constructor-arg>
+            <list>
+                <ref bean="cswSissANUProduction" />
+            </list>
+        </constructor-arg>
+    </bean>
+
+</beans>

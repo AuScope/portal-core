@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:skos="http://www.w3.org/2004/02/skos/core#">
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:QP">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Quarry Products</skos:definition>
+	<skos:prefLabel xml:lang="en">Quarry Products</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">QP</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:RHYO">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Rhyolite</skos:definition>
+	<skos:prefLabel xml:lang="en">Rhyolite</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">RHYO</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:RHYRB">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Rhyolite - road base</skos:definition>
+	<skos:prefLabel xml:lang="en">Rhyolite - road base</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">RHYRB</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SCHFL">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Schist - filling</skos:definition>
+	<skos:prefLabel xml:lang="en">Schist - filling</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SCHFL</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SCHRB">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Schist - road base</skos:definition>
+	<skos:prefLabel xml:lang="en">Schist - road base</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SCHRB</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SCHT">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Schist</skos:definition>
+	<skos:prefLabel xml:lang="en">Schist</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SCHT</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSCA">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Siltstone - concrete aggregate</skos:definition>
+	<skos:prefLabel xml:lang="en">Siltstone - concrete aggregate</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SLSCA</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSFL">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Siltstone - filling</skos:definition>
+	<skos:prefLabel xml:lang="en">Siltstone - filling</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SLSFL</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSRB">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Siltstone - road base</skos:definition>
+	<skos:prefLabel xml:lang="en">Siltstone - road base</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SLSRB</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSRS">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Siltstone - road seal aggregate</skos:definition>
+	<skos:prefLabel xml:lang="en">Siltstone - road seal aggregate</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SLSRS</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSSP">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Siltstone - spalls</skos:definition>
+	<skos:prefLabel xml:lang="en">Siltstone - spalls</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SLSSP</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSSS">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Siltstone - specification sand</skos:definition>
+	<skos:prefLabel xml:lang="en">Siltstone - specification sand</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SLSSS</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:SLST">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Siltstone</skos:definition>
+	<skos:prefLabel xml:lang="en">Siltstone</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">SLST</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:GSV:commodity:Agg">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:GSV:commodity"/>
+	<skos:definition>Aggregate - undifferentiated</skos:definition>
+	<skos:prefLabel xml:lang="en">Aggregate - undifferentiated</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/gsv_commodities.xls">Agg</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:GSWA:commodity:Agg">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:GSWA:commodity"/>
+	<skos:definition>Aggregate - undifferentiated</skos:definition>
+	<skos:prefLabel xml:lang="en">Aggregate - undifferentiated</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/gswa_commodities.xls">Agg</skos:notation>
+</skos:Concept>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GBRRB">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSCA">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSCD">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSFL">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSNA">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSRB">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSRS">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSS">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSSP">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSSS">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:QP">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:RHYO">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:RHYRB">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SCHFL">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SCHRB">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SCHT">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSCA">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSFL">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSRB">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSRS">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSSP">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SLSSS">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:SLST">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:GSWA:commodity:Agg">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:AGGR">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Aggregate - undifferentiated</skos:definition>
+	<skos:prefLabel xml:lang="en">Aggregate - undifferentiated</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">AGGR</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:AMPRB">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Amphibolite - road base</skos:definition>
+	<skos:prefLabel xml:lang="en">Amphibolite - road base</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">AMPRB</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GBRRB">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gabbro - road base</skos:definition>
+	<skos:prefLabel xml:lang="en">Gabbro - road base</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GBRRB</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSCA">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss - concrete aggregate</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss - concrete aggregate</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSCA</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSCD">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss - crusher dust</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss - crusher dust</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSCD</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSFL">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss - filling</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss - filling</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSFL</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSNA">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss - general purpose aggregate</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss - general purpose aggregate</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSNA</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSRB">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss - road base</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss - road base</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSRB</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSRS">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss - road seal aggregate</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss - road seal aggregate</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSRS</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSS">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSS</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSSP">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss - spalls</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss - spalls</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSSP</skos:notation>
+</skos:Concept>
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:GNSSS">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+	<skos:definition>Gneiss - specification sand</skos:definition>
+	<skos:prefLabel xml:lang="en">Gneiss - specification sand</skos:prefLabel>
+	<skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">GNSSS</skos:notation>
+</skos:Concept>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:AMPRB">
+	<skos:inScheme rdf:resource="urn:cgi:classifierScheme:AuScope:commodity"/>
+	<skos:definition>Amphibolite - road base</skos:definition>
+	<skos:broader rdf:resource="urn:cgi:classifier:AuScope:commodity:ConstructionMaterial"/>
+	<skos:altLabel xml:lang="en">Amphibolite - road base</skos:altLabel>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:AGGR">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:PIRSA:commodity:AMPRB">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:GSV:commodity:Agg">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GA:commodity:Agg"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:AuScope:commodity:ConstructionMaterial">
+	<skos:narrower rdf:resource="urn:cgi:classifier:PIRSA:commodity:AMPRB"/>
+</rdf:Description>
+<rdf:Description rdf:about="urn:cgi:classifier:GA:commodity:Agg">
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GBRRB"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSCA"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSCD"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSFL"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSNA"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSRB"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSRS"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSS"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSSP"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:GNSSS"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:QP"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:RHYO"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:RHYRB"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SCHFL"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SCHRB"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SCHT"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SLSCA"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SLSFL"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SLSRB"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SLSRS"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SLSSP"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SLSSS"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:SLST"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GSWA:commodity:Agg"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:AGGR"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:PIRSA:commodity:AMPRB"/>
+	<skos:exactMatch rdf:resource="urn:cgi:classifier:GSV:commodity:Agg"/>
+</rdf:Description>
+
+</rdf:RDF>

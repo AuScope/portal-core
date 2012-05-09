@@ -1,0 +1,8 @@
+<skos:Concept rdf:about="urn:cgi:classifier:PIRSA:commodity:RHYRB"
+        xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+    <skos:inScheme rdf:resource="urn:cgi:classifierScheme:PIRSA:commodity"/>
+    <skos:definition>Rhyolite - road base</skos:definition>
+    <skos:prefLabel xml:lang="en">Rhyolite - road base</skos:prefLabel>
+    <skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/pirsa_commodities.xls">RHYRB</skos:notation>
+</skos:Concept>

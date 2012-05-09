@@ -1,0 +1,10 @@
+<ogc:Filter xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
+        xmlns:ogc="http://www.opengis.net/ogc"
+        xmlns:gml="http://www.opengis.net/gml"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ogc:PropertyIsLike wildCard="*" singleChar="#" escapeChar="!">
+            <ogc:PropertyName>er:mineName/er:MineName/er:mineName</ogc:PropertyName>
+            <ogc:Literal>Dominion Copper Mine</ogc:Literal>
+        </ogc:PropertyIsLike>
+</ogc:Filter>

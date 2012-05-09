@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LogCollection>
+    <Log>
+      <!-- It's worth mentioning that the NVCL datservice returns LogName when mosaicsvc is specified and logName otherwise -->
+      <LogID>logid-1</LogID>
+      <LogName>logname-1</LogName>
+      <SampleCount>45</SampleCount>
+    </Log>
+    <Log>
+      <LogID>logid-2</LogID>
+      <logName>logname-2</logName>
+    </Log>
+</LogCollection>

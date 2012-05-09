@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:GetFeature version="1.1.0" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" 
+                xmlns:wfs="http://www.opengis.net/wfs"
+                xmlns:ogc="http://www.opengis.net/ogc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd" maxFeatures="1000">
+    <wfs:Query typeName="er:Commodity"/>
+</wfs:GetFeature>

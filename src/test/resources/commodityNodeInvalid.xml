@@ -1,0 +1,11 @@
+<er:Commodity gml:id="mo.commodity.361169.au"
+			  xmlns:gml="http://www.opengis.net/gml" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
+			  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink"
+			  xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
+	<gml:name codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">urn:cgi:feature:GSV:Commodity:361169:AU</gml:name>
+	<hiddenToTestXPathException>
+        <er:commodityName codeSpace="urn:cgi:classifierScheme:GSV:OreType">Gold</er:commodityName>
+        <er:commodityImportance>major</er:commodityImportance>
+        <er:source xlink:href="urn:cgi:feature:GSV:MineralOccurrence:361169" />
+    </hiddenToTestXPathException>
+</er:Commodity>

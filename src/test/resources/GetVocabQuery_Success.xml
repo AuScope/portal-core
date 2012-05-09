@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+	xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+	xmlns:nvclscalar="http://www.auscope.org/ontology/vocabs/nvcl-scalars/0.2#"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+	xmlns:owl="http://www.w3.org/2002/07/owl#">
+<skos:Concept rdf:about="http://www.auscope.org/ontology/vocabs/nvcl-scalars/0.2#e8e5c901-b89c-499b-899a-c6c3bae670ce">
+	<skos:prefLabel rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TSA_S_Mineral1</skos:prefLabel>
+	<skos:scopeNote rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Mineral index for TSA singleton match or primary mixture component</skos:scopeNote>
+	<skos:inScheme rdf:resource="http://www.auscope.org/ontology/vocabs/nvcl-scalars/0.2#c7a438ef-82d5-47e5-8294-691c142d5d96"/>
+</skos:Concept>
+<rdf:Description rdf:about="http://www.auscope.org/ontology/vocabs/nvcl-scalars/0.2#f98d26f1-8b35-4dbf-8534-c01cfbdf97ed">
+	<skos:member rdf:resource="http://www.auscope.org/ontology/vocabs/nvcl-scalars/0.2#e8e5c901-b89c-499b-899a-c6c3bae670ce"/>
+</rdf:Description>
+
+</rdf:RDF>

@@ -1,0 +1,11 @@
+<ogc:Filter xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" 
+        xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
+        xmlns:ogc="http://www.opengis.net/ogc"
+        xmlns:gml="http://www.opengis.net/gml"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        <ogc:PropertyIsEqualTo>
+            <ogc:PropertyName>er:associatedMine/@xlink:href</ogc:PropertyName>
+            <ogc:Literal>urn:cgi:feature:GSV:Mine:361068</ogc:Literal>
+        </ogc:PropertyIsEqualTo>
+</ogc:Filter>

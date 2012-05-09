@@ -1,0 +1,94 @@
+<er:MiningActivity gml:id="mo.miningactivity.361082.112" xmlns:gco="http://www.isotc211.org/2005/gco"
+                   xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
+                   xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink"
+                   xmlns:wfs="http://www.opengis.net/wfs" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml"
+                   xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
+    <gml:name codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">
+        urn:cgi:feature:GSV:MiningActivity:361082:112
+    </gml:name>
+    <gml:boundedBy>
+        <gml:Envelope srsName="EPSG:4283">
+            <gml:pos srsDimension="2">147.50723 -37.61991</gml:pos>
+
+            <gml:pos srsDimension="2">147.50723 -37.61991</gml:pos>
+        </gml:Envelope>
+    </gml:boundedBy>
+    <er:occurrence>
+        <er:MiningFeatureOccurrence gml:id="mo.miningfeatureoccurrence.361082">
+            <gml:name codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">
+                urn:cgi:feature:GSV:MiningFeatureOccurrence:361082
+            </gml:name>
+            <gml:boundedBy>
+                <gml:Envelope srsName="EPSG:4283">
+                    <gml:pos srsDimension="2">147.50723 -37.61991</gml:pos>
+                    <gml:pos srsDimension="2">147.50723 -37.61991</gml:pos>
+                </gml:Envelope>
+            </gml:boundedBy>
+            <er:observationMethod>
+
+                <gsml:CGI_TermValue>
+                    <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
+                </gsml:CGI_TermValue>
+            </er:observationMethod>
+            <er:positionalAccuracy>
+                <gsml:CGI_NumericValue>
+                    <gsml:principalValue uom="urn:ogc:def:uom:UCUM:metre">100</gsml:principalValue>
+                </gsml:CGI_NumericValue>
+            </er:positionalAccuracy>
+            <er:specification xlink:href="urn:cgi:feature:GSV:Mine:361082"/>
+            <er:location>
+                <gml:Point srsName="EPSG:4283">
+                    <gml:pos srsDimension="2">147.50723 -37.61991</gml:pos>
+                </gml:Point>
+
+            </er:location>
+        </er:MiningFeatureOccurrence>
+    </er:occurrence>
+    <er:activityDuration>
+        <gml:TimePeriod>
+            <gml:begin>
+                <gml:TimeInstant>
+                    <gml:timePosition>01/JAN/1918</gml:timePosition>
+                </gml:TimeInstant>
+            </gml:begin>
+            <gml:end>
+                <gml:TimeInstant>
+                    <gml:timePosition>31/DEC/1918</gml:timePosition>
+                </gml:TimeInstant>
+            </gml:end>
+
+        </gml:TimePeriod>
+    </er:activityDuration>
+    <er:activityType>unspecified</er:activityType>
+    <er:oreProcessed>
+        <gsml:CGI_NumericValue>
+            <gsml:principalValue uom="urn:ogc:def:uom:UCUM:t">2</gsml:principalValue>
+        </gsml:CGI_NumericValue>
+    </er:oreProcessed>
+    <er:associatedMine xlink:href="urn:cgi:feature:GSV:Mine:361082"/>
+    <er:deposit xlink:href="urn:cgi:feature:GSV:MineralOccurrence:361082"/>
+    <er:producedMaterial>
+        <er:Product>
+            <er:productName>
+                <gsml:CGI_TermValue>
+                    <gsml:value codeSpace="urn:cgi:classifierScheme:GSV:CommodityCode">Gold</gsml:value>
+
+                </gsml:CGI_TermValue>
+            </er:productName>
+            <er:sourceReference xlink:href="urn:ogc:def:nil:OGC:missing"/>
+            <er:grade>
+                <gsml:CGI_NumericValue>
+                    <gsml:principalValue uom="urn:ogc:def:uom:UCUM:g.t-1">31.1</gsml:principalValue>
+                </gsml:CGI_NumericValue>
+            </er:grade>
+            <er:production>
+                <gsml:CGI_NumericValue>
+                    <gsml:principalValue uom="urn:ogc:def:uom:UCUM:[oz_tr]">2</gsml:principalValue>
+                </gsml:CGI_NumericValue>
+            </er:production>
+            <er:sourceCommodity xlink:href="urn:cgi:feature:GSV:Commodity:361082:AU"/>
+        </er:Product>
+
+    </er:producedMaterial>
+</er:MiningActivity>

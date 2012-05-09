@@ -1,0 +1,97 @@
+        <er:MineralOccurrence gml:id="mo.mineral.occurrence.285zone" xmlns:gco="http://www.isotc211.org/2005/gco"
+                      xmlns:gmd="http://www.isotc211.org/2005/gmd"
+                      xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
+                      xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink"
+                      xmlns:wfs="http://www.opengis.net/wfs" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xmlns:gml="http://www.opengis.net/gml"
+                      xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
+            <gml:name codeSpace="http://localhost:8080/deegree-wfs/services">LOMAX PROSPECT</gml:name>
+            <gsml:observationMethod>
+
+                <gsml:CGI_TermValue>
+                    <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
+                </gsml:CGI_TermValue>
+            </gsml:observationMethod>
+            <gsml:purpose>instance</gsml:purpose>
+            <er:commodityDescription xlink:href="urn:cgi:feature:PIRSA:MineralCommodity:285zone:U3O8"/>
+            <er:composition>
+                <er:EarthResourceMaterial>
+
+                    <er:earthResourceMaterialRole>host rock</er:earthResourceMaterialRole>
+                    <er:material>
+                        <gsml:RockMaterial>
+                            <gsml:purpose>instance</gsml:purpose>
+                            <gsml:consolidationDegree>
+                                <gsml:CGI_TermValue>
+                                    <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
+
+                                </gsml:CGI_TermValue>
+                            </gsml:consolidationDegree>
+                            <gsml:lithology xlink:href="urn:cgi:classifier:PIRSA:LithologyCode:GNSS"/>
+                        </gsml:RockMaterial>
+                    </er:material>
+                    <er:proportion>
+                        <gsml:CGI_TermValue>
+                            <gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
+
+                        </gsml:CGI_TermValue>
+                    </er:proportion>
+                </er:EarthResourceMaterial>
+            </er:composition>
+            <er:oreAmount>
+                <er:Reserve>
+                    <er:calculationMethod>Historical Ore Reserve</er:calculationMethod>
+                    <er:date>
+
+                        <gml:TimeInstant>
+                            <gml:timePosition>urn:ogc:def:nil:OGC:missing</gml:timePosition>
+                        </gml:TimeInstant>
+                    </er:date>
+                    <er:sourceReference>
+                        <gmd:CI_Citation id="gmd.ci.citation.3021">
+                            <gmd:title>
+                                <gco:CharacterString>GOVERNMENT DRILLING OPERATIONS - AINSLEE SOUTH PROSPECT.</gco:CharacterString>
+
+                            </gmd:title>
+                            <gmd:date>
+                                <gmd:CI_Date>
+                                    <gmd:date>
+                                        <gco:Date>1957</gco:Date>
+                                    </gmd:date>
+                                    <gmd:dateType>
+                                        <gmd:CI_DateTypeCode codeList="CI_DateTypeCode" codeListValue="publication"/>
+
+                                    </gmd:dateType>
+                                </gmd:CI_Date>
+                            </gmd:date>
+                        </gmd:CI_Citation>
+                    </er:sourceReference>
+                    <er:ore>
+                        <gsml:CGI_NumericValue>
+                            <gsml:principalValue uom="urn:ogc:def:uom:UCUM:TONNE">406.419</gsml:principalValue>
+
+                        </gsml:CGI_NumericValue>
+                    </er:ore>
+                    <er:measureDetails>
+                        <er:CommodityMeasure>
+                            <er:cutOffGrade>
+                                <gsml:CGI_NumericValue>
+                                    <gsml:principalValue uom="urn:ogc:def:uom:UCUM:GM/TONNE">1964.286</gsml:principalValue>
+                                </gsml:CGI_NumericValue>
+
+                            </er:cutOffGrade>
+                            <er:grade>
+                                <gsml:CGI_NumericValue>
+                                    <gsml:principalValue uom="urn:ogc:def:uom:UCUM:GM/TONNE">4.4</gsml:principalValue>
+                                </gsml:CGI_NumericValue>
+                            </er:grade>
+                            <er:commodityOfInterest xlink:href="urn:cgi:feature:PIRSA:MineralCommodity:285zone.U3O8"/>
+                        </er:CommodityMeasure>
+
+                    </er:measureDetails>
+                    <er:category>other: missing</er:category>
+                </er:Reserve>
+            </er:oreAmount>
+            <er:type>prospect</er:type>
+        </er:MineralOccurrence>

@@ -1,0 +1,25 @@
+<ogc:Filter xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" 
+            xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
+            xmlns:ogc="http://www.opengis.net/ogc"
+            xmlns:gml="http://www.opengis.net/gml"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <ogc:And>
+        <ogc:PropertyIsEqualTo>
+            <ogc:PropertyName>er:associatedMine/@xlink:href</ogc:PropertyName>
+            <ogc:Literal>urn:cgi:feature:GSV:Mine:361068</ogc:Literal>
+        </ogc:PropertyIsEqualTo>
+        <ogc:PropertyIsGreaterThan>
+            <ogc:PropertyName>er:activityDuration/gml:TimePeriod/gml:begin/gml:TimeInstant/gml:timePosition</ogc:PropertyName>
+            <ogc:Literal>01/JAN/1870</ogc:Literal>
+        </ogc:PropertyIsGreaterThan>
+        <ogc:PropertyIsLessThan>
+            <ogc:PropertyName>er:activityDuration/gml:TimePeriod/gml:end/gml:TimeInstant/gml:timePosition</ogc:PropertyName>
+            <ogc:Literal>31/DEC/1885</ogc:Literal>
+        </ogc:PropertyIsLessThan>
+        <ogc:PropertyIsGreaterThan>
+            <ogc:PropertyName>er:oreProcessed/gsml:CGI_NumericValue/gsml:principalValue</ogc:PropertyName>
+            <ogc:Literal>28</ogc:Literal>
+        </ogc:PropertyIsGreaterThan>
+    </ogc:And>
+</ogc:Filter>

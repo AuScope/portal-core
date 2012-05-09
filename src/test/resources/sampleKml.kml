@@ -1,0 +1,1081 @@
+                                                <?xml version="1.0" encoding="UTF-8"?><kml xmlns:xalan="http://xml.apache.org/xalan" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1" xmlns:geodesy="http://auscope.org.au/geodesy" xmlns:sa="http://www.opengis.net/sampling/1.0" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0" xmlns:gml="http://www.opengis.net/gml" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:wfs="http://www.opengis.net/wfs"><Document><name>GML Links to KML</name><description>GeoSciML data converted to KML</description><Placemark><name>mo.miningactivity.361102.142</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361102:142
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.52321 -37.63652
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1898
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1898
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.52321,-37.63652,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361147.194</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361147:194
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.20258 -37.47436
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1902
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1902
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.20258,-37.47436,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361549.1432</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361549:1432
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.77677 -36.51257
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1876
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1876
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.77677,-36.51257,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361569.1459</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361569:1459
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.75883 -36.35693
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1888
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/MAR/1888
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.75883,-36.35693,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361479.1194</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361479:1194
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.72528 -36.51517
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1902
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1902
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.72528,-36.51517,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361472.1088</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361472:1088
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.73218 -36.56055
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1864
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1864
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.73218,-36.56055,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361674.1625</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361674:1625
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.99722 -36.74428
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.99722,-36.74428,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361688.1693</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361688:1693
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.97571 -36.75555
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.97571,-36.75555,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361713.1829</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361713:1829
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.98231 -36.81117
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1866
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1866
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.98231,-36.81117,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361822.2497</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361822:2497
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.51386 -36.12079
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUN/1900
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1900
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.51386,-36.12079,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361779.2230</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361779:2230
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.91229 -36.91479
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1910
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1910
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.91229,-36.91479,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361796.2374</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361796:2374
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.8816 -36.8911
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1876
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/MAR/1876
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.8816,-36.8911,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361817.2465</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361817:2465
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.8556 -36.82064
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1920
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1920
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.8556,-36.82064,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361875.2805</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361875:2805
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.58399 -36.16126
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1899
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/APR/1899
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.58399,-36.16126,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361921.2932</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361921:2932
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.63176 -36.14465
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.63176,-36.14465,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361949.3159</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361949:3159
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.58394 -36.14909
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1881
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1881
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.58394,-36.14909,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361853.2585</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361853:2585
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.61342 -36.12314
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1879
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1879
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.61342,-36.12314,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361860.2590</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361860:2590
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.54549 -36.12759
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1891
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/MAR/1891
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.54549,-36.12759,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362065.3663</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362065:3663
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.48273 -36.07242
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1900
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/APR/1900
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.48273,-36.07242,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361982.3245</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361982:3245
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.44944 -36.05343
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/OCT/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.44944,-36.05343,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362155.4269</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362155:4269
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.69542 -36.46776
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUN/1902
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1902
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.69542,-36.46776,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362258.4609</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362258:4609
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.776 -36.31576
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1867
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1867
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.776,-36.31576,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362266.4633</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362266:4633
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.77933 -36.32226
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.77933,-36.32226,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362274.4637</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362274:4637
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.78613 -36.31993
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1875
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1875
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.78613,-36.31993,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362292.4650</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362292:4650
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.80695 -36.37017
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/MAR/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.80695,-36.37017,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362303.4690</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362303:4690
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.77765 -36.36373
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1874
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1874
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.77765,-36.36373,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362185.4372</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362185:4372
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.51506 -36.30426
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1878
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1878
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.51506,-36.30426,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362554.5044</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362554:5044
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.85897 -36.75709
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1907
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.85897,-36.75709,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362561.5070</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362561:5070
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.51901 -36.29643
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1953
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1953
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.51901,-36.29643,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362722.5367</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362722:5367
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.75269 -36.85317
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1871
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1871
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.75269,-36.85317,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361577.5250</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361577:5250
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.80815 -36.38135
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.80815,-36.38135,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362624.5293</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362624:5293
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.87931 -36.59019
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1887
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1887
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.87931,-36.59019,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362635.5302</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362635:5302
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.74628 -36.89351
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1887
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.74628,-36.89351,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362692.5343</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362692:5343
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.85265 -36.55794
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1886
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1888
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.85265,-36.55794,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363398.6062</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363398:6062
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.24979 -36.64475
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.24979,-36.64475,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363424.6110</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363424:6110
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.28315 -36.60031
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.28315,-36.60031,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363627.6346</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363627:6346
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.33831 -36.68721
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.33831,-36.68721,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363678.6446</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363678:6446
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.24835 -36.5952
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1864
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1864
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.24835,-36.5952,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363601.6326</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363601:6326
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.28809 -36.78597
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.28809,-36.78597,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363333.5944</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363333:5944
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.30106 -36.73254
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1988
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1989
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.30106,-36.73254,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363355.5994</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363355:5994
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.26634 -36.56061
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.26634,-36.56061,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.364022.6797</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:364022:6797
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.32682 -36.11556
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1880
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1905
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.32682,-36.11556,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361068.83</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361068:83
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.10619 -37.33473
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1875
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1875
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.10619,-37.33473,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361127.175</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361127:175
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.60221 -37.50554
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1889
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1889
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.60221,-37.50554,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361191.270</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361191:270
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.10399 -37.33387
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1867
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1867
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.10399,-37.33387,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361900.941</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361900:941
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.62617 -36.17511
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.62617,-36.17511,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361885.973</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361885:973
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.58048 -36.19281
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.58048,-36.19281,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362412.1019</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362412:1019
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;145.93914 -36.60623
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>145.93914,-36.60623,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361605.1497</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361605:1497
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.72343 -36.43934
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/OCT/1882
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1882
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.72343,-36.43934,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361915.2914</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361915:2914
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.63272 -36.15484
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/MAR/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.63272,-36.15484,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362014.3426</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362014:3426
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.64198 -36.14631
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1884
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1884
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.64198,-36.14631,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362153.4219</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362153:4219
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.68493 -36.49451
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1870
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1870
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.68493,-36.49451,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362837.5448</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362837:5448
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.56968 -36.77977
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1875
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1882
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.56968,-36.77977,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362921.5529</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362921:5529
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.74707 -36.60187
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1897
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1898
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.74707,-36.60187,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362959.5550</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362959:5550
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.89271 -36.7719
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1904
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1905
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.89271,-36.7719,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363404.6074</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363404:6074
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.13814 -36.97398
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1870
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1870
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.13814,-36.97398,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363470.6197</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363470:6197
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.23183 -36.60363
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1871
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1871
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.23183,-36.60363,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361175.224</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361175:224
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.35169 -37.4366
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1877
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1877
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.35169,-37.4366,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361182.240</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361182:240
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.10399 -37.33387
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1867
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1867
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.10399,-37.33387,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361058.45</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361058:45
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.12548 -37.35638
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.12548,-37.35638,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361923.946</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361923:946
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.63069 -36.13726
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.63069,-36.13726,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361739.1969</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361739:1969
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.99285 -36.74987
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1875
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/MAR/1875
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.99285,-36.74987,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362609.5253</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362609:5253
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;145.86322 -36.9697
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1910
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1921
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>145.86322,-36.9697,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362625.5295</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362625:5295
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.87599 -36.81313
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.87599,-36.81313,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362821.5433</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362821:5433
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.85769 -36.57359
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1866
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1867
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.85769,-36.57359,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362695.5932</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362695:5932
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.70327 -36.84467
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.70327,-36.84467,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363330.5940</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363330:5940
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.34102 -36.96023
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1862
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.34102,-36.96023,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.364174.6943</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:364174:6943
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.07624 -36.1029
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1876
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1879
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.07624,-36.1029,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363991.6757</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363991:6757
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.33127 -36.11735
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1881
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1882
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.33127,-36.11735,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.364033.6810</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:364033:6810
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.32576 -36.12728
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1879
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1881
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.32576,-36.12728,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363917.18501</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363917:18501
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.97188 -36.20952
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1909
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1909
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.97188,-36.20952,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361253.551</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361253:551
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;148.28 -37.26287
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>148.28,-37.26287,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361671.1615</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361671:1615
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.8353 -36.40609
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/APR/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1868
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.8353,-36.40609,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362250.4597</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362250:4597
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.7739 -36.31098
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.7739,-36.31098,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362749.5385</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362749:5385
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.83481 -36.76924
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1871
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.83481,-36.76924,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362313.5277</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362313:5277
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.80617 -36.3708
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1871
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1883
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.80617,-36.3708,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362874.5493</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362874:5493
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.75524 -36.94918
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1889
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1890
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.75524,-36.94918,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362947.5543</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362947:5543
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.82039 -36.91034
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1903
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1903
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.82039,-36.91034,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363647.6387</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363647:6387
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.18008 -36.59197
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1886
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1886
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.18008,-36.59197,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.364023.6799</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:364023:6799
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.35013 -36.11098
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1904
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1909
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.35013,-36.11098,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.364218.7451</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:364218:7451
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.08292 -36.12183
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1883
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1895
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Copper
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.08292,-36.12183,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361583.1469</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361583:1469
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.76776 -36.4261
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1911
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1911
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.76776,-36.4261,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362688.5341</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362688:5341
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.79906 -36.85164
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1887
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1890
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.79906,-36.85164,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363821.6631</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363821:6631
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.48657 -36.84218
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1960
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1960
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.48657,-36.84218,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363881.6688</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363881:6688
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.46836 -36.87092
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1903
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1915
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.46836,-36.87092,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361631.1535</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361631:1535
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.76324 -36.48351
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1908
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.76324,-36.48351,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361661.5276</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361661:5276
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.82396 -36.39012
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.82396,-36.39012,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362676.5334</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362676:5334
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.83034 -36.77863
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1883
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1888
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.83034,-36.77863,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362680.5336</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362680:5336
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.72275 -36.81214
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1879
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1889
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.72275,-36.81214,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363258.5840</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363258:5840
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.53484 -36.81026
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1915
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1917
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.53484,-36.81026,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362802.5423</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362802:5423
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.74413 -36.61348
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1870
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.74413,-36.61348,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363402.6073</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363402:6073
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.24606 -36.59344
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.24606,-36.59344,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363904.6689</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363904:6689
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.9735 -36.20581
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1908
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1908
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.9735,-36.20581,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361776.2219</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361776:2219
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.92141 -36.91134
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JUL/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/SEP/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.92141,-36.91134,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362249.4595</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362249:4595
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.77368 -36.30963
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/OCT/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1869
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.77368,-36.30963,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362275.5273</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362275:5273
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.7868 -36.31939
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.7868,-36.31939,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362895.5510</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362895:5510
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.69974 -36.95442
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1866
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1876
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.69974,-36.95442,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363623.6339</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363623:6339
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.20422 -36.5762
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.20422,-36.5762,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363634.6360</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363634:6360
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.13582 -36.97132
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1865
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.13582,-36.97132,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363442.6148</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363442:6148
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.32936 -36.98299
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1872
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.32936,-36.98299,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362763.5938</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362763:5938
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.74276 -36.82637
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.74276,-36.82637,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363345.5964</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363345:5964
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.11105 -36.96951
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1871
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1871
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.11105,-36.96951,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.364262.6993</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:364262:6993
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.02031 -36.78584
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1860
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1876
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.02031,-36.78584,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363808.6620</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363808:6620
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.48856 -36.83659
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1898
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1915
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.48856,-36.83659,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.361924.947</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:361924:947
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;146.63091 -36.13726
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>146.63091,-36.13726,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.362990.5570</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:362990:5570
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.69202 -36.68965
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1906
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1906
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.69202,-36.68965,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363005.5571</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363005:5571
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;143.79672 -36.79988
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1980
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;30/JUN/1984
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>143.79672,-36.79988,0</coordinates></Point></Placemark><Placemark><name>mo.miningactivity.363988.6754</name><description>
+                                                               &lt;/br&gt;&lt;table border="1" cellspacing="1" width="100%"&gt;
+                                                               &lt;tr&gt;&lt;td&gt;Name&lt;/td&gt;&lt;td&gt;urn:cgi:feature:GSV:MiningActivity:363988:6754
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Lng Lat (deg)&lt;/td&gt;&lt;td&gt;147.32128 -36.12008
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity Start Date&lt;/td&gt;&lt;td&gt;01/JAN/1880
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Acitivity End Date&lt;/td&gt;&lt;td&gt;31/DEC/1880
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Activity Type&lt;/td&gt;&lt;td&gt;unspecified
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Associated Mine&lt;/td&gt;&lt;td&gt;
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Product&lt;/td&gt;&lt;td&gt;Gold
+                                                               &lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+                                                            </description><Point><Style><IconStyle><Icon><href>http://maps.google.com/mapfiles/kml/paddle/pink-blank.png</href></Icon></IconStyle></Style><coordinates>147.32128,-36.12008,0</coordinates></Point></Placemark></Document></kml>

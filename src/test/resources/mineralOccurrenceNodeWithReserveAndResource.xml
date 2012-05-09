@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection xmlns:gco="http://www.isotc211.org/2005/gco"
+	xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:wfs="http://www.opengis.net/wfs" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml"
+	xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
+	<gml:boundedBy>
+		<gml:Envelope srsName="EPSG:4283">
+			<gml:pos srsDimension="2">148.11524 -37.6635</gml:pos>
+			<gml:pos srsDimension="2">148.11524 -37.6635</gml:pos>
+		</gml:Envelope>
+	</gml:boundedBy>
+	<gml:featureMember>
+		<er:MineralOccurrence gml:id="mo.mineraloccurrence.361217">
+			<gml:name
+				codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">urn:cgi:feature:GSV:MineralOccurrence:361217</gml:name>
+			<gml:boundedBy>
+				<gml:Envelope srsName="EPSG:4283">
+					<gml:pos srsDimension="2">148.11524 -37.6635</gml:pos>
+					<gml:pos srsDimension="2">148.11524 -37.6635</gml:pos>
+				</gml:Envelope>
+			</gml:boundedBy>
+			<gsml:observationMethod>
+				<gsml:CGI_TermValue>
+					<gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
+				</gsml:CGI_TermValue>
+			</gsml:observationMethod>
+			<gsml:purpose>typicalNorm</gsml:purpose>
+			<gsml:occurrence>
+				<gsml:MappedFeature gml:id="mo.gsml.mappedfeature.361217">
+					<gml:name
+						codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">urn:cgi:feature:GSV:MappedFeature:361217</gml:name>
+					<gml:boundedBy>
+						<gml:Envelope srsName="EPSG:4283">
+							<gml:pos srsDimension="2">148.11524 -37.6635</gml:pos>
+							<gml:pos srsDimension="2">148.11524 -37.6635</gml:pos>
+						</gml:Envelope>
+					</gml:boundedBy>
+					<gsml:observationMethod>
+						<gsml:CGI_TermValue>
+							<gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing</gsml:value>
+						</gsml:CGI_TermValue>
+					</gsml:observationMethod>
+					<gsml:positionalAccuracy>
+						<gsml:CGI_NumericValue>
+							<gsml:principalValue uom="urn:ogc:def:uom:UCUM:metre">100
+							</gsml:principalValue>
+						</gsml:CGI_NumericValue>
+					</gsml:positionalAccuracy>
+					<gsml:samplingFrame xlink:href="urn:cgi:feature:CGI:EarthNaturalSurface" />
+					<gsml:specification xlink:href="urn:cgi:feature:GSV:MineralOccurrence:361217" />
+					<gsml:shape>
+						<gml:Point srsName="EPSG:4283">
+							<gml:pos srsDimension="2">148.11524 -37.6635
+							</gml:pos>
+						</gml:Point>
+					</gsml:shape>
+				</gsml:MappedFeature>
+			</gsml:occurrence>
+			<er:sourceReference>
+				<gmd:CI_Citation id="gmd.ci.citation.181">
+					<gmd:title>
+						<gco:CharacterString>The iron ore deposits of Nowa Nowa, eastern Gippsland</gco:CharacterString>
+					</gmd:title>
+					<gmd:date>
+						<gmd:CI_Date>
+							<gmd:date>
+								<gco:Date>1959</gco:Date>
+							</gmd:date>
+							<gmd:dateType>
+								<gmd:CI_DateTypeCode codeList="CI_DateTypeCode"
+									codeListValue="publication" />
+							</gmd:dateType>
+						</gmd:CI_Date>
+					</gmd:date>
+				</gmd:CI_Citation>
+			</er:sourceReference>
+			<er:sourceReference>
+				<gmd:CI_Citation id="gmd.ci.citation.7364">
+					<gmd:title>
+						<gco:CharacterString>Eastern Victorian exploration, Tara project, programme and budget</gco:CharacterString>
+					</gmd:title>
+					<gmd:date>
+						<gmd:CI_Date>
+							<gmd:date>
+								<gco:Date>1980</gco:Date>
+							</gmd:date>
+							<gmd:dateType>
+								<gmd:CI_DateTypeCode codeList="CI_DateTypeCode"
+									codeListValue="publication" />
+							</gmd:dateType>
+						</gmd:CI_Date>
+					</gmd:date>
+				</gmd:CI_Citation>
+			</er:sourceReference>
+			<er:sourceReference>
+				<gmd:CI_Citation id="gmd.ci.citation.7626">
+					<gmd:title>
+						<gco:CharacterString>EL 124</gco:CharacterString>
+					</gmd:title>
+					<gmd:date>
+						<gmd:CI_Date>
+							<gmd:date>
+								<gco:Date>1969</gco:Date>
+							</gmd:date>
+							<gmd:dateType>
+								<gmd:CI_DateTypeCode codeList="CI_DateTypeCode"
+									codeListValue="publication" />
+							</gmd:dateType>
+						</gmd:CI_Date>
+					</gmd:date>
+				</gmd:CI_Citation>
+			</er:sourceReference>
+			<er:sourceReference>
+				<gmd:CI_Citation id="gmd.ci.citation.17626">
+					<gmd:title>
+						<gco:CharacterString>EL 3245 Nowa Nowa, Victoria</gco:CharacterString>
+					</gmd:title>
+					<gmd:date>
+						<gmd:CI_Date>
+							<gmd:date>
+								<gco:Date>1993</gco:Date>
+							</gmd:date>
+							<gmd:dateType>
+								<gmd:CI_DateTypeCode codeList="CI_DateTypeCode"
+									codeListValue="publication" />
+							</gmd:dateType>
+						</gmd:CI_Date>
+					</gmd:date>
+				</gmd:CI_Citation>
+			</er:sourceReference>
+			<er:sourceReference>
+				<gmd:CI_Citation id="gmd.ci.citation.19279">
+					<gmd:title>
+						<gco:CharacterString>EL 124 Nowa Nowa prospect, East Gippsland, Victoria</gco:CharacterString>
+					</gmd:title>
+					<gmd:date>
+						<gmd:CI_Date>
+							<gmd:date>
+								<gco:Date>1971</gco:Date>
+							</gmd:date>
+							<gmd:dateType>
+								<gmd:CI_DateTypeCode codeList="CI_DateTypeCode"
+									codeListValue="publication" />
+							</gmd:dateType>
+						</gmd:CI_Date>
+					</gmd:date>
+				</gmd:CI_Citation>
+			</er:sourceReference>
+			<er:sourceReference>
+				<gmd:CI_Citation id="gmd.ci.citation.26478">
+					<gmd:title>
+						<gco:CharacterString>The geology and prospectivity of Orbost 1:100 000 map area, Eastern Victoria</gco:CharacterString>
+					</gmd:title>
+					<gmd:date>
+						<gmd:CI_Date>
+							<gmd:date>
+								<gco:Date>1996</gco:Date>
+							</gmd:date>
+							<gmd:dateType>
+								<gmd:CI_DateTypeCode codeList="CI_DateTypeCode"
+									codeListValue="publication" />
+							</gmd:dateType>
+						</gmd:CI_Date>
+					</gmd:date>
+				</gmd:CI_Citation>
+			</er:sourceReference>
+			<er:dimension>
+				<er:EarthResourceDimension>
+					<er:area>
+						<gsml:CGI_NumericValue>
+							<gsml:principalValue uom="urn:ogc:def:uom:UCUM:ha">0</gsml:principalValue>
+						</gsml:CGI_NumericValue>
+					</er:area>
+					<er:width>
+						<gsml:CGI_NumericValue>
+							<gsml:principalValue uom="urn:ogc:def:uom:UCUM:m">4</gsml:principalValue>
+						</gsml:CGI_NumericValue>
+					</er:width>
+				</er:EarthResourceDimension>
+			</er:dimension>
+			<er:form>
+				<gsml:CGI_TermValue>
+					<gsml:value codeSpace="urn:cgi:classifierScheme:GSV:DepositType">Stratabound</gsml:value>
+				</gsml:CGI_TermValue>
+			</er:form>
+			<er:planarOrientation>
+				<gsml:CGI_PlanarOrientation>
+					<gsml:convention>strike dip right hand rule</gsml:convention>
+					<gsml:azimuth>
+						<gsml:CGI_NumericValue>
+							<gsml:principalValue uom="urn:ogc:def:uom:UCUM:deg">10
+							</gsml:principalValue>
+						</gsml:CGI_NumericValue>
+					</gsml:azimuth>
+					<gsml:polarity>not applicable</gsml:polarity>
+				</gsml:CGI_PlanarOrientation>
+			</er:planarOrientation>
+			<er:classification>
+				<er:MineralDepositModel>
+					<er:mineralDepositGroup codeSpace="urn:cgi:classifierScheme:GSV:DepositStyle">Unknown</er:mineralDepositGroup>
+				</er:MineralDepositModel>
+			</er:classification>
+			<er:commodityDescription xlink:href="urn:cgi:feature:GSV:Commodity:361217:AU" />
+			<er:commodityDescription xlink:href="urn:cgi:feature:GSV:Commodity:361217:CU" />
+			<er:commodityDescription xlink:href="urn:cgi:feature:GSV:Commodity:361217:IRX" />
+			<er:commodityDescription xlink:href="urn:cgi:feature:GSV:Commodity:361217:IRX" />
+			<er:composition>
+				<er:EarthResourceMaterial>
+					<er:earthResourceMaterialRole>unspecified</er:earthResourceMaterialRole>
+					<er:material>
+						<gsml:RockMaterial>
+							<gsml:purpose>typicalNorm</gsml:purpose>
+							<gsml:consolidationDegree>
+								<gsml:CGI_TermValue>
+									<gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing
+									</gsml:value>
+								</gsml:CGI_TermValue>
+							</gsml:consolidationDegree>
+							<gsml:lithology
+								xlink:href="urn:cgi:classifier:CGI:SimpleLithology:2008:calcareous_carbonate_sedimentary_rock" />
+						</gsml:RockMaterial>
+					</er:material>
+					<er:proportion>
+						<gsml:CGI_TermValue>
+							<gsml:value codeSpace="http://urn.opengis.net/">urn:ogc:def:nil:OGC:missing
+							</gsml:value>
+						</gsml:CGI_TermValue>
+					</er:proportion>
+				</er:EarthResourceMaterial>
+			</er:composition>
+			<er:oreAmount>
+				<er:Reserve>
+					<er:calculationMethod>urn:ogc:def:nil:OGC:missing</er:calculationMethod>
+					<er:date>
+						<gml:TimeInstant>
+							<gml:timePosition>1988-01-01T00:00:00
+							</gml:timePosition>
+						</gml:TimeInstant>
+					</er:date>
+					<er:sourceReference xlink:href="#gmd.ci.citation.26478" />
+					<er:ore>
+						<gsml:CGI_NumericValue>
+							<gsml:principalValue uom="urn:ogc:def:uom:UCUM:t">4690000</gsml:principalValue>
+						</gsml:CGI_NumericValue>
+					</er:ore>
+					<er:measureDetails>
+						<er:CommodityMeasure>
+							<er:commodityAmount>
+								<gsml:CGI_NumericValue>
+									<gsml:principalValue uom="urn:ogc:def:uom:UCUM:t">4690000</gsml:principalValue>
+								</gsml:CGI_NumericValue>
+							</er:commodityAmount>
+							<er:commodityOfInterest xlink:href="urn:cgi:feature:GSV:Commodity:361217:IR" />
+						</er:CommodityMeasure>
+					</er:measureDetails>
+					<er:category>probable ore reserves</er:category>
+				</er:Reserve>
+			</er:oreAmount>
+			<er:oreAmount>
+				<er:Reserve>
+					<er:calculationMethod>urn:ogc:def:nil:OGC:missing</er:calculationMethod>
+					<er:date>
+						<gml:TimeInstant>
+							<gml:timePosition>1988-01-01T00:00:00
+							</gml:timePosition>
+						</gml:TimeInstant>
+					</er:date>
+					<er:sourceReference xlink:href="#gmd.ci.citation.26478" />
+					<er:ore>
+						<gsml:CGI_NumericValue>
+							<gsml:principalValue uom="urn:ogc:def:uom:UCUM:t">500000</gsml:principalValue>
+						</gsml:CGI_NumericValue>
+					</er:ore>
+					<er:measureDetails>
+						<er:CommodityMeasure>
+							<er:commodityAmount>
+								<gsml:CGI_NumericValue>
+									<gsml:principalValue uom="urn:ogc:def:uom:UCUM:t">500000</gsml:principalValue>
+								</gsml:CGI_NumericValue>
+							</er:commodityAmount>
+							<er:commodityOfInterest xlink:href="urn:cgi:feature:GSV:Commodity:361217:IR" />
+						</er:CommodityMeasure>
+					</er:measureDetails>
+					<er:category>probable ore reserves</er:category>
+				</er:Reserve>
+			</er:oreAmount>
+			<er:oreAmount>
+				<er:Resource>
+					<er:calculationMethod>urn:ogc:def:nil:OGC:missing</er:calculationMethod>
+					<er:date>
+						<gml:TimeInstant>
+							<gml:timePosition>1959-01-01T00:00:00
+							</gml:timePosition>
+						</gml:TimeInstant>
+					</er:date>
+					<er:sourceReference xlink:href="#gmd.ci.citation.26478" />
+					<er:ore>
+						<gsml:CGI_NumericValue>
+							<gsml:principalValue uom="urn:ogc:def:uom:UCUM:t">0</gsml:principalValue>
+						</gsml:CGI_NumericValue>
+					</er:ore>
+					<er:measureDetails>
+						<er:CommodityMeasure>
+							<er:commodityAmount>
+								<gsml:CGI_NumericValue>
+									<gsml:principalValue uom="urn:ogc:def:uom:UCUM:t">6600000</gsml:principalValue>
+								</gsml:CGI_NumericValue>
+							</er:commodityAmount>
+							<er:commodityOfInterest xlink:href="urn:cgi:feature:GSV:Commodity:361217:IR" />
+						</er:CommodityMeasure>
+					</er:measureDetails>
+					<er:category>inferred mineral resource</er:category>
+				</er:Resource>
+			</er:oreAmount>
+			<er:type>mineral deposit</er:type>
+		</er:MineralOccurrence>
+	</gml:featureMember>
+</wfs:FeatureCollection>
