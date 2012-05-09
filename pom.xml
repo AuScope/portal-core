@@ -2,11 +2,11 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.auscope.portal</groupId>
-    <artifactId>AuScope-Portal</artifactId>
+    <artifactId>portal-core</artifactId>
     <packaging>war</packaging>
-    <version>2.8.2</version>
-    <name>AuScope-Portal</name>
-    <description>AuScopes flagship demonstration tool</description>
+    <version>1.0.0-SNAPSHOT</version>
+    <name>Portal-Core</name>
+    <description>Core functionality common to various AuScope portals.</description>
     <url>http://portal.auscope.org</url>
     <issueManagement>
         <system>Jira</system>
@@ -17,8 +17,8 @@
         <url>http://geobuilder.arrc.csiro.au</url>
     </ciManagement>
     <scm>
-        <connection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</connection>
-        <developerConnection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/AuScope-Portal/trunk</developerConnection>
+        <connection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/portal-core/trunk</connection>
+        <developerConnection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/portal-core/trunk</developerConnection>
     </scm>
     <!-- Build Configuration -->
     <organization>
@@ -35,7 +35,7 @@
         <geotools.version>2.6.5</geotools.version>
     </properties>
     <build>
-        <finalName>AuScope-Portal</finalName>
+        <finalName>Portal-Core</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -110,6 +110,19 @@
                         <phase>package</phase>
                         <goals>
                             <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>make-a-jar</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
                         </goals>
                     </execution>
                 </executions>

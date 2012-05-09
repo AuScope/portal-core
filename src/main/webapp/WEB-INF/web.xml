@@ -7,7 +7,7 @@
                         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
     version="2.4">
 
-   <display-name>AuScope Portal</display-name>
+   <display-name>Portal - Core</display-name>
 
     <!-- This is so our our profile 'magic' context is utilised -->
     <context-param>

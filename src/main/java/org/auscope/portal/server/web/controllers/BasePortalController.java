@@ -114,7 +114,7 @@ public abstract class BasePortalController {
     protected ModelAndView generateJSONResponseMAV(boolean success, String gml, String kml, HttpMethodBase method) {
 
         if (kml == null || kml.isEmpty()) {
-            log.error(String.format("Transform failed gmlBlob='%1$s'", gml));
+            log.error(String.format("Transform failed", gml));
             return generateJSONResponseMAV(false, null, ErrorMessages.OPERATION_FAILED);
         }
 

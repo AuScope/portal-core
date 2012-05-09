@@ -1,16 +1,12 @@
 package org.auscope.portal.server.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-
-import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.support.ServletContextResource;
 
 
 /**
@@ -22,16 +18,14 @@ import org.springframework.web.context.support.ServletContextResource;
 @Component
 public class GmlToKml {
     /** The location of the WFS response -> KML XSLT */
-    public static final String GML_TO_KML_XSLT = "/WEB-INF/xsl/kml.xsl";
+    public static final String GML_TO_KML_XSLT = "kml.xsl";
 
     private final Log log = LogFactory.getLog(this.getClass());
     private PortalXSLTTransformer transformer;
-    private ServletContext servletContext;
 
     @Autowired
-    public GmlToKml(PortalXSLTTransformer transformer, ServletContext servletContext) {
+    public GmlToKml(PortalXSLTTransformer transformer) {
         this.transformer = transformer;
-        this.servletContext = servletContext;
     }
 
     /**
@@ -45,11 +39,9 @@ public class GmlToKml {
     public String convert(String geoXML, String serviceUrl) {
         log.debug("GML input: \n" + geoXML);
 
-        InputStream inXSLT;
-        try {
-            inXSLT = new ServletContextResource(servletContext, GML_TO_KML_XSLT).getInputStream();
-        } catch (IOException ex) {
-            log.error("Couldn't find/read source GML->KML XSLT at " + GML_TO_KML_XSLT, ex);
+        InputStream inXSLT = getClass().getResourceAsStream(GML_TO_KML_XSLT);
+        if (inXSLT == null) {
+            log.error("Couldn't find/read source GML->KML XSLT at " + GML_TO_KML_XSLT);
             return "";
         }
 

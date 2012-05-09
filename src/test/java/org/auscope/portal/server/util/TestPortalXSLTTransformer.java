@@ -40,7 +40,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
     @Test
     public void testGenericFeatureParser() throws Exception {
         final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/GetUndefinedFeatureSet.xml");
-        final InputStream inputStream = new FileInputStream("src/main/webapp/WEB-INF/xsl/kml.xsl");
+        final InputStream inputStream = ClassLoader.getSystemResourceAsStream("org/auscope/portal/server/util/kml.xsl");
         final Properties properties = new Properties();
 
         properties.setProperty("serviceURL", "fake-service-url");
@@ -80,7 +80,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
     @Test
     public void testFeatureMemberEncoding() throws Exception {
         final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/commodityGetFeatureResponse.xml");
-        final InputStream inputStream = new FileInputStream("src/main/webapp/WEB-INF/xsl/WfsToHtml.xsl");
+        final InputStream inputStream = ClassLoader.getSystemResourceAsStream("org/auscope/portal/server/util/WfsToHtml.xsl");
         final Properties properties = new Properties();
 
         properties.setProperty("serviceURL", "fake-service-url");
@@ -99,7 +99,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
     @Test
     public void testMiningFeatures() throws Exception {
         final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/InvalidResultForTestingWfsToHtml.xml");
-        final InputStream inputStream = new FileInputStream("src/main/webapp/WEB-INF/xsl/WfsToHtml.xsl");
+        final InputStream inputStream = ClassLoader.getSystemResourceAsStream("org/auscope/portal/server/util/WfsToHtml.xsl");
         final Properties properties = new Properties();
 
         properties.setProperty("serviceURL", "fake-service-url");
@@ -141,7 +141,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
     @Test
     public void testFeatureMembersEncoding() throws Exception {
         final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/mineGetFeatureResponse.xml");
-        final InputStream inputStream = new FileInputStream("src/main/webapp/WEB-INF/xsl/WfsToHtml.xsl");
+        final InputStream inputStream = ClassLoader.getSystemResourceAsStream("org/auscope/portal/server/util/WfsToHtml.xsl");
         final Properties properties = new Properties();
 
         properties.setProperty("serviceURL", "fake-service-url");

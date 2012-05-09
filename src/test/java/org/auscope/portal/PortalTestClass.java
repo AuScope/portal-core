@@ -1,5 +1,10 @@
 package org.auscope.portal;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -135,5 +140,33 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
             return -1;
         }
         return (Calendar.getInstance().getTimeInMillis() - timerCalendar.getTimeInMillis());
+    }
+
+    /**
+     * Utility function for opening a system resource and parsing it into a string.
+     *
+     * Returns null if the resource cannot be opened
+     * @param resource
+     */
+    protected String getSystemResourceAsString(String resource) {
+        InputStream is = ClassLoader.getSystemResourceAsStream(resource);
+        if (is == null) {
+            return null;
+        }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuffer contents = new StringBuffer();
+
+        try {
+            String str;
+            while ((str = reader.readLine()) != null) {
+                contents.append(str);
+            }
+            reader.close();
+        } catch (IOException ex) {
+            return null;
+        }
+
+        return contents.toString();
     }
 }
