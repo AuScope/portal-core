@@ -1,11 +1,17 @@
 package org.auscope.portal.server.web.controllers;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.auscope.portal.PortalTestClass;
+import org.auscope.portal.manager.download.DownloadResponse;
 import org.auscope.portal.server.web.view.JSONModelAndView;
 import org.junit.Assert;
 import org.junit.Test;
@@ -103,5 +109,43 @@ public class TestBasePortalController extends PortalTestClass {
         assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(true, "gmlString", "kmlString", getMethod));
 
         assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(true, gmlKmlData, message, 43, debugInfo));
+    }
+
+    /**
+     * Tests the responses are correctly written to a zip output stream
+     * @throws Exception
+     */
+    @Test
+    public void writeResponseToZip() throws Exception {
+        DownloadResponse dr1 = new DownloadResponse("http://example.org");
+        String dr1Response = "dr1-response-contents";
+        dr1.setResponseStream(new ByteArrayInputStream(dr1Response.getBytes()));
+
+        DownloadResponse dr2 = new DownloadResponse("http://example.org");
+        String dr2Response = "dr2-response-contents-data";
+        dr2.setResponseStream(new ByteArrayInputStream(dr2Response.getBytes()));
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(1024);
+        ZipOutputStream zout = new ZipOutputStream(outputStream);
+
+        //Write our data out
+        basePortalController.writeResponseToZip(Arrays.asList(dr1, dr2), zout);
+        zout.finish();
+        zout.close();
+        outputStream.close();
+
+        //Collect the zipped data and ensure it was written correctly
+        byte[] zipBytes = outputStream.toByteArray();
+        ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(zipBytes));
+
+        ZipEntry zEntry = zin.getNextEntry();
+        byte[] zData = new byte[dr1Response.getBytes().length];
+        Assert.assertEquals(zData.length, zin.read(zData));
+        Assert.assertArrayEquals(dr1Response.getBytes(), zData);
+
+        zEntry = zin.getNextEntry();
+        zData = new byte[dr2Response.getBytes().length];
+        Assert.assertEquals(zData.length, zin.read(zData));
+        Assert.assertArrayEquals(dr2Response.getBytes(), zData);
     }
 }

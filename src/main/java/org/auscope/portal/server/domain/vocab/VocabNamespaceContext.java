@@ -25,7 +25,7 @@ public class VocabNamespaceContext implements NamespaceContext {
         map.put("owl", "http://www.w3.org/2002/07/owl#");
         map.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
         map.put("skos", "http://www.w3.org/2004/02/skos/core#");
-
+        map.put("sparql", "http://www.w3.org/2005/sparql-results#");
     };
 
     @Override

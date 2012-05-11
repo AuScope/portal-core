@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.auscope.portal.csw.record.CSWRecord;
+import org.auscope.portal.server.domain.auscope.KnownLayerAndRecords;
+import org.auscope.portal.server.web.view.KnownLayer;
 import org.auscope.portal.server.web.view.ViewCSWRecordFactory;
+import org.auscope.portal.server.web.view.ViewKnownLayerFactory;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -15,10 +18,15 @@ import org.springframework.web.servlet.ModelAndView;
  */
 public abstract class BaseCSWController extends BasePortalController {
 
+    /** Used for converting data to something the view can understand*/
     protected ViewCSWRecordFactory viewCSWRecordFactory;
 
-    protected BaseCSWController(ViewCSWRecordFactory viewCSWRecordFactory) {
+    /** Used for converting data to something the view can understand*/
+    private ViewKnownLayerFactory viewKnownLayerFactory;
+
+    protected BaseCSWController(ViewCSWRecordFactory viewCSWRecordFactory, ViewKnownLayerFactory viewKnownLayerFactory) {
         this.viewCSWRecordFactory = viewCSWRecordFactory;
+        this.viewKnownLayerFactory = viewKnownLayerFactory;
     }
 
     /**
@@ -54,5 +62,56 @@ public abstract class BaseCSWController extends BasePortalController {
              return generateJSONResponseMAV(false, new CSWRecord[] {}, 0, "Error converting data records");
          }
         return generateJSONResponseMAV(true, recordRepresentations, matchedResults, "No errors");
+    }
+
+    /**
+     * Utility for generating a response model that represents a number
+     * of KnownLayerAndRecord objects
+     * @param knownLayers The known layers to transform
+     * @return
+     */
+    protected ModelAndView generateKnownLayerResponse(List<KnownLayerAndRecords> knownLayers) {
+        List<ModelMap> viewKnownLayers = new ArrayList<ModelMap>();
+        for (KnownLayerAndRecords knownLayerAndRecords : knownLayers) {
+            KnownLayer kl = knownLayerAndRecords.getKnownLayer();
+            if (kl.isHidden()) {
+                continue; //any hidden layers will NOT be sent to the view
+            }
+            ModelMap viewKnownLayer = viewKnownLayerFactory.toView(knownLayerAndRecords.getKnownLayer());
+
+            List<ModelMap> viewMappedRecords = new ArrayList<ModelMap>();
+            for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
+                viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
+            }
+
+            List<ModelMap> viewRelatedRecords = new ArrayList<ModelMap>();
+            for (CSWRecord rec : knownLayerAndRecords.getRelatedRecords()) {
+                viewRelatedRecords.add(viewCSWRecordFactory.toView(rec));
+            }
+
+            viewKnownLayer.put("cswRecords", viewMappedRecords);
+            viewKnownLayer.put("relatedRecords", viewRelatedRecords);
+            viewKnownLayers.add(viewKnownLayer);
+        }
+
+        return generateJSONResponseMAV(true, viewKnownLayers, "");
+    }
+
+    /**
+     * Utility for generating a response model that represents a number of
+     * CSWRecord objects
+     * @param records
+     * @return
+     */
+    protected ModelAndView generateCSWRecordResponse(List<CSWRecord> records) {
+        List<ModelMap> viewRecords = new ArrayList<ModelMap>();
+        for (CSWRecord rec : records) {
+            if (rec.getServiceName() == null || rec.getServiceName().isEmpty()) {
+                continue;//dont include any records with an empty name (it looks bad)
+            }
+            viewRecords.add(viewCSWRecordFactory.toView(rec));
+        }
+
+        return generateJSONResponseMAV(true, viewRecords, "");
     }
 }

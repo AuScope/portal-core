@@ -1,5 +1,6 @@
 package org.auscope.portal.server.web;
 
+import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -7,22 +8,24 @@ import java.util.Scanner;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.PortalTestClass;
 import org.auscope.portal.csw.record.CSWGeographicBoundingBox;
+import org.auscope.portal.server.domain.wcs.Resolution;
+import org.auscope.portal.server.domain.wcs.TimeConstraint;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestWCSGetCoverageMethodMakerGet extends PortalTestClass {
+public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
 
     private CSWGeographicBoundingBox mockBbox = context.mock(CSWGeographicBoundingBox.class, "simpleBbox");
     private CSWGeographicBoundingBox mockAntiMeridianBbox = context.mock(CSWGeographicBoundingBox.class, "amBbox");
     private CSWGeographicBoundingBox mockMeridianBbox = context.mock(CSWGeographicBoundingBox.class, "mBox");
 
-    private WCSGetCoverageMethodMakerGET methodMaker;
+    private WCSMethodMaker methodMaker;
 
     @Before
     public void setUp() {
-        methodMaker = new WCSGetCoverageMethodMakerGET();
+        methodMaker = new WCSMethodMaker();
 
         context.checking(new Expectations() {{
            allowing(mockBbox).getEastBoundLongitude();will(returnValue((double)1));
@@ -44,7 +47,10 @@ public class TestWCSGetCoverageMethodMakerGet extends PortalTestClass {
 
     @Test
     public void testBbox() throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 1, 2, 0, 0, "myCrs", mockBbox, null, null);
+        Dimension outputSize = new Dimension(1,2);
+        Resolution outputResolution = null;
+        TimeConstraint timeConstraint = null;
+        HttpMethodBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", outputSize, outputResolution, "myCrs", mockBbox, timeConstraint, null);
 
         Assert.assertNotNull(method);
 
@@ -58,7 +64,10 @@ public class TestWCSGetCoverageMethodMakerGet extends PortalTestClass {
 
     @Test
     public void testTime() throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 1, 1, 0, 0, "myCrs", mockBbox, "thetimeis", null);
+        Dimension outputSize = new Dimension(1,1);
+        Resolution outputResolution = null;
+        TimeConstraint timeConstraint = new TimeConstraint("thetimeis");
+        HttpMethodBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", outputSize, outputResolution, "myCrs", mockBbox, timeConstraint, null);
 
         Assert.assertNotNull(method);
 
@@ -70,11 +79,11 @@ public class TestWCSGetCoverageMethodMakerGet extends PortalTestClass {
     }
 
     private void runOptionTest(String notToContain, String mustContain,String serviceURL, String layerName,
-            String format, String outputCrs, int outputWidth, int outputHeight,
-            int outputResX, int outputResY, String inputCrs,CSWGeographicBoundingBox bbox, String timeConstraint,
+            String format, String outputCrs, Dimension outputSize,
+            Resolution outputResolution, String inputCrs,CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint,
             Map<String, String> customParams) throws Exception {
 
-        HttpMethodBase method = methodMaker.makeMethod(serviceURL, layerName, format, outputCrs, outputWidth, outputHeight, outputResX, outputResY, inputCrs, bbox, timeConstraint, customParams);
+        HttpMethodBase method = methodMaker.getCoverageMethod(serviceURL, layerName, format, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParams);
         Assert.assertNotNull(method);
 
         String queryString = method.getQueryString();
@@ -90,49 +99,33 @@ public class TestWCSGetCoverageMethodMakerGet extends PortalTestClass {
 
     @Test
     public void testOptionalArguments() throws Exception {
-
         Map<String, String> customParams = new HashMap<String, String>();
         customParams.put("param1", "param1value");
         customParams.put("param2", "param2value");
 
         //Testing optional output crs
-        runOptionTest("response_crs", null, "http://example.com/wcs", "layerName", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", null);
+        runOptionTest("response_crs", null, "http://example.com/wcs", "layerName", "GeoTIFF", "", new Dimension(1,2), null,"incrs",null, new TimeConstraint("time"), null);
 
         //Testing width /height
-        runOptionTest("resx", "width", "http://example.com/wcs", "layerName", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", customParams);
-        runOptionTest("resy", "height", "http://example.com/wcs", "layerName", "GeoTIFF", "", 1, 2, 0, 0,"incrs",null, "time", null);
-        runOptionTest("width", "resx", "http://example.com/wcs", "layerName", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
-        runOptionTest("height", "resy", "http://example.com/wcs", "layerName", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", null);
+        runOptionTest("resx", "width", "http://example.com/wcs", "layerName", "GeoTIFF", "", new Dimension(1,2), null,"incrs",null, new TimeConstraint("time"), customParams);
+        runOptionTest("resy", "height", "http://example.com/wcs", "layerName", "GeoTIFF", "", new Dimension(1,2), null,"incrs",null, new TimeConstraint("time"), null);
+        runOptionTest("width", "resx", "http://example.com/wcs", "layerName", "GeoTIFF", "", null, new Resolution(1,2),"incrs",null, new TimeConstraint("time"), customParams);
+        runOptionTest("height", "resy", "http://example.com/wcs", "layerName", "GeoTIFF", "", null, new Resolution(1,2),"incrs",null, new TimeConstraint("time"), null);
 
         //Testing custom params
-        runOptionTest(null, "param1=param1value", "http://example.com/wcs", "layerName", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
-        runOptionTest(null, "param2=param2value", "http://example.com/wcs", "layerName", "GeoTIFF", "", 0, 0, 1, 2,"incrs",null, "time", customParams);
+        runOptionTest(null, "param1=param1value", "http://example.com/wcs", "layerName", "GeoTIFF", "", null, new Resolution(1,2),"incrs",null, new TimeConstraint("time"), customParams);
+        runOptionTest(null, "param2=param2value", "http://example.com/wcs", "layerName", "GeoTIFF", "", null, new Resolution(1,2),"incrs",null, new TimeConstraint("time"), customParams);
     }
 
     @Test
     public void testBadArguments() throws Exception {
         try {
-            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 0, 0, 0, 0, "inputCrs", mockBbox, "time", null);
+            methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", null, null, "inputCrs", mockBbox, new TimeConstraint("time"), null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
 
         try {
-            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 5, 0, 0, 0, "inputCrs", mockBbox, "time", null);
-            Assert.fail();
-        } catch (IllegalArgumentException ex) { }
-
-        try {
-            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 0, 5, 0, 0, "inputCrs", mockBbox, "time", null);
-            Assert.fail();
-        } catch (IllegalArgumentException ex) { }
-
-        try {
-            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 0, 0, 5, 0, "inputCrs", mockBbox, "time", null);
-            Assert.fail();
-        } catch (IllegalArgumentException ex) { }
-
-        try {
-            methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 0, 0, 0, 5, "inputCrs", mockBbox, "time", null);
+            methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", new Dimension(0, 5), new Resolution(5, 0), "inputCrs", mockBbox, new TimeConstraint("time"), null);
             Assert.fail();
         } catch (IllegalArgumentException ex) { }
     }
@@ -169,7 +162,7 @@ public class TestWCSGetCoverageMethodMakerGet extends PortalTestClass {
      */
     @Test
     public void testBboxMeridians() throws Exception {
-        HttpMethodBase method = methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 1, 2, 0, 0, "myCrs", mockAntiMeridianBbox, null, null);
+        HttpMethodBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", new Dimension(1,2), null, "myCrs", mockAntiMeridianBbox, null, null);
 
         String queryString = method.getQueryString();
         Assert.assertNotNull(queryString);
@@ -179,7 +172,7 @@ public class TestWCSGetCoverageMethodMakerGet extends PortalTestClass {
         //about which way the bbox will wrap around the earth
         compareBboxesInQuery(queryString, 60, -50, 325, 1);
 
-        method = methodMaker.makeMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", 1, 2, 0, 0, "myCrs", mockMeridianBbox, null, null);
+        method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", new Dimension(1,2), null, "myCrs", mockMeridianBbox, null, null);
         queryString = method.getQueryString();
         Assert.assertNotNull(queryString);
         Assert.assertFalse(queryString.isEmpty());

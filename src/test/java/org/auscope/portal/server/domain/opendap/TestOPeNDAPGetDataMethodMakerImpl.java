@@ -15,7 +15,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- * Unit tests for OPeNDAPGetDataMethodMakerImpl
+ * Unit tests for OPeNDAPGetDataMethodMaker
  * @author vot002
  *
  */
@@ -34,7 +34,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl extends PortalTestClass {
     @Test()
     public void testExtension() throws Exception {
         final String opendapUrl = "http://fake.com/blah.nc";
-        OPeNDAPGetDataMethodMakerImpl methodMaker = new OPeNDAPGetDataMethodMakerImpl();
+        OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
 
         HttpMethodBase method = methodMaker.getMethod(opendapUrl, OPeNDAPFormat.ASCII, mockNetCdfDataset, null);
         Assert.assertNotNull(method);
@@ -55,7 +55,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl extends PortalTestClass {
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
         final SimpleAxis a1 = new SimpleAxis("name1", "FLOAT", "km/h",new SimpleBounds(43, 56), null);
 
-        OPeNDAPGetDataMethodMakerImpl methodMaker = new OPeNDAPGetDataMethodMakerImpl();
+        OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
 
         HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1});
 
@@ -81,7 +81,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl extends PortalTestClass {
      */
     @Test()
     public void testSingleAxisConstraint() throws Exception {
-        OPeNDAPGetDataMethodMakerImpl methodMaker = new OPeNDAPGetDataMethodMakerImpl();
+        OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
         final double[] dimensionVals = {0,1,2,3};
@@ -159,7 +159,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl extends PortalTestClass {
      */
     @Test
     public void testSingleGridConstraint() throws Exception {
-        OPeNDAPGetDataMethodMakerImpl methodMaker = new OPeNDAPGetDataMethodMakerImpl();
+        OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
         final double[] dimensionVals1 = {0,1,2,3};
@@ -203,7 +203,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl extends PortalTestClass {
      */
     @Test
     public void testMultiConstraint() throws Exception {
-        OPeNDAPGetDataMethodMakerImpl methodMaker = new OPeNDAPGetDataMethodMakerImpl();
+        OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
         final double[] dimensionVals1 = {0,1,2,3};
@@ -247,7 +247,7 @@ public class TestOPeNDAPGetDataMethodMakerImpl extends PortalTestClass {
      */
     @Test(expected=IOException.class)
     public void testReadError() throws Exception {
-        OPeNDAPGetDataMethodMakerImpl methodMaker = new OPeNDAPGetDataMethodMakerImpl();
+        OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
         final String opendapUrl = "http://fake.com/blah.nc";
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
 

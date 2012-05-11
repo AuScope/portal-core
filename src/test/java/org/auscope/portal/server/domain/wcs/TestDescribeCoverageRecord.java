@@ -4,8 +4,10 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import org.auscope.portal.PortalTestClass;
+import org.auscope.portal.server.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 public class TestDescribeCoverageRecord extends PortalTestClass {
 
@@ -14,9 +16,10 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
     @Test
     public void parseTest1() throws Exception {
         final String xmlString = org.auscope.portal.Util.loadXML("src/test/resources/DescribeCoverageResponse1.xml");
+        final Document doc = DOMUtil.buildDomFromString(xmlString);
 
         //Check the parsed response contains everything we want
-        DescribeCoverageRecord[] records = DescribeCoverageRecord.parseRecords(xmlString);
+        DescribeCoverageRecord[] records = DescribeCoverageRecord.parseRecords(doc);
 
         Assert.assertNotNull(records);
         Assert.assertEquals(1, records.length);
@@ -98,9 +101,10 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
     @Test
     public void parseTest2() throws Exception {
         final String xmlString = org.auscope.portal.Util.loadXML("src/test/resources/DescribeCoverageResponse2.xml");
+        final Document doc = DOMUtil.buildDomFromString(xmlString);
 
         //Check the parsed response contains everything we want
-        DescribeCoverageRecord[] records = DescribeCoverageRecord.parseRecords(xmlString);
+        DescribeCoverageRecord[] records = DescribeCoverageRecord.parseRecords(doc);
 
         Assert.assertNotNull(records);
         Assert.assertEquals(1, records.length);

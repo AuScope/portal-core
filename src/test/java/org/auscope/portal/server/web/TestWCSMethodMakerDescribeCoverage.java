@@ -5,30 +5,30 @@ import org.auscope.portal.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestWCSDescribeCoverageMethodMakerGet extends PortalTestClass {
+public class TestWCSMethodMakerDescribeCoverage extends PortalTestClass {
     @Test(expected=IllegalArgumentException.class)
     public void testBadLayer() throws Exception {
-        new WCSDescribeCoverageMethodMakerGET().makeMethod("http://fake.com", "");
+        new WCSMethodMaker().describeCoverageMethod("http://fake.com", "");
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void testNullLayer() throws Exception {
-        new WCSDescribeCoverageMethodMakerGET().makeMethod("http://fake.com", null);
+        new WCSMethodMaker().describeCoverageMethod("http://fake.com", null);
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void testNullUrl() throws Exception {
-        new WCSDescribeCoverageMethodMakerGET().makeMethod(null, "layer_name");
+        new WCSMethodMaker().describeCoverageMethod(null, "layer_name");
     }
 
     @Test(expected=IllegalArgumentException.class)
     public void testBadUrl() throws Exception {
-        new WCSDescribeCoverageMethodMakerGET().makeMethod("", "layer_name");
+        new WCSMethodMaker().describeCoverageMethod("", "layer_name");
     }
 
     @Test
     public void testSimple() throws Exception {
-        HttpMethodBase method = new WCSDescribeCoverageMethodMakerGET().makeMethod("http://fake.com/bob", "layer_name");
+        HttpMethodBase method = new WCSMethodMaker().describeCoverageMethod("http://fake.com/bob", "layer_name");
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getQueryString().contains("request=DescribeCoverage"));

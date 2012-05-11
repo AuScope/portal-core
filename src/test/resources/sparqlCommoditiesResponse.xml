@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<sparql xmlns='http://www.w3.org/2005/sparql-results#'>
+    <head>
+        <variable name='concept'/>
+        <variable name='prefLabel'/>
+    </head>
+    <results>
+        <result>
+            <binding name='prefLabel'>
+                <literal xml:lang='en'>Silver</literal>
+            </binding>
+            <binding name='concept'>
+                <uri>urn:cgi:classifier:GA:commodity:Ag</uri>
+            </binding>
+        </result>
+        <result>
+            <binding name='prefLabel'>
+                <literal xml:lang='en'>Agate</literal>
+            </binding>
+            <binding name='concept'>
+                <uri>urn:cgi:classifier:GA:commodity:Aga</uri>
+            </binding>
+        </result>
+        <result>
+            <binding name='prefLabel'>
+                <literal xml:lang='en'>Moss agate</literal>
+            </binding>
+            <binding name='concept'>
+                <uri>urn:cgi:classifier:GA:commodity:Agam</uri>
+            </binding>
+        </result>
+    </results>
+</sparql>

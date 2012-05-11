@@ -1,6 +1,7 @@
 package org.auscope.portal.server.util;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,7 +52,7 @@ public class FileIOUtil {
      * Utility function for closing a stream quietly (with no exceptions being raised)
      * @param s The stream to close
      */
-    public static void closeQuietly(InputStream s) {
+    public static void closeQuietly(Closeable s) {
         if (s != null) {
             try {
                 s.close();

@@ -4,9 +4,19 @@ package org.auscope.portal.server.web.controllers;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import net.sf.json.JSONNull;
+import net.sf.json.JSONObject;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -16,6 +26,8 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.manager.download.DownloadResponse;
+import org.auscope.portal.server.util.FileIOUtil;
 import org.auscope.portal.server.web.ErrorMessages;
 import org.auscope.portal.server.web.service.PortalServiceException;
 import org.auscope.portal.server.web.view.JSONView;
@@ -25,6 +37,9 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * An abstract controller for providing portal 'standard' JSON response types
  * in the form of a ModelAndView object.
+ *
+ * Also contains a few utilities for common response types (eg: Zip Streams)
+ *
  * @author Josh Vote
  *
  */
@@ -218,6 +233,62 @@ public abstract class BasePortalController {
                 output.write(buffer, 0, dataRead);
             }
         } while (dataRead != -1);
+    }
+
+    /**
+     * Writes a series of DownloadResponse objects to a zip stream, each
+     * download response will be put into a separate zip entry.
+     *
+     * @param gmlDownloads The download responses
+     * @param zout The stream to receive the zip entries
+     */
+    protected void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout) throws IOException {
+        for (int i = 0; i < gmlDownloads.size(); i++) {
+            DownloadResponse download = gmlDownloads.get(i);
+            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml";
+
+            // Check that attempt to request is successful
+            if (!download.hasException()) {
+                InputStream stream = download.getResponseAsStream();
+
+                //Write stream into the zip entry
+                zout.putNextEntry(new ZipEntry(entryName));
+                writeInputToOutputStream(stream, zout, 1024 * 1024);
+                zout.closeEntry();
+            } else {
+                writeErrorToZip(zout, download.getRequestURL(), download.getException(), entryName + ".error");
+            }
+        }
+    }
+
+    /**
+     * Writes an error to a zip stream.
+     *
+     * @param zout the zout
+     * @param debugQuery the debug query
+     * @param exceptionToPrint the exception to print
+     * @param errorFileName The name of the error file in the zip (defaults to 'error.txt')
+     */
+    protected void writeErrorToZip(ZipOutputStream zout, String debugQuery, Exception exceptionToPrint, String errorFileName) {
+        String message = null;
+        StringWriter sw = null;
+        PrintWriter pw = null;
+        try {
+            sw = new StringWriter();
+            pw = new PrintWriter(sw);
+            exceptionToPrint.printStackTrace(pw);
+            message = String.format("An exception occured whilst requesting/parsing your WCS download.\r\n%1$s\r\nMessage=%2$s\r\n%3$s", debugQuery, exceptionToPrint.getMessage(), sw.toString());
+        } finally {
+            FileIOUtil.closeQuietly(pw);
+            FileIOUtil.closeQuietly(sw);
+        }
+
+        try {
+            zout.putNextEntry(new ZipEntry(errorFileName == null ? errorFileName : "error.txt"));
+            zout.write(message.getBytes());
+        } catch (IOException ex) {
+            log.error("Couldnt create debug error.txt in output", ex);
+        }
     }
 
     /**

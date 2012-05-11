@@ -297,15 +297,13 @@ public class DescribeCoverageRecord implements Serializable {
     }
 
     /**
-     * Parses the XML string response from a DescribeCoverage request into a list of DescribeCoverageRecords.
+     * Parses the XML response from a DescribeCoverage request into a list of DescribeCoverageRecords.
      *
-     * @param inXml the in xml
+     * @param doc the input xml
      * @return the describe coverage record[]
      * @throws Exception the exception
      */
-    public static DescribeCoverageRecord[] parseRecords(String inXml) throws Exception {
-        Document doc = DOMUtil.buildDomFromString(inXml);
-
+    public static DescribeCoverageRecord[] parseRecords(Document doc) throws Exception {
         //This is to make sure we actually receive a valid response
         OWSExceptionParser.checkForExceptionResponse(doc);
 

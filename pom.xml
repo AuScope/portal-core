@@ -35,7 +35,7 @@
         <geotools.version>2.6.5</geotools.version>
     </properties>
     <build>
-        <finalName>Portal-Core</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -114,6 +114,7 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- This is for building a JAR (as well as the default WAR)-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -127,6 +128,26 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- This is for ensuring the JAR (see above maven-jar-plugin) gets installed properly --> 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>install-file</goal>
+                        </goals>
+                        <configuration>
+                            <packaging>jar</packaging>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <groupId>${project.groupId}</groupId>
+                            <version>${project.version}</version>
+                            <file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> 
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
