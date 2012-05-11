@@ -20,9 +20,9 @@ import org.junit.Test;
  * @author Josh Vote
  *
  */
-public class TestGetCapabilitiesService extends PortalTestClass {
+public class TestWMSService extends PortalTestClass {
 
-    private GetCapabilitiesService service;
+    private WMSService service;
     private HttpServiceCaller mockServiceCaller;
     private HttpClient mockHttpClient;
 
@@ -30,7 +30,7 @@ public class TestGetCapabilitiesService extends PortalTestClass {
     public void setup() throws Exception {
         mockServiceCaller = context.mock(HttpServiceCaller.class);
         mockHttpClient = context.mock(HttpClient.class);
-        service = new GetCapabilitiesService(mockServiceCaller);
+        service = new WMSService(mockServiceCaller);
     }
 
     /**

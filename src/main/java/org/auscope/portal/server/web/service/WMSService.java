@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  * @version $Id$
  */
 @Service
-public class GetCapabilitiesService {
+public class WMSService {
 
     // -------------------------------------------------------------- Constants
     private final Log log = LogFactory.getLog(getClass());
@@ -31,7 +31,7 @@ public class GetCapabilitiesService {
 
     // ----------------------------------------------------------- Constructors
     @Autowired
-    public GetCapabilitiesService(HttpServiceCaller serviceCaller) throws Exception {
+    public WMSService(HttpServiceCaller serviceCaller) throws Exception {
         this.serviceCaller = serviceCaller;
     }
 

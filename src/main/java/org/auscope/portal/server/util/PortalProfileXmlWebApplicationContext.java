@@ -5,7 +5,7 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 /**
  * A class that overrides the way the spring framework looks up bean configuration locations
  * and replaces it with a context parameter specified 'profile'
- * @author vot002
+ * @author Josh Vote
  *
  */
 public class PortalProfileXmlWebApplicationContext extends

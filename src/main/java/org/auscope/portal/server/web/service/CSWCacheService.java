@@ -38,7 +38,6 @@ import org.w3c.dom.Document;
  * @author Josh Vote
  *
  */
-@Service
 public class CSWCacheService {
 
     /**
@@ -87,10 +86,9 @@ public class CSWCacheService {
      * @param cswServiceList Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
      * @throws Exception
      */
-    @Autowired
     public CSWCacheService(CSWThreadExecutor executor,
                       HttpServiceCaller serviceCaller,
-                      @Qualifier(value = "cswServiceList") ArrayList cswServiceList) throws Exception {
+                      ArrayList cswServiceList) throws Exception {
         this.updateRunning = false;
         this.executor = executor;
         this.serviceCaller = serviceCaller;

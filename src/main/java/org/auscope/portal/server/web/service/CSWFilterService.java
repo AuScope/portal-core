@@ -28,7 +28,6 @@ import org.w3c.dom.Document;
  *
  * @author Josh Vote
  */
-@Service
 public class CSWFilterService {
 
     private final Log log = LogFactory.getLog(getClass());
@@ -46,10 +45,9 @@ public class CSWFilterService {
      * @param cswServiceList Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
      * @throws Exception
      */
-    @Autowired
     public CSWFilterService(CSWThreadExecutor executor,
                       HttpServiceCaller serviceCaller,
-                      @Qualifier(value = "cswServiceList") ArrayList cswServiceList) throws Exception {
+                      ArrayList cswServiceList) throws Exception {
 
         this.executor = executor;
         this.serviceCaller = serviceCaller;

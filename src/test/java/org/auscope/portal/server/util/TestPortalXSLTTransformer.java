@@ -30,7 +30,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
 
     @Before
     public void setUp() throws Exception {
-        transformer = new PortalXSLTTransformer();
+        transformer = new PortalXSLTTransformer("/org/auscope/portal/server/util/wfsToKml.xsl");
     }
 
     /**
@@ -40,12 +40,11 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
     @Test
     public void testGenericFeatureParser() throws Exception {
         final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/GetUndefinedFeatureSet.xml");
-        final InputStream inputStream = ClassLoader.getSystemResourceAsStream("org/auscope/portal/server/util/kml.xsl");
         final Properties properties = new Properties();
 
         properties.setProperty("serviceURL", "fake-service-url");
 
-        String convertedText = transformer.convert(testXml, inputStream, properties);
+        String convertedText = transformer.convert(testXml, properties);
 
         //Check we have data
         Assert.assertNotNull(convertedText);
@@ -70,92 +69,5 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
 
         counter = (Double) xPath.evaluate("count(Document/Placemark/MultiGeometry/Point/Style/IconStyle/Icon/href)", root, XPathConstants.NUMBER);
         Assert.assertEquals(8.0, counter.doubleValue(),0);
-    }
-
-
-    /**
-     * Unit test for testing the basic features of the transformer with the kml.xsl XSLT
-     * @throws Exception
-     */
-    @Test
-    public void testFeatureMemberEncoding() throws Exception {
-        final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/commodityGetFeatureResponse.xml");
-        final InputStream inputStream = ClassLoader.getSystemResourceAsStream("org/auscope/portal/server/util/WfsToHtml.xsl");
-        final Properties properties = new Properties();
-
-        properties.setProperty("serviceURL", "fake-service-url");
-
-        String convertedText = transformer.convert(testXml, inputStream, properties);
-
-        //Check we have data
-        Assert.assertNotNull(convertedText);
-        Assert.assertTrue(convertedText.length() > 0);
-
-        Assert.assertTrue(convertedText.contains("urn:cgi:feature:GSV:Commodity:361169:AU"));
-        Assert.assertTrue(convertedText.contains("urn:cgi:feature:GSV:Commodity:361170:AU"));
-
-    }
-
-    @Test
-    public void testMiningFeatures() throws Exception {
-        final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/InvalidResultForTestingWfsToHtml.xml");
-        final InputStream inputStream = ClassLoader.getSystemResourceAsStream("org/auscope/portal/server/util/WfsToHtml.xsl");
-        final Properties properties = new Properties();
-
-        properties.setProperty("serviceURL", "fake-service-url");
-
-        String convertedText = transformer.convert(testXml, inputStream, properties);
-        System.out.println(convertedText);
-
-        //Check we have data
-        Assert.assertNotNull(convertedText);
-        Assert.assertTrue(convertedText.length() > 0);
-
-        Assert.assertTrue(!convertedText.contains("test.123"));
-        Assert.assertTrue(!convertedText.contains("test name"));
-
-        Assert.assertTrue(convertedText.contains("http://geology.data.nt.gov.au/resource/feature/ntgs/miningfeatureoccurrence/1113"));
-        Assert.assertTrue(convertedText.contains("Mining Feature Occurrence Id"));
-        Assert.assertTrue(convertedText.contains("http://geology.data.vic.gov.au/feature/gsv/commodity/922597-cu"));
-        Assert.assertTrue(convertedText.contains("Commodity Id"));
-        Assert.assertTrue(convertedText.contains("http://geology.data.vic.gov.au/feature/gsv/mineraloccurrence/922597"));
-        Assert.assertTrue(convertedText.contains("http://geology.data.nt.gov.au/resource/feature/ntgs/mine/2368"));
-        Assert.assertTrue(convertedText.contains("http://geology.data.nt.gov.au/resource/feature/ntgs/miningfeatureoccurrence/2368"));
-        Assert.assertTrue(convertedText.contains("Mine Id"));
-        Assert.assertTrue(convertedText.contains("http://geology.data.nt.gov.au/resource/feature/ntgs/miningactivity/2368/747"));
-        Assert.assertTrue(convertedText.contains("MiningActivity Id"));
-        Assert.assertTrue(convertedText.contains("EarthResourceML - MineralOccurrence"));
-        Assert.assertTrue(convertedText.contains("EarthResourceML - Mine"));
-        Assert.assertTrue(convertedText.contains("EarthResourceML - MiningActivity"));
-        Assert.assertTrue(convertedText.contains("EarthResourceML - Commodity"));
-        Assert.assertTrue(convertedText.contains("EarthResourceML - MiningFeatureOccurrence"));
-        Assert.assertTrue(convertedText.contains("EarthResourceML - Mine"));
-
-
-    }
-
-    /**
-     * Unit test for testing the basic features of the transformer with the kml.xsl XSLT
-     * @throws Exception
-     */
-    @Test
-    public void testFeatureMembersEncoding() throws Exception {
-        final String testXml = org.auscope.portal.Util.loadXML("src/test/resources/mineGetFeatureResponse.xml");
-        final InputStream inputStream = ClassLoader.getSystemResourceAsStream("org/auscope/portal/server/util/WfsToHtml.xsl");
-        final Properties properties = new Properties();
-
-        properties.setProperty("serviceURL", "fake-service-url");
-
-        String convertedText = transformer.convert(testXml, inputStream, properties);
-
-        //Check we have data
-        Assert.assertNotNull(convertedText);
-        Assert.assertTrue(convertedText.length() > 0);
-
-        Assert.assertTrue(convertedText.contains("WOOLDRIDGE CREEK WORKINGS"));
-        Assert.assertTrue(convertedText.contains("HALL MAGNESITE MINE"));
-        Assert.assertTrue(convertedText.contains("http://services-test.auscope.org/resource/feature/pirsa/mine/95"));
-        Assert.assertTrue(convertedText.contains("http://services-test.auscope.org/resource/feature/pirsa/mine/217"));
-
     }
 }

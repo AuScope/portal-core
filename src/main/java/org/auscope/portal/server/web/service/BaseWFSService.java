@@ -1,20 +1,18 @@
 package org.auscope.portal.server.web.service;
 
 import java.io.InputStream;
+import java.util.Properties;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.server.domain.ows.OWSException;
 import org.auscope.portal.server.domain.ows.OWSExceptionParser;
 import org.auscope.portal.server.domain.wfs.WFSCountResponse;
-import org.auscope.portal.server.domain.wfs.WFSHTMLResponse;
-import org.auscope.portal.server.domain.wfs.WFSKMLResponse;
 import org.auscope.portal.server.domain.wfs.WFSNamespaceContext;
+import org.auscope.portal.server.domain.wfs.WFSTransformedResponse;
 import org.auscope.portal.server.util.DOMUtil;
-import org.auscope.portal.server.util.GmlToHtml;
-import org.auscope.portal.server.util.GmlToKml;
+import org.auscope.portal.server.util.PortalXSLTTransformer;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker;
 import org.auscope.portal.server.web.WFSGetFeatureMethodMaker.ResultType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +33,6 @@ public abstract class BaseWFSService {
 
     protected HttpServiceCaller httpServiceCaller;
     protected WFSGetFeatureMethodMaker wfsMethodMaker;
-    protected GmlToKml gmlToKml;
-    protected GmlToHtml gmlToHtml;
 
     /**
      * Creates a new instance of this class with the specified dependencies
@@ -47,12 +43,9 @@ public abstract class BaseWFSService {
      */
     @Autowired
     public BaseWFSService(HttpServiceCaller httpServiceCaller,
-            WFSGetFeatureMethodMaker wfsMethodMaker,
-            GmlToKml gmlToKml, GmlToHtml gmlToHtml) {
+            WFSGetFeatureMethodMaker wfsMethodMaker) {
         this.httpServiceCaller = httpServiceCaller;
         this.wfsMethodMaker = wfsMethodMaker;
-        this.gmlToKml = gmlToKml;
-        this.gmlToHtml = gmlToHtml;
     }
 
     /**
@@ -95,7 +88,7 @@ public abstract class BaseWFSService {
             //Make the request and parse the response
             InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method, httpServiceCaller.getHttpClient());
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-            checkForOWSException(responseDoc);
+            OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
             XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures", new WFSNamespaceContext());
             Node numNode = (Node) xPath.evaluate(responseDoc, XPathConstants.NODE);
@@ -108,66 +101,25 @@ public abstract class BaseWFSService {
     }
 
     /**
-     * Makes a WFS GetFeature request represented by method
-     *
-     * The response is returned as a String in both GML and KML forms.
-     * @param wfsUrl The web feature service url (passed as parameter to style sheet)
-     * @param method The method for making the WFS request
+     * Executes a method that returns GML wrapped in a WFS response, converts that
+     * response using transformer and returns the lot bundled in a WFSTransformedResponse
+     * @param method a WFS GetFeature request
+     * @param transformer A transformer to work with the resulting WFS response
+     * @param styleSheetParams Properties to apply to the transformer
      * @return
-     * @throws Exception
+     * @throws PortalServiceException
      */
-    protected WFSKMLResponse getWfsResponseAsKml(String wfsUrl, HttpMethodBase method) throws PortalServiceException {
+    protected WFSTransformedResponse getTransformedWFSResponse(HttpMethodBase method, PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
         try {
-            //Make the request and transform the response
-            String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-            checkForOWSException(responseGml);
-            String responseKml = gmlToKml.convert(responseGml, wfsUrl);
+            //Make the request and parse the response
+            String responseString = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+            OWSExceptionParser.checkForExceptionResponse(responseString);
 
-            return new WFSKMLResponse(responseGml, responseKml, method);
+            String transformed = transformer.convert(responseString, styleSheetParams);
+
+            return new WFSTransformedResponse(responseString, transformed, method);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
-    }
-
-    /**
-     * Makes a WFS GetFeature request represented by method
-     *
-     * The response is returned as a String in both GML and HTML forms.
-     * @param wfsUrl The web feature service url (passed as parameter to style sheet)
-     * @param method The method for making the WFS request
-     * @return
-     * @throws Exception
-     */
-    protected WFSHTMLResponse getWfsResponseAsHtml(String wfsUrl, HttpMethodBase method) throws PortalServiceException {
-        try {
-            //Make the request and transform the response
-            String responseGml = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
-            checkForOWSException(responseGml);
-            String responseHtml = gmlToHtml.convert(responseGml, wfsUrl);
-
-            return new WFSHTMLResponse(responseGml, responseHtml, method);
-        } catch (Exception ex) {
-            throw new PortalServiceException(method, ex);
-        }
-    }
-
-    /**
-     * Checks the specified xmlString for any OWS exceptions. An OWSException is thrown if xmlString contains said exception.
-     *
-     * @param xmlString the string to check, must contain valid XML
-     * @throws OWSException
-     */
-    protected void checkForOWSException(String xmlString) throws OWSException {
-        OWSExceptionParser.checkForExceptionResponse(xmlString);
-    }
-
-    /**
-     * Checks the specified xml document for any OWS exceptions. An OWSException is thrown if the doc contains said exception.
-     *
-     * @param doc the document to check
-     * @throws OWSException
-     */
-    protected void checkForOWSException(Document doc) throws OWSException {
-        OWSExceptionParser.checkForExceptionResponse(doc);
     }
 }
