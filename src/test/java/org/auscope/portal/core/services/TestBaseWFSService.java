@@ -24,7 +24,6 @@ public class TestBaseWFSService extends PortalTestClass {
 
     private PortalXSLTTransformer mockTransformer = context.mock(PortalXSLTTransformer.class);
     private Properties mockProperties = context.mock(Properties.class);
-    private HttpClient mockClient = context.mock(HttpClient.class);
     private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
     private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
     private WFSGetFeatureMethodMaker mockMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
@@ -81,8 +80,7 @@ public class TestBaseWFSService extends PortalTestClass {
         final InputStream responseStream = getClass().getResourceAsStream("/GetWFSFeatureCount.xml");
 
         context.checking(new Expectations() {{
-            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockClient));
-            oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod, mockClient);will(returnValue(responseStream));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
         }});
 
         WFSCountResponse response = service.getWfsFeatureCount(mockMethod);
@@ -93,8 +91,7 @@ public class TestBaseWFSService extends PortalTestClass {
     @Test(expected=PortalServiceException.class)
     public void testGetFeatureCountError() throws Exception {
         context.checking(new Expectations() {{
-            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockClient));
-            oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod, mockClient);will(throwException(new IOException()));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
         }});
 
         service.getWfsFeatureCount(mockMethod);
@@ -105,8 +102,7 @@ public class TestBaseWFSService extends PortalTestClass {
         final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml");
 
         context.checking(new Expectations() {{
-            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockClient));
-            oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod, mockClient);will(returnValue(responseStream));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
         }});
 
         service.getWfsFeatureCount(mockMethod);
@@ -117,8 +113,7 @@ public class TestBaseWFSService extends PortalTestClass {
         final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml");
 
         context.checking(new Expectations() {{
-            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockClient));
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(returnValue(responseStream));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);will(returnValue(responseStream));
         }});
 
         service.getTransformedWFSResponse(mockMethod, mockTransformer, mockProperties);
@@ -127,8 +122,7 @@ public class TestBaseWFSService extends PortalTestClass {
     @Test(expected=PortalServiceException.class)
     public void testTransformConnectError() throws Exception {
         context.checking(new Expectations() {{
-            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockClient));
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(throwException(new IOException()));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);will(throwException(new IOException()));
         }});
 
         service.getTransformedWFSResponse(mockMethod, mockTransformer, mockProperties);
@@ -136,14 +130,12 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test
     public void testTransform() throws Exception {
-        final InputStream responseStream = getClass().getResourceAsStream("/commodityGetFeatureResponse.xml");
         final String responseString = new java.util.Scanner(getClass().getResourceAsStream("/commodityGetFeatureResponse.xml")).useDelimiter("\\A").next();
 
         final String convertedString = "transformed-string";
 
         context.checking(new Expectations() {{
-            oneOf(mockHttpServiceCaller).getHttpClient();will(returnValue(mockClient));
-            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod, mockClient);will(returnValue(responseString));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);will(returnValue(responseString));
 
             oneOf(mockTransformer).convert(with(any(String.class)), with(same(mockProperties)));will(returnValue(convertedString));
         }});

@@ -47,7 +47,7 @@ public class SISSVocService {
         try {
             //Do the request
             method = sissVocMethodMaker.getConceptByLabelMethod(serviceUrl, repository, label);
-            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method, httpServiceCaller.getHttpClient());
+            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
 
             //Parse the response
             Document doc = DOMUtil.buildDomFromStream(responseStream);
@@ -72,7 +72,7 @@ public class SISSVocService {
         try {
             //Do the request
             method = sissVocMethodMaker.getCommodityMethod(serviceUrl, repository, commodityParent);
-            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method, httpServiceCaller.getHttpClient());
+            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
 
             //Parse the response
             Document doc = DOMUtil.buildDomFromStream(responseStream);

@@ -3,7 +3,6 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.PortalServiceException;
@@ -21,7 +20,6 @@ import org.w3c.dom.Node;
 public class TestSISSVocService extends PortalTestClass {
 
     private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
-    private HttpClient mockHttpClient = context.mock(HttpClient.class);
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private ConceptFactory mockConceptFactory = context.mock(ConceptFactory.class);
     private SISSVocMethodMaker mockMethodMaker = context.mock(SISSVocMethodMaker.class);
@@ -47,8 +45,7 @@ public class TestSISSVocService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(returnValue(responseStream));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
 
             oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));will(returnValue(expectedResult));
         }});
@@ -68,8 +65,7 @@ public class TestSISSVocService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(throwException(new IOException()));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
         }});
 
         service.getConceptByLabel(serviceUrl, repository, label);
@@ -89,8 +85,7 @@ public class TestSISSVocService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(returnValue(responseStream));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
         }});
 
         Concept[] result = service.getCommodityConcepts(serviceUrl, repository, commodityParent);
@@ -117,8 +112,7 @@ public class TestSISSVocService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, parent);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(throwException(new IOException()));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
         }});
 
         service.getCommodityConcepts(serviceUrl, repository, parent);

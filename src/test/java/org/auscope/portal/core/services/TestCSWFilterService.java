@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.CSWFilterService;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
@@ -34,7 +33,6 @@ public class TestCSWFilterService extends PortalTestClass {
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
     private BasicThreadExecutor threadExecutor;
     private CSWGetDataRecordsFilter mockFilter = context.mock(CSWGetDataRecordsFilter.class);
-    private HttpClient mockHttpClient = context.mock(HttpClient.class);
     private ArrayList<CSWServiceItem> serviceUrlList;
 
     private static final String IDFORMATSTRING = "id:%1$s";
@@ -70,18 +68,16 @@ public class TestCSWFilterService extends PortalTestClass {
         final ByteArrayInputStream is3 = new ByteArrayInputStream(docString.getBytes());
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();
-            will(returnValue(mockHttpClient));
 
             allowing(mockFilter).getFilterStringAllRecords();
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 0), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 0), null)));
             will(returnValue(is1));
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 1), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 1), null)));
             will(returnValue(is2));
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 2), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 2), null)));
             will(returnValue(is3));
         }});
 
@@ -119,13 +115,11 @@ public class TestCSWFilterService extends PortalTestClass {
         final ByteArrayInputStream is3 = new ByteArrayInputStream(docString.getBytes());
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-
             allowing(mockFilter).getFilterStringAllRecords();
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 0), null)), with(any(HttpClient.class)));will(returnValue(is1));
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 1), null)), with(any(HttpClient.class)));will(returnValue(is2));
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 2), null)), with(any(HttpClient.class)));will(returnValue(is3));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 0), null)));will(returnValue(is1));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 1), null)));will(returnValue(is2));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 2), null)));will(returnValue(is3));
         }});
 
         //We call this twice to test that an update wont commence whilst
@@ -157,11 +151,9 @@ public class TestCSWFilterService extends PortalTestClass {
         final String expectedServiceUrl = String.format(SERVICEURLFORMATSTRING, serviceToTest);
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-
             allowing(mockFilter).getFilterStringAllRecords();
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, expectedServiceUrl, null)), with(any(HttpClient.class)));will(returnValue(is1));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, expectedServiceUrl, null)));will(returnValue(is1));
         }});
 
         //We call this twice to test that an update wont commence whilst
@@ -185,11 +177,9 @@ public class TestCSWFilterService extends PortalTestClass {
         final String expectedServiceUrl = String.format(SERVICEURLFORMATSTRING, serviceToTest);
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-
             allowing(mockFilter).getFilterStringAllRecords();
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, expectedServiceUrl, null)), with(any(HttpClient.class)));will(returnValue(is1));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, expectedServiceUrl, null)));will(returnValue(is1));
         }});
 
         //We call this twice to test that an update wont commence whilst

@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.CSWCacheService;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
@@ -43,7 +42,6 @@ public class TestCSWCacheService extends PortalTestClass {
     private CSWCacheService cswCacheService;
     private HttpServiceCaller httpServiceCaller = context.mock(HttpServiceCaller.class);
     private BasicThreadExecutor threadExecutor;
-    private HttpClient mockHttpClient = context.mock(HttpClient.class);
 
     private static final String serviceUrlFormatString = "http://cswservice.%1$s.url/";
 
@@ -86,26 +84,24 @@ public class TestCSWCacheService extends PortalTestClass {
         final int totalRequestsMade = CONCURRENT_THREADS_TO_RUN + 2;
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-
             //Thread 1 will make 2 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
             inSequence(t1Sequence);
             will(returnValue(t1r1));
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
             inSequence(t1Sequence);
             will(returnValue(t1r2));
 
             //Thread 2 will make 1 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             inSequence(t2Sequence);
             will(returnValue(t2r1));
 
             //Thread 3 will make 2 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             inSequence(t3Sequence);
             will(returnValue(t3r1));
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             inSequence(t3Sequence);
             will(returnValue(t3r2));
         }});
@@ -151,27 +147,24 @@ public class TestCSWCacheService extends PortalTestClass {
         final int totalRequestsMade = CONCURRENT_THREADS_TO_RUN + 1;
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();
-            will(returnValue(mockHttpClient));
-
             //Thread 1 will make 2 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
             inSequence(t1Sequence);
             will(returnValue(t1r1));
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
             inSequence(t1Sequence);
             will(returnValue(t1r2));
 
             //Thread 2 will throw an exception
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             inSequence(t2Sequence);
             will(throwException(new Exception()));
 
             //Thread 3 will make 2 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             inSequence(t3Sequence);
             will(returnValue(t3r1));
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             inSequence(t3Sequence);
             will(returnValue(t3r2));
         }});
@@ -206,11 +199,8 @@ public class TestCSWCacheService extends PortalTestClass {
         final Map<String, Integer> expectedResult = new HashMap<String, Integer>();
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();
-            will(returnValue(mockHttpClient));
-
             for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
-                oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, i + 1), null)), with(mockHttpClient));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, i + 1), null)));
                 will(throwException(new Exception()));
             }
         }});
@@ -248,9 +238,8 @@ public class TestCSWCacheService extends PortalTestClass {
 
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
             for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
-                oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(serviceUrlFormatString, i + 1), null)), with(mockHttpClient));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(serviceUrlFormatString, i + 1), null)));
                 will(delayReturnValue(delay, new ByteArrayInputStream(cswResponse.getBytes())));
             }
 
@@ -279,18 +268,16 @@ public class TestCSWCacheService extends PortalTestClass {
         final ByteArrayInputStream t1r1 = new ByteArrayInputStream(mergeRecordsString.getBytes());
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-
             //Thread 1 will make 1 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
             will(returnValue(t1r1));
 
             //Thread 2 will error
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             will(throwException(new ConnectException()));
 
             //Thread 3 will make 2 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             will(throwException(new ConnectException()));
         }});
 
@@ -357,18 +344,16 @@ public class TestCSWCacheService extends PortalTestClass {
         expectedResult.put("points_of_interest", 1);
 
         context.checking(new Expectations() {{
-            allowing(httpServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-
             //Thread 1 will make 1 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
             will(returnValue(t1r1));
 
             //Thread 2 will error
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             will(throwException(new ConnectException()));
 
             //Thread 3 will error
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)), with(any(HttpClient.class)));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             will(throwException(new ConnectException()));
         }});
 

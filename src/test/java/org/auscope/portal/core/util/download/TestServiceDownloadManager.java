@@ -6,12 +6,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.util.download.DownloadResponse;
-import org.auscope.portal.core.util.download.ServiceDownloadManager;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,8 +38,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         context.checking(new Expectations() {
             {
                 // calling the service
-                exactly(2).of(mockServiceCaller).getHttpClient();
-                exactly(2).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
+                exactly(2).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)));
                     will(returnValue(dummyJSONResponseIS));
             }
         });
@@ -70,8 +66,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         context.checking(new Expectations() {
             {
                 // calling the service
-                exactly(2).of(mockServiceCaller).getHttpClient();
-                atLeast(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
+                atLeast(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)));
                     will(onConsecutiveCalls(
                             returnValue(dummyJSONResponseIS),
                             throwException(new Exception("test exception"))));
@@ -130,22 +125,20 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         //600ms    Response url2
         //1200ms   Response url1
         context.checking(new Expectations() {{
-            allowing(mockServiceCaller).getHttpClient();//We aren't testing this
-
             //It's too difficult to test a sequence as at step 1 it is undefined
             //as to whether url0/url2 will be requested first (they will be requested at roughly the same time).
             //It's also too difficult to use a JMock state for the same reason - we are stuck comparing execution times
 
             //first request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)), with(any(HttpClient.class)));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)));
             will(delayReturnValue(responseDelays[0], responseStreams[0]));
 
             //second request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[2], null)), with(any(HttpClient.class)));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[2], null)));
             will(delayReturnValue(responseDelays[2], responseStreams[2]));
 
             //third request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)), with(any(HttpClient.class)));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)));
             will(delayReturnValue(responseDelays[1], responseStreams[1]));
         }});
 

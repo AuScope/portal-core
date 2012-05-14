@@ -377,7 +377,7 @@ public class CSWCacheService {
 
                     //Request our set of records
                     HttpMethodBase method = methodMaker.makeMethod(null, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
-                    InputStream responseStream = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
+                    InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
 
                     log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
 

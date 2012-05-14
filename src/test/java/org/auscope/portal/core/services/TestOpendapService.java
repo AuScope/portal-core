@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.OpendapService;
@@ -119,13 +118,11 @@ public class TestOpendapService extends PortalTestClass {
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
 
         final HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
-        final HttpClient mockClient = context.mock(HttpClient.class);
         final InputStream mockResponse = context.mock(InputStream.class);
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockClient);will(returnValue(mockResponse));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(mockResponse));
         }});
 
         InputStream response = service.getData(serviceUrl, format, constraints);
@@ -140,13 +137,10 @@ public class TestOpendapService extends PortalTestClass {
 
 
         final HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
-        final HttpClient mockClient = context.mock(HttpClient.class);
-        final InputStream mockResponse = context.mock(InputStream.class);
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockClient);will(throwException(new IOException()));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
         }});
 
         service.getData(serviceUrl, format, constraints);

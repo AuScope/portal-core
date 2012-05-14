@@ -85,7 +85,7 @@ public abstract class BaseWFSService {
     protected WFSCountResponse getWfsFeatureCount(HttpMethodBase method) throws PortalServiceException {
         try {
             //Make the request and parse the response
-            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method, httpServiceCaller.getHttpClient());
+            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
@@ -111,7 +111,7 @@ public abstract class BaseWFSService {
     protected WFSTransformedResponse getTransformedWFSResponse(HttpMethodBase method, PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
         try {
             //Make the request and parse the response
-            String responseString = httpServiceCaller.getMethodResponseAsString(method, httpServiceCaller.getHttpClient());
+            String responseString = httpServiceCaller.getMethodResponseAsString(method);
             OWSExceptionParser.checkForExceptionResponse(responseString);
 
             String transformed = transformer.convert(responseString, styleSheetParams);

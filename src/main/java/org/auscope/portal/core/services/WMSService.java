@@ -44,7 +44,7 @@ public class WMSService {
             // Do the request
             WMSMethodMaker methodMaker = new WMSMethodMaker(serviceUrl);
             HttpMethodBase method = methodMaker.getCapabilitiesMethod();
-            response = new BufferedInputStream(serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient()));
+            response = new BufferedInputStream(serviceCaller.getMethodResponseAsStream(method));
 
             return new GetCapabilitiesRecord(response);
         } finally {

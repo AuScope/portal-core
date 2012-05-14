@@ -57,7 +57,7 @@ public class WCSService {
         HttpMethodBase method = methodMaker.getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
 
         try {
-            return serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
+            return serviceCaller.getMethodResponseAsStream(method);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
         }
@@ -72,7 +72,7 @@ public class WCSService {
         HttpMethodBase method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
 
         try {
-            InputStream response = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
+            InputStream response = serviceCaller.getMethodResponseAsStream(method);
 
             Document responseDoc = DOMUtil.buildDomFromStream(response);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);

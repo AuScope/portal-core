@@ -255,7 +255,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
             Exception error = null;
 
             try {
-                data = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
+                data = serviceCaller.getMethodResponseAsStream(method);
             } catch (Exception e) {
                 error = e;
             } finally {

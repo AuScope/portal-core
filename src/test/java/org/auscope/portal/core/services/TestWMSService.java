@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.WMSService;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMaker;
@@ -26,12 +25,10 @@ public class TestWMSService extends PortalTestClass {
 
     private WMSService service;
     private HttpServiceCaller mockServiceCaller;
-    private HttpClient mockHttpClient;
 
     @Before
     public void setup() throws Exception {
         mockServiceCaller = context.mock(HttpServiceCaller.class);
-        mockHttpClient = context.mock(HttpClient.class);
         service = new WMSService(mockServiceCaller);
     }
 
@@ -46,8 +43,7 @@ public class TestWMSService extends PortalTestClass {
         final String wmsGetCapRequestUrl = new WMSMethodMaker(serviceUrl).getCapabilitiesMethod().getURI().toString();
 
         context.checking(new Expectations() {{
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, wmsGetCapRequestUrl, null)), with(mockHttpClient));will(returnValue(is));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, wmsGetCapRequestUrl, null)));will(returnValue(is));
         }});
 
         GetCapabilitiesRecord record = service.getWmsCapabilities(serviceUrl);
@@ -101,8 +97,7 @@ public class TestWMSService extends PortalTestClass {
         final String wmsGetCapRequestUrl = new WMSMethodMaker(serviceUrl).getCapabilitiesMethod().getURI().toString();
 
         context.checking(new Expectations() {{
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, wmsGetCapRequestUrl, null)), with(mockHttpClient));will(throwException(new ConnectException()));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, wmsGetCapRequestUrl, null)));will(throwException(new ConnectException()));
         }});
 
         service.getWmsCapabilities(serviceUrl);

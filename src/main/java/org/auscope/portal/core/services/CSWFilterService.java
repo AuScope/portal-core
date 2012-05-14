@@ -71,7 +71,7 @@ public class CSWFilterService {
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords(serviceItem.getServiceUrl());
         HttpMethodBase method = methodMaker.makeMethod(filter, resultType, maxRecords, startIndex);
 
-        InputStream responseStream = serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
+        InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
         Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
         return new CSWGetRecordResponse(serviceItem, responseDoc);
     }

@@ -3,7 +3,6 @@ package org.auscope.portal.core.server.http;
 import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,14 +10,9 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.core.server.http.DistributedHTTPServiceCaller;
-import org.auscope.portal.core.server.http.DistributedHTTPServiceCallerException;
-import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
-import org.jmock.api.ExpectationError;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +26,6 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
     private Object mockAdditionalInfo2 = context.mock(Object.class, "mockAddInfo2");
     private Object mockAdditionalInfo3 = context.mock(Object.class, "mockAddInfo3");
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
-    private HttpClient mockHttpClient = context.mock(HttpClient.class);
     private ExecutorService threadPool;
     private InputStream mockInputStream1 = context.mock(InputStream.class, "stream1");
     private InputStream mockInputStream2 = context.mock(InputStream.class, "stream2");
@@ -69,8 +62,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
 
         context.checking(new Expectations() {{
-            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1, mockHttpClient);will(throwException(expectedError));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);will(throwException(expectedError));
         }});
 
         dsc.beginCallingServices(threadPool);
@@ -97,9 +89,8 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1, mockMethod2), mockServiceCaller);
 
         context.checking(new Expectations() {{
-            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1, mockHttpClient);will(throwException(expectedError));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2, mockHttpClient);will(delayReturnValue(delay2ms, mockInputStream2));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);will(throwException(expectedError));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);will(delayReturnValue(delay2ms, mockInputStream2));
         }});
 
         //ensure our available and error data return immediately but our
@@ -149,10 +140,9 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
                 mockServiceCaller);
 
         context.checking(new Expectations() {{
-            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1, mockHttpClient);will(delayReturnValue(delay1ms, mockInputStream1));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2, mockHttpClient);will(delayReturnValue(delay2ms, mockInputStream2));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod3, mockHttpClient);will(delayReturnValue(delay3ms, mockInputStream3));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);will(delayReturnValue(delay1ms, mockInputStream1));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);will(delayReturnValue(delay2ms, mockInputStream2));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod3);will(delayReturnValue(delay3ms, mockInputStream3));
         }});
 
         //Do some dodgey timings to ensure we get our data in the right order (ie as the input streams become available)
@@ -189,8 +179,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(bigMethodList, mockServiceCaller);
 
         context.checking(new Expectations() {{
-            allowing(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            exactly(5).of(mockServiceCaller).getMethodResponseAsStream(mockMethod1, mockHttpClient);will(delayReturnValue(100, mockInputStream1));
+            exactly(5).of(mockServiceCaller).getMethodResponseAsStream(mockMethod1);will(delayReturnValue(100, mockInputStream1));
         }});
 
         //start our threads executing (we need to use this class to pickup any failures)

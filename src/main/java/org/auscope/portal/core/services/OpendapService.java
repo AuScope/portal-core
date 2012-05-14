@@ -84,7 +84,7 @@ public class OpendapService {
 
         try {
             method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);
-            return serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient());
+            return serviceCaller.getMethodResponseAsStream(method);
         } catch (Exception ex) {
             log.error(String.format("Error requesting data from '%1$s'", serviceUrl), ex);
             throw new PortalServiceException(method, String.format("Error requesting data from '%1$s'", serviceUrl), ex);

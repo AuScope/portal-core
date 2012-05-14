@@ -36,13 +36,25 @@ public class HttpServiceCaller {
     /**
      * Makes a call to a http GetMethod and returns the response as a string.
      *
-     * @param method
-     * @param httpClient
+     * (Creates a new HttpClient for use with this request)
+     *
+     * @param method The method to be executed
+     * @return
+     * @throws Exception
+     */
+    public String getMethodResponseAsString(HttpMethodBase method) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+        return getMethodResponseAsString(method, new HttpClient());
+    }
+
+    /**
+     * Makes a call to a http GetMethod and returns the response as a string.
+     *
+     * @param method The method to be executed
+     * @param httpClient The client that will be used
      * @return
      * @throws Exception
      */
     public String getMethodResponseAsString(HttpMethodBase method, HttpClient httpClient) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
-
         //invoke the method
         this.invokeTheMethod(method, httpClient);
 
@@ -62,9 +74,24 @@ public class HttpServiceCaller {
 
     /**
      * Invokes a method and returns the binary response as a stream.
+     * (Creates a new HttpClient for use with this request)
      *
      * WARNING - ensure you call method.releaseConnection() AFTER you have finished reading the input stream.
      *
+     * @param method The method to be executed
+     * @return
+     */
+    public InputStream getMethodResponseAsStream(HttpMethodBase method) throws Exception {
+        return this.getMethodResponseAsStream(method, new HttpClient());
+    }
+
+    /**
+     * Invokes a method and returns the binary response as a stream.
+     *
+     * WARNING - ensure you call method.releaseConnection() AFTER you have finished reading the input stream.
+     *
+     * @param method The method to be executed
+     * @param httpClient The client that will be used
      * @return
      */
     public InputStream getMethodResponseAsStream(HttpMethodBase method, HttpClient httpClient) throws Exception {
@@ -76,10 +103,22 @@ public class HttpServiceCaller {
 
     /**
      * Invokes a method and returns the binary response.
-     *
+     * (Creates a new HttpClient for use with this request)
+     * @param method The method to be executed
      * @return
      */
-    public byte[] getMethodResponseInBytes(HttpMethodBase method, HttpClient httpClient) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpMethodBase method) throws Exception {
+        return getMethodResponseAsBytes(method, new HttpClient());
+    }
+
+    /**
+     * Invokes a method and returns the binary response.
+     *
+     * @param method The method to be executed
+     * @param httpClient The client that will be used
+     * @return
+     */
+    public byte[] getMethodResponseAsBytes(HttpMethodBase method, HttpClient httpClient) throws Exception {
         //invoke the method
         this.invokeTheMethod(method, httpClient);
 
@@ -120,35 +159,6 @@ public class HttpServiceCaller {
             //if the response is not OK then throw an error
             throw new Exception("Returned status line: " + method.getStatusLine());
         }
-    }
-
-    /**
-     * Returns a header value for a given method and key.
-     *
-     * @param method
-     * @param header
-     * @return
-     */
-    public Header getResponseHeader(HttpMethodBase method, String header) {
-        return method.getResponseHeader(header);
-    }
-
-    /**
-     * Generate a new httpClient.
-     * @return
-     */
-    public HttpClient getHttpClient() {
-        return new HttpClient();
-    }
-
-    /**
-     * Given a URL, call it, convert the response into a String and return.
-     * @param serviceUrl
-     * @return
-     * @throws IOException
-     */
-    public String callHttpUrlGET(URL serviceUrl) throws IOException {
-        return responseToString(new BufferedInputStream(serviceUrl.openStream()));
     }
 
     /**

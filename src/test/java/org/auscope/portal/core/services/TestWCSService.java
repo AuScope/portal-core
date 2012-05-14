@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.PortalServiceException;
@@ -24,7 +23,6 @@ import org.junit.Test;
 
 public class TestWCSService extends PortalTestClass {
     private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
-    private HttpClient mockHttpClient = context.mock(HttpClient.class);
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private WCSMethodMaker mockMethodMaker = context.mock(WCSMethodMaker.class);
 
@@ -54,8 +52,7 @@ public class TestWCSService extends PortalTestClass {
             oneOf(mockMethodMaker).getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
             will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(returnValue(mockStream));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(mockStream));
         }});
 
         Assert.assertSame(mockStream, service.getCoverage(serviceUrl, coverageName, downloadFormat, outputSize, outputResolution, outputCrs, inputCrs, bbox, timeConstraint, customParameters));
@@ -78,8 +75,7 @@ public class TestWCSService extends PortalTestClass {
             oneOf(mockMethodMaker).getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
             will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(throwException(new IOException()));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
         }});
 
         service.getCoverage(serviceUrl, coverageName, downloadFormat, outputSize, outputResolution, outputCrs, inputCrs, bbox, timeConstraint, customParameters);
@@ -95,8 +91,7 @@ public class TestWCSService extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(returnValue(responseStream));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
         }});
 
         //Just going to do a quick test on the response - tests for parsing the actual data are handled
@@ -116,8 +111,7 @@ public class TestWCSService extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(returnValue(responseStream));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
         }});
 
         service.describeCoverage(serviceUrl, coverageName);
@@ -131,8 +125,7 @@ public class TestWCSService extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getHttpClient();will(returnValue(mockHttpClient));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod, mockHttpClient);will(throwException(new IOException()));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
         }});
 
         service.describeCoverage(serviceUrl, coverageName);
