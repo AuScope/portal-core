@@ -1,4 +1,4 @@
-package org.auscope.portal.core.util.download;
+package org.auscope.portal.core.server.http.download;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

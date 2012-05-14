@@ -1,4 +1,4 @@
-package org.auscope.portal.core.util.download;
+package org.auscope.portal.core.server.http.download;
 
 import java.io.IOException;
 import java.io.InputStream;

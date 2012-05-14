@@ -14,8 +14,8 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.auscope.portal.core.server.controllers.BasePortalController;
+import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.util.download.DownloadResponse;
 import org.auscope.portal.core.view.JSONModelAndView;
 import org.jmock.Expectations;
 import org.junit.Assert;
