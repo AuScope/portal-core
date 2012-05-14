@@ -36,4 +36,9 @@ public class NamedIndividual extends Concept {
         }
         return this.equals(ni.getUrn());
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

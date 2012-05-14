@@ -10,9 +10,6 @@ import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerAndRecords;
 import org.auscope.portal.core.view.knownlayer.KnownLayerGrouping;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 /**
  * A service class performing that groups CSWRecord objects (from a CSWCacheService) according
@@ -21,7 +18,6 @@ import org.springframework.stereotype.Service;
  * @author Josh Vote
  *
  */
-@Service
 public class KnownLayerService {
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
@@ -32,8 +28,7 @@ public class KnownLayerService {
      * @param knownTypes A list of objects, only KnownLayer subclasses will be used
      * @param cswCacheService An instance of CSWCacheService
      */
-    @Autowired
-    public KnownLayerService(@SuppressWarnings("rawtypes") @Qualifier("knownTypes") ArrayList knownTypes,
+    public KnownLayerService(@SuppressWarnings("rawtypes") ArrayList knownTypes,
             CSWCacheService cswCacheService) {
         this.knownLayers = new ArrayList<KnownLayer>();
         for (Object obj : knownTypes) {

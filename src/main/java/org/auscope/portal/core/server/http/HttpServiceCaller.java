@@ -19,23 +19,16 @@ import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 
 /**
  * Utility class used to call web service end points.
- *
- * @version $Id$
  */
-
-@Repository
 public class HttpServiceCaller {
     private final Log log = LogFactory.getLog(getClass());
 
     private HttpConnectionManagerParams clientParams;
 
-    @Autowired
     public void setClientParams(HttpConnectionManagerParams clientParams) {
         this.clientParams = clientParams;
     }

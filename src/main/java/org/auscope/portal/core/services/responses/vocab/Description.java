@@ -148,6 +148,12 @@ public class Description {
         }
     }
 
-
+    @Override
+    public int hashCode() {
+        if (this.urn == null) {
+            return 0;
+        }
+        return this.urn.hashCode();
+    }
 
 }

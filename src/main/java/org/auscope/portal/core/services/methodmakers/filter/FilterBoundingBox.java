@@ -208,7 +208,7 @@ public class FilterBoundingBox implements Serializable {
     public static FilterBoundingBox attemptParseFromJSON(String json) {
         FilterBoundingBox bbox = null;
         try {
-            if (json != null && json != "") {
+            if (json != null && !json.isEmpty()) {
                 JSONObject obj = JSONObject.fromObject(json);
                 bbox = FilterBoundingBox.parseFromJSON(obj);
                 log.debug("bbox=" + bbox.toString());

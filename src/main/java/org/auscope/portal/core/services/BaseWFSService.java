@@ -16,7 +16,6 @@ import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.util.DOMUtil;
 import org.auscope.portal.core.xslt.PortalXSLTTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -42,7 +41,6 @@ public abstract class BaseWFSService {
      * @param gmlToKml Will be used for transforming GML (WFS responses) into KML
      * @param gmlToHtml Will be used for transforming GML (WFS responses) into HTML
      */
-    @Autowired
     public BaseWFSService(HttpServiceCaller httpServiceCaller,
             WFSGetFeatureMethodMaker wfsMethodMaker) {
         this.httpServiceCaller = httpServiceCaller;

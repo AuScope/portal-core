@@ -10,16 +10,10 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMaker;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
- * Concrete implementation of the GetCapabilitiesService interface.
- *
- * @author Jarek Sanders
- * @version $Id$
+ * Service class providing functionality for interacting with a Web Map Service
  */
-@Service
 public class WMSService {
 
     // -------------------------------------------------------------- Constants
@@ -31,7 +25,6 @@ public class WMSService {
 
 
     // ----------------------------------------------------------- Constructors
-    @Autowired
     public WMSService(HttpServiceCaller serviceCaller) throws Exception {
         this.serviceCaller = serviceCaller;
     }
@@ -47,25 +40,19 @@ public class WMSService {
     public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl) throws Exception {
 
         BufferedInputStream response = null;
-        try{
-
-            //Check that its a real URL
-            //Quick test that it looks like a URL....
-
-            URL newUrl = new URL(serviceUrl);
-
+        try {
             // Do the request
             WMSMethodMaker methodMaker = new WMSMethodMaker(serviceUrl);
             HttpMethodBase method = methodMaker.getCapabilitiesMethod();
             response = new BufferedInputStream(serviceCaller.getMethodResponseAsStream(method, serviceCaller.getHttpClient()));
 
             return new GetCapabilitiesRecord(response);
-        }finally{
-            try{
+        } finally {
+            try {
                 if (response != null) {
                     response.close();
                 }
-            }catch(IOException e){
+            } catch(IOException e) {
                 //Not a show stopper if stream can't be closed since
                 //most likely it is because it is already closed.
                 log.warn(e);

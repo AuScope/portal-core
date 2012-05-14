@@ -184,9 +184,6 @@ public class Concept {
         this.definition = definition;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Concept) {
@@ -223,6 +220,14 @@ public class Concept {
         } else {
             return this.urn == urn;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        if (this.urn == null) {
+            return 0;
+        }
+        return this.urn.hashCode();
     }
 
     /* (non-Javadoc)
