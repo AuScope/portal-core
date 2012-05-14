@@ -20,7 +20,6 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author Josh Vote
  *
  */
-@Service
 public class OpendapService {
 
     /** The log. */

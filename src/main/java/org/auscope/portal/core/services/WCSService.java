@@ -22,7 +22,6 @@ import org.w3c.dom.Document;
  * Service class for interacting with a Web Coverage Service
  * @author Josh Vote
  */
-@Service
 public class WCSService {
     private final Log logger = LogFactory.getLog(getClass());
 
