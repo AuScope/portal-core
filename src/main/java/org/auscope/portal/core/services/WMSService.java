@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -10,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMaker;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
+import org.auscope.portal.core.util.FileIOUtil;
 
 /**
  * Service class providing functionality for interacting with a Web Map Service
@@ -38,24 +40,17 @@ public class WMSService {
      * @return GetCapabilitiesRecord
      */
     public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl) throws Exception {
-
-        BufferedInputStream response = null;
+        HttpMethodBase method = null;
         try {
             // Do the request
             WMSMethodMaker methodMaker = new WMSMethodMaker();
-            HttpMethodBase method = methodMaker.getCapabilitiesMethod(serviceUrl);
-            response = new BufferedInputStream(serviceCaller.getMethodResponseAsStream(method));
+            method = methodMaker.getCapabilitiesMethod(serviceUrl);
+            InputStream response = serviceCaller.getMethodResponseAsStream(method);
 
             return new GetCapabilitiesRecord(response);
         } finally {
-            try {
-                if (response != null) {
-                    response.close();
-                }
-            } catch(IOException e) {
-                //Not a show stopper if stream can't be closed since
-                //most likely it is because it is already closed.
-                log.warn(e);
+            if (method != null) {
+                method.releaseConnection();
             }
         }
     }

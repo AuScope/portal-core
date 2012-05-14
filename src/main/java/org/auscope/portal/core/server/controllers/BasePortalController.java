@@ -226,17 +226,24 @@ public abstract class BasePortalController {
      * @param input The input stream
      * @param output The output stream (will receive input's bytes)
      * @param bufferSize The size (in bytes) of the in memory buffer
+     * @param closeInput if true, the input will be closed prior to this method returning
      * @throws IOException
      */
-    protected void writeInputToOutputStream(InputStream input, OutputStream output, int bufferSize) throws IOException {
-        byte[] buffer = new byte[bufferSize];
-        int dataRead;
-        do {
-            dataRead = input.read(buffer, 0, buffer.length);
-            if (dataRead > 0) {
-                output.write(buffer, 0, dataRead);
+    protected void writeInputToOutputStream(InputStream input, OutputStream output, int bufferSize, boolean closeInput) throws IOException {
+        try {
+            byte[] buffer = new byte[bufferSize];
+            int dataRead;
+            do {
+                dataRead = input.read(buffer, 0, buffer.length);
+                if (dataRead > 0) {
+                    output.write(buffer, 0, dataRead);
+                }
+            } while (dataRead != -1);
+        } finally {
+            if (closeInput) {
+                FileIOUtil.closeQuietly(input);
             }
-        } while (dataRead != -1);
+        }
     }
 
     /**
@@ -246,7 +253,7 @@ public abstract class BasePortalController {
      * @param gmlDownloads The download responses
      * @param zout The stream to receive the zip entries
      */
-    protected void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout) throws IOException {
+    protected void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs) throws IOException {
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
             String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml";
@@ -257,7 +264,7 @@ public abstract class BasePortalController {
 
                 //Write stream into the zip entry
                 zout.putNextEntry(new ZipEntry(entryName));
-                writeInputToOutputStream(stream, zout, 1024 * 1024);
+                writeInputToOutputStream(stream, zout, 1024 * 1024, closeInputs);
                 zout.closeEntry();
             } else {
                 writeErrorToZip(zout, download.getRequestURL(), download.getException(), entryName + ".error");

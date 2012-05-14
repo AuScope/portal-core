@@ -56,6 +56,10 @@ public class SISSVocService {
             return conceptFactory.parseFromRDF(response);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
         }
     }
 
@@ -95,6 +99,10 @@ public class SISSVocService {
             return concepts.toArray(new Concept[concepts.size()]);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
         }
     }
 }

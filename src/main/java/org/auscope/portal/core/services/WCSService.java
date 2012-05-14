@@ -80,6 +80,10 @@ public class WCSService {
             return DescribeCoverageRecord.parseRecords(responseDoc);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
         }
     }
 

@@ -90,8 +90,8 @@ public class TestWCSService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
-
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         //Just going to do a quick test on the response - tests for parsing the actual data are handled
@@ -110,8 +110,8 @@ public class TestWCSService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
-
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         service.describeCoverage(serviceUrl, coverageName);
@@ -124,8 +124,8 @@ public class TestWCSService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
-
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         service.describeCoverage(serviceUrl, coverageName);

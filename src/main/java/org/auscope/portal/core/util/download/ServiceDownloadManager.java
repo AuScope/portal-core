@@ -184,8 +184,7 @@ public class ServiceDownloadManager {
             GetMethod method = new GetMethod(url);
             try {
                 // Our request may fail (due to timeout or otherwise)
-                response.setResponseStream(serviceCaller.getMethodResponseAsStream(
-                        method));
+                response.setResponseStream(serviceCaller.getMethodResponseAsStream(method));
             } catch (Exception ex) {
                 logger.error(ex, ex);
                 response.setException(ex);

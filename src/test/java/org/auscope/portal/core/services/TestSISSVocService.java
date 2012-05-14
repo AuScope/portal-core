@@ -46,8 +46,8 @@ public class TestSISSVocService extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);will(returnValue(mockMethod));
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
-
             oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));will(returnValue(expectedResult));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         Assert.assertSame(expectedResult, service.getConceptByLabel(serviceUrl, repository, label));
@@ -66,6 +66,7 @@ public class TestSISSVocService extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);will(returnValue(mockMethod));
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         service.getConceptByLabel(serviceUrl, repository, label);
@@ -86,6 +87,7 @@ public class TestSISSVocService extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);will(returnValue(mockMethod));
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         Concept[] result = service.getCommodityConcepts(serviceUrl, repository, commodityParent);
@@ -113,6 +115,7 @@ public class TestSISSVocService extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, parent);will(returnValue(mockMethod));
             oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         service.getCommodityConcepts(serviceUrl, repository, parent);

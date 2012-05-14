@@ -96,6 +96,10 @@ public abstract class BaseWFSService {
             return new WFSCountResponse(numNodeValue);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
         }
     }
 

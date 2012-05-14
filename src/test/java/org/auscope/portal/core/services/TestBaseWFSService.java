@@ -4,11 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.BaseWFSService;
-import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
@@ -81,6 +78,7 @@ public class TestBaseWFSService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         WFSCountResponse response = service.getWfsFeatureCount(mockMethod);
@@ -92,6 +90,7 @@ public class TestBaseWFSService extends PortalTestClass {
     public void testGetFeatureCountError() throws Exception {
         context.checking(new Expectations() {{
             oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         service.getWfsFeatureCount(mockMethod);
@@ -103,6 +102,7 @@ public class TestBaseWFSService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
+            oneOf(mockMethod).releaseConnection();
         }});
 
         service.getWfsFeatureCount(mockMethod);

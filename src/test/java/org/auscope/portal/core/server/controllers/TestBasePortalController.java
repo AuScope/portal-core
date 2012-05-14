@@ -2,6 +2,9 @@ package org.auscope.portal.core.server.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +17,7 @@ import org.auscope.portal.core.server.controllers.BasePortalController;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.download.DownloadResponse;
 import org.auscope.portal.core.view.JSONModelAndView;
+import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
@@ -130,7 +134,7 @@ public class TestBasePortalController extends PortalTestClass {
         ZipOutputStream zout = new ZipOutputStream(outputStream);
 
         //Write our data out
-        basePortalController.writeResponseToZip(Arrays.asList(dr1, dr2), zout);
+        basePortalController.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false);
         zout.finish();
         zout.close();
         outputStream.close();
@@ -148,5 +152,70 @@ public class TestBasePortalController extends PortalTestClass {
         zData = new byte[dr2Response.getBytes().length];
         Assert.assertEquals(zData.length, zin.read(zData));
         Assert.assertArrayEquals(dr2Response.getBytes(), zData);
+    }
+
+    /**
+     * Tests piping input->output works as expected
+     * @throws Exception
+     */
+    @Test
+    public void testWriteInputToOutputStream() throws Exception {
+        final InputStream mockInput = context.mock(InputStream.class);
+        final int bufferSize = 134;
+        final OutputStream outputStream = context.mock(OutputStream.class);
+
+        context.checking(new Expectations() {{
+            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+            will(returnValue(bufferSize));
+
+            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+            will(returnValue(12));
+
+            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+            will(returnValue(-1));
+
+            oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+            oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
+        }});
+
+        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+    }
+
+    /**
+     * Tests piping input->output correctly closes input streams (where appropriate)
+     * @throws Exception
+     */
+    @Test(expected=IOException.class)
+    public void testWriteInputToOutputStreamClosing() throws Exception {
+        final InputStream mockInput = context.mock(InputStream.class);
+        final int bufferSize = 134;
+        final OutputStream outputStream = context.mock(OutputStream.class);
+
+        context.checking(new Expectations() {{
+            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+            will(throwException(new IOException()));
+
+            oneOf(mockInput).close();
+        }});
+
+        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
+    }
+
+    /**
+     * Tests piping input->output correctly closes input streams (where appropriate)
+     * @throws Exception
+     */
+    @Test(expected=IOException.class)
+    public void testWriteInputToOutputStreamClosing2() throws Exception {
+        final InputStream mockInput = context.mock(InputStream.class);
+        final int bufferSize = 134;
+        final OutputStream outputStream = context.mock(OutputStream.class);
+
+        context.checking(new Expectations() {{
+            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+            will(throwException(new IOException()));
+        }});
+
+        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
     }
 }
