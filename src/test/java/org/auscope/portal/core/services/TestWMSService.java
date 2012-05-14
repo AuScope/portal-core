@@ -40,7 +40,7 @@ public class TestWMSService extends PortalTestClass {
     public void testParsingWMS111() throws Exception {
         final String serviceUrl = "http://service/wms";
         final InputStream is = this.getClass().getResourceAsStream("/GetCapabilitiesControllerWMSResponse_1_1_1.xml");
-        final String wmsGetCapRequestUrl = new WMSMethodMaker(serviceUrl).getCapabilitiesMethod().getURI().toString();
+        final String wmsGetCapRequestUrl = new WMSMethodMaker().getCapabilitiesMethod(serviceUrl).getURI().toString();
 
         context.checking(new Expectations() {{
             oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, wmsGetCapRequestUrl, null)));will(returnValue(is));
@@ -94,7 +94,7 @@ public class TestWMSService extends PortalTestClass {
     @Test(expected=ConnectException.class)
     public void testRequestFailure() throws Exception {
         final String serviceUrl = "http://service/wms";
-        final String wmsGetCapRequestUrl = new WMSMethodMaker(serviceUrl).getCapabilitiesMethod().getURI().toString();
+        final String wmsGetCapRequestUrl = new WMSMethodMaker().getCapabilitiesMethod(serviceUrl).getURI().toString();
 
         context.checking(new Expectations() {{
             oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, wmsGetCapRequestUrl, null)));will(throwException(new ConnectException()));

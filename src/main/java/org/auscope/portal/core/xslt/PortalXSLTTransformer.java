@@ -15,14 +15,12 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.util.FileIOUtil;
-import org.springframework.stereotype.Component;
 
 /**
  * Class for performing XSLT Transformations
  * @author Josh Vote
  *
  */
-@Component
 public class PortalXSLTTransformer {
     private final Log log = LogFactory.getLog(this.getClass());
 

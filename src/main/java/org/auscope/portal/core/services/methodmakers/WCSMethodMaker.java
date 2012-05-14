@@ -20,8 +20,7 @@ import org.springframework.stereotype.Repository;
  * @author Josh Vote
  *
  */
-@Repository
-public class WCSMethodMaker {
+public class WCSMethodMaker extends AbstractMethodMaker {
 
     private final Log logger = LogFactory.getLog(getClass());
 

@@ -32,7 +32,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass  {
     @Before
     public void init() {
         mockFilter = context.mock(CSWGetDataRecordsFilter.class);
-        methodMaker = new CSWMethodMakerGetDataRecords(uri);
+        methodMaker = new CSWMethodMakerGetDataRecords();
     }
 
     /**
@@ -47,7 +47,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass  {
             oneOf(mockFilter).getFilterStringAllRecords();will(returnValue(filterStr));
         }});
 
-        HttpMethodBase method = methodMaker.makeMethod(mockFilter, ResultType.Results, maxRecords);
+        HttpMethodBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
         Assert.assertNotNull(method);
         Assert.assertTrue(method instanceof PostMethod); //we want this to be sent via post in case we get a large filter
 
@@ -73,7 +73,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass  {
 
         }});
 
-        HttpMethodBase method = methodMaker.makeMethod(null, ResultType.Hits, maxRecords);
+        HttpMethodBase method = methodMaker.makeMethod(uri, null, ResultType.Hits, maxRecords);
         Assert.assertNotNull(method);
         Assert.assertTrue(method instanceof PostMethod); //we want this to be sent via post in case we get a large filter
 

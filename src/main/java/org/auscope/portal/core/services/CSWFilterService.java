@@ -68,8 +68,8 @@ public class CSWFilterService {
      */
     private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws Exception {
         log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
-        CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords(serviceItem.getServiceUrl());
-        HttpMethodBase method = methodMaker.makeMethod(filter, resultType, maxRecords, startIndex);
+        CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
+        HttpMethodBase method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex);
 
         InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
         Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
@@ -96,8 +96,8 @@ public class CSWFilterService {
         for (CSWServiceItem serviceItem : cswServiceList) {
             try {
                 log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
-                CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords(serviceItem.getServiceUrl());
-                requestMethods.add(methodMaker.makeMethod(filter, resultType, maxRecords, startIndex));
+                CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
+                requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex));
                 additionalInfo.add(serviceItem);
             } catch (UnsupportedEncodingException ex) {
                 log.warn(String.format("Error generating HTTP method for serviceItem '%1$s'",serviceItem), ex);

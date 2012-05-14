@@ -20,7 +20,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author JoshVote
  *
  */
-public class OPeNDAPGetDataMethodMaker {
+public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
     public enum OPeNDAPFormat {
         ASCII,
         DODS

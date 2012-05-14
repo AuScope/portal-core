@@ -12,7 +12,6 @@ import org.springframework.ui.ModelMap;
  * @author Josh Vote
  *
  */
-@Repository
 public class ViewKnownLayerFactory {
 
     public ModelMap toView(KnownLayer k) {

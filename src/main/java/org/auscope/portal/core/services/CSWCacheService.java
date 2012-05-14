@@ -368,7 +368,8 @@ public class CSWCacheService {
         @Override
         public void run() {
             try {
-                CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords(this.endpoint.getServiceUrl());
+                String cswServiceUrl = this.endpoint.getServiceUrl();
+                CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
                 int startPosition = 1;
 
                 //Request page after page of CSWRecords until we've iterated the entire store
@@ -376,7 +377,7 @@ public class CSWCacheService {
                     log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
 
                     //Request our set of records
-                    HttpMethodBase method = methodMaker.makeMethod(null, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
+                    HttpMethodBase method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
                     InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
 
                     log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));

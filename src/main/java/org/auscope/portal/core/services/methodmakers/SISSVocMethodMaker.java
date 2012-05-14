@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
  * @author Josh Vote
  *
  */
-@Repository
 public class SISSVocMethodMaker extends AbstractMethodMaker {
 
     /**

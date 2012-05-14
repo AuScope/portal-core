@@ -16,8 +16,7 @@ import org.springframework.stereotype.Repository;
  *
  * @author Josh Vote
  */
-@Repository
-public class WFSGetFeatureMethodMaker {
+public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     public static final String WFS_VERSION = "1.1.0";
 
     /**

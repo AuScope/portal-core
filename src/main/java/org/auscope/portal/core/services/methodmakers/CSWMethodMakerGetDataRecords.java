@@ -10,11 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 
 /**
- * User: Mathew Wyatt
- * Date: 02/07/2009
- * @version $Id$
+ * Class for generating methods for interacting with a Coverage Service for the Web (CS/W)
  */
-public class CSWMethodMakerGetDataRecords {
+public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
 
     /**
      * The different types of ways CSW records can be requested
@@ -31,24 +29,14 @@ public class CSWMethodMakerGetDataRecords {
     }
 
     private final Log log = LogFactory.getLog(getClass());
-    private String serviceUrl;
-
-    public CSWMethodMakerGetDataRecords(String serviceUrl) {
-        //pretty hard to do a GetFeature query without a serviceURL, so we had better check that we have one
-        if (serviceUrl == null || serviceUrl.isEmpty()) {
-            throw new IllegalArgumentException("serviceUrl parameter can not be null or empty.");
-        }
-
-        this.serviceUrl = serviceUrl;
-    }
 
     /**
      * Generates a method that performs a CSW GetRecords request for a maximum of 1000 records
      * @return
      * @throws Exception
      */
-    public HttpMethodBase makeMethod() throws Exception {
-        return this.makeMethod(null, ResultType.Results, 1000, 1);
+    public HttpMethodBase makeMethod(String serviceUrl) throws Exception {
+        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1);
     }
 
     /**
@@ -59,8 +47,8 @@ public class CSWMethodMakerGetDataRecords {
      * @return
      * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
      */
-    public HttpMethodBase makeMethod(CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords) throws UnsupportedEncodingException {
-        return this.makeMethod(filter, resultType, maxRecords, 1);
+    public HttpMethodBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords) throws UnsupportedEncodingException {
+        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1);
     }
 
     /**
@@ -71,7 +59,7 @@ public class CSWMethodMakerGetDataRecords {
      * @return
      * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
      */
-    public HttpMethodBase makeMethod(CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords, int startPosition) throws UnsupportedEncodingException {
+    public HttpMethodBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords, int startPosition) throws UnsupportedEncodingException {
         PostMethod httpMethod = new PostMethod(serviceUrl);
 
         String filterString = null;

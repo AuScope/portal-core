@@ -14,10 +14,9 @@ import org.springframework.ui.ModelMap;
 
 /**
  * A factory class for generating serializable CSWRecord objects that can be used to communicate with the view.
- * @author vot002
+ * @author Josh Vote
  *
  */
-@Repository
 public class ViewCSWRecordFactory {
 
     /**

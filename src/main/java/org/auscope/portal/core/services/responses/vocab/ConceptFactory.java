@@ -22,7 +22,6 @@ import org.w3c.dom.NodeList;
  * @author Josh Vote
  *
  */
-@Component
 public class ConceptFactory {
 
     private final Log log = LogFactory.getLog(getClass());
