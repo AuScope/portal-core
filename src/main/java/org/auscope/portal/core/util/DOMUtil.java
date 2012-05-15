@@ -41,9 +41,19 @@ public class DOMUtil {
      * @return
      */
     public static Document buildDomFromString(String xmlString) throws ParserConfigurationException, IOException, SAXException {
+        return buildDomFromString(xmlString, true);
+    }
+
+    /**
+     * Given a String containing XML, parse it and return a DOM object representation
+     * @param xmlString A string containing valid XML
+     * @param isNamespaceAware Will this DOM document take into account namespaces?
+     * @return
+     */
+    public static Document buildDomFromString(String xmlString, boolean isNamespaceAware) throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true); // never forget this!
+        factory.setNamespaceAware(isNamespaceAware); // never forget this!
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputSource inputSource = new InputSource(new StringReader(xmlString.toString()));
         Document doc = builder.parse(inputSource);
@@ -57,9 +67,18 @@ public class DOMUtil {
      * @return
      */
     public static Document buildDomFromStream(InputStream stream) throws ParserConfigurationException, IOException, SAXException {
+        return buildDomFromStream(stream, true);
+    }
+
+    /**
+     * Given a Stream containing XML, parse it and return a DOM object representation (that is namespace aware).
+     * @param xmlString A string containing valid XML
+     * @return
+     */
+    public static Document buildDomFromStream(InputStream stream, boolean isNamespaceAware) throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true); // never forget this!
+        factory.setNamespaceAware(isNamespaceAware); // never forget this!
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(stream);
 

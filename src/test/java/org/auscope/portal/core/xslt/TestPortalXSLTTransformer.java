@@ -1,7 +1,5 @@
 package org.auscope.portal.core.xslt;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Properties;
 
@@ -12,7 +10,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.xslt.PortalXSLTTransformer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +28,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
 
     @Before
     public void setUp() throws Exception {
-        transformer = new PortalXSLTTransformer("/org/auscope/portal/server/responses/wfs/wfsToKml.xsl");
+        transformer = new PortalXSLTTransformer("/org/auscope/portal/core/xslt/wfsToKml.xsl");
     }
 
     /**
