@@ -183,9 +183,8 @@
                 <configuration>
                     <excludes>
                         <!-- Exclude some base frameworks -->
-                        <exclude>js/OpenLayers-*/**</exclude>
-                        <exclude>js/ext-*/**</exclude>
-                        <exclude>js/extjs-*/**</exclude>
+                        <exclude>portal-core/js/ext*/**</exclude>
+                        <exclude>portal-core/js/OpenLayers*/**</exclude>
                     </excludes>
                     <nosuffix>true</nosuffix>
                 </configuration>
