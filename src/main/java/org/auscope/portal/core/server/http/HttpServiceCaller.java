@@ -29,7 +29,7 @@ public class HttpServiceCaller {
 
     private HttpConnectionManagerParams clientParams;
 
-    public void setClientParams(HttpConnectionManagerParams clientParams) {
+    public HttpServiceCaller(HttpConnectionManagerParams clientParams) {
         this.clientParams = clientParams;
     }
 

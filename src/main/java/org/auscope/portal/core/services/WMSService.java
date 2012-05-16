@@ -25,7 +25,7 @@ public class WMSService {
 
 
     // ----------------------------------------------------------- Constructors
-    public WMSService(HttpServiceCaller serviceCaller, WMSMethodMaker methodMaker) throws Exception {
+    public WMSService(HttpServiceCaller serviceCaller, WMSMethodMaker methodMaker) {
         this.serviceCaller = serviceCaller;
         this.methodMaker = methodMaker;
     }
