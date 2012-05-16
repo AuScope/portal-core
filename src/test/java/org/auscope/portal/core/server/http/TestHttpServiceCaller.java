@@ -40,9 +40,8 @@ public class TestHttpServiceCaller extends PortalTestClass {
     public void setUp() {
         mockHttpClient = context.mock(HttpClient.class);
         mockParams = context.mock(HttpConnectionManagerParams.class);
-        httpServiceCaller = new HttpServiceCaller();
+        httpServiceCaller = new HttpServiceCaller(mockParams);
         methodMaker = new WFSGetFeatureMethodMaker();
-        httpServiceCaller.setClientParams(mockParams);
     }
 
     /**
