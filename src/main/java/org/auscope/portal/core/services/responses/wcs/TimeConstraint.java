@@ -74,4 +74,34 @@ public class TimeConstraint {
 
         return new TimeConstraint(timeString);
     }
+
+    /**
+     * Tests equality based on time constraint string values
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof TimeConstraint) {
+            return this.constraint.equals(((TimeConstraint) o).constraint);
+        } else {
+            return this.constraint.equals(o);
+        }
+    }
+
+    /**
+     * Generates a hashcode from the internal constraint value
+     */
+    @Override
+    public int hashCode() {
+        return this.constraint.hashCode();
+    }
+
+    /**
+     * Prints the contents of this TimeConstraint
+     */
+    @Override
+    public String toString() {
+        return "TimeConstraint [constraint=" + constraint + "]";
+    }
+
+
 }

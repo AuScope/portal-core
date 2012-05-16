@@ -47,5 +47,35 @@ public class Resolution {
         this.y = y;
     }
 
+    /**
+     * Prints the contents of this object
+     */
+    @Override
+    public String toString() {
+        return "Resolution [x=" + x + ", y=" + y + "]";
+    }
+
+    /**
+     * Tests equality based on the x/y values of this resolution (can only
+     * test against other Resolution objects).
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Resolution) {
+            Resolution r = (Resolution) o;
+
+            return this.x == r.x && this.y == r.y;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Creates a hashcode based on X/Y values
+     */
+    @Override
+    public int hashCode() {
+        return new Double(x).hashCode() ^ new Double(y).hashCode();
+    }
 
 }

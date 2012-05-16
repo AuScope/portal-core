@@ -1,4 +1,4 @@
-package org.auscope.portal.core.test;
+package org.auscope.portal.core.test.jmock;
 
 import java.util.Arrays;
 

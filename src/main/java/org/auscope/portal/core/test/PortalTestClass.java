@@ -6,13 +6,19 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.auscope.portal.core.test.HttpMethodBaseMatcher.HttpMethodType;
+import org.auscope.portal.core.test.jmock.DelayedReturnValueAction;
+import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher;
+import org.auscope.portal.core.test.jmock.MapMatcher;
+import org.auscope.portal.core.test.jmock.PropertiesMatcher;
+import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher.HttpMethodType;
 import org.jmock.Mockery;
 import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
@@ -123,6 +129,33 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
     }
 
     /**
+     * A JMock Matcher for testing a Map has every specified value
+     * @param map The values to test for
+     * @return
+     */
+    protected <K,V> MapMatcher<K,V> aMap(Map<K,V> map) {
+        return new MapMatcher<K,V>(map);
+    }
+
+    /**
+     * A JMock Matcher for testing a Map has every specified value
+     * @param keys The Keys to match for (must correspond 1:1 with values
+     * @param values The Values to match for (must correspond 1:1 with keys
+     * @return
+     */
+    protected <K,V> MapMatcher<K,V> aMap(K[] keys, V[] values) {
+        if (keys.length != values.length) {
+            throw new IllegalArgumentException();
+        }
+
+        Map<K,V> map = new HashMap<K,V>();
+        for (int i = 0; i < keys.length; i++) {
+            map.put(keys[i], values[i]);
+        }
+        return aMap(map);
+    }
+
+    /**
      * Starts an inbuilt timer - to get the elapsed time call endTimer(). Subsequent calls to this function
      * will reset the timer
      */
@@ -167,5 +200,31 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
         }
 
         return contents.toString();
+    }
+
+    /**
+     * Tests equality of two objects based on their 'equals' comparison AND a comparison
+     * between their hashcodes. True is only returned IFF both parameters are null or have matching
+     * equals + hashCode results.
+     *
+     * Quote from equals Javadoc:
+     * Note that it is generally necessary to override the hashCode method whenever
+     * this method is overridden, so as to maintain the general contract for the hashCode
+     * method, which states that equal objects must have equal hash codes.
+     *
+     * @see http://docs.oracle.com/javase/1.5.0/docs/api/java/lang/Object.html#equals%28java.lang.Object%29
+     * @param o1 The first object to compare
+     * @param o2 The second object to compare
+     */
+    protected boolean equalsWithHashcode(Object o1, Object o2) {
+        if (o1 == null || o2 == null) {
+            return o1 == o2;
+        }
+
+        if (!o1.equals(o2)) {
+            return false;
+        }
+
+        return o1.hashCode() == o2.hashCode();
     }
 }
