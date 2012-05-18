@@ -9,6 +9,8 @@ Ext.define('portal.layer.querier.wfs.WFSQuerier', {
     /**
      * {
      *  featureSource : [Optional] An portal.layer.querier.wfs.FeatureSource implementation. If omitted WFSFeatureSource will be used
+     *  parser : portal.layer.querier.wfs.Parser instances to parse features in GUI elements
+     *  knownLayerParser : portal.layer.querier.wfs.KnownLayerParser to parse features in GUI elements
      * }
      */
     constructor: function(config){
@@ -19,8 +21,8 @@ Ext.define('portal.layer.querier.wfs.WFSQuerier', {
             this.featureSource = Ext.create('portal.layer.querier.wfs.featuresources.WFSFeatureSource', {});
         }
 
-        this.parser = Ext.create('portal.layer.querier.wfs.Parser', {});
-        this.knownLayerParser = Ext.create('portal.layer.querier.wfs.KnownLayerParser', {});
+        this.parser = config.parser ? config.parser : Ext.create('portal.layer.querier.wfs.Parser', {});
+        this.knownLayerParser = config.knownLayerParser ? config.knownLayerParser : Ext.create('portal.layer.querier.wfs.KnownLayerParser', {});
 
         // Call our superclass constructor to complete construction process.
         this.callParent(arguments);

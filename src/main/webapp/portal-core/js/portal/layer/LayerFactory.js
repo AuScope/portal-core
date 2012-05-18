@@ -7,7 +7,10 @@
 Ext.define('portal.layer.LayerFactory', {
 
     map : null,
-    formFactory : null,
+    formFactory : null, //an implementation of portal.layer.filterer.FormFactory
+    downloaderFactory : null, //an implementation of portal.layer.downloader.DownloaderFactory
+    querierFactory : null, //an implementation of portal.layer.querier.QuerierFactory
+    rendererFactory : null, //an implementation of portal.layer.renderer.RendererFactory
 
     /**
      * Creates a new instance of this factory.
@@ -15,11 +18,18 @@ Ext.define('portal.layer.LayerFactory', {
      * @param cfg an object in the form
      * {
      *  map : an instance of portal.util.gmap.GMapWrapper
+     *  formFactory : an implementation of portal.layer.filterer.FormFactory
+     *  downloaderFactory : an implementation of portal.layer.downloader.DownloaderFactory
+     *  querierFactory : an implementation of portal.layer.querier.QuerierFactory
+     *  rendererFactory : an implementation of portal.layer.renderer.RendererFactory
      * }
      */
     constructor : function(cfg) {
-        this.map = cfg.map; //use globally accessable map object
-        this.formFactory = Ext.create('portal.layer.filterer.FormFactory', {map : cfg.map});
+        this.map = cfg.map;
+        this.formFactory = cfg.formFactory;
+        this.downloaderFactory = cfg.downloaderFactory;
+        this.querierFactory = cfg.querierFactory;
+        this.rendererFactory = cfg.rendererFactory;
 
         this.callParent(arguments);
     },
@@ -82,91 +92,9 @@ Ext.define('portal.layer.LayerFactory', {
         return newLayer;
     },
 
-    /**
-     * Creates a new instance of renderer based on the specified values
-     */
-    _generateRenderer : function(wfsResources, wmsResources, proxyUrl, proxyCountUrl, iconUrl, iconSize, iconAnchor) {
-        var icon = Ext.create('portal.map.Icon', {
-            url : iconUrl,
-            width : iconSize ? iconSize.width : 16,
-            height : iconSize ? iconSize.height : 16,
-            anchorOffsetX : iconAnchor ? iconAnchor.x : 0,
-            anchorOffsetY : iconAnchor ? iconAnchor.y : 0
-        });
 
-        if (wmsResources.length > 0) {
-            return Ext.create('portal.layer.renderer.wms.LayerRenderer', {map : this.map});
-        } else if (wfsResources.length > 0) {
-            return Ext.create('portal.layer.renderer.wfs.FeatureRenderer', {
-                map : this.map,
-                icon : icon,
-                proxyUrl : proxyUrl ? proxyUrl : 'getAllFeatures.do',
-                proxyCountUrl : proxyCountUrl
-            });
-        }else{
-            return Ext.create('portal.layer.renderer.csw.CSWRenderer', {
-                map : this.map,
-                icon : icon
-            });
-        }
-    },
 
-    /**
-     * Creates a new instance of a Querier based on the specified values
-     *
-     * knownLayer can be null
-     */
-    _generateQuerier : function(knownLayer, wfsResources, wmsResources, wcsResources) {
-        var cfg = {map : this.map};
 
-        //Geodesy features don't allow gml:Id lookups </rant>
-        //To workaround this we have a custom feature source that looks up via the gps site id.
-        if (knownLayer && knownLayer.get('id') === 'geodesy:gnssstation') {
-            cfg.featureSource = Ext.create('portal.layer.querier.wfs.featuresources.WFSFeatureByPropertySource', {
-                property : 'GPSSITEID'
-            });
-        }
-
-        if (wfsResources.length > 0) {
-            return Ext.create('portal.layer.querier.wfs.WFSQuerier', cfg);
-        } else if (wcsResources.length > 0) {
-            return Ext.create('portal.layer.querier.coverage.WCSQuerier',cfg);
-        } else if (wmsResources.length > 0) {
-            //WMS may mean Geotransects
-            for (var i = 0; i < wmsResources.length; i++) {
-                if (wmsResources[i].get('name') === 'gt:AuScope_Land_Seismic_gda94') {
-                    return Ext.create('portal.layer.querier.wms.GeotransectQuerier', cfg);
-                }
-            }
-
-            //Or just the plain old WMS querier
-            return Ext.create('portal.layer.querier.wms.WMSQuerier', cfg);
-        } else {
-            //Worst case scenario, we render the source CSW record
-            return Ext.create('portal.layer.querier.csw.CSWQuerier', cfg);
-        }
-    },
-
-    _generateFilterer : function() {
-        return Ext.create('portal.layer.filterer.Filterer', {});
-    },
-
-    _generateDownloader : function(wfsResources, wmsResources, wcsResources) {
-        if (wfsResources.length > 0) {
-            return Ext.create('portal.layer.downloader.wfs.WFSDownloader', {map : this.map});
-        }
-
-        if (wcsResources.length > 0) {
-            return Ext.create('portal.layer.downloader.coverage.WCSDownloader', {map : this.map});
-        }
-
-        if (wmsResources.length > 0) {
-            return Ext.create('portal.layer.downloader.wms.WMSDownloader', {map : this.map});
-        }
-
-        //Not having a downloader isn't a problem.
-        return null;
-    },
 
     /**
      * Generates a new instance of portal.layer.Layer from an existing KnownLayer object. Appropriate
@@ -180,19 +108,12 @@ Ext.define('portal.layer.LayerFactory', {
         var description = knownLayer.get('description');
         var name = knownLayer.get('name');
         var cswRecords = knownLayer.get('cswRecords');
-        var allOnlineResources = knownLayer.getAllOnlineResources();
-
-        //We need to know what resources this known layer has available
-        var wmsResources = portal.csw.OnlineResource.getFilteredFromArray(allOnlineResources, portal.csw.OnlineResource.WMS);
-        var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(allOnlineResources, portal.csw.OnlineResource.WFS);
-        var wcsResources = portal.csw.OnlineResource.getFilteredFromArray(allOnlineResources, portal.csw.OnlineResource.WCS);
 
         //Create our objects for interacting with this layer
-        var renderer = this._generateRenderer(wfsResources, wmsResources,knownLayer.get('proxyUrl'), knownLayer.get('proxyCountUrl'),
-                                              knownLayer.get('iconUrl'), knownLayer.get('iconSize'), knownLayer.get('iconAnchor'));
-        var querier = this._generateQuerier(knownLayer, wfsResources, wmsResources,wcsResources);
-        var filterer = this._generateFilterer();
-        var downloader = this._generateDownloader(wfsResources, wmsResources, wcsResources);
+        var renderer = this.rendererFactory.buildFromKnownLayer(knownLayer);
+        var querier = this.querierFactory.buildFromKnownLayer(knownLayer);
+        var filterer = Ext.create('portal.layer.filterer.Filterer', {});
+        var downloader = this.downloaderFactory.buildFromKnownLayer(knownLayer);
 
         return this.generateLayer(id, source, name, description, renderer, filterer, downloader, querier, cswRecords);
     },
@@ -204,23 +125,17 @@ Ext.define('portal.layer.LayerFactory', {
      * @param cswRecord an instance of portal.csw.CSWRecord
      */
     generateLayerFromCSWRecord : function(cswRecord) {
-        var id = cswRecord.data.id;
+        var id = cswRecord.get('id');
         var source = cswRecord;
-        var description = cswRecord.data.description;
-        var name = cswRecord.data.name;
+        var description = cswRecord.get('description');
+        var name = cswRecord.get('name');
         var cswRecords = cswRecord;
-        var allOnlineResources = cswRecord.data.onlineResources;
-
-        //We need to know what resources this known layer has available
-        var wmsResources = portal.csw.OnlineResource.getFilteredFromArray(allOnlineResources, portal.csw.OnlineResource.WMS);
-        var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(allOnlineResources, portal.csw.OnlineResource.WFS);
-        var wcsResources = portal.csw.OnlineResource.getFilteredFromArray(allOnlineResources, portal.csw.OnlineResource.WCS);
 
         //Create our objects for interacting with this layer
-        var renderer = this._generateRenderer(wfsResources, wmsResources, undefined, undefined, undefined, undefined, undefined);
-        var querier = this._generateQuerier(null, wfsResources, wmsResources,wcsResources);
-        var filterer = this._generateFilterer();
-        var downloader = this._generateDownloader(wfsResources, wmsResources, wcsResources);
+        var renderer = this.rendererFactory.buildFromCswRecord(cswRecord);
+        var querier = this.querierFactory.buildFromCswRecord(cswRecord);
+        var filterer = Ext.create('portal.layer.filterer.Filterer', {});
+        var downloader = this.downloaderFactory.buildFromCswRecord(cswRecord);
 
         return this.generateLayer(id, source, name, description, renderer, filterer, downloader, querier, cswRecords);
     }

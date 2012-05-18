@@ -11,20 +11,23 @@ Ext.define('portal.layer.querier.wfs.KnownLayerParser', {
     extend: 'Ext.util.Observable',
 
     /**
-     * Accepts all Ext.util.Observable configuration options with the following additions
-     * {
+     * Builds a new KnownLayerParser from a list of factories. Factories in factoryList will be tested before
+     * the items in factoryNames
      *
+     * {
+     *  factoryNames : String[] - an array of class names which will be instantiated as portal.layer.querier.wfs.factories.BaseFactory objects
+     *  factoryList : portal.layer.querier.wfs.factories.BaseFactory[] - an array of already instantiated factory objects
      * }
      */
     constructor : function(config) {
-        //Setup class variables
-        this.factoryList = [];
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.knownlayerfactories.NVCLFactory', config));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.knownlayerfactories.PressureDBFactory', config));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.knownlayerfactories.GeodesyFactory', config));
-
-        this.listeners = config.listeners;
-
+        //The following ordering is important as it dictates the order in which to try
+        //factories for parsing a particular node
+        this.factoryList = Ext.isArray(config.factoryList) ? config.factoryList : [];
+        if (Ext.isArray(config.factoryNames)) {
+            for (var i = 0; i < config.factoryNames.length; i++) {
+                this.factoryList.push(Ext.create(config.factoryNames[i], config));
+            }
+        }
         // Call our superclass constructor to complete construction process.
         this.callParent(arguments);
     },

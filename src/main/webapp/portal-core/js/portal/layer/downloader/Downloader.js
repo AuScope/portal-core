@@ -8,7 +8,7 @@ Ext.define('portal.layer.downloader.Downloader', {
 
     requires : ['portal.util.UnimplementedFunction'],
 
-    map : null, //instance of portal.util.gmap.GMapWrapper
+    map : null, //instance of portal.map.BaseMap
 
     constructor: function(config){
         this.map = config.map;

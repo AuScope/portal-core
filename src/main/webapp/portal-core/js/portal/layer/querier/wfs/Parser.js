@@ -5,25 +5,28 @@
 Ext.define('portal.layer.querier.wfs.Parser', {
     extend: 'Ext.util.Observable',
 
+    /**
+     * Builds a new Parser from a list of factories. Factories in factoryList will be tested before
+     * the items in factoryNames
+     *
+     * {
+     *  factoryNames : String[] - an array of class names which will be instantiated as portal.layer.querier.wfs.factories.BaseFactory objects
+     *  factoryList : portal.layer.querier.wfs.factories.BaseFactory[] - an array of already instantiated factory objects
+     * }
+     */
     constructor : function(config) {
         //The following ordering is important as it dictates the order in which to try
         //factories for parsing a particular node
-        var cfg = {
-            parser : this
-        };
-        this.factoryList = [];
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.GeologicUnitFactory', cfg));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.LocatedSpecimenFactory', cfg));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.SamplingFeatureCollectionFactory', cfg));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.BoreholeFactory', cfg));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.MappedFeatureFactory', cfg));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.MiningFeatureOccurrenceFactory', cfg));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.GeophysicsAnomaliesFactory', cfg));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.GnssStationFactory', cfg));
-        this.factoryList.push(Ext.create('portal.layer.querier.wfs.factories.SimpleFactory', cfg));//The simple factory should always go last
+        this.factoryList = Ext.isArray(config.factoryList) ? config.factoryList : [];
+        if (Ext.isArray(config.factoryNames)) {
+            var cfg = {
+                parser : this
+            };
 
-        this.listeners = config.listeners;
-
+            for (var i = 0; i < config.factoryNames.length; i++) {
+                this.factoryList.push(Ext.create(config.factoryNames[i], cfg));
+            }
+        }
         // Call our superclass constructor to complete construction process.
         this.callParent(arguments);
     },
