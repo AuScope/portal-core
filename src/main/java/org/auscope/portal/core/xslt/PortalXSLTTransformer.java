@@ -9,6 +9,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -52,6 +53,9 @@ public class PortalXSLTTransformer {
         // However, we prefer Saxon...
         TransformerFactory tFactory = new net.sf.saxon.TransformerFactoryImpl();
         log.debug("XSLT implementation in use: " + tFactory.getClass());
+
+        //Ensure we resolve resources locally
+        tFactory.setURIResolver(new ResourceURIResolver(getClass()));
 
         // Use the TransformerFactory to instantiate updateCSWRecords
         // transformer that will
