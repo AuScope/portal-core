@@ -6,6 +6,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
     @Test
     public void testParseWMSDocument() throws Exception {
         //Build our record
-        InputStream xmlStream = this.getClass().getResourceAsStream("/wmsGetCapabilities.xml");
+        InputStream xmlStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wms/wmsGetCapabilities.xml");
         GetCapabilitiesRecord rec = new GetCapabilitiesRecord(xmlStream);
 
         //Test the overall data

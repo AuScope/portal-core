@@ -11,7 +11,7 @@ import org.auscope.portal.core.services.responses.vocab.Concept;
 import org.auscope.portal.core.services.responses.vocab.ConceptFactory;
 import org.auscope.portal.core.services.responses.vocab.NamedIndividual;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.Util;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -105,7 +105,7 @@ public class TestConceptFactory extends PortalTestClass {
         Concept[] expectation = new Concept[] {concept1, concept4};
 
         //Build our actual list
-        String responseXml = Util.loadXML("src/test/resources/SISSVocResponse.xml");
+        String responseXml = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
         Document responseDoc = DOMUtil.buildDomFromString(responseXml);
         Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc, XPathConstants.NODE);
         ConceptFactory cf = new ConceptFactory();
@@ -122,7 +122,7 @@ public class TestConceptFactory extends PortalTestClass {
      */
     @Test
     public void testGetConcepts() throws Exception {
-        String responseXml = Util.loadXML("src/test/resources/vocabularyServiceResponse.xml");
+        String responseXml = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/vocabularyServiceResponse.xml");
         Document responseDoc = DOMUtil.buildDomFromString(responseXml);
         Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc, XPathConstants.NODE);
 

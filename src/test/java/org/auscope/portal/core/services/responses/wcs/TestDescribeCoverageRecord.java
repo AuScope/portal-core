@@ -13,6 +13,7 @@ import org.auscope.portal.core.services.responses.wcs.SpatialDomain;
 import org.auscope.portal.core.services.responses.wcs.TemporalDomain;
 import org.auscope.portal.core.services.responses.wcs.ValueEnumType;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
 
     @Test
     public void parseTest1() throws Exception {
-        final String xmlString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/DescribeCoverageResponse1.xml");
+        final String xmlString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml");
         final Document doc = DOMUtil.buildDomFromString(xmlString);
 
         //Check the parsed response contains everything we want
@@ -109,7 +110,7 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
 
     @Test
     public void parseTest2() throws Exception {
-        final String xmlString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/DescribeCoverageResponse2.xml");
+        final String xmlString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse2.xml");
         final Document doc = DOMUtil.buildDomFromString(xmlString);
 
         //Check the parsed response contains everything we want

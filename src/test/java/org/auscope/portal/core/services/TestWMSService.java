@@ -13,6 +13,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,7 +46,7 @@ public class TestWMSService extends PortalTestClass {
     @Test
     public void testParsingWMS111() throws Exception {
         final String serviceUrl = "http://service/wms";
-        final InputStream is = this.getClass().getResourceAsStream("/GetCapabilitiesControllerWMSResponse_1_1_1.xml");
+        final InputStream is = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wms/GetCapabilitiesControllerWMSResponse_1_1_1.xml");
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);will(returnValue(mockMethod));
@@ -133,7 +134,7 @@ public class TestWMSService extends PortalTestClass {
         final int pointY = 10;
         final String styles = "styles";
 
-        final String response = org.auscope.portal.core.test.Util.loadXML("src/test/resources/EmptyWFSResponse.xml");
+        final String response = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles);
@@ -193,7 +194,7 @@ public class TestWMSService extends PortalTestClass {
         final int pointY = 10;
         final String styles = "styles";
 
-        final String response = org.auscope.portal.core.test.Util.loadXML("src/test/resources/OWSExceptionSample1.xml");
+        final String response = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles);

@@ -11,6 +11,7 @@ import org.auscope.portal.core.services.methodmakers.SISSVocMethodMaker;
 import org.auscope.portal.core.services.responses.vocab.Concept;
 import org.auscope.portal.core.services.responses.vocab.ConceptFactory;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,7 +41,7 @@ public class TestSISSVocService extends PortalTestClass {
         final String repository = "repository";
         final String label = "label";
 
-        final InputStream responseStream = getClass().getResourceAsStream("/SISSVocResponse.xml");
+        final InputStream responseStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
         final Concept[] expectedResult = new Concept[] {context.mock(Concept.class)};
 
         context.checking(new Expectations() {{
@@ -82,7 +83,7 @@ public class TestSISSVocService extends PortalTestClass {
         final String repository = "repository";
         final String commodityParent = "parent";
 
-        final InputStream responseStream = getClass().getResourceAsStream("/sparqlCommoditiesResponse.xml");
+        final InputStream responseStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml");
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);will(returnValue(mockMethod));

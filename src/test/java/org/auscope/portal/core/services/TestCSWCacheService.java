@@ -16,6 +16,7 @@ import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.BasicThreadExecutor;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher.HttpMethodType;
 import org.jmock.Expectations;
 import org.jmock.Sequence;
@@ -69,8 +70,8 @@ public class TestCSWCacheService extends PortalTestClass {
      */
     @Test
     public void testMultiUpdate() throws Exception {
-        final String moreRecordsString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse.xml");
-        final String noMoreRecordsString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse_NoMoreRecords.xml");
+        final String moreRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final String noMoreRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
         final ByteArrayInputStream t1r1 = new ByteArrayInputStream(moreRecordsString.getBytes());
         final ByteArrayInputStream t1r2 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
         final ByteArrayInputStream t2r1 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
@@ -133,8 +134,8 @@ public class TestCSWCacheService extends PortalTestClass {
      */
     @Test
     public void testMultiUpdateWithErrors() throws Exception {
-        final String moreRecordsString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse.xml");
-        final String noMoreRecordsString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse_NoMoreRecords.xml");
+        final String moreRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final String noMoreRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
         final ByteArrayInputStream t1r1 = new ByteArrayInputStream(moreRecordsString.getBytes());
         final ByteArrayInputStream t1r2 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
         final ByteArrayInputStream t3r1 = new ByteArrayInputStream(moreRecordsString.getBytes());
@@ -234,7 +235,7 @@ public class TestCSWCacheService extends PortalTestClass {
     @Test
     public void testSingleUpdate() throws Exception {
         final long delay = 1000;
-        final String cswResponse = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse_NoMoreRecords.xml");
+        final String cswResponse = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
 
 
         context.checking(new Expectations() {{
@@ -264,7 +265,7 @@ public class TestCSWCacheService extends PortalTestClass {
      */
     @Test
     public void testRecordMerging() throws Exception {
-        final String mergeRecordsString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse_MergeRecords.xml");
+        final String mergeRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MergeRecords.xml");
         final ByteArrayInputStream t1r1 = new ByteArrayInputStream(mergeRecordsString.getBytes());
 
         context.checking(new Expectations() {{
@@ -323,7 +324,7 @@ public class TestCSWCacheService extends PortalTestClass {
      */
     @Test
     public void testKeywordCache() throws Exception {
-        final String noMoreRecordsString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse_NoMoreRecords.xml");
+        final String noMoreRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
         final ByteArrayInputStream t1r1 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
 
         final Map<String, Integer> expectedResult = new HashMap<String, Integer>();

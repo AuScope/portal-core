@@ -9,6 +9,8 @@ import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
+import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,13 +32,9 @@ public class TestCSWGetRecordResponse extends PortalTestClass  {
      */
     @Before
     public void setUp() throws Exception {
-
         // load CSW record response document
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        Document doc =
-            builder.parse("src/test/resources/cswRecordResponse.xml" );
+        Document doc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml"));
+
         this.origin = new CSWServiceItem("id", "http://test.com", "http://test.com?uuid=%1$s", "title");
 
         this.recordResponse = new CSWGetRecordResponse(this.origin, doc);

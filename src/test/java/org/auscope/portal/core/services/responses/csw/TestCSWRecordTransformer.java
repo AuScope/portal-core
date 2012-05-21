@@ -26,6 +26,7 @@ import org.auscope.portal.core.services.responses.csw.CSWRecordTransformer;
 import org.auscope.portal.core.services.responses.csw.CSWResponsibleParty;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -54,10 +55,7 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         exprGetFirstMetadataNode = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]", nc);
 
         // load CSW record response document
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        doc = builder.parse("src/test/resources/cswRecordResponse.xml" );
+        doc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml"));
 
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());

@@ -10,7 +10,7 @@ import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.services.responses.vocab.Description;
 import org.auscope.portal.core.services.responses.vocab.DescriptionFactory;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.Util;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -86,7 +86,7 @@ public class TestDescriptionFactory extends PortalTestClass {
         Description[] expectation = new Description[] {concept1, concept4};
 
         //Build our actual list
-        String responseXml = Util.loadXML("src/test/resources/SISSVocResponse.xml");
+        String responseXml = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
         Document responseDoc = DOMUtil.buildDomFromString(responseXml);
         Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc, XPathConstants.NODE);
         DescriptionFactory df = new DescriptionFactory();

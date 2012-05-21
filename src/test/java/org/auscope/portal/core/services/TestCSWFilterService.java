@@ -11,6 +11,7 @@ import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecord
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.test.BasicThreadExecutor;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,7 +63,7 @@ public class TestCSWFilterService extends PortalTestClass {
      */
     @Test
     public void testGetCSWRecordsMultiService() throws Exception {
-        final String docString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse.xml");
+        final String docString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is2 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is3 = new ByteArrayInputStream(docString.getBytes());
@@ -109,7 +110,7 @@ public class TestCSWFilterService extends PortalTestClass {
      */
     @Test
     public void testGetCountMultiService() throws Exception {
-        final String docString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse.xml");
+        final String docString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is2 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is3 = new ByteArrayInputStream(docString.getBytes());
@@ -143,7 +144,7 @@ public class TestCSWFilterService extends PortalTestClass {
      */
     @Test
     public void testGetCSWRecordsSingleService() throws Exception {
-        final String docString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse.xml");
+        final String docString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
 
         final int serviceToTest = CONCURRENT_THREADS_TO_RUN / 2;
@@ -169,7 +170,7 @@ public class TestCSWFilterService extends PortalTestClass {
      */
     @Test
     public void testGetCountSingleService() throws Exception {
-        final String docString = org.auscope.portal.core.test.Util.loadXML("src/test/resources/cswRecordResponse.xml");
+        final String docString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
 
         final int serviceToTest = CONCURRENT_THREADS_TO_RUN / 2;

@@ -11,6 +11,7 @@ import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.Re
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.xslt.PortalXSLTTransformer;
 import org.jmock.Expectations;
 import org.junit.Assert;
@@ -74,7 +75,7 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test
     public void testGetFeatureCount() throws Exception {
-        final InputStream responseStream = getClass().getResourceAsStream("/GetWFSFeatureCount.xml");
+        final InputStream responseStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml");
 
         context.checking(new Expectations() {{
             oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
@@ -130,7 +131,7 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test
     public void testTransform() throws Exception {
-        final String responseString = new java.util.Scanner(getClass().getResourceAsStream("/commodityGetFeatureResponse.xml")).useDelimiter("\\A").next();
+        final String responseString = new java.util.Scanner(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml")).useDelimiter("\\A").next();
 
         final String convertedString = "transformed-string";
 

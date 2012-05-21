@@ -15,7 +15,7 @@ import junit.framework.Assert;
 import net.sf.saxon.xpath.XPathFactoryImpl;
 
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.test.Util;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -33,7 +33,7 @@ public class TestDOMUtil extends PortalTestClass {
      */
     @Test
     public void testReversibleTransformation() throws Exception{
-        String originalXmlString = Util.loadXML("src/test/resources/TestXML_NoPrettyPrint.xml");
+        String originalXmlString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
 
         Document doc = DOMUtil.buildDomFromString(originalXmlString);
         String newXmlString = DOMUtil.buildStringFromDom(doc, false);
@@ -90,7 +90,7 @@ public class TestDOMUtil extends PortalTestClass {
     @Test
     public void testDOMObjectNamespace() throws Exception{
         //Build our DOM
-        String originalXmlString = Util.loadXML("src/test/resources/TestXML_NoPrettyPrint.xml");
+        String originalXmlString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
         Document doc = DOMUtil.buildDomFromString(originalXmlString);
 
         //Build our queries (namespace aware)

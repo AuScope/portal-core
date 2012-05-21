@@ -10,6 +10,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
      */
     @Test
     public void testGenericFeatureParser() throws Exception {
-        final String testXml = org.auscope.portal.core.test.Util.loadXML("src/test/resources/GetUndefinedFeatureSet.xml");
+        final String testXml = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wfs/GetUndefinedFeatureSet.xml");
         final Properties properties = new Properties();
 
         properties.setProperty("serviceURL", "fake-service-url");

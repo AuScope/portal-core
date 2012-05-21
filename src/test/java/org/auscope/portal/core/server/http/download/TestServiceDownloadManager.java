@@ -147,7 +147,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         //We have a pretty good idea of what the processing time and margin of error should be
         long processingTime = Math.min(responseDelays[0], responseDelays[2]) + responseDelays[1];
         long marginOfError = Math.min(Math.min(responseDelays[0], responseDelays[1]), responseDelays[2]) / 10;
-        long minProcessingTime = processingTime - 1;
+        long minProcessingTime = processingTime - 5;
         long maxProcessingTime = processingTime + marginOfError;
 
         //Create our service downloader

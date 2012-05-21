@@ -16,6 +16,7 @@ import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -86,7 +87,7 @@ public class TestWCSService extends PortalTestClass {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
 
-        final InputStream responseStream = getClass().getResourceAsStream("/DescribeCoverageResponse1.xml");
+        final InputStream responseStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml");
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
