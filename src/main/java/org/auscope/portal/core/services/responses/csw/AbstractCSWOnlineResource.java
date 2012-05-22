@@ -41,7 +41,12 @@ public abstract class AbstractCSWOnlineResource {
         /**
          * A generic web link.
          */
-        WWW
+        WWW,
+
+        /**
+         * A SOS Service
+         */
+        SOS
     }
 
     /**
@@ -96,6 +101,8 @@ public abstract class AbstractCSWOnlineResource {
             }
 
             return OnlineResourceType.WWW;
+        } else if (lowerProtocol.contains("ogc:sos-")) {
+            return OnlineResourceType.SOS;
         }
 
         return OnlineResourceType.Unsupported;

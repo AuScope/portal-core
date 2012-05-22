@@ -25,6 +25,7 @@ Ext.define('portal.csw.OnlineResource', {
         WCS : 'WCS', //represents a Web Coverage Service
         WWW : 'WWW', //represents a regular HTTP web link
         OPeNDAP : 'OPeNDAP', //represents an OPeNDAP service
+        SOS : 'SOS', //represents a SOS service
 
         /**
          * Static utility function for extracting a subset of OnlineResources from an array
