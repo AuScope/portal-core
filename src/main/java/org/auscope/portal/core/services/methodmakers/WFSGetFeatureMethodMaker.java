@@ -156,9 +156,10 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param typeName The typeName to query
      * @param featureId [Optional] The ID of typeName to request
      * @param maxFeatures [Optional] The maximum number of features to request
+     * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    private HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType) {
+    private HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) {
         GetMethod method = new GetMethod(serviceUrl);
 
         ArrayList<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
@@ -175,6 +176,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         }
         if (maxFeatures != null) {
             valuePairs.add(new NameValuePair("maxFeatures", maxFeatures.toString()));
+        }
+        if (srs != null) {
+            valuePairs.add(new NameValuePair("srsName", srs));
         }
         if (resultType != null) {
             switch (resultType) {
@@ -201,10 +205,11 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param serviceUrl The WFS endpoint
      * @param typeName The typeName to query
      * @param featureId [Optional] The ID of typeName to request
+     * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId) {
-        return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null);
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs) {
+        return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs);
     }
 
     /**
@@ -212,10 +217,11 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param serviceUrl The WFS endpoint
      * @param typeName The typeName to query
      * @param maxFeatures [Optional] The maximum number of features to request
+     * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures) {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null);
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs) {
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs);
     }
 
     /**
@@ -223,10 +229,11 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param serviceUrl The WFS endpoint
      * @param typeName The typeName to query
      * @param maxFeatures [Optional] The maximum number of features to request
+     * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType) {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType);
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs) {
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs);
     }
 
     /**
@@ -235,10 +242,11 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param typeName The typeName to query
      * @param maxFeatures [Optional] The maximum number of features to request
      * @param cqlFilter A CQL filter string (not an OGC filter).
+     * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures) {
-        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null);
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, String srs) {
+        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null, srs);
     }
 
     /**
@@ -247,9 +255,10 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param typeName The typeName to query
      * @param maxFeatures [Optional] The maximum number of features to request
      * @param cqlFilter A CQL filter string (not an OGC filter).
+     * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType) {
-        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType);
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) {
+        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs);
     }
 }
