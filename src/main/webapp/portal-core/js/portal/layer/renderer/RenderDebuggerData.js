@@ -36,6 +36,9 @@ Ext.define('portal.layer.renderer.RenderDebuggerData', {
 
         for(i in this.parameters) {
             var unescapedXml = this.parameters[i];
+            if (!Ext.isString(unescapedXml)) {
+                unescapedXml = '';
+            }
             var escapedXml = unescapedXml.replace(/</g, '&lt;');
 
             parametersAdded = parametersAdded + 1;
