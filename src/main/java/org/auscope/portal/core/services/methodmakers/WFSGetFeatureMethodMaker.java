@@ -10,7 +10,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Repository;
 /**
  * A class for generating Web Feature Service requests.
  *
@@ -46,8 +45,8 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
-        return makeMethod(serviceURL, featureType, filterString, maxFeatures, null, null);
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
+        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, null, null);
     }
 
     /**
@@ -59,8 +58,8 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
-        return makeMethod(serviceURL, featureType, filterString, 0, null, resultType);
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
+        return makePostMethod(serviceURL, featureType, filterString, 0, null, resultType);
     }
 
     /**
@@ -73,22 +72,22 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
-        return makeMethod(serviceURL, featureType, filterString, 0, srsName, null);
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
+        return makePostMethod(serviceURL, featureType, filterString, 0, srsName, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
      * @param serviceURL - required, exception thrown if not provided
      * @param featureType - required, exception thrown if not provided
-     * @param filterString - optional
+     * @param filterString - optional - an OGC Filter String
      * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
      * @param srsName - Can be null or empty
      * @param resultType - Can be null - The type of response set you wish to request (default is Results)
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makeMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
 
         // Make sure the required parameters are given
         if (featureType == null || featureType.equals("")) {
@@ -159,7 +158,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param maxFeatures [Optional] The maximum number of features to request
      * @return
      */
-    private HttpMethodBase makeMethod(String serviceUrl, String typeName, String featureId, Integer maxFeatures) {
+    private HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType) {
         GetMethod method = new GetMethod(serviceUrl);
 
         ArrayList<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
@@ -171,8 +170,23 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         if (featureId != null) {
             valuePairs.add(new NameValuePair("featureId", featureId));
         }
+        if (cqlFilter != null && !cqlFilter.isEmpty()) {
+            valuePairs.add(new NameValuePair("cql_filter", cqlFilter));
+        }
         if (maxFeatures != null) {
             valuePairs.add(new NameValuePair("maxFeatures", maxFeatures.toString()));
+        }
+        if (resultType != null) {
+            switch (resultType) {
+            case Hits:
+                valuePairs.add(new NameValuePair("resultType", "hits"));
+                break;
+            case Results:
+                valuePairs.add(new NameValuePair("resultType", "results"));
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown resultType " + resultType);
+            }
         }
         valuePairs.add(new NameValuePair("version", WFS_VERSION));
 
@@ -189,8 +203,8 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param featureId [Optional] The ID of typeName to request
      * @return
      */
-    public HttpMethodBase makeMethod(String serviceUrl, String typeName, String featureId) {
-        return makeMethod(serviceUrl, typeName, featureId, (Integer) null);
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId) {
+        return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null);
     }
 
     /**
@@ -200,7 +214,42 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param maxFeatures [Optional] The maximum number of features to request
      * @return
      */
-    public HttpMethodBase makeMethod(String serviceUrl, String typeName, Integer maxFeatures) {
-        return makeMethod(serviceUrl, typeName, null, (Integer) maxFeatures);
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures) {
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null);
+    }
+
+    /**
+     * Generates a method for requesting all instances of a specific feature type.
+     * @param serviceUrl The WFS endpoint
+     * @param typeName The typeName to query
+     * @param maxFeatures [Optional] The maximum number of features to request
+     * @return
+     */
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType) {
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType);
+    }
+
+    /**
+     * Generates a method for requesting all instances of a specific feature type that pass a CQL filter.
+     * @param serviceUrl The WFS endpoint
+     * @param typeName The typeName to query
+     * @param maxFeatures [Optional] The maximum number of features to request
+     * @param cqlFilter A CQL filter string (not an OGC filter).
+     * @return
+     */
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures) {
+        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null);
+    }
+
+    /**
+     * Generates a method for requesting all instances of a specific feature type that pass a CQL filter.
+     * @param serviceUrl The WFS endpoint
+     * @param typeName The typeName to query
+     * @param maxFeatures [Optional] The maximum number of features to request
+     * @param cqlFilter A CQL filter string (not an OGC filter).
+     * @return
+     */
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType) {
+        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType);
     }
 }

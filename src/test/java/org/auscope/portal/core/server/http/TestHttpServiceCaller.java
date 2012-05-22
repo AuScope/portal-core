@@ -50,7 +50,7 @@ public class TestHttpServiceCaller extends PortalTestClass {
      */
     @Test
     public void testConstructWFSGetFeatureMethodAllParameters() throws Exception {
-        PostMethod method = (PostMethod)methodMaker.makeMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING, 0);
+        PostMethod method = (PostMethod)methodMaker.makePostMethod(SERVICE_URL, FEATURE_TYPE, FILTER_STRING, 0);
 
         String expectedPost = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                               "<wfs:GetFeature version=\"1.1.0\" xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd\" xmlns:er=\"urn:cgi:xmlns:GGIC:EarthResource:1.1\" maxFeatures=\"200\">\n" +
@@ -79,7 +79,7 @@ public class TestHttpServiceCaller extends PortalTestClass {
      */
     @Test (expected = Exception.class)
     public void testConstructWFSGetFeatureMethodNoFeatureType() throws Exception {
-        methodMaker.makeMethod(SERVICE_URL, "", FILTER_STRING, 0);
+        methodMaker.makePostMethod(SERVICE_URL, "", FILTER_STRING, 0);
     }
 
     /**
@@ -88,7 +88,7 @@ public class TestHttpServiceCaller extends PortalTestClass {
      */
     @Test (expected = Exception.class)
     public void testConstructWFSGetFeatureMethodNoURL() throws Exception {
-        methodMaker.makeMethod("", FEATURE_TYPE, FILTER_STRING, 0);
+        methodMaker.makePostMethod("", FEATURE_TYPE, FILTER_STRING, 0);
     }
 
     /**

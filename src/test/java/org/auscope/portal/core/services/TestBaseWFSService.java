@@ -50,7 +50,7 @@ public class TestBaseWFSService extends PortalTestClass {
         final ResultType resultType = ResultType.Results;
 
         context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).makeMethod(wfsUrl, featureType, filterString, maxFeatures, BaseWFSService.DEFAULT_SRS, resultType);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).makePostMethod(wfsUrl, featureType, filterString, maxFeatures, BaseWFSService.DEFAULT_SRS, resultType);will(returnValue(mockMethod));
         }});
 
         Assert.assertSame(mockMethod, service.generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType));
@@ -67,7 +67,7 @@ public class TestBaseWFSService extends PortalTestClass {
         final ResultType resultType = ResultType.Results;
 
         context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).makeMethod(wfsUrl, featureType, featureId);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).makeGetMethod(wfsUrl, featureType, featureId);will(returnValue(mockMethod));
         }});
 
         Assert.assertSame(mockMethod, service.generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType));

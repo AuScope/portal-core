@@ -68,9 +68,9 @@ public abstract class BaseWFSService {
         }
 
         if (featureId == null) {
-            return wfsMethodMaker.makeMethod(wfsUrl, featureType, filterString, max, srs, resultType);
+            return wfsMethodMaker.makePostMethod(wfsUrl, featureType, filterString, max, srs, resultType);
         } else {
-            return wfsMethodMaker.makeMethod(wfsUrl, featureType, featureId);
+            return wfsMethodMaker.makeGetMethod(wfsUrl, featureType, featureId);
         }
     }
 

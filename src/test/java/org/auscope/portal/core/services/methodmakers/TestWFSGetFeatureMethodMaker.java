@@ -83,9 +83,9 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
-        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, featureId),"version", expectedVersion));
-        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, filterString, maxFeatures),"version", expectedVersion));
-        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits),"version", expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, featureId),"version", expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, filterString, maxFeatures),"version", expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits),"version", expectedVersion));
     }
 
     /**
@@ -100,7 +100,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
-        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, featureId),"service", "WFS"));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, featureId),"service", "WFS"));
     }
 
     @Test
@@ -110,14 +110,14 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
-        Assert.assertFalse(testWFSParam(mm.makeMethod(serviceUrl, typeName, (Integer)null),"maxFeatures", null));
-        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, 99),"maxFeatures", "99"));
+        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (Integer)null),"maxFeatures", null));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, 99),"maxFeatures", "99"));
 
-        Assert.assertFalse(testWFSParam(mm.makeMethod(serviceUrl, typeName, (String)null),"featureId", null));
-        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, "id-value"),"featureId", "id-value"));
+        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null),"featureId", null));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, "id-value"),"featureId", "id-value"));
 
-        Assert.assertFalse(testWFSParam(mm.makeMethod(serviceUrl, typeName, null, 0, null, null),"resultType", null));
-        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, null, 0, null, ResultType.Hits),"resultType", "hits"));
-        Assert.assertTrue(testWFSParam(mm.makeMethod(serviceUrl, typeName, null, 0, null, ResultType.Results),"resultType", "results"));
+        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null),"resultType", null));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, ResultType.Hits),"resultType", "hits"));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, ResultType.Results),"resultType", "results"));
     }
 }
