@@ -200,13 +200,12 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var lonlat = this.map.getLonLatFromViewPortPx(e.xy);
         var longitude = lonlat.lon;
         var latitude = lonlat.lat;
-        console.log("You clicked primitive: ", primitive, " near " + lonlat.lat + " N, " +
-                                  + lonlat.lon + " E and the arguments are: ", arguments);
+        var layer = primitive ? primitive.getLayer() : null;
 
         var queryTargets = [];
-        if (primitive && primitive instanceof portal.map.openlayers.primitives.Polygon) {
+        if (primitive && layer && primitive instanceof portal.map.openlayers.primitives.Polygon) {
             queryTargets = this._makeQueryTargetsPolygon(primitive, this.layerStore, longitude, latitude);
-        } else if (primitive) {
+        } else if (primitive && layer) {
             queryTargets = this._makeQueryTargetsVector(primitive, longitude, latitude);
         } else {
             queryTargets = this._makeQueryTargetsMap(this.layerStore, longitude, latitude);
@@ -315,7 +314,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var size = new OpenLayers.Size(width, height);
         var divId = Ext.id();
         var divHtml = Ext.util.Format.format('<html><body><div id="{0}" style="width: {1}px; height: {2}px;"></div></body></html>', divId, width, height);
-        var popup = new OpenLayers.Popup.Anchored(popupId, location, size, divHtml, null, true, null);
+        var popup = new OpenLayers.Popup.FramedCloud(popupId, location, size, divHtml, null, true, null);
+
         this.map.addPopup(popup, true);
 
         //next create an Ext.Container to house our content, render it to the HTML created above
@@ -323,28 +323,39 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             content = [content];
         }
 
-        var tabPanelItems = [];
-        for (var i = 0; i < content.length; i++) {
-            if (Ext.isString(content[i])) {
-                tabPanelItems.push({
-                    title : '',
-                    html : content[i]
-                });
-            } else {
-                tabPanelItems.push({
-                    title : content[i].tabTitle,
-                    items : [content[i]]
-                });
+        if (content.length === 1) {
+            Ext.create('Ext.panel.Panel', {
+                width : width,
+                height : height,
+                renderTo : divId,
+                border : false,
+                items : content
+            });
+        } else {
+            var tabPanelItems = [];
+            for (var i = 0; i < content.length; i++) {
+                if (Ext.isString(content[i])) {
+                    tabPanelItems.push({
+                        title : '',
+                        html : content[i]
+                    });
+                } else {
+                    tabPanelItems.push({
+                        title : content[i].tabTitle,
+                        items : [content[i]]
+                    });
+                }
             }
-        }
 
-        Ext.create('Ext.tab.Panel', {
-            width : width,
-            height : height,
-            renderTo : divId,
-            activeTab: 0,
-            items : tabPanelItems
-        });
+            Ext.create('Ext.tab.Panel', {
+                width : width,
+                height : height,
+                renderTo : divId,
+                border : false,
+                activeTab: 0,
+                items : tabPanelItems
+            });
+        }
     },
 
     /**
@@ -411,7 +422,32 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      *
      * @param point portal.map.Point to get tile information
      */
-    getTileInformationForPoint : portal.util.UnimplementedFunction,
+    getTileInformationForPoint : function(point) {
+        var layer = this.map.baseLayer;
+
+        //Get the bounds of the tile that encases point
+        var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
+        var viewPortPixel = this.map.getViewPortPxFromLonLat(lonLat);
+        var tileBounds = layer.getTileBounds(viewPortPixel);
+
+        var tileOrigin = new OpenLayers.LonLat(tileBounds.left, tileBounds.top);
+        var tileOriginPixel = this.map.getViewPortPxFromLonLat(tileOrigin);
+
+        return Ext.create('portal.map.TileInformation', {
+            width : this.map.tileSize.w,
+            height : this.map.tileSize.h,
+            offset : {  //Object - The point location within the tile being queried
+                x : Math.floor(viewPortPixel.x - tileOriginPixel.x),  //Number - offset in x direction
+                y : Math.floor(viewPortPixel.y - tileOriginPixel.y)   //Number - offset in y direction
+            },
+            tileBounds : Ext.create('portal.util.BBox', {
+                eastBoundLongitude : tileBounds.right,
+                westBoundLongitude : tileBounds.left,
+                northBoundLatitude : tileBounds.top,
+                southBoundLatitude : tileBounds.bottom
+            })
+        });
+    },
 
     /**
      * Returns an portal.map.Size object representing the map size in pixels in the form
