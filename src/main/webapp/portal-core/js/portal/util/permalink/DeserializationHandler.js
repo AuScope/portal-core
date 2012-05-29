@@ -11,6 +11,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
     mapStateSerializer : null,
     knownLayerStore : null,
+    layerFactory : null,
     cswRecordStore : null,
     layerStore : null,
     map : null,
@@ -21,6 +22,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
      *  knownLayerStore : A Ext.data.Store containing portal.knownlayer.KnownLayer models
      *  cswRecordStore : A Ext.data.Store containing portal.csw.CSWRecord models
      *  layerStore : A portal.layer.LayerStore which will be populated with deserialized layers
+     *  layerFactory : A portal.layer.LayerFactory which will be used to create layers
      *  map : A portal.util.gmap.GMapWrapper instance
      * }
      */
@@ -131,7 +133,6 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
     _deserialize : function() {
         var s = this.mapStateSerializer;
-        var layerFactory = Ext.create('portal.layer.LayerFactory', {map : this.map});
         var missingLayers = false;
 
         //Update our map location to the specified bounds
@@ -156,7 +157,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 }
 
                 //Create our new layer
-                var newLayer = layerFactory.generateLayerFromKnownLayer(knownLayer);
+                var newLayer = this.layerFactory.generateLayerFromKnownLayer(knownLayer);
 
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
@@ -184,7 +185,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                     continue;
                 }
 
-                var newLayer = layerFactory.generateLayerFromCSWRecord(cswRecord);
+                var newLayer = this.layerFactory.generateLayerFromCSWRecord(cswRecord);
 
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
