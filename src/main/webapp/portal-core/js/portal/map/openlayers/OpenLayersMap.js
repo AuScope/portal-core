@@ -311,10 +311,12 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         //Firstly create a popup with a chunk of placeholder HTML - we will render an ExtJS container inside that
         var popupId = Ext.id();
         var location = new OpenLayers.LonLat(windowLocation.getLongitude(), windowLocation.getLatitude());
-        var size = new OpenLayers.Size(width, height);
+        var verticalPadding = content.length <= 1 ? 0 : 32; //If we are opening a padded popup, we need to pad for the header
+        var horizontalPadding = 0;
+        var paddedSize = new OpenLayers.Size(width + horizontalPadding, height + verticalPadding);
         var divId = Ext.id();
-        var divHtml = Ext.util.Format.format('<html><body><div id="{0}" style="width: {1}px; height: {2}px;"></div></body></html>', divId, width, height);
-        var popup = new OpenLayers.Popup.FramedCloud(popupId, location, size, divHtml, null, true, null);
+        var divHtml = Ext.util.Format.format('<html><body><div id="{0}" style="width: {1}px; height: {2}px;"></div></body></html>', divId, paddedSize.w, paddedSize.h);
+        var popup = new OpenLayers.Popup.FramedCloud(popupId, location, paddedSize, divHtml, null, true, null);
 
         this.map.addPopup(popup, true);
 
@@ -323,10 +325,13 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             content = [content];
         }
 
+        //We need a parent control to house the components, a regular panel works fine for one component
+        //A tab panel will be required for many components
         if (content.length === 1) {
             Ext.create('Ext.panel.Panel', {
-                width : width,
-                height : height,
+                width : paddedSize.w,
+                height : paddedSize.h,
+                autoScroll : true,
                 renderTo : divId,
                 border : false,
                 items : content
@@ -337,20 +342,25 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 if (Ext.isString(content[i])) {
                     tabPanelItems.push({
                         title : '',
+                        border : false,
+                        autoScroll : true,
                         html : content[i]
                     });
                 } else {
                     tabPanelItems.push({
                         title : content[i].tabTitle,
+                        border : false,
+                        autoScroll : true,
                         items : [content[i]]
                     });
                 }
             }
 
             Ext.create('Ext.tab.Panel', {
-                width : width,
-                height : height,
+                width : paddedSize.w,
+                height : paddedSize.h,
                 renderTo : divId,
+                plain : true,
                 border : false,
                 activeTab: 0,
                 items : tabPanelItems
