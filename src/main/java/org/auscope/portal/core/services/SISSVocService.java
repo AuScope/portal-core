@@ -9,7 +9,7 @@ import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.methodmakers.SISSVocMethodMaker;
+import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc2MethodMaker;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
 import org.auscope.portal.core.services.responses.vocab.Concept;
 import org.auscope.portal.core.services.responses.vocab.ConceptFactory;
@@ -26,9 +26,9 @@ import org.w3c.dom.NodeList;
 public class SISSVocService {
     private HttpServiceCaller httpServiceCaller;
     private ConceptFactory conceptFactory;
-    private SISSVocMethodMaker sissVocMethodMaker;
+    private SISSVoc2MethodMaker sissVocMethodMaker;
 
-    public SISSVocService(HttpServiceCaller httpServiceCaller, ConceptFactory conceptFactory, SISSVocMethodMaker sissVocMethodMaker) {
+    public SISSVocService(HttpServiceCaller httpServiceCaller, ConceptFactory conceptFactory, SISSVoc2MethodMaker sissVocMethodMaker) {
         this.httpServiceCaller = httpServiceCaller;
         this.conceptFactory = conceptFactory;
         this.sissVocMethodMaker = sissVocMethodMaker;

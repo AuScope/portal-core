@@ -55,4 +55,26 @@ public class TestAbstractMethodMaker extends PortalTestClass {
         expected = new NameValuePair[] {new NameValuePair("param1", "test1"), new NameValuePair("param2", "test2")};
         Assert.assertArrayEquals(expected, actual);
     }
+
+    /**
+     * Tests the various edge cases with the URL concatentation
+     * @throws Exception
+     */
+    @Test
+    public void testUrlPathConcat() throws Exception {
+        TestableAbstractMethodMaker mm = new TestableAbstractMethodMaker();
+
+        Assert.assertEquals("http://example.org", mm.urlPathConcat("http://example.org"));
+        Assert.assertEquals("http://example.org/", mm.urlPathConcat("http://example.org/"));
+
+        Assert.assertEquals("http://example.org/test/path", mm.urlPathConcat("http://example.org", "test", "path"));
+        Assert.assertEquals("http://example.org/test/path", mm.urlPathConcat("http://example.org/", "test", "/path"));
+        Assert.assertEquals("http://example.org/test/path", mm.urlPathConcat("http://example.org/", "/test", "/path"));
+        Assert.assertEquals("http://example.org/test/path", mm.urlPathConcat("http://example.org", "/test", "path"));
+        Assert.assertEquals("http://example.org/test/path/", mm.urlPathConcat("http://example.org/", "/test/", "/path/"));
+
+        Assert.assertEquals("http://example.org/test/path", mm.urlPathConcat("http://example.org", "", null, "/test/", "/path"));
+
+        Assert.assertEquals("http://example.org/existing/path/value/test/", mm.urlPathConcat("http://example.org", "existing/path/value", "/test/"));
+    }
 }

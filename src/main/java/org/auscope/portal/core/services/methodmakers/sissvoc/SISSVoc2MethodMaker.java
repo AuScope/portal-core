@@ -1,15 +1,16 @@
-package org.auscope.portal.core.services.methodmakers;
+package org.auscope.portal.core.services.methodmakers.sissvoc;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.auscope.portal.core.services.methodmakers.AbstractMethodMaker;
 import org.springframework.stereotype.Repository;
 
 /**
- * A class for generating HTTP methods that can communicate with a SISSVoc service
+ * A class for generating HTTP methods that can communicate with a SISSVoc version 2.0 service
  * @author Josh Vote
  *
  */
-public class SISSVocMethodMaker extends AbstractMethodMaker {
+public class SISSVoc2MethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting information about available repositories
