@@ -68,4 +68,31 @@ public class TestAbstractFilter extends AbstractFilter {
         AbstractFilterTestUtilities.parsefilterStringXML(this.generateNotComparisonFragment(
                 this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral")));
     }
+
+    @Test
+    public void testEscapingChars() {
+        final String literal = "&<>\"";
+        final String escapedLiteral = "&amp;&lt;&gt;&quot;";
+        final String propertyName = "propertyName";
+
+        String fragment = this.generatePropertyIsEqualToFragment(propertyName, literal);
+        Assert.assertFalse(fragment.contains(literal));
+        Assert.assertTrue(fragment.contains(escapedLiteral));
+
+        fragment = this.generatePropertyIsGreaterThan(propertyName, literal);
+        Assert.assertFalse(fragment.contains(literal));
+        Assert.assertTrue(fragment.contains(escapedLiteral));
+
+        fragment = this.generatePropertyIsLessThan(propertyName, literal);
+        Assert.assertFalse(fragment.contains(literal));
+        Assert.assertTrue(fragment.contains(escapedLiteral));
+
+        fragment = this.generatePropertyIsLikeFragment(propertyName, literal);
+        Assert.assertFalse(fragment.contains(literal));
+        Assert.assertTrue(fragment.contains(escapedLiteral));
+
+        fragment = this.generatePropertyIsNotEqualTo(propertyName, literal);
+        Assert.assertFalse(fragment.contains(literal));
+        Assert.assertTrue(fragment.contains(escapedLiteral));
+    }
 }

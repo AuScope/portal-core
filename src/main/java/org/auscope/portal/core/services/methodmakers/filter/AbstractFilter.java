@@ -3,6 +3,7 @@ package org.auscope.portal.core.services.methodmakers.filter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -112,6 +113,19 @@ public abstract class AbstractFilter implements IFilter {
 
 
        return sb.toString();
+   }
+
+   /**
+    * XML escapes the specified literal string, returns the escaped string
+    * @param literal the literal to escape
+    * @return
+    */
+   protected String escapeLiteral(String literal) {
+       if (literal == null) {
+           return null;
+       }
+
+       return StringEscapeUtils.escapeXml(literal);
    }
 
    /**
@@ -532,7 +546,7 @@ public abstract class AbstractFilter implements IFilter {
        }
        sb.append(String.format("<ogc:PropertyName>%1$s</ogc:PropertyName>", propertyName));
        if (literal != null) {
-           sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", literal));
+           sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", escapeLiteral(literal)));
        }
        sb.append(String.format("</%1$s>", comparison));
 
