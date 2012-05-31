@@ -46,8 +46,7 @@ public class CSWFilterService {
      */
     public CSWFilterService(Executor executor,
                       HttpServiceCaller serviceCaller,
-                      ArrayList cswServiceList) throws Exception {
-
+                      ArrayList cswServiceList) {
         this.executor = executor;
         this.serviceCaller = serviceCaller;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
@@ -66,14 +65,20 @@ public class CSWFilterService {
      * @return
      * @throws Exception
      */
-    private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws Exception {
+    private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws PortalServiceException {
         log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-        HttpMethodBase method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex);
+        HttpMethodBase method = null;
 
-        InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
-        Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-        return new CSWGetRecordResponse(serviceItem, responseDoc);
+        try {
+            method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex);
+            InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
+            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+
+            return new CSWGetRecordResponse(serviceItem, responseDoc);
+        } catch (Exception ex) {
+            throw new PortalServiceException(method, ex);
+        }
     }
 
     /**
@@ -131,7 +136,7 @@ public class CSWFilterService {
      * @throws DistributedHTTPServiceCallerException If an underlying service call returns an exception
      * @return
      */
-    public CSWGetRecordResponse[] getFilteredRecords(CSWGetDataRecordsFilter filter, int maxRecords) throws Exception {
+    public CSWGetRecordResponse[] getFilteredRecords(CSWGetDataRecordsFilter filter, int maxRecords) throws PortalServiceException {
         List<CSWGetRecordResponse> responses = new ArrayList<CSWGetRecordResponse>();
 
         //Call our services and start iterating the responses
@@ -139,8 +144,13 @@ public class CSWFilterService {
         while (dsc.hasNext()) {
             InputStream responseStream = dsc.next();
             CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
-            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-            responses.add(new CSWGetRecordResponse(origin, responseDoc));
+            try {
+                Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+                responses.add(new CSWGetRecordResponse(origin, responseDoc));
+            } catch (Exception ex) {
+                throw new PortalServiceException(null, "Error parsing response document", ex);
+            }
+
         }
 
         return responses.toArray(new CSWGetRecordResponse[responses.size()]);

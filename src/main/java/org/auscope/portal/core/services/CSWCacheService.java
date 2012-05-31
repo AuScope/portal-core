@@ -87,7 +87,7 @@ public class CSWCacheService {
      */
     public CSWCacheService(Executor executor,
                       HttpServiceCaller serviceCaller,
-                      ArrayList cswServiceList) throws Exception {
+                      ArrayList cswServiceList) {
         this.updateRunning = false;
         this.executor = executor;
         this.serviceCaller = serviceCaller;
@@ -204,7 +204,7 @@ public class CSWCacheService {
      * @return
      * @throws Exception
      */
-    public List<CSWRecord> getWMSRecords() throws Exception {
+    public List<CSWRecord> getWMSRecords() {
         return getFilteredRecords(OnlineResourceType.WMS);
     }
 
@@ -214,7 +214,7 @@ public class CSWCacheService {
      * @return
      * @throws Exception
      */
-    public List<CSWRecord> getWCSRecords() throws Exception {
+    public List<CSWRecord> getWCSRecords() {
         return getFilteredRecords(OnlineResourceType.WCS);
     }
 
@@ -223,7 +223,7 @@ public class CSWCacheService {
      * @return
      * @throws Exception
      */
-    public List<CSWRecord> getWFSRecords() throws Exception {
+    public List<CSWRecord> getWFSRecords() {
         return getFilteredRecords(OnlineResourceType.WFS);
     }
 
@@ -234,7 +234,7 @@ public class CSWCacheService {
      * @throws Exception
      */
     private synchronized List<CSWRecord> getFilteredRecords(
-            AbstractCSWOnlineResource.OnlineResourceType... types) throws Exception {
+            AbstractCSWOnlineResource.OnlineResourceType... types) {
 
         ArrayList<CSWRecord> records = new ArrayList<CSWRecord>();
 
