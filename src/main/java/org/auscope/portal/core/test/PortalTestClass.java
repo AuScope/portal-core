@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import junit.framework.Assert;
 
 import org.auscope.portal.core.test.jmock.DelayedReturnValueAction;
+import org.auscope.portal.core.test.jmock.FileWithNameMatcher;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher;
 import org.auscope.portal.core.test.jmock.MapMatcher;
 import org.auscope.portal.core.test.jmock.PropertiesMatcher;
@@ -226,5 +227,14 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
         }
 
         return o1.hashCode() == o2.hashCode();
+    }
+
+    /**
+     * A JMock matcher for matching a File with a specific name
+     * @param fileName The name of the file to match
+     * @return
+     */
+    protected FileWithNameMatcher aFileWithName(String fileName) {
+        return new FileWithNameMatcher(fileName);
     }
 }

@@ -35,6 +35,13 @@ public class PortalServiceException extends Exception {
     }
 
     /**
+     * Creates a new exception with the specified message
+     */
+    public PortalServiceException(String message) {
+        super(message);
+    }
+
+    /**
      * Creates a new exception
      * @param rootMethod The method that was being run when this exception was thrown
      * @param message Descriptive message
