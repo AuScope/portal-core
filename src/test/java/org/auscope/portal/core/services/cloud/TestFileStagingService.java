@@ -72,9 +72,7 @@ public class TestFileStagingService extends PortalTestClass {
      */
     @Before
     public void setupJobObj() {
-        String jobId = "testjob" + testCounter;
-        testCounter++;
-        job = new CloudJob(jobId, "jobName", "jobDesc", "email@address", "user", new Date(), "status", "computeVmId", "computeInstanceId", "computeInstanceType", "computeInstanceKey", "storageBucket");
+        job = new CloudJob(testCounter++);
 
         service = new FileStagingService(testStagingInfo);
     }
@@ -99,15 +97,6 @@ public class TestFileStagingService extends PortalTestClass {
         Assert.assertEquals("p1" + File.separator + "p2", FileStagingService.pathConcat("p1" + File.separator, "p2"));
         Assert.assertEquals("p1" + File.separator + "p2", FileStagingService.pathConcat("p1", File.separator + "p2"));
         Assert.assertEquals("p1" + File.separator + "p2", FileStagingService.pathConcat("p1" + File.separator, File.separator + "p2"));
-    }
-
-    /**
-     * Tests that job ids are correctly sanitised
-     */
-    @Test
-    public void testSanitisedJobId() {
-        CloudJob badJob = new CloudJob("a-\\/b :$^%!@#()c[]{}12", "jobName", "jobDesc", "email@address", "user", new Date(), "status", "computeVmId", "computeInstanceId", "computeInstanceType", "computeInstanceKey", "storageBucket");
-        Assert.assertEquals("a___b__________c____12", FileStagingService.getBaseFolderForJob(badJob));
     }
 
     /**

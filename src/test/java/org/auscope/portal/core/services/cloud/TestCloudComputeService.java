@@ -62,7 +62,7 @@ public class TestCloudComputeService extends PortalTestClass {
 
     @Before
     public void initJobObject() {
-        job = new CloudJob("13", "jobName", "jobDesc", "email@address", "user", new Date(), "status", "computeVmId", "computeInstanceId", "computeInstanceType", "computeInstanceKey", "storageBucket");
+        job = new CloudJob(13);
         service = new TestableCloudComputeService(mockAmazonEC2, ec2Endpoint, mockCredentials);
     }
 

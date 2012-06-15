@@ -3,11 +3,10 @@ package org.auscope.portal.core.services;
 import junit.framework.Assert;
 
 import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.URI;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.csw.GeonetworkCredentials;
+import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.GeonetworkMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
@@ -28,15 +27,20 @@ public class TestGeonetworkService extends PortalTestClass {
 
     private HttpServiceCaller serviceCaller;
     private GeonetworkMethodMaker gnMethodMaker;
-    private GeonetworkCredentials gnDetails;
     private GeonetworkService service;
+
+    private final String endpoint = "http://example.org/gn";
+    private final String userName = "un";
+    private final String password = "pwd";
 
     @Before
     public void setup() {
         serviceCaller = context.mock(HttpServiceCaller.class);
         gnMethodMaker = context.mock(GeonetworkMethodMaker.class);
-        gnDetails = new GeonetworkCredentials("http://example.org/gn", "user-name", "pass-word");
-        service = new GeonetworkService(serviceCaller, gnMethodMaker, gnDetails);
+        CSWServiceItem item = new CSWServiceItem("fake-id", endpoint + "/srv/en/csw");
+        item.setUserName(userName);
+        item.setPassword(password);
+        service = new GeonetworkService(serviceCaller, gnMethodMaker, item);
     }
 
     @Test
@@ -62,11 +66,11 @@ public class TestGeonetworkService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             allowing(gnMethodMaker).makeInsertRecordMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)));will(returnValue(insertRecordMethod));
-            allowing(gnMethodMaker).makeRecordMetadataGetMethod(gnDetails.getUrl(), uuid, sessionCookie);will(returnValue(recordMetadataGetMethod));
-            allowing(gnMethodMaker).makeRecordMetadataShowMethod(gnDetails.getUrl(), uuid, sessionCookie);will(returnValue(recordMetadataShowMethod));
-            allowing(gnMethodMaker).makeRecordPublicMethod(gnDetails.getUrl(), recordId, sessionCookie);will(returnValue(recordPublicMethod));
-            allowing(gnMethodMaker).makeUserLoginMethod(gnDetails.getUrl(), gnDetails.getUser(), gnDetails.getPassword());will(returnValue(loginMethod));
-            allowing(gnMethodMaker).makeUserLogoutMethod(gnDetails.getUrl(), sessionCookie);will(returnValue(logoutMethod));
+            allowing(gnMethodMaker).makeRecordMetadataGetMethod(endpoint, uuid, sessionCookie);will(returnValue(recordMetadataGetMethod));
+            allowing(gnMethodMaker).makeRecordMetadataShowMethod(endpoint, uuid, sessionCookie);will(returnValue(recordMetadataShowMethod));
+            allowing(gnMethodMaker).makeRecordPublicMethod(endpoint, recordId, sessionCookie);will(returnValue(recordPublicMethod));
+            allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);will(returnValue(loginMethod));
+            allowing(gnMethodMaker).makeUserLogoutMethod(endpoint, sessionCookie);will(returnValue(logoutMethod));
 
             allowing(loginMethod).getResponseHeader("Set-Cookie");will(returnValue(new Header("Set-Cookie", sessionCookie)));
 
@@ -90,7 +94,7 @@ public class TestGeonetworkService extends PortalTestClass {
         final CSWRecord record = new CSWRecord("a", "b", "c", "", new CSWOnlineResourceImpl[0], new CSWGeographicElement[0]);
 
         context.checking(new Expectations() {{
-            allowing(gnMethodMaker).makeUserLoginMethod(gnDetails.getUrl(), gnDetails.getUser(), gnDetails.getPassword());will(returnValue(loginMethod));
+            allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);will(returnValue(loginMethod));
 
             oneOf(serviceCaller).getMethodResponseAsString(loginMethod);will(returnValue(loginResponse));
         }});

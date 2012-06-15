@@ -7,7 +7,7 @@ import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.csw.GeonetworkCredentials;
+import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.GeonetworkMethodMaker;
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
@@ -28,14 +28,26 @@ public class GeonetworkService {
 
     private HttpServiceCaller serviceCaller;
     private GeonetworkMethodMaker gnMethodMaker;
-    private GeonetworkCredentials gnCredentials;
+    private String userName;
+    private String password;
+    private String endpoint;
 
+
+    /**
+     *
+     * @param serviceCaller
+     * @param gnMethodMaker
+     * @param cswServiceItem The CSW service (must be a geonetwork CSW service)
+     */
     public GeonetworkService(HttpServiceCaller serviceCaller,
-            GeonetworkMethodMaker gnMethodMaker, GeonetworkCredentials gnCredentials) {
+            GeonetworkMethodMaker gnMethodMaker, CSWServiceItem cswServiceItem) {
         super();
         this.serviceCaller = serviceCaller;
         this.gnMethodMaker = gnMethodMaker;
-        this.gnCredentials = gnCredentials;
+
+        this.endpoint = cswServiceItem.getServiceUrl().replace("/srv/en/csw", "");
+        this.userName = cswServiceItem.getUserName();
+        this.password = cswServiceItem.getPassword();
     }
 
     /**
@@ -86,7 +98,7 @@ public class GeonetworkService {
      * @return
      */
     private String convertUUIDToRecordID(String uuid, String sessionCookie) throws Exception {
-        HttpMethodBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataGetMethod(gnCredentials.getUrl(), uuid, sessionCookie);
+        HttpMethodBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataGetMethod(endpoint, uuid, sessionCookie);
         String responseString = serviceCaller.getMethodResponseAsString(metadataInfoMethod);
         Document responseDoc = DOMUtil.buildDomFromString(responseString);
 
@@ -116,7 +128,7 @@ public class GeonetworkService {
         String gnResponse = null;
 
         //Login and extract our cookies (this will be our session id)
-        HttpMethodBase methodLogin = gnMethodMaker.makeUserLoginMethod(gnCredentials.getUrl(), gnCredentials.getUser(), gnCredentials.getPassword());
+        HttpMethodBase methodLogin = gnMethodMaker.makeUserLoginMethod(endpoint, userName, password);
         gnResponse = serviceCaller.getMethodResponseAsString(methodLogin);
         logger.debug(String.format("GN Login response: %1$s", gnResponse));
         if (!gnResponse.contains("<ok />")) {
@@ -126,7 +138,7 @@ public class GeonetworkService {
         String sessionCookie = methodLogin.getResponseHeader("Set-Cookie").getValue();
 
         //Insert our record
-        HttpMethodBase methodInsertRecord = gnMethodMaker.makeInsertRecordMethod(gnCredentials.getUrl(), mdMetadataXml, sessionCookie);
+        HttpMethodBase methodInsertRecord = gnMethodMaker.makeInsertRecordMethod(endpoint, mdMetadataXml, sessionCookie);
         gnResponse = serviceCaller.getMethodResponseAsString(methodInsertRecord);
         logger.debug(String.format("GN Insert response: %1$s", gnResponse));
 
@@ -138,17 +150,17 @@ public class GeonetworkService {
         String recordId = convertUUIDToRecordID(uuid, sessionCookie);
 
         //Use our new record ID to FINALLY set the record to public
-        HttpMethodBase methodSetPublic = gnMethodMaker.makeRecordPublicMethod(gnCredentials.getUrl(), recordId, sessionCookie);
+        HttpMethodBase methodSetPublic = gnMethodMaker.makeRecordPublicMethod(endpoint, recordId, sessionCookie);
         gnResponse = serviceCaller.getMethodResponseAsString(methodSetPublic);
         logger.debug(String.format("GN setting record %1$s (uuid=%2$s) public returned: %3$s", recordId, uuid , gnResponse));
 
         //Logout (just in case)
-        HttpMethodBase methodLogout = gnMethodMaker.makeUserLogoutMethod(gnCredentials.getUrl(), sessionCookie);
+        HttpMethodBase methodLogout = gnMethodMaker.makeUserLogoutMethod(endpoint, sessionCookie);
         gnResponse = serviceCaller.getMethodResponseAsString(methodLogout);
         logger.debug(String.format("GN Logout response: %1$s", gnResponse));
 
         //Finally get the URL to access the record's page
-        HttpMethodBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataShowMethod(gnCredentials.getUrl(), uuid, sessionCookie);
+        HttpMethodBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataShowMethod(endpoint, uuid, sessionCookie);
         return metadataInfoMethod.getURI().toString();
     }
 }

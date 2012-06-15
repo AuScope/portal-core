@@ -22,7 +22,7 @@ public class CloudJob implements Serializable {
     public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
 
     /** Unique ID identifying this job*/
-    protected String id;
+    protected Integer id;
     /** Descriptive name of this job*/
     protected String name;
     /** Long description of this job*/
@@ -45,8 +45,18 @@ public class CloudJob implements Serializable {
     /** The name of the key to inject into the instance at startup for root access. Can be null */
     protected String computeInstanceKey;
 
+    /** A unique identifier identifying the type of storage API used to store this job's files*/
+    protected String storageProvider;
+    /** The endpoint for the cloud storage service */
+    protected String storageEndpoint;
     /** The 'bucket' name where input/output files will be staged for this job*/
     protected String storageBucket;
+    /** The key prefix for all files associated with this job in the specified storage bucket*/
+    protected String storageBaseKey;
+    /** The access key (user name) for writing to storage*/
+    protected String storageAccessKey;
+    /** the secret key (password) for writing to storage*/
+    protected String storageSecretKey;
 
 
     /**
@@ -59,39 +69,17 @@ public class CloudJob implements Serializable {
     /**
      * Creates a new cloud job with the following fields
      * @param id Unique ID identifying this job
-     * @param name Descriptive name of this job
-     * @param description Long description of this job
-     * @param emailAddress Email address of job submitter
-     * @param user user name of job submitter
-     * @param submitDate date/time when this job was submitted
-     * @param status descriptive status of this job
-     * @param computeVmId the ID of the VM that will be used to run this job
-     * @param computeInstanceId the ID of the VM instance that is running this job (will be null if no job is currently running)
-     * @param computeInstanceType The type of the compute instance to start (size of memory, number of CPUs etc) - eg m1.large. Can be null
-     * @param computeInstanceKey The name of the key to inject into the instance at startup for root access. Can be null
-     * @param storageBucket The 'bucket' name where input/output files will be staged for this job
      */
-    public CloudJob(String id, String name, String description,
-            String emailAddress, String user, Date submitDate, String status,
-            String computeVmId, String computeInstanceId, String computeInstanceType, String computeInstanceKey, String storageBucket) {
+    public CloudJob(Integer id) {
         super();
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.emailAddress = emailAddress;
-        this.user = user;
-        this.submitDate = submitDate;
-        this.status = status;
-        this.computeVmId = computeVmId;
-        this.computeInstanceId = computeInstanceId;
-        this.storageBucket = storageBucket;
     }
 
     /**
      * Unique ID identifying this job
      * @return
      */
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -99,7 +87,7 @@ public class CloudJob implements Serializable {
      * Unique ID identifying this job
      * @param id
      */
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -285,4 +273,88 @@ public class CloudJob implements Serializable {
     public void setStorageBucket(String storageBucket) {
         this.storageBucket = storageBucket;
     }
+
+    /**
+     * The endpoint for the cloud storage service
+     * @return
+     */
+    public String getStorageEndpoint() {
+        return storageEndpoint;
+    }
+
+    /**
+     * The endpoint for the cloud storage service
+     * @param storageEndpoint
+     */
+    public void setStorageEndpoint(String storageEndpoint) {
+        this.storageEndpoint = storageEndpoint;
+    }
+
+    /**
+     * The access key (user name) for writing to storage
+     * @return
+     */
+    public String getStorageAccessKey() {
+        return storageAccessKey;
+    }
+
+    /**
+     * The access key (user name) for writing to storage
+     * @param storageAccessKey
+     */
+    public void setStorageAccessKey(String storageAccessKey) {
+        this.storageAccessKey = storageAccessKey;
+    }
+
+    /**
+     * the secret key (password) for writing to storage
+     * @return
+     */
+    public String getStorageSecretKey() {
+        return storageSecretKey;
+    }
+
+    /**
+     * the secret key (password) for writing to storage
+     * @param storageSecretKey
+     */
+    public void setStorageSecretKey(String storageSecretKey) {
+        this.storageSecretKey = storageSecretKey;
+    }
+
+    /**
+     * The key prefix for all files associated with this job in the specified storage bucket
+     * @return
+     */
+    public String getStorageBaseKey() {
+        return storageBaseKey;
+    }
+
+    /**
+     * The key prefix for all files associated with this job in the specified storage bucket
+     * @param storageBaseKey
+     */
+    public void setStorageBaseKey(String storageBaseKey) {
+        this.storageBaseKey = storageBaseKey;
+    }
+
+    /**
+     * A unique identifier identifying the type of storage API used to store this job's files
+     * @return
+     */
+    public String getStorageProvider() {
+        return storageProvider;
+    }
+
+    /**
+     * A unique identifier identifying the type of storage API used to store this job's files
+     * @param storageProvider
+     */
+    public void setStorageProvider(String storageProvider) {
+        this.storageProvider = storageProvider;
+    }
+
+
+
+
 }

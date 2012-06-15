@@ -13,7 +13,6 @@ import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.cloud.StagingInformation;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.FileIOUtil;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -22,7 +21,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
  * @author Josh Vote
  *
  */
-@Service
 public class FileStagingService {
     private final Log logger = LogFactory.getLog(getClass());
     protected StagingInformation stagingInformation;
@@ -57,7 +55,7 @@ public class FileStagingService {
      * @return
      */
     public static String getBaseFolderForJob(CloudJob job) {
-        return job.getId().replaceAll("[^a-zA-Z0-9]", "_");
+        return String.format("job-%1$s", job.getId());
     }
 
     /**

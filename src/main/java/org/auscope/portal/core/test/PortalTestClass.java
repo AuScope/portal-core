@@ -124,9 +124,20 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @return
      */
     protected PropertiesMatcher aProperty(String property, String value) {
+        return aProperty(property, value, true);
+    }
+
+    /**
+     * A JMock Matcher for testing for a java.util.Properties object with a matching property
+     * @param property The property name
+     * @param value The property value
+     * @param matchExactly if true, the compared properties must contain ONLY the specified property=value, if false it may also contain other property names
+     * @return
+     */
+    protected PropertiesMatcher aProperty(String property, String value, boolean matchExactly) {
         Properties prop = new Properties();
         prop.setProperty(property, value);
-        return new PropertiesMatcher(prop);
+        return new PropertiesMatcher(prop, matchExactly);
     }
 
     /**

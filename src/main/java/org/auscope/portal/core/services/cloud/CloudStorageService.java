@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -9,6 +10,7 @@ import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
@@ -16,8 +18,11 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.ContentMetadata;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+
 /**
- * Service for providing storage of objects (blobs) in a cloud
+ * Service for providing storage of objects (blobs) in a cloud using the JClouds library
  *
  * @author Josh Vote
  *
@@ -26,19 +31,44 @@ public class CloudStorageService {
 
     private final Log log = LogFactory.getLog(getClass());
 
-    protected BlobStoreContext blobStoreContext;
+    protected BlobStoreContextFactory blobStoreContextFactory;
     /** Prefix to apply to any job files stored (will be appended with job id)*/
     protected String jobPrefix = "job-";
-
+    /** Whether security certs are required to strictly match the host*/
+    protected boolean relaxHostName = false;
 
     /**
      * Creates a new instance of this class
-     * @param blobStoreContext The context used to power this service
      */
-    public CloudStorageService(BlobStoreContext blobStoreContext) {
-        super();
-        this.blobStoreContext = blobStoreContext;
+    public CloudStorageService() {
+        this(new BlobStoreContextFactory());
     }
+
+    /**
+     * Creates a new instance of this class
+     */
+    public CloudStorageService(BlobStoreContextFactory blobStoreContextFactory) {
+        super();
+        this.blobStoreContextFactory = blobStoreContextFactory;
+    }
+
+    /**
+     * Whether security certs are required to strictly match the host
+     * @return
+     */
+    public boolean isRelaxHostName() {
+        return relaxHostName;
+    }
+
+    /**
+     * Whether security certs are required to strictly match the host
+     * @param relaxHostName
+     */
+    public void setRelaxHostName(boolean relaxHostName) {
+        this.relaxHostName = relaxHostName;
+    }
+
+
 
     /**
      * Prefix to apply to any job files stored (will be appended with job id)
@@ -57,13 +87,28 @@ public class CloudStorageService {
     }
 
     /**
-     * Utility to create the base key for a job
+     * Generates a BlobStoreContext, configured
+     * @param job
+     * @return
+     */
+    protected BlobStoreContext getBlobStoreContextForJob(CloudJob job) {
+        Properties properties = new Properties();
+        properties.setProperty(String.format("%1$s.endpoint", job.getStorageProvider()), job.getStorageEndpoint());
+        properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
+        return blobStoreContextFactory.createContext(job.getStorageProvider(), job.getStorageAccessKey(), job.getStorageSecretKey(), ImmutableSet.<Module>of(), properties);
+    }
+
+    /**
+     * Utility to create the base key for a job.
      * @param job
      * @return
      */
     protected String jobToBaseKey(CloudJob job) {
-        String escapedId = job.getId().replace('/', '_');
-        return jobPrefix + escapedId;
+        if (job.getStorageBaseKey() == null) {
+            job.setStorageBaseKey(String.format("%1$s%2$s", jobPrefix, job.getId()));
+        }
+
+        return job.getStorageBaseKey();
     }
 
     /**
@@ -94,8 +139,9 @@ public class CloudStorageService {
 
         log.debug(String.format("Attempting to open a InputStreamMap for bucket '%1$s' with base key '%2$s'", bucket, baseKey));
 
+        BlobStoreContext bsc = getBlobStoreContextForJob(job);
         ListContainerOptions lco = ListContainerOptions.Builder.inDirectory(baseKey);
-        return blobStoreContext.createInputStreamMap(bucket,lco);
+        return bsc.createInputStreamMap(bucket,lco);
     }
 
     /**

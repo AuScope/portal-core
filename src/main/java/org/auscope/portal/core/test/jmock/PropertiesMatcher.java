@@ -14,18 +14,33 @@ import org.junit.matchers.TypeSafeMatcher;
 public class PropertiesMatcher extends TypeSafeMatcher<Properties> {
 
     private Properties comparison;
+    private boolean matchAll;
 
     /**
      * Create a new matcher
      * @param properties Match will succeed if the comparison properties has exactly the same set of properties
      */
     public PropertiesMatcher(Properties properties) {
+        this(properties, true);
+    }
+
+    /**
+     * Create a new matcher
+     * @param properties Match will succeed if the comparison properties matches according to matchAll
+     * @param matchAll if true, the comparison properties must be EXACTLY the same, otherwise it need only contain all of values in properties
+     */
+    public PropertiesMatcher(Properties properties, boolean matchAll) {
         this.comparison = properties;
+        this.matchAll = matchAll;
     }
 
     @Override
     public void describeTo(Description description) {
-        description.appendText(String.format("a Properties with '%1$s'", comparison));
+        if (matchAll) {
+            description.appendText(String.format("a Properties with '%1$s'", comparison));
+        } else {
+
+        }
 
     }
 
@@ -42,16 +57,16 @@ public class PropertiesMatcher extends TypeSafeMatcher<Properties> {
 
         Set<String> toMatchNames = toMatch.stringPropertyNames();
         Set<String> comparisonNames = comparison.stringPropertyNames();
-        if (toMatchNames.size() != comparisonNames.size()) {
+        if (matchAll && toMatchNames.size() != comparisonNames.size()) {
             return false;
         }
 
-        if (!toMatchNames.containsAll(comparisonNames) || !comparisonNames.containsAll(toMatchNames)) {
+        if (matchAll && (!toMatchNames.containsAll(comparisonNames) || !comparisonNames.containsAll(toMatchNames))) {
             return false;
         }
 
-        for (String property : toMatchNames) {
-            if (!toMatch.getProperty(property).equals(comparison.getProperty(property))) {
+        for (String property : comparisonNames) {
+            if (!comparison.getProperty(property).equals(toMatch.getProperty(property))) {
                 return false;
             }
         }

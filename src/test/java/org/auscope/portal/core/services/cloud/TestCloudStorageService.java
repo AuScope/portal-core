@@ -5,12 +5,14 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Properties;
 
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -27,14 +29,21 @@ public class TestCloudStorageService extends PortalTestClass {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
+    private BlobStoreContextFactory mockBlobStoreContextFactory = context.mock(BlobStoreContextFactory.class);
     private BlobStoreContext mockBlobStoreContext = context.mock(BlobStoreContext.class);
     private CloudJob job;
     private CloudStorageService service;
 
     @Before
     public void initJobObject() {
-        job = new CloudJob("13", "jobName", "jobDesc", "email@address", "user", new Date(), "status", "computeVmId", "computeInstanceId", "computeInstanceType", "computeInstanceKey", "storageBucket");
-        service = new CloudStorageService(mockBlobStoreContext);
+        job = new CloudJob(13);
+        job.setStorageBaseKey("base/key");
+        job.setStorageAccessKey("accessKey");
+        job.setStorageBucket("bucket");
+        job.setStorageEndpoint("http://example.com/storage");
+        job.setStorageProvider("example-storage-provider");
+        job.setStorageSecretKey("secretKey");
+        service = new CloudStorageService(mockBlobStoreContextFactory);
     }
 
 
@@ -44,9 +53,16 @@ public class TestCloudStorageService extends PortalTestClass {
           final InputStreamMap mockInputStream = context.mock(InputStreamMap.class);
           final InputStream mockReturnedInputStream = context.mock(InputStream.class);
 
+
           context.checking(new Expectations() {{
-              oneOf(mockBlobStoreContext).createInputStreamMap(with(any(String.class)),with(any(ListContainerOptions.class)));will(returnValue(mockInputStream));
-              oneOf(mockInputStream).get(myKey);will(returnValue(mockReturnedInputStream));
+              oneOf(mockBlobStoreContextFactory).createContext(with(job.getStorageProvider()), with(job.getStorageAccessKey()), with(job.getStorageSecretKey()), with(any(Iterable.class)), with(aProperty(job.getStorageProvider() + ".endpoint", job.getStorageEndpoint(), false)));
+              will(returnValue(mockBlobStoreContext));
+
+              oneOf(mockBlobStoreContext).createInputStreamMap(with(job.getStorageBucket()),with(any(ListContainerOptions.class)));
+              will(returnValue(mockInputStream));
+
+              oneOf(mockInputStream).get(myKey);
+              will(returnValue(mockReturnedInputStream));
           }});
 
           InputStream actualInputStream = service.getJobFile(job, myKey);
@@ -77,6 +93,9 @@ public class TestCloudStorageService extends PortalTestClass {
           final long obj2Length = 4567L;
 
           context.checking(new Expectations() {{
+              oneOf(mockBlobStoreContextFactory).createContext(with(job.getStorageProvider()), with(job.getStorageAccessKey()), with(job.getStorageSecretKey()), with(any(Iterable.class)), with(aProperty(job.getStorageProvider() + ".endpoint", job.getStorageEndpoint(), false)));
+              will(returnValue(mockBlobStoreContext));
+
               oneOf(mockBlobStoreContext).createInputStreamMap(with(any(String.class)),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
               oneOf(mockInputStreamMap).size();will(returnValue(2));
               oneOf(mockInputStreamMap).list();will(returnValue(mockFileMetaDataList));
@@ -124,7 +143,10 @@ public class TestCloudStorageService extends PortalTestClass {
         };
 
         context.checking(new Expectations() {{
-            oneOf(mockBlobStoreContext).createInputStreamMap(with(any(String.class)),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
+            oneOf(mockBlobStoreContextFactory).createContext(with(job.getStorageProvider()), with(job.getStorageAccessKey()), with(job.getStorageSecretKey()), with(any(Iterable.class)), with(aProperty(job.getStorageProvider() + ".endpoint", job.getStorageEndpoint(), false)));
+            will(returnValue(mockBlobStoreContext));
+
+            oneOf(mockBlobStoreContext).createInputStreamMap(with(job.getStorageBucket()),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
             allowing(mockBlobStore).createDirectory(job.getStorageBucket(), service.jobToBaseKey(job));
             allowing(mockFiles[0]).getName();will(returnValue("file1Name"));
             allowing(mockFiles[1]).getName();will(returnValue("file2Name"));
