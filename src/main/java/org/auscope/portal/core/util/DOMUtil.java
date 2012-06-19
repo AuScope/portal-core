@@ -35,6 +35,16 @@ import org.xml.sax.SAXException;
  * @author Josh Vote
  */
 public class DOMUtil {
+
+    /**
+     * Utility for accessing a consistent DocumentBuilderFactory (irregardless of what is on the classpath)
+     * @return
+     */
+    private static DocumentBuilderFactory getDocumentBuilderFactory() {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
+        return factory;
+    }
+
     /**
      * Given a String containing XML, parse it and return a DOM object representation (that is namespace aware).
      * @param xmlString A string containing valid XML
@@ -52,12 +62,11 @@ public class DOMUtil {
      */
     public static Document buildDomFromString(String xmlString, boolean isNamespaceAware) throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = getDocumentBuilderFactory();
         factory.setNamespaceAware(isNamespaceAware); // never forget this!
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputSource inputSource = new InputSource(new StringReader(xmlString.toString()));
         Document doc = builder.parse(inputSource);
-
         return doc;
     }
 
@@ -77,11 +86,10 @@ public class DOMUtil {
      */
     public static Document buildDomFromStream(InputStream stream, boolean isNamespaceAware) throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory factory = getDocumentBuilderFactory();
         factory.setNamespaceAware(isNamespaceAware); // never forget this!
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(stream);
-
         return doc;
     }
 
