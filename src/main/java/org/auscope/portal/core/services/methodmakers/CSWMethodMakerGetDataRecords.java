@@ -1,8 +1,12 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
@@ -105,5 +109,54 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(),"text/xml", "ISO-8859-1"));
 
         return httpMethod;
+    }
+
+    /**
+     * Generates a HTTP Get method that performs a CSW GetRecords request
+     *
+     * @return
+     * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
+     */
+    public HttpMethodBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition) throws UnsupportedEncodingException {
+        GetMethod method = new GetMethod(serviceUrl);
+
+
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+        params.add(new NameValuePair("service", "CSW"));
+        params.add(new NameValuePair("constraint_language_version", "1.1.0"));
+        params.add(new NameValuePair("request", "GetRecords"));
+        params.add(new NameValuePair("outputSchema", "csw:IsoRecord"));
+        params.add(new NameValuePair("typeNames", "csw:IsoRecord"));
+        params.add(new NameValuePair("constraintLanguage", "FILTER"));
+        params.add(new NameValuePair("namespace", "csw:http://www.opengis.net/cat/csw"));
+        params.add(new NameValuePair("elementSetName", "full"));
+        params.add(new NameValuePair("startPosition", Integer.toString(startPosition)));
+        params.add(new NameValuePair("maxRecords", Integer.toString(maxRecords)));
+
+        if (resultType != null) {
+            switch (resultType) {
+            case Hits:
+                params.add(new NameValuePair("resultType", "hits"));
+                break;
+            case Results:
+                params.add(new NameValuePair("resultType", "results"));
+                break;
+            default:
+                log.error("Request type invalid - sending unconstrained request");
+                break;
+            }
+        }
+
+        //attach params to the method
+        method.setQueryString(params.toArray(new NameValuePair[params.size()]));
+
+        String queryStr = method.getName()
+                        + " query sent to GeoNetwork: \n\t"
+                        + serviceUrl + "?" + method.getQueryString();
+
+        log.debug(queryStr);
+
+        return method;
     }
 }

@@ -73,6 +73,8 @@ public class CSWCacheService {
     protected Executor executor;
     protected CSWServiceItem[] cswServiceList;
     protected boolean updateRunning;  //don't set this variable directly
+    /** If true, this class will force the usage of HTTP GetMethods instead of POST methods (where possible). Useful workaround for some CSW services */
+    protected boolean forceGetMethods = false;
     protected Date lastCacheUpdate;
 
 
@@ -98,6 +100,24 @@ public class CSWCacheService {
             this.cswServiceList[i] = (CSWServiceItem) cswServiceList.get(i);
         }
     }
+
+    /**
+     * Does this cache service force the usage of HTTP Get Methods
+     * @return
+     */
+    public boolean isForceGetMethods() {
+        return forceGetMethods;
+    }
+
+    /**
+     * Sets whether this cache service force the usage of HTTP Get Methods
+     * @param forceGetMethods
+     */
+    public void setForceGetMethods(boolean forceGetMethods) {
+        this.forceGetMethods = forceGetMethods;
+    }
+
+
 
     /**
      * Get's whether the currently running thread is OK to start a cache update
@@ -377,7 +397,14 @@ public class CSWCacheService {
                     log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
 
                     //Request our set of records
-                    HttpMethodBase method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
+                    HttpMethodBase method = null;
+                    if (parent.forceGetMethods) {
+                        method = methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
+                    } else {
+                        method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
+                    }
+
+
                     InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
 
                     log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
