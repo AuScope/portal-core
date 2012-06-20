@@ -35,8 +35,8 @@ MPolyDragControl.prototype.initialize = function() {
     baseIcon.dragCrossSize = new GSize(0,0);
     baseIcon.maxHeight = 0.1;
 
-    this.dragImage = "js/external/MPolyDragControl/images/polyEditSquare.png";
-    this.transImage = "js/external/MPolyDragControl/images/transparent.png";
+    this.dragImage = "portal-core/js/MPolyDragControl/images/polyEditSquare.png";
+    this.transImage = "portal-core/js/MPolyDragControl/images/transparent.png";
     this.polyEditIcon = (new GIcon(baseIcon, this.dragImage));
     this.transIcon = (new GIcon(baseIcon, this.transImage));
 
