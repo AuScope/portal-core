@@ -35,7 +35,8 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
                 'SRS' : bbox.crs,
                 'BBOX' : bboxString,
                 'WIDTH' : width,
-                'HEIGHT' : height
+                'HEIGHT' : height,
+                'STYLES' : '' //Some WMS implementations require this
             };
 
             var queryString = Ext.Object.toQueryString(params);
