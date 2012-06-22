@@ -38,7 +38,7 @@ public  class SOSService {
      * @param request - required, service type identifier (e.g. GetCapabilities or GetObservation) 
      * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested 
      * @param eventTime - optional - time period(s) (start and end) for which observations are requested 
-     *                             - the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss±HH. 
+     *                             - the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. 
      *                             - Periods of time (start and end) are separated by "/". 
      *                               For example: 1990-01-01T00:00:00.000+08:00/2010-02-20T00:00:00.000+08:00
      * @param BBOX - optional - Bounding Box format : minlon,minlat,maxlon,maxlat(,srsURI). 
