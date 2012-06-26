@@ -1,17 +1,12 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
 /**
  * A class for generating Sensor Observation Service requests.
  *
@@ -118,7 +113,7 @@ public class SOSMethodMaker extends AbstractMethodMaker {
         	sb.append("        <sos:spatialFilter>\n");
         	sb.append("          <fes:BBOX>\n");
         	sb.append("            <fes:ValueReference>om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape</fes:ValueReference>\n");
-        	if (boundingBox.length>4) {
+        	if (boundingBox.length>3) {
         		sb.append("              <gml:Envelope srsName=\"" + boundingBox[4] + "\">\n");
         	} else {
         		sb.append("              <gml:Envelope srsName=\"http://www.opengis.net/def/crs/EPSG/0/4326\">\n");
@@ -149,6 +144,8 @@ public class SOSMethodMaker extends AbstractMethodMaker {
     public HttpMethodBase makePostMethod(String serviceURL, String request) {
     	return makePostMethod(serviceURL,request,null,null,null);
     }
+    
+    
    
 }        
     

@@ -37,29 +37,26 @@ public class TestSOSService extends PortalTestClass {
     public void testGetObsTemporalFilterRequest() throws Exception {
     	final String sosUrl = "http://example.org/sos";
         final String request ="GetObservation";
-        final String featureID = "testID";
         final String temporalFilter = "1989-12-31T00:00:00+08/2010-02-21T00:00:00+08";
         
         context.checking(new Expectations() {{
-        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, featureID, temporalFilter,null);will(returnValue(mockHttpMethodBase));
+        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, null, temporalFilter,null);will(returnValue(mockHttpMethodBase));
         }});
         
-        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, featureID, temporalFilter, null));
+        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, null, temporalFilter, null));
     }
     
     @Test
     public void testGetObsBBOXFilterRequest() throws Exception {
     	final String sosUrl = "http://example.org/sos";
         final String request ="GetObservation";
-        final String featureID = "testID";
-        final String temporalFilter = "1989-12-31T00:00:00+08/2010-02-21T00:00:00+08";
-        final String bboxFilter = "0,0,180,180,,http://www.opengis.net/def/crs/EPSG/0/4283";
+        final String bboxFilter = "-8.9,-44.0,112.8,154.1,http://www.opengis.net/def/crs/EPSG/0/4283";
         
         context.checking(new Expectations() {{
-        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, featureID, temporalFilter, bboxFilter);will(returnValue(mockHttpMethodBase));
+        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, null, null, bboxFilter);will(returnValue(mockHttpMethodBase));
         }});
         
-        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, featureID, temporalFilter, bboxFilter));
+        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, null, null, bboxFilter));
     }
     
     
