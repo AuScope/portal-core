@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONSerializer;
+import net.sf.json.JsonConfig;
+import net.sf.json.util.CycleDetectionStrategy;
 
 import org.springframework.web.servlet.view.AbstractView;
 
@@ -21,23 +23,31 @@ import org.springframework.web.servlet.view.AbstractView;
  */
 public class JSONView extends AbstractView {
     private JSONArray jsonArray;
+    private JsonConfig cfg;
 
     public JSONView() {
         super();
         setContentType("application/json");
+        initialiseConfig();
     }
 
     public JSONView(JSONArray jsonArray) {
         this.jsonArray = jsonArray;
+        initialiseConfig();
+    }
+
+    private void initialiseConfig() {
+        cfg = new JsonConfig();
+        cfg.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
     }
 
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         response.setContentType(getContentType());
 
         if (jsonArray != null) { //convert just the array
-            response.getWriter().write(JSONSerializer.toJSON(jsonArray).toString());
+            response.getWriter().write(JSONSerializer.toJSON(jsonArray, cfg).toString());
         } else { //send of the object
-            response.getWriter().write(JSONSerializer.toJSON(model).toString());
+            response.getWriter().write(JSONSerializer.toJSON(model, cfg).toString());
         }
     }
 
