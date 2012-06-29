@@ -321,6 +321,53 @@ public class TestCSWCacheService extends PortalTestClass {
     }
 
     /**
+     * Tests cache service correctly merges online resources when they have the same name, type and URL (sans parameters)
+     * @throws Exception
+     */
+    @Test
+    public void testOnlineResourceMerging() throws Exception {
+        final String mergeRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MergeableResources.xml");
+        final ByteArrayInputStream t1r1 = new ByteArrayInputStream(mergeRecordsString.getBytes());
+
+        context.checking(new Expectations() {{
+            //Thread 1 will make 1 requests
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+            will(returnValue(t1r1));
+
+            //Thread 2 will error
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+            will(throwException(new ConnectException()));
+
+            //Thread 3 will error
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+            will(throwException(new ConnectException()));
+        }});
+
+        //Start our updating and wait for our threads to finish
+        Assert.assertTrue(this.cswCacheService.updateCache());
+        Thread.sleep(50);
+        try {
+            threadExecutor.getExecutorService().shutdown();
+            threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
+        } catch (Exception ex) {
+            threadExecutor.getExecutorService().shutdownNow();
+            Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
+        }
+
+        //There must be exactly 1 record
+        List<CSWRecord> cachedRecords = this.cswCacheService.getRecordCache();
+        Assert.assertNotNull(cachedRecords);
+        Assert.assertEquals(1, cachedRecords.size());
+
+        //Verify we only have 2 resources (correctly merged) - one merged resource and the other with a null URL
+        CSWRecord rec = cachedRecords.get(0);
+        Assert.assertTrue(rec.containsAnyOnlineResource(OnlineResourceType.WFS));
+        Assert.assertEquals(2, rec.getOnlineResources().length);
+        Assert.assertNull(rec.getOnlineResources()[0].getLinkage().getQuery()); //There should be no query string (it gets removed when merging)
+        Assert.assertNull(rec.getOnlineResources()[1].getLinkage()); //Should be null
+    }
+
+    /**
      * Tests keyword cache gets properly populated
      * @throws Exception
      */

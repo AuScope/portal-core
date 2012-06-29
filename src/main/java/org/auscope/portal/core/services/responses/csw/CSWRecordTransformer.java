@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -426,6 +427,39 @@ public class CSWRecordTransformer {
         return (Node) expression.evaluate(node, XPathConstants.NODE);
     }
 
+
+    /**
+     * Iterates through the record's online resource list and removes any pairs of online resources that match on:
+     * 1) URL (sans query string)
+     * 2) name
+     * 3) protocol
+     */
+    private List<AbstractCSWOnlineResource> removeDuplicateOnlineResources(List<AbstractCSWOnlineResource> resources) {
+        for (int i = 0; i < resources.size(); i++) {
+            AbstractCSWOnlineResource resource = resources.get(i);
+            boolean foundMatching = false;
+            for (int j = i + 1; j < resources.size() && !foundMatching; j++) {
+                AbstractCSWOnlineResource cmp = resources.get(j);
+
+                //Do the easy check first
+                if (resource.getName().equals(cmp.getName()) &&
+                    resource.getType() == cmp.getType()) {
+                    //Then test the URL host + path
+                    if (resource.getLinkage() != null && cmp.getLinkage() != null) {
+                        String resourceUrl = resource.getLinkage().toString().split("\\?")[0];
+                        String cmpUrl = cmp.getLinkage().toString().split("\\?")[0];
+
+                        if (resourceUrl.equals(cmpUrl)) {
+                            resources.remove(j--);
+                        }
+                    }
+                }
+            }
+        }
+
+        return resources;
+    }
+
     /**
      * Creates a new CSWRecord instance parsed from the internal template of this class
      *
@@ -474,6 +508,7 @@ public class CSWRecordTransformer {
                 logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",record.getServiceName(), ex));
             }
         }
+        removeDuplicateOnlineResources(resources);
         record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
