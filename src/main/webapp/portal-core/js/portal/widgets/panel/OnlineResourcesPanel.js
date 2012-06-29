@@ -50,6 +50,9 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 case portal.csw.OnlineResource.SOS:
                     group = 'Sensor Observation Service 2.0.0';
                     break;
+                case portal.csw.OnlineResource.UNKNOWN:
+                    group = 'Others';
+                    break;
                 default:
                     continue;//don't include anything else
                 }
@@ -121,6 +124,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         switch(onlineResource.get('type')) {
         case portal.csw.OnlineResource.WWW:
         case portal.csw.OnlineResource.FTP:
+        case portal.csw.OnlineResource.UNKNOWN:
             return Ext.DomHelper.markup({
                 tag : 'div',
                 children : [{
