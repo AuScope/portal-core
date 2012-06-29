@@ -1,11 +1,14 @@
 package org.auscope.portal.core.services;
 
+import java.util.Date;
+
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.SOSMethodMaker;
+import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.sos.SOSResponse;
 
@@ -37,18 +40,19 @@ public  class SOSService {
      * @param sosUrl [required] - the sensor observation service url
      * @param request - required, service type identifier (e.g. GetCapabilities or GetObservation) 
      * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested 
-     * @param eventTime - optional - time period(s) (start and end) for which observations are requested 
-     *                             - the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. 
-     *                             - Periods of time (start and end) are separated by "/". 
-     *                               For example: 1990-01-01T00:00:00.000+08:00/2010-02-20T00:00:00.000+08:00
-     * @param BBOX - optional - Bounding Box format : minlon,minlat,maxlon,maxlat(,srsURI). 
-     * 												  The first four parameters are expected as decimal degrees. 
-     * 												  SrsURI is optional and could take a value of "urn:ogc:def:crs:EPSG:6.5:4326"                             
+     * @param beginPosition - optional - start time period for which observations are requested 
+     *                       			the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. 
+     * @param endPosition - optional  -	end time period(s) for which observations are requested 
+     *                             		the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
+     *                                - both beginPosition and endPosition must go in pair, if one exists, the other must exists                               
+     * @param bbox - optional         -	FilterBoundingBox object -> convert to 52NorthSOS BBOX format :
+     *                          		maxlat,minlon,minlat,maxlon(,srsURI) 
+     *                             		srsURI format : "http://www.opengis.net/def/crs/EPSG/0/"+epsg code 							                          
      * @return HttpMethodBase object
      * @throws Exception
      */
-    protected HttpMethodBase generateSOSRequest(String sosUrl, String request, String featureOfInterest, String eventTime, String BBOX) {    	
-            return sosMethodMaker.makePostMethod(sosUrl, request, featureOfInterest, eventTime, BBOX);
+    protected HttpMethodBase generateSOSRequest(String sosUrl, String request, String featureOfInterest, Date beginPosition, Date endPosition, FilterBoundingBox bbox) {    	
+            return sosMethodMaker.makePostMethod(sosUrl, request, featureOfInterest, beginPosition, endPosition, bbox);
     }
 
     

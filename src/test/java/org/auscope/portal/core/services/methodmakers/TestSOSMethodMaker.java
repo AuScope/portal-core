@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -9,8 +10,10 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.DOMUtil;
+import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -117,14 +120,17 @@ public class TestSOSMethodMaker extends PortalTestClass {
     	final String expectedVersion = "2.0.0";
         final String sosUrl = "http://example.url";
         final String request = "GetObservation";
-        final String featureID = "testID";
-        final String temporalFilter = "2010-01-31T00:00:00+08/2010-02-21T00:00:00+08";
-        final String bboxFilter = "-8.9,-44.0,112.8,154.1,http://www.opengis.net/def/crs/EPSG/0/4326";
+        final String featureID = "testID";        
+        final long oneDay = (long) 1000.0 * 60 * 60 * 24;          
+        final Date today = new Date(System.currentTimeMillis()); 
+        final Date yesterday = new Date(System.currentTimeMillis()-oneDay);
+        final String bboxFilter = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":154.1,\"westBoundLongitude\":112.8,\"southBoundLatitude\":-44.0,\"northBoundLatitude\":-8.9}";
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter);
 
         SOSMethodMaker sosMM = new SOSMethodMaker();
 
         Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request),"version", expectedVersion));
-        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, featureID, temporalFilter, bboxFilter),"version", expectedVersion));
+        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, featureID, yesterday, today, bbox),"version", expectedVersion));
     }
     
 
@@ -135,25 +141,28 @@ public class TestSOSMethodMaker extends PortalTestClass {
         final String sosUrl = "http://example.url";
         final String request = "GetObservation";
         final String featureID = "testID";
-        final String temporalFilter = "2010-01-31T00:00:00+08/2010-02-21T00:00:00+08";
-        final String bboxFilter = "-8.9,-44.0,112.8,154.1,http://www.opengis.net/def/crs/EPSG/0/4326";
+        final long oneDay = (long) 1000.0 * 60 * 60 * 24;
+        final Date today = new Date(System.currentTimeMillis()); 
+        final Date yesterday = new Date(System.currentTimeMillis()-oneDay);
+        final String bboxFilter = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":154.1,\"westBoundLongitude\":112.8,\"southBoundLatitude\":-44.0,\"northBoundLatitude\":-8.9}";
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter);
         
         SOSMethodMaker sosMM = new SOSMethodMaker();
 
-        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null),"featureOfInterest", null));
-        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, featureID, null, null),"featureOfInterest", "testID"));
+        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, null),"featureOfInterest", null));
+        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, featureID, null, null, null),"featureOfInterest", "testID"));
 
-        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null),"beginPosition", null));
-        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null),"endPosition", null));
-        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, temporalFilter, null),"beginPosition", "2010-01-31T00:00:00+08"));
-        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, temporalFilter, null),"endPosition", "2010-02-21T00:00:00+08"));
+        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, null),"beginPosition", null));
+        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, null),"endPosition", null));
+        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, yesterday,today, null),"beginPosition", new DateTime(yesterday).toString()));
+        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, yesterday,today, null),"endPosition", new DateTime(today).toString()));
 
-        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null),"lowerCorner", null));
-        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null),"upperCorner", null));
-        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null),"srsName", null));
-        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, bboxFilter),"lowerCorner", "-8.9 112.8"));
-        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, bboxFilter),"upperCorner", "-44.0 154.1"));
-        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, bboxFilter),"srsName", "http://www.opengis.net/def/crs/EPSG/0/4326"));
+        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, null),"lowerCorner", null));
+        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, null),"upperCorner", null));
+        Assert.assertFalse(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, null),"srsName", null));
+        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, bbox),"lowerCorner", "-8.9 112.8"));
+        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, bbox),"upperCorner", "-44.0 154.1"));
+        Assert.assertTrue(testSOSParam(sosMM.makePostMethod(sosUrl, request, null, null, null, bbox),"srsName", "http://www.opengis.net/def/crs/EPSG/0/4326"));
 
     }
 }

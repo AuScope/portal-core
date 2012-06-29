@@ -1,12 +1,18 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
+import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 /**
  * A class for generating Sensor Observation Service requests.
  *
@@ -50,21 +56,20 @@ public class SOSMethodMaker extends AbstractMethodMaker {
      * @param serviceURL - required, SOS End Point
      * @param request - required, service type identifier (e.g. GetObservation) 
      * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested 
-     * @param eventTime - optional - time period(s) (start and end) for which observations are requested 
-     *                             - the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. 
-     *                             - Periods of time (start and end) are separated by "/". 
-     *                               For example: 1990-01-01T00:00:00.000+08:00/2010-02-20T00:00:00.000+08:00
-     * @param BBOX - optional - Bounding Box format : minlon,minlat,maxlon,maxlat(,srsURI). 
-     * 												  The first four parameters are expected as decimal degrees. 
-     * 												  SrsURI is optional and could take a value of "urn:ogc:def:crs:EPSG:6.5:4326"                             
+     * @param beginPosition - optional - start time period for which observations are requested 
+     *                       			the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. 
+     * @param endPosition - optional  -	end time period(s) for which observations are requested 
+     *                             		the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
+     *                                - both beginPosition and endPosition must go in pair, if one exists, the other must exists                               
+     * @param bbox - optional         -	FilterBoundingBox object -> convert to 52NorthSOS BBOX format :
+     *                          		maxlat,minlon,minlat,maxlon(,srsURI) 
+     *                             		srsURI format : "http://www.opengis.net/def/crs/EPSG/0/"+epsg code 							                          
      * @return httpMethod
      * @throws Exception if service URL or request are not provided
      */
-    public HttpMethodBase makePostMethod(String serviceURL, String request, String featureOfInterest, String eventTime, String BBOX) {
+    public HttpMethodBase makePostMethod(String serviceURL, String request, String featureOfInterest, Date beginPosition, Date endPosition, FilterBoundingBox bbox) {
     	
-    	String[] timePeriod;
-    	String[] boundingBox;
-    	
+        
         // Make sure the required parameters are given
         if (serviceURL == null || serviceURL.equals("")) {
             throw new IllegalArgumentException("serviceURL parameter can not be null or empty.");
@@ -93,14 +98,15 @@ public class SOSMethodMaker extends AbstractMethodMaker {
         sb.append("        xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n");
         sb.append("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
         sb.append("        xsi:schemaLocation=\"http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd\">\n");
-        if (eventTime != null && !eventTime.isEmpty()) {
-        	timePeriod = eventTime.split("/");
+        if ( (beginPosition != null && !beginPosition.equals("") ) && (beginPosition != null && !endPosition.equals("") ) ) {
+        	DateTime bpDateTime = new DateTime(beginPosition);
+        	DateTime epDateTime = new DateTime(endPosition);
         	sb.append("        <sos:temporalFilter>\n");
         	sb.append("          <fes:During>\n");
         	sb.append("            <fes:ValueReference>phenomenonTime</fes:ValueReference>\n");
         	sb.append("              <gml:TimePeriod gml:id=\"tp_1\">\n");
-        	sb.append("                <gml:beginPosition>" + timePeriod[0] + "</gml:beginPosition>\n");
-        	sb.append("                <gml:endPosition>" + timePeriod[1] + "</gml:endPosition>\n");
+        	sb.append("                <gml:beginPosition>" + bpDateTime + "</gml:beginPosition>\n");
+        	sb.append("                <gml:endPosition>" + epDateTime + "</gml:endPosition>\n");
         	sb.append("              </gml:TimePeriod>\n");
         	sb.append("          </fes:During>\n");
         	sb.append("        </sos:temporalFilter>\n");
@@ -108,18 +114,24 @@ public class SOSMethodMaker extends AbstractMethodMaker {
         if (featureOfInterest != null && !featureOfInterest.isEmpty()) {
             sb.append("        <sos:featureOfInterest>" + featureOfInterest + "</sos:featureOfInterest>\n");
         }  
-        if (BBOX != null && !BBOX.isEmpty()) {
-        	boundingBox = BBOX.split(",");
+        if (bbox != null && !bbox.equals("")) {        	
         	sb.append("        <sos:spatialFilter>\n");
         	sb.append("          <fes:BBOX>\n");
         	sb.append("            <fes:ValueReference>om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape</fes:ValueReference>\n");
-        	if (boundingBox.length>3) {
-        		sb.append("              <gml:Envelope srsName=\"" + boundingBox[4] + "\">\n");
+        	if (bbox.getBboxSrs() != null && !bbox.getBboxSrs().equals("")) {
+        		String[] epsgcode = bbox.getBboxSrs().split(":");
+        		sb.append("              <gml:Envelope srsName=\"http://www.opengis.net/def/crs/EPSG/0/" + epsgcode[1] +"\">\n");
         	} else {
         		sb.append("              <gml:Envelope srsName=\"http://www.opengis.net/def/crs/EPSG/0/4326\">\n");
         	}
-        	sb.append("                <gml:lowerCorner>" + boundingBox[0] + " " + boundingBox[2] + "</gml:lowerCorner>\n");
-        	sb.append("                <gml:upperCorner>" + boundingBox[1] + " " + boundingBox[3] + "</gml:upperCorner>\n");
+        	//Converting Google Map bbox format : lower corner point (minWestBoundLong,minNothBoundLatitude) and 
+        	//                                    upper corner point (maxWestBoundLong,maxNothBoundLatitude) 
+        	//TO SOS bbox format                : lower corner point (maxNothBoundLatitude,minWestBoundLong) and 
+        	//                                    upper corner point (minNothBoundLatitude,maxWestBoundLong) 
+        	double[] lowerCornerPoints = bbox.getLowerCornerPoints();
+        	double[] upperCornerPoints = bbox.getUpperCornerPoints();
+        	sb.append("                <gml:lowerCorner>" + upperCornerPoints[1] + " " + lowerCornerPoints[0] + "</gml:lowerCorner>\n");
+        	sb.append("                <gml:upperCorner>" + lowerCornerPoints[1] + " " + upperCornerPoints[0] + "</gml:upperCorner>\n");
         	sb.append("              </gml:Envelope>\n");
         	sb.append("          </fes:BBOX>\n");
         	sb.append("        </sos:spatialFilter>\n");
@@ -142,7 +154,7 @@ public class SOSMethodMaker extends AbstractMethodMaker {
     }
         
     public HttpMethodBase makePostMethod(String serviceURL, String request) {
-    	return makePostMethod(serviceURL,request,null,null,null);
+    	return makePostMethod(serviceURL,request,null,null,null,null);
     }
     
     

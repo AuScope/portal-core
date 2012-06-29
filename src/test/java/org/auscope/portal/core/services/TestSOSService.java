@@ -1,8 +1,11 @@
 package org.auscope.portal.core.services;
 
+import java.util.Date;
+
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.SOSMethodMaker;
+import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Assert;
@@ -27,36 +30,40 @@ public class TestSOSService extends PortalTestClass {
         final String featureID = "testID";
         
         context.checking(new Expectations() {{
-        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, featureID, null,null);will(returnValue(mockHttpMethodBase));
+        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, featureID, null, null, null);will(returnValue(mockHttpMethodBase));
         }});
         
-        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, featureID, null, null));
+        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, featureID, null, null, null));
     }
     
     @Test
     public void testGetObsTemporalFilterRequest() throws Exception {
     	final String sosUrl = "http://example.org/sos";
         final String request ="GetObservation";
-        final String temporalFilter = "1989-12-31T00:00:00+08/2010-02-21T00:00:00+08";
+        final long oneDay = (long) 1000.0 * 60 * 60 * 24;          
+        final Date today = new Date(System.currentTimeMillis()); 
+        final Date yesterday = new Date(System.currentTimeMillis()-oneDay);
+
         
         context.checking(new Expectations() {{
-        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, null, temporalFilter,null);will(returnValue(mockHttpMethodBase));
+        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, null, yesterday, today, null);will(returnValue(mockHttpMethodBase));
         }});
         
-        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, null, temporalFilter, null));
+        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, null, yesterday, today, null));
     }
     
     @Test
     public void testGetObsBBOXFilterRequest() throws Exception {
     	final String sosUrl = "http://example.org/sos";
         final String request ="GetObservation";
-        final String bboxFilter = "-8.9,-44.0,112.8,154.1,http://www.opengis.net/def/crs/EPSG/0/4283";
+        final String bboxFilter = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":154.1,\"westBoundLongitude\":112.8,\"southBoundLatitude\":-44.0,\"northBoundLatitude\":-8.9}";
+        final FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter);
         
         context.checking(new Expectations() {{
-        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, null, null, bboxFilter);will(returnValue(mockHttpMethodBase));
+        	oneOf(mockSosMethodMaker).makePostMethod(sosUrl, request, null, null, null, bbox);will(returnValue(mockHttpMethodBase));
         }});
         
-        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, null, null, bboxFilter));
+        Assert.assertSame(mockHttpMethodBase, sosService.generateSOSRequest(sosUrl, request, null, null, null, bbox));
     }
     
     
