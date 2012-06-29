@@ -217,7 +217,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             case portal.csw.OnlineResource.WMS:
             case portal.csw.OnlineResource.WWW:
             case portal.csw.OnlineResource.FTP:
-            case portal.csw.OnlineResource.UNKNOWN:
+            case portal.csw.OnlineResource.UNSUPPORTED:
                 containsImageSource = true;
                 break;
             }

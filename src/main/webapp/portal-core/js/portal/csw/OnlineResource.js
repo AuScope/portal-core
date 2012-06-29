@@ -27,7 +27,7 @@ Ext.define('portal.csw.OnlineResource', {
         OPeNDAP : 'OPeNDAP', //represents an OPeNDAP service
         FTP : 'FTP', //represents a File Transfer Protocol service
         SOS : 'SOS', //represents a SOS service
-        UNKNOWN : 'Unknown', //The backend doesn't recognise the type of service/protocol
+        UNSUPPORTED : 'Unsupported', //The backend doesn't recognise the type of service/protocol
 
         /**
          * Static utility function for extracting a subset of OnlineResources from an array
