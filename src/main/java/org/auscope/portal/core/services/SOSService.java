@@ -56,24 +56,37 @@ public  class SOSService {
     }
 
     
+    
     /**
-     * Makes a GetObservation request, transform the response using transformer and returns the 
-     * lot bundled in a SOSTransformedResopnse
-     * @param method a SOS GetObservation request
-     * @param transformer A transformer to work with the resulting SOS response
-     * @param styleSheetParams Properties to apply to the transformer
-     * @return
-     * @throws PortalServiceException
+     * Public method that receive parameters from Client, generate the SOSMethodMaker, trigger the  
+     * "GetObservation" request, receive and return the response 
+     * @param sosUrl [required] - the sensor observation service url
+     * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested 
+     * @param beginPosition - optional - start time period for which observations are requested 
+     *                       			the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. 
+     * @param endPosition - optional  -	end time period(s) for which observations are requested 
+     *                             		the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
+     *                                - both beginPosition and endPosition must go in pair, if one exists, the other must exists                               
+     * @param bbox - optional         -	FilterBoundingBox object -> convert to 52NorthSOS BBOX format :
+     *                          		maxlat,minlon,minlat,maxlon(,srsURI) 
+     *                             		srsURI format : "http://www.opengis.net/def/crs/EPSG/0/"+epsg code 							                          
+     * @return HttpMethodBase object
+     * @throws PortalServiceException 
      */
-    protected SOSResponse getSOSResponse(HttpMethodBase method) throws PortalServiceException {
-        try {
+    public SOSResponse getObservationsForFeature(String sosUrl, String featureOfInterest, Date beginPosition, Date endPosition, FilterBoundingBox bbox) throws PortalServiceException {
+		//Generate SOSMethodMaker
+		HttpMethodBase method = this.generateSOSRequest(sosUrl, "GetObservation", featureOfInterest, beginPosition, endPosition, bbox);
+
+    	try {
             //Make the request and parse the response
             String responseString = httpServiceCaller.getMethodResponseAsString(method);
             OWSExceptionParser.checkForExceptionResponse(responseString);
 
             return new SOSResponse(responseString, method);
         } catch (Exception ex) {
-            throw new PortalServiceException(method, ex);
+            throw new PortalServiceException(method, "Error while making SOS GetObservationForFeature request", ex);
         }
+
     }
+
 }
