@@ -39,6 +39,11 @@ public abstract class AbstractCSWOnlineResource {
         OPeNDAP,
 
         /**
+         * A FTP (File Transfer Protocol) link
+         */
+        FTP,
+
+        /**
          * A generic web link.
          */
         WWW,
@@ -103,6 +108,8 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.WWW;
         } else if (lowerProtocol.contains("ogc:sos-")) {
             return OnlineResourceType.SOS;
+        } else if (lowerProtocol.contains("www:download-1.0-ftp--download")) {
+            return OnlineResourceType.FTP;
         }
 
         return OnlineResourceType.Unsupported;

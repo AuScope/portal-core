@@ -25,6 +25,7 @@ Ext.define('portal.csw.OnlineResource', {
         WCS : 'WCS', //represents a Web Coverage Service
         WWW : 'WWW', //represents a regular HTTP web link
         OPeNDAP : 'OPeNDAP', //represents an OPeNDAP service
+        FTP : 'FTP', //represents a File Transfer Protocol service
         SOS : 'SOS', //represents a SOS service
 
         /**

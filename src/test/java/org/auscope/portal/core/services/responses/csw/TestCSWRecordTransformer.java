@@ -108,7 +108,7 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     @Test
     public void testMultipleOnlineResources() throws Exception {
         AbstractCSWOnlineResource[] resources = this.records[14].getOnlineResources();
-        Assert.assertEquals(2, resources.length);
+        Assert.assertEquals(3, resources.length);
 
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS);
         Assert.assertEquals(1, resources.length);
@@ -117,6 +117,10 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WMS);
         Assert.assertEquals(1, resources.length);
         Assert.assertEquals("http://apacsrv6/thredds/wms/galeon/ocean.nc", resources[0].getLinkage().toString());
+
+        resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.FTP);
+        Assert.assertEquals(1, resources.length);
+        Assert.assertEquals("ftp://example.org/ftp", resources[0].getLinkage().toString());
 
         resources = this.records[14].getOnlineResourcesByType();
         Assert.assertEquals(0, resources.length);
@@ -129,10 +133,18 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
 
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WCS));
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WMS));
+        Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.FTP));
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WCS, OnlineResourceType.WMS));
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WCS, OnlineResourceType.WMS, OnlineResourceType.WFS));
         Assert.assertFalse(this.records[14].containsAnyOnlineResource(OnlineResourceType.WFS));
         Assert.assertFalse(this.records[14].containsAnyOnlineResource(OnlineResourceType.WFS, OnlineResourceType.Unsupported));
+
+        //Now test another record with a slightly different schema
+        resources = this.records[3].getOnlineResources();
+        Assert.assertEquals(1, resources.length);
+        resources = this.records[3].getOnlineResourcesByType(OnlineResourceType.FTP);
+        Assert.assertEquals(1, resources.length);
+        Assert.assertEquals("ftp://ftp.bom.gov.au/anon/home/geofabric/", resources[0].getLinkage().toString());
     }
 
     @Test

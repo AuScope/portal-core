@@ -210,11 +210,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             switch(onlineResources[i].get('type')) {
             case portal.csw.OnlineResource.WFS:
             case portal.csw.OnlineResource.WCS:
+            case portal.csw.OnlineResource.SOS:
             case portal.csw.OnlineResource.OPeNDAP:
                 containsDataSource = true;
                 break;
             case portal.csw.OnlineResource.WMS:
             case portal.csw.OnlineResource.WWW:
+            case portal.csw.OnlineResource.FTP:
                 containsImageSource = true;
                 break;
             }

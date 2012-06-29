@@ -38,7 +38,7 @@ public class TestCSWCacheService extends PortalTestClass {
     static final int RECORD_COUNT_TOTAL = 15;
     static final int RECORD_MATCH_TOTAL = 30;
     static final int RECORD_COUNT_WMS = 2;
-    static final int RECORD_COUNT_WFS = 12;
+    static final int RECORD_COUNT_WFS = 11;
     static final int RECORD_COUNT_ERMINE_RECORDS = 2;
 
 
@@ -341,7 +341,7 @@ public class TestCSWCacheService extends PortalTestClass {
         expectedResult.put("Manhattan", 1);
         expectedResult.put("landmarks", 1);
         expectedResult.put("DS_poly_landmarks", 1);
-        expectedResult.put("WFS", 7);
+        expectedResult.put("WFS", 6);
         expectedResult.put("gsml:MappedFeature", 6);
         expectedResult.put("World", 1);
         expectedResult.put("points_of_interest", 1);

@@ -32,6 +32,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 //ensure we have a type we want to describe
                 switch (onlineResources[j].get('type')) {
                 case portal.csw.OnlineResource.WWW:
+                case portal.csw.OnlineResource.FTP:
                     group = 'Web Link';
                     break;
                 case portal.csw.OnlineResource.WFS:
@@ -45,6 +46,9 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     break;
                 case portal.csw.OnlineResource.OPeNDAP:
                     group = 'OPeNDAP Service';
+                    break;
+                case portal.csw.OnlineResource.SOS:
+                    group = 'Sensor Observation Service 2.0.0';
                     break;
                 default:
                     continue;//don't include anything else
@@ -116,6 +120,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         //Render our HTML
         switch(onlineResource.get('type')) {
         case portal.csw.OnlineResource.WWW:
+        case portal.csw.OnlineResource.FTP:
             return Ext.DomHelper.markup({
                 tag : 'div',
                 children : [{
@@ -164,6 +169,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         var cswRecord = record.get('cswRecord');
         var url = onlineRes.get('url');
         var name = onlineRes.get('name');
+        var description = onlineRes.get('description');
 
         //We preview types differently
         switch(onlineRes.get('type')) {
@@ -189,6 +195,14 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 target : '_blank',
                 href : url + '.html',
                 html : 'OPeNDAP Data access form'
+            });
+        case portal.csw.OnlineResource.SOS:
+            var getObservations = url + this.internalURLSeperator(url) + 'SERVICE=SOS&REQUEST=GetObservation&VERSION=2.0.0&OFFERING=' + escape(name) + '&OBSERVEDPROPERTY=' + escape(description) + '&RESPONSEFORMAT=' + escape('http://www.opengis.net/om/2.0');
+            return Ext.DomHelper.markup({
+                tag : 'a',
+                target : '_blank',
+                href : getObservations,
+                html : 'Observations for ' + description
             });
         case portal.csw.OnlineResource.WMS:
 
