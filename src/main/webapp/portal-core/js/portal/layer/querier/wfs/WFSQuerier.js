@@ -43,14 +43,15 @@ Ext.define('portal.layer.querier.wfs.WFSQuerier', {
     query : function(queryTarget, callback) {
         //This class can only query for specific WFS feature's
         var id = queryTarget.get('id');
-        var onlineResource = queryTarget.data.onlineResource;
+        var onlineResource = queryTarget.get('onlineResource');
+        var layer = queryTarget.get('layer');
         var typeName = onlineResource.get('name');
         var wfsUrl = onlineResource.get('url');
 
         //we need to get a reference to the parent known layer (if it is a known layer)
         var knownLayer = null;
-        if (queryTarget.data.layer.data.sourceType === portal.layer.Layer.KNOWN_LAYER) {
-            knownLayer = queryTarget.data.layer.data.source;
+        if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
+            knownLayer = layer.get('source');
         }
 
         //Download the DOM of the feature we are interested in
@@ -63,9 +64,9 @@ Ext.define('portal.layer.querier.wfs.WFSQuerier', {
 
             //Parse our response into a number of GUI components, pass those along to the callback
             var allComponents = [];
-            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.data.url));
-            if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource)) {
-                allComponents.push(me.knownLayerParser.parseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource));
+            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url')));
+            if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer)) {
+                allComponents.push(me.knownLayerParser.parseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer));
             }
 
             callback(me, allComponents, queryTarget);

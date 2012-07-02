@@ -35,7 +35,7 @@ Ext.define('portal.layer.querier.wfs.KnownLayerParser', {
     /**
      * Internal Method - returns a factory instance that can parse the specified feature/KnownLayer or null if it DNE
      */
-    _getSupportingFactory : function(featureId, parentKnownLayer, parentOnlineResource) {
+    _getSupportingFactory : function(featureId, parentKnownLayer, parentOnlineResource, parentLayer) {
         if (!parentKnownLayer) {
             return null;
         }
@@ -59,9 +59,10 @@ Ext.define('portal.layer.querier.wfs.KnownLayerParser', {
      * @param featureId The unique ID of the feature (belonging to a known layer)
      * @param parentKnownLayer The KnownLayer that 'owns' featureId
      * @param parentOnlineResource The OnlineResource Object belonging to CSWRecord that sourced featureId
+     * @param parentLayer The portal.layer.Layer representing the layer generated from parentKnownLayer
      */
-    canParseKnownLayerFeature : function(featureId, parentKnownLayer, parentOnlineResource) {
-        var supportingFactory = this._getSupportingFactory(featureId, parentKnownLayer, parentOnlineResource);
+    canParseKnownLayerFeature : function(featureId, parentKnownLayer, parentOnlineResource, parentLayer) {
+        var supportingFactory = this._getSupportingFactory(featureId, parentKnownLayer, parentOnlineResource, parentLayer);
         return supportingFactory !== null && supportingFactory !== undefined;
     },
 
@@ -74,12 +75,13 @@ Ext.define('portal.layer.querier.wfs.KnownLayerParser', {
      * @param featureId The unique ID of the feature (belonging to a known layer)
      * @param parentKnownLayer The KnownLayer that 'owns' featureId
      * @param parentOnlineResource The OnlineResource Object belonging to CSWRecord that sourced featureId
+     * @param parentLayer The portal.layer.Layer representing the layer generated from parentKnownLayer
      * @param rootCfg [Optional] An Object whose properties will be applied to the top level component parsed (a GenericParser.BaseComponent instance)
      */
-    parseKnownLayerFeature : function(featureId, parentKnownLayer, parentOnlineResource) {
-        var supportingFactory = this._getSupportingFactory(featureId, parentKnownLayer, parentOnlineResource);
+    parseKnownLayerFeature : function(featureId, parentKnownLayer, parentOnlineResource, parentLayer) {
+        var supportingFactory = this._getSupportingFactory(featureId, parentKnownLayer, parentOnlineResource, parentLayer);
         if (supportingFactory) {
-            return supportingFactory.parseKnownLayerFeature(featureId, parentKnownLayer, parentOnlineResource);
+            return supportingFactory.parseKnownLayerFeature(featureId, parentKnownLayer, parentOnlineResource, parentLayer);
         }
 
         return Ext.create('portal.layer.querier.BaseComponent', {});
