@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Header;
@@ -145,6 +146,9 @@ public class HttpServiceCaller {
         HttpConnectionManager man = new SimpleHttpConnectionManager();
         man.setParams(clientParams);
         httpClient.setHttpConnectionManager(man);
+
+        log.trace("Outgoing request headers: " + Arrays.toString(method.getRequestHeaders()));
+
 
         //make the call
         int statusCode = httpClient.executeMethod(method);

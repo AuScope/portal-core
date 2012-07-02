@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import junit.framework.Assert;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -128,6 +129,7 @@ public class TestHttpServiceCaller extends PortalTestClass {
             oneOf(mockHttpClient).executeMethod(method); will(returnValue(HttpStatus.SC_EXPECTATION_FAILED));
             oneOf(method).getStatusLine();//logger
             oneOf(method).getStatusLine();//exception
+            allowing(method).getRequestHeaders();will(returnValue(new Header[0]));
             allowing(method).getURI();will(returnValue(null));
 
         }});
