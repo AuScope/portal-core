@@ -5,6 +5,13 @@
 Ext.define('portal.layer.querier.wfs.featuresources.WFSFeatureSource', {
     extend : 'portal.layer.querier.wfs.FeatureSource',
 
+    extraParams : null,
+
+    constructor : function(config) {
+        this.extraParams = config.extraParams ? config.extraParams : {};
+        this.callParent(arguments);
+    },
+
     /**
      * See parent class for definition
      */
@@ -14,14 +21,17 @@ Ext.define('portal.layer.querier.wfs.featuresources.WFSFeatureSource', {
             return;
         }
 
+        var params = Ext.apply({}, this.extraParams);
+        Ext.apply(params, {
+            serviceUrl : wfsUrl,
+            typeName : featureType,
+            featureId : featureId
+        });
+
         var me = this;
         Ext.Ajax.request({
             url : 'requestFeature.do',
-            params : {
-                serviceUrl : wfsUrl,
-                typeName : featureType,
-                featureId : featureId
-            },
+            params : params,
             callback : function(options, success, response) {
                 if (!success) {
                     callback(null, featureId, featureType, wfsUrl);
