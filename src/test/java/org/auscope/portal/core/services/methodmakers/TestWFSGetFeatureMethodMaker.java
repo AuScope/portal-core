@@ -12,6 +12,8 @@ import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
+import org.auscope.portal.core.services.namespaces.IterableNamespace;
+import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.DOMUtil;
 import org.junit.Assert;
@@ -108,6 +110,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         final String serviceUrl = "http://example.url";
         final String typeName = "test:typeName";
         final String srsName = "srs-name";
+        final String outputFormat = "o-f";
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
@@ -120,8 +123,31 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, null),"srsName", null));
         Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, srsName),"srsName", srsName));
 
+        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, (Integer) null, null),"srsName", null));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, (Integer) null, outputFormat),"srsName", outputFormat));
+
         Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null),"resultType", null));
         Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, ResultType.Hits),"resultType", "hits"));
         Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, ResultType.Results),"resultType", "results"));
+
+        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, ""),"outputFormat", null));
+        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, null),"outputFormat", null));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, outputFormat),"outputFormat", outputFormat));
+    }
+
+    private class MyNamespace extends WFSNamespaceContext {
+        public MyNamespace() {
+            map.put("p1", "v1");
+            map.put("p2", "v2");
+        }
+    }
+
+    @Test
+    public void testNamespaces() throws Exception {
+        WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
+        mm.setNamespaces(new MyNamespace());
+
+        Assert.assertTrue(testWFSParam(mm.makePostMethod("http://example.org", "type:Name", null, 0, null, null, null),"xmlns:p1", "v1"));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod("http://example.org", "type:Name", null, 0, null, null, null),"xmlns:p2", "v2"));
     }
 }

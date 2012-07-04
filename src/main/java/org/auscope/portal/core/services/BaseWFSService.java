@@ -60,6 +60,23 @@ public abstract class BaseWFSService {
      * @throws Exception
      */
     protected HttpMethodBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType) {
+        return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, null);
+    }
+
+    /**
+     * Utility method for choosing the correct WFS method to generate based on specified parameters
+     * @param wfsUrl [required] - the web feature service url
+     * @param featureType [required] - the type name
+     * @param featureId [optional] - A unique ID of a single feature type to query
+     * @param filterString [optional] - A OGC filter string to constrain the request
+     * @param maxFeatures [optional] - A maximum number of features to request
+     * @param srs [optional] - The spatial reference system the response should be encoded to. If unspecified BaseWFSService.DEFAULT_SRS will be used
+     * @param resultType [optional] - Whether to request all features (default) or just the count
+     * @param outputFormat [optional] - The format the response should take
+     * @return
+     * @throws Exception
+     */
+    protected HttpMethodBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat) {
         int max = maxFeatures == null ? 0 : maxFeatures.intValue();
 
         //apply default value for srs
@@ -68,9 +85,9 @@ public abstract class BaseWFSService {
         }
 
         if (featureId == null) {
-            return wfsMethodMaker.makePostMethod(wfsUrl, featureType, filterString, max, srs, resultType);
+            return wfsMethodMaker.makePostMethod(wfsUrl, featureType, filterString, max, srs, resultType, outputFormat);
         } else {
-            return wfsMethodMaker.makeGetMethod(wfsUrl, featureType, featureId, srs);
+            return wfsMethodMaker.makeGetMethod(wfsUrl, featureType, featureId, srs, outputFormat);
         }
     }
 

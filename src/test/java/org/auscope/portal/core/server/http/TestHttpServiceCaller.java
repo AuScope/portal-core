@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
+import org.auscope.portal.core.services.namespaces.ErmlNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Before;
@@ -43,6 +44,7 @@ public class TestHttpServiceCaller extends PortalTestClass {
         mockParams = context.mock(HttpConnectionManagerParams.class);
         httpServiceCaller = new HttpServiceCaller(mockParams);
         methodMaker = new WFSGetFeatureMethodMaker();
+        methodMaker.setNamespaces(new ErmlNamespaceContext());
     }
 
     /**
