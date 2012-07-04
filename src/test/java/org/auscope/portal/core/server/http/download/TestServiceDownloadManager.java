@@ -167,4 +167,34 @@ public class TestServiceDownloadManager extends PortalTestClass  {
             Assert.assertFalse(dr.hasException());
         }
     }
+
+    /**
+     * Tests a download with no service URL parameter succeeds
+     * @throws Exception
+     */
+    @Test
+    public void testDownloadNoServiceUrlParam() throws Exception {
+        final String[] serviceUrls = {"http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?param1=value=1&param2=value2"};
+        final String dummyGml = "<someGmlHere/>";
+        final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
+                + dummyGml + "\"},\"success\":true}";
+        final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
+
+        context.checking(new Expectations() {
+            {
+                // calling the service
+                exactly(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)));
+                    will(returnValue(dummyJSONResponseIS));
+            }
+        });
+
+        ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool);
+        ArrayList<DownloadResponse> gmlDownloads=sdm.downloadAll();
+        for(DownloadResponse response:gmlDownloads){
+            Assert.assertEquals(dummyJSONResponseIS,response.getResponseAsStream());
+            Assert.assertFalse(response.hasException());
+            Assert.assertNull(response.getException());
+        }
+
+    }
 }

@@ -96,7 +96,15 @@ public class ServiceDownloadManager {
                 map.put(name, value);
             }
         }
-        return map.get("serviceUrl");
+
+        //Some requests may use a hardcoded serviceUrl (not specifying the remote url)
+        //We can't guess at underlying hardcoded URL so instead apply service fairness rule to the proxy
+        String serviceUrl = map.get("serviceUrl");
+        if (serviceUrl == null) {
+            return url;
+        }
+
+        return serviceUrl;
     }
 
     public class GMLDownload implements Runnable {
