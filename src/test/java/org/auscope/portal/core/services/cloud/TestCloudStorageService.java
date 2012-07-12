@@ -156,4 +156,26 @@ public class TestCloudStorageService extends PortalTestClass {
 
         service.uploadJobFiles(job, mockFiles);
     }
+
+    /**
+     * Tests that no exceptions occur during base key generation edge cases
+     * @throws Exception
+     */
+    @Test
+    public void testBaseKeyGeneration() throws Exception {
+        CloudJob emptyJob = new CloudJob(null);
+
+
+        String emptyJobBaseKey = service.generateBaseKey(emptyJob);
+        Assert.assertNotNull(emptyJobBaseKey);
+        Assert.assertFalse(emptyJobBaseKey.isEmpty());
+
+        CloudJob nonEmptyJob = new CloudJob(42);
+        String nonEmptyJobBaseKey = service.generateBaseKey(nonEmptyJob);
+        Assert.assertNotNull(nonEmptyJobBaseKey);
+        Assert.assertFalse(nonEmptyJobBaseKey.isEmpty());
+
+        //Base keys should differ based soley on ID
+        Assert.assertFalse(nonEmptyJobBaseKey.equals(emptyJobBaseKey));
+    }
 }
