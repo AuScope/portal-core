@@ -104,7 +104,7 @@ public class CloudStorageService {
      * @return
      */
     public String generateBaseKey(CloudJob job) {
-        String baseKey = String.format("%1$s%2$s-%3$s", jobPrefix, job.getUser(), job.getId());
+        String baseKey = String.format("%1$s%2$s-%3$010d", jobPrefix, job.getUser(), job.getId());
         baseKey = baseKey.replaceAll("[^a-zA-Z0-9_\\-]", "_"); //get rid of some nasty characters
         return baseKey;
     }
