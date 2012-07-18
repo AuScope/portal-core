@@ -17,6 +17,20 @@ Ext.define('portal.widgets.panel.LayerPanel', {
         this.allowDebugWindow = cfg.allowDebugWindow ? true : false;
         this.addEvents('removelayerrequest');
 
+        this.removeAction = new Ext.Action({
+            text : 'Remove Layer',
+            iconCls : 'remove',
+            handler : Ext.bind(function(cmp) {
+                var sm = this.getSelectionModel();
+                var selectedRecords = sm.getSelection();
+                if (selectedRecords && selectedRecords.length > 0) {
+                    var store = this.getStore();
+                    store.remove(selectedRecords);
+                    this.fireEvent('removelayerrequest', this, selectedRecords[0]);//only support single selection
+                }
+            }, this)
+        });
+
         Ext.apply(cfg, {
             columns : [{
                 //legend column
@@ -78,21 +92,13 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 ]
             },{
                 ptype: 'celltips'
+            },{
+                ptype : 'rowcontextmenu',
+                contextMenu : Ext.create('Ext.menu.Menu', {
+                    items: [this.removeAction]
+                })
             }],
-            bbar: [{
-                text : 'Remove Layer',
-                iconCls : 'remove',
-                handler : function(button) {
-                    var grid = button.findParentByType('layerpanel');
-                    var sm = grid.getSelectionModel();
-                    var selectedRecords = sm.getSelection();
-                    if (selectedRecords && selectedRecords.length > 0) {
-                        var store = grid.getStore();
-                        store.remove(selectedRecords);
-                        grid.fireEvent('removelayerrequest', this, selectedRecords[0]);//only support single selection
-                    }
-                }
-            }]
+            bbar: [this.removeAction]
         });
 
         this.callParent(arguments);
