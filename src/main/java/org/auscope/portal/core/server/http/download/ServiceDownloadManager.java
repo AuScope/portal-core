@@ -10,9 +10,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 /**
  * A manager class that to control number of requests to a endpoint and also multithread a request
@@ -96,7 +96,15 @@ public class ServiceDownloadManager {
                 map.put(name, value);
             }
         }
-        return map.get("serviceUrl");
+
+        //Some requests may use a hardcoded serviceUrl (not specifying the remote url)
+        //We can't guess at underlying hardcoded URL so instead apply service fairness rule to the proxy
+        String serviceUrl = map.get("serviceUrl");
+        if (serviceUrl == null) {
+            return url;
+        }
+
+        return serviceUrl;
     }
 
     public class GMLDownload implements Runnable {
@@ -180,7 +188,7 @@ public class ServiceDownloadManager {
         }
 
         public void download(DownloadResponse response, String url) {
-            GetMethod method = new GetMethod(url);
+            HttpGet method = new HttpGet(url);
             try {
                 // Our request may fail (due to timeout or otherwise)
                 response.setResponseStream(serviceCaller.getMethodResponseAsStream(method));

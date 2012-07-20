@@ -84,6 +84,8 @@ public class CloudComputeService {
         if (job.getComputeInstanceKey() != null) {
             instanceRequest.setKeyName(job.getComputeInstanceKey());
         }
+        instanceRequest.setInstanceInitiatedShutdownBehavior("terminate");
+
         RunInstancesResult result = ec2.runInstances(instanceRequest);
         List<Instance> instances = result.getReservation().getInstances();
 

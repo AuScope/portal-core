@@ -4,9 +4,9 @@ import java.awt.Dimension;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -15,7 +15,6 @@ import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 import org.auscope.portal.core.util.DOMUtil;
-import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
 /**
@@ -53,7 +52,7 @@ public class WCSService {
             Dimension outputSize, Resolution outputResolution, String outputCrs, String inputCrs,
             CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParameters) throws PortalServiceException {
 
-        HttpMethodBase method = methodMaker.getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
+        HttpRequestBase method = methodMaker.getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
 
         try {
             return serviceCaller.getMethodResponseAsStream(method);
@@ -68,7 +67,7 @@ public class WCSService {
      * @param coverageName The coverage name to describe
      */
     public DescribeCoverageRecord[] describeCoverage(String serviceUrl, String coverageName) throws PortalServiceException {
-        HttpMethodBase method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
+        HttpRequestBase method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
 
         try {
             InputStream response = serviceCaller.getMethodResponseAsStream(method);

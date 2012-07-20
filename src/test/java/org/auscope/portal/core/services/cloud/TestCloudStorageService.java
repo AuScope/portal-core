@@ -156,4 +156,58 @@ public class TestCloudStorageService extends PortalTestClass {
 
         service.uploadJobFiles(job, mockFiles);
     }
+
+    /**
+     * Tests that no exceptions occur during base key generation edge cases
+     * @throws Exception
+     */
+    @Test
+    public void testBaseKeyGeneration() throws Exception {
+        CloudJob emptyJob = new CloudJob(null);
+
+        String emptyJobBaseKey = service.generateBaseKey(emptyJob);
+        Assert.assertNotNull(emptyJobBaseKey);
+        Assert.assertFalse(emptyJobBaseKey.isEmpty());
+
+        CloudJob nonEmptyJob = new CloudJob(42);
+        String nonEmptyJobBaseKey = service.generateBaseKey(nonEmptyJob);
+        Assert.assertNotNull(nonEmptyJobBaseKey);
+        Assert.assertFalse(nonEmptyJobBaseKey.isEmpty());
+
+        //Base keys should differ based soley on ID
+        Assert.assertFalse(nonEmptyJobBaseKey.equals(emptyJobBaseKey));
+    }
+
+    /**
+     * Tests that generateBaseKey doesn't generate keys that are a substring
+     * of eachother.
+     *
+     * Cloud storage treats files as being in a 'directory' based solely on its prefix. If you have
+     * the following files:
+     *
+     * job5/aFile.txt
+     * job52/anotherFile.txt
+     *
+     * And searched for all files whose prefix begins 'job5' (i.e. to list all files in the job5 directory), you would
+     * get BOTH of the above files returned. We need to manage this edge case by ensuring our prefixes don't overlap like that.
+     * @throws Exception
+     */
+    @Test
+    public void testBaseKeyNoSubstrings() throws Exception {
+        CloudJob jobBase = new CloudJob(new Integer(5));
+        CloudJob[] jobsToTest = new CloudJob[] {
+            new CloudJob(new Integer(50)),
+            new CloudJob(new Integer(52)),
+            new CloudJob(new Integer(500)),
+            new CloudJob(new Integer(500000000)),
+        };
+
+        for (int i = 0; i < jobsToTest.length; i++) {
+            String base = service.generateBaseKey(jobBase);
+            String test = service.generateBaseKey(jobsToTest[i]);
+
+            Assert.assertFalse(base.startsWith(test));
+            Assert.assertFalse(test.startsWith(base));
+        }
+    }
 }

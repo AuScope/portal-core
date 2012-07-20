@@ -99,13 +99,24 @@ public class CloudStorageService {
     }
 
     /**
-     * Utility to create the base key for a job.
+     * Utility for calculating an appropriate base cloud key for storing this jobs files
      * @param job
+     * @return
+     */
+    public String generateBaseKey(CloudJob job) {
+        String baseKey = String.format("%1$s%2$s-%3$010d", jobPrefix, job.getUser(), job.getId());
+        baseKey = baseKey.replaceAll("[^a-zA-Z0-9_\\-]", "_"); //get rid of some nasty characters
+        return baseKey;
+    }
+
+    /**
+     * Gets the preconfigured base key for a job. If the job doesn't have a base key, one will be generated.
+     * @param job Will have its baseKey parameter set if it's null
      * @return
      */
     protected String jobToBaseKey(CloudJob job) {
         if (job.getStorageBaseKey() == null) {
-            job.setStorageBaseKey(String.format("%1$s%2$s", jobPrefix, job.getId()));
+            job.setStorageBaseKey(generateBaseKey(job));
         }
 
         return job.getStorageBaseKey();

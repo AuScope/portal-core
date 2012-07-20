@@ -50,10 +50,28 @@ public class TestBaseWFSService extends PortalTestClass {
         final ResultType resultType = ResultType.Results;
 
         context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).makePostMethod(wfsUrl, featureType, filterString, maxFeatures, BaseWFSService.DEFAULT_SRS, resultType);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).makePostMethod(wfsUrl, featureType, filterString, maxFeatures, BaseWFSService.DEFAULT_SRS, resultType, null);will(returnValue(mockMethod));
         }});
 
         Assert.assertSame(mockMethod, service.generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType));
+    }
+
+    @Test
+    public void testGenerateFilterRequestWithFormat() throws Exception {
+        final String wfsUrl = "http://example.org/wfs";
+        final String featureType ="my:type";
+        final String featureId = null;
+        final String filterString = "filterString";
+        final Integer maxFeatures = 200;
+        final String srs = null;
+        final ResultType resultType = ResultType.Results;
+        final String outputFormat = "of";
+
+        context.checking(new Expectations() {{
+            oneOf(mockMethodMaker).makePostMethod(wfsUrl, featureType, filterString, maxFeatures, BaseWFSService.DEFAULT_SRS, resultType, outputFormat);will(returnValue(mockMethod));
+        }});
+
+        Assert.assertSame(mockMethod, service.generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, outputFormat));
     }
 
     @Test
@@ -67,7 +85,7 @@ public class TestBaseWFSService extends PortalTestClass {
         final ResultType resultType = ResultType.Results;
 
         context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).makeGetMethod(wfsUrl, featureType, featureId, srs);will(returnValue(mockMethod));
+            oneOf(mockMethodMaker).makeGetMethod(wfsUrl, featureType, featureId, srs, null);will(returnValue(mockMethod));
         }});
 
         Assert.assertSame(mockMethod, service.generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType));

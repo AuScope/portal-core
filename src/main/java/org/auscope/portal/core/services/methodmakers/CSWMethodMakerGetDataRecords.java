@@ -1,16 +1,16 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.Charset;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.params.BasicHttpParams;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 
 /**
@@ -39,7 +39,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws Exception
      */
-    public HttpMethodBase makeMethod(String serviceUrl) throws Exception {
+    public HttpRequestBase makeMethod(String serviceUrl) throws Exception {
         return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1);
     }
 
@@ -51,7 +51,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
      */
-    public HttpMethodBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords) throws UnsupportedEncodingException {
+    public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords) throws UnsupportedEncodingException {
         return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1);
     }
 
@@ -63,8 +63,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
      */
-    public HttpMethodBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords, int startPosition) throws UnsupportedEncodingException {
-        PostMethod httpMethod = new PostMethod(serviceUrl);
+    public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords, int startPosition) throws UnsupportedEncodingException {
+        HttpPost httpMethod = new HttpPost(serviceUrl);
 
         String filterString = null;
         if (filter != null) {
@@ -106,8 +106,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         log.trace("CSW GetRecords Request: " + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
-        httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(),"text/xml", "ISO-8859-1"));
-
+        httpMethod.setEntity(new StringEntity(sb.toString(),  ContentType.create("text/xml", Charset.defaultCharset())));
         return httpMethod;
     }
 
@@ -117,30 +116,29 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition) throws UnsupportedEncodingException {
-        GetMethod method = new GetMethod(serviceUrl);
+    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition) {
+        HttpGet method = new HttpGet(serviceUrl);
 
+        BasicHttpParams params = new BasicHttpParams();
 
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
-
-        params.add(new NameValuePair("service", "CSW"));
-        params.add(new NameValuePair("constraint_language_version", "1.1.0"));
-        params.add(new NameValuePair("request", "GetRecords"));
-        params.add(new NameValuePair("outputSchema", "csw:IsoRecord"));
-        params.add(new NameValuePair("typeNames", "csw:IsoRecord"));
-        params.add(new NameValuePair("constraintLanguage", "FILTER"));
-        params.add(new NameValuePair("namespace", "csw:http://www.opengis.net/cat/csw"));
-        params.add(new NameValuePair("elementSetName", "full"));
-        params.add(new NameValuePair("startPosition", Integer.toString(startPosition)));
-        params.add(new NameValuePair("maxRecords", Integer.toString(maxRecords)));
+        params.setParameter("service", "CSW");
+        params.setParameter("constraint_language_version", "1.1.0");
+        params.setParameter("request", "GetRecords");
+        params.setParameter("outputSchema", "csw:IsoRecord");
+        params.setParameter("typeNames", "csw:IsoRecord");
+        params.setParameter("constraintLanguage", "FILTER");
+        params.setParameter("namespace", "csw:http://www.opengis.net/cat/csw");
+        params.setParameter("elementSetName", "full");
+        params.setIntParameter("startPosition", startPosition);
+        params.setIntParameter("maxRecords", maxRecords);
 
         if (resultType != null) {
             switch (resultType) {
             case Hits:
-                params.add(new NameValuePair("resultType", "hits"));
+                params.setParameter("resultType", "hits");
                 break;
             case Results:
-                params.add(new NameValuePair("resultType", "results"));
+                params.setParameter("resultType", "results");
                 break;
             default:
                 log.error("Request type invalid - sending unconstrained request");
@@ -149,13 +147,9 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         }
 
         //attach params to the method
-        method.setQueryString(params.toArray(new NameValuePair[params.size()]));
+        method.setParams(params);
 
-        String queryStr = method.getName()
-                        + " query sent to GeoNetwork: \n\t"
-                        + serviceUrl + "?" + method.getQueryString();
-
-        log.debug(queryStr);
+        log.debug(method.getMethod() + " query sent to GeoNetwork: \n\t" + serviceUrl + "?" + method.getURI().getQuery());
 
         return method;
     }

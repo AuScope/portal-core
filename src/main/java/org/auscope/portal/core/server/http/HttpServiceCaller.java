@@ -8,17 +8,19 @@ import java.io.InputStreamReader;
 import java.net.ConnectException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 
 
 /**
@@ -42,7 +44,7 @@ public class HttpServiceCaller {
      * @return
      * @throws Exception
      */
-    public String getMethodResponseAsString(HttpMethodBase method) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+    public String getMethodResponseAsString(HttpRequestBase method) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
         return getMethodResponseAsString(method, new HttpClient());
     }
 
@@ -54,7 +56,7 @@ public class HttpServiceCaller {
      * @return
      * @throws Exception
      */
-    public String getMethodResponseAsString(HttpMethodBase method, HttpClient httpClient) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+    public String getMethodResponseAsString(HttpRequestBase method, HttpClient httpClient) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
         //invoke the method
         this.invokeTheMethod(method, httpClient);
 
@@ -81,7 +83,7 @@ public class HttpServiceCaller {
      * @param method The method to be executed
      * @return
      */
-    public InputStream getMethodResponseAsStream(HttpMethodBase method) throws Exception {
+    public InputStream getMethodResponseAsStream(HttpRequestBase method) throws Exception {
         return this.getMethodResponseAsStream(method, new HttpClient());
     }
 
@@ -94,7 +96,7 @@ public class HttpServiceCaller {
      * @param httpClient The client that will be used
      * @return
      */
-    public InputStream getMethodResponseAsStream(HttpMethodBase method, HttpClient httpClient) throws Exception {
+    public InputStream getMethodResponseAsStream(HttpRequestBase method, HttpClient httpClient) throws Exception {
         //invoke the method
         this.invokeTheMethod(method, httpClient);
 
@@ -107,7 +109,7 @@ public class HttpServiceCaller {
      * @param method The method to be executed
      * @return
      */
-    public byte[] getMethodResponseAsBytes(HttpMethodBase method) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws Exception {
         return getMethodResponseAsBytes(method, new HttpClient());
     }
 
@@ -118,7 +120,7 @@ public class HttpServiceCaller {
      * @param httpClient The client that will be used
      * @return
      */
-    public byte[] getMethodResponseAsBytes(HttpMethodBase method, HttpClient httpClient) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient httpClient) throws Exception {
         //invoke the method
         this.invokeTheMethod(method, httpClient);
 
@@ -137,7 +139,7 @@ public class HttpServiceCaller {
      * @param method
      * @param httpClient
      */
-    private void invokeTheMethod(HttpMethodBase method, HttpClient httpClient) throws Exception {
+    private void invokeTheMethod(HttpRequestBase method, HttpClient httpClient) throws Exception {
 
         log.debug("method=" + method.getURI());
 
@@ -145,6 +147,9 @@ public class HttpServiceCaller {
         HttpConnectionManager man = new SimpleHttpConnectionManager();
         man.setParams(clientParams);
         httpClient.setHttpConnectionManager(man);
+
+        log.trace("Outgoing request headers: " + Arrays.toString(method.getRequestHeaders()));
+
 
         //make the call
         int statusCode = httpClient.executeMethod(method);

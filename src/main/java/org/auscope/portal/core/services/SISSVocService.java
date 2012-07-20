@@ -7,7 +7,7 @@ import java.util.List;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc2MethodMaker;
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
@@ -43,7 +43,7 @@ public class SISSVocService {
      * @throws PortalServiceException
      */
     public Concept[] getConceptByLabel(String serviceUrl, String repository, String label) throws PortalServiceException {
-        HttpMethodBase method = null;
+        HttpRequestBase method = null;
         try {
             //Do the request
             method = sissVocMethodMaker.getConceptByLabelMethod(serviceUrl, repository, label);
@@ -72,7 +72,7 @@ public class SISSVocService {
      * @throws PortalServiceException
      */
     public Concept[] getCommodityConcepts(String serviceUrl, String repository, String commodityParent) throws PortalServiceException {
-        HttpMethodBase method = null;
+        HttpRequestBase method = null;
         try {
             //Do the request
             method = sissVocMethodMaker.getCommodityMethod(serviceUrl, repository, commodityParent);

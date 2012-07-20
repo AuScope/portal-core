@@ -12,10 +12,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
@@ -397,7 +397,7 @@ public class CSWCacheService {
                     log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
 
                     //Request our set of records
-                    HttpMethodBase method = null;
+                    HttpRequestBase method = null;
                     if (parent.forceGetMethods) {
                         method = methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
                     } else {

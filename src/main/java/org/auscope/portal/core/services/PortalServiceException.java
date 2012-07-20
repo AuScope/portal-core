@@ -1,6 +1,6 @@
 package org.auscope.portal.core.services;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 
 /**
  * Represents an exception thrown by an AuScope portal service.
@@ -13,14 +13,14 @@ import org.apache.commons.httpclient.HttpMethodBase;
  */
 public class PortalServiceException extends Exception {
     /** The method that was executing when this exception was thrown */
-    private HttpMethodBase rootMethod;
+    private HttpRequestBase rootMethod;
 
     /**
      * Creates a new exception
      * @param rootMethod The method that was being run when this exception was thrown
      * @param cause Root cause of this exception
      */
-    public PortalServiceException(HttpMethodBase rootMethod, Throwable cause) {
+    public PortalServiceException(HttpRequestBase rootMethod, Throwable cause) {
         super(cause);
         this.rootMethod = rootMethod;
     }
@@ -29,7 +29,7 @@ public class PortalServiceException extends Exception {
      * Creates a new exception
      * @param rootMethod The method that was being run when this exception was thrown
      */
-    public PortalServiceException(HttpMethodBase rootMethod) {
+    public PortalServiceException(HttpRequestBase rootMethod) {
         super();
         this.rootMethod = rootMethod;
     }
@@ -46,7 +46,7 @@ public class PortalServiceException extends Exception {
      * @param rootMethod The method that was being run when this exception was thrown
      * @param message Descriptive message
      */
-    public PortalServiceException(HttpMethodBase rootMethod, String message) {
+    public PortalServiceException(HttpRequestBase rootMethod, String message) {
         super(message);
         this.rootMethod = rootMethod;
     }
@@ -57,7 +57,7 @@ public class PortalServiceException extends Exception {
      * @param message Descriptive message
      * @param cause Root cause of this exception
      */
-    public PortalServiceException(HttpMethodBase rootMethod, String message, Throwable cause) {
+    public PortalServiceException(HttpRequestBase rootMethod, String message, Throwable cause) {
         super(message, cause);
         this.rootMethod = rootMethod;
     }
@@ -66,7 +66,7 @@ public class PortalServiceException extends Exception {
      * Gets the method that was executing when this exception was thrown
      * @return
      */
-    public HttpMethodBase getRootMethod() {
+    public HttpRequestBase getRootMethod() {
         return rootMethod;
     }
 }

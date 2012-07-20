@@ -12,8 +12,19 @@ import javax.xml.transform.stream.StreamSource;
  */
 public class WfsToKmlTransformer extends PortalXSLTTransformer {
 
+    /**
+     * Creates a new transformer using /org/auscope/portal/core/xslt/wfsToKml.xsl
+     */
     public WfsToKmlTransformer() {
         super("/org/auscope/portal/core/xslt/wfsToKml.xsl");
+    }
+
+    /**
+     * Creates a new transformer using the specified resource (should accept a serviceURL parameter)
+     * @param resource
+     */
+    public WfsToKmlTransformer(String resource) {
+        super(resource);
     }
 
 
