@@ -19,15 +19,12 @@ public class GeonetworkMethodMaker extends AbstractMethodMaker{
     /**
      * Creates a method that when called will logout the current user
      * @param baseGeonetworkUrl The base URL for the geonetwork instance - eg http://example.com/geonetwork
-     * @param sessionCookie Session cookie returned from a succesful login response
      * @return
      */
-    public HttpRequestBase makeUserLogoutMethod(String baseGeonetworkUrl, String sessionCookie) {
+    public HttpRequestBase makeUserLogoutMethod(String baseGeonetworkUrl) {
         String url = urlPathConcat(baseGeonetworkUrl, "srv/en/xml.user.logout");
 
-        HttpGet method = new HttpGet(url);
-        method.setHeader("Cookie", sessionCookie);
-        return method;
+        return new HttpGet(url);
     }
 
     /**
@@ -56,13 +53,12 @@ public class GeonetworkMethodMaker extends AbstractMethodMaker{
      * @return
      * @throws UnsupportedEncodingException
      */
-    public HttpRequestBase makeInsertRecordMethod(String baseGeonetworkUrl, String mdMetadataXml, String sessionCookie) throws UnsupportedEncodingException {
+    public HttpRequestBase makeInsertRecordMethod(String baseGeonetworkUrl, String mdMetadataXml) throws UnsupportedEncodingException {
         String url = urlPathConcat(baseGeonetworkUrl, "srv/en/csw");
         HttpPost method = new HttpPost(url);
 
         method.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         method.setHeader("Content-Type", "application/xml; charset=UTF-8");
-        method.setHeader("Cookie", sessionCookie);
 
         StringBuilder sb = new StringBuilder();
 
@@ -85,42 +81,34 @@ public class GeonetworkMethodMaker extends AbstractMethodMaker{
      * @param sessionCookie Session cookie returned from a successful login response
      * @return
      */
-    public HttpRequestBase makeRecordMetadataShowMethod(String baseGeonetworkUrl, String uuid, String sessionCookie) {
+    public HttpRequestBase makeRecordMetadataShowMethod(String baseGeonetworkUrl, String uuid) {
         String url = urlPathConcat(baseGeonetworkUrl, String.format("srv/en/metadata.show?uuid=%1$s", uuid));
 
-        HttpGet method = new HttpGet(url);
-        method.setHeader("Cookie", sessionCookie);
-        return method;
+        return new HttpGet(url);
     }
 
     /**
      * Makes a method that when called will request a specified record be publicly readable
      * @param baseGeonetworkUrl The base URL for the geonetwork instance - eg http://example.com/geonetwork
      * @param recordId The unique ID of the record (as a recordId, not a uuid).
-     * @param sessionCookie Session cookie returned from a successful login response
      * @return
      */
-    public HttpRequestBase makeRecordPublicMethod(String baseGeonetworkUrl, String recordId, String sessionCookie) {
+    public HttpRequestBase makeRecordPublicMethod(String baseGeonetworkUrl, String recordId) {
         String url = urlPathConcat(baseGeonetworkUrl, String.format("srv/en/metadata.admin?id=%1$s&_1_0=on&_1_1=on&_1_5=on&_1_6=on", recordId));
 
-        HttpGet method = new HttpGet(url);
-        method.setHeader("Cookie", sessionCookie);
-        return method;
+        return new HttpGet(url);
     }
 
     /**
      * Makes a method that when called will request XML describing the metadata associated with a CSWRecord with specified uuid
      * @param baseGeonetworkUrl The base URL for the geonetwork instance - eg http://example.com/geonetwork
      * @param uuid The unique ID of the record
-     * @param sessionCookie Session cookie returned from a successful login response
      * @return
      * @throws UnsupportedEncodingException
      */
-    public HttpRequestBase makeRecordMetadataGetMethod(String baseGeonetworkUrl, String uuid, String sessionCookie) throws UnsupportedEncodingException {
+    public HttpRequestBase makeRecordMetadataGetMethod(String baseGeonetworkUrl, String uuid) throws UnsupportedEncodingException {
         String url = urlPathConcat(baseGeonetworkUrl, String.format("srv/en/xml.metadata.get?uuid=%1$s", uuid));
 
-        HttpGet method = new HttpGet(url);
-        method.setHeader("Cookie", sessionCookie);
-        return method;
+        return new HttpGet(url);
     }
 }

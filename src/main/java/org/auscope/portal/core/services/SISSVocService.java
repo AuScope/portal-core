@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,21 +44,14 @@ public class SISSVocService {
     public Concept[] getConceptByLabel(String serviceUrl, String repository, String label) throws PortalServiceException {
         HttpRequestBase method = null;
         try {
-            //Do the request
+            //Do the request, parse the response
             method = sissVocMethodMaker.getConceptByLabelMethod(serviceUrl, repository, label);
-            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
-
-            //Parse the response
-            Document doc = DOMUtil.buildDomFromStream(responseStream);
+            Document doc = httpServiceCaller.getMethodResponseAsDocument(method);
             XPathExpression rdfExpression = DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext());
             Node response = (Node) rdfExpression.evaluate(doc, XPathConstants.NODE);
             return conceptFactory.parseFromRDF(response);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
-        } finally {
-            if (method != null) {
-                method.releaseConnection();
-            }
         }
     }
 
@@ -74,15 +66,11 @@ public class SISSVocService {
     public Concept[] getCommodityConcepts(String serviceUrl, String repository, String commodityParent) throws PortalServiceException {
         HttpRequestBase method = null;
         try {
-            //Do the request
+            //Do the request, parse the response
             method = sissVocMethodMaker.getCommodityMethod(serviceUrl, repository, commodityParent);
-            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
-
-            //Parse the response
-            Document doc = DOMUtil.buildDomFromStream(responseStream);
+            Document doc = httpServiceCaller.getMethodResponseAsDocument(method);
             XPathExpression expression = DOMUtil.compileXPathExpr("/sparql:sparql/sparql:results/sparql:result", new VocabNamespaceContext());
             NodeList exprResult = (NodeList)expression.evaluate(doc, XPathConstants.NODESET);
-
 
             List<Concept> concepts = new ArrayList<Concept>();
             for (int i = 0; i < exprResult.getLength(); i++) {
@@ -99,10 +87,6 @@ public class SISSVocService {
             return concepts.toArray(new Concept[concepts.size()]);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
-        } finally {
-            if (method != null) {
-                method.releaseConnection();
-            }
         }
     }
 }

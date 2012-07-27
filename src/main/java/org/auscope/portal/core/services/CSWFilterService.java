@@ -13,6 +13,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCaller;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCallerException;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.server.http.responses.DomResponseHandler;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
@@ -72,8 +73,7 @@ public class CSWFilterService {
 
         try {
             method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex);
-            InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
-            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+            Document responseDoc = serviceCaller.getMethodResponseAsDocument(method);
 
             return new CSWGetRecordResponse(serviceItem, responseDoc);
         } catch (Exception ex) {
@@ -93,7 +93,7 @@ public class CSWFilterService {
      * @param startIndex The first record index to start filtering from (for pagination). Set to 1 for the first record
      * @return
      */
-    private DistributedHTTPServiceCaller callAllServices(CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
+    private DistributedHTTPServiceCaller<Document> callAllServices(CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
         List<HttpRequestBase> requestMethods = new ArrayList<HttpRequestBase>();
         List<Object> additionalInfo = new ArrayList<Object>();
 
@@ -109,7 +109,7 @@ public class CSWFilterService {
             }
         }
 
-        DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(requestMethods, additionalInfo, serviceCaller);
+        DistributedHTTPServiceCaller<Document> dsc = new DistributedHTTPServiceCaller<Document>(requestMethods, additionalInfo, serviceCaller, new DomResponseHandler());
         dsc.beginCallingServices(executor);
 
         return dsc;
@@ -140,12 +140,11 @@ public class CSWFilterService {
         List<CSWGetRecordResponse> responses = new ArrayList<CSWGetRecordResponse>();
 
         //Call our services and start iterating the responses
-        DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Results);
+        DistributedHTTPServiceCaller<Document> dsc = callAllServices(filter, maxRecords, 1, ResultType.Results);
         while (dsc.hasNext()) {
-            InputStream responseStream = dsc.next();
+            Document responseDoc = dsc.next();
             CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
             try {
-                Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
                 responses.add(new CSWGetRecordResponse(origin, responseDoc));
             } catch (Exception ex) {
                 throw new PortalServiceException(null, "Error parsing response document", ex);
@@ -198,11 +197,10 @@ public class CSWFilterService {
         int count = 0;
 
         //Call our services and start iterating the responses
-        DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Hits);
+        DistributedHTTPServiceCaller<Document> dsc = callAllServices(filter, maxRecords, 1, ResultType.Hits);
         while (dsc.hasNext()) {
-            InputStream responseStream = dsc.next();
+            Document responseDoc = dsc.next();
             CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
-            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc);
 
             count += response.getRecordsMatched();

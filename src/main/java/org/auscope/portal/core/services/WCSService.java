@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.awt.Dimension;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -33,7 +34,9 @@ public class WCSService {
     }
 
     /**
-     * Makes a GetCoverage request, returns the response as a stream of data
+     * Makes a GetCoverage request, pipes the response bytes into output.
+     * Returns the number of bytes written to output
+     * @param output will receive response bytes
      * @param serviceUrl The WCS endpoint to query
      * @param coverageName The coverage layername to request
      * @param inputCrs the coordinate reference system to query
@@ -48,14 +51,13 @@ public class WCSService {
      *
      * @throws PortalServiceException
      */
-    public InputStream getCoverage(String serviceUrl, String coverageName, String downloadFormat,
+    public Integer getCoverage(OutputStream output, String serviceUrl, String coverageName, String downloadFormat,
             Dimension outputSize, Resolution outputResolution, String outputCrs, String inputCrs,
             CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParameters) throws PortalServiceException {
 
         HttpRequestBase method = methodMaker.getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
-
         try {
-            return serviceCaller.getMethodResponseAsStream(method);
+            return serviceCaller.getMethodResponsePiped(method, output);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
         }
@@ -70,18 +72,12 @@ public class WCSService {
         HttpRequestBase method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
 
         try {
-            InputStream response = serviceCaller.getMethodResponseAsStream(method);
-
-            Document responseDoc = DOMUtil.buildDomFromStream(response);
+            Document responseDoc = serviceCaller.getMethodResponseAsDocument(method);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
             return DescribeCoverageRecord.parseRecords(responseDoc);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
-        } finally {
-            if (method != null) {
-                method.releaseConnection();
-            }
         }
     }
 

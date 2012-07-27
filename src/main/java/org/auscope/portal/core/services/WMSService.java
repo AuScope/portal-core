@@ -1,7 +1,5 @@
 package org.auscope.portal.core.services;
 
-import java.io.InputStream;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -9,6 +7,7 @@ import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMaker;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
+import org.w3c.dom.Document;
 
 /**
  * Service class providing functionality for interacting with a Web Map Service
@@ -42,9 +41,7 @@ public class WMSService {
         HttpRequestBase method = null;
         try {
             // Do the request
-            method = methodMaker.getCapabilitiesMethod(serviceUrl);
-            InputStream response = serviceCaller.getMethodResponseAsStream(method);
-
+            Document response = serviceCaller.getMethodResponseAsDocument(method);
             return new GetCapabilitiesRecord(response);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Failure getting/parsing wms capabilities", ex);

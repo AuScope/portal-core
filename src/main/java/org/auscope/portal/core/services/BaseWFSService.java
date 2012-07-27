@@ -102,8 +102,7 @@ public abstract class BaseWFSService {
     protected WFSCountResponse getWfsFeatureCount(HttpRequestBase method) throws PortalServiceException {
         try {
             //Make the request and parse the response
-            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
-            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+            Document responseDoc = httpServiceCaller.getMethodResponseAsDocument(method);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
             XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures", new WFSNamespaceContext());
@@ -113,11 +112,7 @@ public abstract class BaseWFSService {
             return new WFSCountResponse(numNodeValue);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
-        } finally {
-            if (method != null) {
-                method.releaseConnection();
-            }
-        }
+        } 
     }
 
     /**

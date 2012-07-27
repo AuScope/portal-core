@@ -1,10 +1,7 @@
 package org.auscope.portal.core.services.responses.wms;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -15,7 +12,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * This class represents response to GetCapabilites query.
@@ -63,27 +59,16 @@ public class GetCapabilitiesRecord {
      * Constructor.
      * @param inXml GetCapabilites string response
      */
-    public GetCapabilitiesRecord(InputStream inXml) {
-        try {
-            Document doc = DOMUtil.buildDomFromStream(inXml);
-
-            this.serviceType = getService(doc);
-            this.organisation = getContactOrganisation(doc);
-            this.getMapUrl = getGetMapUrl(doc);
-            this.layerSRS = getWMSLayerSRS(doc);
-            this.getMapFormats = getWMSGetMapFormats(doc);
-            if (isWMS()) {
-                this.layers = getWMSLayers(doc);
-            } else {
-                log.debug("Adding non WMS's are not yet implimented");
-            }
-
-        } catch (SAXException e) {
-            log.error("Parsing error: " + e.getMessage());
-        } catch (IOException e) {
-            log.error("IO error: " + e.getMessage());
-        } catch (ParserConfigurationException e) {
-            log.error("Parser Config Error: " + e.getMessage());
+    public GetCapabilitiesRecord(Document doc) {
+        this.serviceType = getService(doc);
+        this.organisation = getContactOrganisation(doc);
+        this.getMapUrl = getGetMapUrl(doc);
+        this.layerSRS = getWMSLayerSRS(doc);
+        this.getMapFormats = getWMSGetMapFormats(doc);
+        if (isWMS()) {
+            this.layers = getWMSLayers(doc);
+        } else {
+            log.debug("Adding non WMS's are not yet implimented");
         }
     }
 

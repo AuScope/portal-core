@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +24,6 @@ import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
-import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 
 /**
@@ -404,13 +402,9 @@ public class CSWCacheService {
                         method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
                     }
 
-
-                    InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
-
-                    log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
-
                     //Parse the response into newCache (remember that maps are NOT thread safe)
-                    Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
+                    Document responseDocument = serviceCaller.getMethodResponseAsDocument(method);
+                    log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
                     OWSExceptionParser.checkForExceptionResponse(responseDocument);
                     CSWGetRecordResponse response = new CSWGetRecordResponse(endpoint, responseDocument);
                     synchronized(newKeywordCache) {

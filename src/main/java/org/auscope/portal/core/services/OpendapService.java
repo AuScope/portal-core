@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,20 +70,24 @@ public class OpendapService {
     }
 
     /**
-     * Makes a request for the data at an OPeNDAP endpoint
+     * Makes a request for the data at an OPeNDAP endpoint. Writes the response to a specified output stream.
+     *
+     * Returns the number of bytes written to output.
+     *
      * @param serviceUrl OPeNDAP endpoint to query
      * @param downloadFormat What format should the data be downloaded in
      * @param constraints [Optional] Any constraints to apply to the download
+     * @param output will have the response data written to it.
      * @return
      * @throws PortalServiceException
      */
-    public InputStream getData(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
+    public Integer getData(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints, OutputStream output) throws PortalServiceException {
         NetcdfDataset ds = fetchDataset(serviceUrl);
         HttpRequestBase method = null;
 
         try {
             method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);
-            return serviceCaller.getMethodResponseAsStream(method);
+            return serviceCaller.getMethodResponsePiped(method, output);
         } catch (Exception ex) {
             log.error(String.format("Error requesting data from '%1$s'", serviceUrl), ex);
             throw new PortalServiceException(method, String.format("Error requesting data from '%1$s'", serviceUrl), ex);
