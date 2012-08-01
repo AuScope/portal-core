@@ -3,22 +3,37 @@ package org.auscope.portal.core.view.knownlayer;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 
 /**
- * matches groups of CSWRecords based upon the inclusion
- * of a descriptive keyword.
+ * matches groups of CSWRecords based upon various parameters
  * @author Josh Vote
  *
  */
-public class CSWKeywordSelector implements KnownLayerSelector {
+public class CSWRecordSelector implements KnownLayerSelector {
 
+    private String recordId;
     private String descriptiveKeyword;
 
     /**
-     * @param title a descriptive title of this layer
-     * @param description an extended description of this layer
      * @param descriptiveKeyword the descriptive keyword used to identify CSW records
      */
-    public CSWKeywordSelector(String descriptiveKeyword) {
-        this.descriptiveKeyword = descriptiveKeyword;
+    public CSWRecordSelector() {
+        this.descriptiveKeyword = null;
+        this.recordId = null;
+    }
+
+    /**
+     * Matches a CSWRecord by an exact matching record id
+     * @return
+     */
+    public String getRecordId() {
+        return recordId;
+    }
+
+    /**
+     * Matches a CSWRecord by an exact matching record id
+     * @return
+     */
+    public void setRecordId(String recordId) {
+        this.recordId = recordId;
     }
 
     /**
@@ -43,7 +58,11 @@ public class CSWKeywordSelector implements KnownLayerSelector {
      */
     @Override
     public RelationType isRelatedRecord(CSWRecord record) {
-        if (record.containsKeyword(descriptiveKeyword)) {
+        if (recordId != null && recordId.equals(record.getFileIdentifier())) {
+            return RelationType.Belongs;
+        }
+
+        if (descriptiveKeyword != null && record.containsKeyword(descriptiveKeyword)) {
             return RelationType.Belongs;
         }
 

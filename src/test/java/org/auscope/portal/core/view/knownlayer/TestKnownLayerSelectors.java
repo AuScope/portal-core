@@ -9,7 +9,7 @@ import junit.framework.Assert;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.view.knownlayer.CSWKeywordSelector;
+import org.auscope.portal.core.view.knownlayer.CSWRecordSelector;
 import org.auscope.portal.core.view.knownlayer.WFSSelector;
 import org.auscope.portal.core.view.knownlayer.WMSSelector;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector.RelationType;
@@ -86,7 +86,24 @@ public class TestKnownLayerSelectors extends PortalTestClass {
      */
     @Test
     public void testCSWKeywordSelector() {
-        CSWKeywordSelector selector = new CSWKeywordSelector("Report");
+        CSWRecordSelector selector = new CSWRecordSelector();
+        selector.setDescriptiveKeyword("Report");
+
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(0)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(1)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(2)));
+        Assert.assertEquals(RelationType.Belongs, selector.isRelatedRecord(recordList.get(3)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(4)));
+        Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(5)));
+    }
+
+    /**
+     * Asserts the keyword selector correctly picks records based on descriptive keywords
+     */
+    @Test
+    public void testCSWIdSelector() {
+        CSWRecordSelector selector = new CSWRecordSelector();
+        selector.setRecordId("id4");
 
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(0)));
         Assert.assertEquals(RelationType.NotRelated, selector.isRelatedRecord(recordList.get(1)));
