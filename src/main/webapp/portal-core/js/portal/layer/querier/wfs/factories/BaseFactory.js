@@ -90,7 +90,7 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
      */
     _makeWFSPopupHtml : function(wfsUrl, typeName, featureId, content, qtip) {
         var url = Ext.util.Format.format('{0}&typeName={1}&featureId={2}', wfsUrl, typeName, featureId);
-        return this._makeWfsUriPopupHtml(wfsUrl, url, content, qtip);
+        return this._makeWfsUriPopupHtml(url, content, qtip);
     },
 
     /**
