@@ -205,6 +205,16 @@ Ext.define('portal.util.BBox', {
         var bboxWidth = bbox.eastBoundLongitude - bbox.westBoundLongitude;
         var bboxHeight = bbox.northBoundLatitude - bbox.southBoundLatitude;
 
+        if(this.eastBoundLongitude<0){
+            thisWidth = 360-Math.abs(thisWidth);
+        }
+
+        if(bbox.eastBoundLongitude < 0){
+            bboxWidth = 360-Math.abs(bboxWidth);
+        }
+
+
+
         //In English: On each axis, check to see if the centers of the boxes are close enough that they'll intersect.
         //If they intersect on both axes, then the boxes intersect. If they don't, then they don't.
         //NOTE - This will only work for axis aligned bounding boxes
