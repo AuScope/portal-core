@@ -95,13 +95,16 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                 //This function is recursive over fieldset objects
                 var setFieldSetDisabled = function (fieldSet, disabled, depth) {
                     if (depth === undefined) {
-                        depth = 1;
+                        depth = 0;
                     }
 
-                    //IE workaround !Ext.isIE ||
-                    if (depth > 1) {
-                        fieldSet.setDisabled(disabled);
-                    }
+                    //IE workaround
+                    //VT: I don't think we need this any. setting the disabling the fieldset from this level
+                    // disable the checkbox associted with the fieldset as well. Can be seen from the ASTER WMS Download
+                    //once bounding box is check, it cannot be unchecked anymore. disabling this works for all three browsers.
+                    //if (!Ext.isIE || depth != 0) {
+                    //    fieldSet.setDisabled(disabled);
+                    //}
 
                     for (var i = 0; i < fieldSet.items.length; i++) {
                         var item = fieldSet.items.get(i);
@@ -134,7 +137,7 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                             collapse : {
                                 scope: this,
                                 fn : function(panel, anim) {
-                                    setFieldSetDisabled(panel, true);
+                                    setFieldSetDisabled(panel, true,1);
                                 }
                             }
                         },
