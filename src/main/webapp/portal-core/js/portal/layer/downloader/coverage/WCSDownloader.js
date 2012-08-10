@@ -95,11 +95,11 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                 //This function is recursive over fieldset objects
                 var setFieldSetDisabled = function (fieldSet, disabled, depth) {
                     if (depth === undefined) {
-                        depth = 0;
+                        depth = 1;
                     }
 
-                    //IE workaround
-                    if (!Ext.isIE || depth !== 0) {
+                    //IE workaround !Ext.isIE ||
+                    if (depth > 1) {
                         fieldSet.setDisabled(disabled);
                     }
 
