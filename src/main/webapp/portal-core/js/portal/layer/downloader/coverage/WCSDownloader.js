@@ -137,7 +137,7 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                             collapse : {
                                 scope: this,
                                 fn : function(panel, anim) {
-                                    setFieldSetDisabled(panel, true,1);
+                                    setFieldSetDisabled(panel, true);
                                 }
                             }
                         },
