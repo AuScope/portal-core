@@ -98,13 +98,18 @@ public class OpendapService {
      * @return
      * @throws PortalServiceException
      */
-    public String getQuery(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
+    public String getQueryDetails(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
         NetcdfDataset ds = fetchDataset(serviceUrl);
         HttpMethodBase method = null;
 
         try {
             method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);
-            return method.getURI().toString();
+            String details="ServiceUrl: " + method.getURI().toString();
+            details += "\n" + "DownloadFormat: " + downloadFormat;
+            details += "\n" + "DataSet: " + ds;
+            details += "\n" + "Constraints: " + constraints;
+
+            return details;
         } catch (Exception ex) {
             throw new PortalServiceException(method, String.format(
                     "Error parsing query URI", serviceUrl), ex);
