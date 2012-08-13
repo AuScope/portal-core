@@ -91,7 +91,7 @@ public class OpendapService {
     }
 
     /**
-     * Makes a request for the data at an OPeNDAP endpoint
+     * Provide a string representation of the url request
      * @param serviceUrl OPeNDAP endpoint to query
      * @param downloadFormat What format should the data be downloaded in
      * @param constraints [Optional] Any constraints to apply to the download
