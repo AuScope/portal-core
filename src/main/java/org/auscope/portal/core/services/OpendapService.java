@@ -107,7 +107,6 @@ public class OpendapService {
             String details="ServiceUrl: " + method.getURI().toString();
             details += "\n" + "DownloadFormat: " + downloadFormat;
             details += "\n" + "DataSet: " + ds;
-            details += "\n" + "Constraints: " + constraints;
 
             return details;
         } catch (Exception ex) {
