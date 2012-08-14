@@ -159,7 +159,9 @@ Ext.define('portal.map.gmap.GoogleMap', {
     /**
      * See Parent class.
      */
-    openInfoWindow : function(windowLocation, width, height, content, initFunction) {
+    //VT: initFunction doesn't seem to be in use.
+    //openInfoWindow : function(windowLocation, width, height, content, initFunction,layer) {
+    openInfoWindow : function(windowLocation, width, height, content,layer) {
         if (!Ext.isArray(content)) {
             content = [content];
         }
@@ -265,6 +267,7 @@ Ext.define('portal.map.gmap.GoogleMap', {
                 });
             }
         });
+        this.openedInfoLayerId=layer.get('id');
     },
 
     /**
@@ -407,6 +410,15 @@ Ext.define('portal.map.gmap.GoogleMap', {
     _onClick : function(overlay, latlng, overlayLatlng) {
         var queryTargets = portal.map.gmap.ClickController.generateQueryTargets(overlay, latlng, overlayLatlng, this.layerStore);
         this.fireEvent('query', this, queryTargets);
+    },
+
+    /**
+     * If the removal of a layer has the same ID has a info window opened, close it.
+     */
+    closeInfoWindow: function(layerid){
+        if(layerid === this.openedInfoLayerId){
+          this.map.closeInfoWindow();
+        }
     },
 
 
