@@ -89,4 +89,30 @@ public class OpendapService {
             throw new PortalServiceException(method, String.format("Error requesting data from '%1$s'", serviceUrl), ex);
         }
     }
+
+    /**
+     * Provide a string representation of the url request
+     * @param serviceUrl OPeNDAP endpoint to query
+     * @param downloadFormat What format should the data be downloaded in
+     * @param constraints [Optional] Any constraints to apply to the download
+     * @return
+     * @throws PortalServiceException
+     */
+    public String getQueryDetails(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
+        NetcdfDataset ds = fetchDataset(serviceUrl);
+        HttpMethodBase method = null;
+
+        try {
+            method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);
+            String details="ServiceUrl: " + method.getURI().toString();
+            details += "\n" + "DownloadFormat: " + downloadFormat;
+            details += "\n" + "DataSet: " + ds;
+
+            return details;
+        } catch (Exception ex) {
+            throw new PortalServiceException(method, String.format(
+                    "Error parsing query URI", serviceUrl), ex);
+        }
+    }
+
 }

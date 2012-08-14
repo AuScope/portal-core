@@ -214,6 +214,15 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         this.fireEvent('query', this, queryTargets);
     },
 
+    /**
+     * If the removal of a layer has the same ID has a info window opened, close it.
+     */
+    closeInfoWindow: function(layerid){
+        if(layerid === this.openedInfoLayerId){
+            this.map.removePopup(this.map.popups[0]);
+        }
+    },
+
     _onPrimitivesAdded : function(primManager) {
         this.selectControl.setLayer(primManager.allLayers);
     },
@@ -307,7 +316,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * content - Mixed - A HTML string representing the content of the window OR a Ext.container.Container object OR an Array of the previous types
      * initFunction - [Optional] function(portal.map.BaseMap map, Mixed content) a function that will be called when the info window actually opens
      */
-    openInfoWindow : function(windowLocation, width, height, content, initFunction) {
+    openInfoWindow : function(windowLocation, width, height, content,layer) {
         //Firstly create a popup with a chunk of placeholder HTML - we will render an ExtJS container inside that
         var popupId = Ext.id();
         var location = new OpenLayers.LonLat(windowLocation.getLongitude(), windowLocation.getLatitude());
@@ -319,7 +328,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var popup = new OpenLayers.Popup.FramedCloud(popupId, location, paddedSize, divHtml, null, true, null);
 
         this.map.addPopup(popup, true);
-
+        this.openedInfoLayerId=layer.get('id');
         //next create an Ext.Container to house our content, render it to the HTML created above
         if (!Ext.isArray(content)) {
             content = [content];
@@ -533,6 +542,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         if (renderer) {
             renderer.abortDisplay();
             renderer.removeData();
+            this.closeInfoWindow(layer.get('id'));
         }
     }
 });

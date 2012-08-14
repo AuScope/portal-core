@@ -11,6 +11,11 @@ Ext.define('portal.map.BaseMap', {
     layerStore : null,
 
     /**
+     * Layer ID of the latest opened info window
+     */
+    openedInfoLayerId : null,
+
+    /**
      * An instance of portal.map.BasePrimitiveManager for managing any temporary highlights
      * on the map
      */
@@ -233,6 +238,14 @@ Ext.define('portal.map.BaseMap', {
      */
     getPixelFromLatLng : Ext.util.UnimplementedFunction,
 
+
+    /**
+     * closes any info windows associated with the removal of a layer
+     * function(layerId) : the id of the layer that is being removed
+     *
+     */
+    closeInfoWindow : Ext.util.UnimplementedFunction,
+
     ////////////////// Base functionality
 
     /**
@@ -310,6 +323,7 @@ Ext.define('portal.map.BaseMap', {
         if (renderer) {
             renderer.abortDisplay();
             renderer.removeData();
+            this.closeInfoWindow(layer.get('id'));
         }
     }
 });
