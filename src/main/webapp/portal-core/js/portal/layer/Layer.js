@@ -62,6 +62,7 @@ Ext.define('portal.layer.Layer', {
         } else {
             renderer.abortDisplay();
             renderer.removeData();
+            renderer.map.closeInfoWindow(this.get('id'));
         }
     },
 
