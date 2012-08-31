@@ -7,6 +7,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
+import org.auscope.portal.core.services.PortalServiceException;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -72,29 +73,43 @@ public class CloudComputeService {
      * @param userDataString A string that is made available to the job when it starts execution (this will be Base64 encoded before being sent to the VM)
      * @return null if execution fails or the instance ID of the running VM
      */
-    public String executeJob(CloudJob job, String userDataString) throws AmazonServiceException, AmazonClientException {
-        AmazonEC2 ec2 = getAmazonEC2Instance();
-        RunInstancesRequest instanceRequest = new RunInstancesRequest(job.getComputeVmId(), 1, 1);
+    public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
+        try {
+            AmazonEC2 ec2 = getAmazonEC2Instance();
+            RunInstancesRequest instanceRequest = new RunInstancesRequest(job.getComputeVmId(), 1, 1);
 
-        String base64EncodedUserData = new String(Base64.encodeBase64(userDataString.toString().getBytes()));
-        instanceRequest.setUserData(base64EncodedUserData);
-        if (job.getComputeInstanceType() != null) {
-            instanceRequest.setInstanceType(job.getComputeInstanceType());
-        }
-        if (job.getComputeInstanceKey() != null) {
-            instanceRequest.setKeyName(job.getComputeInstanceKey());
-        }
-        instanceRequest.setInstanceInitiatedShutdownBehavior("terminate");
+            String base64EncodedUserData = new String(Base64.encodeBase64(userDataString.toString().getBytes()));
+            instanceRequest.setUserData(base64EncodedUserData);
+            if (job.getComputeInstanceType() != null) {
+                instanceRequest.setInstanceType(job.getComputeInstanceType());
+            }
+            if (job.getComputeInstanceKey() != null) {
+                instanceRequest.setKeyName(job.getComputeInstanceKey());
+            }
+            instanceRequest.setInstanceInitiatedShutdownBehavior("terminate");
 
-        RunInstancesResult result = ec2.runInstances(instanceRequest);
-        List<Instance> instances = result.getReservation().getInstances();
+            RunInstancesResult result = ec2.runInstances(instanceRequest);
+            List<Instance> instances = result.getReservation().getInstances();
 
-        //We should get a single item on success
-        if (instances.size() == 0) {
-            return null;
+            //We should get a single item on success
+            if (instances.size() == 0 || instances.get(0) == null) {
+                throw new Exception("VM started but failed to fetch instance id.");
+            }
+            Instance instance = instances.get(0);
+            return instance.getInstanceId();
         }
-        Instance instance = instances.get(0);
-        return instance.getInstanceId();
+        catch (AmazonServiceException ex) {
+            logger.error("Compute service is currently unavailable.", ex);
+            throw new PortalServiceException(null, "Compute service is currently unavailable. Please try again in a few minutes. [" + ex.getMessage() + "]", ex);
+        }
+        catch (AmazonClientException ex) {
+            logger.error("Network connection is not available.", ex);
+            throw new PortalServiceException(null, "Network connection is currently unavailable. Please try again in a few minutes.", ex);
+        }
+        catch (Exception ex) {
+            logger.error("An unexpected error has occurred while executing job: " + job, ex);
+            throw new PortalServiceException(null, "An unexpected error has occurred. Please report it to cg-admin@csiro.au.", ex);
+        }
     }
 
     /**

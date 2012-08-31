@@ -12,11 +12,13 @@ import org.auscope.portal.core.services.PortalServiceException;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.ContentMetadata;
+import org.jclouds.rest.AuthorizationException;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
@@ -216,10 +218,15 @@ public class CloudStorageService {
                 map.putFile(file.getName(), file);
                 log.debug(file.getName() + " uploaded to '" + job.getStorageBucket() + "' container");
             }
+        } catch (AuthorizationException ex) {
+            log.error("Storage credentials are not valid for job: " + job, ex);
+            throw new PortalServiceException(null, "Storage credentials are not valid. Please provide valid storage crendentials.", ex);
+        } catch (KeyNotFoundException ex) {
+            log.error("Storage container does not exist for job: " + job, ex);
+            throw new PortalServiceException(null, "Storage container does not exist. Please provide a valid storage container.", ex);
         } catch (Exception ex) {
-            log.error("Unable to upload files for job:" + job.toString());
-            log.debug("error:", ex);
-            throw new PortalServiceException(null, "Error uploading job files", ex);
+            log.error("Unable to upload files for job: " + job, ex);
+            throw new PortalServiceException(null, "An unexpected error has occurred. Please report it to cg-admin@csiro.au.", ex);
         }
     }
 
