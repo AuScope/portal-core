@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services.responses.vocab;
 
-import org.auscope.portal.core.services.responses.vocab.Description;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;

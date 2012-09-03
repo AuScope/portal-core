@@ -5,15 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWContact;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWResponsibleParty;
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.AssertViewUtility;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;

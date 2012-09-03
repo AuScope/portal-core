@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services.methodmakers.filter;
 
-import org.springframework.stereotype.Component;
 
 /**
  * Represents a simple OGC:Filter that can only make queries based upon bounding box

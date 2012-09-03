@@ -1,8 +1,8 @@
 package org.auscope.portal.core.view.knownlayer;
 
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
-import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
+import org.auscope.portal.core.services.responses.csw.CSWRecord;
 
 /**
  * Used for selecting individual WMS's

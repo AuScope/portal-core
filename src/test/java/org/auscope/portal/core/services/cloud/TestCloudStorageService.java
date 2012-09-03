@@ -3,9 +3,7 @@ package org.auscope.portal.core.services.cloud;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Date;
 import java.util.LinkedList;
-import java.util.Properties;
 
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudJob;

@@ -1,7 +1,6 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.httpclient.HttpMethodBase;
@@ -10,9 +9,7 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
-import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 /**
  * A class for generating Sensor Observation Service requests.
  *

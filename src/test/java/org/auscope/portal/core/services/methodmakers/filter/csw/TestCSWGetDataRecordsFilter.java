@@ -1,7 +1,6 @@
 package org.auscope.portal.core.services.methodmakers.filter.csw;
 
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
-import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.KeywordMatchType;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;

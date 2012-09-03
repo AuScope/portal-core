@@ -7,9 +7,6 @@ import java.util.List;
 import javax.xml.xpath.XPathConstants;
 
 import org.auscope.portal.core.services.namespaces.VocabNamespaceContext;
-import org.auscope.portal.core.services.responses.vocab.Concept;
-import org.auscope.portal.core.services.responses.vocab.ConceptFactory;
-import org.auscope.portal.core.services.responses.vocab.NamedIndividual;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;

@@ -1,7 +1,6 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;

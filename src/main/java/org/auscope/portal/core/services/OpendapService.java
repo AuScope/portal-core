@@ -11,7 +11,6 @@ import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.ViewVariableFactory;
-import org.springframework.stereotype.Service;
 
 import ucar.nc2.dataset.NetcdfDataset;
 

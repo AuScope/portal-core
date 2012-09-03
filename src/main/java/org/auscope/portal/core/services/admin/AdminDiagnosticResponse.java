@@ -2,7 +2,6 @@ package org.auscope.portal.core.services.admin;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

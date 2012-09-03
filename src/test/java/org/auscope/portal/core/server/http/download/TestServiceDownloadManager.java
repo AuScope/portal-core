@@ -8,8 +8,6 @@ import java.util.concurrent.Executors;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.server.http.download.DownloadResponse;
-import org.auscope.portal.core.server.http.download.ServiceDownloadManager;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Assert;

@@ -2,12 +2,7 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.auscope.portal.core.services.csw.CSWServiceItem;
-import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
-import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;

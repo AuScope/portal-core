@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;

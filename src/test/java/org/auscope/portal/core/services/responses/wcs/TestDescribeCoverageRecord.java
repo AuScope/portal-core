@@ -3,15 +3,6 @@ package org.auscope.portal.core.services.responses.wcs;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import org.auscope.portal.core.services.responses.wcs.AxisDescription;
-import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
-import org.auscope.portal.core.services.responses.wcs.RangeSet;
-import org.auscope.portal.core.services.responses.wcs.SimpleEnvelope;
-import org.auscope.portal.core.services.responses.wcs.SimpleTimePosition;
-import org.auscope.portal.core.services.responses.wcs.SingleValue;
-import org.auscope.portal.core.services.responses.wcs.SpatialDomain;
-import org.auscope.portal.core.services.responses.wcs.TemporalDomain;
-import org.auscope.portal.core.services.responses.wcs.ValueEnumType;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;

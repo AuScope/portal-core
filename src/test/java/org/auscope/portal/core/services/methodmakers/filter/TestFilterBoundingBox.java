@@ -2,7 +2,6 @@ package org.auscope.portal.core.services.methodmakers.filter;
 
 import junit.framework.Assert;
 
-import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Test;
 

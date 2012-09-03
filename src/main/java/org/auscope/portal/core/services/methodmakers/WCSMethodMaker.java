@@ -13,7 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
-import org.springframework.stereotype.Repository;
 
 /**
  * Class for creating HttpMethods for interacting with an OGC Web Coverage Service

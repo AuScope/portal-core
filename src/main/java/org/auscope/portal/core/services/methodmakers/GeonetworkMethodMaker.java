@@ -7,7 +7,6 @@ import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.springframework.stereotype.Repository;
 
 /**
  * A class for making HttpMethods that can communicate with an instance of Geonetwork (not the CSW service)

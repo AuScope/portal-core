@@ -3,7 +3,6 @@ package org.auscope.portal.core.services.admin;
 import java.util.Arrays;
 import java.util.List;
 
-import org.auscope.portal.core.services.admin.EndpointAndSelector;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;

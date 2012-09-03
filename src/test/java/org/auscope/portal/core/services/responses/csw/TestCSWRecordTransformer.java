@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -17,13 +15,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
-import org.auscope.portal.core.services.responses.csw.CSWContact;
-import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
-import org.auscope.portal.core.services.responses.csw.CSWRecord;
-import org.auscope.portal.core.services.responses.csw.CSWRecordTransformer;
-import org.auscope.portal.core.services.responses.csw.CSWResponsibleParty;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;

@@ -15,7 +15,6 @@ import org.auscope.portal.core.services.responses.wcs.DescribeCoverageRecord;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 import org.auscope.portal.core.util.DOMUtil;
-import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
 /**

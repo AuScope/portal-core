@@ -1,11 +1,5 @@
 package org.auscope.portal.core.services.namespaces;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.xml.XMLConstants;
-import javax.xml.namespace.NamespaceContext;
 
 /**
  * A simple implementation of <a

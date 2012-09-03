@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.auscope.portal.core.services.CSWCacheService;
-import org.auscope.portal.core.services.KnownLayerService;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;

@@ -3,9 +3,6 @@ package org.auscope.portal.core.services;
 import java.util.Date;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.SOSMethodMaker;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;

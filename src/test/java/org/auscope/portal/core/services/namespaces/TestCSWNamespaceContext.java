@@ -6,7 +6,6 @@ import javax.xml.namespace.NamespaceContext;
 
 import junit.framework.Assert;
 
-import org.auscope.portal.core.services.namespaces.CSWNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Test;
 

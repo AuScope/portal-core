@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.ModelMap;
 
 /**
