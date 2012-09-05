@@ -220,7 +220,7 @@ public class CloudStorageService {
             }
         } catch (AuthorizationException ex) {
             log.error("Storage credentials are not valid for job: " + job, ex);
-            throw new PortalServiceException(null, "Storage credentials are not valid. Please provide valid storage crendentials.", ex);
+            throw new PortalServiceException(null, "Storage credentials are not valid. Please provide valid storage credentials.", ex);
         } catch (KeyNotFoundException ex) {
             log.error("Storage container does not exist for job: " + job, ex);
             throw new PortalServiceException(null, "Storage container does not exist. Please provide a valid storage container.", ex);
