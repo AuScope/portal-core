@@ -2,7 +2,10 @@ package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
+import org.auscope.portal.core.cloud.StagedFile;
 import org.auscope.portal.core.cloud.StagingInformation;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -29,6 +33,21 @@ public class FileStagingService {
         this.stagingInformation = stagingInformation;
     }
 
+    /**
+     * Utility for returning a File handle to the actual file on HDD for a given job + fileName
+     * @param job
+     * @param fileName
+     * @return
+     */
+    private File getFile(CloudJob job, String fileName) {
+    	if (fileName.contains(File.pathSeparator) || fileName.contains(File.separator)) {
+            throw new IllegalArgumentException("fileName cannot include " + File.pathSeparator + " or " + File.separator);
+        }
+
+        String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
+		return new File(pathConcat(directory, fileName));
+    }
+    
     /**
      * Given 2 path components this function will concatenate them together.
      *
@@ -79,12 +98,7 @@ public class FileStagingService {
      * @return
      */
     public boolean deleteStageInFile(CloudJob job, String fileName) {
-        if (fileName.contains(File.pathSeparator) || fileName.contains(File.separator)) {
-            throw new IllegalArgumentException("fileName cannot include " + File.pathSeparator + " or " + File.separator);
-        }
-
-        String directoryPath = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
-        File file = new File(pathConcat(directoryPath, fileName));
+        File file = getFile(job, fileName);
         logger.debug("deleting " + file.getPath());
         if (!file.exists()) {
             return true;
@@ -117,7 +131,7 @@ public class FileStagingService {
      * @return
      * @throws IOException
      */
-    public File[] listStageInDirectoryFiles(CloudJob job) throws PortalServiceException {
+    public StagedFile[] listStageInDirectoryFiles(CloudJob job) throws PortalServiceException {
         //List files in directory, add them to array
         File directory = new File(pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job)));
         logger.debug("Attempting to list files at " + directory.getPath());
@@ -128,24 +142,87 @@ public class FileStagingService {
         if (files == null) {
             throw new PortalServiceException("Unable to list files in: " + directory.getPath());
         }
-
-        return files;
+        
+        StagedFile[] stagedFiles = new StagedFile[files.length];
+        for (int i = 0; i < stagedFiles.length; i++) {
+        	stagedFiles[i] = new StagedFile(job, files[i].getName());
+        }
+        
+        return stagedFiles;
     }
+    
 
     /**
-     * Creates a new file object in the specified job's stage in directory
+     * Opens the specified staging file for reading
+     * 
+     * The returned stream must be closed when finished with
+     * @param stagedFile
+     * @return
+     * @throws PortalServiceException
+     */
+    public InputStream readFile(StagedFile stagedFile) throws PortalServiceException {
+    	return this.readFile(stagedFile.getOwner(), stagedFile.getName());
+    }
+    
+    
+    /**
+     * Opens the specified staging file for reading
+     * 
+     * The returned stream must be closed when finished with
      * @param job Must have its fileStorageId parameter set
      * @param fileName
      * @return
      */
-    public File createStageInDirectoryFile(CloudJob job, String fileName) {
-        if (fileName.contains(File.pathSeparator) || fileName.contains(File.separator)) {
-            throw new IllegalArgumentException("fileName cannot include " + File.pathSeparator + " or " + File.separator);
-        }
-
-        String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
-
-        return new File(pathConcat(directory, fileName));
+    public InputStream readFile(CloudJob job, String fileName) throws PortalServiceException {
+    	File f = getFile(job, fileName);
+        try {
+			return new FileInputStream(f);
+		} catch (Exception e) {
+			throw new PortalServiceException(null, e.getMessage(), e);
+		}
+    }
+    
+    /**
+     * Opens the specified staging file for writing. If it DNE, it will be created
+     * 
+     * The returned stream must be closed when finished with
+     * @param stagedFile
+     * @return
+     * @throws PortalServiceException
+     */
+    public OutputStream writeFile(StagedFile stagedFile) throws PortalServiceException {
+    	return writeFile(stagedFile.getOwner(), stagedFile.getName(), false);
+    }
+    
+    /**
+     * Opens the specified staging file for writing, If it DNE, it will be created
+     * 
+     * The returned stream must be closed when finished with
+     * @param job
+     * @param fileName
+     * @return
+     */
+    public OutputStream writeFile(CloudJob job, String fileName) throws PortalServiceException{
+    	return writeFile(job, fileName, false);
+    }
+    
+    /**
+     * Opens the specified staging file for writing or appending. If it DNE, it will be created.
+     * 
+     * The returned stream must be closed when finished with
+     * 
+     * @param job Must have its fileStorageId parameter set
+     * @param fileName
+     * @param append Should the file be overwritten or appended to. true to append, false to overwrite
+     * @return
+     */
+    public OutputStream writeFile(CloudJob job, String fileName, boolean append) throws PortalServiceException {
+    	File f = getFile(job, fileName);
+        try {
+			return new FileOutputStream(f, append);
+		} catch (Exception e) {
+			throw new PortalServiceException(null, e.getMessage(), e);
+		}
     }
 
     /**
@@ -158,14 +235,15 @@ public class FileStagingService {
      * @param request
      * @throws IOException
      */
-    public File handleFileUpload(CloudJob job, MultipartHttpServletRequest request) throws PortalServiceException {
+    public StagedFile handleFileUpload(CloudJob job, MultipartHttpServletRequest request) throws PortalServiceException {
         MultipartFile f = request.getFile("file");
         if (f == null) {
             throw new PortalServiceException("No file parameter provided.");
         }
 
+        String originalFileName = f.getOriginalFilename();
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
-        String destinationPath = pathConcat(directory, f.getOriginalFilename());
+        String destinationPath = pathConcat(directory, originalFileName);
         logger.debug("Saving uploaded file to " + destinationPath);
 
         File destination = new File(destinationPath);
@@ -181,9 +259,23 @@ public class FileStagingService {
             throw new PortalServiceException(null, "Failure during transfer", ex);
         }
 
-        return destination;
+        return new StagedFile(job, originalFileName);
     }
 
+    /**
+     * This function will attempt to download fileName from job's staging directory by writing
+     * directly to the output stream of response.
+     *
+     * response will have its internal outputStream directly accessed and written to (if the internal
+     * file request is successful).
+     *
+     * @param stagedFile Must have owner and name set
+     * @throws IOException
+     */
+    public void handleFileDownload(StagedFile stagedFile, HttpServletResponse response) throws PortalServiceException {
+        handleFileDownload(stagedFile.getOwner(), stagedFile.getName(), response);
+    }
+    
     /**
      * This function will attempt to download fileName from job's staging directory by writing
      * directly to the output stream of response.

@@ -1,13 +1,18 @@
 package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.auscope.portal.core.cloud.CloudJob;
+import org.auscope.portal.core.cloud.StagedFile;
 import org.auscope.portal.core.cloud.StagingInformation;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.jmock.ReadableServletOutputStream;
@@ -115,15 +120,39 @@ public class TestFileStagingService extends PortalTestClass {
     /**
      * Tests the existence/nonexistence of job's stage in file
      * @param job
+     * @param fileName
      * @param exists
      */
-    private void assertStagedFile(CloudJob job, String fileName, boolean exists) {
+    private void assertStagedFile(CloudJob job, String fileName, boolean exists) throws Exception {
+    	assertStagedFile(job, fileName, exists, null);
+    }
+    
+    /**
+     * Tests the existence/nonexistence of job's stage in file as well as its contents
+     * @param job
+     * @param exists
+     * @param expectedData if not null and file exists, file data will be tested against this value
+     */
+    private void assertStagedFile(CloudJob job, String fileName, boolean exists, byte[] expectedData) throws Exception{
         String stageInDir = FileStagingService.pathConcat(testStagingInfo.getStageInDirectory(), FileStagingService.getBaseFolderForJob(job));
         File stageInFile = new File(FileStagingService.pathConcat(stageInDir, fileName));
 
         Assert.assertEquals(exists, stageInFile.exists());
         if (exists) {
             Assert.assertEquals(true, stageInFile.isFile());
+            
+            //Test file contents
+            if (expectedData != null) {
+            	FileInputStream fis = null;
+            	try {
+            		fis = new FileInputStream(stageInFile);
+            		byte[] actualData = IOUtils.toByteArray(fis);
+            		Assert.assertArrayEquals(expectedData, actualData);
+            	} finally {
+            		IOUtils.closeQuietly(fis);
+            	}
+            }
+            
         }
     }
 
@@ -148,32 +177,37 @@ public class TestFileStagingService extends PortalTestClass {
     @Test
     public void testFileCreationAndListing() throws Exception {
         service.generateStageInDirectory(job);
+        
+        final byte[] file1Data = new byte[] {1,2,3};
+        final byte[] file2Data = new byte[] {4,3,1};
 
-        File file1 = service.createStageInDirectoryFile(job, "testFile1");
-        File file2 = service.createStageInDirectoryFile(job, "testFile2");
+        OutputStream file1 = service.writeFile(job, "testFile1");
+        OutputStream file2 = service.writeFile(job, "testFile2");
 
-        Assert.assertTrue(file1.createNewFile());
-        Assert.assertTrue(file2.createNewFile());
+        file1.write(file1Data);
+        file2.write(file2Data);
+        file1.close();
+        file2.close();
 
         assertStagedDirectory(job, true);
-        assertStagedFile(job, "testFile1", true);
-        assertStagedFile(job, "testFile2", true);
+        assertStagedFile(job, "testFile1", true, file1Data);
+        assertStagedFile(job, "testFile2", true, file2Data);
 
         //Ensure that listing returns all the files (in no particular order)
-        File[] expectedFiles = new File[] {file1, file2};
-        File[] listedFiles = service.listStageInDirectoryFiles(job);
+        StagedFile[] expectedFiles = new StagedFile[] {new StagedFile(job, "testFile1"), new StagedFile(job, "testFile2")};
+        StagedFile[] listedFiles = service.listStageInDirectoryFiles(job);
         Assert.assertNotNull(listedFiles);
         Assert.assertEquals(expectedFiles.length, listedFiles.length);
-        for (File expectedFile : expectedFiles) {
+        for (StagedFile expectedFile : expectedFiles) {
             boolean foundFile = false;
-            for (File listedFile : listedFiles) {
-                if (listedFile.getAbsoluteFile().equals(expectedFile.getAbsoluteFile())) {
+            for (StagedFile listedFile : listedFiles) {
+                if (listedFile.equals(expectedFile)) {
                     foundFile = true;
                     break;
                 }
             }
 
-            Assert.assertTrue(String.format("File '%1$s' not listed", expectedFile.getAbsoluteFile()), foundFile);
+            Assert.assertTrue(String.format("File '%1$s' not listed", expectedFile), foundFile);
         }
 
         service.deleteStageInDirectory(job);
@@ -192,11 +226,19 @@ public class TestFileStagingService extends PortalTestClass {
 
         //Should either return null or throw exception
         try {
-            File file = service.createStageInDirectoryFile(job, FileStagingService.pathConcat("..", "testFile1"));
+            OutputStream file = service.writeFile(job, FileStagingService.pathConcat("..", "testFile1"));
             Assert.assertNull(file);
         } catch (Exception ex) { }
         try {
-            File file = service.createStageInDirectoryFile(job, "testFile1" + File.pathSeparator + "testFile2");
+        	OutputStream file = service.writeFile(job, "testFile1" + File.pathSeparator + "testFile2");
+            Assert.assertNull(file);
+        } catch (Exception ex) { }
+        try {
+            InputStream file = service.readFile(job, FileStagingService.pathConcat("..", "testFile1"));
+            Assert.assertNull(file);
+        } catch (Exception ex) { }
+        try {
+        	InputStream file = service.readFile(job, "testFile1" + File.pathSeparator + "testFile2");
             Assert.assertNull(file);
         } catch (Exception ex) { }
 
@@ -223,7 +265,7 @@ public class TestFileStagingService extends PortalTestClass {
         service.generateStageInDirectory(job);
 
         //"Upload" the file and check it gets created
-        File newlyStagedFile = service.handleFileUpload(job, request);
+        StagedFile newlyStagedFile = service.handleFileUpload(job, request);
         Assert.assertNotNull(newlyStagedFile);
         Assert.assertEquals(fileName, newlyStagedFile.getName());
 
@@ -244,8 +286,7 @@ public class TestFileStagingService extends PortalTestClass {
 
         //Start by creating our file that we want to download
         service.generateStageInDirectory(job);
-        File file = service.createStageInDirectoryFile(job, fileName);
-        FileOutputStream fos = new FileOutputStream(file);
+        OutputStream fos = service.writeFile(job, fileName);
         fos.write(data);
         fos.close();
 
