@@ -2,7 +2,6 @@ package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,14 +39,14 @@ public class FileStagingService {
      * @return
      */
     private File getFile(CloudJob job, String fileName) {
-    	if (fileName.contains(File.pathSeparator) || fileName.contains(File.separator)) {
+        if (fileName.contains(File.pathSeparator) || fileName.contains(File.separator)) {
             throw new IllegalArgumentException("fileName cannot include " + File.pathSeparator + " or " + File.separator);
         }
 
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
-		return new File(pathConcat(directory, fileName));
+        return new File(pathConcat(directory, fileName));
     }
-    
+
     /**
      * Given 2 path components this function will concatenate them together.
      *
@@ -142,87 +141,87 @@ public class FileStagingService {
         if (files == null) {
             throw new PortalServiceException("Unable to list files in: " + directory.getPath());
         }
-        
+
         StagedFile[] stagedFiles = new StagedFile[files.length];
         for (int i = 0; i < stagedFiles.length; i++) {
-        	stagedFiles[i] = new StagedFile(job, files[i].getName());
+            stagedFiles[i] = new StagedFile(job, files[i].getName(), files[i]);
         }
-        
+
         return stagedFiles;
     }
-    
+
 
     /**
      * Opens the specified staging file for reading
-     * 
+     *
      * The returned stream must be closed when finished with
      * @param stagedFile
      * @return
      * @throws PortalServiceException
      */
     public InputStream readFile(StagedFile stagedFile) throws PortalServiceException {
-    	return this.readFile(stagedFile.getOwner(), stagedFile.getName());
+        return this.readFile(stagedFile.getOwner(), stagedFile.getName());
     }
-    
-    
+
+
     /**
      * Opens the specified staging file for reading
-     * 
+     *
      * The returned stream must be closed when finished with
      * @param job Must have its fileStorageId parameter set
      * @param fileName
      * @return
      */
     public InputStream readFile(CloudJob job, String fileName) throws PortalServiceException {
-    	File f = getFile(job, fileName);
+        File f = getFile(job, fileName);
         try {
-			return new FileInputStream(f);
-		} catch (Exception e) {
-			throw new PortalServiceException(null, e.getMessage(), e);
-		}
+            return new FileInputStream(f);
+        } catch (Exception e) {
+            throw new PortalServiceException(null, e.getMessage(), e);
+        }
     }
-    
+
     /**
      * Opens the specified staging file for writing. If it DNE, it will be created
-     * 
+     *
      * The returned stream must be closed when finished with
      * @param stagedFile
      * @return
      * @throws PortalServiceException
      */
     public OutputStream writeFile(StagedFile stagedFile) throws PortalServiceException {
-    	return writeFile(stagedFile.getOwner(), stagedFile.getName(), false);
+        return writeFile(stagedFile.getOwner(), stagedFile.getName(), false);
     }
-    
+
     /**
      * Opens the specified staging file for writing, If it DNE, it will be created
-     * 
+     *
      * The returned stream must be closed when finished with
      * @param job
      * @param fileName
      * @return
      */
     public OutputStream writeFile(CloudJob job, String fileName) throws PortalServiceException{
-    	return writeFile(job, fileName, false);
+        return writeFile(job, fileName, false);
     }
-    
+
     /**
      * Opens the specified staging file for writing or appending. If it DNE, it will be created.
-     * 
+     *
      * The returned stream must be closed when finished with
-     * 
+     *
      * @param job Must have its fileStorageId parameter set
      * @param fileName
      * @param append Should the file be overwritten or appended to. true to append, false to overwrite
      * @return
      */
     public OutputStream writeFile(CloudJob job, String fileName, boolean append) throws PortalServiceException {
-    	File f = getFile(job, fileName);
+        File f = getFile(job, fileName);
         try {
-			return new FileOutputStream(f, append);
-		} catch (Exception e) {
-			throw new PortalServiceException(null, e.getMessage(), e);
-		}
+            return new FileOutputStream(f, append);
+        } catch (Exception e) {
+            throw new PortalServiceException(null, e.getMessage(), e);
+        }
     }
 
     /**
@@ -259,7 +258,7 @@ public class FileStagingService {
             throw new PortalServiceException(null, "Failure during transfer", ex);
         }
 
-        return new StagedFile(job, originalFileName);
+        return new StagedFile(job, originalFileName, destination);
     }
 
     /**
@@ -275,7 +274,7 @@ public class FileStagingService {
     public void handleFileDownload(StagedFile stagedFile, HttpServletResponse response) throws PortalServiceException {
         handleFileDownload(stagedFile.getOwner(), stagedFile.getName(), response);
     }
-    
+
     /**
      * This function will attempt to download fileName from job's staging directory by writing
      * directly to the output stream of response.
