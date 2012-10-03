@@ -27,7 +27,7 @@ Ext.define('portal.layer.querier.wfs.knownlayerfactories.BaseFactory', {
 
     /**
      * abstract - Must be overridden by extending classes
-     * This function must return an GenericParser.BaseComponent object that represents
+     * This function must return an portal.layer.querier.BaseComponent object that represents
      * ancillary information about the specified feature.
      *
      * function(featureId, parentKnownLayer, parentOnlineResource, rootCfg, parentLayer)
