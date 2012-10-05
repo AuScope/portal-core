@@ -5,13 +5,56 @@
 Ext.define('portal.widgets.window.ErrorWindow', {
     extend : 'Ext.window.Window',
 
+    statics : {
+        /**
+         * Static utility for showing a window with the specified values.
+         *
+         * Creates a new instance on every call
+         */
+        showText : function(title, message, info) {
+            Ext.create('portal.widgets.window.ErrorWindow', {
+                title : title,
+                message : message,
+                info : info
+            }).show();
+        },
+
+        /**
+         * Static utility for showing a window with the specified values.
+         *
+         * Creates a new instance on every call
+         */
+        show : function(errorObj) {
+            Ext.create('portal.widgets.window.ErrorWindow', {
+                errorObj : errorObj
+            }).show();
+        }
+    },
+
+    /**
+     * Accepts Ext.window.Window parameters along with the following additions:
+     * {
+     *  errorObj : Object - a response object from a portal controller function
+     *  title : String - The title of the error (used if errorObj is undefined)
+     *  message : String - The message of the error (used if errorObj is undefined)
+     *  info : String - additional error information (used if errorObj is undefined)
+     * }
+     */
     constructor : function(cfg) {
         var errorObj = cfg.errorObj;
+        var title = errorObj ? errorObj.title : cfg.title;
+        var message = errorObj ? errorObj.message : cfg.message;
+        var info = errorObj ? errorObj.info : cfg.info;
+
         // get a reference to our class
         var win = this;
 
+        if (!title || !title.length) {
+            title = 'Error';
+        }
+
         Ext.apply(cfg, {
-            title: errorObj.title,
+            title: title,
             layout: 'anchor',
             defaults: { anchor: '100%' },
             modal: true,
@@ -23,7 +66,7 @@ Ext.define('portal.widgets.window.ErrorWindow', {
                 autoScroll: true,
                 border: false,
                 height: 50,
-                html: Ext.htmlEncode(errorObj.message)
+                html: Ext.htmlEncode(message)
             }], // eo items
             buttons: [{
                 text: 'OK',
@@ -43,7 +86,7 @@ Ext.define('portal.widgets.window.ErrorWindow', {
             } // eo listeners
         })
 
-        if ( errorObj.info ) {
+        if (info) {
             cfg.items.push({
                 xtype: 'panel',
                 title: 'Details',
@@ -59,7 +102,7 @@ Ext.define('portal.widgets.window.ErrorWindow', {
                     xtype: 'textarea',
                     readOnly: true,
                     height: 50,
-                    value: errorObj.info
+                    value: info
                 }
             });
         }
