@@ -233,6 +233,18 @@ Ext.define('portal.util.BBox', {
     },
 
     /**
+     * Returns true IFF this bounding box completely encloses the specified BBBox
+     */
+    containsBbox : function(bbox) {
+        if (this.crs !== bbox.crs) {
+            return false;
+        }
+
+        return (this.contains(bbox.northBoundLatitude, bbox.westBoundLongitude) &&
+               this.contains(bbox.southBoundLatitude, bbox.eastBoundLongitude));
+    },
+
+    /**
      * Function for comparing 2 instances of BBox. If the internal fields are all exactly the same then
      * true will be returned, otherwise false.
      */
