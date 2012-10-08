@@ -91,7 +91,7 @@ Ext.define('portal.widgets.window.ErrorWindow', {
                 xtype: 'panel',
                 title: 'Details',
                 collapsible: true,
-                collapsed: true,
+                collapsed: false,
                 titleCollapse: true,
                 layout: 'fit',
                 listeners: {
