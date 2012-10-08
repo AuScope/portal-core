@@ -97,18 +97,15 @@ public class CloudComputeService {
             }
             Instance instance = instances.get(0);
             return instance.getInstanceId();
-        }
-        catch (AmazonServiceException ex) {
+        } catch (AmazonServiceException ex) {
             logger.error("Compute service is currently unavailable.", ex);
-            throw new PortalServiceException(null, "Compute service is currently unavailable. Please try again in a few minutes. [" + ex.getMessage() + "]", ex);
-        }
-        catch (AmazonClientException ex) {
-            logger.error("Network connection is not available.", ex);
-            throw new PortalServiceException(null, "Network connection is currently unavailable. Please try again in a few minutes.", ex);
-        }
-        catch (Exception ex) {
+            throw new PortalServiceException("Compute service is currently unavailable.", "Please try again in a few minutes. [" + ex.getMessage() + "]");
+        } catch (AmazonClientException ex) {
+            logger.error("Network connection to compute service is currently unavailable.", ex);
+            throw new PortalServiceException("Network connection to compute service is currently unavailable.", "Please try again in a few minutes.");
+        } catch (Exception ex) {
             logger.error("An unexpected error has occurred while executing job: " + job, ex);
-            throw new PortalServiceException(null, "An unexpected error has occurred. Please report it to cg-admin@csiro.au.", ex);
+            throw new PortalServiceException("An unexpected error has occurred while executing your job.", "Please report it to cg-admin@csiro.au.");
         }
     }
 

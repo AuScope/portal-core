@@ -9,11 +9,12 @@ import org.apache.commons.httpclient.HttpMethodBase;
  * service that is causing problems
  *
  * @author Josh Vote
- *
+ * @author Richard Goh
  */
 public class PortalServiceException extends Exception {
     /** The method that was executing when this exception was thrown */
     private HttpMethodBase rootMethod;
+    private String errorCorrection;
 
     /**
      * Creates a new exception
@@ -39,6 +40,16 @@ public class PortalServiceException extends Exception {
      */
     public PortalServiceException(String message) {
         super(message);
+    }
+
+    /**
+     * Creates a new exception with the specified error and its correction messages
+     * @param errorMessage The error description
+     * @param errorCorrection The error correction description
+     */
+    public PortalServiceException(String errorMessage, String errorCorrection) {
+        super(errorMessage);
+        this.errorCorrection = errorCorrection;
     }
 
     /**
@@ -68,5 +79,12 @@ public class PortalServiceException extends Exception {
      */
     public HttpMethodBase getRootMethod() {
         return rootMethod;
+    }
+
+    /**
+     * @return the errorCorrection
+     */
+    public String getErrorCorrection() {
+        return errorCorrection;
     }
 }

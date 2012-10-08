@@ -77,17 +77,23 @@ public class FileStagingService {
     }
 
     /**
-     * Deletes the entire job stage in directory, returns true on success
+     * Deletes the entire job stage in directory, returns true on success.
+     * It silently fails and log the failure message to error log if the operation failed.
      * @param job Must have its fileStorageId parameter set
      */
     public boolean deleteStageInDirectory(CloudJob job) {
-        File jobInputDir = new File(pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job)));
-        logger.debug("Recursively deleting " + jobInputDir.getPath());
-        if (!jobInputDir.exists()) {
-            return true;
+        boolean status = false;
+        try {
+            File jobInputDir = new File(pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job)));
+            logger.debug("Recursively deleting " + jobInputDir.getPath());
+            if (!jobInputDir.exists()) {
+                status = true;
+            }
+            status = FileIOUtil.deleteFilesRecursive(jobInputDir);
+        } catch (Exception ex) {
+            logger.warn("There was a problem wiping the stage in directory for job: " + job, ex);
         }
-
-        return FileIOUtil.deleteFilesRecursive(jobInputDir);
+        return status;
     }
 
     /**
@@ -139,7 +145,7 @@ public class FileStagingService {
         }
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new PortalServiceException("Unable to list files in: " + directory.getPath());
+            throw new PortalServiceException("Unable to list files in: " + directory.getPath(), "");
         }
 
         StagedFile[] stagedFiles = new StagedFile[files.length];
@@ -170,12 +176,16 @@ public class FileStagingService {
      * The returned stream must be closed when finished with
      * @param job Must have its fileStorageId parameter set
      * @param fileName
-     * @return
+     * @return the staging file input stream if the file exists otherwise null
      */
     public InputStream readFile(CloudJob job, String fileName) throws PortalServiceException {
-        File f = getFile(job, fileName);
         try {
-            return new FileInputStream(f);
+            File f = getFile(job, fileName);
+            FileInputStream fis = null;
+            if (f.exists()) {
+                fis = new FileInputStream(f);
+            }
+            return fis;
         } catch (Exception e) {
             throw new PortalServiceException(null, e.getMessage(), e);
         }

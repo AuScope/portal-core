@@ -220,13 +220,13 @@ public class CloudStorageService {
             }
         } catch (AuthorizationException ex) {
             log.error("Storage credentials are not valid for job: " + job, ex);
-            throw new PortalServiceException(null, "Storage credentials are not valid. Please provide valid storage credentials.", ex);
+            throw new PortalServiceException("Storage credentials are not valid.", "Please provide valid storage credentials.");
         } catch (KeyNotFoundException ex) {
             log.error("Storage container does not exist for job: " + job, ex);
-            throw new PortalServiceException(null, "Storage container does not exist. Please provide a valid storage container.", ex);
+            throw new PortalServiceException("Storage container does not exist.", "Please provide a valid storage container.");
         } catch (Exception ex) {
             log.error("Unable to upload files for job: " + job, ex);
-            throw new PortalServiceException(null, "An unexpected error has occurred. Please report it to cg-admin@csiro.au.", ex);
+            throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to S3 storage.", "Please report it to cg-admin@csiro.au.");
         }
     }
 
