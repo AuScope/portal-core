@@ -38,15 +38,14 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     private XPathExpression exprGetAllMetadataNodes;
     private XPathExpression exprGetFirstMetadataNode;
 
-    @Before
-    public void setUp() throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+    private void setUpForResponse(String responseResourceName) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
 
         CSWNamespaceContext nc = new CSWNamespaceContext();
         exprGetAllMetadataNodes = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata", nc);
         exprGetFirstMetadataNode = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]", nc);
 
         // load CSW record response document
-        doc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml"));
+        doc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream(responseResourceName));
 
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new CSWNamespaceContext());
@@ -62,7 +61,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     }
 
     @Test
-    public void testGetServiceName() throws XPathExpressionException {
+    public void testGetServiceName() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         Assert.assertEquals(
                 "GSV GeologicUnit WFS",
@@ -74,7 +74,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     }
 
     @Test
-    public void testGetServiceUrl() throws XPathExpressionException {
+    public void testGetServiceUrl() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         AbstractCSWOnlineResource[] resources = this.records[4].getOnlineResourcesByType(OnlineResourceType.WFS);
         Assert.assertEquals(1, resources.length);
@@ -90,7 +91,9 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     }
 
     @Test
-    public void testDescriptiveKeywords() throws XPathExpressionException {
+    public void testDescriptiveKeywords() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+
         String[] actual = this.records[0].getDescriptiveKeywords();
         String[] expected = new String[] {"WFS", "GeologicUnit", "MappedFeature", "gsml:GeologicUnit", "gsml:MappedFeature"};
         Assert.assertArrayEquals(expected, actual);
@@ -98,6 +101,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
 
     @Test
     public void testMultipleOnlineResources() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+
         AbstractCSWOnlineResource[] resources = this.records[14].getOnlineResources();
         Assert.assertEquals(3, resources.length);
 
@@ -140,6 +145,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
 
     @Test
     public void testGeographicBoundingBoxParsing() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+
         CSWGeographicElement[] geoEls = this.records[0].getCSWGeographicElements();
 
         Assert.assertNotNull(geoEls);
@@ -156,6 +163,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
 
     @Test
     public void testContactInfo() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+
         CSWRecord rec = this.records[0];
 
         CSWResponsibleParty respParty = rec.getContact();
@@ -188,7 +197,9 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
      * Tests that the data quality info is correctly parsed
      */
     @Test
-    public void testDataQualityInfo() {
+    public void testDataQualityInfo() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+
         Assert.assertEquals("Data Quality Statment 1", this.records[0].getDataQualityStatement());
         Assert.assertEquals("", this.records[1].getDataQualityStatement());
     }
@@ -314,17 +325,34 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
 
     @Test
     public void testConstraints() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+
         Assert.assertArrayEquals(new String[] {"CopyrightConstraint1", "CopyrightConstraint2"}, this.records[0].getConstraints());
         Assert.assertArrayEquals(new String[] {}, this.records[1].getConstraints());
     }
 
     @Test
     public void testReverseTransformation() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+
         CSWRecordTransformer transformer = new CSWRecordTransformer();
 
         Node original = (Node) exprGetFirstMetadataNode.evaluate(doc, XPathConstants.NODE);
         Node actual = transformer.transformToNode(this.records[0]);
 
         assertNodeTreesEqual(original, actual);
+    }
+
+    @Test
+    public void testUploadedResourceParsing() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_UploadedResources.xml");
+
+        AbstractCSWOnlineResource[] ors = this.records[0].getOnlineResources();
+
+        Assert.assertNotNull(ors);
+        Assert.assertEquals(1, ors.length);
+
+        Assert.assertEquals(OnlineResourceType.WWW, ors[0].getType());
+        Assert.assertEquals("Cooper_Basin_3D_Map_geology.vo", ors[0].getName());
     }
 }
