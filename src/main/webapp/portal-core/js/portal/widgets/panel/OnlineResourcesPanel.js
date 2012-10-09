@@ -13,6 +13,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
      * Accepts all Ext.grid.Panel options as well as
      * {
      *  cswRecords : single instance of array of portal.csw.CSWRecord objects
+     *  allow
      * }
      */
     constructor : function(cfg) {
@@ -23,80 +24,42 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         }
 
         //Generate our flattened 'data items' list for rendering to the grid
-        var dataItems = [];
-        for (var i = 0; i < this.cswRecords.length; i++) {
-            var onlineResources = this.cswRecords[i].get('onlineResources');
-            for (var j = 0; j < onlineResources.length; j++) {
-                var group = '';
-
-                //ensure we have a type we want to describe
-                switch (onlineResources[j].get('type')) {
-                case portal.csw.OnlineResource.WWW:
-                case portal.csw.OnlineResource.FTP:
-                    group = 'Web Link';
-                    break;
-                case portal.csw.OnlineResource.WFS:
-                    group = 'OGC Web Feature Service 1.1.0';
-                    break;
-                case portal.csw.OnlineResource.WMS:
-                    group = 'OGC Web Map Service 1.1.1';
-                    break;
-                case portal.csw.OnlineResource.WCS:
-                    group = 'OGC Web Coverage Service 1.0.0';
-                    break;
-                case portal.csw.OnlineResource.OPeNDAP:
-                    group = 'OPeNDAP Service';
-                    break;
-                case portal.csw.OnlineResource.SOS:
-                    group = 'Sensor Observation Service 2.0.0';
-                    break;
-                case portal.csw.OnlineResource.UNSUPPORTED:
-                    group = 'Others';
-                    break;
-                default:
-                    continue;//don't include anything else
-                }
-
-                dataItems.push({
-                    group : group,
-                    onlineResource : onlineResources[j],
-                    cswRecord : this.cswRecords[i]
-                });
-            }
-        }
+        var dataItems = portal.widgets.panel.OnlineResourcePanelRow.parseCswRecords(this.cswRecords);
 
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
             groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})'
         });
+
+        //We allow the owner to specify additional columns
+        var columns = [{
+            //Title column
+            dataIndex: 'onlineResource',
+            menuDisabled: true,
+            sortable: true,
+            flex: 1,
+            renderer: Ext.bind(this._titleRenderer, this)
+        },{
+            dataIndex: 'onlineResource',
+            width: 140,
+            renderer: Ext.bind(this._previewRenderer, this)
+        }];
+        if (cfg.columns) {
+            columns = columns.concat(cfg.columns);
+        }
 
         //Build our configuration object
         Ext.apply(cfg, {
             features : [groupingFeature],
             store : Ext.create('Ext.data.Store', {
                 groupField : 'group',
-                fields : [
-                    {name : 'group', type: 'string'},
-                    {name : 'onlineResource', type: 'auto'},
-                    {name : 'cswRecord', type: 'auto'}
-                ],
+                model : 'portal.widgets.panel.OnlineResourcePanelRow',
                 data : dataItems
             }),
             plugins : [{
                 ptype : 'selectablegrid'
             }],
             hideHeaders : true,
-            columns: [{
-                //Title column
-                dataIndex: 'onlineResource',
-                menuDisabled: true,
-                sortable: true,
-                flex: 1,
-                renderer: Ext.bind(this._titleRenderer, this)
-            },{
-                dataIndex: 'onlineResource',
-                width: 140,
-                renderer: Ext.bind(this._previewRenderer, this)
-            }]
+            columns: columns
         });
 
         this.callParent(arguments);
@@ -273,4 +236,68 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             return '?';
         }
     }
+});
+/**
+ * Convenience class for representing the rows in the OnlineResourcesPanel
+ */
+Ext.define('portal.widgets.panel.OnlineResourcePanelRow', {
+    extend : 'Ext.data.Model',
+
+    statics : {
+        /**
+         * Turns an array of portal.csw.CSWRecord objects into an equivalent array of
+         * portal.widgets.panel.OnlineResourcePanelRow objects
+         */
+        parseCswRecords : function(cswRecords) {
+            var dataItems = [];
+            for (var i = 0; i < cswRecords.length; i++) {
+                var onlineResources = cswRecords[i].get('onlineResources');
+                for (var j = 0; j < onlineResources.length; j++) {
+                    var group = '';
+
+                    //ensure we have a type we want to describe
+                    switch (onlineResources[j].get('type')) {
+                    case portal.csw.OnlineResource.WWW:
+                    case portal.csw.OnlineResource.FTP:
+                        group = 'Web Link';
+                        break;
+                    case portal.csw.OnlineResource.WFS:
+                        group = 'OGC Web Feature Service 1.1.0';
+                        break;
+                    case portal.csw.OnlineResource.WMS:
+                        group = 'OGC Web Map Service 1.1.1';
+                        break;
+                    case portal.csw.OnlineResource.WCS:
+                        group = 'OGC Web Coverage Service 1.0.0';
+                        break;
+                    case portal.csw.OnlineResource.OPeNDAP:
+                        group = 'OPeNDAP Service';
+                        break;
+                    case portal.csw.OnlineResource.SOS:
+                        group = 'Sensor Observation Service 2.0.0';
+                        break;
+                    case portal.csw.OnlineResource.UNSUPPORTED:
+                        group = 'Others';
+                        break;
+                    default:
+                        continue;//don't include anything else
+                    }
+
+                    dataItems.push(Ext.create('portal.widgets.panel.OnlineResourcePanelRow',{
+                        group : group,
+                        onlineResource : onlineResources[j],
+                        cswRecord : cswRecords[i]
+                    }));
+                }
+            }
+
+            return dataItems;
+        }
+    },
+
+    fields: [
+             {name : 'group', type: 'string'},
+             {name : 'onlineResource', type: 'auto'},
+             {name : 'cswRecord', type: 'auto'}
+    ]
 });
