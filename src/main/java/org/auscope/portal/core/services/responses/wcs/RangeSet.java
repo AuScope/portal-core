@@ -22,7 +22,7 @@ public interface RangeSet extends Serializable {
      */
     public String getLabel();
     /**
-     * Defines a range provided by a coverage. Multiple occurences are used for compound observations, to
+     * Defines a range provided by a coverage. Multiple occurrences are used for compound observations, to
      * describe an additional parameter (that is an independent variable besides space and time) plus the
      * valid values of this parameter (which GetCoverage requests can use to select subsets of the coverage
      * offering).
