@@ -231,17 +231,30 @@ public class CloudStorageService {
     }
 
     /**
-     * Deletes all files for the specified job
+     * Deletes all files including the container or directory for the specified job
      * @param job The whose storage space will be deleted
      * @throws PortalServiceException
      */
     public void deleteJobFiles(CloudJob job) throws PortalServiceException {
-        InputStreamMap map = jobToInputStreamMap(job);
-
-        CloudFileInformation[] files = listJobFiles(job);
-        if (files != null) {
-            for (CloudFileInformation file : files) {
-                map.remove(file.getName());
+        BlobStoreContext bsc = null;
+        try {
+            //Remove all files
+            InputStreamMap map = jobToInputStreamMap(job);
+            CloudFileInformation[] files = listJobFiles(job);
+            if (files != null) {
+                for (CloudFileInformation file : files) {
+                    map.remove(file.getName());
+                }
+            }
+            //Remove the job storage base key (directory) from the storage bucket
+            bsc = getBlobStoreContextForJob(job);
+            bsc.getBlobStore().deleteDirectory(job.getStorageBucket(), job.getStorageBaseKey());
+        } catch (Exception ex) {
+            log.error("Error in removing job files or storage key.", ex);
+            throw new PortalServiceException(null, "An unexpected error has occurred while removing job files from S3 storage", ex);
+        } finally {
+            if (bsc != null) {
+                bsc.close();
             }
         }
     }
