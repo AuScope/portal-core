@@ -1,5 +1,5 @@
 /**
- * Abstract base class for all Generic Parser factories to inherit from.
+ * Abstract base class for all Parser factories to inherit from.
  */
 Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
     extend : 'Ext.util.Observable',
@@ -14,7 +14,7 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
 
 
     config : {
-        //Reference back to genericParser that spawned this factory. Use
+        //Reference back to portal.layer.querier.wfs.Parser that spawned this factory. Use
         //this reference to parse nodes that your factory cannot handle.
         parser : null
     },
@@ -22,7 +22,7 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
     /**
      * Accepts all Ext.util.Observable configuration options with the following additions
      * {
-     *  genericParser : GenericParser - the generic parser that owns this factory
+     *  parser : portal.layer.querier.wfs.Parser - the parser that owns this factory
      * }
      */
     constructor : function(cfg) {
