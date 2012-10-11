@@ -26,7 +26,6 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
      * }
      */
     constructor : function(cfg) {
-        this.genericParser = cfg.genericParser;
         this.listeners = cfg.listeners;
         this.callParent(arguments);
     },

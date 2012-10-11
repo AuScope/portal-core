@@ -1,11 +1,12 @@
 /**
- * Abstract base class for all Generic Parser factories to inherit from.
+ * A simple extension of the BaseFactory class.
+ * It is capable of representing a domNode as a basic tree-like structure.
  */
 Ext.define('portal.layer.querier.wfs.factories.SimpleFactory', {
     extend : 'portal.layer.querier.wfs.factories.BaseFactory',
 
     /**
-     * Accepts all GenericParser.Factory.BaseFactory configuration options
+     * Accepts all portal.layer.querier.wfs.factories.BaseFactory configuration options
      */
     constructor : function(cfg) {
         this.callParent(arguments);
