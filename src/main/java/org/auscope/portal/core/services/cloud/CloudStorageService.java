@@ -31,6 +31,9 @@ import com.google.inject.Module;
  */
 public class CloudStorageService {
 
+    /** The bucket name used when no bucket is specified*/
+    public static final String DEFAULT_BUCKET = "portal-core-storage-service";
+
     private final Log log = LogFactory.getLog(getClass());
 
     protected BlobStoreContextFactory blobStoreContextFactory;
@@ -39,18 +42,47 @@ public class CloudStorageService {
     /** Whether security certs are required to strictly match the host*/
     protected boolean relaxHostName = false;
 
+    /** Username credential for accessing the storage service*/
+    private String accessKey;
+    /** Password credentials for accessing the storage service*/
+    private String secretKey;
+    /** A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'*/
+    private String provider;
+    /** The URL endpoint for the cloud storage service*/
+    private String endpoint;
+
+    /** The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty*/
+    private String id;
+
     /**
-     * Creates a new instance of this class
+     * The bucket that this service will access - defaults to DEFAULT_BUCKET
      */
-    public CloudStorageService() {
-        this(new BlobStoreContextFactory());
+    private String bucket = DEFAULT_BUCKET;
+
+    /**
+     * Creates a new instance
+     * @param endpoint The URL endpoint for the cloud storage service
+     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey Username credential for accessing the storage service
+     * @param secretKey Password credentials for accessing the storage service
+     */
+    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey) {
+        this(endpoint, provider, accessKey, secretKey, new BlobStoreContextFactory());
     }
 
     /**
-     * Creates a new instance of this class
+     * Creates a new instance
+     * @param endpoint The URL endpoint for the cloud storage service
+     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey Username credential for accessing the storage service
+     * @param secretKey Password credentials for accessing the storage service
      */
-    public CloudStorageService(BlobStoreContextFactory blobStoreContextFactory) {
+    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, BlobStoreContextFactory blobStoreContextFactory) {
         super();
+        this.endpoint = endpoint;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+        this.provider = provider;
         this.blobStoreContextFactory = blobStoreContextFactory;
     }
 
@@ -70,8 +102,6 @@ public class CloudStorageService {
         this.relaxHostName = relaxHostName;
     }
 
-
-
     /**
      * Prefix to apply to any job files stored (will be appended with job id)
      * @return
@@ -89,15 +119,79 @@ public class CloudStorageService {
     }
 
     /**
+     * The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty
+     * @return
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * The bucket where the data will be stored
+     * @return
+     */
+    public String getBucket() {
+        return bucket;
+    }
+
+    /**
+     * The bucket where the data will be stored
+     * @param bucket
+     */
+    public void setBucket(String bucket) {
+        this.bucket = bucket;
+    }
+
+    /**
+     * Username credential for accessing the storage service
+     * @return
+     */
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    /**
+     * Password credential for accessing the storage service
+     * @return
+     */
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    /**
+     * A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @return
+     */
+    public String getProvider() {
+        return provider;
+    }
+
+    /**
+     * The URL endpoint for the cloud storage service
+     * @return
+     */
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    /**
      * Generates a BlobStoreContext, configured
      * @param job
      * @return
      */
     protected BlobStoreContext getBlobStoreContextForJob(CloudJob job) {
         Properties properties = new Properties();
-        properties.setProperty(String.format("%1$s.endpoint", job.getStorageProvider()), job.getStorageEndpoint());
+        properties.setProperty(String.format("%1$s.endpoint", provider), endpoint);
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
-        return blobStoreContextFactory.createContext(job.getStorageProvider(), job.getStorageAccessKey(), job.getStorageSecretKey(), ImmutableSet.<Module>of(), properties);
+        return blobStoreContextFactory.createContext(provider, accessKey, secretKey, ImmutableSet.<Module>of(), properties);
     }
 
     /**
@@ -148,7 +242,6 @@ public class CloudStorageService {
      */
     protected InputStreamMap jobToInputStreamMap(CloudJob job) {
         String baseKey = jobToBaseKey(job);
-        String bucket = job.getStorageBucket();
 
         log.debug(String.format("Attempting to open a InputStreamMap for bucket '%1$s' with base key '%2$s'", bucket, baseKey));
 
@@ -216,7 +309,7 @@ public class CloudStorageService {
             InputStreamMap map = jobToInputStreamMap(job);
             for (File file : files) {
                 map.putFile(file.getName(), file);
-                log.debug(file.getName() + " uploaded to '" + job.getStorageBucket() + "' container");
+                log.debug(file.getName() + " uploaded to '" + bucket + "' container");
             }
         } catch (AuthorizationException ex) {
             log.error("Storage credentials are not valid for job: " + job, ex);
@@ -248,7 +341,7 @@ public class CloudStorageService {
             }
             //Remove the job storage base key (directory) from the storage bucket
             bsc = getBlobStoreContextForJob(job);
-            bsc.getBlobStore().deleteDirectory(job.getStorageBucket(), job.getStorageBaseKey());
+            bsc.getBlobStore().deleteDirectory(bucket, job.getStorageBaseKey());
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
             throw new PortalServiceException(null, "An unexpected error has occurred while removing job files from S3 storage", ex);

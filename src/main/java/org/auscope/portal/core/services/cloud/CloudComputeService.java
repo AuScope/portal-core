@@ -32,6 +32,9 @@ public class CloudComputeService {
     private AWSCredentials credentials;
     private String endpoint;
 
+    /** Unique ID for distinguishing instances of this class - can be null*/
+    private String id;
+
     /**
      * Creates a new instance with the specified credentials
      * @param endpoint (URL) The location of the EC2 service
@@ -51,6 +54,22 @@ public class CloudComputeService {
     public CloudComputeService(String endpoint, String accessKey, String secretKey) {
         this.endpoint = endpoint;
         this.credentials = new BasicAWSCredentials(accessKey, secretKey);
+    }
+
+    /**
+     * Unique ID for distinguishing instances of this class - can be null
+     * @return
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Unique ID for distinguishing instances of this class - can be null
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
