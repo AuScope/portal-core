@@ -50,7 +50,6 @@ Ext.define('portal.layer.querier.wfs.factories.SimpleFactory', {
 
         return Ext.create('portal.layer.querier.BaseComponent', {
             layout : 'fit',
-            height : 300,
             items : [{
                 xtype : 'treepanel',
                 autoScroll : true,
