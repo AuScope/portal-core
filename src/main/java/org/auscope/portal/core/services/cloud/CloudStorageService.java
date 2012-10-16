@@ -2,6 +2,8 @@ package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -37,8 +39,8 @@ public class CloudStorageService {
     private final Log log = LogFactory.getLog(getClass());
 
     protected BlobStoreContextFactory blobStoreContextFactory;
-    /** Prefix to apply to any job files stored (will be appended with job id)*/
-    protected String jobPrefix = "job-";
+    /** Prefix to apply to any job files stored (will be appended with job id) - defaults to hostname*/
+    protected String jobPrefix;
     /** Whether security certs are required to strictly match the host*/
     protected boolean relaxHostName = false;
 
@@ -84,6 +86,12 @@ public class CloudStorageService {
         this.secretKey = secretKey;
         this.provider = provider;
         this.blobStoreContextFactory = blobStoreContextFactory;
+        try {
+            this.jobPrefix = "job-" + InetAddress.getLocalHost().getHostName() + "-";
+        } catch (UnknownHostException e) {
+            this.jobPrefix = "job-";
+            log.error("Unable to lookup hostname. Defaulting prefix to " + this.jobPrefix, e);
+        }
     }
 
     /**
