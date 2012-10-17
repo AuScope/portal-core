@@ -26,7 +26,7 @@ public class TestKnownLayerService extends PortalTestClass {
     
     /**
      * This fake class is used to test aspects of the KnownLayerService where
-     * the behaviour requires a descendant of KnownLayer.
+     * the sought behaviour requires a descendant of KnownLayer.
      * @author bro879
      *
      */
@@ -161,12 +161,10 @@ public class TestKnownLayerService extends PortalTestClass {
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
         }});
         
-        @SuppressWarnings("unchecked")
-        KnownLayerGrouping grouping = 
-                knownLayerService.groupKnownLayerRecords(FakeKnownLayerChild.class);
-        
         // Act
-        List<KnownLayerAndRecords> groups = grouping.getKnownLayers();
+        @SuppressWarnings("unchecked")
+        List<KnownLayerAndRecords> groups = 
+            knownLayerService.groupKnownLayerRecords(FakeKnownLayerChild.class).getKnownLayers();
         
         // Assert
         Assert.assertEquals(1, groups.size());
