@@ -42,6 +42,8 @@ portal.util.xml.SimpleDOM.getClassList = function(domNode) {
  */
 portal.util.xml.SimpleDOM.isLeafNode = function(domNode) {
     var isLeaf = true;
+    if (!domNode.childNodes)
+    	return false;
     for ( var i = 0; i < domNode.childNodes.length && isLeaf; i++) {
         isLeaf = domNode.childNodes[i].nodeType !== portal.util.xml.SimpleDOM.XML_NODE_ELEMENT;
     }
