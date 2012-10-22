@@ -11,8 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -21,9 +21,6 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.rest.AuthorizationException;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Service for providing storage of objects (blobs) in a cloud using the JClouds library
@@ -38,7 +35,6 @@ public class CloudStorageService {
 
     private final Log log = LogFactory.getLog(getClass());
 
-    protected BlobStoreContextFactory blobStoreContextFactory;
     /** Prefix to apply to any job files stored (will be appended with job id) - defaults to hostname*/
     protected String jobPrefix;
     /** Whether security certs are required to strictly match the host*/
@@ -52,9 +48,10 @@ public class CloudStorageService {
     private String provider;
     /** The URL endpoint for the cloud storage service*/
     private String endpoint;
-
     /** The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty*/
     private String id;
+    /** The authentication version to use when connecting to this object store - can be null or empty*/
+    private String authVersion;
 
     /**
      * The bucket that this service will access - defaults to DEFAULT_BUCKET
@@ -69,23 +66,11 @@ public class CloudStorageService {
      * @param secretKey Password credentials for accessing the storage service
      */
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey) {
-        this(endpoint, provider, accessKey, secretKey, new BlobStoreContextFactory());
-    }
-
-    /**
-     * Creates a new instance
-     * @param endpoint The URL endpoint for the cloud storage service
-     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
-     * @param accessKey Username credential for accessing the storage service
-     * @param secretKey Password credentials for accessing the storage service
-     */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, BlobStoreContextFactory blobStoreContextFactory) {
         super();
         this.endpoint = endpoint;
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.provider = provider;
-        this.blobStoreContextFactory = blobStoreContextFactory;
         try {
             this.jobPrefix = "job-" + InetAddress.getLocalHost().getHostName() + "-";
         } catch (UnknownHostException e) {
@@ -191,15 +176,31 @@ public class CloudStorageService {
     }
 
     /**
+     * The authentication version to use when connecting to this object store - can be null or empty
+     * @return
+     */
+    public String getAuthVersion() {
+        return authVersion;
+    }
+
+    /**
+     * The authentication version to use when connecting to this object store - can be null or empty
+     * @param authVersion
+     */
+    public void setAuthVersion(String authVersion) {
+        this.authVersion = authVersion;
+    }
+
+    /**
      * Generates a BlobStoreContext, configured
      * @param job
      * @return
      */
     protected BlobStoreContext getBlobStoreContextForJob(CloudJob job) {
         Properties properties = new Properties();
-        properties.setProperty(String.format("%1$s.endpoint", provider), endpoint);
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
-        return blobStoreContextFactory.createContext(provider, accessKey, secretKey, ImmutableSet.<Module>of(), properties);
+
+        return ContextBuilder.newBuilder(provider).overrides(properties).endpoint(endpoint).credentials(accessKey, secretKey).build(BlobStoreContext.class);
     }
 
     /**
