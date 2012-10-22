@@ -27,13 +27,32 @@ public class TestCloudStorageService extends PortalTestClass {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
+    /**
+     * Utility class for testing CloudStorageService by injecting a mock BlobStoreContext
+     * @author vot002
+     *
+     */
+    private class TestableCloudStorageService extends CloudStorageService {
+
+        BlobStoreContext mockContext;
+
+        public TestableCloudStorageService(String endpoint, String provider, String accessKey, String secretKey, BlobStoreContext mockContext) {
+            super(endpoint, provider, accessKey, secretKey);
+            this.mockContext = mockContext;
+        }
+
+        @Override
+        public BlobStoreContext getBlobStoreContextForJob(CloudJob job) {
+           return mockContext;
+        }
+    }
+
     private final String endpoint = "http://example.com/storage";
     private final String provider = "example-storage-provider";
     private final String accessKey = "accessKey";
     private final String secretKey = "secretKey";
     private final String bucket = "bucket-name";
 
-    private BlobStoreContextFactory mockBlobStoreContextFactory = context.mock(BlobStoreContextFactory.class);
     private BlobStoreContext mockBlobStoreContext = context.mock(BlobStoreContext.class);
     private CloudJob job;
     private CloudStorageService service;
@@ -41,7 +60,7 @@ public class TestCloudStorageService extends PortalTestClass {
     @Before
     public void initJobObject() {
         job = new CloudJob(13);
-        service = new CloudStorageService(endpoint, provider, accessKey, secretKey,  mockBlobStoreContextFactory);
+        service = new TestableCloudStorageService(endpoint, provider, accessKey, secretKey,  mockBlobStoreContext);
         service.setBucket(bucket);
     }
 
@@ -54,9 +73,6 @@ public class TestCloudStorageService extends PortalTestClass {
 
 
           context.checking(new Expectations() {{
-              oneOf(mockBlobStoreContextFactory).createContext(with(provider), with(accessKey), with(secretKey), with(any(Iterable.class)), with(aProperty(provider + ".endpoint", endpoint, false)));
-              will(returnValue(mockBlobStoreContext));
-
               oneOf(mockBlobStoreContext).createInputStreamMap(with(bucket),with(any(ListContainerOptions.class)));
               will(returnValue(mockInputStream));
 
@@ -92,9 +108,6 @@ public class TestCloudStorageService extends PortalTestClass {
           final long obj2Length = 4567L;
 
           context.checking(new Expectations() {{
-              oneOf(mockBlobStoreContextFactory).createContext(with(provider), with(accessKey), with(secretKey), with(any(Iterable.class)), with(aProperty(provider + ".endpoint", endpoint, false)));
-              will(returnValue(mockBlobStoreContext));
-
               oneOf(mockBlobStoreContext).createInputStreamMap(with(any(String.class)),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
               oneOf(mockInputStreamMap).size();will(returnValue(2));
               oneOf(mockInputStreamMap).list();will(returnValue(mockFileMetaDataList));
@@ -142,9 +155,6 @@ public class TestCloudStorageService extends PortalTestClass {
         };
 
         context.checking(new Expectations() {{
-            oneOf(mockBlobStoreContextFactory).createContext(with(provider), with(accessKey), with(secretKey), with(any(Iterable.class)), with(aProperty(provider + ".endpoint", endpoint, false)));
-            will(returnValue(mockBlobStoreContext));
-
             oneOf(mockBlobStoreContext).createInputStreamMap(with(bucket),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
             allowing(mockBlobStore).createDirectory(bucket, service.jobToBaseKey(job));
             allowing(mockFiles[0]).getName();will(returnValue("file1Name"));
