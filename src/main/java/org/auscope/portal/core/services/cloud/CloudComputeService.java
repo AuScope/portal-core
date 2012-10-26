@@ -7,6 +7,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
+import org.auscope.portal.core.cloud.MachineImage;
 import org.auscope.portal.core.services.PortalServiceException;
 
 import com.amazonaws.AmazonClientException;
@@ -34,6 +35,11 @@ public class CloudComputeService {
 
     /** Unique ID for distinguishing instances of this class - can be null*/
     private String id;
+    /** A short descriptive name for human identification of this service*/
+    private String name;
+
+    /** An array of images that are available through this compute service*/
+    private MachineImage[] availableImages = new MachineImage[0];
 
     /**
      * Creates a new instance with the specified credentials
@@ -73,6 +79,22 @@ public class CloudComputeService {
     }
 
     /**
+     * An array of images that are available through this compute service
+     * @return
+     */
+    public MachineImage[] getAvailableImages() {
+        return availableImages;
+    }
+
+    /**
+     * An array of images that are available through this compute service
+     * @param availableImages
+     */
+    public void setAvailableImages(MachineImage[] availableImages) {
+        this.availableImages = availableImages;
+    }
+
+    /**
      * Gets an instance of an AmazonEC2 for use in submitting/terminating jobs
      * @return
      */
@@ -80,6 +102,22 @@ public class CloudComputeService {
         AmazonEC2Client client = new AmazonEC2Client(credentials);
         client.setEndpoint(endpoint);
         return client;
+    }
+
+    /**
+     *  A short descriptive name for human identification of this service
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * A short descriptive name for human identification of this service
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**

@@ -50,6 +50,8 @@ public class CloudStorageService {
     private String endpoint;
     /** The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty*/
     private String id;
+    /** A short descriptive name for human identification of this service*/
+    private String name;
     /** The authentication version to use when connecting to this object store - can be null or empty*/
     private String authVersion;
 
@@ -189,6 +191,22 @@ public class CloudStorageService {
      */
     public void setAuthVersion(String authVersion) {
         this.authVersion = authVersion;
+    }
+
+    /**
+     * A short descriptive name for human identification of this service
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * A short descriptive name for human identification of this service
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
