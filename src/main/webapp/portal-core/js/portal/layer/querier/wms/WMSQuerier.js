@@ -55,48 +55,6 @@ Ext.define('portal.layer.querier.wms.WMSQuerier', {
         return lowerCase.length > 32;
     },
 
-
-    /**
-     * Utility function for generating a WMS GetFeatureInfo request that is proxied through the portal backend
-     * for querying for information about the specific queryTarget.
-     *
-     * The response will be returned in the specified infoFormat
-     * @param queryTarget A portal.layer.querier.QueryTarget
-     * @param infoFormat a String representing a MIME type
-     */
-    generateWmsProxyQuery : function(queryTarget, infoFormat) {
-        var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
-        var tileInfo = this.map.getTileInformationForPoint(point);
-        var layer = queryTarget.get('layer');
-        var wmsOnlineResource = queryTarget.get('onlineResource');
-
-        var typeName = wmsOnlineResource.get('name');
-        var serviceUrl = wmsOnlineResource.get('url');
-
-        var bbox = tileInfo.getTileBounds();
-        var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
-                bbox.eastBoundLongitude,
-                bbox.northBoundLatitude,
-                bbox.westBoundLongitude,
-                bbox.southBoundLatitude);
-
-
-        //Build our proxy URL
-        var queryString = Ext.Object.toQueryString({
-            WMS_URL : serviceUrl,
-            lat : point.getLatitude(),
-            lng : point.getLongitude(),
-            QUERY_LAYERS : typeName,
-            x : tileInfo.getOffset().x,
-            y : tileInfo.getOffset().y,
-            BBOX : bboxString,
-            WIDTH : tileInfo.getWidth(),
-            HEIGHT : tileInfo.getHeight(),
-            INFO_FORMAT : infoFormat
-        });
-        return Ext.urlAppend('wmsMarkerPopup.do', queryString);
-    },
-
     /**
      * See parent class for definition
      *
