@@ -1,5 +1,5 @@
 /**
- * An implementation of a portal.layer.renderer for rendering WFS Features
+ * An implementation of a portal.layer.renderer for rendering WFS with WMS Features
  * as transformed by the AuScope portal backend.
  */
 Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
@@ -121,15 +121,23 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         var urls = [];
         var wmsRendered=[];
         //alert any listeners that we are about to start rendering wms
-        this.fireEvent('renderstarted', this, wmsResources, filterer);
+        //this.fireEvent('renderstarted', this, wmsResources, filterer);
 
+        //get the style format encoded as string
+        //portal.util.URL.base
+        //var victor='http://TUCSON-KB.arrc.csiro.au:8088/AuScope-Portal/';
+        var styleUrl = escape(Ext.urlAppend(portal.util.URL.base + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
+        console.log('styleUrl', styleUrl);
+        var wmsUrls = [];
         var primitives = [];
         for (var i = 0; i < wmsResources.length; i++) {
             var wmsUrl = wmsResources[i].get('url');
+            urls.push(wmsUrl);
+            wmsUrls.push(wmsUrl);
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1
-            urls.push(wmsUrl);
+            wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
             primitives.push(this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity));
 
         }
@@ -148,6 +156,11 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             }
         }
         this.renderStatus.initialiseResponses(urls, 'Loading...');
+
+        //VT: somehow determine wms complete?
+        for (var i =0; i < wmsUrls.length; i++){
+            this.renderStatus.updateResponse(wmsUrls[i], "");
+        }
 
         //alert any listeners that we are about to start rendering wfs
         this.fireEvent('renderstarted', this, wfsResources, filterer);
@@ -189,6 +202,9 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 downloadManager.startDownload();
 
                 this.allDownloadManagers.push(downloadManager);//save this manager in case we need to abort later on
+            }else{
+                //VT: the resource is already rendered via wms therefore we can deduct it from currentRequestCount
+                this.currentRequestCount--;
             }
 
         }

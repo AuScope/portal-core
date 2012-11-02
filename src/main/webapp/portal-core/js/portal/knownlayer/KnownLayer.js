@@ -19,6 +19,7 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'group', type: 'string' }, //A term in which like KnownLayers can be grouped under
         { name: 'proxyUrl', type: 'string' }, //A URL of a backend controller method for fetching available data with a filter specific for this KnonwLayer
         { name: 'proxyCountUrl', type: 'string' }, //A URL of a backend controller method for fetching the count of data available (eg for WFS a URL that will set featureType=hits)
+        { name: 'proxyStyleUrl', type: 'string' }, // A URL of a bacnend controller method for fetching style
         { name: 'iconUrl', type: 'string' }, //A URL of an icon that will be used for rendering GMarkers associated with this layer
         { name: 'iconAnchor', type: 'auto' }, //An object containing x,y for the pixel location of where the icon get's anchored to the map
         { name: 'iconSize', type: 'auto' }, //An object containing width,height for the pixel size of the icon
