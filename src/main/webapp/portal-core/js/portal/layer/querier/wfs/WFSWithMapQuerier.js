@@ -46,7 +46,9 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
         var onlineResource = queryTarget.get('onlineResource');
 
         if(onlineResource.get('type')==='WMS'){
-             id=this._handleWMSQuery(queryTarget,callback,this);
+             this._handleWMSQuery(queryTarget,callback,this);
+        }else if(onlineResource.get('type')=='WFS'){
+            this._handleWFSQuery(queryTarget, callback);
         }
 
     },
@@ -122,6 +124,40 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                 });
 
             }
+        });
+    },
+
+    _handleWFSQuery : function(queryTarget, callback){
+
+        //This class can only query for specific WFS feature's
+        var id = queryTarget.get('id');
+        var onlineResource = queryTarget.get('onlineResource');
+        var layer = queryTarget.get('layer');
+        var typeName = onlineResource.get('name');
+        var wfsUrl = onlineResource.get('url');
+
+        //we need to get a reference to the parent known layer (if it is a known layer)
+        var knownLayer = null;
+        if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
+            knownLayer = layer.get('source');
+        }
+
+        //Download the DOM of the feature we are interested in
+        var me = this;
+        this.featureSource.getFeature(id, typeName, wfsUrl, function(wfsResponseRoot, id, typeName, wfsUrl) {
+            if (!wfsResponseRoot) {
+                callback(me, [me._generateErrorComponent(Ext.util.Format.format('There was a problem when looking up the feature with id \"{0}\"', id))], queryTarget);
+                return;
+            }
+
+            //Parse our response into a number of GUI components, pass those along to the callback
+            var allComponents = [];
+            allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url')));
+            if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer)) {
+                allComponents.push(me.knownLayerParser.parseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer));
+            }
+
+            callback(me, allComponents, queryTarget);
         });
     }
 
