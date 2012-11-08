@@ -38,7 +38,7 @@ Ext.define('Ext.ux.form.SearchField', {
         if (me.hasSearch) {
             me.setValue('');
             proxy.extraParams[me.paramName] = '';
-            store.loadPage(1);
+            //store.loadPage(1);
             me.hasSearch = false;
             me.triggerCell.item(0).setDisplayed(false);
             me.doComponentLayout();
