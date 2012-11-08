@@ -162,6 +162,7 @@ public class WMSMethodMaker extends AbstractMethodMaker {
         options.add(new NameValuePair("y", Integer.toString(pointY)));
         options.add(new NameValuePair("width", Integer.toString(width)));
         options.add(new NameValuePair("height", Integer.toString(height)));
+        options.add(new NameValuePair("SRS", srs));
         if (styles != null && styles.trim().length() > 0) {
             options.add(new NameValuePair("styles", styles.trim()));
         }
