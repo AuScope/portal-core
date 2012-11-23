@@ -16,17 +16,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Node;
 
-public class TestSISSVocService extends PortalTestClass {
+public class TestSISSVoc2Service extends PortalTestClass {
 
     private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private ConceptFactory mockConceptFactory = context.mock(ConceptFactory.class);
     private SISSVoc2MethodMaker mockMethodMaker = context.mock(SISSVoc2MethodMaker.class);
-    private SISSVocService service;
+    private SISSVoc2Service service;
 
     @Before
     public void init() {
-        service = new SISSVocService(mockServiceCaller, mockConceptFactory, mockMethodMaker);
+        service = new SISSVoc2Service(mockServiceCaller, mockConceptFactory, mockMethodMaker);
     }
 
     /**

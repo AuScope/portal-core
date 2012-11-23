@@ -23,12 +23,12 @@ import org.w3c.dom.NodeList;
  * Service class for interacting with a SISSVoc endpoint
  * @author Josh Vote
  */
-public class SISSVocService {
+public class SISSVoc2Service {
     private HttpServiceCaller httpServiceCaller;
     private ConceptFactory conceptFactory;
     private SISSVoc2MethodMaker sissVocMethodMaker;
 
-    public SISSVocService(HttpServiceCaller httpServiceCaller, ConceptFactory conceptFactory, SISSVoc2MethodMaker sissVocMethodMaker) {
+    public SISSVoc2Service(HttpServiceCaller httpServiceCaller, ConceptFactory conceptFactory, SISSVoc2MethodMaker sissVocMethodMaker) {
         this.httpServiceCaller = httpServiceCaller;
         this.conceptFactory = conceptFactory;
         this.sissVocMethodMaker = sissVocMethodMaker;

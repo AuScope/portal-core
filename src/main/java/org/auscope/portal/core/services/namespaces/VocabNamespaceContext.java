@@ -16,5 +16,9 @@ public class VocabNamespaceContext extends IterableNamespace {
         map.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
         map.put("skos", "http://www.w3.org/2004/02/skos/core#");
         map.put("sparql", "http://www.w3.org/2005/sparql-results#");
+        map.put("api", "http://purl.org/linked-data/api/vocab#");
+        map.put("xhv", "http://www.w3.org/1999/xhtml/vocab#");
+        map.put("os", "http://a9.com/-/spec/opensearch/1.1/");
+        map.put("dcterms", "http://purl.org/dc/terms/");
     }
 }
