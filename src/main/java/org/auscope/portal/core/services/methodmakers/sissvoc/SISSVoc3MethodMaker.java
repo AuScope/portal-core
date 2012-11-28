@@ -45,7 +45,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param params The list of params
      * @return
      */
-    private GetMethod buildGetMethod(String sissVocUrl, String repository, String command, Format format, List<NameValuePair> params) {
+    protected GetMethod buildGetMethod(String sissVocUrl, String repository, String command, Format format, List<NameValuePair> params) {
         String requestUrl = this.urlPathConcat(sissVocUrl, repository, command);
 
         if (format != null) {
@@ -80,7 +80,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param pageSize
      * @param pageNumber
      */
-    private void appendPagingParams(List<NameValuePair> params, Integer pageSize, Integer pageNumber) {
+    protected void appendPagingParams(List<NameValuePair> params, Integer pageSize, Integer pageNumber) {
         if (pageSize != null) {
             params.add(new NameValuePair("_pageSize", pageSize.toString()));
         }

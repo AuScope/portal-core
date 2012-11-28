@@ -103,17 +103,16 @@ public class SISSVoc3Service {
     }
 
     /**
-     * Gets all descriptions for a given page, appends the parsed values to the specified JENA model.
+     * Gets all descriptions for a given page (as described by a HttpMethod), appends the parsed values to the specified JENA model.
      *
-     * Returns the next page number or -1 if end of data
+     * Returns true if there is more data (pages) to request. false otherwise. Exceptions will be rethrown as PortalServiceException objects
      * @param repository
      * @param pageNumber The page number to request
      * @param pageSize The number of descriptions per request
      * @param model receives the response Descriptions
      */
-    private int requestPageOfConcepts(int pageNumber, int pageSize, Model model) throws PortalServiceException {
+    protected boolean requestPageOfConcepts(HttpMethodBase method, Model model) throws PortalServiceException {
         //Make our request
-        HttpMethodBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, this.pageSize, pageNumber);
         InputStream is;
         try {
             is = httpServiceCaller.getMethodResponseAsStream(method);
@@ -124,7 +123,7 @@ public class SISSVoc3Service {
 
         //Parse the response into an XML document
         Document doc = null;
-        int nextPage = -1;
+        boolean moreData = false;
         try {
             doc = DOMUtil.buildDomFromStream(is);
 
@@ -134,7 +133,7 @@ public class SISSVoc3Service {
 
             Node nextPageNode = (Node) nextPageExpr.evaluate(doc, XPathConstants.NODE);
             if (nextPageNode != null) {
-                nextPage = pageNumber + 1;
+                moreData = true;
             }
 
             NodeList allDescriptions = (NodeList) getDescriptionsExpr.evaluate(doc, XPathConstants.NODESET);
@@ -150,7 +149,7 @@ public class SISSVoc3Service {
             FileIOUtil.closeQuietly(is);
         }
 
-        return nextPage;
+        return moreData;
     }
 
     /**
@@ -167,8 +166,13 @@ public class SISSVoc3Service {
 
         //Request each page in turn - put the results into Model
         do {
-            pageNumber = requestPageOfConcepts(pageNumber, pageSize, model);
-        } while (pageNumber >= 0);
+            HttpMethodBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, pageSize, pageNumber);
+            if (requestPageOfConcepts(method, model)) {
+                pageNumber++;
+            } else {
+                break;
+            }
+        } while (true);
 
         return model;
     }
