@@ -1,8 +1,6 @@
 package org.auscope.portal.core.services.responses.wcs;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -56,7 +54,7 @@ public class DescribeCoverageRecord implements Serializable {
     private String[] nativeCRSs;
 
     /** The spatial domain. */
-    private SpatialDomain[] spatialDomain;
+    private SpatialDomain spatialDomain;
 
     /** The temporal domain. */
     private TemporalDomain[] temporalDomain;
@@ -147,19 +145,7 @@ public class DescribeCoverageRecord implements Serializable {
         //Parse our spatial domain (only grab gml:Envelopes and wcs:EnvelopeWithTimePeriod
         tempNode = (Node) xPath.evaluate("wcs:domainSet/wcs:spatialDomain", node, XPathConstants.NODE);
         if (tempNode != null) {
-            List<SpatialDomain> parsableItems = new ArrayList<SpatialDomain>();
-            tempNodeList = (NodeList) xPath.evaluate(XPATHALLCHILDREN, tempNode, XPathConstants.NODESET);
-
-            //Attempt to parse spatial domains (we don't support every type so we may get some exceptions)
-            for (int i = 0; i < tempNodeList.getLength(); i++) {
-                try {
-                    parsableItems.add(SpatialDomainFactory.parseFromNode(tempNodeList.item(i)));
-                } catch (IllegalArgumentException ex) {
-                    logger.debug("Unsupported spatial domain - Skipping: " + ex.getMessage());
-                }
-            }
-
-            spatialDomain = parsableItems.toArray(new SpatialDomain[parsableItems.size()]);
+            spatialDomain = new SpatialDomain(tempNode, xPath);
         }
 
         //Get the temporal range (which is optional)
@@ -270,7 +256,7 @@ public class DescribeCoverageRecord implements Serializable {
      *
      * @return the spatial domain
      */
-    public SpatialDomain[] getSpatialDomain() {
+    public SpatialDomain getSpatialDomain() {
         return spatialDomain;
     }
 

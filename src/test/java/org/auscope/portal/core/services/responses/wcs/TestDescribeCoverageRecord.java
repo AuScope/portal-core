@@ -60,13 +60,11 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
 
         //This will need to be updated if we add support for more spatial domains
         Assert.assertNotNull(record.getSpatialDomain());
-        Assert.assertEquals(2, record.getSpatialDomain().length);
-        for (SpatialDomain spatialDom : record.getSpatialDomain()) {
-            SimpleEnvelope env = (SimpleEnvelope) spatialDom;
-
-            Assert.assertEquals(0.0,env.getEastBoundLongitude(), 0.000001);
+        Assert.assertEquals(2, record.getSpatialDomain().getEnvelopes().length);
+        for (SimpleEnvelope env : record.getSpatialDomain().getEnvelopes()) {
+            Assert.assertEquals(358.875,env.getEastBoundLongitude(), 0.000001);
             Assert.assertEquals(-89.4375,env.getSouthBoundLatitude(), 0.000001);
-            Assert.assertEquals(358.875,env.getWestBoundLongitude(), 0.000001);
+            Assert.assertEquals(0.0,env.getWestBoundLongitude(), 0.000001);
             Assert.assertEquals(89.4375,env.getNorthBoundLatitude(), 0.000001);
         }
 
@@ -78,12 +76,24 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
         Assert.assertArrayEquals(new String[] {"EPSG:4326"}, record.getSupportedResponseCRSs());
 
         Assert.assertNotNull(record.getSpatialDomain());
-        Assert.assertEquals(2, record.getSpatialDomain().length);
+        Assert.assertEquals(2, record.getSpatialDomain().getEnvelopes().length);
 
         Assert.assertEquals(2, record.getTemporalDomain().length);
         for (TemporalDomain temporalDom : record.getTemporalDomain()) {
             Assert.assertEquals("timePosition", temporalDom.getType());
         }
+
+        RectifiedGrid rg = record.getSpatialDomain().getRectifiedGrid();
+        Assert.assertNotNull(rg);
+        Assert.assertEquals("OGC:CRS84", rg.getSrsName());
+        Assert.assertEquals(3, rg.getDimension());
+        Assert.assertArrayEquals(new String[] {"x", "y", "z"}, rg.getAxisNames());
+        Assert.assertArrayEquals(new double[] {0.0, -89.4375, 100.0}, rg.getOrigin(), 0.001);
+        Assert.assertArrayEquals(new double[] {1.125, 0.0, 0.0}, rg.getOffsetVectors()[0], 0.001);
+        Assert.assertArrayEquals(new double[] {0.0, 1.125, 0.0}, rg.getOffsetVectors()[1], 0.001);
+        Assert.assertArrayEquals(new double[] {0.0, 0.0, 33.333334115835335}, rg.getOffsetVectors()[2], 0.001);
+        Assert.assertArrayEquals(new int[] {0, 0, 0}, rg.getEnvelopeLowValues());
+        Assert.assertArrayEquals(new int[] {319, 159, 26}, rg.getEnvelopeHighValues());
 
         SimpleTimePosition tp0 = (SimpleTimePosition) record.getTemporalDomain()[0];
         SimpleTimePosition tp1 = (SimpleTimePosition) record.getTemporalDomain()[1];
@@ -131,18 +141,18 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
 
         //This will need to be updated if we add support for more spatial domains
         Assert.assertNotNull(record.getSpatialDomain());
-        Assert.assertEquals(2, record.getSpatialDomain().length);
+        Assert.assertEquals(2, record.getSpatialDomain().getEnvelopes().length);
 
-        SimpleEnvelope env0 = (SimpleEnvelope) record.getSpatialDomain()[0];
-        Assert.assertEquals(-179.123,env0.getEastBoundLongitude(), 0.000001);
+        SimpleEnvelope env0 = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[0];
+        Assert.assertEquals(179.982,env0.getEastBoundLongitude(), 0.000001);
         Assert.assertEquals(63.041,env0.getSouthBoundLatitude(), 0.000001);
-        Assert.assertEquals(179.982,env0.getWestBoundLongitude(), 0.000001);
+        Assert.assertEquals(-179.123,env0.getWestBoundLongitude(), 0.000001);
         Assert.assertEquals(82.415,env0.getNorthBoundLatitude(), 0.000001);
 
-        SimpleEnvelope env1 = (SimpleEnvelope) record.getSpatialDomain()[1];
-        Assert.assertEquals(-825267.555,env1.getEastBoundLongitude(), 0.00001);
+        SimpleEnvelope env1 = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[1];
+        Assert.assertEquals(2173789.735,env1.getEastBoundLongitude(), 0.00001);
         Assert.assertEquals(-1151631.237,env1.getSouthBoundLatitude(), 0.00001);
-        Assert.assertEquals(2173789.735,env1.getWestBoundLongitude(), 0.00001);
+        Assert.assertEquals(-825267.555,env1.getWestBoundLongitude(), 0.00001);
         Assert.assertEquals(2041572.863,env1.getNorthBoundLatitude(), 0.00001);
 
         Assert.assertArrayEquals(new String[] {"nearest neighbor", "bilinear"}, record.getSupportedInterpolations());
@@ -153,5 +163,31 @@ public class TestDescribeCoverageRecord extends PortalTestClass {
         Assert.assertArrayEquals(new String[] {"EPSG:32661", "EPSG:4326", "EPSG:3408", "EPSG:3410"}, record.getSupportedResponseCRSs());
 
         Assert.assertNull(record.getTemporalDomain());
+    }
+
+    @Test
+    public void parseTest3() throws Exception {
+        final String xmlString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse3.xml");
+        final Document doc = DOMUtil.buildDomFromString(xmlString);
+
+        //Check the parsed response contains everything we want
+        DescribeCoverageRecord[] records = DescribeCoverageRecord.parseRecords(doc);
+
+        Assert.assertNotNull(records);
+        Assert.assertEquals(1, records.length);
+        Assert.assertNotNull(records[0]);
+
+
+        DescribeCoverageRecord record = records[0];
+
+        SpatialDomain sd = record.getSpatialDomain();
+        Assert.assertNotNull(sd);
+        Assert.assertEquals(1, record.getSpatialDomain().getEnvelopes().length);
+        SimpleEnvelope env = (SimpleEnvelope) record.getSpatialDomain().getEnvelopes()[0];
+        Assert.assertEquals(153.62049699996703,env.getEastBoundLongitude(), 0.00001);
+        Assert.assertEquals(-43.69864800000154,env.getSouthBoundLatitude(), 0.00001);
+        Assert.assertEquals(112.87212699999998,env.getWestBoundLongitude(), 0.00001);
+        Assert.assertEquals(-8.991703000000008,env.getNorthBoundLatitude(), 0.00001);
+
     }
 }

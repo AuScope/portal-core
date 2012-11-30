@@ -111,7 +111,7 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
                             },{
                                 xtype : 'displayfield',
                                 fieldLabel : 'Spatial Domain',
-                                value : portal.layer.querier.coverage.WCSQuerier._parseArrayToString(record.spatialDomain,spatialFunc)
+                                value : portal.layer.querier.coverage.WCSQuerier._parseArrayToString(record.spatialDomain.envelopes,spatialFunc)
                             }]
                         }],
                         buttonAlign : 'right',
