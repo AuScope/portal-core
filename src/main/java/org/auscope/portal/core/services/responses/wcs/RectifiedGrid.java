@@ -51,6 +51,30 @@ public class RectifiedGrid implements Serializable {
      */
     private String[] axisNames;
 
+
+    /**
+     *
+     * @param srsName The spatial reference system for the origin/offsetVectors
+     * @param dimension The number of dimensions in this rectified grid
+     * @param envelopeLowValues The low index values for this rectified grid (normally 0's)
+     * @param envelopeHighValues The high index values for this rectified grid
+     * @param origin The n dimensional ordinates for the origin of this grid (in srsName coordinate space)
+     * @param offsetVectors double[] x will reference a n dimensional vector offset (in srsName space) that allows you to correspond an integer grid index to a point in real space
+     * @param axisNames The names of each axes
+     */
+    public RectifiedGrid(String srsName, int dimension,
+            int[] envelopeLowValues, int[] envelopeHighValues, double[] origin,
+            double[][] offsetVectors, String[] axisNames) {
+        super();
+        this.srsName = srsName;
+        this.dimension = dimension;
+        this.envelopeLowValues = envelopeLowValues;
+        this.envelopeHighValues = envelopeHighValues;
+        this.origin = origin;
+        this.offsetVectors = offsetVectors;
+        this.axisNames = axisNames;
+    }
+
     /**
      * Creates a rectifiedGrid from a DOM node representing a gml:RectifiedGrid element
      * @param node

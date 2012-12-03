@@ -64,6 +64,28 @@ public class DescribeCoverageRecord implements Serializable {
 
     private static final String XPATHALLCHILDREN = "./*";
 
+
+
+    public DescribeCoverageRecord(String description, String name,
+            String label, String[] supportedRequestCRSs,
+            String[] supportedResponseCRSs, String[] supportedFormats,
+            String[] supportedInterpolations, String[] nativeCRSs,
+            SpatialDomain spatialDomain, TemporalDomain[] temporalDomain,
+            RangeSet rangeSet) {
+        super();
+        this.description = description;
+        this.name = name;
+        this.label = label;
+        this.supportedRequestCRSs = supportedRequestCRSs;
+        this.supportedResponseCRSs = supportedResponseCRSs;
+        this.supportedFormats = supportedFormats;
+        this.supportedInterpolations = supportedInterpolations;
+        this.nativeCRSs = nativeCRSs;
+        this.spatialDomain = spatialDomain;
+        this.temporalDomain = temporalDomain;
+        this.rangeSet = rangeSet;
+    }
+
     /**
      * Gets the text content or empty string.
      *

@@ -20,6 +20,18 @@ public class SpatialDomain implements Serializable {
     public SimpleEnvelope[] envelopes;
     public RectifiedGrid rectifiedGrid;
 
+
+    /**
+     *
+     * @param envelopes The envelopes (if any) associated with this spatial domain). Can be null
+     * @param rectifiedGrid Returns the RectifiedGrid (if any) associated with this spatial domain. Can be null.
+     */
+    public SpatialDomain(SimpleEnvelope[] envelopes, RectifiedGrid rectifiedGrid) {
+        super();
+        this.envelopes = envelopes;
+        this.rectifiedGrid = rectifiedGrid;
+    }
+
     /**
      * Creates a new spatial domain
      * @param envelope

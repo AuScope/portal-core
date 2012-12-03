@@ -24,6 +24,28 @@ public class SimpleEnvelope implements Serializable {
     private double eastBoundLongitude;
     private double westBoundLongitude;
 
+
+    /**
+     *
+     * @param srsName Gets the SRS Name of the ordinates this envelope is representing (Can be null/empty)
+     * @param type
+     * @param southBoundLatitude
+     * @param northBoundLatitude
+     * @param eastBoundLongitude
+     * @param westBoundLongitude
+     */
+    public SimpleEnvelope(String srsName, String type,
+            double southBoundLatitude, double northBoundLatitude,
+            double eastBoundLongitude, double westBoundLongitude) {
+        super();
+        this.srsName = srsName;
+        this.type = type;
+        this.southBoundLatitude = southBoundLatitude;
+        this.northBoundLatitude = northBoundLatitude;
+        this.eastBoundLongitude = eastBoundLongitude;
+        this.westBoundLongitude = westBoundLongitude;
+    }
+
     public SimpleEnvelope(Node node, XPath xPath) throws XPathExpressionException {
         //get our list of gml:Points and parse our spatial bounds
         NodeList tempNodeList = (NodeList)xPath.evaluate("gml:pos", node, XPathConstants.NODESET);
