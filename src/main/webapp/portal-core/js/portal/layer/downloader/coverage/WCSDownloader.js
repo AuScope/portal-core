@@ -50,7 +50,7 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                     rec.temporalDomain = [];
                 }
                 if (!rec.spatialDomain) {
-                    rec.spatialDomain = [];
+                    rec.spatialDomain = {envelopes : [], rectifiedGrid : null};
                 }
 
                 //Add a proper date time method to each temporal domain element
@@ -119,7 +119,7 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
 
 
                 //Contains the fields for bbox selection
-                if (rec.spatialDomain.length > 0) {
+                if (rec.spatialDomain.envelopes.length > 0) {
                     fieldSetsToDisplay.push(new Ext.form.FieldSet({
                         id              : 'bboxFldSet',
                         title           : 'Bounding box constraint',
