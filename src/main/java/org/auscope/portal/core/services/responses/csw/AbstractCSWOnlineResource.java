@@ -51,7 +51,12 @@ public abstract class AbstractCSWOnlineResource {
         /**
          * A SOS Service
          */
-        SOS
+        SOS,
+        
+        /**
+         * IRIS Web Service
+         */
+        IRIS
     }
 
     /**
@@ -110,6 +115,8 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.SOS;
         } else if (lowerProtocol.contains("www:download-1.0-ftp--download")) {
             return OnlineResourceType.FTP;
+        } else if (lowerProtocol.contains("iris")) {
+            return OnlineResourceType.IRIS;
         }
 
         return OnlineResourceType.Unsupported;
