@@ -204,7 +204,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         var onlineResources = this.getOnlineResourcesForRecord(record);
         var containsDataSource = false;
         var containsImageSource = false;
-
+        
+        
+        
         //We classify resources as being data or image sources.
         for (var i = 0; i < onlineResources.length; i++) {
             switch(onlineResources[i].get('type')) {
@@ -212,6 +214,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             case portal.csw.OnlineResource.WCS:
             case portal.csw.OnlineResource.SOS:
             case portal.csw.OnlineResource.OPeNDAP:
+            case portal.csw.OnlineResource.IRIS:
                 containsDataSource = true;
                 break;
             case portal.csw.OnlineResource.WMS:
@@ -262,6 +265,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             cswRecords : cswRecords
         });
 
+        console.log(cswRecords);
         popup.show();
     },
 

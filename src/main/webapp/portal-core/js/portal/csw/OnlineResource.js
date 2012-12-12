@@ -28,6 +28,7 @@ Ext.define('portal.csw.OnlineResource', {
         FTP : 'FTP', //represents a File Transfer Protocol service
         SOS : 'SOS', //represents a SOS service
         UNSUPPORTED : 'Unsupported', //The backend doesn't recognise the type of service/protocol
+        IRIS : 'IRIS', // IRIS web service
 
         /**
          * Static utility function for extracting a subset of OnlineResources from an array
