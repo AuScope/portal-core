@@ -278,9 +278,23 @@
       <outerBoundaryIs>
          <LinearRing>
             <coordinates>
-               <xsl:call-template name="parseLatLongCoord">
-                  <xsl:with-param name="coordinates" select="$ext_coordinates" />
-               </xsl:call-template>
+				 <xsl:choose>
+					<xsl:when test="ancestor::*[starts-with(@srsName,'EPSG')]">
+					  <xsl:call-template name="parseLongLatCoord">
+						<xsl:with-param name="coordinates" select="$ext_coordinates" />
+					  </xsl:call-template>
+				   </xsl:when>
+				   <xsl:when test="ancestor::*[starts-with(@srsName,'http://www.opengis.net/gml/srs/epsg.xml')]">
+					  <xsl:call-template name="parseLongLatCoord">
+						<xsl:with-param name="coordinates" select="$ext_coordinates" />
+					  </xsl:call-template>
+				   </xsl:when>				           
+				   <xsl:otherwise>
+					  <xsl:call-template name="parseLatLongCoord">
+						<xsl:with-param name="coordinates" select="$ext_coordinates" />
+					  </xsl:call-template>
+				   </xsl:otherwise>
+				</xsl:choose>			           
             </coordinates>
          </LinearRing>
       </outerBoundaryIs>
@@ -299,9 +313,23 @@
       <innerBoundaryIs>
          <LinearRing>
             <coordinates>
-               <xsl:call-template name="parseLatLongCoord">
-                  <xsl:with-param name="coordinates" select="$int_coordinates"/>
-               </xsl:call-template>
+				 <xsl:choose>   
+					<xsl:when test="ancestor::*[starts-with(@srsName,'EPSG')]">
+					   <xsl:call-template name="parseLongLatCoord">
+						  <xsl:with-param name="coordinates" select="$int_coordinates"/>
+					   </xsl:call-template>
+				   </xsl:when> 
+				   <xsl:when test="ancestor::*[starts-with(@srsName,'http://www.opengis.net/gml/srs/epsg.xml')]">
+					   <xsl:call-template name="parseLongLatCoord">
+						  <xsl:with-param name="coordinates" select="$int_coordinates"/>
+					   </xsl:call-template>
+				   </xsl:when>             
+				   <xsl:otherwise>
+					  <xsl:call-template name="parseLatLongCoord">
+						 <xsl:with-param name="coordinates" select="$int_coordinates"/>
+					  </xsl:call-template>
+				   </xsl:otherwise>
+				</xsl:choose>					             
             </coordinates>
          </LinearRing>
       </innerBoundaryIs>
