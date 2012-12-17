@@ -125,15 +125,16 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
         //get the style format encoded as string
         //portal.util.URL.base
-        //var victor='http://TUCSON-KB.arrc.csiro.au:8088/AuScope-Portal/';
+        //var victor='http://INDEX-KF.nexus.csiro.au:8088/AuScope-Portal/';
         var styleUrl = escape(Ext.urlAppend(portal.util.URL.base + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
         console.log('styleUrl', styleUrl);
-        var wmsUrls = [];
+
         var primitives = [];
         for (var i = 0; i < wmsResources.length; i++) {
             var wmsUrl = wmsResources[i].get('url');
-            urls.push(wmsUrl);
-            wmsUrls.push(wmsUrl);
+            // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
+           // urls.push(wmsUrl);
+
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1
@@ -144,22 +145,25 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
         this.primitiveManager.addPrimitives(primitives);
         this.hasData = true;
-
+        //this array will contain a list of wfs url that are process by its wms component.
+        var wmsUrls = [];
 
         //Initialise our render status with every URL we will be calling (these will get updated as we go)
 
         for (var i = 0; i < wfsResources.length; i++) {
             var wfsUrl = wfsResources[i].get('url');
             var wfsLayer = wfsResources[i].get('name');
-            if(!wmsRendered[this._getDomainWithLayerNameId(wfsUrl,wfsLayer)]){
-                urls.push(wfsResources[i].get('url'));
+            urls.push(wfsUrl);
+            // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
+            if(wmsRendered[this._getDomainWithLayerNameId(wfsUrl,wfsLayer)]){
+                wmsUrls.push(wfsUrl);
             }
         }
         this.renderStatus.initialiseResponses(urls, 'Loading...');
 
         //VT: somehow determine wms complete?
         for (var i =0; i < wmsUrls.length; i++){
-            this.renderStatus.updateResponse(wmsUrls[i], "");
+            this.renderStatus.updateResponse(wmsUrls[i], "WMS Image");
         }
 
         //alert any listeners that we are about to start rendering wfs
@@ -205,6 +209,9 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             }else{
                 //VT: the resource is already rendered via wms therefore we can deduct it from currentRequestCount
                 this.currentRequestCount--;
+                if (this.currentRequestCount === 0) {
+                    this.fireEvent('renderfinished', this);
+                }
             }
 
         }
