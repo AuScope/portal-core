@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csw:TransactionResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
+  <csw:TransactionSummary>
+    <csw:totalInserted>1</csw:totalInserted>
+    <csw:totalUpdated>0</csw:totalUpdated>
+    <csw:totalDeleted>0</csw:totalDeleted>
+  </csw:TransactionSummary>
+  <csw:InsertResult handleRef="handleRefValue">
+    <csw:BriefRecord>
+      <identifier>4cda9dc3-9a0e-40cd-a3a9-64db5ce3c031</identifier>
+    </csw:BriefRecord>
+  </csw:InsertResult>
+</csw:TransactionResponse>

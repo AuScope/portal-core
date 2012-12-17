@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ows:ExceptionReport version="1.0.0"
+  xsi:schemaLocation="http://www.opengis.net/ows http://mdu-data-2.arrc.csiro.au:80/geoserver/schemas/ows/1.0.0/owsExceptionReport.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ows="http://www.opengis.net/ows">
+  <ows:Exception exceptionCode="MissingParameterValue">
+    <ows:ExceptionText>The query should specify either typeName or a featureId filter</ows:ExceptionText>
+  </ows:Exception>
+</ows:ExceptionReport>

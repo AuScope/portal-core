@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection xmlns:gco="http://www.isotc211.org/2005/gco"
+	xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:er="urn:cgi:xmlns:GGIC:EarthResource:1.1"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink"
+	xmlns:wfs="http://www.opengis.net/wfs" xmlns:gsml="urn:cgi:xmlns:CGI:GeoSciML:2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml"
+	numberOfFeatures="2"
+	xsi:schemaLocation="urn:cgi:xmlns:GGIC:EarthResource:1.1 http://www.earthresourceml.org/earthresourceml/1.1/xsd/earthResource.xsd http://www.opengis.net/wfs http://schemas.opengis.net/wfs/1.1.0/wfs.xsd">
+	<gml:featureMember>
+		<er:Commodity gml:id="mo.commodity.361169.au">
+			<gml:name
+				codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">urn:cgi:feature:GSV:Commodity:361169:AU</gml:name>
+			<er:commodityName codeSpace="urn:cgi:classifierScheme:GSV:OreType">Gold</er:commodityName>
+			<er:commodityImportance>major</er:commodityImportance>
+			<er:source xlink:href="urn:cgi:feature:GSV:MineralOccurrence:361169" />
+		</er:Commodity>
+	</gml:featureMember>
+	<gml:featureMember>
+		<er:Commodity gml:id="mo.commodity.361170.au">
+			<gml:name
+				codeSpace="http://www.gsv-tb.dpi.vic.gov.au/AuScope-MineralOccurrence/services">urn:cgi:feature:GSV:Commodity:361170:AU</gml:name>
+
+			<er:commodityName codeSpace="urn:cgi:classifierScheme:GSV:OreType">Gold</er:commodityName>
+			<er:commodityImportance>major</er:commodityImportance>
+			<er:source xlink:href="urn:cgi:feature:GSV:MineralOccurrence:361170" />
+		</er:Commodity>
+	</gml:featureMember>
+</wfs:FeatureCollection>

@@ -1,0 +1,523 @@
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>GeoNetwork - The portal to spatial data and information</title>
+      <link href="/geonetwork/favicon.ico" rel="shortcut icon" type="image/x-icon">
+      <link href="/geonetwork/favicon.ico" rel="icon" type="image/x-icon">
+      <link rel="stylesheet" type="text/css" href="/geonetwork/geonetwork.css">
+      <link rel="stylesheet" type="text/css" href="/geonetwork/modalbox.css">
+      <link href="/geonetwork/srv/en/rss.latest?georss=gml" rel="alternate" type="application/rss+xml" title="GeoNetwork opensource GeoRSS | Recent Changes">
+      <link href="/geonetwork/srv/en/portal.opensearch" rel="search" type="application/opensearchdescription+xml" title="GeoNetwork|dummy|dummy">
+      <meta name="keywords" content="GeoNetwork opensource metadata ISO19115 ISO19139 ISO GIS remote sensing data shapefiles spatial data satellite images map maps interactive opengis geospatial CSW reference implementation mapping 19115 19139 geographic z39.50 catalog clearinghouse coverages grid raster data opensource open source network">
+      <meta name="description" content="GeoNetwork opensource provides Internet access to interactive maps, satellite imagery and related spatial databases. It's purpose is to improve access to and integrated use of spatial data and information. GeoNetwork opensource allows to easily share spatial data among different users">
+      <meta name="DC.title" lang="English" content="GeoNetwork opensource portal to spatial data and information">
+      <meta name="DC.creator" content="GeoNetwork Team">
+      <meta name="DC.subject" lang="English" content="GeoNetwork opensource metadata ISO19115 ISO19139 ISO GIS remote sensing data shapefiles spatial data satellite images map maps interactive opengis mapping 19115 19139 geographic z39.50 catalog clearinghouse coverages grid raster data opensource open source network">
+      <meta name="DC.description" lang="English" content="GeoNetwork opensource provides Internet access to interactive maps, satellite imagery and related spatial databases. It's purpose is to improve access to and integrated use of spatial data and information. GeoNetwork opensource allows to easily share spatial data among different users">
+      <meta name="DC.publisher" content="">
+      <meta name="DC.date" content="02-07-2007">
+      <meta name="DC.type" scheme="DCMIType" content="InteractiveResource">
+      <meta name="DC.format" content="text/html; charset=UTF-8">
+      <meta name="DC.language" content="English French Spanish Portuguese Russian Chinese Dutch">
+      <meta name="DC.coverage" content="Global">
+      <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+      <META HTTP-EQUIV="Expires" CONTENT="-1"><script type="text/javascript" src="/geonetwork/scripts/prototype.js"></script><script type="text/javascript" src="/geonetwork/scripts/geonetwork.js"></script><script type="text/javascript" src="/geonetwork/scripts/scriptaculous/scriptaculous.js?load=slider,effects,controls"></script><script type="text/javascript" src="/geonetwork/scripts/modalbox.js"></script><script type="text/javascript" src="/geonetwork/scripts/form_check.js"></script><script language="JavaScript" type="text/javascript">
+			var Env = new Object();
+
+			Env.locService= "/geonetwork/srv/en";
+			Env.locUrl    = "/geonetwork/loc/en";
+			Env.url       = "/geonetwork";
+			Env.lang      = "en";
+            var on        = "/geonetwork/images/plus.gif";
+            var off       = "/geonetwork/images/minus.png";
+			
+			
+            document.onkeyup = alertkey;
+            
+            function alertkey(e) {
+             if (!e) {
+                 if (window.event) {
+                     e = window.event;
+                 } else {
+                     return;
+                 }
+             }
+             
+             if (e.keyCode == 13) {
+                  
+                  if (document.cookie.indexOf("search=advanced")!=-1)
+                    runAdvancedSearch();
+                  else
+                    runSimpleSearch();
+             }
+            };
+			
+			
+            var translations = {
+				
+		"layersAdded":"Selected layers have been added"
+		,
+		"registrationFailed":"Error, registration failed:"
+		,
+		"tryAgain":"Try again later"
+		,
+		"cannotRetrieveGroup":"Cannot retrieve groups"
+		,
+		"selectNewOwner":"Select the user who will be the new owner"
+		,
+		"selectOwnerGroup":"Select a group that the selected user belongs to"
+		,
+		"selectOneFile":"You'd better select at least one file to download!"
+		,
+		"checkEmail":"Please fill correct email address"
+		,
+		"addName":"Please fill in a name or organization"
+		,
+		"noComment":"No comment"
+		,
+		"rateMetadataFailed":"Cannot rate metadata."
+		,
+		"error":"Error"
+		,
+		"northSouth":"North < South"
+		,
+		"north90":"North > 90 degrees"
+		,
+		"south90":"South < -90 degrees"
+		,
+		"east180":"East > 180 degrees"
+		,
+		"west180":"West < -180 degrees"
+		,
+		"eastWest":"East < West"
+		,
+		"metadataSelectionError":"Error on metadata selection."
+		,
+		"closeWindow":"Close Window"
+		,
+		"loseYourChange":"If you press OK you will LOSE any changes you've made to the metadata!"
+		,
+		"errorDeleteElement":"Error: Could not delete element"
+		,
+		"errorFromDoc":"from document:"
+		,
+		"errorMoveElement":"Error: Could not move element"
+		,
+		"errorAddElement":"Error: Could not add element"
+		,
+		"errorSaveFailed":"Error: Could not save form"
+		,
+		"errorOnAction":"Error: Could not do action"
+		,
+		"errorChangeProtocol":"A file may have been uploaded. You cannot change the protocol until you remove that file"
+		,
+		"selectOneFile":"Browse for, or enter a file name before pressing upload!"
+		,
+		"uploadFailed":"Error: Upload failed! - returned"
+		,
+		"uploadSetFileNameFailed":"Error: Upload succeeded but unable to set filename!"
+		,
+		"cannotGetTooltip":"Cannot get tooltips from server"
+		,
+		"close":"Close"
+		,
+		"emailAddressInvalid":"Email address is invalid"
+		,
+		"firstNameMandatory":"The First Name field is mandatory"
+		,
+		"insertFileMode":"File Upload"
+		,
+		"lastNameMandatory":"The Last Name field is mandatory"
+		,
+		"spacesNot":"Spaces in this field are not allowed"
+		,
+		"userAtLeastOneGroup":"Please, select at least one group."
+		,
+		"waitGetCap":"Loading server layers, please wait..."
+		,
+		"yourRegistration":"Your registration..."
+		
+			};
+
+			function translate(text) {
+				return translations[text] || text;
+			}
+		</script><script xmlns:geonet="http://www.fao.org/geonetwork" xmlns:exslt="http://exslt.org/common" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" type="text/javascript" src="/geonetwork/scripts/prototype.js"></script><script xmlns:geonet="http://www.fao.org/geonetwork" xmlns:exslt="http://exslt.org/common" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" type="text/javascript" src="/geonetwork/scripts/scriptaculous/scriptaculous.js?load=slider,effects,controls"></script><script xmlns:geonet="http://www.fao.org/geonetwork" xmlns:exslt="http://exslt.org/common" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" type="text/javascript" src="/geonetwork/scripts/modalbox.js"></script><script xmlns:geonet="http://www.fao.org/geonetwork" xmlns:exslt="http://exslt.org/common" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" type="text/javascript" src="/geonetwork/scripts/editor/metadata-show.js"></script><script xmlns:geonet="http://www.fao.org/geonetwork" xmlns:exslt="http://exslt.org/common" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" type="text/javascript" src="/geonetwork/scripts/core/kernel/kernel.js"></script><script xmlns:geonet="http://www.fao.org/geonetwork" xmlns:exslt="http://exslt.org/common" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" type="text/javascript" src="/geonetwork/scripts/editor/simpletooltip.js"></script></head>
+   <body onload="init()">
+      <table width="100%" height="100%">
+         <tr>
+            <td>
+               <table width="100%">
+                  <tr class="banner">
+                     <td class="banner"><img src="/geonetwork/images/header-left.jpg" alt="World picture" align="top"></td>
+                     <td align="right" class="banner"><img src="/geonetwork/images/header-right.gif" alt="GeoNetwork opensource logo" align="top"></td>
+                  </tr>
+                  <tr class="banner">
+                     <td class="banner-menu" width="380px"><a class="banner" href="/geonetwork/srv/en/main.home">Home</a>
+                        					|
+                        
+                        					<a class="banner" href="/geonetwork/srv/en/admin">Administration</a>
+                        						|
+                        					<a class="banner" href="/geonetwork/srv/en/feedback">Contact us</a>
+                        					|
+                        					<a class="banner" href="/geonetwork/srv/en/links">Links</a>
+                        					|
+                        					<a class="banner" href="/geonetwork/srv/en/about">About</a>
+                        					|
+                        
+                        
+                        					
+                        					<a class="banner" href="/geonetwork/docs/usermanual/eng/" target="_blank">Help</a>
+                        					|
+                        				
+                     </td>
+                     <td align="right" class="banner-menu" width="610px"><a class="banner" href="/geonetwork/srv/cn/main.home">中文</a>
+                        					|
+                        					<font class="banner-active">English</font>
+                        					|
+                        					<a class="banner" href="/geonetwork/srv/es/main.home">Español</a>
+                        					|
+                        					<a class="banner" href="/geonetwork/srv/pt/main.home">Рortuguês</a>
+                        					|
+                        					<a class="banner" href="/geonetwork/srv/fr/main.home">Français</a>
+                        					|
+                        					<a class="banner" href="/geonetwork/srv/ru/main.home">Русский</a>
+                        					|
+                        					<a class="banner" href="/geonetwork/srv/de/main.home">Deutsch</a>
+                        					|
+                        					<a class="banner" href="/geonetwork/srv/nl/main.home">Nederlands</a></td>
+                  </tr>
+                  <tr class="banner">
+                     <td class="banner-login" align="right" width="380px"></td>
+                     <td align="right" class="banner-login">
+                        <form name="logout" action="/geonetwork/srv/en/user.logout" method="post">User: Portal User <button class="banner" onclick="goSubmit('logout')">Logout</button></form>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+         <tr height="100%">
+            <td class="padded-content">
+               <table xmlns:geonet="http://www.fao.org/geonetwork" xmlns:exslt="http://exslt.org/common" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" width="100%" height="100%">
+                  <tr height="100%">
+                     <td class="blue-content" width="150" valign="top">
+                        <table width="100%">
+                           <tr>
+                              <td class="banner-login"><font class="banner-active">Default view</font></td>
+                           </tr>
+                           <tr>
+                              <td class="banner-login"><a class="palette" href="javascript:doTabAction('/geonetwork/srv/en/metadata.show','metadata')">Advanced view</a></td>
+                           </tr>
+                           <tr>
+                              <td class="banner-login"><a class="palette" href="javascript:doTabAction('/geonetwork/srv/en/metadata.show','xml')">XML view</a></td>
+                           </tr>
+                        </table>
+                     </td>
+                     <td class="content" valign="top">
+                        <table width="100%">
+                           <tr>
+                              <td class="padded-content" height="100%" align="center" valign="top"><button class="content" onclick="load('/geonetwork/srv/en/metadata.duplicate.form?id=19144')">Create</button>
+                                 			&nbsp;
+                                 			<button class="content" onclick="load('/geonetwork/srv/en/metadata.edit?id=19144')">Edit</button>
+                                 			&nbsp;
+                                 			<button class="content" onclick="return doConfirmDelete('/geonetwork/srv/en/metadata.delete?id=19144', 'Are you sure you want to delete the metadata from the database?','VEGL Workflow Portal ...','19144', 'Delete Metadata Confirmation')">Delete</button>
+                                 			&nbsp;
+                                 			<button class="content" onclick="doOtherButton('/geonetwork/srv/en/metadata.admin.form?id=19144',' VEGL Workflow Portal ...',600)">Privileges</button>
+                                 			&nbsp;
+                                 			<button class="content" onclick="doOtherButton('/geonetwork/srv/en/metadata.category.form?id=19144',' VEGL Workflow Portal ...',300)">Categories</button></td>
+                           </tr>
+                           <tr>
+                              <td align="center" valign="left" class="padded-content">
+                                 <table width="100%">
+                                    <tr>
+                                       <td align="left" valign="middle" class="padded-content" height="40"><a href="" target="_blank"><img src="/geonetwork/images/logos/ea8f00c1-0419-426e-a451-89b335de2750.gif" width="40"></a></td>
+                                       <td class="padded" width="90%">
+                                          <h1 align="left">VEGL Workflow Portal</h1>
+                                       </td>
+                                       <td align="right" class="padded-content" height="16" nowrap><a href="/geonetwork/srv/en/iso19139.xml?id=19144" target="_blank" title="Download ISO19115/19139 metadata in XML"><img src="/geonetwork/images/xml.png" alt="ISO19115/19139 XML" title="Save ISO19115/19139 metadata as XML" border="0"></a></td>
+                                    </tr>
+                                 </table>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td class="padded-content">
+                                 <table class="md" width="100%">
+                                    <form name="mainForm" accept-charset="UTF-8" method="POST" action="/geonetwork/srv/en/metadata.edit"><input type="hidden" name="id" value="19144"><input type="hidden" name="currTab" value="simple"><tr xmlns:gmx="http://www.isotc211.org/2005/gmx">
+                                          <td class="padded" align="center" valign="middle" colspan="2"><img src="/geonetwork/loc/en/images/nopreview.gif" alt=""><br></td>
+                                       </tr>
+                                       <tr id="d2077e36363" type="metadata">
+                                          <td class="padded-content" width="100%" colspan="2">
+                                             <fieldset class="metadata-block">
+                                                <legend class="block-legend"><span id="stip.iso19139|gmd:identificationInfo|d2077e36363" onclick="toolTip(this.id);" class="content" style="cursor:help;">Identification info</span></legend>
+                                                <table width="100%">
+                                                   <tr id="d2077e36371" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:title|d2077e36371" onclick="toolTip(this.id);" class="content" style="cursor:help;">Title</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top">VEGL Workflow Portal</td>
+                                                   </tr>
+                                                   <tr id="d2077e36386" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:dateType|d2077e36386" onclick="toolTip(this.id);" class="content" style="cursor:help;">Date type</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top"><b xmlns:gmx="http://www.isotc211.org/2005/gmx">Creation</b>: Date identifies when the resource was brought into existence
+                                                      </td>
+                                                   </tr>
+                                                   <tr id="d2077e36395" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:abstract|d2077e36395" onclick="toolTip(this.id);" class="content" style="cursor:help;">Abstract</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top">TODO:</td>
+                                                   </tr>
+                                                   <tr id="d2077e36401" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:status|d2077e36401" onclick="toolTip(this.id);" class="content" style="cursor:help;">Status</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top"><b xmlns:gmx="http://www.isotc211.org/2005/gmx">Completed</b>: Production of the data has been completed
+                                                      </td>
+                                                   </tr>
+                                                   <tr id="d2077e36406" type="metadata">
+                                                      <td class="padded-content" width="100%" colspan="2">
+                                                         <fieldset class="metadata-block">
+                                                            <legend class="block-legend"><span id="stip.iso19139|gmd:pointOfContact|d2077e36406" onclick="toolTip(this.id);" class="content" style="cursor:help;">Point of contact</span></legend>
+                                                            <table width="100%">
+                                                               <td xmlns:gmx="http://www.isotc211.org/2005/gmx" class="padded-content" width="100%" colspan="2">
+                                                                  <table width="100%">
+                                                                     <tr>
+                                                                        <td width="50%" valign="top">
+                                                                           <table width="100%">
+                                                                              <tr id="d2077e36484" type="metadata">
+                                                                                 <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:role|d2077e36484" onclick="toolTip(this.id);" class="content" style="cursor:help;">Role</span>&nbsp;
+                                                                                 </th>
+                                                                                 <td class="padded" valign="top"><b>Point of contact</b>: Party who can be contacted for acquiring knowledge about or acquisition of the
+                                                                                    				resource
+                                                                                 </td>
+                                                                              </tr>
+                                                                           </table>
+                                                                        </td>
+                                                                        <td valign="top">
+                                                                           <table width="100%"></table>
+                                                                        </td>
+                                                                     </tr>
+                                                                  </table>
+                                                               </td>
+                                                            </table>
+                                                         </fieldset>
+                                                      </td>
+                                                   </tr>
+                                                   <tr id="d2077e36491" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|descriptiveKeywords|d2077e36491" onclick="toolTip(this.id);" class="content" style="cursor:help;">descriptiveKeywords</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top"> (theme).</td>
+                                                   </tr>
+                                                   <tr id="d2077e36530" type="metadata">
+                                                      <td class="padded-content" width="100%" colspan="2">
+                                                         <fieldset class="metadata-block">
+                                                            <legend class="block-legend"><span id="stip.iso19139|extent|d2077e36530" onclick="toolTip(this.id);" class="content" style="cursor:help;">extent</span></legend>
+                                                            <table width="100%">
+                                                               <tr id="d2077e36536" type="metadata">
+                                                                  <td class="padded-content" width="100%" colspan="2">
+                                                                     <fieldset class="metadata-block">
+                                                                        <legend class="block-legend"><span id="stip.iso19139|EX_GeographicBoundingBox|d2077e36536" onclick="toolTip(this.id);" class="content" style="cursor:help;">EX_GeographicBoundingBox</span></legend>
+                                                                        <table width="100%">
+                                                                           <tr xmlns:gmx="http://www.isotc211.org/2005/gmx">
+                                                                              <td align="center">
+                                                                                 <table>
+                                                                                    <tr>
+                                                                                       <td></td>
+                                                                                       <td class="padded" align="center"><b><span id="stip.iso19139|gmd:northBoundLatitude|d2077e36558" onclick="toolTip(this.id);" style="cursor:help;">North bound latitude</span></b><br>60.0
+                                                                                       </td>
+                                                                                       <td></td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                       <td class="padded" align="center"><b><span id="stip.iso19139|gmd:westBoundLongitude|d2077e36540" onclick="toolTip(this.id);" style="cursor:help;">West bound longitude</span></b><br>-30.0
+                                                                                       </td>
+                                                                                       <td></td>
+                                                                                       <td class="padded" align="center"><b><span id="stip.iso19139|gmd:eastBoundLongitude|d2077e36546" onclick="toolTip(this.id);" style="cursor:help;">East bound longitude</span></b><br>60.0
+                                                                                       </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                       <td></td>
+                                                                                       <td class="padded" align="center"><b><span id="stip.iso19139|gmd:southBoundLatitude|d2077e36552" onclick="toolTip(this.id);" style="cursor:help;">South bound latitude</span></b><br>-30.0
+                                                                                       </td>
+                                                                                       <td></td>
+                                                                                    </tr>
+                                                                                 </table>
+                                                                              </td>
+                                                                           </tr>
+                                                                        </table>
+                                                                     </fieldset>
+                                                                  </td>
+                                                               </tr>
+                                                            </table>
+                                                         </fieldset>
+                                                      </td>
+                                                   </tr>
+                                                </table>
+                                             </fieldset>
+                                          </td>
+                                       </tr>
+                                       <tr id="d2077e36573" type="metadata">
+                                          <td class="padded-content" width="100%" colspan="2">
+                                             <fieldset class="metadata-block">
+                                                <legend class="block-legend"><span id="stip.iso19139|gmd:distributionInfo|d2077e36573" onclick="toolTip(this.id);" class="content" style="cursor:help;">Distribution info</span></legend>
+                                                <table width="100%">
+                                                   <tr id="d2077e36577" type="metadata">
+                                                      <td class="padded-content" width="100%" colspan="2">
+                                                         <fieldset class="metadata-block">
+                                                            <legend class="block-legend"><span id="stip.iso19139|gmd:transferOptions|d2077e36577" onclick="toolTip(this.id);" class="content" style="cursor:help;">Download Summary</span></legend>
+                                                            <table width="100%">
+                                                               <tr xmlns:gmx="http://www.isotc211.org/2005/gmx">
+                                                                  <td align="center"><button class="content" onclick="javascript:runFileDownloadSummary('4cda9dc3-9a0e-40cd-a3a9-64db5ce3c031','Download Summary')" type="button">Show File Download Chooser</button></td>
+                                                               </tr>
+                                                            </table>
+                                                         </fieldset>
+                                                      </td>
+                                                   </tr>
+                                                   <tr id="d2077e36577" type="metadata">
+                                                      <td class="padded-content" width="100%" colspan="2">
+                                                         <fieldset class="metadata-block">
+                                                            <legend class="block-legend"><span id="stip.iso19139|gmd:transferOptions|d2077e36577" onclick="toolTip(this.id);" class="content" style="cursor:help;">Transfer options</span></legend>
+                                                            <table width="100%">
+                                                               <tr id="d2077e36583" type="metadata">
+                                                                  <th class="md" width="20%" valign="top"><span id="stip.iso19139|CI_OnlineResource|d2077e36583" onclick="toolTip(this.id);" class="content" style="cursor:help;">CI_OnlineResource</span>&nbsp;
+                                                                  </th>
+                                                                  <td class="padded" valign="top"><a xmlns:gmx="http://www.isotc211.org/2005/gmx" href="http://vegl-portal.s3.amazonaws.com/Josh.Vote@csiro.au-VEGLJob-20110630_175711/output/gzinv3d.log" target="_new">Josh.Vote@csiro.au-VEGLJob-20110630_175711/output/gzinv3d.log</a></td>
+                                                               </tr>
+                                                               <tr id="d2077e36618" type="metadata">
+                                                                  <th class="md" width="20%" valign="top"><span id="stip.iso19139|CI_OnlineResource|d2077e36618" onclick="toolTip(this.id);" class="content" style="cursor:help;">CI_OnlineResource</span>&nbsp;
+                                                                  </th>
+                                                                  <td class="padded" valign="top"><a xmlns:gmx="http://www.isotc211.org/2005/gmx" href="http://vegl-portal.s3.amazonaws.com/Josh.Vote@csiro.au-VEGLJob-20110630_175711/output/gzsen3d.log" target="_new">Josh.Vote@csiro.au-VEGLJob-20110630_175711/output/gzsen3d.log</a></td>
+                                                               </tr>
+                                                               <tr id="d2077e36653" type="metadata">
+                                                                  <th class="md" width="20%" valign="top"><span id="stip.iso19139|CI_OnlineResource|d2077e36653" onclick="toolTip(this.id);" class="content" style="cursor:help;">CI_OnlineResource</span>&nbsp;
+                                                                  </th>
+                                                                  <td class="padded" valign="top"><a xmlns:gmx="http://www.isotc211.org/2005/gmx" href="http://vegl-portal.s3.amazonaws.com/Josh.Vote@csiro.au-VEGLJob-20110630_175711/output/sensitivity.txt" target="_new">Josh.Vote@csiro.au-VEGLJob-20110630_175711/output/sensitivity.txt</a></td>
+                                                               </tr>
+                                                               <tr id="d2077e36688" type="metadata">
+                                                                  <th class="md" width="20%" valign="top"><span id="stip.iso19139|CI_OnlineResource|d2077e36688" onclick="toolTip(this.id);" class="content" style="cursor:help;">CI_OnlineResource</span>&nbsp;
+                                                                  </th>
+                                                                  <td class="padded" valign="top"><a xmlns:gmx="http://www.isotc211.org/2005/gmx" href="http://vegl-portal.s3.amazonaws.com/Josh.Vote@csiro.au-VEGLJob-20110630_175711/output/vegl.sh.log" target="_new">Josh.Vote@csiro.au-VEGLJob-20110630_175711/output/vegl.sh.log</a></td>
+                                                               </tr>
+                                                            </table>
+                                                         </fieldset>
+                                                      </td>
+                                                   </tr>
+                                                </table>
+                                             </fieldset>
+                                          </td>
+                                       </tr>
+                                       <tr id="d2077e36725" type="metadata">
+                                          <td class="padded-content" width="100%" colspan="2">
+                                             <fieldset class="metadata-block">
+                                                <legend class="block-legend"><span id="stip.iso19139|gmd:dataQualityInfo|d2077e36725" onclick="toolTip(this.id);" class="content" style="cursor:help;">Data quality info</span></legend>
+                                                <table width="100%">
+                                                   <tr id="d2077e36733" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:level|d2077e36733" onclick="toolTip(this.id);" class="content" style="cursor:help;">Hierarchy level</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top"><b xmlns:gmx="http://www.isotc211.org/2005/gmx">Dataset</b>: Information applies to the dataset
+                                                      </td>
+                                                   </tr>
+                                                </table>
+                                             </fieldset>
+                                          </td>
+                                       </tr>
+                                       <tr id="d2077e36287" type="metadata">
+                                          <td class="padded-content" width="100%" colspan="2">
+                                             <fieldset class="metadata-block">
+                                                <legend class="block-legend"><a class="no-help" title="This is an element/attribute name - you can give it a title and help by entering some help for Metadata in the help file">Metadata</a></legend>
+                                                <table width="100%">
+                                                   <tr id="d2077e36289" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:fileIdentifier|d2077e36289" onclick="toolTip(this.id);" class="content" style="cursor:help;">File identifier</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top"><span xmlns:gmx="http://www.isotc211.org/2005/gmx" class="info">
+                                                            							- Value will be set when record is saved - 
+                                                            						</span></td>
+                                                   </tr>
+                                                   <tr id="d2077e36294" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:language|d2077e36294" onclick="toolTip(this.id);" class="content" style="cursor:help;">Language</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top">English</td>
+                                                   </tr>
+                                                   <tr id="d2077e36300" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:characterSet|d2077e36300" onclick="toolTip(this.id);" class="content" style="cursor:help;">Character set</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top"><b xmlns:gmx="http://www.isotc211.org/2005/gmx">UTF8</b>: 8-bit variable size UCS Transfer Format, based on ISO/IEC 10646
+                                                      </td>
+                                                   </tr>
+                                                   <tr id="d2077e36344" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:dateStamp|d2077e36344" onclick="toolTip(this.id);" class="content" style="cursor:help;">Date stamp</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top">2009-12-23T13:47:40</td>
+                                                   </tr>
+                                                   <tr id="d2077e36351" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:metadataStandardName|d2077e36351" onclick="toolTip(this.id);" class="content" style="cursor:help;">Metadata standard name</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top">ISO 19115:2003/19139</td>
+                                                   </tr>
+                                                   <tr id="d2077e36357" type="metadata">
+                                                      <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:metadataStandardVersion|d2077e36357" onclick="toolTip(this.id);" class="content" style="cursor:help;">Metadata standard version</span>&nbsp;
+                                                      </th>
+                                                      <td class="padded" valign="top">1.0</td>
+                                                   </tr>
+                                                   <tr id="d2077e36305" type="metadata">
+                                                      <td class="padded-content" width="100%" colspan="2">
+                                                         <fieldset class="metadata-block">
+                                                            <legend class="block-legend"><span id="stip.iso19139|gmd:contact|d2077e36305" onclick="toolTip(this.id);" class="content" style="cursor:help;">Metadata author</span></legend>
+                                                            <table width="100%">
+                                                               <td xmlns:gmx="http://www.isotc211.org/2005/gmx" class="padded-content" width="100%" colspan="2">
+                                                                  <table width="100%">
+                                                                     <tr>
+                                                                        <td width="50%" valign="top">
+                                                                           <table width="100%">
+                                                                              <tr id="d2077e36314" type="metadata">
+                                                                                 <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:organisationName|d2077e36314" onclick="toolTip(this.id);" class="content" style="cursor:help;">Organisation name</span>&nbsp;
+                                                                                 </th>
+                                                                                 <td class="padded" valign="top">CSIRO</td>
+                                                                              </tr>
+                                                                              <tr id="d2077e36337" type="metadata">
+                                                                                 <th class="md" width="20%" valign="top"><span id="stip.iso19139|gmd:role|d2077e36337" onclick="toolTip(this.id);" class="content" style="cursor:help;">Role</span>&nbsp;
+                                                                                 </th>
+                                                                                 <td class="padded" valign="top"><b>Point of contact</b>: Party who can be contacted for acquiring knowledge about or acquisition of the
+                                                                                    				resource
+                                                                                 </td>
+                                                                              </tr>
+                                                                           </table>
+                                                                        </td>
+                                                                        <td valign="top">
+                                                                           <table width="100%"></table>
+                                                                        </td>
+                                                                     </tr>
+                                                                  </table>
+                                                               </td>
+                                                            </table>
+                                                         </fieldset>
+                                                      </td>
+                                                   </tr>
+                                                </table>
+                                             </fieldset>
+                                          </td>
+                                       </tr>
+                                    </form>
+                                 </table>
+                              </td>
+                           </tr>
+                           <tr>
+                              <td class="padded-content" height="100%" align="center" valign="top"><button class="content" onclick="load('/geonetwork/srv/en/metadata.duplicate.form?id=19144')">Create</button>
+                                 			&nbsp;
+                                 			<button class="content" onclick="load('/geonetwork/srv/en/metadata.edit?id=19144')">Edit</button>
+                                 			&nbsp;
+                                 			<button class="content" onclick="return doConfirmDelete('/geonetwork/srv/en/metadata.delete?id=19144', 'Are you sure you want to delete the metadata from the database?','VEGL Workflow Portal ...','19144', 'Delete Metadata Confirmation')">Delete</button>
+                                 			&nbsp;
+                                 			<button class="content" onclick="doOtherButton('/geonetwork/srv/en/metadata.admin.form?id=19144',' VEGL Workflow Portal ...',600)">Privileges</button>
+                                 			&nbsp;
+                                 			<button class="content" onclick="doOtherButton('/geonetwork/srv/en/metadata.category.form?id=19144',' VEGL Workflow Portal ...',300)">Categories</button></td>
+                           </tr>
+                        </table>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td class="blue-content" colspan="3"></td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>

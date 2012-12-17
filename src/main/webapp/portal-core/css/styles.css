@@ -1,0 +1,116 @@
+    body {
+        margin: 0px;
+        padding: 0px;
+        overflow: hidden;
+    }
+
+    #header-container {
+        width: 100%;
+        height: 100px;
+        background-color: #ffffff;
+        position:fixed;
+        top: 0px;
+        left: 0px;
+        z-index: 1;
+    }
+
+    #body-container {
+        position: fixed;
+        top: 100px;
+        bottom: 0px;
+        width: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    #logo {
+        float: left;
+        width: 531px;
+        height: 100px;
+    }
+
+    #logo h1 {
+        float: left;
+        margin: 0;
+        padding: 0;
+        width: 531px;
+    }
+
+    #logo h1 a {
+        padding: 0;
+        margin: 0;
+        width: 531px;
+        height: 100px;
+        display: block;
+        background: url( "../img/img-auscope-banner.gif" ) no-repeat top left;
+    }
+
+    #logo h1 a span {
+        display: none;
+    }
+
+    .related-portal-div {
+        margin-top: 5px;
+        margin-left: 15px;
+        margin-right: 15px;
+        border-bottom: 1px solid black;
+    }
+
+    .niceDiv {
+        min-width: 40px;
+        max-width:650px;
+        min-height: 40px;
+        max-height: 350px;
+        font-family: Verdana;
+
+    }
+
+    .niceDivOverFlow {
+        font-family: Verdana;
+        min-width: 40px;
+        max-width:650px;
+        min-height: 40px;
+        max-height: 350px;
+        overflow: auto;
+    }
+
+    .auscopeTable {
+        font-family: Verdana;
+        font-weight: normal;
+        font-size: 12px;
+        color: #404040;
+        background-color: #fafafa;
+        border-style: solid;
+        border-color: #6699CC;
+        border-collapse: collapse;
+    }
+
+    #reportsname {
+        font-weight: bold;
+    }
+
+    #auscopePre {
+        white-space: pre-wrap;       /* css-3 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
+        width: 99%;
+    }
+
+    .centeredlabel {
+         margin:15px;
+         padding:15px;
+         border:1px dotted #999;
+         color:#555;
+         background: #f9f9f9;
+    }
+
+
+    <!-- AUS-1466 - disable red triangles - they confuse people -->
+    .x-grid-dirty-cell {
+        background-image:none ! important;
+    }
+    .x-grid3-dirty-cell {
+        background-image:none ! important;
+    }

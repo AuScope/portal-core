@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:gml="http://www.opengis.net/gml" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" xsi:schemaLocation="http://www.isotc211.org/2005/gmd http://www.isotc211.org/2005/gmd/gmd.xsd">
+  <gmd:fileIdentifier>
+    <gco:CharacterString />
+  </gmd:fileIdentifier>
+  <gmd:language>
+    <gco:CharacterString>eng</gco:CharacterString>
+  </gmd:language>
+  <gmd:characterSet>
+    <gmd:MD_CharacterSetCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8" />
+  </gmd:characterSet>
+  <gmd:contact>
+    <gmd:CI_ResponsibleParty>
+      <gmd:individualName>
+        <gco:CharacterString />
+      </gmd:individualName>
+      <gmd:organisationName>
+        <gco:CharacterString>CSIRO</gco:CharacterString>
+      </gmd:organisationName>
+      <gmd:contactInfo>
+        <gmd:CI_Contact>
+          <gmd:address>
+            <gmd:CI_Address>
+              <gmd:electronicMailAddress>
+                <gco:CharacterString>Josh.Vote@csiro.au</gco:CharacterString>
+              </gmd:electronicMailAddress>
+            </gmd:CI_Address>
+          </gmd:address>
+        </gmd:CI_Contact>
+      </gmd:contactInfo>
+      <gmd:role>
+        <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact" />
+      </gmd:role>
+    </gmd:CI_ResponsibleParty>
+  </gmd:contact>
+  <gmd:dateStamp>
+    <gco:DateTime>2009-12-23T13:47:40</gco:DateTime>
+  </gmd:dateStamp>
+  <gmd:metadataStandardName>
+    <gco:CharacterString>ISO 19115:2003/19139</gco:CharacterString>
+  </gmd:metadataStandardName>
+  <gmd:metadataStandardVersion>
+    <gco:CharacterString>1.0</gco:CharacterString>
+  </gmd:metadataStandardVersion>
+  <gmd:identificationInfo>
+    <gmd:MD_DataIdentification>
+      <gmd:citation>
+        <gmd:CI_Citation>
+          <gmd:title>
+            <gco:CharacterString>VEGL Workflow Portal</gco:CharacterString>
+          </gmd:title>
+          <gmd:date>
+            <gmd:CI_Date>
+              <gmd:date>
+                <gco:DateTime />
+              </gmd:date>
+              <gmd:dateType>
+                <gmd:CI_DateTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" />
+              </gmd:dateType>
+            </gmd:CI_Date>
+          </gmd:date>
+        </gmd:CI_Citation>
+      </gmd:citation>
+      <gmd:abstract>
+        <gco:CharacterString>TODO:</gco:CharacterString>
+      </gmd:abstract>
+      <gmd:status>
+        <gmd:MD_ProgressCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ProgressCode" codeListValue="completed" />
+      </gmd:status>
+      <gmd:pointOfContact>
+        <gmd:CI_ResponsibleParty>
+          <gmd:individualName>
+            <gco:CharacterString />
+          </gmd:individualName>
+          <gmd:organisationName>
+            <gco:CharacterString />
+          </gmd:organisationName>
+          <gmd:positionName>
+            <gco:CharacterString />
+          </gmd:positionName>
+          <gmd:contactInfo>
+            <gmd:CI_Contact>
+              <gmd:phone>
+                <gmd:CI_Telephone>
+                  <gmd:voice gco:nilReason="missing">
+                    <gco:CharacterString />
+                  </gmd:voice>
+                  <gmd:facsimile gco:nilReason="missing">
+                    <gco:CharacterString />
+                  </gmd:facsimile>
+                </gmd:CI_Telephone>
+              </gmd:phone>
+              <gmd:address>
+                <gmd:CI_Address>
+                  <gmd:deliveryPoint gco:nilReason="missing">
+                    <gco:CharacterString />
+                  </gmd:deliveryPoint>
+                  <gmd:city gco:nilReason="missing">
+                    <gco:CharacterString />
+                  </gmd:city>
+                  <gmd:administrativeArea gco:nilReason="missing">
+                    <gco:CharacterString />
+                  </gmd:administrativeArea>
+                  <gmd:postalCode gco:nilReason="missing">
+                    <gco:CharacterString />
+                  </gmd:postalCode>
+                  <gmd:country gco:nilReason="missing">
+                    <gco:CharacterString />
+                  </gmd:country>
+                  <gmd:electronicMailAddress gco:nilReason="missing">
+                    <gco:CharacterString />
+                  </gmd:electronicMailAddress>
+                </gmd:CI_Address>
+              </gmd:address>
+            </gmd:CI_Contact>
+          </gmd:contactInfo>
+          <gmd:role>
+            <gmd:CI_RoleCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="pointOfContact" />
+          </gmd:role>
+        </gmd:CI_ResponsibleParty>
+      </gmd:pointOfContact>
+      <descriptiveKeywords xmlns="http://www.isotc211.org/2005/gmd">
+        <MD_Keywords>
+          <type>
+            <MD_KeywordTypeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_KeywordTypeCode" codeListValue="theme" />
+          </type>
+        </MD_Keywords>
+      </descriptiveKeywords>
+      <gmd:language>
+        <gco:CharacterString />
+      </gmd:language>
+      <gmd:extent>
+        <gmd:EX_Extent>
+          <gmd:temporalElement>
+            <gmd:EX_TemporalExtent>
+              <gmd:extent>
+                <gml:TimePeriod gml:id="d766e435a1049886">
+                  <gml:beginPosition />
+                  <gml:endPosition />
+                </gml:TimePeriod>
+              </gmd:extent>
+            </gmd:EX_TemporalExtent>
+          </gmd:temporalElement>
+        </gmd:EX_Extent>
+      </gmd:extent>
+      <extent xmlns="http://www.isotc211.org/2005/gmd">
+        <EX_Extent>
+          <geographicElement>
+            <EX_GeographicBoundingBox>
+              <westBoundLongitude>
+                <Decimal xmlns="http://www.isotc211.org/2005/gco">-30.0</Decimal>
+              </westBoundLongitude>
+              <eastBoundLongitude>
+                <Decimal xmlns="http://www.isotc211.org/2005/gco">60.0</Decimal>
+              </eastBoundLongitude>
+              <southBoundLatitude>
+                <Decimal xmlns="http://www.isotc211.org/2005/gco">-30.0</Decimal>
+              </southBoundLatitude>
+              <northBoundLatitude>
+                <Decimal xmlns="http://www.isotc211.org/2005/gco">60.0</Decimal>
+              </northBoundLatitude>
+            </EX_GeographicBoundingBox>
+          </geographicElement>
+        </EX_Extent>
+      </extent>
+      <gmd:supplementalInformation>
+        <gco:CharacterString />
+      </gmd:supplementalInformation>
+    </gmd:MD_DataIdentification>
+  </gmd:identificationInfo>
+  <gmd:distributionInfo>
+    <gmd:MD_Distribution>
+      <gmd:transferOptions>
+        <gmd:MD_DigitalTransferOptions>
+          <onLine xmlns="http://www.isotc211.org/2005/gmd">
+            <CI_OnlineResource>
+              <linkage>
+                <URL>http://vegl-portal.s3.amazonaws.com/VEGL-Josh.Vote_csiro.au-20110714_171902/output/subset_request.sh</URL>
+              </linkage>
+              <protocol>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">WWW:DOWNLOAD-1.0-ftp--download</CharacterString>
+              </protocol>
+              <applicationProfile nilReason="missing">
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco" />
+              </applicationProfile>
+              <name>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">subset_request.sh</CharacterString>
+              </name>
+              <description>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">subset_request.sh</CharacterString>
+              </description>
+            </CI_OnlineResource>
+          </onLine>
+          <onLine xmlns="http://www.isotc211.org/2005/gmd">
+            <CI_OnlineResource>
+              <linkage>
+                <URL>http://vegl-portal.s3.amazonaws.com/VEGL-Josh.Vote_csiro.au-20110714_171902/output/vegl.sh.log</URL>
+              </linkage>
+              <protocol>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">WWW:DOWNLOAD-1.0-ftp--download</CharacterString>
+              </protocol>
+              <applicationProfile nilReason="missing">
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco" />
+              </applicationProfile>
+              <name>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">vegl.sh.log</CharacterString>
+              </name>
+              <description>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">vegl.sh.log</CharacterString>
+              </description>
+            </CI_OnlineResource>
+          </onLine>
+          <onLine xmlns="http://www.isotc211.org/2005/gmd">
+            <CI_OnlineResource>
+              <linkage>
+                <URL>http://vegl-portal.s3.amazonaws.com/VEGL-Josh.Vote_csiro.au-20110714_171902/output/vegl_script.py</URL>
+              </linkage>
+              <protocol>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">WWW:DOWNLOAD-1.0-ftp--download</CharacterString>
+              </protocol>
+              <applicationProfile nilReason="missing">
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco" />
+              </applicationProfile>
+              <name>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">vegl_script.py</CharacterString>
+              </name>
+              <description>
+                <CharacterString xmlns="http://www.isotc211.org/2005/gco">vegl_script.py</CharacterString>
+              </description>
+            </CI_OnlineResource>
+          </onLine>
+        </gmd:MD_DigitalTransferOptions>
+      </gmd:transferOptions>
+    </gmd:MD_Distribution>
+  </gmd:distributionInfo>
+  <gmd:dataQualityInfo>
+    <gmd:DQ_DataQuality>
+      <gmd:scope>
+        <gmd:DQ_Scope>
+          <gmd:level>
+            <gmd:MD_ScopeCode codeList="http://www.isotc211.org/2005/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="dataset" />
+          </gmd:level>
+        </gmd:DQ_Scope>
+      </gmd:scope>
+    </gmd:DQ_DataQuality>
+  </gmd:dataQualityInfo>
+  <geonet:info>
+    <id>21569</id>
+    <schema>iso19139</schema>
+    <createDate>2011-07-18T13:23:06</createDate>
+    <changeDate>2011-07-18T13:23:06</changeDate>
+    <isTemplate>n</isTemplate>
+    <title />
+    <source>ea8f00c1-0419-426e-a451-89b335de2750</source>
+    <uuid>72a11a63-def0-4101-88a3-9e16217d58b2</uuid>
+    <isHarvested>n</isHarvested>
+    <popularity>0</popularity>
+    <rating>0</rating>
+    <view>true</view>
+    <notify>true</notify>
+    <download>true</download>
+    <dynamic>true</dynamic>
+    <featured>true</featured>
+    <edit>true</edit>
+    <owner>true</owner>
+    <ownername>portal</ownername>
+    <subtemplates>
+      <record>
+        <title>OnlineResource</title>
+        <id>3</id>
+      </record>
+      <record>
+        <title>PointOfContact</title>
+        <id>6</id>
+      </record>
+    </subtemplates>
+  </geonet:info>
+</gmd:MD_Metadata>
+

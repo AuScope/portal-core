@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<test:root xmlns:test="http://test.namespace"><test2:child1 xmlns:test2="http://test2.namespace">child1Value</test2:child1><test2:child2 xmlns:test2="http://test2.namespace">child2Value</test2:child2></test:root>
