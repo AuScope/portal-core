@@ -17,11 +17,8 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
      * }
      */
     constructor : function(cfg) {
-        if (Ext.isArray(cfg.cswRecords)) {
-            this.cswRecords = cfg.cswRecords;
-        } else {
-            this.cswRecords = [cfg.cswRecords];
-        }
+        // Ensures this.cswRecords is an array:
+        this.cswRecords = [].concat(cfg.cswRecords);
 
         //Generate our flattened 'data items' list for rendering to the grid
         var dataItems = portal.widgets.panel.OnlineResourcePanelRow.parseCswRecords(this.cswRecords);
@@ -87,6 +84,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         switch(onlineResource.get('type')) {
         case portal.csw.OnlineResource.WWW:
         case portal.csw.OnlineResource.FTP:
+        case portal.csw.OnlineResource.IRIS:
         case portal.csw.OnlineResource.UNSUPPORTED:
             return Ext.DomHelper.markup({
                 tag : 'div',
@@ -278,6 +276,9 @@ Ext.define('portal.widgets.panel.OnlineResourcePanelRow', {
                         break;
                     case portal.csw.OnlineResource.UNSUPPORTED:
                         group = 'Others';
+                        break;
+                    case portal.csw.OnlineResource.IRIS:
+                        group = 'IRIS Web Service';
                         break;
                     default:
                         continue;//don't include anything else

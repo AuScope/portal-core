@@ -265,7 +265,6 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             cswRecords : cswRecords
         });
 
-        console.log(cswRecords);
         popup.show();
     },
 

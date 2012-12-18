@@ -72,7 +72,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
     },
 
     /**
-     * Used for handling a successful response from a request's download manaager
+     * Used for handling a successful response from a request's download manager
      */
     _handleDownloadManagerSuccess : function(dm, actualFilterParams, data, debugInfo, onlineResource, layer, icon) {
         var me = this;
@@ -128,7 +128,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
         this.fireEvent('renderstarted', this, wfsResources, filterer);
         this.currentRequestCount = wfsResources.length; //this will be decremented as requests return
 
-        //Each and every WFS resource will be queried with their own seperate download manager
+        //Each and every WFS resource will be queried with their own separate download manager
 
         for (var i = 0; i < wfsResources.length; i++) {
             //Build our filter params object that will make a request
