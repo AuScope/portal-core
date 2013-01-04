@@ -49,7 +49,8 @@ Ext.define('portal.map.openlayers.primitives.Marker', {
             graphicHeight : iconHeight,
             graphicXOffset : iconOffsetX,
             graphicYOffset : iconOffsetY,
-            cursor : 'pointer'
+            cursor : 'pointer',
+            graphicTitle : cfg.tooltip
 
         });
 

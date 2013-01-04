@@ -43,11 +43,15 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 }
             },{
                 //Loading icon column
+                xtype : 'clickcolumn',
                 dataIndex : 'loading',
                 renderer : this._loadingRenderer,
                 hasTip : true,
                 tipRenderer : Ext.bind(this._loadingTipRenderer, this),
-                width: 32
+                width: 32,
+                listeners : {
+                    columnclick : Ext.bind(this._serviceInformationClickHandler, this)
+                }
             },{
                 //Layer name column
                 xtype : 'clickcolumn',
@@ -253,6 +257,22 @@ Ext.define('portal.widgets.panel.LayerPanel', {
             downloader.downloadData(layer, onlineResources, renderedFilterer, currentFilterer);
 
         }
+    },
+
+    /**
+     * Show a popup containing info about the services that 'power' this layer
+     */
+    _serviceInformationClickHandler : function(column, record, rowIndex, colIndex) {
+        var cswRecords = record.get('cswRecords')
+        if (!cswRecords || cswRecords.length === 0) {
+            return;
+        }
+
+        var popup = Ext.create('portal.widgets.window.CSWRecordDescriptionWindow', {
+            cswRecords : cswRecords
+        });
+
+        popup.show();
     },
 
     /**
