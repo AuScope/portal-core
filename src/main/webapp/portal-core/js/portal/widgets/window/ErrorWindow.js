@@ -99,10 +99,9 @@ Ext.define('portal.widgets.window.ErrorWindow', {
                     expand: function() { win.doLayout(); }
                 },
                 items: {
-                    xtype: 'textarea',
-                    readOnly: true,
+                    xtype: 'container',
                     height: 50,
-                    value: info
+                    html: info
                 }
             });
         }
