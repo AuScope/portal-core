@@ -169,7 +169,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                     tag : 'img',
                     width : 16,
                     height : 16,
-                    src: 'img/page_code_disabled.png'
+                    src: 'portal-core/img/page_code_disabled.png'
                 }]
             });
         }

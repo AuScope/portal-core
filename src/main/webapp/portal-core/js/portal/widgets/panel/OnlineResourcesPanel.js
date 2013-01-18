@@ -27,12 +27,22 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})'
         });
 
+        //The following two Configs variables can be set by the owner
+        var sortable = true;
+        var hideHeaders = true;
+        if (typeof(cfg.hideHeaders) !== 'undefined' && cfg.hideHeaders != null) {
+            hideHeaders = cfg.hideHeaders;
+        }
+        if (typeof(cfg.sortable) !== 'undefined' && cfg.sortable != null) {
+            sortable = cfg.sortable;
+        }        
+
         //We allow the owner to specify additional columns
         var columns = [{
             //Title column
             dataIndex: 'onlineResource',
             menuDisabled: true,
-            sortable: true,
+            sortable: sortable,
             flex: 1,
             renderer: Ext.bind(this._titleRenderer, this)
         },{
@@ -43,9 +53,10 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         if (cfg.columns) {
             columns = columns.concat(cfg.columns);
         }
-
+        
         //Build our configuration object
         Ext.apply(cfg, {
+            selModel: cfg.selModel,
             features : [groupingFeature],
             store : Ext.create('Ext.data.Store', {
                 groupField : 'group',
@@ -55,7 +66,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             plugins : [{
                 ptype : 'selectablegrid'
             }],
-            hideHeaders : true,
+            hideHeaders : hideHeaders,
             columns: columns
         });
 
