@@ -125,8 +125,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
         //get the style format encoded as string
         //portal.util.URL.base
-        var victor='http://INDEX-KF.nexus.csiro.au:8088/AuScope-Portal/';
-        var styleUrl = escape(Ext.urlAppend(victor + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
+        //var victor='http://INDEX-KF.nexus.csiro.au:8088/AuScope-Portal/';
+        var styleUrl = escape(Ext.urlAppend(portal.util.URL.base + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
 
 
         var primitives = [];
