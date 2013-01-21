@@ -19,6 +19,7 @@ public class CSWServiceItem {
     private String recordInformationUrl;
     private String userName;
     private String password;
+    private String cqlText;
 
     /**
      * Creates a new service item with NO role restrictions
@@ -188,7 +189,7 @@ public class CSWServiceItem {
     }
 
     /**
-     * Gets the user name part of the credentials for this geonetwork (can be null) 
+     * Gets the user name part of the credentials for this geonetwork (can be null)
      * @return
      */
     public String getUserName() {
@@ -218,6 +219,22 @@ public class CSWServiceItem {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
+
+    /**
+     * Get cqlText for querying the catalog
+     * @return String
+     */
+    public String getCqlText() {
+        return cqlText;
+    }
+
+     /**
+     * Set cqlText for querying the catalog
+     * @return
+     */
+    public void setCqlText(String cqlText) {
+        this.cqlText = cqlText;
+    }
+
+
 }

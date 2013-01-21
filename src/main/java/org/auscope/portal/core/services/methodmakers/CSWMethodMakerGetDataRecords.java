@@ -40,7 +40,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @throws Exception
      */
     public HttpMethodBase makeMethod(String serviceUrl) throws Exception {
-        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1);
+        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1,null);
     }
 
     /**
@@ -52,7 +52,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
      */
     public HttpMethodBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords) throws UnsupportedEncodingException {
-        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1);
+        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1,null);
     }
 
     /**
@@ -63,7 +63,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
      */
-    public HttpMethodBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords, int startPosition) throws UnsupportedEncodingException {
+    public HttpMethodBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords, int startPosition, String cqlText) throws UnsupportedEncodingException {
         PostMethod httpMethod = new PostMethod(serviceUrl);
 
         String filterString = null;
@@ -95,9 +95,18 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         sb.append(">");
         sb.append("<csw:Query typeNames=\"csw:Record\">");
         sb.append("<csw:ElementSetName>full</csw:ElementSetName>");
-        if (filterString != null && filterString.length() > 0) {
+
+        boolean hasFilter = filterString != null && filterString.length() > 0;
+        boolean hasCql = cqlText !=null && cqlText.length() > 0;
+
+        if (hasFilter || hasCql) {
             sb.append("<csw:Constraint version=\"1.1.0\">");
-            sb.append(filterString);
+            if(hasFilter){
+                sb.append(filterString);
+            }
+            if(hasCql){
+                sb.append("<csw:CqlText>" + cqlText+ "</csw:CqlText>");
+            }
             sb.append("</csw:Constraint>");
         }
         sb.append("</csw:Query>");

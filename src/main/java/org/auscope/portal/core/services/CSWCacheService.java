@@ -1,5 +1,7 @@
 package org.auscope.portal.core.services;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.util.DOMUtil;
+import org.auscope.portal.core.util.FileIOUtil;
 import org.w3c.dom.Document;
 
 /**
@@ -55,7 +58,7 @@ public class CSWCacheService {
      *
      * If a CSW has more records than this value then multiple requests will be made
      */
-    public static final int MAX_QUERY_LENGTH = 1000;
+    public static final int MAX_QUERY_LENGTH = 500;
 
     /**
      * The frequency in which the cache updates (in milli seconds).
@@ -398,12 +401,12 @@ public class CSWCacheService {
 
                     //Request our set of records
                     HttpMethodBase method = null;
-                    if (parent.forceGetMethods) {
+                    //if cqlText is not null means we want to perform filter on the query
+                    if (parent.forceGetMethods && this.endpoint.getCqlText()==null) {
                         method = methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
                     } else {
-                        method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
+                        method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, MAX_QUERY_LENGTH, startPosition,this.endpoint.getCqlText());
                     }
-
 
                     InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
 
@@ -466,7 +469,7 @@ public class CSWCacheService {
                 } while (startPosition > 0);
             } catch (Exception ex) {
                 log.warn(String.format("Error updating keyword cache for '%1$s': %2$s",this.endpoint.getServiceUrl(), ex));
-                log.debug("Exception: ", ex);
+                log.warn("Exception: ", ex);
             } finally {
                 attemptCleanup();
             }

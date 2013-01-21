@@ -71,7 +71,7 @@ public class CSWFilterService {
         HttpMethodBase method = null;
 
         try {
-            method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex);
+            method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,null);
             InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
 
@@ -102,7 +102,7 @@ public class CSWFilterService {
             try {
                 log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
                 CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-                requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex));
+                requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,null));
                 additionalInfo.add(serviceItem);
             } catch (UnsupportedEncodingException ex) {
                 log.warn(String.format("Error generating HTTP method for serviceItem '%1$s'",serviceItem), ex);
