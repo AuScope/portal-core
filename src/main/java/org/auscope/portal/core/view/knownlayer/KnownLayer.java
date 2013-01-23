@@ -49,6 +49,9 @@ public class KnownLayer implements Serializable {
     /** If this layer is rendered, this icon will be used to mark any point geometries*/
     private String iconUrl;
 
+    /** If this layer is rendered, this color will be used for any polygon in the renderings*/
+    private String polygonColor;
+
     /** If this layer is rendered, this is the offset in pixels of where iconUrl will be anchored to the map*/
     private Point iconAnchor;
 
@@ -235,6 +238,23 @@ public class KnownLayer implements Serializable {
      */
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;
+    }
+
+
+    /**
+     * Gets the color of a polygon used to mark any polygon geometries
+     * @return
+     */
+    public String getPolygonColor() {
+        return this.polygonColor;
+    }
+
+    /**
+     * Sets the color of a polygon used to mark any polygon geometries
+     * @param iconUrl
+     */
+    public void setPolygonColor(String polygonColor) {
+        this.polygonColor = polygonColor;
     }
 
     /**
