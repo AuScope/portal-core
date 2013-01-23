@@ -28,6 +28,10 @@ public class ViewKnownLayerFactory {
             obj.put("iconUrl", k.getIconUrl());
         }
 
+        if(k.getPolygonColor() != null && k.getPolygonColor().length() > 0) {
+            obj.put("polygonColor", k.getPolygonColor());
+        }
+
         if (k.getIconAnchor() != null) {
             obj.put("iconAnchor", toView(k.getIconAnchor()));
         }
