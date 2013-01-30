@@ -104,7 +104,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
 
 
     _getPolygonColor : function(colorCSV){
-        if(colorCSV.length > 0){
+        if(colorCSV && colorCSV.length > 0){
             var colorArray=colorCSV.split(",");
             return colorArray;
         }else{
