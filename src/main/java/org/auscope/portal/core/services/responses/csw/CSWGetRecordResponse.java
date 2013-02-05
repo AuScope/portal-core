@@ -2,8 +2,9 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -29,6 +30,9 @@ public class CSWGetRecordResponse {
     private int recordsReturned = 0;
     private int recordsMatched = 0;
     private int nextRecord = 0;
+    
+    /** A map object for looking up a particular CSWRecord object by its file identifier */
+    private Map<String, CSWRecord> cswRecordLookupMap = new HashMap<String, CSWRecord>();
 
     /**
      * Creates a new instance from the specified record response by parsing its contents
@@ -69,6 +73,15 @@ public class CSWGetRecordResponse {
             newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);
             log.trace("GN layer " + (i + 1) + " : " + newRecord.toString());
+            cswRecordLookupMap.put(newRecord.getFileIdentifier(), newRecord);
+        }
+        
+        //For those child records that have a parent, associate them to their parent record  
+        for (CSWRecord record : records) {
+            String parentId = record.getParentIdentifier();
+            if (parentId != null && !parentId.isEmpty()) {
+                cswRecordLookupMap.get(parentId).addChildRecord(record);
+            }
         }
     }
 
@@ -108,6 +121,4 @@ public class CSWGetRecordResponse {
     public int getNextRecord() {
         return nextRecord;
     }
-
-
 }

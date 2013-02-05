@@ -1,7 +1,5 @@
 package org.auscope.portal.core.services;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +26,6 @@ import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.util.DOMUtil;
-import org.auscope.portal.core.util.FileIOUtil;
 import org.w3c.dom.Document;
 
 /**
