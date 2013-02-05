@@ -3,11 +3,13 @@
  * from a catalogue service for the web (CSW)
  */
 Ext.require(['portal.csw.OnlineResourceType',
-             'portal.util.BBoxType']);
+             'portal.util.BBoxType',
+             'portal.csw.CSWRecordType']);
 Ext.define('portal.csw.CSWRecord', {
     extend: 'Ext.data.Model',
     requires: ['portal.csw.OnlineResourceType',
-               'portal.util.BBoxType'],
+               'portal.util.BBoxType',
+               'portal.csw.CSWRecordType'],
     fields: [
         { name: 'id', type: 'string' }, //Based on CSWRecord's file identifier
         { name: 'name', type: 'string' }, //Human readable name/title of this record
@@ -17,6 +19,7 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'descriptiveKeywords', type: 'auto' }, //an array of strings representing descriptive keywords for this record
         { name: 'geographicElements', convert: portal.util.BBoxType.convert}, //an array of portal.util.BBox objects representing the total spatial bounds of this record
         { name: 'onlineResources', convert: portal.csw.OnlineResourceType.convert}, //A set of portal.csw.OnlineResource objects
+        { name: 'childRecords', convert: portal.csw.CSWRecordType.convert}, //an array of child portal.csw.CSWRecord objects
         { name: 'resourceProvider', type: 'string'}, //A set of portal.csw.OnlineResource objects
         { name: 'recordInfoUrl' , type:'string'},
         { name: 'constraints' , type:'auto'} //An array of strings representing access constraints that will be shown to a user before this layer is used
