@@ -387,9 +387,7 @@ public class CSWRecord {
      * @return the csw child records
      */
     public CSWRecord[] getChildRecords() {
-        CSWRecord[] cswRecords = new CSWRecord[childRecords.size()];
-        childRecords.toArray(cswRecords);
-        return cswRecords;
+        return childRecords.toArray(new CSWRecord[childRecords.size()]);
     }
     
     /**
@@ -418,8 +416,8 @@ public class CSWRecord {
                 + ", supplementalInformation=" + supplementalInformation
                 + ", language=" + language + ", constraints="
                 + Arrays.toString(constraints) + ", contact=" + contact
-                + ", date=" + date + ", childRecords=" 
-                + Arrays.toString(getChildRecords()) + "]";
+                + ", date=" + date + ", childRecords="
+                + childRecords  + "]";
     }
 
     /**

@@ -79,6 +79,14 @@ public class ViewCSWRecordFactory {
             }
         }
         obj.put("constraints", constraints);
+        
+        List<Map<String, Object>> childRecords = new ArrayList<Map<String, Object>>();
+        if (record.hasChildRecords()) {
+            for (CSWRecord childRecord : record.getChildRecords()) {
+                childRecords.add(this.toView(childRecord));
+            }
+        }
+        obj.put("childRecords", childRecords);
 
         return obj;
     }
