@@ -192,34 +192,17 @@ Ext.define('portal.util.BBox', {
 
     /**
      * Returns true IFF both bboxes share the same CRS and that they intersect one another.
-     * Algorithm sourced from - http://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
+     * Algorithm sourced from - http://tekpool.wordpress.com/2006/10/11/rectangle-intersection-determine-if-two-given-rectangles-intersect-each-other-or-not/
      */
     intersects : function(bbox) {
         if (this.crs !== bbox.crs) {
             return false;
         }
 
-        //Get the 'width'/'height' in 'units'
-        var thisWidth = this.eastBoundLongitude - this.westBoundLongitude;
-        var thisHeight = this.northBoundLatitude - this.southBoundLatitude;
-        var bboxWidth = bbox.eastBoundLongitude - bbox.westBoundLongitude;
-        var bboxHeight = bbox.northBoundLatitude - bbox.southBoundLatitude;
-
-        if(this.eastBoundLongitude<0){
-            thisWidth = 360-Math.abs(thisWidth);
-        }
-
-        if(bbox.eastBoundLongitude < 0){
-            bboxWidth = 360-Math.abs(bboxWidth);
-        }
-
-
-
-        //In English: On each axis, check to see if the centers of the boxes are close enough that they'll intersect.
-        //If they intersect on both axes, then the boxes intersect. If they don't, then they don't.
-        //NOTE - This will only work for axis aligned bounding boxes
-        return Math.abs(this.westBoundLongitude - bbox.westBoundLongitude) * 2 < (thisWidth + bboxWidth) &&
-               Math.abs(this.northBoundLatitude - bbox.northBoundLatitude) * 2 < (thisHeight + bboxHeight)
+        return !(bbox.westBoundLongitude > this.eastBoundLongitude
+                || bbox.eastBoundLongitude < this.westBoundLongitude
+                || bbox.southBoundLatitude > this.northBoundLatitude
+                || bbox.northBoundLatitude < this.southBoundLatitude);
     },
 
     /**
