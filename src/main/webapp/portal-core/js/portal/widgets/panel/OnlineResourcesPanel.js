@@ -35,7 +35,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         }
         if (typeof(cfg.sortable) !== 'undefined' && cfg.sortable != null) {
             sortable = cfg.sortable;
-        }        
+        }
 
         //We allow the owner to specify additional columns
         var columns = [{
@@ -53,7 +53,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         if (cfg.columns) {
             columns = columns.concat(cfg.columns);
         }
-        
+
         //Build our configuration object
         Ext.apply(cfg, {
             selModel: cfg.selModel,
@@ -262,37 +262,11 @@ Ext.define('portal.widgets.panel.OnlineResourcePanelRow', {
             for (var i = 0; i < cswRecords.length; i++) {
                 var onlineResources = cswRecords[i].get('onlineResources');
                 for (var j = 0; j < onlineResources.length; j++) {
-                    var group = '';
 
                     //ensure we have a type we want to describe
-                    switch (onlineResources[j].get('type')) {
-                    case portal.csw.OnlineResource.WWW:
-                    case portal.csw.OnlineResource.FTP:
-                        group = 'Web Link';
-                        break;
-                    case portal.csw.OnlineResource.WFS:
-                        group = 'OGC Web Feature Service 1.1.0';
-                        break;
-                    case portal.csw.OnlineResource.WMS:
-                        group = 'OGC Web Map Service 1.1.1';
-                        break;
-                    case portal.csw.OnlineResource.WCS:
-                        group = 'OGC Web Coverage Service 1.0.0';
-                        break;
-                    case portal.csw.OnlineResource.OPeNDAP:
-                        group = 'OPeNDAP Service';
-                        break;
-                    case portal.csw.OnlineResource.SOS:
-                        group = 'Sensor Observation Service 2.0.0';
-                        break;
-                    case portal.csw.OnlineResource.UNSUPPORTED:
-                        group = 'Others';
-                        break;
-                    case portal.csw.OnlineResource.IRIS:
-                        group = 'IRIS Web Service';
-                        break;
-                    default:
-                        continue;//don't include anything else
+                    var group = portal.csw.OnlineResource.typeToString(onlineResources[j].get('type'));
+                    if (!group) {
+                        continue; //don't include anything else
                     }
 
                     dataItems.push(Ext.create('portal.widgets.panel.OnlineResourcePanelRow',{

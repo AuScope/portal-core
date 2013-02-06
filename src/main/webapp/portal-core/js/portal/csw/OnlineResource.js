@@ -31,6 +31,34 @@ Ext.define('portal.csw.OnlineResource', {
         IRIS : 'IRIS', // IRIS web service
 
         /**
+         * Utility for turning the various portal.csw.OnlineResource.* enums into an English readable string.
+         * Returns null if type isn't recognised
+         */
+        typeToString : function(type) {
+            switch (type) {
+            case portal.csw.OnlineResource.WWW:
+            case portal.csw.OnlineResource.FTP:
+                return 'Web Link';
+            case portal.csw.OnlineResource.WFS:
+                return 'OGC Web Feature Service 1.1.0';
+            case portal.csw.OnlineResource.WMS:
+                return 'OGC Web Map Service 1.1.1';
+            case portal.csw.OnlineResource.WCS:
+                return 'OGC Web Coverage Service 1.0.0';
+            case portal.csw.OnlineResource.OPeNDAP:
+                return 'OPeNDAP Service';
+            case portal.csw.OnlineResource.SOS:
+                return 'Sensor Observation Service 2.0.0';
+            case portal.csw.OnlineResource.UNSUPPORTED:
+                return 'Others';
+            case portal.csw.OnlineResource.IRIS:
+                return 'IRIS Web Service';
+            default:
+                return null;
+            }
+        },
+
+        /**
          * Static utility function for extracting a subset of OnlineResources from an array
          * according to a variety of filter options
          *
