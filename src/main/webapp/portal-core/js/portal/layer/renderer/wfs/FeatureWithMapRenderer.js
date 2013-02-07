@@ -14,6 +14,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
     legend : null,
     allDownloadManagers : null,
+    sld : null,
 
     constructor: function(config) {
         this.currentRequestCount = 0;//how many requests are still running
@@ -127,7 +128,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         //portal.util.URL.base
         //var victor='http://INDEX-KF.nexus.csiro.au:8088/AuScope-Portal/';
         var styleUrl = escape(Ext.urlAppend(portal.util.URL.base + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
-
+        this.sld=unescape(styleUrl);
 
         var primitives = [];
         for (var i = 0; i < wmsResources.length; i++) {
