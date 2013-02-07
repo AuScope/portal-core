@@ -80,7 +80,10 @@ public class CSWGetRecordResponse {
         for (CSWRecord record : records) {
             String parentId = record.getParentIdentifier();
             if (parentId != null && !parentId.isEmpty()) {
-                cswRecordLookupMap.get(parentId).addChildRecord(record);
+                CSWRecord parent = cswRecordLookupMap.get(parentId);
+                if (parent != null) {
+                    parent.addChildRecord(record);
+                }
             }
         }
     }
