@@ -102,8 +102,6 @@ Ext.define('portal.widgets.tab.ActivePreRenderTabPanel', {
             }
         }
 
-
-
         return beforeRenderedCmp;
     },
 
