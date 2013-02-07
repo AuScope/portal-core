@@ -260,7 +260,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanelRow', {
         parseCswRecords : function(cswRecords) {
             var dataItems = [];
             for (var i = 0; i < cswRecords.length; i++) {
-                var onlineResources = cswRecords[i].get('onlineResources');
+                var onlineResources = cswRecords[i].getAllChildOnlineResources();
                 for (var j = 0; j < onlineResources.length; j++) {
 
                     //ensure we have a type we want to describe

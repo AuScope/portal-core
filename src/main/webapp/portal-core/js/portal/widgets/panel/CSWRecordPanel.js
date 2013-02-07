@@ -20,7 +20,7 @@ Ext.define('portal.widgets.panel.CSWRecordPanel', {
      * Implements method - see parent class for details.
      */
     getOnlineResourcesForRecord : function(record) {
-        return record.data.onlineResources;
+        return record.getAllChildOnlineResources();
     },
 
     /**

@@ -92,6 +92,25 @@ Ext.define('portal.csw.CSWRecord', {
         }
 
         return false;
+    },
+
+    /**
+     * Iterates this CSWRecord and all child CSWRecords. Each record will have it's OnlineResource
+     * array concatenated and the sum total of all concatenations will be returned.
+     */
+    getAllChildOnlineResources : function() {
+        var onlineResources = this.get('onlineResources');
+        var childRecs = this.get('childRecords');
+
+        if (!onlineResources) {
+            onlineResources = [];
+        }
+
+        for (var i = 0; i < childRecs.length; i++) {
+            onlineResources = onlineResources.concat(childRecs[i].getAllChildOnlineResources());
+        }
+
+        return onlineResources;
     }
 
 });
