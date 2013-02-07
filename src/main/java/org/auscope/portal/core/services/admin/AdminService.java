@@ -254,7 +254,7 @@ public class AdminService {
             endpointsToTest.add(endpoint);
 
             //Make a GetFeatureInfo request
-            methodsToTest.add(methodMaker.getFeatureInfo(endpoint.getEndpoint(), infoMimeType, endpoint.getSelector(), bbox.getBboxSrs(), west, south, east, north, width, height, west, north, 0, 0, null));
+            methodsToTest.add(methodMaker.getFeatureInfo(endpoint.getEndpoint(), infoMimeType, endpoint.getSelector(), bbox.getBboxSrs(), west, south, east, north, width, height, west, north, 0, 0, null,null));
             endpointsToTest.add(endpoint);
         }
 

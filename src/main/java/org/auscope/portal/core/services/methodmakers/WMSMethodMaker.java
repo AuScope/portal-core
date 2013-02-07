@@ -137,7 +137,7 @@ public class WMSMethodMaker extends AbstractMethodMaker {
      * @param pointY Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
      * @return
      */
-    public HttpMethodBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles) {
+    public HttpMethodBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) {
         GetMethod method = new GetMethod(wmsUrl);
         List<NameValuePair> options = new ArrayList<NameValuePair>();
 
@@ -163,6 +163,9 @@ public class WMSMethodMaker extends AbstractMethodMaker {
         options.add(new NameValuePair("width", Integer.toString(width)));
         options.add(new NameValuePair("height", Integer.toString(height)));
         options.add(new NameValuePair("SRS", srs));
+        if(sld != null && sld.trim().length() > 0){
+            options.add(new NameValuePair("SLD", sld));
+        }
         if (styles != null && styles.trim().length() > 0) {
             options.add(new NameValuePair("styles", styles.trim()));
         }

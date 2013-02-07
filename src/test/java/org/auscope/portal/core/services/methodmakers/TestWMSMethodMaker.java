@@ -19,7 +19,7 @@ public class TestWMSMethodMaker extends PortalTestClass {
     public void testParamParsing_NoParams() {
         WMSMethodMaker mm = new WMSMethodMaker();
         HttpMethodBase getCapMethod = mm.getCapabilitiesMethod("http://example.com");
-        HttpMethodBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles");
+        HttpMethodBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
         HttpMethodBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0, 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpMethodBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
 
@@ -43,7 +43,7 @@ public class TestWMSMethodMaker extends PortalTestClass {
     public void testParamParsing_ExtraParams() {
         WMSMethodMaker mm = new WMSMethodMaker();
         HttpMethodBase getCapMethod = mm.getCapabilitiesMethod("http://example.com?param1=val1&param2=val2");
-        HttpMethodBase getFeatureMethod = mm.getFeatureInfo("http://example.com?param1=val1&param2=val2", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles");
+        HttpMethodBase getFeatureMethod = mm.getFeatureInfo("http://example.com?param1=val1&param2=val2", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
         HttpMethodBase getMapMethod = mm.getMapMethod("http://example.com?param1=val1&param2=val2", "layer", "imageMimeType", "srs", 1.0, 2.0, 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpMethodBase getLegendMethod = mm.getLegendGraphic("http://example.com?param1=val1&param2=val2", "layerName", 100, 200, "styles");
 
