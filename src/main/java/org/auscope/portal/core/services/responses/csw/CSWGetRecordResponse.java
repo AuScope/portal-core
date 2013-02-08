@@ -33,6 +33,8 @@ public class CSWGetRecordResponse {
     
     /** A map object for looking up a particular CSWRecord object by its file identifier */
     private Map<String, CSWRecord> cswRecordLookupMap = new HashMap<String, CSWRecord>();
+    /** A list object that stores orphan CSWRecord objects */
+    private List<CSWRecord> stagingOrphanRecords = new ArrayList<CSWRecord>();
 
     /**
      * Creates a new instance from the specified record response by parsing its contents
@@ -74,15 +76,35 @@ public class CSWGetRecordResponse {
             records.add(newRecord);
             log.trace("GN layer " + (i + 1) + " : " + newRecord.toString());
             cswRecordLookupMap.put(newRecord.getFileIdentifier(), newRecord);
+            //Links a child record to its parent and stage it as it is possible
+            //that its parent record hasn't been parsed yet.
+            linkChildToParent(newRecord, true);
         }
         
-        //For those child records that have a parent, associate them to their parent record  
-        for (CSWRecord record : records) {
-            String parentId = record.getParentIdentifier();
-            if (parentId != null && !parentId.isEmpty()) {
-                CSWRecord parent = cswRecordLookupMap.get(parentId);
-                if (parent != null) {
-                    parent.addChildRecord(record);
+        //Final check to ensure each staged child record links to its parent record.
+        //There is no need to stage a child record at this point if it doesn't have
+        //a parent - as there is a possibility the record is wrong in the registry.
+        for (CSWRecord record : stagingOrphanRecords) {
+            linkChildToParent(record, false);
+        }
+    }
+    
+    /**
+     * Links a child CSWRecord object to its parent object.
+     * @param record a CSWRecord object (can be a child or parent object)
+     * @param stageOrphanChild flag to indicate whether or not an orphan CSWRecord should be staged.
+     */
+    private void linkChildToParent(CSWRecord record, boolean stageOrphanChild) {
+        String parentId = record.getParentIdentifier();
+        if (parentId != null && !parentId.isEmpty()) {
+            CSWRecord parent = cswRecordLookupMap.get(parentId);
+            if (parent != null) {
+                parent.addChildRecord(record);
+            } else {
+                if (stageOrphanChild) {
+                    stagingOrphanRecords.add(record);
+                } else {
+                    log.trace("An orphan CSWRecord object detected. Child id=" + record.getFileIdentifier());
                 }
             }
         }
