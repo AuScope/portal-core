@@ -56,7 +56,12 @@ public abstract class AbstractCSWOnlineResource {
         /**
          * IRIS Web Service
          */
-        IRIS
+        IRIS,
+        
+        /**
+         * A CSW Entry
+         * */
+        CSW
     }
 
     /**
@@ -117,8 +122,10 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.FTP;
         } else if (lowerProtocol.contains("iris")) {
             return OnlineResourceType.IRIS;
+        } else if (lowerProtocol.contains("csw")) {
+            return OnlineResourceType.CSW;
         }
-
+        
         return OnlineResourceType.Unsupported;
     }
 

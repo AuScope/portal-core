@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecord
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
+import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.util.DOMUtil;
@@ -389,7 +391,23 @@ public class CSWCacheService {
         public void run() {
             try {
                 if (this.endpoint.getNoCache()) {
-                    log.trace(String.format("noCache flag is set for Service URL: $s, skipping caching.", this.endpoint.getServiceUrl()));
+                    String serviceUrl = this.endpoint.getServiceUrl();
+                    log.trace(String.format("noCache flag is set for Service URL: $s, skipping caching.", serviceUrl));
+
+                    // If we're not caching the responses we need to add this endpoint as a fake CSW record:
+                    synchronized(newRecordCache) {
+                        CSWRecord record = new CSWRecord(this.endpoint.getId());
+                        record.setServiceName(this.endpoint.getTitle());
+                        
+                        CSWOnlineResourceImpl cswResource = new CSWOnlineResourceImpl(
+                                new URL(serviceUrl),
+                                /* protocol */ "CSW",
+                                this.endpoint.getTitle(),
+                                "A dummy layer which just points to a CSW end point.");
+                                              
+                        record.setOnlineResources(new AbstractCSWOnlineResource[] {cswResource});
+                        newRecordCache.add(record);
+                    }
                 }
                 else {
                     String cswServiceUrl = this.endpoint.getServiceUrl();
@@ -424,9 +442,9 @@ public class CSWCacheService {
     
                                     //Firstly we may possibly merge this
                                     //record into an existing record IF particular keywords
-                                    //are present. In this case, record will be discarded (it's contents
+                                    //are present. In this case, record will be discarded (its contents
                                     //already found their way into an existing record)
-                                    //Hence - we need to perform this step first
+                                    //Hence we need to perform this step first
                                     for (String keyword : record.getDescriptiveKeywords()) {
                                         if (keyword == null || keyword.isEmpty()) {
                                             continue;
