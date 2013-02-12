@@ -10,14 +10,13 @@ Ext.define('portal.util.help.InstructionManager',{
 
     /**
      * Accepts the following {
-     *
+     *  spotCfg : Applied to the internal Ext.ux.Spotlight. If not specified, Spotlight default values will be used
      * }
      */
     constructor : function(cfg) {
-        this.spot = Ext.create('Ext.ux.Spotlight', {
-            easing: 'easeOut',
-            duration: 300
-        });
+        var spotCfg = cfg.spotCfg ? cfg.spotCfg : {};
+
+        this.spot = Ext.create('Ext.ux.Spotlight', spotCfg);
         this.callParent(arguments);
     },
 
