@@ -388,82 +388,87 @@ public class CSWCacheService {
         @Override
         public void run() {
             try {
-                String cswServiceUrl = this.endpoint.getServiceUrl();
-                CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-                int startPosition = 1;
-
-                //Request page after page of CSWRecords until we've iterated the entire store
-                do {
-                    log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
-
-                    //Request our set of records
-                    HttpMethodBase method = null;
-                    //if cqlText is not null means we want to perform filter on the query
-                    if (parent.forceGetMethods && this.endpoint.getCqlText()==null) {
-                        method = methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
-                    } else {
-                        method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, MAX_QUERY_LENGTH, startPosition,this.endpoint.getCqlText());
-                    }
-
-                    InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
-
-                    log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
-
-                    //Parse the response into newCache (remember that maps are NOT thread safe)
-                    Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
-                    OWSExceptionParser.checkForExceptionResponse(responseDocument);
-                    CSWGetRecordResponse response = new CSWGetRecordResponse(endpoint, responseDocument);
-                    synchronized(newKeywordCache) {
-                        synchronized(newRecordCache) {
-                            for (CSWRecord record : response.getRecords()) {
-                                boolean recordMerged = false;
-
-                                //Firstly we may possibly merge this
-                                //record into an existing record IF particular keywords
-                                //are present. In this case, record will be discarded (it's contents
-                                //already found their way into an existing record)
-                                //Hence - we need to perform this step first
-                                for (String keyword : record.getDescriptiveKeywords()) {
-                                    if (keyword == null || keyword.isEmpty()) {
-                                        continue;
-                                    }
-
-                                    //If we have an 'association keyword', look for existing records
-                                    //to merge this record's contents in to.
-                                    if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
-                                        Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
-                                        if (existingRecs != null && !existingRecs.isEmpty()) {
-                                            mergeRecords(existingRecs.iterator().next(), record, newKeywordCache);
-                                            recordMerged = true;
+                if (this.endpoint.getNoCache()) {
+                    log.trace(String.format("noCache flag is set for Service URL: $s, skipping caching.", this.endpoint.getServiceUrl()));
+                }
+                else {
+                    String cswServiceUrl = this.endpoint.getServiceUrl();
+                    CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
+                    int startPosition = 1;
+    
+                    //Request page after page of CSWRecords until we've iterated the entire store
+                    do {
+                        log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
+    
+                        //Request our set of records
+                        HttpMethodBase method = null;
+                        //if cqlText is not null means we want to perform filter on the query
+                        if (parent.forceGetMethods && this.endpoint.getCqlText()==null) {
+                            method = methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, MAX_QUERY_LENGTH, startPosition);
+                        } else {
+                            method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, MAX_QUERY_LENGTH, startPosition,this.endpoint.getCqlText());
+                        }
+    
+                        InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
+    
+                        log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
+    
+                        //Parse the response into newCache (remember that maps are NOT thread safe)
+                        Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
+                        OWSExceptionParser.checkForExceptionResponse(responseDocument);
+                        CSWGetRecordResponse response = new CSWGetRecordResponse(endpoint, responseDocument);
+                        synchronized(newKeywordCache) {
+                            synchronized(newRecordCache) {
+                                for (CSWRecord record : response.getRecords()) {
+                                    boolean recordMerged = false;
+    
+                                    //Firstly we may possibly merge this
+                                    //record into an existing record IF particular keywords
+                                    //are present. In this case, record will be discarded (it's contents
+                                    //already found their way into an existing record)
+                                    //Hence - we need to perform this step first
+                                    for (String keyword : record.getDescriptiveKeywords()) {
+                                        if (keyword == null || keyword.isEmpty()) {
+                                            continue;
+                                        }
+    
+                                        //If we have an 'association keyword', look for existing records
+                                        //to merge this record's contents in to.
+                                        if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
+                                            Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
+                                            if (existingRecs != null && !existingRecs.isEmpty()) {
+                                                mergeRecords(existingRecs.iterator().next(), record, newKeywordCache);
+                                                recordMerged = true;
+                                            }
                                         }
                                     }
-                                }
-
-                                //If the record was NOT merged into an existing record we then
-                                //actually update our record cache
-                                if (!recordMerged) {
-                                    //Actually update the keyword cache
-                                    for (String keyword : record.getDescriptiveKeywords()) {
-                                        addToKeywordCache(keyword, record, newKeywordCache);
+    
+                                    //If the record was NOT merged into an existing record we then
+                                    //actually update our record cache
+                                    if (!recordMerged) {
+                                        //Actually update the keyword cache
+                                        for (String keyword : record.getDescriptiveKeywords()) {
+                                            addToKeywordCache(keyword, record, newKeywordCache);
+                                        }
+    
+                                        //Add record to record list
+                                        newRecordCache.add(record);
                                     }
-
-                                    //Add record to record list
-                                    newRecordCache.add(record);
                                 }
                             }
                         }
-                    }
-
-                    log.trace(String.format("%1$s - Response parsed!", this.endpoint.getServiceUrl()));
-
-                    //Prepare to request next 'page' of records (if required)
-                    if (response.getNextRecord() > response.getRecordsMatched() ||
-                        response.getNextRecord() <= 0) {
-                        startPosition = -1; //we are done in this case
-                    } else {
-                        startPosition = response.getNextRecord();
-                    }
-                } while (startPosition > 0);
+    
+                        log.trace(String.format("%1$s - Response parsed!", this.endpoint.getServiceUrl()));
+    
+                        //Prepare to request next 'page' of records (if required)
+                        if (response.getNextRecord() > response.getRecordsMatched() ||
+                            response.getNextRecord() <= 0) {
+                            startPosition = -1; //we are done in this case
+                        } else {
+                            startPosition = response.getNextRecord();
+                        }
+                    } while (startPosition > 0);
+                }
             } catch (Exception ex) {
                 log.warn(String.format("Error updating keyword cache for '%1$s': %2$s",this.endpoint.getServiceUrl(), ex));
                 log.warn("Exception: ", ex);

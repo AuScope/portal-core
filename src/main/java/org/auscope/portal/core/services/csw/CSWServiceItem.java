@@ -20,6 +20,7 @@ public class CSWServiceItem {
     private String userName;
     private String password;
     private String cqlText;
+    private boolean noCache = false;
 
     /**
      * Creates a new service item with NO role restrictions
@@ -235,6 +236,20 @@ public class CSWServiceItem {
     public void setCqlText(String cqlText) {
         this.cqlText = cqlText;
     }
+    
+    /**
+     * Gets a value indicating whether or not the caching has been disabled for this item.
+     * @return
+     */
+    public boolean getNoCache() {
+        return this.noCache;
+    }
 
-
+    /**
+     * Set noCache to prevent the caching of data from CSW's that have too many records.
+     * @param noCache
+     */
+    public void setNoCache(boolean noCache) {
+        this.noCache = noCache;
+    }
 }
