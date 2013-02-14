@@ -199,8 +199,21 @@ Ext.define('portal.util.BBox', {
             return false;
         }
 
-        return !(bbox.westBoundLongitude > this.eastBoundLongitude
-                || bbox.eastBoundLongitude < this.westBoundLongitude
+        //If a bbox wraps the international date line such that east is in fact less than west
+        //We should wrap the values around accordingly so we can directly compare
+        var bboxEast = bbox.eastBoundLongitude;
+        var bboxWest = bbox.westBoundLongitude;
+        var thisEast = this.eastBoundLongitude;
+        var thisWest = this.westBoundLongitude;
+        if (bboxEast < bboxWest) {
+            bboxEast += 360;
+        }
+        if (thisEast < thisWest) {
+            thisEast += 360;
+        }
+
+        return !(bboxWest > thisEast
+                || bboxEast < thisWest
                 || bbox.southBoundLatitude > this.northBoundLatitude
                 || bbox.northBoundLatitude < this.southBoundLatitude);
     },
