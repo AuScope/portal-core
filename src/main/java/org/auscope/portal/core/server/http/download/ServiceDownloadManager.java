@@ -198,5 +198,24 @@ public class ServiceDownloadManager {
             }
 
         }
+
+//        private InputStream getJSONResponse(){
+//            try {
+//                synchronized(this){
+//                    this.wait(10000);
+//                }
+//            } catch (InterruptedException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+//            final String[] serviceUrls = {
+//                    "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
+//                    "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
+//            final String dummyGml = "<someGmlHere"+ (Math.random()*100) +"/>";
+//            final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
+//                    + dummyGml + "\"},\"success\":true}";
+//            final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
+//            return dummyJSONResponseIS;
+//        }
     }
 }
