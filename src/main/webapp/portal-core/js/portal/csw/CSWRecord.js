@@ -106,8 +106,10 @@ Ext.define('portal.csw.CSWRecord', {
             onlineResources = [];
         }
 
-        for (var i = 0; i < childRecs.length; i++) {
-            onlineResources = onlineResources.concat(childRecs[i].getAllChildOnlineResources());
+        if(childRecs){
+            for (var i = 0; i < childRecs.length; i++) {
+                onlineResources = onlineResources.concat(childRecs[i].getAllChildOnlineResources());
+            }
         }
 
         return onlineResources;
