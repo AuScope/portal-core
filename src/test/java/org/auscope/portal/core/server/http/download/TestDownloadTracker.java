@@ -44,7 +44,7 @@ public class TestDownloadTracker extends PortalTestClass  {
         context.checking(new Expectations() {
             {
                 oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)));
-                will(delayReturnValue(100, dummyJSONResponseIS));
+                will(delayReturnValue(3500, dummyJSONResponseIS));
                 // calling the service
                 oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)));
                 will(delayReturnValue(200, dummyJSONResponseIS2));
@@ -63,7 +63,7 @@ public class TestDownloadTracker extends PortalTestClass  {
 
         while(downloadTracker.getProgress()!=Progression.COMPLETED && System.currentTimeMillis() < (startTime + 15000)){
             synchronized(this){
-                this.wait(5000);
+                this.wait(2000);
             }
         }
 
