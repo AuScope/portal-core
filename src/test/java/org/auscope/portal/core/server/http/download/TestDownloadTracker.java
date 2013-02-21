@@ -2,11 +2,10 @@ package org.auscope.portal.core.server.http.download;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.apache.commons.httpclient.HttpMethodBase;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
@@ -31,10 +30,13 @@ public class TestDownloadTracker extends PortalTestClass  {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
 
+        final String dummyGml = "<someGmlHere>the quick brown fox jumps over the</someGmlHere>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
-                + "<someGmlHere/>" + "\"},\"success\":true}";
+                + dummyGml + "\"},\"success\":true}";
+
+        final String dummyGml2 = "<someGmlHere>Mary has a little lamb</someGmlHere>";
         final String dummyJSONResponse2 = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
-                + "<someGmlHere2/>" + "\"},\"success\":true}";
+                + dummyGml2 + "\"},\"success\":true}";
 
         final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
         final InputStream dummyJSONResponseIS2=new ByteArrayInputStream(dummyJSONResponse2.getBytes());
@@ -42,29 +44,43 @@ public class TestDownloadTracker extends PortalTestClass  {
         context.checking(new Expectations() {
             {
                 oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)));
-                will(delayReturnValue(10000, dummyJSONResponseIS));
+                will(delayReturnValue(100, dummyJSONResponseIS));
                 // calling the service
                 oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)));
                 will(delayReturnValue(200, dummyJSONResponseIS2));
             }
         });
 
+
         ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool);
         DownloadTracker downloadTracker=DownloadTracker.getTracker("victor");
-        downloadTracker.startTrack(sdm);
-        System.out.println(downloadTracker.getProgress());
-//        try{
-//            downloadTracker.startTrack(sdm);
-//        }catch(InCompleteDownloadException e){
-//            e.printStackTrace();
-//        }
-        while(downloadTracker.getProgress()!=Progression.COMPLETED){
+        Assert.assertEquals(Progression.NOT_STARTED, downloadTracker.getProgress());
 
+        long startTime = System.currentTimeMillis();
+
+        downloadTracker.startTrack(sdm);
+        Assert.assertEquals(Progression.INPROGRESS, downloadTracker.getProgress());
+
+        while(downloadTracker.getProgress()!=Progression.COMPLETED && System.currentTimeMillis() < (startTime + 15000)){
+            synchronized(this){
+                this.wait(5000);
+            }
         }
 
-        System.out.println(downloadTracker.getProgress());
+        Assert.assertEquals(Progression.COMPLETED,downloadTracker.getProgress());
 
-
+        ZipInputStream zis = new ZipInputStream(downloadTracker.getFile());
+        ZipEntry entry;
+        while ((entry = zis.getNextEntry()) != null){
+            byte[] bytes= new byte[1024];
+            Assert.assertNotNull(entry);
+            Assert.assertTrue(entry.getName().endsWith(".xml"));
+            zis.read(bytes, 0, bytes.length);
+            String result= new String(bytes);
+            result=result.trim();
+            Assert.assertTrue(dummyGml.equals(result)||dummyGml2.equals(result));
+        }
+        zis.close();
     }
 
 

@@ -74,6 +74,14 @@ public class DownloadTracker {
         }
     }
 
+    public synchronized File getFileHandle() throws InCompleteDownloadException, FileNotFoundException{
+        if(getProgress()==Progression.COMPLETED){
+            return this.file;
+        }else{
+            throw new InCompleteDownloadException("that that download has complete using getDownloadComplete() before requesting file");
+        }
+    }
+
     public synchronized void setDownloadComplete() {
         this.downloadProgress = Progression.COMPLETED;
     }
