@@ -15,7 +15,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
             iconUrl : config.icon ? config.icon.getUrl() : ''
         });
         this.callParent(arguments);
-    },
+    }, 
 
     /**
      * A function for displaying generic data from a variety of data sources. This function will
@@ -36,6 +36,44 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
      * callback - Will be called when the rendering process is completed and passed an instance of this renderer and the parameters used to call this function
      */
     displayData : function(resources, filterer, callback) {
+        // TODO: ADAM: I think I need to make this perform the CSW query and then add those
+        // elements to the resources array then just let this method finish off what it was
+        // doing.
+       
+        // This gives me: http://eos-test.ga.gov.au/geonetwork/srv/en/csw
+        
+        cswRecords = [];
+
+//        console.log(this.parentLayer);
+//        // TODO: ADAM: I need a control here based on whether or not this is a GeoNetwork resource or not.
+//        running = true;
+//        if (true) {
+//            Ext.Ajax.request({
+//                url : 'getCSWRecordsNoCache.do',
+//                params : {
+//                    cswServiceUrl : resources[0].data.url
+//                },
+//                success : function(response) {
+//                    response = Ext.JSON.decode(response.responseText);
+//                    if (response.success) {
+//                        cswRecords = [];
+//
+//                        for (i = 0; i < response.data.length; i++) {
+//                            cswRecords.push(Ext.create('portal.csw.CSWRecord', response.data[i]));
+//                        }
+//                    }
+//
+//                    running = false;
+//                }
+//            });
+//        }
+//        
+//        while(running); // TODO: ADAM: FIX THIS
+//        
+//        
+//
+//        this.parentLayer.set('cswRecords', cswRecords);
+        
         this.removeData();
         var titleFilter = '';
         var keywordFilter = '';
@@ -65,6 +103,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
 
 
         var cswRecords = this.parentLayer.get('cswRecords');
+               
         var numRecords = 0;
         var primitives = [];
         for (var i = 0; i < cswRecords.length; i++) {
@@ -73,6 +112,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
                     (resourceProviderFilter === '' || cswRecords[i].get('resourceProvider') === resourceProviderFilter)) {
                 numRecords++;
                 var geoEls = cswRecords[i].get('geographicElements');
+                
                 for (var j = 0; j < geoEls.length; j++) {
                     var geoEl = geoEls[j];
                     if (geoEl instanceof portal.util.BBox) {
@@ -95,6 +135,8 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
                         }
                     }
                 }
+                
+                break; /* TODO : ADAM */
             }
         }
 

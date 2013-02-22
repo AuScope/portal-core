@@ -56,7 +56,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     /**
      * Internal handler for when the user clicks 'Apply Filter'.
      *
-     * Simply updates the appropriate layer filterer. It's the responsbility
+     * Simply updates the appropriate layer filterer. It's the responsibility
      * of renderers/layers to listen for filterer updates.
      */
     _onApplyFilter : function() {

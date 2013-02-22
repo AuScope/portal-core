@@ -202,10 +202,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      */
     _serviceInformationRenderer : function(value, metaData, record, row, col, store, gridView) {
         var onlineResources = this.getOnlineResourcesForRecord(record);
-        var containsDataSource = false;
-        var containsImageSource = false;
-        
-        
+      
+        // Default to a cross:
+        var iconPath = 'img/cross.png';
         
         //We classify resources as being data or image sources.
         for (var i = 0; i < onlineResources.length; i++) {
@@ -215,26 +214,19 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             case portal.csw.OnlineResource.SOS:
             case portal.csw.OnlineResource.OPeNDAP:
             case portal.csw.OnlineResource.IRIS:
-                containsDataSource = true;
+                iconPath = 'img/binary.png';
                 break;
             case portal.csw.OnlineResource.WMS:
             case portal.csw.OnlineResource.WWW:
             case portal.csw.OnlineResource.FTP:
+            case portal.csw.OnlineResource.CSWService:
             case portal.csw.OnlineResource.UNSUPPORTED:
-                containsImageSource = true;
+                iconPath = 'img/picture.png';
                 break;
             }
         }
 
-        //We show an icon depending on the types
-        //of online resources that are available
-        if (containsDataSource) {
-            return this._generateHTMLIconMarkup('img/binary.png');
-        } else if (containsImageSource) {
-            return this._generateHTMLIconMarkup('img/picture.png');
-        }
-
-        return this._generateHTMLIconMarkup('img/cross.png');
+        return this._generateHTMLIconMarkup(iconPath);
     },
 
     /**
