@@ -20,6 +20,7 @@ public class CSWServiceItem {
     private String userName;
     private String password;
     private String cqlText;
+    private String[] defaultConstraints;
     private boolean noCache = false;
 
     /**
@@ -244,6 +245,10 @@ public class CSWServiceItem {
     public boolean getNoCache() {
         return this.noCache;
     }
+    
+    public String[] getDefaultConstraints() {
+        return this.defaultConstraints;
+    }
 
     /**
      * Set noCache to prevent the caching of data from CSW's that have too many records.
@@ -251,5 +256,14 @@ public class CSWServiceItem {
      */
     public void setNoCache(boolean noCache) {
         this.noCache = noCache;
+    }
+    
+    /**
+     * Set an array of constraints to be applied to any dummy layers that get created from this Service item. It doesn't make sense to set this value
+     * unless noCache is being set to true.
+     * @param defaultConstraints
+     */
+    public void setDefaultConstraints(String[] defaultConstraints) {
+        this.defaultConstraints = defaultConstraints;
     }
 }
