@@ -172,10 +172,14 @@ public class HttpServiceCaller {
     public String responseToString(BufferedInputStream stream) throws IOException {
         StringBuffer stringBuffer = new StringBuffer();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        String line;
-        while((line = reader.readLine()) != null) {
-            stringBuffer.append(line);
+        int bufferCount = -1;
+        char[] bufferArray=new char[1024];
+        //VT:Very bad idea to use readline when dealing with xml response as there may not be a new line
+        //which will lead to oom on the heap.
+        while((bufferCount = reader.read(bufferArray)) != -1){
+            stringBuffer.append(new String(bufferArray,0,bufferCount));
         }
+
         return stringBuffer.toString();
     }
 }

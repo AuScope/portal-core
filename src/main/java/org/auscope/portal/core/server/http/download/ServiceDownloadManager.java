@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -25,13 +26,13 @@ public class ServiceDownloadManager {
     private final int maxThreadPerEndpoint = 1;
     private final int maxThreadPerSession = 2;
     public static final int MAX_WAIT_TIME_MINUTE = 20;
-    private static Hashtable<String, Semaphore> endpointSemaphores;
+    private static ConcurrentHashMap<String, Semaphore> endpointSemaphores;
     private static int globalId;
     private int callerId;
     private ExecutorService pool;
 
     static{
-        endpointSemaphores = new Hashtable<String, Semaphore>();
+        endpointSemaphores = new ConcurrentHashMap<String, Semaphore>();
     }
 
     // VT do not directly access entryCount due to multi threading. Access it
@@ -158,7 +159,7 @@ public class ServiceDownloadManager {
                         break;
                     }
                 }
-                logger.debug((callerId + "->Calling service: " + id +" " + url));
+                logger.info((callerId + "->Calling service: " + id +" " + url));
                 this.download(response,url);
                 this.downloadComplete = true;
                 logger.info(callerId + "->Download Complete: " + id + " " + url);
