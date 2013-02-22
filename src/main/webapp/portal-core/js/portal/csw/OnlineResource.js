@@ -29,8 +29,8 @@ Ext.define('portal.csw.OnlineResource', {
         SOS : 'SOS', //represents a SOS service
         UNSUPPORTED : 'Unsupported', //The backend doesn't recognise the type of service/protocol
         IRIS : 'IRIS', // IRIS web service,
-        CSW : 'CSW', // Catalogue service for the web
-
+        CSWService : 'CSWService', // A CSW Service e.g. GeoNetwork server.
+ 
         /**
          * Utility for turning the various portal.csw.OnlineResource.* enums into an English readable string.
          * Returns null if type isn't recognised
@@ -54,8 +54,8 @@ Ext.define('portal.csw.OnlineResource', {
                 return 'Others';
             case portal.csw.OnlineResource.IRIS:
                 return 'IRIS Web Service';
-            case portal.csw.OnlineResource.CSW:
-                return 'Catalogue Service for the Web';
+            case portal.csw.OnlineResource.CSWService:
+                return 'Catalogue Service for the Web endpoint';
             default:
                 return null;
             }
