@@ -459,10 +459,12 @@ public class CSWCacheService {
                               OnlineResourceType.CSWService.toString(), // Set the protocol to CSWService.
                               this.endpoint.getTitle(),
                                 "A link to a CSW end point."); 
-                        // TODO: I need a way of adding response.getRecordsMatched() to this.... maybe I need a different object...
-                        // you'll have to see how this gets rendered to the screen and then work out how to shoe-horn max records in to it.
                     
                         record.setConstraints(this.endpoint.getDefaultConstraints());
+                        
+                        // We'll add the number of records matched in the data identification abstract item.
+                        // This will get used later by the UncachedCSWServiceRenderer. 
+                        record.setDescriptiveKeywords(new String[] {Integer.toString(response.getRecordsMatched())});
                     
                         record.setOnlineResources(new AbstractCSWOnlineResource[] {cswResource});
                         newRecordCache.add(record);
