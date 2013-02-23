@@ -102,28 +102,6 @@ public class CSWCacheService {
         this.serviceCaller = serviceCaller;
         this.keywordCache = new HashMap<String, Set<CSWRecord>>();
         this.recordCache = new ArrayList<CSWRecord>();
-
-//        // Separate out the cswServiceList items into two new arrays: deferredCacheCSWServiceList and cswServiceList
-//        // I use some temporary ArrayLists to store the items because we can't know how big the arrays need to be
-//        // till after we've iterated over the whole of the original list.
-//        ArrayList<CSWServiceItem> deferredCacheCSWServiceArrayList = new ArrayList<CSWServiceItem>();
-//        ArrayList<CSWServiceItem> cswServiceArrayList = new ArrayList<CSWServiceItem>();
-//        for (int i = 0; i < cswServiceList.size(); i++) {
-//            CSWServiceItem cswServiceItem = (CSWServiceItem) cswServiceList.get(i);
-//
-//            if (cswServiceItem.getNoCache()) {
-//                deferredCacheCSWServiceArrayList.add(cswServiceItem);
-//            }
-//            else {
-//                cswServiceArrayList.add(cswServiceItem);
-//            }
-//        }
-//
-//        this.deferredCacheCSWServiceList = new CSWServiceItem[deferredCacheCSWServiceArrayList.size()];
-//        this.deferredCacheCSWServiceList = deferredCacheCSWServiceArrayList.toArray(this.deferredCacheCSWServiceList);
-//
-//        this.cswServiceList = new CSWServiceItem[cswServiceArrayList.size()];
-//        this.cswServiceList = cswServiceArrayList.toArray(this.cswServiceList);
         
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
         for (int i = 0; i < cswServiceList.size(); i++) {
@@ -307,9 +285,8 @@ public class CSWCacheService {
         private CSWServiceItem endpoint;
         private Map<String, Set<CSWRecord>> newKeywordCache;
         private List<CSWRecord> newRecordCache;
-        private HttpServiceCaller serviceCaller;
         private boolean finishedExecution;
-        private CSWMethodMakerGetDataRecords methodMaker;
+        private CSWService cswService;
 
         public CSWCacheUpdateThread(CSWCacheService parent,
                 CSWCacheUpdateThread[] siblings, CSWServiceItem endpoint,
@@ -320,9 +297,9 @@ public class CSWCacheService {
             this.endpoint = endpoint;
             this.newKeywordCache = newKeywordCache;
             this.newRecordCache = newRecordCache;
-            this.serviceCaller = serviceCaller;
             this.finishedExecution = false;
-            this.methodMaker = new CSWMethodMakerGetDataRecords();
+            
+            this.cswService = new CSWService(this.endpoint, serviceCaller, this.parent.forceGetMethods);
         }
 
         /**
@@ -415,41 +392,14 @@ public class CSWCacheService {
             }
         }
 
-        private CSWGetRecordResponse queryCSWEndpoint(String cswServiceUrl, int startPosition, int maxQueryLength) throws Exception {
-            log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
-
-            // Request our set of records
-            HttpMethodBase method = null;
-            
-            // If cqlText is not null means we want to perform filter on the query
-            if (parent.forceGetMethods && this.endpoint.getCqlText() == null) {
-                method = methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, maxQueryLength, startPosition);
-            } else {
-                method = methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, maxQueryLength, startPosition, this.endpoint.getCqlText());
-            }
-
-            InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
-
-            log.trace(String.format("%1$s - Response received", this.endpoint.getServiceUrl()));
-
-            // Parse the response into newCache (remember that maps are NOT thread safe)
-            Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
-            OWSExceptionParser.checkForExceptionResponse(responseDocument);
-            return new CSWGetRecordResponse(endpoint, responseDocument);
-        }
-
         @Override
         public void run() {
             try {
                 String cswServiceUrl = this.endpoint.getServiceUrl();
-                int startPosition = 1;
                 
-                // If noCache is set to true then just get 1 record and use it to extract the total number of CSW records:
                 if (this.endpoint.getNoCache()) {
-                    CSWGetRecordResponse response = queryCSWEndpoint(cswServiceUrl, startPosition, 1);
-                    
                     // Create the dummy CSWResource - to avoid confusion: this is a CSW End point, NOT a CSW record.
-                    // If we're not caching the responses we need to add this endpoint as a fake CSW record:
+                    // If we're not caching the responses we need to add this endpoint as a fake CSW record so that we can query it later:
                     synchronized(newRecordCache) {
                         CSWRecord record = new CSWRecord(this.endpoint.getId());
                         record.setServiceName(this.endpoint.getTitle());
@@ -462,18 +412,20 @@ public class CSWCacheService {
                     
                         record.setConstraints(this.endpoint.getDefaultConstraints());
                         
-                        // We'll add the number of records matched in the data identification abstract item.
-                        // This will get used later by the UncachedCSWServiceRenderer. 
-                        record.setDescriptiveKeywords(new String[] {Integer.toString(response.getRecordsMatched())});
+                        // Add the CQLText to the record so that we can use it in conjunction
+                        // with the values set in the the CSW Filter Form.
+                        record.setDescriptiveKeywords(new String[] {this.endpoint.getCqlText()});
                     
                         record.setOnlineResources(new AbstractCSWOnlineResource[] {cswResource});
                         newRecordCache.add(record);
                     }
                 }
                 else {
+                    int startPosition = 1;
+                    
                     // Request page after page of CSWRecords until we've iterated the entire store
                     do {
-                        CSWGetRecordResponse response = queryCSWEndpoint(cswServiceUrl, startPosition, MAX_QUERY_LENGTH);
+                        CSWGetRecordResponse response = this.cswService.queryCSWEndpoint(startPosition, MAX_QUERY_LENGTH);
                         
                         synchronized(newKeywordCache) {
                             synchronized(newRecordCache) {
