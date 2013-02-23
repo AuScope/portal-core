@@ -92,10 +92,6 @@ Ext.define('portal.layer.LayerFactory', {
         return newLayer;
     },
 
-
-
-
-
     /**
      * Generates a new instance of portal.layer.Layer from an existing KnownLayer object. Appropriate
      * renderers, queriers etc will be generated according to knownLayer's contents
