@@ -8,7 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.auscope.portal.core.services.methodmakers.filter.AbstractFilter;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
-
+import org.joda.time.DateTime;
 
 /**
  * Represents a OGC:Filter that will fetch matching records from a CS/W.
@@ -32,6 +32,24 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The any text. */
     private String anyText;
+    
+    /** The title. */
+    private String title = null;
+    
+    /** The abstract. */
+    private String abstract_ = null;
+    
+    /** The metadata change date's lower bound. */
+    private DateTime metadataChangeDateFrom;
+    
+    /** The metadata change date's upper bound. */
+    private DateTime metadataChangeDateTo;
+    
+    /** The temporal extent's lower bound. */
+    private DateTime temporalExtentFrom;
+    
+    /** The temporal extent's upper bound. */
+    private DateTime temporalExtentTo;
 
     /** The spatial bounds. */
     private FilterBoundingBox spatialBounds;
@@ -48,6 +66,17 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /** The keyword match type. */
     private KeywordMatchType keywordMatchType;
 
+    /**
+     * Generates a new filter generator for the specified fields.
+     *
+     * @param anyText [Optional] The text used to query the 'AnyText' attribute
+     * @param spatialBounds
+     *            [Optional] The spatial bounds to filter by
+     */
+    public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds) {
+        this(anyText, spatialBounds, null, null, null, null);
+    }    
+    
     /**
      * Generates a new filter generator for the specified fields.
      *
@@ -106,6 +135,14 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
         if (anyText != null && !anyText.isEmpty()) {
             fragments.add(this.generatePropertyIsLikeFragment("anytext", this.anyText));
+        }
+        
+        if (title != null && !title.isEmpty()) {
+            fragments.add(this.generatePropertyIsLikeFragment("title", this.title));
+        }
+        
+        if (abstract_ != null && !abstract_.isEmpty()) {
+            fragments.add(this.generatePropertyIsLikeFragment("abstract", this.abstract_));
         }
 
         if (spatialBounds != null) {
@@ -224,5 +261,55 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
                 + ", keywordMatchType=" + keywordMatchType + "]";
     }
 
-
+    /** Gets the title. */
+    public String getTitle() {
+        return this.title;
+    }
+    
+    /** Gets the abstract. */
+    public String getAbstract() {
+        return this.abstract_;
+    }
+    
+    /** Gets the metadata change date's lower bound. */
+    public DateTime getMetadataChangeDateFrom() {
+        return this.metadataChangeDateFrom;
+    }
+    
+    /** Gets the metadata change date's upper bound. */
+    public DateTime getMetadataChangeDateTo() {
+        return this.metadataChangeDateTo;
+    }
+    
+    /** Gets the temporal extent's lower bound. */
+    public DateTime getTemporalExtentFrom() {
+        return this.temporalExtentFrom;
+    }
+    
+    /** Gets the temporal extent's upper bound. */
+    public DateTime getTemporalExtentTo() {
+        return this.temporalExtentTo;
+    }
+    
+    /** Sets the title. */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    /** Sets the abstract. */
+    public void setAbstract(String abstract_) {
+        this.abstract_ = abstract_;
+    }
+    
+    /** Sets the metadata change date's boundary. */
+    public void setMetadataChangeDate(DateTime metadataChangeDateFrom, DateTime metadataChangeDateTo) {
+        this.metadataChangeDateFrom = metadataChangeDateFrom;
+        this.metadataChangeDateTo = metadataChangeDateTo;
+    }
+        
+    /** Sets the temporal extent's boundary. */
+    public void setTemporalExtentFrom(DateTime temporalExtentFrom, DateTime temporalExtentTo) {
+        this.temporalExtentFrom = temporalExtentFrom;
+        this.temporalExtentTo = temporalExtentTo;
+    }
 }

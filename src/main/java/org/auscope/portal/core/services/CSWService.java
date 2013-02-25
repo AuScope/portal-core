@@ -9,6 +9,7 @@ import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
+import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.util.DOMUtil;
@@ -38,6 +39,10 @@ public class CSWService {
     }
     
     public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength) throws Exception {
+        return this.queryCSWEndpoint(startPosition, maxQueryLength, null);
+    }
+    
+    public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength, CSWGetDataRecordsFilter filter) throws Exception {
         log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
 
         String cswServiceUrl = this.endpoint.getServiceUrl();
@@ -46,10 +51,10 @@ public class CSWService {
         HttpMethodBase method = null;
         
         // If cqlText is not null means we want to perform filter on the query
-        if (this.forceGetMethods && this.endpoint.getCqlText() == null) {
+        if (this.forceGetMethods && this.endpoint.getCqlText() == null && filter == null) {
             method = this.methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, maxQueryLength, startPosition);
         } else {
-            method = this.methodMaker.makeMethod(cswServiceUrl, null, ResultType.Results, maxQueryLength, startPosition, this.endpoint.getCqlText());
+            method = this.methodMaker.makeMethod(cswServiceUrl, filter, ResultType.Results, maxQueryLength, startPosition, this.endpoint.getCqlText());
         }
 
         InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method);
