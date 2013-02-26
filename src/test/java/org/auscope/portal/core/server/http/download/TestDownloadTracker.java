@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.httpclient.HttpClient;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
@@ -43,10 +45,10 @@ public class TestDownloadTracker extends PortalTestClass  {
 
         context.checking(new Expectations() {
             {
-                oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)),with(any(HttpClient.class)));
                 will(delayReturnValue(3500, dummyJSONResponseIS));
                 // calling the service
-                oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)),with(any(HttpClient.class)));
                 will(delayReturnValue(200, dummyJSONResponseIS2));
             }
         });

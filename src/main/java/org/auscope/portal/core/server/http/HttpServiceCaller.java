@@ -14,7 +14,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.SimpleHttpConnectionManager;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -141,26 +141,31 @@ public class HttpServiceCaller {
         log.debug("method=" + method.getURI());
 
         //create the connection manager and add it to the client
-        HttpConnectionManager man = new SimpleHttpConnectionManager();
+        // VT: Change from SimpleHttpConnectionManager (not thread safe) to
+        // MultiThreadedHttpConnectionManager (thread safe)
+        HttpConnectionManager man = new MultiThreadedHttpConnectionManager();
         man.setParams(clientParams);
         httpClient.setHttpConnectionManager(man);
 
-        log.trace("Outgoing request headers: " + Arrays.toString(method.getRequestHeaders()));
+        log.trace("Outgoing request headers: "
+                + Arrays.toString(method.getRequestHeaders()));
 
-
-        //make the call
+        // make the call
         int statusCode = httpClient.executeMethod(method);
 
         if (statusCode != HttpStatus.SC_OK) {
             log.error(method.getStatusLine());
 
-            //if its unavailable then throw updateCSWRecords connection exception
+            // if its unavailable then throw updateCSWRecords connection
+            // exception
             if (statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
                 throw new ConnectException();
 
-            //if the response is not OK then throw an error
-            throw new Exception("Returned status line: " + method.getStatusLine());
+            // if the response is not OK then throw an error
+            throw new Exception("Returned status line: "
+                    + method.getStatusLine());
         }
+
     }
 
     /**

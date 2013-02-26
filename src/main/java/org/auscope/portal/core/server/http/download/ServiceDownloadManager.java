@@ -11,7 +11,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -25,7 +27,10 @@ public class ServiceDownloadManager {
     protected final Log logger = LogFactory.getLog(getClass());
     private final int maxThreadPerEndpoint = 1;
     private final int maxThreadPerSession = 2;
-    public static final int MAX_WAIT_TIME_MINUTE = 20;
+    // VT: the individual download controllers should decided on the length of time we allow each download
+    // as they should be handled on a case by case basic rather then 1 length of time to set all.
+    // 120 minutes is a huge time as a final catch all safety net.
+    public static final int MAX_WAIT_TIME_MINUTE = 120;
     private static ConcurrentHashMap<String, Semaphore> endpointSemaphores;
     private static int globalId;
     private int callerId;
@@ -192,7 +197,12 @@ public class ServiceDownloadManager {
             GetMethod method = new GetMethod(url);
             try {
                 // Our request may fail (due to timeout or otherwise)
-                response.setResponseStream(serviceCaller.getMethodResponseAsStream(method));
+                HttpClient client=new HttpClient();
+                HttpClientParams clientParams=new HttpClientParams();
+                int timeoutMillsSec=MAX_WAIT_TIME_MINUTE * 60 * 1000;
+                clientParams.setSoTimeout(timeoutMillsSec);//VT 2 hours
+                client.setParams(clientParams);
+                response.setResponseStream(serviceCaller.getMethodResponseAsStream(method,client));
             } catch (Exception ex) {
                 logger.error(ex, ex);
                 response.setException(ex);
