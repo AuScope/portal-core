@@ -50,7 +50,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     /**
      * See parent class for information.
      */
-    makePolyline : function(id, sourceCswRecord,sourceOnlineResource, sourceLayer, points, color, weight, opacity) {
+    makePolyline : function(id, sourceCswRecord,sourceOnlineResource, sourceLayer, points, strokeColor, strokeWeight, strokeOpacity) {
         return Ext.create('portal.map.openlayers.primitives.Polyline', {
             id : id,
             layer : sourceLayer,

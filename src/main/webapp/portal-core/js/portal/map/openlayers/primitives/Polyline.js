@@ -32,7 +32,7 @@ Ext.define('portal.map.openlayers.primitives.Polyline', {
         var olLineString = new OpenLayers.Geometry.LineString(olPoints);
 
         //Construct our feature
-        var vector = new OpenLayers.Feature.Vector([olLineString], undefined, {
+        var vector = new OpenLayers.Feature.Vector(olLineString, undefined, {
             stroke : true,
             strokeColor : this.getStrokeColor(),
             strokeOpacity : this.getStrokeOpacity(),
