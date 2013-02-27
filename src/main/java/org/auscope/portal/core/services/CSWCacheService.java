@@ -403,13 +403,15 @@ public class CSWCacheService {
                     synchronized(newRecordCache) {
                         CSWRecord record = new CSWRecord(this.endpoint.getId());
                         record.setServiceName(this.endpoint.getTitle());
+                        
+                        record.setRecordInfoUrl(this.endpoint.getRecordInformationUrl());
                     
                         CSWOnlineResourceImpl cswResource = new CSWOnlineResourceImpl(
                               new URL(cswServiceUrl),
                               OnlineResourceType.CSWService.toString(), // Set the protocol to CSWService.
                               this.endpoint.getTitle(),
-                                "A link to a CSW end point."); 
-                    
+                                "A link to a CSW end point.");
+                   
                         record.setConstraints(this.endpoint.getDefaultConstraints());
                         
                         // Add the CQLText to the record so that we can use it in conjunction
