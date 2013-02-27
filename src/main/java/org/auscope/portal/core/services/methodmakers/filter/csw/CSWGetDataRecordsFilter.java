@@ -308,7 +308,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     }
         
     /** Sets the temporal extent's boundary. */
-    public void setTemporalExtentFrom(DateTime temporalExtentFrom, DateTime temporalExtentTo) {
+    public void setTemporalExtent(DateTime temporalExtentFrom, DateTime temporalExtentTo) {
         this.temporalExtentFrom = temporalExtentFrom;
         this.temporalExtentTo = temporalExtentTo;
     }
