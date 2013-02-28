@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services;
 
-import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,22 +12,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
-import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
-import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
-import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
-import org.auscope.portal.core.util.DOMUtil;
-import org.w3c.dom.Document;
 
 /**
  * A service for creating a cache of all keywords at a CSW.
