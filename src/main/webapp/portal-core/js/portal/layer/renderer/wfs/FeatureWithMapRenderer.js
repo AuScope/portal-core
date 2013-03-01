@@ -124,10 +124,15 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         //alert any listeners that we are about to start rendering wms
         //this.fireEvent('renderstarted', this, wmsResources, filterer);
 
-        //get the style format encoded as string
-        //portal.util.URL.base
-        //var victor='http://INDEX-KF.nexus.csiro.au:8088/AuScope-Portal/';
-        var styleUrl = escape(Ext.urlAppend(portal.util.URL.base + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
+
+        //VT: portal.util.URL.base is unable to resolve the name of the
+        // local machine instead return localhost. eg localhost:8080/Auscope-Portal/
+        var home=portal.util.URL.base;
+        if(home.indexOf("localhost") != -1){
+            home=home.replace("localhost",LOCALHOST);
+        }
+      //get the style format encoded as string
+        var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
         this.sld=unescape(styleUrl);
 
         var primitives = [];

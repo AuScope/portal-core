@@ -263,13 +263,20 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
 
 
         var email = sEmail;
-
+        var downloadUrl=layer.get('source').get('proxyDownloadUrl');
         var proxyUrl = renderer.getProxyUrl();
-        proxyUrl = (proxyUrl && proxyUrl.length > 0) ? proxyUrl : 'getAllFeatures.do';
+
+        if(downloadUrl && downloadUrl.length>0){
+            proxyUrl = downloadUrl;
+        }else{
+            proxyUrl = (proxyUrl && proxyUrl.length > 0) ? proxyUrl : 'getAllFeatures.do';
+        }
+
         var prefixUrl = portal.util.URL.base + proxyUrl + "?";
 
 
         var sUrl = '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="';
+
         sUrl += 'downloadGMLAsZip.do?';
         sUrl += "email=";
         sUrl += email;
