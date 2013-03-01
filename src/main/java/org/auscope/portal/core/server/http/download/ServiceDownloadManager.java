@@ -208,7 +208,6 @@ public class ServiceDownloadManager {
                 Header header=method.getResponseHeader("Content-Type");
                 if(header != null && header.getValue().length() > 0){
                     response.setContentType(method.getResponseHeader("Content-Type").getValue());
-                    System.out.println(response.getContentType());
                 }
 
             } catch (Exception ex) {

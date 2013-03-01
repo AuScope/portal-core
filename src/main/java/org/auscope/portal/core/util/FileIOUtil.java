@@ -252,7 +252,7 @@ public class FileIOUtil {
 
                 //Write stream into the zip entry
                 zout.putNextEntry(new ZipEntry(entryName));
-                writeInputToOutputStream(stream, zout, 1024 * 1024, closeInputs);
+                writeInputToOutputStream(stream, zout, 8 * 1024, closeInputs);
                 zout.closeEntry();
             } else {
                 writeErrorToZip(zout, download.getRequestURL(), download.getException(), entryName + ".error");
