@@ -40,16 +40,16 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     private String abstract_ = null;
     
     /** The metadata change date's lower bound. */
-    private DateTime metadataChangeDateFrom;
+    private DateTime metadataChangeDateFrom = null;
     
     /** The metadata change date's upper bound. */
-    private DateTime metadataChangeDateTo;
+    private DateTime metadataChangeDateTo = null;
     
     /** The temporal extent's lower bound. */
-    private DateTime temporalExtentFrom;
+    private DateTime temporalExtentFrom = null;
     
     /** The temporal extent's upper bound. */
-    private DateTime temporalExtentTo;
+    private DateTime temporalExtentTo = null;
 
     /** The spatial bounds. */
     private FilterBoundingBox spatialBounds;
@@ -172,6 +172,22 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         if (sensor != null && !sensor.isEmpty()) {
             fragments.add(this.generatePropertyIsEqualToFragment("sensor", sensor));
         }
+        
+        if (temporalExtentFrom != null ) {
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("TempExtent_begin", temporalExtentFrom.toString()));
+        }
+        
+        if (temporalExtentTo != null ) {
+            fragments.add(this.generatePropertyIsLessThanOrEqualTo("TempExtent_end", temporalExtentTo.toString()));
+        }
+        
+        if (metadataChangeDateFrom != null ) {
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("changeDate", metadataChangeDateFrom.toString()));
+        }
+        
+        if (metadataChangeDateTo != null ) {
+            fragments.add(this.generatePropertyIsLessThanOrEqualTo("changeDate", metadataChangeDateTo.toString()));
+        }
 
         return this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
     }
@@ -184,7 +200,6 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     @Override
     public String getFilterStringAllRecords() {
-
         // This is a bit of a hack - unfortunately the NamespaceContext class is
         // unsuitable here
         // as it contains no methods to iterate the contained list of
