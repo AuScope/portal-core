@@ -43,6 +43,9 @@ public class KnownLayer implements Serializable {
     /** URL to proxy data style requests through*/
     private String proxyStyleUrl;
 
+    /** URL to proxy download requests through*/
+    private String proxyDownloadUrl;
+
     /** Class for selecting CSWRecords that belong to this known layer*/
     private KnownLayerSelector knownLayerSelector;
 
@@ -198,11 +201,27 @@ public class KnownLayer implements Serializable {
     }
 
     /**
-     * Gets the URL to proxy style count requests through
+     * Gets the URL to proxy style requests through
      * @return
      */
     public String getProxyStyleUrl() {
         return proxyStyleUrl;
+    }
+
+    /**
+     * Sets the URL to proxy download requests through
+     * @param proxyUrl
+     */
+    public void setProxyDownloadUrl(String proxyDownloadUrl) {
+        this.proxyDownloadUrl = proxyDownloadUrl;
+    }
+
+    /**
+     * Gets the URL to proxy download requests through
+     * @return
+     */
+    public String getProxyDownloadUrl() {
+        return this.proxyDownloadUrl;
     }
 
 

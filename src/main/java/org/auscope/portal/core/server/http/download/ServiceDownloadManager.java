@@ -11,11 +11,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.util.EntityUtils;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 /**
  * A manager class that to control number of requests to a endpoint and also multithread a request
@@ -203,6 +205,12 @@ public class ServiceDownloadManager {
                 clientParams.setSoTimeout(timeoutMillsSec);//VT 2 hours
                 client.setParams(clientParams);
                 response.setResponseStream(serviceCaller.getMethodResponseAsStream(method,client));
+                Header header=method.getResponseHeader("Content-Type");
+                if(header != null && header.getValue().length() > 0){
+                    response.setContentType(method.getResponseHeader("Content-Type").getValue());
+                    System.out.println(response.getContentType());
+                }
+
             } catch (Exception ex) {
                 logger.error(ex, ex);
                 response.setException(ex);

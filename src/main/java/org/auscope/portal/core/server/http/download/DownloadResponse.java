@@ -9,11 +9,13 @@ public class DownloadResponse {
     private InputStream responseStream;
     private Exception exception;
     private String requestURL;
+    private String contentType;
 
     public DownloadResponse(String url){
-        requestURL=url;
-        exception=null;
-        responseStream=null;
+        requestURL = url;
+        exception = null;
+        responseStream = null;
+        contentType = "";
     }
 
     public String getResponseAsString() throws IOException{
@@ -54,6 +56,14 @@ public class DownloadResponse {
             e.printStackTrace();
             return "error";
         }
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
 }

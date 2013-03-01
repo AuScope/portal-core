@@ -23,6 +23,7 @@ public class DownloadTracker {
     private Progression downloadProgress;
     private File file;
 
+
     static {
         downloadTracker = new ConcurrentHashMap<String, DownloadTracker>();
     }
@@ -128,10 +129,10 @@ public class DownloadTracker {
             }  catch (Exception e) {
                 logger.error("Error with the serviceDownloadManager", e);
                 e.printStackTrace();
+            }finally{
+                //VT : No matter what happens we have to give it a completion.
+                DownloadTracker.this.setDownloadComplete();
             }
-
-
-            DownloadTracker.this.setDownloadComplete();
 
         }
 

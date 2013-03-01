@@ -15,6 +15,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.util.FileIOUtil;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
@@ -132,7 +133,7 @@ public class TestBasePortalController extends PortalTestClass {
         ZipOutputStream zout = new ZipOutputStream(outputStream);
 
         //Write our data out
-        basePortalController.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false);
+        FileIOUtil.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false);
         zout.finish();
         zout.close();
         outputStream.close();
@@ -176,7 +177,7 @@ public class TestBasePortalController extends PortalTestClass {
             oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
         }});
 
-        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
     }
 
     /**
@@ -196,7 +197,7 @@ public class TestBasePortalController extends PortalTestClass {
             oneOf(mockInput).close();
         }});
 
-        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
+        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
     }
 
     /**
@@ -214,6 +215,6 @@ public class TestBasePortalController extends PortalTestClass {
             will(throwException(new IOException()));
         }});
 
-        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
     }
 }
