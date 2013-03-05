@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.methodmakers.filter.AbstractFilter;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.joda.time.DateTime;
@@ -17,7 +19,8 @@ import org.joda.time.DateTime;
  *
  */
 public class CSWGetDataRecordsFilter extends AbstractFilter {
-
+    private final Log log = LogFactory.getLog(getClass());
+    
     /**
      * How the list of keywords will be used to match records.
      */
@@ -189,7 +192,12 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             fragments.add(this.generatePropertyIsLessThanOrEqualTo("changeDate", metadataChangeDateTo.toString()));
         }
 
-        return this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
+        
+        String fragment = this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
+        
+        log.trace(fragment);
+        
+        return fragment;
     }
 
     /**
