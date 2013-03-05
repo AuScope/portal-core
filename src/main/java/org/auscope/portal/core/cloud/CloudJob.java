@@ -33,6 +33,8 @@ public class CloudJob implements Serializable {
     protected String user;
     /** date/time when this job was submitted*/
     protected Date submitDate;
+    /** date/time when this job was processed*/
+    protected Date processDate;
     /** descriptive status of this job */
     protected String status;
 
@@ -165,6 +167,22 @@ public class CloudJob implements Serializable {
         this.submitDate = submitDate;
     }
 
+    /**
+     * date/time when this job was processed
+     * @return
+     */
+    public Date getProcessDate() {
+        return processDate;
+    }
+
+    /**
+     * date/time when this job was processed
+     * @param processDate
+     */
+    public void setProcessDate(Date processDate) {
+        this.processDate = processDate;
+    }
+    
     /**
      * date/time when this job was submitted (expects a date in the format CloudJob.DATE_FORMAT)
      *
