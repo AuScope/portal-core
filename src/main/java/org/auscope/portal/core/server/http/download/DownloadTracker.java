@@ -107,11 +107,12 @@ public class DownloadTracker {
             ZipOutputStream zout;
 
             try {
-                //in the event that a user makes another request we want to ensure the old file reference is deleted
-                //and a file one is created in its place.
-                if(file.exists()){
+                // in the event that a user makes another request we want to
+                // ensure the old file reference is deleted
+                // and a file one is created in its place.
+                if (file.exists()) {
                     file.delete();
-                    file=File.createTempFile(email, ".zip");
+                    file = File.createTempFile(email, ".zip");
                 }
                 fos = new FileOutputStream(file);
                 zout = new ZipOutputStream(fos);
@@ -126,11 +127,11 @@ public class DownloadTracker {
             } catch (FileNotFoundException e) {
                 logger.error("Unable to write to file", e);
                 e.printStackTrace();
-            }  catch (Exception e) {
+            } catch (Exception e) {
                 logger.error("Error with the serviceDownloadManager", e);
                 e.printStackTrace();
-            }finally{
-                //VT : No matter what happens we have to give it a completion.
+            } finally {
+                // VT : No matter what happens we have to give it a completion.
                 DownloadTracker.this.setDownloadComplete();
             }
 

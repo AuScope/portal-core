@@ -245,7 +245,7 @@ public class FileIOUtil {
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
             String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml";
-
+            //TODO: VT - this method can be further improved if we thread this method as we are processing each stream one by one.
             // Check that attempt to request is successful
             if (!download.hasException()) {
                 InputStream stream = download.getResponseAsStream();

@@ -32,7 +32,7 @@ public class ServiceDownloadManager {
     // VT: the individual download controllers should decided on the length of time we allow each download
     // as they should be handled on a case by case basic rather then 1 length of time to set all.
     // 120 minutes is a huge time as a final catch all safety net.
-    public static final int MAX_WAIT_TIME_MINUTE = 120;
+    public static final int MAX_WAIT_TIME_MINUTE = 360;
     private static ConcurrentHashMap<String, Semaphore> endpointSemaphores;
     private static int globalId;
     private int callerId;
@@ -202,7 +202,7 @@ public class ServiceDownloadManager {
                 HttpClient client=new HttpClient();
                 HttpClientParams clientParams=new HttpClientParams();
                 int timeoutMillsSec=MAX_WAIT_TIME_MINUTE * 60 * 1000;
-                clientParams.setSoTimeout(timeoutMillsSec);//VT 2 hours
+                clientParams.setSoTimeout(timeoutMillsSec);
                 client.setParams(clientParams);
                 response.setResponseStream(serviceCaller.getMethodResponseAsStream(method,client));
                 Header header=method.getResponseHeader("Content-Type");
