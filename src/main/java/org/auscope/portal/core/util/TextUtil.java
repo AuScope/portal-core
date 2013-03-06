@@ -12,7 +12,8 @@ import org.apache.commons.io.IOUtils;
  */
 public class TextUtil {
     /**
-     * Get the last N lines of multi-line text.
+     * Get the last N lines of multi-line text. Each line will be separated by
+     * platform dependant line separator.
      * 
      * @param text The multi-line text.
      * @param maxLines The last N lines.
