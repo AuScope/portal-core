@@ -45,8 +45,8 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             title : 'Download Options',
             buttonAlign : 'right',
             modal : true,
-            width : 550,
-            height : 200,
+            width : 570,
+            height : 390,
             layout : {
                 type : 'anchor'
                 //align : 'stretch'
@@ -56,7 +56,8 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 xtype : 'label',
                 anchor : '100%',
                 style : 'font-size: 12px;',
-                text : 'The portal will make a download request on your behalf and return the results in a ZIP archive. How would you like the portal to filter your download?'
+                border : '10',
+                html : this._parseNotifcationString(resources)
             },{
                 xtype : 'fieldset',
                 anchor : '100%',
@@ -140,6 +141,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 },{
 
                     xtype : 'toolbar',
+                    anchor : '100%',
                     border : false,
                     layout : {
                         type : 'hbox',
@@ -166,7 +168,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         iconCls : 'download',
                         handler : function(button) {
                             var sEmail = Ext.getCmp('downloadToken').getValue();
-                            if ( sEmail === '') {
+                            if ( sEmail === '' && sEmail.length < 4) {
                                 Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
                                 Ext.getCmp('downloadToken').markInvalid();
                                 return;
@@ -252,6 +254,27 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
 
     },
 
+    _parseNotifcationString : function(resources){
+
+        var text = '<p>The portal will make a download request on your behalf and return the results in a ZIP archive.';
+            text += 'Please check back with us later using your email as access token and click on Check Status</p>';
+            text += '<br><p>We limit the results to 2000 features per access point.';
+            text += 'You can either modify the download filter or alternatively, you can download directly from the access points below</p><br>';
+
+        var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
+
+
+        for (var i = 0; i < wfsResources.length; i++) {
+            text += '<a href="' + wfsResources[i].get('url') +'">' + wfsResources[i].get('url') + '</a><br>';
+        }
+
+        text += '<br><p>How would you like the portal to filter your download?</p>';
+
+        return text;
+
+
+    },
+
     /**
      * Handles a download the specified set of online resources and filterer
      *
@@ -296,7 +319,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
 
             filterParameters.serviceUrl = url;
             filterParameters.typeName = typeName;
-            filterParameters.maxFeatures = 0;
+            filterParameters.maxFeatures = 2000;
 
 
             sUrl += '&serviceUrls=' + escape(Ext.urlEncode(filterParameters, prefixUrl));
