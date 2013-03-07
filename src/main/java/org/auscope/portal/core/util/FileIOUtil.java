@@ -224,7 +224,7 @@ public class FileIOUtil {
      */
     public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads,ZipOutputStream zout) throws IOException{
       if(gmlDownloads.get(0).getContentType().equals("text/xml")){
-          writeResponseToZip(gmlDownloads,zout,false);
+          writeResponseToZip(gmlDownloads,zout,true);
       }else{ //VT: TODO: the different response type should be handled differently.
              //VT: eg. handle application/json and a final catch all.
           log.warn("No content type found, defaulting to handling JSON responses");
@@ -240,6 +240,7 @@ public class FileIOUtil {
      *
      * @param gmlDownloads The download responses
      * @param zout The stream to receive the zip entries
+     * @param closeInput true to close all the input stream in the gmlDownloads
      */
     public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs) throws IOException {
         for (int i = 0; i < gmlDownloads.size(); i++) {
@@ -297,9 +298,10 @@ public class FileIOUtil {
      * @param output The output stream (will receive input's bytes)
      * @param bufferSize The size (in bytes) of the in memory buffer
      * @param closeInput if true, the input will be closed prior to this method returning
+     * @throws Exception
      * @throws IOException
      */
-    public static void writeInputToOutputStream(InputStream input, OutputStream output, int bufferSize, boolean closeInput) throws IOException {
+    public static void writeInputToOutputStream(InputStream input, OutputStream output, int bufferSize, boolean closeInput) throws IOException  {
         try {
             byte[] buffer = new byte[bufferSize];
             int dataRead;
@@ -309,7 +311,9 @@ public class FileIOUtil {
                     output.write(buffer, 0, dataRead);
                 }
             } while (dataRead != -1);
-        } finally {
+        } catch(Exception e){
+            writeExceptionToXMLStream(e, output, false);
+        }finally {
             if (closeInput) {
                 FileIOUtil.closeQuietly(input);
             }
@@ -379,9 +383,21 @@ public class FileIOUtil {
      * @param closeStream
      * @throws Exception
      */
-    public static void writeExceptionToXMLStream(Exception e,OutputStream out,boolean closeStream) throws Exception{
+    public static void writeExceptionToXMLStream(Exception e,OutputStream out,boolean closeStream) throws IOException{
+        writeExceptionToXMLStream(e,out,closeStream,"");
+    }
+
+
+    /**
+     * VT: Have to think of a better way to handle exception rather then just encapsulating the error in xml
+     * @param e
+     * @param out
+     * @param closeStream
+     * @throws Exception
+     */
+    public static void writeExceptionToXMLStream(Exception e,OutputStream out,boolean closeStream,String additionalMsg) throws IOException{
         String stack=ExceptionUtils.getStackTrace(e);
-        String error="<error>" + stack + "</error>";
+        String error="<StackTrace>" + additionalMsg + "\n" + stack + "</StackTrace>";
         try {
             out.write(error.getBytes());
         } catch (IOException e1) {
@@ -393,4 +409,6 @@ public class FileIOUtil {
             }
         }
     }
+
+
 }
