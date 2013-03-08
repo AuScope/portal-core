@@ -45,6 +45,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             title : 'Download Options',
             buttonAlign : 'right',
             modal : true,
+            border : '1 1 0 1',
             width : 570,
             layout : {
                 type : 'anchor'
@@ -150,7 +151,8 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 xtype : 'toolbar',
                 dock: 'bottom',
                 anchor : '100%',
-                border : false,
+                border : '0 1 1 1',
+                margin : '-1 0 0 0',
                 layout : {
                     type : 'hbox',
                     pack : 'end'
