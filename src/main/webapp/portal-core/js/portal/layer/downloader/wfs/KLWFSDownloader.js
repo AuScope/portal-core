@@ -46,23 +46,27 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             buttonAlign : 'right',
             modal : true,
             width : 570,
-            height : 390,
             layout : {
                 type : 'anchor'
                 //align : 'stretch'
             },
 
             items : [{
-                xtype : 'label',
+                xtype : 'fieldset',
                 anchor : '100%',
-                style : 'font-size: 12px;',
-                border : '10',
-                html : this._parseNotifcationString(resources)
+                layout : 'fit',
+                padding : '10 10 0 10',
+                border : false,
+                items : [{
+                    xtype : 'label',
+                    style : 'font-size: 12px;',
+                    html : this._parseNotifcationString(resources)
+                }]
             },{
                 xtype : 'fieldset',
                 anchor : '100%',
                 layout : 'fit',
-                border : 0,
+                border : false,
                 items : [{
                     //Our radiogroup can see its item list vary according to the presence of bounding boxes
                     xtype : 'radiogroup',
@@ -125,7 +129,8 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                     xtype : 'fieldset',
                     anchor : '100%',
                     layout : 'fit',
-                    border : 0,
+                    border : false,
+                    margin : '0 0 50 0',
                     items : [{
                         xtype           : 'textfield',
                         id              : 'downloadToken',
@@ -138,64 +143,66 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         anchor          : '-50'
                     }]
 
-                },{
+                }]
 
-                    xtype : 'toolbar',
-                    anchor : '100%',
-                    border : false,
-                    layout : {
-                        type : 'hbox',
-                        pack : 'end'
-                    },
-                    items : [{
-                        xtype : 'button',
-                        text: 'Check Status',
-                        iconCls : 'info',
-                        handler: function() {
-                            var sEmail = Ext.getCmp('downloadToken').getValue();
-                            if ( sEmail === '') {
-                                Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
-                                Ext.getCmp('downloadToken').markInvalid();
-                                return;
-                            } else {
-                               me._doCheckRequest(sEmail);
-                            }
+            }],
+            dockedItems: [{
+                xtype : 'toolbar',
+                dock: 'bottom',
+                anchor : '100%',
+                border : false,
+                layout : {
+                    type : 'hbox',
+                    pack : 'end'
+                },
+                items : [{
+                    xtype : 'button',
+                    text: 'Check Status',
+                    iconCls : 'info',
+                    handler: function() {
+                        var sEmail = Ext.getCmp('downloadToken').getValue();
+                        if ( sEmail === '') {
+                            Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
+                            Ext.getCmp('downloadToken').markInvalid();
+                            return;
+                        } else {
+                           me._doCheckRequest(sEmail);
                         }
+                    }
 
-                    },{
-                        xtype : 'button',
-                        text : 'Download',
-                        iconCls : 'download',
-                        handler : function(button) {
-                            var sEmail = Ext.getCmp('downloadToken').getValue();
-                            if ( sEmail === '' && sEmail.length < 4) {
-                                Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
-                                Ext.getCmp('downloadToken').markInvalid();
-                                return;
-                            } else {
-                                var bboxJson = '';
-                                var popup = button.ownerCt.ownerCt.ownerCt;
-                                var fieldSet = popup.items.getAt(1); //our second item is the fieldset
-                                var radioGroup = fieldSet.items.getAt(0);
-                                var checkedRadio = radioGroup.getChecked()[0]; //there should always be a checked radio
+                },{
+                    xtype : 'button',
+                    text : 'Download',
+                    iconCls : 'download',
+                    handler : function(button) {
+                        var sEmail = Ext.getCmp('downloadToken').getValue();
+                        if ( sEmail === '' && sEmail.length < 4) {
+                            Ext.MessageBox.alert('Unable to submit request...','Please Enter valid Email Address');
+                            Ext.getCmp('downloadToken').markInvalid();
+                            return;
+                        } else {
+                            var bboxJson = '';
+                            var popup = button.ownerCt.ownerCt
+                            var fieldSet = popup.items.getAt(1); //our second item is the fieldset
+                            var radioGroup = fieldSet.items.getAt(0);
+                            var checkedRadio = radioGroup.getChecked()[0]; //there should always be a checked radio
 
-                                switch(checkedRadio.inputValue) {
-                                case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE:
-                                    me._doDownload(layer, currentFilterer, resources, sEmail);
-                                    break;
-                                case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE:
-                                    me._doDownload(layer, renderedFilterer, resources, sEmail);
-                                    break;
-                                default:
-                                    me._doDownload(layer, renderedFilterer, resources, sEmail);
-                                    break;
-                                }
-
-                                //popup.close();
+                            switch(checkedRadio.inputValue) {
+                            case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE:
+                                me._doDownload(layer, currentFilterer, resources, sEmail);
+                                break;
+                            case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE:
+                                me._doDownload(layer, renderedFilterer, resources, sEmail);
+                                break;
+                            default:
+                                me._doDownload(layer, renderedFilterer, resources, sEmail);
+                                break;
                             }
-                        }//end of handler function
 
-                    }]
+                            //popup.close();
+                        }
+                    }//end of handler function
+
                 }]
             }]
         }).show();
@@ -268,7 +275,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             text += '<a href="' + wfsResources[i].get('url') +'">' + wfsResources[i].get('url') + '</a><br>';
         }
 
-        text += '<br><p>How would you like the portal to filter your download?</p>';
+        text += '<br>How would you like the portal to filter your download?';
 
         return text;
 
