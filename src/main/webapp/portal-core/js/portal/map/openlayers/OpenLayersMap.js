@@ -240,26 +240,50 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var containerId = container.body.dom.id;
 
         this.map = new OpenLayers.Map(containerId, {
+            projection: 'EPSG:4326',
             controls : [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.PanZoomBar(),
                 //new OpenLayers.Control.LayerSwitcher({'ascending':false}), //useful for debug
                 new OpenLayers.Control.MousePosition(),
                 new OpenLayers.Control.KeyboardDefaults()
-            ]
+            ],
+            layers: [
+                     new OpenLayers.Layer.Google(
+                             "Google Hybrid",
+                             {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
+                         ),
+                     new OpenLayers.Layer.Google(
+                         "Google Physical",
+                         {type: google.maps.MapTypeId.TERRAIN}
+                     ),
+                     new OpenLayers.Layer.Google(
+                         "Google Streets", // the default
+                         {numZoomLevels: 20}
+                     ),
+                     new OpenLayers.Layer.Google(
+                         "Google Satellite",
+                         {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+                     )
+                 ],
+                 center: new OpenLayers.LonLat(133.3, -26)
+                     // Google.v3 uses web mercator as projection, so we have to
+                     // transform our coordinates
+                     .transform('EPSG:4326', 'EPSG:3857'),
+                 zoom: 4
         });
 
-        var baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-                "http://vmap0.tiles.osgeo.org/wms/vmap0",
-                {layers: 'basic'},
-                {wrapDateLine : true, isBaseLayer : true});
-        this.map.addLayer(baseLayer);
-
-        this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {});
+        var ls = new OpenLayers.Control.LayerSwitcher()
+        this.map.addControl(ls);
+        ls.maximizeControl();
+        this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {
+                                preFeatureInsert: function(feature) {
+                                    // Google.v3 uses web mercator as projection, so we have to
+                                    // transform our coordinates
+                                    feature.geometry.transform('EPSG:4326','EPSG:3857');
+                                }
+                            });
         this.map.addLayer(this.vectorLayer);
-
-        this.map.zoomTo(4);
-        this.map.panTo(new OpenLayers.LonLat(133.3, -26));
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
         this.container = container;
@@ -282,7 +306,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * function()
      */
     getVisibleMapBounds : function() {
-        var bounds = this.map.getExtent().toArray();
+        var bounds = this.map.getExtent().transform('EPSG:3857','EPSG:4326').toArray();
 
         return Ext.create('portal.util.BBox', {
             westBoundLongitude : bounds[0],
