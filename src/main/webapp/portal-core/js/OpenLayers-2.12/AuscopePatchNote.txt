@@ -1,0 +1,5 @@
+* Override style.css.olImageLoadError as pink tiles are shown when wms fail to load. I replace it to display none as follow,
+
+.olImageLoadError {
+   display: none !important;
+}
