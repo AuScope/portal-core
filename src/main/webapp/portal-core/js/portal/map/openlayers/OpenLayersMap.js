@@ -240,7 +240,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var containerId = container.body.dom.id;
 
         this.map = new OpenLayers.Map(containerId, {
-            projection: 'EPSG:4326',
+            projection: 'EPSG:3857',
             controls : [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.PanZoomBar(),
