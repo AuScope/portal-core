@@ -198,8 +198,10 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     _onClick : function(vector, e) {
         var primitive = vector ? vector.attributes['portalBasePrimitive'] : null;
         var lonlat = this.map.getLonLatFromViewPortPx(e.xy);
+        lonlat = lonlat.transform('EPSG:3857','EPSG:4326');
         var longitude = lonlat.lon;
         var latitude = lonlat.lat;
+
         var layer = primitive ? primitive.getLayer() : null;
 
         var queryTargets = [];
@@ -240,26 +242,50 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var containerId = container.body.dom.id;
 
         this.map = new OpenLayers.Map(containerId, {
+            projection: 'EPSG:3857',
             controls : [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.PanZoomBar(),
                 //new OpenLayers.Control.LayerSwitcher({'ascending':false}), //useful for debug
                 new OpenLayers.Control.MousePosition(),
                 new OpenLayers.Control.KeyboardDefaults()
-            ]
+            ],
+            layers: [
+                     new OpenLayers.Layer.Google(
+                             "Google Hybrid",
+                             {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
+                         ),
+                     new OpenLayers.Layer.Google(
+                         "Google Physical",
+                         {type: google.maps.MapTypeId.TERRAIN}
+                     ),
+                     new OpenLayers.Layer.Google(
+                         "Google Streets", // the default
+                         {numZoomLevels: 20}
+                     ),
+                     new OpenLayers.Layer.Google(
+                         "Google Satellite",
+                         {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+                     )
+                 ],
+                 center: new OpenLayers.LonLat(133.3, -26)
+                     // Google.v3 uses web mercator as projection, so we have to
+                     // transform our coordinates
+                     .transform('EPSG:4326', 'EPSG:3857'),
+                 zoom: 4
         });
 
-        var baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-                "http://vmap0.tiles.osgeo.org/wms/vmap0",
-                {layers: 'basic'},
-                {wrapDateLine : true, isBaseLayer : true});
-        this.map.addLayer(baseLayer);
-
-        this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {});
+        var ls = new OpenLayers.Control.LayerSwitcher()
+        this.map.addControl(ls);
+        ls.maximizeControl();
+        this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {
+                                preFeatureInsert: function(feature) {
+                                    // Google.v3 uses web mercator as projection, so we have to
+                                    // transform our coordinates
+                                    feature.geometry.transform('EPSG:4326','EPSG:3857');
+                                }
+                            });
         this.map.addLayer(this.vectorLayer);
-
-        this.map.zoomTo(4);
-        this.map.panTo(new OpenLayers.LonLat(133.3, -26));
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
         this.container = container;
@@ -282,7 +308,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * function()
      */
     getVisibleMapBounds : function() {
-        var bounds = this.map.getExtent().toArray();
+        var bounds = this.map.getExtent().transform('EPSG:3857','EPSG:4326').toArray();
 
         return Ext.create('portal.util.BBox', {
             westBoundLongitude : bounds[0],
@@ -320,6 +346,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         //Firstly create a popup with a chunk of placeholder HTML - we will render an ExtJS container inside that
         var popupId = Ext.id();
         var location = new OpenLayers.LonLat(windowLocation.getLongitude(), windowLocation.getLatitude());
+        location = location.transform('EPSG:4326','EPSG:3857');
         var verticalPadding = content.length <= 1 ? 0 : 32; //If we are opening a padded popup, we need to pad for the header
         var horizontalPadding = 0;
         var paddedSize = new OpenLayers.Size(width + horizontalPadding, height + verticalPadding);
@@ -417,7 +444,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * @param point portal.map.Point to be centered on
      */
     setCenter : function(point) {
-        this.map.panTo(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()));
+        this.map.panTo((new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()))
+                .transform('EPSG:4326','EPSG:3857'));
     },
 
     /**
@@ -427,7 +455,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     getCenter : function() {
         var center = this.map.getCenter();
-
+        center = center.transform('EPSG:3857','EPSG:4326');
         return Ext.create('portal.map.Point', {
             longitude : center.lon,
             latitude : center.lat
@@ -443,13 +471,18 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     getTileInformationForPoint : function(point) {
         var layer = this.map.baseLayer;
-
+        var tileSize = this.map.getTileSize();
         //Get the bounds of the tile that encases point
         var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
+            lonLat = lonLat.transform('EPSG:4326','EPSG:3857');
         var viewPortPixel = this.map.getViewPortPxFromLonLat(lonLat);
-        var tileBounds = layer.getTileBounds(viewPortPixel);
+        var tileBounds = this.getTileBounds(viewPortPixel,point);
+
+
+
 
         var tileOrigin = new OpenLayers.LonLat(tileBounds.left, tileBounds.top);
+        tileOrigin = tileOrigin.transform('EPSG:4326','EPSG:3857');
         var tileOriginPixel = this.map.getViewPortPxFromLonLat(tileOrigin);
 
         return Ext.create('portal.map.TileInformation', {
@@ -469,6 +502,40 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     },
 
     /**
+      * This function is a hack to get the tile bound following the same logic as provided
+      * by the kaMap(openlayers defaults map).getTileBounds() function
+      * @param {OpenLayers.Pixel} viewPortPx The location in the viewport
+      * @param points the point in lat lon which was clicked.
+      * @returns The tile bounds for a layer given a pixel location
+      * @type OpenLayers.Bounds
+      */
+     getTileBounds: function(viewPortPx,point) {
+         //VT: I hardcoded the maxExtent as a workaround as calling transform to EPSG:4326
+         // on this.map.getMaxExtent() makes the map behave funny.
+         var maxExtent = new OpenLayers.Bounds(-180, -85, 180, 85);
+         //VT: workaround to get the resolution as calling this.map.getResolution
+         // gave me a weird number in the the 20k range. I am unsure how that value is
+         // interpreted. Found nothing on the docs regarding this.
+         var resolution = 156543.0339 * Math.cos(1.57078734) / Math.pow(2, this.map.getZoom());
+         var tileMapWidth = resolution * this.map.tileSize.w;
+         var tileMapHeight = resolution * this.map.tileSize.h;
+
+         var mapPoint = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
+         var tileLeft = maxExtent.left + (tileMapWidth *
+                                          Math.floor((mapPoint.lon -
+                                                      maxExtent.left) /
+                                                     tileMapWidth));
+         var tileBottom = maxExtent.bottom + (tileMapHeight *
+                                              Math.floor((mapPoint.lat -
+                                                          maxExtent.bottom) /
+                                                         tileMapHeight));
+
+         return new OpenLayers.Bounds(tileLeft, tileBottom,
+                                      tileLeft + tileMapWidth,
+                                      tileBottom + tileMapHeight);
+     },
+
+    /**
      * Returns an portal.map.Size object representing the map size in pixels in the form
      *
      * function()
@@ -485,7 +552,9 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * See parent class for information
      */
     getPixelFromLatLng : function(point) {
-        var layerPixel = this.map.getLayerPxFromLonLat(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()));
+        var lonlat=new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
+        lonlat = lonlat.transform('EPSG:4326','EPSG:3857');
+        var layerPixel = this.map.getLayerPxFromLonLat(lonlat);
         var viewportPixel = this.map.getViewPortPxFromLayerPx(layerPixel);
 
         return {
