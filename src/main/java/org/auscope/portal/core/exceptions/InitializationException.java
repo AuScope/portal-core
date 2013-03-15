@@ -1,5 +1,10 @@
 package org.auscope.portal.core.exceptions;
 
+/**
+ * Exception thrown during any Initialization phase
+ * @author tey006
+ *
+ */
 public class InitializationException extends Exception{
 
     /**
