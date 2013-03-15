@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +23,8 @@ public class DownloadTracker {
     private static ConcurrentHashMap<String, DownloadTracker> downloadTracker;
     private Progression downloadProgress;
     private File file;
-
+    private long lastCompletedTime=System.currentTimeMillis();
+    public static final long timeAllowForCache=6 * 60 * 60 * 1000; //VT we give the user 6 hours to download before we clear up memory
 
     static {
         downloadTracker = new ConcurrentHashMap<String, DownloadTracker>();
@@ -32,7 +34,8 @@ public class DownloadTracker {
         this.email = email;
         downloadProgress = Progression.NOT_STARTED;
         try {
-            this.file=File.createTempFile(email, ".zip");
+            this.file=File.createTempFile("APT_TRACKER", ".zip");
+            this.file.deleteOnExit();
         } catch (IOException e) {
             logger.error("Unable to write to file", e);
             e.printStackTrace();
@@ -40,6 +43,10 @@ public class DownloadTracker {
     }
 
     public static DownloadTracker getTracker(String email) {
+
+        //VT: always perform some clean up in case of memory leak.
+        DownloadTracker.cleanUp(timeAllowForCache);
+
         if (downloadTracker.containsKey(email)) {
             return downloadTracker.get(email);
         } else {
@@ -47,6 +54,19 @@ public class DownloadTracker {
 
             downloadTracker.put(email, tracker);
             return tracker;
+        }
+    }
+
+    public synchronized static void cleanUp(long timeAllowance){
+        //Everytime someone attempts to get a Tracker we do some cleaning up
+        Set<String> keys =downloadTracker.keySet();
+        long currentTime=System.currentTimeMillis();
+
+        for(String key:keys){
+            long lastComplete=downloadTracker.get(key).getLastCompletedTime();
+            if(currentTime - lastComplete > timeAllowance){
+                downloadTracker.remove(key);
+            }
         }
     }
 
@@ -83,7 +103,12 @@ public class DownloadTracker {
         }
     }
 
+    public long getLastCompletedTime(){
+        return this.lastCompletedTime;
+    }
+
     public synchronized void setDownloadComplete() {
+        this.lastCompletedTime=System.currentTimeMillis();
         this.downloadProgress = Progression.COMPLETED;
     }
 
@@ -112,7 +137,8 @@ public class DownloadTracker {
                 // and a file one is created in its place.
                 if (file.exists()) {
                     file.delete();
-                    file = File.createTempFile(email, ".zip");
+                    file = File.createTempFile("APT_TRACKER", ".zip");
+                    file.deleteOnExit();
                 }
                 fos = new FileOutputStream(file);
                 zout = new ZipOutputStream(fos);
