@@ -85,6 +85,12 @@ public class DownloadTracker {
         for(String key:keys){
             long lastComplete=downloadTracker.get(key).getLastCompletedTime();
             if(currentTime - lastComplete > timeAllowance){
+                try {
+                    File f=downloadTracker.get(key).getFileHandle();
+                    f.delete();
+                } catch (Exception e) {
+                    LogFactory.getLog(DownloadTracker.class).warn(e);
+                }
                 downloadTracker.remove(key);
             }
         }
