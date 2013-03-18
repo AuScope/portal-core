@@ -246,7 +246,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 new OpenLayers.Control.LayerSwitcher({'ascending':false}), //useful for debug
                 new OpenLayers.Control.MousePosition(),
                 new OpenLayers.Control.KeyboardDefaults(),
-                new OpenLayers.Control.Graticule(),
                 new OpenLayers.Control.Scale(),
                 new OpenLayers.Control.ScaleLine()
 
