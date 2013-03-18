@@ -243,17 +243,54 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             controls : [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.PanZoomBar(),
-                //new OpenLayers.Control.LayerSwitcher({'ascending':false}), //useful for debug
+                new OpenLayers.Control.LayerSwitcher({'ascending':false}), //useful for debug
                 new OpenLayers.Control.MousePosition(),
-                new OpenLayers.Control.KeyboardDefaults()
+                new OpenLayers.Control.KeyboardDefaults(),
+                new OpenLayers.Control.Graticule(),
+                new OpenLayers.Control.Scale(),
+                new OpenLayers.Control.ScaleLine()
+
             ]
         });
 
-        var baseLayer = new OpenLayers.Layer.WMS( "OpenLayers WMS",
-                "http://vmap0.tiles.osgeo.org/wms/vmap0",
-                {layers: 'basic'},
-                {wrapDateLine : true, isBaseLayer : true});
+        //VT: adds a customZoomBox which fires a afterZoom event.
+        var customNavToolBar = OpenLayers.Class(OpenLayers.Control.NavToolbar, {
+            initialize: function(options) {
+                OpenLayers.Control.Panel.prototype.initialize.apply(this, [options]);
+                this.addControls([
+                  new OpenLayers.Control.Navigation(),
+                  new OpenLayers.Control.CustomZoomBox({alwaysZoom:true})
+                ])
+            }
+
+        });
+
+        //VT: once we catch the afterZoom event, reset the control to panning.
+        var customNavTb=new customNavToolBar();
+        customNavTb.controls[1].events.on({
+            "afterZoom": function() {
+               customNavTb.defaultControl=customNavTb.controls[0];
+               customNavTb.activateControl(customNavTb.controls[0]);
+            }
+        })
+
+        this.map.addControl(customNavTb);
+
+        var baseLayer = new OpenLayers.Layer.WMS(
+                "Global Imagery",
+                "http://maps.opengeo.org/geowebcache/service/wms",
+                {layers: "bluemarble"}
+            );
+
+        var imagery = new OpenLayers.Layer.WMS(
+                "Global Imagery",
+                "http://maps.opengeo.org/geowebcache/service/wms",
+                {layers: "openstreetmap", format: "image/png"}
+            );
+
         this.map.addLayer(baseLayer);
+        this.map.addLayer(imagery);
+
 
         this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {});
         this.map.addLayer(this.vectorLayer);
