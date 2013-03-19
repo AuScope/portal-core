@@ -151,7 +151,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 }
 
                 //If it doesn't, don't consider this point for examination
-                if (!containsPoint) {
+                if (!containsPoint || layer.visible==false) {
                     continue;
                 }
 

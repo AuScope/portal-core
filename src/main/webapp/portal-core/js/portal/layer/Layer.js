@@ -13,6 +13,8 @@ Ext.define('portal.layer.Layer', {
         CSW_RECORD : 'CSWRecord' //A value for 'sourceType'
     },
 
+    visible : true,
+
     fields: [
         { name: 'id', type: 'string' }, //A unique ID of this layer - sourced from the original KnownLayer/CSWRecord
         { name: 'sourceType', type: 'string' }, //an 'enum' representing whether this Layer was constructed from a KnownLayer or CSWRecord
@@ -58,8 +60,10 @@ Ext.define('portal.layer.Layer', {
      */
     onVisibilityChanged : function(renderer, newVisibility) {
         if (newVisibility) {
+            this.visible=true;
             renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
         } else {
+            this.visible=false;
             renderer.abortDisplay();
             renderer.removeData();
             renderer.map.closeInfoWindow(this.get('id'));
