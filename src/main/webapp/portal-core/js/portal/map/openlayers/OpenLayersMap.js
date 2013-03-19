@@ -275,15 +275,22 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
         this.map.addControl(customNavTb);
 
+        var ls = new OpenLayers.Control.LayerSwitcher({'ascending':false});
+
+        this.map.addControl(ls);
+        ls.maximizeControl();
+
+
+
         var baseLayer = new OpenLayers.Layer.WMS(
-                "Global Imagery",
+                "Blue Marble",
                 "http://maps.opengeo.org/geowebcache/service/wms",
                 {layers: "bluemarble"},
                 {wrapDateLine:true,isBaseLayer:true }
             );
 
         var imagery = new OpenLayers.Layer.WMS(
-                "Global Imagery",
+                "Open Street Map",
                 "http://maps.opengeo.org/geowebcache/service/wms",
                 {layers: "openstreetmap", format: "image/png"},
                 {wrapDateLine:true,isBaseLayer:true }
@@ -293,7 +300,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         this.map.addLayer(imagery);
 
 
-        this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {});
+        this.vectorLayer = new OpenLayers.Layer.Vector("Markers", {});
         this.map.addLayer(this.vectorLayer);
 
         this.map.zoomTo(4);
