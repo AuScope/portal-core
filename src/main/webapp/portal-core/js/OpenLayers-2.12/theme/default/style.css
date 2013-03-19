@@ -272,10 +272,16 @@ div.olControlSaveFeaturesItemInactive {
  -khtml-user-select: none;
 }
 
+/**
+*.olImageLoadError {
+*    background-color: pink;
+*   opacity: 0.5;
+*    filter: alpha(opacity=50);
+*}
+*/
+
 .olImageLoadError {
-    background-color: pink;
-    opacity: 0.5;
-    filter: alpha(opacity=50); /* IE */
+   display: none !important;
 }
 
 /**

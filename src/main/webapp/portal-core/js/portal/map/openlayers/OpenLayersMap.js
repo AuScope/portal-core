@@ -258,7 +258,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 OpenLayers.Control.Panel.prototype.initialize.apply(this, [options]);
                 this.addControls([
                   new OpenLayers.Control.Navigation(),
-                  new OpenLayers.Control.CustomZoomBox({alwaysZoom:true})
+                  new OpenLayers.Control.ZoomBox({alwaysZoom:true})
                 ])
             }
 
@@ -278,13 +278,15 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var baseLayer = new OpenLayers.Layer.WMS(
                 "Global Imagery",
                 "http://maps.opengeo.org/geowebcache/service/wms",
-                {layers: "bluemarble"}
+                {layers: "bluemarble"},
+                {wrapDateLine:true,isBaseLayer:true }
             );
 
         var imagery = new OpenLayers.Layer.WMS(
                 "Global Imagery",
                 "http://maps.opengeo.org/geowebcache/service/wms",
-                {layers: "openstreetmap", format: "image/png"}
+                {layers: "openstreetmap", format: "image/png"},
+                {wrapDateLine:true,isBaseLayer:true }
             );
 
         this.map.addLayer(baseLayer);
