@@ -160,6 +160,24 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 var allResources = cswRecord.get('onlineResources');
                 var wmsResources = portal.csw.OnlineResource.getFilteredFromArray(allResources, portal.csw.OnlineResource.WMS);
                 var wcsResources = portal.csw.OnlineResource.getFilteredFromArray(allResources, portal.csw.OnlineResource.WCS);
+
+                //VT: if layerswitcher layer visibility is set to false, then do not query that layer as well.
+                if(wmsResources[0]){
+                    var layerSwitcherVisible=true;
+                    var layerName=wmsResources[0].get('name');
+                    var layerSwitcherState=this.map.controls[2].layerStates;
+                    for(var z=0; z < layerSwitcherState.length; z++){
+                        if(layerSwitcherState[z].name === layerName){
+                            layerSwitcherVisible=layerSwitcherState[z].visibility;
+                            break;
+                        }
+                    }
+                    if(!layerSwitcherVisible){
+                        continue;
+                    }
+                }
+
+
                 var resourcesToIterate = [];
                 if (wcsResources.length > 0) {
                     resourcesToIterate = wcsResources;
