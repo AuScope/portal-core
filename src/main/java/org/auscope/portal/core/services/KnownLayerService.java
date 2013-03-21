@@ -86,12 +86,36 @@ public class KnownLayerService {
 
         //Figure out what records belong to which known layers (could be multiple)
         for (KnownLayer knownLayer : knownLayers) {
+            // We have to do this part regardless of the classFilters because
+            // if not, the results for unmappedRecords will be incorrect.
+            // (I.e.: they'll include related features from things that have
+            // been put in Research Data tab).
+            KnownLayerSelector selector = knownLayer.getKnownLayerSelector();
+            List<CSWRecord> relatedRecords = new ArrayList<CSWRecord>();
+            List<CSWRecord> belongingRecords = new ArrayList<CSWRecord>();
+
+            //For each record, mark it as being added to a known layer (if appropriate)
+            //We also need to mark the record as being mapped using mappedRecordIDs
+            for (CSWRecord record : originalRecordList) {
+                switch (selector.isRelatedRecord(record)) {
+                case Related:
+                    relatedRecords.add(record);
+                    mappedRecordIDs.put(record.getFileIdentifier(), null);
+                                            
+                    break;
+                case Belongs:
+                    belongingRecords.add(record);
+                    mappedRecordIDs.put(record.getFileIdentifier(), null);
+                    break;
+                }
+            }
+            
             // The include flag will indicate whether or not this particular layer 
             // should be included in the output.
             boolean include = false;
         
             // If no filters have been set then we just check that the KnownLayer is not a derived type:
-            if (classFilters == null){
+            if (classFilters == null) {
                 include = knownLayer.getClass().equals(KnownLayer.class);
             }
             else {
@@ -104,28 +128,9 @@ public class KnownLayerService {
                     }               
                 }
             }
-
+            
             // If the include flag got set then we can add this record:
             if (include) {
-                KnownLayerSelector selector = knownLayer.getKnownLayerSelector();
-                List<CSWRecord> relatedRecords = new ArrayList<CSWRecord>();
-                List<CSWRecord> belongingRecords = new ArrayList<CSWRecord>();
-    
-                //For each record, mark it as being added to a known layer (if appropriate)
-                //We also need to mark the record as being mapped using mappedRecordIDs
-                for (CSWRecord record : originalRecordList) {
-                    switch (selector.isRelatedRecord(record)) {
-                    case Related:
-                        relatedRecords.add(record);
-                        mappedRecordIDs.put(record.getFileIdentifier(), null);
-                        break;
-                    case Belongs:
-                        belongingRecords.add(record);
-                        mappedRecordIDs.put(record.getFileIdentifier(), null);
-                        break;
-                    }
-                }
-    
                 knownLayerAndRecords.add(new KnownLayerAndRecords(knownLayer, belongingRecords, relatedRecords));
             }
         }
