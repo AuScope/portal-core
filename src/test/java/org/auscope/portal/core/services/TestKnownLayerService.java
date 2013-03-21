@@ -123,6 +123,10 @@ public class TestKnownLayerService extends PortalTestClass {
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.Related));
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.Related));
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
+            
+            oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.NotRelated));
+            oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.NotRelated));
+            oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
         }});
 
         KnownLayerGrouping grouping = knownLayerService.groupKnownLayerRecords();
@@ -156,6 +160,15 @@ public class TestKnownLayerService extends PortalTestClass {
         // Arrange
         context.checking(new Expectations() {{
             oneOf(mockCacheService).getRecordCache();will(returnValue(cswRecordList));
+            
+            oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.NotRelated));
+            oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.NotRelated));
+            oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
+
+            oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.NotRelated));
+            oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.NotRelated));
+            oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
+            
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.Belongs));
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.NotRelated));
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
