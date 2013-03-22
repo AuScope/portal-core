@@ -102,6 +102,27 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                     items: [this.removeAction]
                 })
             }],
+
+            viewConfig:{
+                plugins:[{
+                    ptype: 'gridviewdragdrop',
+                    dragText: 'Drag and drop to re-order'
+                }],
+                listeners: {
+                    beforedrop: function(node, data, overModel, dropPosition,  dropFunction,  eOpts ){
+                        if(data.records[0].data.renderer instanceof portal.layer.renderer.wms.LayerRenderer){
+                            return true;
+                        }else{
+                            alert('Only wms layers can be reordered');
+                            return false;
+                        }
+                    }
+                }
+            },
+
+
+
+
             bbar: [this.removeAction]
         });
 
