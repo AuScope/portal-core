@@ -74,7 +74,7 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
                 this.baseMap.map.addLayer(layer);
 
               //VT: this will give us the order where we should be slotting into the map layer
-                position = this.baseMap.map.layers.length - layerStore.length + position;
+                position = this.baseMap.map.layers.length - 1 - position;
                 this.baseMap.map.setLayerIndex(layer,position);
 
             }
