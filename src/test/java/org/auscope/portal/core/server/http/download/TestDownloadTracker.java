@@ -114,7 +114,7 @@ public class TestDownloadTracker extends PortalTestClass  {
 
 
         ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool);
-        DownloadTracker downloadTracker=DownloadTracker.getTracker("victor");
+        DownloadTracker downloadTracker=DownloadTracker.getTracker("victor2");
 
         long startTime = System.currentTimeMillis();
         downloadTracker.startTrack(sdm);
