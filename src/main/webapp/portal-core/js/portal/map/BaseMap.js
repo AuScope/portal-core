@@ -27,21 +27,31 @@ Ext.define('portal.map.BaseMap', {
     rendered : false,
 
     /**
+     * Boolean - whether to allow a data selection widget to appear on the map. Defaults to false
+     */
+    allowDataSelection : false,
+
+    /**
      * Accepts a config in the form {
      *  container - [Optional] Ext.util.Container that will house the google map instance. If omitted then a call to renderToContainer must be made before this wrapper can be used
      *  layerStore - An instance of portal.layer.LayerStore
+     *  allowDataSelection - Boolean - whether to allow a data selection widget to appear on the map. Defaults to false
      * }
      *
      * Adds the following events
      *
      * query : function(portal.map.BaseMap this, portal.layer.querier.QueryTarget[] queryTargets)
      *         Fired whenever the underlying map is clicked and the user is requesting information about one or more layers
+     *
+     * dataSelect : function(portal.map.BaseMap this, portal.util.BBox region, portal.csw.CSWRecord[] selectedRecords)
+     *              Fired whenever the user draws a BBox on the map for data selection purposes. Returns the region requested
+     *              along with the list of added CSWRecords that intersect the selected region
      */
     constructor : function(cfg) {
         this.container = cfg.container;
         this.layerStore = cfg.layerStore;
 
-        this.addEvents('query');
+        this.addEvents(['query', 'dataSelect']);
 
         this.callParent(arguments);
 
@@ -286,6 +296,34 @@ Ext.define('portal.map.BaseMap', {
     showContextMenuAtLatLng : function(point, menu) {
         var pixel = this.getPixelFromLatLng(point);
         menu.showAt(this.container.x + pixel.x, this.container.y + pixel.y);
+    },
+
+    /**
+     * Returns the list of CSWRecords (based on the internal layerStore) whose
+     * registered bounding boxes intersect the specified bounding box
+     *
+     * @param bbox A portal.util.BBox
+     *
+     * Returns portal.csw.CSWRecord[]
+     */
+    getLayersInBBox : function(bbox) {
+        var intersectedRecords = [];
+        for (var layerIdx = 0; layerIdx < this.layerStore.getCount(); layerIdx++) {
+            var layer = this.layerStore.getAt(layerIdx);
+            var cswRecs = layer.get('cswRecords');
+            for (var recIdx = 0; recIdx < cswRecs.length; recIdx++) {
+                var cswRecord = cswRecs[recIdx];
+                var geoEls = cswRecord.get('geographicElements');
+                for (var geoIdx = 0; geoIdx < geoEls.length; geoIdx++) {
+                    var bboxToCompare = geoEls[geoIdx];
+                    if (bbox.intersects(bboxToCompare)) {
+                        intersectedRecords.push(cswRecord);
+                        break;
+                    }
+                }
+            }
+        }
+        return intersectedRecords;
     },
 
     /**

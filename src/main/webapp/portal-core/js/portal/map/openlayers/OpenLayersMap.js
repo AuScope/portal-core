@@ -289,7 +289,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                customNavTb.defaultControl=customNavTb.controls[0];
                customNavTb.activateControl(customNavTb.controls[0]);
             }
-        })
+        });
 
         this.map.addControl(customNavTb);
 
@@ -297,8 +297,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
         this.map.addControl(ls);
         ls.maximizeControl();
-
-
 
         var baseLayer = new OpenLayers.Layer.WMS(
                 "Blue Marble",
@@ -316,7 +314,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
         this.map.addLayer(baseLayer);
         this.map.addLayer(imagery);
-
 
         this.vectorLayer = new OpenLayers.Layer.Vector("Markers", {});
         this.map.addLayer(this.vectorLayer);
@@ -337,6 +334,97 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
         this.map.addControl(clickControl);
         clickControl.activate();
+
+        //If we are allowing data selection, add an extra control to the map
+        if (this.allowDataSelection) {
+            //This panel will hold our Draw Control. It will also custom style it
+            var panel = new OpenLayers.Control.Panel({
+                createControlMarkup: function(control) {
+                    var button = document.createElement('button'),
+                        iconSpan = document.createElement('span'),
+                        activeTextSpan = document.createElement('span');
+                        inactiveTextSpan = document.createElement('span');
+
+                    iconSpan.innerHTML = '&nbsp;';
+                    button.appendChild(iconSpan);
+
+                    activeTextSpan.innerHTML = control.activeText;
+                    Ext.get(activeTextSpan).addCls('active-text');
+                    button.appendChild(activeTextSpan);
+
+                    inactiveTextSpan.innerHTML = control.inactiveText;
+                    Ext.get(inactiveTextSpan).addCls('inactive-text');
+                    button.appendChild(inactiveTextSpan);
+
+                    button.setAttribute('id', control.buttonId);
+
+                    return button;
+                }
+            });
+
+            var drawFeatureCtrl = new OpenLayers.Control.DrawFeature(this.vectorLayer, OpenLayers.Handler.RegularPolygon, {
+                handlerOptions: {
+                    sides: 4,
+                    irregular: true
+                },
+                title:'Draw a bounding box to select data in a region.',
+                activeText: 'Click and drag a region of interest',
+                buttonId : 'gmap-subset-control',
+                inactiveText : 'Select Data'
+            });
+            panel.addControls([drawFeatureCtrl]);
+
+            //We need to ensure the click controller and other controls aren't active at the same time
+            drawFeatureCtrl.events.register('activate', {}, function() {
+                clickControl.deactivate();
+                Ext.each(customNavTb.controls, function(ctrl) {
+                   ctrl.deactivate();
+                });
+            });
+            drawFeatureCtrl.events.register('deactivate', {}, function() {
+                clickControl.activate();
+            });
+            Ext.each(customNavTb.controls, function(ctrl) {
+                ctrl.events.register('activate', {}, function() {
+                    drawFeatureCtrl.deactivate();
+                });
+            });
+
+            //We need to listen for when a feature is drawn and act accordingly
+            drawFeatureCtrl.events.register('featureadded', {}, Ext.bind(function(e){
+                var ctrl = e.object;
+                var feature = e.feature;
+
+                //Remove box after it's added (delayed by 3 seconds so the user can see it)
+                var task = new Ext.util.DelayedTask(Ext.bind(function(feature){
+                    this.vectorLayer.removeFeatures([feature]);
+                }, this, [feature]));
+                task.delay(3000);
+
+                //raise the data selection event
+                var bounds = feature.geometry.getBounds().toArray();
+                var bbox = Ext.create('portal.util.BBox', {
+                    northBoundLatitude : bounds[3],
+                    southBoundLatitude : bounds[1],
+                    eastBoundLongitude : bounds[2],
+                    westBoundLongitude : bounds[0]
+                });
+
+                //Iterate all active layers looking for data sources (csw records) that intersect the selection
+                var intersectedRecords = this.getLayersInBBox(bbox);
+                this.fireEvent('dataSelect', this, bbox, intersectedRecords);
+
+                //Because click events are still 'caught' even if the click control is deactive, the click event
+                //still gets fired. To work around this, add a tiny delay to when we reactivate click events
+                var task = new Ext.util.DelayedTask(Ext.bind(function(ctrl){
+                    ctrl.deactivate();
+                }, this, [ctrl]));
+                task.delay(50);
+            }, this));
+
+
+            this.map.addControl(panel);
+        }
     },
 
     /**

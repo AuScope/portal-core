@@ -128,6 +128,23 @@ Ext.define('portal.map.gmap.GoogleMap', {
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
 
+        //Add data selection box (if required)
+        if (this.allowDataSelection) {
+            this.map.addControl(new GmapSubsetControl(Ext.bind(function(nw, ne, se, sw) {
+                var bbox = Ext.create('portal.util.BBox', {
+                  northBoundLatitude : nw.lat(),
+                      southBoundLatitude : sw.lat(),
+                      eastBoundLongitude : ne.lng(),
+                      westBoundLongitude : sw.lng()
+                });
+
+                //Iterate all active layers looking for data sources (csw records) that intersect the selection
+                var intersectedRecords = this.getLayersInBBox(bbox);
+
+                this.fireEvent('dataSelect', this, bbox, intersectedRecords);
+              }, this)), new GControlPosition(G_ANCHOR_TOP_RIGHT, new GSize(405, 7)));
+        }
+
         this.rendered = true;
     },
 
