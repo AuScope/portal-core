@@ -132,7 +132,6 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         }
       //get the style format encoded as string
         var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters())));
-        //var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl')));
         this.sld=unescape(styleUrl);
 
         var primitives = [];
@@ -145,7 +144,6 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var wmsOpacity = filterer.getParameter('opacity');
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1
             wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
-            wmsUrl=Ext.urlAppend(wmsUrl, 'SRS=' + 'EPSG%3A3857');
 
             primitives.push(this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity));
 
