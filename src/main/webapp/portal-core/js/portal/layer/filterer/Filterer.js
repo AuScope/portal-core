@@ -43,6 +43,40 @@ Ext.define('portal.layer.filterer.Filterer', {
     },
 
     /**
+     * Gets the set of parameters configured within this map as
+     * a simple javascript object with key/value pairs
+     *
+     * The spatial component will be written to portal.layer.filterer.SpatialFilterer.BBOX_FIELD
+     *
+     * returns - a javascript object
+     */
+    getMercatorCompatibleParameters : function() {
+        var params = this.getParameters();
+
+        var bbox = this.getSpatialParam();
+
+        if(bbox.crs=='EPSG:4326'){
+            var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
+            bounds = bounds.transform('EPSG:4326','EPSG:3857')
+            bbox = Ext.create('portal.util.BBox', {
+                northBoundLatitude : bounds.top,
+                southBoundLatitude : bounds.bottom,
+                eastBoundLongitude : bounds.right,
+                westBoundLongitude : bounds.left,
+                crs : 'EPSG:3857'
+            });
+        }
+
+
+
+        if (bbox) {
+            params[portal.layer.filterer.Filterer.BBOX_FIELD] = Ext.JSON.encode(bbox);
+        }
+
+        return params;
+    },
+
+    /**
      * Sets the internal bbox field with value - value can be a Object, BBox or JSON String
      */
     applySpatialParam : function(value) {

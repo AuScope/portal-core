@@ -124,7 +124,6 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         //alert any listeners that we are about to start rendering wms
         //this.fireEvent('renderstarted', this, wmsResources, filterer);
 
-
         //VT: portal.util.URL.base is unable to resolve the name of the
         // local machine instead return localhost. eg localhost:8080/Auscope-Portal/
         var home=portal.util.URL.base;
@@ -132,7 +131,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             home=home.replace("localhost",LOCALHOST);
         }
       //get the style format encoded as string
-        var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
+        //var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
+        var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl')));
         this.sld=unescape(styleUrl);
 
         var primitives = [];
@@ -145,6 +145,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var wmsOpacity = filterer.getParameter('opacity');
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1
             wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
+            wmsUrl=Ext.urlAppend(wmsUrl, 'SRS=' + 'EPSG%3A3857');
+
             primitives.push(this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity));
 
         }

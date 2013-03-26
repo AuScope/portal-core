@@ -32,7 +32,7 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
                 'BGCOLOR' : '0xFFFFFF',
                 'TRANSPARENT' : 'TRUE',
                 'LAYERS' : layer,
-                'SRS' : bbox.crs,
+                'SRS' : 'EPSG:3857',//bbox.crs,
                 'BBOX' : bboxString,
                 'WIDTH' : width,
                 'HEIGHT' : height,

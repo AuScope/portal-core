@@ -32,6 +32,9 @@ Ext.define('portal.layer.querier.Querier', {
      */
     generateWmsProxyQuery : function(queryTarget, infoFormat) {
         var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
+        var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
+        lonLat = lonLat.transform('EPSG:4326','EPSG:3857');
+
         var tileInfo = this.map.getTileInformationForPoint(point);
         var layer = queryTarget.get('layer');
         var wmsOnlineResource = queryTarget.get('onlineResource');
@@ -55,8 +58,8 @@ Ext.define('portal.layer.querier.Querier', {
         //Build our proxy URL
         var queryString = Ext.Object.toQueryString({
             WMS_URL : serviceUrl,
-            lat : point.getLatitude(),
-            lng : point.getLongitude(),
+            lat : lonLat.lat,
+            lng : lonLat.lon,
             QUERY_LAYERS : typeName,
             x : tileInfo.getOffset().x,
             y : tileInfo.getOffset().y,

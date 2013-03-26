@@ -165,7 +165,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 if(wmsResources[0]){
                     var layerSwitcherVisible=true;
                     var layerName=wmsResources[0].get('name');
-                    var layerSwitcherState=this.map.controls[2].layerStates;
+                    var layerSwitcherState=this.map.controls[7].layerStates;
                     for(var z=0; z < layerSwitcherState.length; z++){
                         if(layerSwitcherState[z].name === layerName){
                             layerSwitcherVisible=layerSwitcherState[z].visibility;
@@ -216,6 +216,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     _onClick : function(vector, e) {
         var primitive = vector ? vector.attributes['portalBasePrimitive'] : null;
         var lonlat = this.map.getLonLatFromViewPortPx(e.xy);
+        lonlat = lonlat.transform('EPSG:3857','EPSG:4326');
         var longitude = lonlat.lon;
         var latitude = lonlat.lat;
         var layer = primitive ? primitive.getLayer() : null;
@@ -258,17 +259,39 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var containerId = container.body.dom.id;
 
         this.map = new OpenLayers.Map(containerId, {
+            projection: 'EPSG:3857',
             controls : [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.PanZoomBar(),
-                new OpenLayers.Control.LayerSwitcher({'ascending':false}), //useful for debug
+                //new OpenLayers.Control.LayerSwitcher({'ascending':false}), //useful for debug
                 new OpenLayers.Control.MousePosition(),
-                new OpenLayers.Control.KeyboardDefaults(),
-                new OpenLayers.Control.Scale(),
-                new OpenLayers.Control.ScaleLine()
-
-            ]
+                new OpenLayers.Control.KeyboardDefaults()
+            ],
+            layers: [
+                     new OpenLayers.Layer.Google(
+                             "Google Hybrid",
+                             {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
+                         ),
+                     new OpenLayers.Layer.Google(
+                         "Google Physical",
+                         {type: google.maps.MapTypeId.TERRAIN}
+                     ),
+                     new OpenLayers.Layer.Google(
+                         "Google Streets", // the default
+                         {numZoomLevels: 20}
+                     ),
+                     new OpenLayers.Layer.Google(
+                         "Google Satellite",
+                         {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+                     )
+                 ],
+                 center: new OpenLayers.LonLat(133.3, -26)
+                     // Google.v3 uses web mercator as projection, so we have to
+                     // transform our coordinates
+                     .transform('EPSG:4326', 'EPSG:3857'),
+                 zoom: 4
         });
+
 
         //VT: adds a customZoomBox which fires a afterZoom event.
         var customNavToolBar = OpenLayers.Class(OpenLayers.Control.NavToolbar, {
@@ -289,7 +312,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                customNavTb.defaultControl=customNavTb.controls[0];
                customNavTb.activateControl(customNavTb.controls[0]);
             }
-        });
+        })
 
         this.map.addControl(customNavTb);
 
@@ -298,28 +321,15 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         this.map.addControl(ls);
         ls.maximizeControl();
 
-        var baseLayer = new OpenLayers.Layer.WMS(
-                "Blue Marble",
-                "http://maps.opengeo.org/geowebcache/service/wms",
-                {layers: "bluemarble"},
-                {wrapDateLine:true,isBaseLayer:true }
-            );
-
-        var imagery = new OpenLayers.Layer.WMS(
-                "Open Street Map",
-                "http://maps.opengeo.org/geowebcache/service/wms",
-                {layers: "openstreetmap", format: "image/png"},
-                {wrapDateLine:true,isBaseLayer:true }
-            );
-
-        this.map.addLayer(baseLayer);
-        this.map.addLayer(imagery);
-
-        this.vectorLayer = new OpenLayers.Layer.Vector("Markers", {});
+        this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {
+            preFeatureInsert: function(feature) {
+                // Google.v3 uses web mercator as projection, so we have to
+                // transform our coordinates
+                feature.geometry.transform('EPSG:4326','EPSG:3857');
+            }
+        });
         this.map.addLayer(this.vectorLayer);
 
-        this.map.zoomTo(4);
-        this.map.panTo(new OpenLayers.LonLat(133.3, -26));
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
         this.container = container;
@@ -433,8 +443,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * function()
      */
     getVisibleMapBounds : function() {
-        var bounds = this.map.getExtent().toArray();
-
+        var bounds = this.map.getExtent().transform('EPSG:3857','EPSG:4326').toArray();
         return Ext.create('portal.util.BBox', {
             westBoundLongitude : bounds[0],
             southBoundLatitude : bounds[1],
@@ -471,6 +480,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         //Firstly create a popup with a chunk of placeholder HTML - we will render an ExtJS container inside that
         var popupId = Ext.id();
         var location = new OpenLayers.LonLat(windowLocation.getLongitude(), windowLocation.getLatitude());
+        location = location.transform('EPSG:4326','EPSG:3857');
         var verticalPadding = content.length <= 1 ? 0 : 32; //If we are opening a padded popup, we need to pad for the header
         var horizontalPadding = 0;
         var paddedSize = new OpenLayers.Size(width + horizontalPadding, height + verticalPadding);
@@ -537,6 +547,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     scrollToBounds : function(bbox) {
         var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
+
         this.map.zoomToExtent(bounds);
     },
 
@@ -568,7 +579,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * @param point portal.map.Point to be centered on
      */
     setCenter : function(point) {
-        this.map.panTo(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()));
+        this.map.panTo(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()))
+            .transform('EPSG:4326','EPSG:3857');
     },
 
     /**
@@ -578,7 +590,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     getCenter : function() {
         var center = this.map.getCenter();
-
+        center = center.transform('EPSG:3857','EPSG:4326');
         return Ext.create('portal.map.Point', {
             longitude : center.lon,
             latitude : center.lat
@@ -594,21 +606,20 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     getTileInformationForPoint : function(point) {
         var layer = this.map.baseLayer;
-
+        var tileSize = this.map.getTileSize();
         //Get the bounds of the tile that encases point
         var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
+            lonLat = lonLat.transform('EPSG:4326','EPSG:3857');
         var viewPortPixel = this.map.getViewPortPxFromLonLat(lonLat);
-        var tileBounds = layer.getTileBounds(viewPortPixel);
 
-        var tileOrigin = new OpenLayers.LonLat(tileBounds.left, tileBounds.top);
-        var tileOriginPixel = this.map.getViewPortPxFromLonLat(tileOrigin);
+        var tileBounds = this.map.getExtent();//.transform('EPSG:3857','EPSG:4326');
 
         return Ext.create('portal.map.TileInformation', {
-            width : this.map.tileSize.w,
-            height : this.map.tileSize.h,
+            width : this.map.size.w,
+            height : this.map.size.h,
             offset : {  //Object - The point location within the tile being queried
-                x : Math.floor(viewPortPixel.x - tileOriginPixel.x),  //Number - offset in x direction
-                y : Math.floor(viewPortPixel.y - tileOriginPixel.y)   //Number - offset in y direction
+                x : viewPortPixel.x ,
+                y : viewPortPixel.y
             },
             tileBounds : Ext.create('portal.util.BBox', {
                 eastBoundLongitude : tileBounds.right,
@@ -636,7 +647,9 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * See parent class for information
      */
     getPixelFromLatLng : function(point) {
-        var layerPixel = this.map.getLayerPxFromLonLat(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()));
+        var lonlat=new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
+        lonlat = lonlat.transform('EPSG:4326','EPSG:3857');
+        var layerPixel = this.map.getLayerPxFromLonLat(lonlat);
         var viewportPixel = this.map.getViewPortPxFromLayerPx(layerPixel);
 
         return {
