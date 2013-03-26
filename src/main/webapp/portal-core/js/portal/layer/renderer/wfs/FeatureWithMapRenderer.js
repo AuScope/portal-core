@@ -131,8 +131,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             home=home.replace("localhost",LOCALHOST);
         }
       //get the style format encoded as string
-        //var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getParameters())));
-        var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl')));
+        var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters())));
+        //var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl')));
         this.sld=unescape(styleUrl);
 
         var primitives = [];

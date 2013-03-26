@@ -70,7 +70,7 @@ Ext.define('portal.layer.filterer.Filterer', {
 
 
         if (bbox) {
-            params[portal.layer.filterer.Filterer.BBOX_FIELD] = Ext.JSON.encode(bbox);
+            params[portal.layer.filterer.Filterer.BBOX_FIELD] = null;
         }
 
         return params;
