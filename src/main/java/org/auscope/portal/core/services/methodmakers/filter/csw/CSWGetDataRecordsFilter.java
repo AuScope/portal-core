@@ -280,8 +280,14 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public String toString() {
         return "CSWGetDataRecordsFilter [spatialBounds=" + spatialBounds
                 + ", keywords=" + Arrays.toString(keywords)
-                + ", capturePlatform=" + capturePlatform + ", sensor=" + sensor
-                + ", keywordMatchType=" + keywordMatchType + "]";
+                + ", capturePlatform=" + capturePlatform 
+                + ", sensor=" + sensor
+                + ", keywordMatchType=" + metadataChangeDateFrom 
+                + ", metadataChangeDateTo=" + metadataChangeDateTo 
+                + ", temporalExtentFrom=" + temporalExtentFrom 
+                + ", temporalExtentTo=" + temporalExtentTo
+                + ", keywordMatchType=" + keywordMatchType +"]";
+        
     }
 
     /** Gets the title. */
