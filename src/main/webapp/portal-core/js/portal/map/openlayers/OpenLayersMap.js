@@ -325,7 +325,18 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             preFeatureInsert: function(feature) {
                 // Google.v3 uses web mercator as projection, so we have to
                 // transform our coordinates
-                feature.geometry.transform('EPSG:4326','EPSG:3857');
+
+                var bounds = feature.geometry.getBounds();
+
+                //JJV - Here be dragons... this is a horrible, horrible workaround. I am so very sorry :(
+                //Because we want to let portal core *think* its in EPSG:4326 and because our base map is in EPSG:3857
+                //we automagically transform the geometry on the fly. That isn't a problem until you come across
+                //various openlayers controls that add to the map in the native projection (EPSG:3857). To workaround this
+                //we simply don't transform geometry that's already EPSG:3857. The scary part is how we go about testing for that...
+                //The below should work except for tiny bounding boxes off the west coast of Africa
+                if (bounds.top <= 90 && bounds.top >= -90) {
+                    feature.geometry.transform('EPSG:4326','EPSG:3857');
+                }
             }
         });
         this.map.addLayer(this.vectorLayer);
@@ -412,7 +423,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 task.delay(3000);
 
                 //raise the data selection event
-                var bounds = feature.geometry.getBounds().toArray();
+                var originalBounds = feature.geometry.getBounds();
+                var bounds = originalBounds.transform('EPSG:3857','EPSG:4326').toArray();
                 var bbox = Ext.create('portal.util.BBox', {
                     northBoundLatitude : bounds[3],
                     southBoundLatitude : bounds[1],
