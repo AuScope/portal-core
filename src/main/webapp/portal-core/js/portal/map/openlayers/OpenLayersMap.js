@@ -559,7 +559,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     scrollToBounds : function(bbox) {
         var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
-
+        bounds.transform('EPSG:4326','EPSG:3857');
         this.map.zoomToExtent(bounds);
     },
 

@@ -282,6 +282,15 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             var bbox = spatialBoundsArray[i];
             if (bbox.southBoundLatitude !== bbox.northBoundLatitude ||
                 bbox.eastBoundLongitude !== bbox.westBoundLongitude) {
+
+                //VT: Google map uses EPSG:3857 and its maximum latitude is only 85 degrees
+                // anything more will stretch the transformation
+                if(bbox.northBoundLatitude>85){
+                    bbox.northBoundLatitude=85;
+                }
+                if(bbox.southBoundLatitude<-85){
+                    bbox.southBoundLatitude=-85;
+                }
                 nonPointBounds.push(bbox);
             }
         }
