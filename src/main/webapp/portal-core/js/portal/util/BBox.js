@@ -250,5 +250,21 @@ Ext.define('portal.util.BBox', {
             this.southBoundLatitude === bbox.southBoundLatitude &&
             this.northBoundLatitude === bbox.northBoundLatitude &&
             this.crs === bbox.crs;
+    },
+
+    /**
+     * Covert this bounding box to a new transformation
+     */
+    transform : function(bbox,newCrs) {
+        var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
+        bounds.transform(this.crs,newCrs);
+        var newBbox = Ext.create('portal.util.BBox', {
+            eastBoundLongitude : bounds.right,
+            westBoundLongitude : bounds.left,
+            northBoundLatitude : bounds.top,
+            southBoundLatitude : bounds.bottom
+        });
+        newBbox.crs=newCrs;
+        return newBbox;
     }
 });
