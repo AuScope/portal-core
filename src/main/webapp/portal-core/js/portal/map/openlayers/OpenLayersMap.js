@@ -589,10 +589,15 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * function(point)
      *
      * @param point portal.map.Point to be centered on
+     * @param crs - the crs of the point
      */
-    setCenter : function(point) {
-        this.map.panTo(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()))
-            .transform('EPSG:4326','EPSG:3857');
+    setCenter : function(point,crs) {
+        if(crs && crs=='EPSG:3857'){
+            this.map.panTo(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()))
+        }else{
+            this.map.panTo((new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()))
+                .transform('EPSG:4326','EPSG:3857'));
+        }
     },
 
     /**
