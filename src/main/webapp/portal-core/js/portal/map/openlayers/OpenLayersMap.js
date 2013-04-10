@@ -82,6 +82,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     _makeQueryTargetsPolygon : function(polygon, layerStore, longitude, latitude) {
         var queryTargets = [];
         var lonLat = new OpenLayers.LonLat(longitude, latitude);
+        lonLat=lonLat.transform('EPSG:4326','EPSG:3857');
 
         //Iterate all features on the map, those that intersect the given lat/lon should
         //have query targets generated for them as it isn't clear which one the user meant
@@ -589,10 +590,15 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * function(point)
      *
      * @param point portal.map.Point to be centered on
+     * @param crs - the crs of the point
      */
-    setCenter : function(point) {
-        this.map.panTo(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()))
-            .transform('EPSG:4326','EPSG:3857');
+    setCenter : function(point,crs) {
+        if(crs && crs=='EPSG:3857'){
+            this.map.panTo(new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()))
+        }else{
+            this.map.panTo((new OpenLayers.LonLat(point.getLongitude(), point.getLatitude()))
+                .transform('EPSG:4326','EPSG:3857'));
+        }
     },
 
     /**

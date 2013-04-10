@@ -67,7 +67,10 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 ptype : 'selectablegrid'
             }],
             hideHeaders : hideHeaders,
-            columns: columns
+            columns: columns,
+            viewConfig: {
+                enableTextSelection: true
+              }
         });
 
         this.callParent(arguments);
