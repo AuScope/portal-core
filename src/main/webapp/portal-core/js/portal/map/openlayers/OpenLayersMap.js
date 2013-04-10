@@ -82,6 +82,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     _makeQueryTargetsPolygon : function(polygon, layerStore, longitude, latitude) {
         var queryTargets = [];
         var lonLat = new OpenLayers.LonLat(longitude, latitude);
+        lonLat=lonLat.transform('EPSG:4326','EPSG:3857');
 
         //Iterate all features on the map, those that intersect the given lat/lon should
         //have query targets generated for them as it isn't clear which one the user meant
