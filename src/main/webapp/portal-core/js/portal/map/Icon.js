@@ -4,6 +4,19 @@
  */
 Ext.define('portal.map.Icon', {
 
+    statics : {
+        markerOrder : 0,
+        genericMarkers : [
+            'http://maps.google.com/mapfiles/ms/micons/ylw-pushpin.png',
+            'http://maps.google.com/mapfiles/ms/micons/blue-pushpin.png',
+            'http://maps.google.com/mapfiles/ms/micons/grn-pushpin.png',
+            'http://maps.google.com/mapfiles/ms/micons/ltblu-pushpin.png',
+            'http://maps.google.com/mapfiles/ms/micons/pink-pushpin.png',
+            'http://maps.google.com/mapfiles/ms/micons/purple-pushpin.png',
+            'http://maps.google.com/mapfiles/ms/micons/red-pushpin.png'
+        ]
+    },
+
     config : {
         /**
          * String - URL of the icon image
@@ -38,7 +51,18 @@ Ext.define('portal.map.Icon', {
      */
     constructor : function(cfg) {
         this.callParent(arguments);
-        this.setUrl(cfg.url);
+        if(cfg.url && cfg.url.length > 0){
+            this.setUrl(cfg.url);
+        }else{
+            //VT:give this a default marker to use.
+            var order=this.self.markerOrder
+            this.setUrl(this.self.genericMarkers[order]);
+            if(order == 6){
+                this.self.markerOrder = 0;
+            }else{
+                this.self.markerOrder ++;
+            }
+        }
         this.setWidth(cfg.width);
         this.setHeight(cfg.height);
         this.setAnchorOffsetX(cfg.anchorOffsetX);
