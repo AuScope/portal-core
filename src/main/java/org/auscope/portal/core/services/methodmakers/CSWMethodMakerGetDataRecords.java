@@ -74,7 +74,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         // We should be using a library for this call...
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<csw:GetRecords xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" service=\"CSW\" constraint_language_version=\"1.1.0\" outputFormat=\"application/xml\" outputSchema=\"csw:IsoRecord\" typeNames=\"csw:Record\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"");
+        sb.append("<csw:GetRecords xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" service=\"CSW\" version=\"2.0.2\" constraint_language_version=\"1.1.0\" outputFormat=\"application/xml\" outputSchema=\"csw:IsoRecord\" typeNames=\"gmd:MD_Metadata\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"");
         sb.append(String.format(" maxRecords=\"%1$s\"", maxRecords));
         if (resultType != null) {
             switch (resultType) {
@@ -93,7 +93,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
             sb.append(" startPosition=\"" + startPosition + "\"");
         }
         sb.append(">");
-        sb.append("<csw:Query typeNames=\"csw:Record\">");
+        sb.append("<csw:Query typeNames=\"gmd:MD_Metadata\">");
         sb.append("<csw:ElementSetName>full</csw:ElementSetName>");
 
         boolean hasFilter = filterString != null && filterString.length() > 0;
@@ -135,8 +135,9 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         params.add(new NameValuePair("service", "CSW"));
         params.add(new NameValuePair("constraint_language_version", "1.1.0"));
         params.add(new NameValuePair("request", "GetRecords"));
+        params.add(new NameValuePair("version", "2.0.2"));
         params.add(new NameValuePair("outputSchema", "csw:IsoRecord"));
-        params.add(new NameValuePair("typeNames", "csw:IsoRecord"));
+        params.add(new NameValuePair("typeNames", "gmd:MD_Metadata"));
         params.add(new NameValuePair("constraintLanguage", "FILTER"));
         params.add(new NameValuePair("namespace", "csw:http://www.opengis.net/cat/csw"));
         params.add(new NameValuePair("elementSetName", "full"));
