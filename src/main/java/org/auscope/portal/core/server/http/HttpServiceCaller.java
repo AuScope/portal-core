@@ -137,7 +137,6 @@ public class HttpServiceCaller {
      * @param httpClient
      */
     private void invokeTheMethod(HttpMethodBase method, HttpClient httpClient) throws Exception {
-
         log.debug("method=" + method.getURI());
 
         //create the connection manager and add it to the client
@@ -156,16 +155,17 @@ public class HttpServiceCaller {
         if (statusCode != HttpStatus.SC_OK) {
             log.error(method.getStatusLine());
 
-            // if its unavailable then throw updateCSWRecords connection
-            // exception
-            if (statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE)
+            // if it's unavailable then throw connection exception
+            if (statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE) {
                 throw new ConnectException();
+            }
+            
+            String responseBody = method.getResponseBodyAsString();
 
             // if the response is not OK then throw an error
-            throw new Exception("Returned status line: "
-                    + method.getStatusLine());
+            throw new Exception("Returned status line: " + method.getStatusLine() + 
+                    System.getProperty("line.separator") + "Returned response body: " + responseBody);
         }
-
     }
 
     /**
