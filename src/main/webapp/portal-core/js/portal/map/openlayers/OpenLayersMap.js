@@ -300,7 +300,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 OpenLayers.Control.Panel.prototype.initialize.apply(this, [options]);
                 this.addControls([
                   new OpenLayers.Control.Navigation(),
-                  new OpenLayers.Control.ZoomBox({alwaysZoom:true})
+                  new OpenLayers.Control.ZoomBox({alwaysZoom:true,zoomOnClick:false})
                 ])
             }
 
