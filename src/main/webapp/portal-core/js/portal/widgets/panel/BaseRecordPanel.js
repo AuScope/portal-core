@@ -202,10 +202,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      */
     _serviceInformationRenderer : function(value, metaData, record, row, col, store, gridView) {
         var onlineResources = this.getOnlineResourcesForRecord(record);
-
-        var containsDataService = false;
-        var containsImageService = false;
-
+      
+        // Default to a cross:
+        var iconPath = 'img/cross.png';
+        
         //We classify resources as being data or image sources.
         for (var i = 0; i < onlineResources.length; i++) {
             switch(onlineResources[i].get('type')) {
@@ -214,25 +214,16 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             case portal.csw.OnlineResource.SOS:
             case portal.csw.OnlineResource.OPeNDAP:
             case portal.csw.OnlineResource.IRIS:
-                containsDataService = true;
+                iconPath = 'img/binary.png';
                 break;
             case portal.csw.OnlineResource.WMS:
             case portal.csw.OnlineResource.WWW:
             case portal.csw.OnlineResource.FTP:
-            case portal.csw.OnlineResource.CSW:
+            case portal.csw.OnlineResource.CSWService:
             case portal.csw.OnlineResource.UNSUPPORTED:
-                containsImageService = true;
+                iconPath = 'img/picture.png';
                 break;
             }
-        }
-
-        var iconPath = null;
-        if (containsDataService) {
-            iconPath = 'img/binary.png'; //a single data service will label the entire layer as a data layer
-        } else if (containsImageService) {
-            iconPath = 'img/picture.png';
-        } else {
-            iconPath = 'img/cross.png';
         }
 
         return this._generateHTMLIconMarkup(iconPath);

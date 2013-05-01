@@ -15,12 +15,12 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
             iconUrl : config.icon ? config.icon.getUrl() : ''
         });
         this.callParent(arguments);
-    },
+    }, 
 
     /**
      * A function for displaying generic data from a variety of data sources. This function will
      * raise the renderstarted and renderfinished events as appropriate. The effect of multiple calls
-     * to this function (ie calling displayData again before renderfinished is raised) is undefined.
+     * to this function (i.e. calling displayData again before renderfinished is raised) is undefined.
      *
      * This function will re-render itself entirely and thus may call removeData() during the normal
      * operation of this function
@@ -65,6 +65,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
 
 
         var cswRecords = this.parentLayer.get('cswRecords');
+               
         var numRecords = 0;
         var primitives = [];
         for (var i = 0; i < cswRecords.length; i++) {
@@ -73,6 +74,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
                     (resourceProviderFilter === '' || cswRecords[i].get('resourceProvider') === resourceProviderFilter)) {
                 numRecords++;
                 var geoEls = cswRecords[i].get('geographicElements');
+                
                 for (var j = 0; j < geoEls.length; j++) {
                     var geoEl = geoEls[j];
                     if (geoEl instanceof portal.util.BBox) {

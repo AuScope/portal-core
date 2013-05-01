@@ -91,5 +91,18 @@ Ext.define('portal.layer.Layer', {
             }
         }
         return results;
+    },
+    
+    containsCSWService : function() {
+        // If the layer is a known layer, then ask the KnownLayer
+        // object if it contains a CSW service endpoint:
+        if (this.get('sourceType') == portal.layer.Layer.KNOWN_LAYER) {
+            return this.get('source').containsCSWService();
+        }
+        
+        return false;
     }
 });
+
+
+

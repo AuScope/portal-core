@@ -28,9 +28,9 @@ Ext.define('portal.csw.OnlineResource', {
         FTP : 'FTP', //represents a File Transfer Protocol service
         SOS : 'SOS', //represents a SOS service
         UNSUPPORTED : 'Unsupported', //The backend doesn't recognise the type of service/protocol
-        IRIS : 'IRIS', // IRIS web service,
-        CSWService : 'CSWService', // A CSW Service e.g. GeoNetwork server.
- 
+        IRIS : 'IRIS', // IRIS web service
+        CSWService : 'CSWService', // A CSW Service such as a GeoNetwork endpoint.
+
         /**
          * Utility for turning the various portal.csw.OnlineResource.* enums into an English readable string.
          * Returns null if type isn't recognised
@@ -55,7 +55,7 @@ Ext.define('portal.csw.OnlineResource', {
             case portal.csw.OnlineResource.IRIS:
                 return 'IRIS Web Service';
             case portal.csw.OnlineResource.CSWService:
-                return 'Catalogue Service for the Web endpoint';
+                return 'CSW Service';
             default:
                 return null;
             }

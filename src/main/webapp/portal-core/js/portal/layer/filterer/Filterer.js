@@ -188,11 +188,7 @@ Ext.define('portal.layer.filterer.Filterer', {
         var thisBBox = this.getSpatialParam();
 
         Ext.apply(clonedObj.parameters, this.parameters);
-        if (thisBBox) {
-            clonedObj.setSpatialParam(thisBBox.clone(), true);
-        } else {
-            clonedObj.setSpatialParam(thisBBox, true);
-        }
+        clonedObj.setSpatialParam(thisBBox ? thisBBox.clone() : thisBBox, true);
 
         return clonedObj;
     }

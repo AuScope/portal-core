@@ -20,6 +20,8 @@ public class CSWServiceItem {
     private String userName;
     private String password;
     private String cqlText;
+    private String[] defaultConstraints;
+    private boolean noCache = false;
 
     /**
      * Creates a new service item with NO role restrictions
@@ -235,6 +237,33 @@ public class CSWServiceItem {
     public void setCqlText(String cqlText) {
         this.cqlText = cqlText;
     }
+    
+    /**
+     * Gets a value indicating whether or not the caching has been disabled for this item.
+     * @return
+     */
+    public boolean getNoCache() {
+        return this.noCache;
+    }
+    
+    public String[] getDefaultConstraints() {
+        return this.defaultConstraints;
+    }
 
-
+    /**
+     * Set noCache to prevent the caching of data from CSW's that have too many records.
+     * @param noCache
+     */
+    public void setNoCache(boolean noCache) {
+        this.noCache = noCache;
+    }
+    
+    /**
+     * Set an array of constraints to be applied to any dummy layers that get created from this Service item. It doesn't make sense to set this value
+     * unless noCache is being set to true.
+     * @param defaultConstraints
+     */
+    public void setDefaultConstraints(String[] defaultConstraints) {
+        this.defaultConstraints = defaultConstraints;
+    }
 }

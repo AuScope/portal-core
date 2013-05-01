@@ -521,15 +521,15 @@ public abstract class AbstractFilter implements IFilter {
 
        if (nonEmptyFragmentCount >= minParams)
            sb.append(String.format("</%1$s>", logicalComparison));
-       return sb.toString();
+       
+       String filter = sb.toString(); 
+       log.trace(filter);
+       
+       return filter;
    }
 
    private String generatePropertyUnaryComparisonFragment(String comparison, String propertyName) {
        return generatePropertyComparisonFragment(comparison, null, propertyName, null);
-   }
-
-   private String generatePropertyBinaryComparisonFragment(String comparison, String propertyName, String literal) {
-       return generatePropertyComparisonFragment(comparison, null, propertyName, literal);
    }
 
    private String generatePropertyComparisonFragment(String comparison, Map<String, String> attributes, String propertyName, String literal) {
