@@ -407,11 +407,11 @@ public class CSWCacheService {
                    
                         record.setConstraints(this.endpoint.getDefaultConstraints());
                         
-                        // Add the CQLText to the record so that we can use it in conjunction
-                        // with the values set in the the CSW Filter Form.
-                        record.setDescriptiveKeywords(new String[] {this.endpoint.getCqlText()});
+                        // Add the DefaultAnyTextFilter to the record so that we can use it in conjunction
+                        // with whatever the user enters in the filter form.
+                        record.setDescriptiveKeywords(new String[] { this.endpoint.getDefaultAnyTextFilter() });
                     
-                        record.setOnlineResources(new AbstractCSWOnlineResource[] {cswResource});
+                        record.setOnlineResources(new AbstractCSWOnlineResource[] { cswResource });
                         newRecordCache.add(record);
                     }
                 }
