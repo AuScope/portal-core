@@ -330,15 +330,23 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         this.abstract_ = abstract_;
     }
     
-    /** Sets the metadata change date's boundary. */
-    public void setMetadataChangeDate(DateTime metadataChangeDateFrom, DateTime metadataChangeDateTo) {
+    /** Sets metadataChangeDateFrom. */
+    public void setMetadataChangeDateFrom(DateTime metadataChangeDateFrom) {
         this.metadataChangeDateFrom = metadataChangeDateFrom;
+    }
+    
+    /** Sets metadataChangeDateTo. */
+    public void setMetadataChangeDateTo(DateTime metadataChangeDateTo) {
         this.metadataChangeDateTo = metadataChangeDateTo;
     }
         
-    /** Sets the temporal extent's boundary. */
-    public void setTemporalExtent(DateTime temporalExtentFrom, DateTime temporalExtentTo) {
+    /** Sets temporalExtentFrom. */
+    public void setTemporalExtentFrom(DateTime temporalExtentFrom) {
         this.temporalExtentFrom = temporalExtentFrom;
+    }
+    
+    /** Sets temporalExtentTo. */
+    public void setTemporalExtentTo(DateTime temporalExtentTo) {
         this.temporalExtentTo = temporalExtentTo;
     }
 }
