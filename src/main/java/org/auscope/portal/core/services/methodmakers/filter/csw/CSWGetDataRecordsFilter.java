@@ -282,7 +282,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
                 + ", keywords=" + Arrays.toString(keywords)
                 + ", capturePlatform=" + capturePlatform 
                 + ", sensor=" + sensor
-                + ", keywordMatchType=" + metadataChangeDateFrom 
+                + ", metadataChangeDateFrom=" + metadataChangeDateFrom 
                 + ", metadataChangeDateTo=" + metadataChangeDateTo 
                 + ", temporalExtentFrom=" + temporalExtentFrom 
                 + ", temporalExtentTo=" + temporalExtentTo
