@@ -1,0 +1,92 @@
+/**
+ * An abstract base class to be extended.
+ *
+ * Represents a grid panel for containing layers
+ * that haven't yet been added to the map. Each row
+ * will be grouped under a heading, contain links
+ * to underlying data sources and have a spatial location
+ * that can be viewed by the end user.
+ *
+ * This class is expected to be extended for usage within
+ * the 'Registered Layers', 'Known Layers' and 'Custom Layers'
+ * panels in the portal. Support for KnownLayers/CSWRecords and
+ * other row types will be injected by implementing the abstract
+ * functions of this class
+ *
+ * Adds the following events :
+ *      addlayerrequest(this, Ext.data.Model) - raised whenever the user has indicated to this panel that it wishes
+ *                                              to add a specified record to the map as a new layer
+ */
+Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
+    extend : 'Ext.grid.Panel',
+    alias: 'widget.cswpagingpanel',
+
+    map : null,
+    cswRecordStore : null,
+    pageSize: 20,
+
+    constructor : function(cfg) {
+        var me = this;
+
+        this.cswRecordStore = Ext.create('Ext.data.Store', {
+            id:'CSWPagingStore',
+            autoLoad: false,
+            model : 'portal.csw.CSWRecord',
+            pageSize: this.pageSize,
+            proxy: {
+                type: 'ajax',
+                url: 'getUncachedCSWRecords.do',
+                extraParams:cfg.cswConfig.extraParams,
+                reader: {
+                    type: 'json',
+                    root: 'data',
+                    successProperty: 'success',
+                    totalProperty: 'totalResults'
+                }
+            }
+        });
+
+
+        Ext.apply(cfg, {
+            hideHeaders : false,
+            height: 200,
+            width: 400,
+            columns: [
+                 { header: 'Name',  dataIndex: 'name' },
+                 { header: 'Admin',  dataIndex: 'adminArea' }
+            ],
+            store : this.cswRecordStore,
+            viewConfig : {
+                forceFit : true,
+                enableRowBody:true
+            },
+
+            loadMask : {msg : 'Performing CSW Filter...'},
+            multiSelect: true,
+            dockedItems: [{
+                xtype: 'pagingtoolbar',
+                pageSize: this.pageSize,
+                store: this.cswRecordStore,
+                dock: 'bottom',
+                displayInfo: true
+            }],
+            listeners : {
+                afterrender : function(grid,eOpts) {
+                    grid.cswRecordStore.load({
+                        params:cfg.cswConfig.pagingConfig
+                    });
+                },
+                cellclick : function (grid, rowIndex, colIndex, e) {
+                    console.log('row:' + rowIndex + ' clicked');
+                }
+
+            }
+
+        });
+
+      this.callParent(arguments);
+    },
+
+
+
+});
