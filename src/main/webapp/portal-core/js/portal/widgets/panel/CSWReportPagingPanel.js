@@ -50,6 +50,7 @@ Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
         Ext.apply(cfg, {
             hideHeaders : false,
             height: 200,
+            layout : 'fit',
             width: 400,
             columns: [{
                 header: 'Name',
@@ -89,8 +90,8 @@ Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
                         params:cfg.cswConfig.pagingConfig
                     });
                 },
-                cellclick : function (grid, rowIndex, colIndex, e) {
-                    console.log('row:' + rowIndex + ' clicked');
+                itemdblclick : function(grid, record, item, index, e, eOpts ){
+                    cfg.cswConfig.callback(record);
                 }
 
             }
