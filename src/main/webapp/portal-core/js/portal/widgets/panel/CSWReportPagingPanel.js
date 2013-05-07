@@ -51,10 +51,23 @@ Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
             hideHeaders : false,
             height: 200,
             width: 400,
-            columns: [
-                 { header: 'Name',  dataIndex: 'name' },
-                 { header: 'Admin',  dataIndex: 'adminArea' }
-            ],
+            columns: [{
+                header: 'Name',
+                dataIndex: 'name',
+                width:  390
+
+            },{
+                header: 'Administrative Area',
+                dataIndex: 'adminArea',
+                width: 110
+            },{
+                header:'Type',
+                dataIndex:  'onlineResources',
+                width: 100,
+                renderer : function(value){
+                    return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
+                }
+            }],
             store : this.cswRecordStore,
             viewConfig : {
                 forceFit : true,
