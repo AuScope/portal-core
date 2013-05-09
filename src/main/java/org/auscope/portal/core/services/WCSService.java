@@ -62,7 +62,7 @@ public class WCSService {
     }
 
     /**
-     * Makes a DescribeCoverage reqeust, returns the response as an array of DescribeCoverageRecords
+     * Makes a DescribeCoverage request, returns the response as an array of DescribeCoverageRecords
      * @param serviceUrl The WCS endpoint to query
      * @param coverageName The coverage name to describe
      */
