@@ -152,7 +152,9 @@ public class HttpServiceCaller {
         // make the call
         int statusCode = httpClient.executeMethod(method);
 
-        if (statusCode != HttpStatus.SC_OK) {
+        if (statusCode != HttpStatus.SC_OK &&
+            statusCode != HttpStatus.SC_CREATED &&
+            statusCode != HttpStatus.SC_ACCEPTED) {
             log.error(method.getStatusLine());
 
             // if it's unavailable then throw connection exception
