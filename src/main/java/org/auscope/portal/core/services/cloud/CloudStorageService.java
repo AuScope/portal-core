@@ -267,12 +267,11 @@ public class CloudStorageService {
      * @param job
      * @return
      */
-    protected InputStreamMap jobToInputStreamMap(CloudJob job) {
+    protected InputStreamMap jobToInputStreamMap(BlobStoreContext bsc, CloudJob job) {
         String baseKey = jobToBaseKey(job);
 
         log.debug(String.format("Attempting to open a InputStreamMap for bucket '%1$s' with base key '%2$s'", bucket, baseKey));
 
-        BlobStoreContext bsc = getBlobStoreContextForJob(job);
         ListContainerOptions lco = ListContainerOptions.Builder.inDirectory(baseKey);
         return bsc.createInputStreamMap(bucket,lco);
     }
@@ -288,14 +287,41 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public InputStream getJobFile(CloudJob job, String key) throws PortalServiceException {
+        BlobStoreContext bsc = null;
         try {
-            InputStreamMap map = jobToInputStreamMap(job);
+            bsc = getBlobStoreContextForJob(job);
+            InputStreamMap map = jobToInputStreamMap(bsc, job);
             return map.get(key);
         } catch (Exception ex) {
             log.error(String.format("Unable to get job file '%1$s' for job %2$s:", key, job));
             log.debug("error:", ex);
             throw new PortalServiceException(null, "Error retriving output file details", ex);
+        } finally {
+            if (bsc != null) {
+                bsc.close();
+            }
         }
+    }
+    
+    /**
+     * Gets information about every file in the specified InputStreamMap (no resources
+     * will be disposed of)
+     * @param map
+     * @return
+     * @throws PortalServiceException
+     */
+    private CloudFileInformation[] listJobFiles(InputStreamMap map) throws Exception {
+        CloudFileInformation[] fileDetails = new CloudFileInformation[map.size()];
+        Iterable<? extends StorageMetadata> fileMetaDataList = map.list();
+        
+        int i = 0;
+        for (StorageMetadata fileMetadata : fileMetaDataList) {
+            fileDetails[i++] = new CloudFileInformation(
+                    fileMetadata.getName(), getFileSize(fileMetadata),
+                    fileMetadata.getUri().toString());
+        }
+
+        return fileDetails;
     }
 
     /**
@@ -305,23 +331,19 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public CloudFileInformation[] listJobFiles(CloudJob job) throws PortalServiceException {
-        InputStreamMap map = jobToInputStreamMap(job);
-        CloudFileInformation[] fileDetails = new CloudFileInformation[map.size()];
-        Iterable<? extends StorageMetadata> fileMetaDataList = map.list();
-
+        BlobStoreContext bsc = getBlobStoreContextForJob(job);
+        
         try {
-            int i = 0;
-            for (StorageMetadata fileMetadata : fileMetaDataList) {
-                fileDetails[i++] = new CloudFileInformation(
-                        fileMetadata.getName(), getFileSize(fileMetadata),
-                        fileMetadata.getUri().toString());
-            }
-
-            return fileDetails;
+            InputStreamMap map = jobToInputStreamMap(bsc, job);
+            return listJobFiles(map);
         } catch (Exception ex) {
             log.error("Unable to list files for job:" + job.toString());
             log.debug("error:", ex);
             throw new PortalServiceException(null, "Error retriving output file details", ex);
+        } finally {
+            if (bsc != null) {
+                bsc.close();
+            }
         }
     }
 
@@ -332,8 +354,10 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public void uploadJobFiles(CloudJob job, File[] files) throws PortalServiceException {
+        BlobStoreContext bsc = getBlobStoreContextForJob(job);
+        
         try {
-            InputStreamMap map = jobToInputStreamMap(job);
+            InputStreamMap map = jobToInputStreamMap(bsc, job);
             for (File file : files) {
                 map.putFile(file.getName(), file);
                 log.debug(file.getName() + " uploaded to '" + bucket + "' container");
@@ -347,6 +371,10 @@ public class CloudStorageService {
         } catch (Exception ex) {
             log.error("Unable to upload files for job: " + job, ex);
             throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to S3 storage.", "Please report it to cg-admin@csiro.au.");
+        } finally {
+            if (bsc != null) {
+                bsc.close();
+            }
         }
     }
 
@@ -359,15 +387,16 @@ public class CloudStorageService {
         BlobStoreContext bsc = null;
         try {
             //Remove all files
-            InputStreamMap map = jobToInputStreamMap(job);
-            CloudFileInformation[] files = listJobFiles(job);
+            bsc = getBlobStoreContextForJob(job);
+            InputStreamMap map = jobToInputStreamMap(bsc, job);
+            CloudFileInformation[] files = listJobFiles(map);
             if (files != null) {
                 for (CloudFileInformation file : files) {
                     map.remove(file.getName());
                 }
             }
+            
             //Remove the job storage base key (directory) from the storage bucket
-            bsc = getBlobStoreContextForJob(job);
             bsc.getBlobStore().deleteDirectory(bucket, job.getStorageBaseKey());
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);

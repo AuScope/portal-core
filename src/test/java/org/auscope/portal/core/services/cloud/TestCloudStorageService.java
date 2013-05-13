@@ -10,7 +10,6 @@ import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -56,10 +55,13 @@ public class TestCloudStorageService extends PortalTestClass {
     private BlobStoreContext mockBlobStoreContext = context.mock(BlobStoreContext.class);
     private CloudJob job;
     private CloudStorageService service;
+    
+    private final String jobStorageBaseKey = "job/base/key/";
 
     @Before
     public void initJobObject() {
         job = new CloudJob(13);
+        job.setStorageBaseKey(jobStorageBaseKey);
         service = new TestableCloudStorageService(endpoint, provider, accessKey, secretKey,  mockBlobStoreContext);
         service.setBucket(bucket);
     }
@@ -78,6 +80,8 @@ public class TestCloudStorageService extends PortalTestClass {
 
               oneOf(mockInputStream).get(myKey);
               will(returnValue(mockReturnedInputStream));
+              
+              oneOf(mockBlobStoreContext).close();
           }});
 
           InputStream actualInputStream = service.getJobFile(job, myKey);
@@ -108,6 +112,8 @@ public class TestCloudStorageService extends PortalTestClass {
           final long obj2Length = 4567L;
 
           context.checking(new Expectations() {{
+              oneOf(mockBlobStoreContext).close();
+              
               oneOf(mockBlobStoreContext).createInputStreamMap(with(any(String.class)),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
               oneOf(mockInputStreamMap).size();will(returnValue(2));
               oneOf(mockInputStreamMap).list();will(returnValue(mockFileMetaDataList));
@@ -155,6 +161,7 @@ public class TestCloudStorageService extends PortalTestClass {
         };
 
         context.checking(new Expectations() {{
+            oneOf(mockBlobStoreContext).close();
             oneOf(mockBlobStoreContext).createInputStreamMap(with(bucket),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
             allowing(mockBlobStore).createDirectory(bucket, service.jobToBaseKey(job));
             allowing(mockFiles[0]).getName();will(returnValue("file1Name"));
@@ -165,6 +172,67 @@ public class TestCloudStorageService extends PortalTestClass {
 
         service.uploadJobFiles(job, mockFiles);
     }
+    
+    /**
+     * Tests that requests for deleting files successfully call all dependencies
+     * @throws Exception
+     */
+    @Test
+    public void testDeleteJobFiles() throws Exception {
+        final BlobStore mockBlobStore = context.mock(BlobStore.class);
+        
+        final InputStreamMap mockInputStreamMap = context.mock(InputStreamMap.class);
+        final MutableContentMetadata mockObj1ContentMetadata=context.mock(MutableContentMetadata.class,"mockObj1Md");
+        final MutableContentMetadata mockObj2ContentMetadata=context.mock(MutableContentMetadata.class,"mockObj2Md");
+
+        LinkedList<MutableBlobMetadataImpl> ls=new LinkedList<MutableBlobMetadataImpl>();
+        ls.add(context.mock(MutableBlobMetadataImpl.class,"mockObj1"));
+        ls.add(context.mock(MutableBlobMetadataImpl.class,"mockObj2"));
+
+        final Iterable<? extends MutableBlobMetadataImpl> mockFileMetaDataList=ls;
+
+        final String obj1Key = jobStorageBaseKey + "obj1";
+        final String obj1Bucket = bucket;
+        final long obj1Length = 1234L;
+        final String obj2Key = jobStorageBaseKey + "obj2";
+        final String obj2Bucket = bucket;
+        final long obj2Length = 4567L;
+
+        context.checking(new Expectations() {{
+            oneOf(mockBlobStoreContext).close();
+            
+            allowing(mockBlobStoreContext).getBlobStore();will(returnValue(mockBlobStore));
+            oneOf(mockBlobStore).deleteDirectory(bucket, jobStorageBaseKey);
+            
+            oneOf(mockBlobStoreContext).createInputStreamMap(with(any(String.class)),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
+            oneOf(mockInputStreamMap).size();will(returnValue(2));
+            oneOf(mockInputStreamMap).list();will(returnValue(mockFileMetaDataList));
+              int i = 0;
+              for (MutableBlobMetadataImpl fileMetadata : mockFileMetaDataList) {
+                  if (i == 0) {
+                      allowing(fileMetadata).getName();will(returnValue(obj1Key));
+                      allowing(fileMetadata).getUri();will(returnValue(new URI(obj1Bucket)));
+                      allowing(fileMetadata).getContentMetadata();will(returnValue(mockObj1ContentMetadata));
+                      allowing(mockObj1ContentMetadata).getContentLength();will(returnValue(obj1Length));
+                      
+                      oneOf(mockInputStreamMap).remove("obj1");
+                  } else {
+                      allowing(fileMetadata).getName();will(returnValue(obj2Key));
+                      allowing(fileMetadata).getUri();will(returnValue(new URI(obj2Bucket)));
+                      allowing(fileMetadata).getContentMetadata();will(returnValue(mockObj2ContentMetadata));
+                      allowing(mockObj2ContentMetadata).getContentLength();will(returnValue(obj2Length));
+                      
+                      oneOf(mockInputStreamMap).remove("obj2");
+                  }
+                  i++;
+              }
+
+        }});
+
+        service.deleteJobFiles(job);
+    }
+    
+    
 
     /**
      * Tests that no exceptions occur during base key generation edge cases
