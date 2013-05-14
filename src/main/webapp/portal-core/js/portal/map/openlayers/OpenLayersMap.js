@@ -238,7 +238,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * If the removal of a layer has the same ID has a info window opened, close it.
      */
     closeInfoWindow: function(layerid){
-        if(layerid === this.openedInfoLayerId){
+        if(layerid === this.openedInfoLayerId && this.map.popups[0]){
             this.map.removePopup(this.map.popups[0]);
         }
     },
