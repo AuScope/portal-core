@@ -99,8 +99,5 @@ Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
         });
 
       this.callParent(arguments);
-    },
-
-
-
+    }
 });
