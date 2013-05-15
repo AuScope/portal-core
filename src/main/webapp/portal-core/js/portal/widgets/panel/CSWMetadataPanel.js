@@ -28,9 +28,9 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
             if (source.contains('eos-test.ga.gov.au') || source.contains('eos.ga.gov.au')) {
                 this.extraItems = {
                         xtype : 'displayfield',
-                        fieldLabel : 'test',
+                        fieldLabel : 'Notes',
                         anchor : '100%',
-                        value : 'test'
+                        value : 'You will require a userid and password to download the data. You can apply for this by filling in the Terms and Conditions for the utilisation of the European Space Agency&apos;s Earth Observation Data v11/05/11 available in the link <a href="https://earth.esa.int/pi/esa?type=file&amp;ts=1127284911811&amp;table=aotarget&amp;cmd=image&amp;id=122">https://earth.esa.int/pi/esa?type=file&amp;ts=1127284911811&amp;table=aotarget&amp;cmd=image&amp;id=122</a>. Forward a scan of the completed document to <a href="mailto:InSAR@ga.gov.au">InSAR@ga.gov.au</a> to obtain a userid and password.'
                     };
             }
         }
