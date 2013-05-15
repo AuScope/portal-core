@@ -7,6 +7,9 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
     alias : 'widget.cswmetadatapanel',
 
     cswRecord : null,
+    
+    // TODO: description
+    extraItems : null,    
 
     /**
      * Constructor for this class, accepts all configuration options that can be
@@ -16,9 +19,22 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
      * }
      */
     constructor : function(cfg) {
-
         this.cswRecord = cfg.cswRecord;
-
+        
+        var source = this.cswRecord.get('recordInfoUrl');
+        
+        if (typeof(cfg.extraItems) === 'undefined') {
+            
+            if (source.contains('eos-test.ga.gov.au') || source.contains('eos.ga.gov.au')) {
+                this.extraItems = {
+                        xtype : 'displayfield',
+                        fieldLabel : 'test',
+                        anchor : '100%',
+                        value : 'test'
+                    };
+            }
+        }
+                
         var keywordsString = "";
         var keywords = this.cswRecord.get('descriptiveKeywords');
         for (var i = 0; i < keywords.length; i++) {
@@ -27,7 +43,7 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
                 keywordsString += ', ';
             }
         }
-
+        
         //Build our configuration object
         Ext.apply(cfg, {
             layout : 'fit',
@@ -36,7 +52,7 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
                 items : [{
                     xtype : 'displayfield',
                     fieldLabel : 'Source',
-                    value : Ext.util.Format.format('<a target="_blank" href="{0}">Link back to registry</a>', this.cswRecord.get('recordInfoUrl'))
+                    value : Ext.util.Format.format('<a target="_blank" href="{0}">Link back to registry</a>', source)
                 },{
                     xtype : 'displayfield',
                     fieldLabel : 'Title',
@@ -58,11 +74,13 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
                     fieldLabel : 'Contact Org',
                     anchor : '100%',
                     value : this.cswRecord.get('contactOrg')
-                },{
+                }]
+                .concat(this.extraItems)
+                .concat({
                     fieldLabel : 'Resources',
                     xtype : 'onlineresourcepanel',
                     cswRecords : this.cswRecord
-                }]
+                })
             }]
         });
 
