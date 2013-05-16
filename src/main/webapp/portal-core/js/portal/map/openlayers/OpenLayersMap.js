@@ -445,6 +445,12 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
             this.map.addControl(panel);
         }
+        
+        //Finally listen for resize events on the parent container so we can pass the details
+        //on to Openlayers.
+        container.on('resize', function() {
+            this.map.updateSize();
+        }, this);
     },
 
     /**
