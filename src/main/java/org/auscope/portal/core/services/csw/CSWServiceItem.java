@@ -20,6 +20,7 @@ public class CSWServiceItem {
     private String userName;
     private String password;
     private String cqlText;
+    private String defaultAnyTextFilter;
     private String[] defaultConstraints;
     private boolean noCache = false;
 
@@ -229,13 +230,29 @@ public class CSWServiceItem {
     public String getCqlText() {
         return cqlText;
     }
-
-     /**
+    
+    /**
      * Set cqlText for querying the catalog
      * @return
      */
     public void setCqlText(String cqlText) {
         this.cqlText = cqlText;
+    }
+    
+    /**
+     * Get the defaultAnyTextFilter for querying the catalog.
+     * @return String
+     */
+    public String getDefaultAnyTextFilter() {
+        return defaultAnyTextFilter;
+    }
+    
+    /**
+     * Set defaultAnyTextFilter for querying the catalog.
+     * @return
+     */
+    public void setDefaultAnyTextFilter(String defaultAnyTextFilter) {
+        this.defaultAnyTextFilter = defaultAnyTextFilter;
     }
     
     /**

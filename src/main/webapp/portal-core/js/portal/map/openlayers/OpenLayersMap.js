@@ -293,30 +293,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                  zoom: 4
         });
 
-
-        //VT: adds a customZoomBox which fires a afterZoom event.
-        var customNavToolBar = OpenLayers.Class(OpenLayers.Control.NavToolbar, {
-            initialize: function(options) {
-                OpenLayers.Control.Panel.prototype.initialize.apply(this, [options]);
-                this.addControls([
-                  new OpenLayers.Control.Navigation(),
-                  new OpenLayers.Control.ZoomBox({alwaysZoom:true,zoomOnClick:false})
-                ])
-            }
-
-        });
-
-        //VT: once we catch the afterZoom event, reset the control to panning.
-        var customNavTb=new customNavToolBar();
-        customNavTb.controls[1].events.on({
-            "afterZoom": function() {
-               customNavTb.defaultControl=customNavTb.controls[0];
-               customNavTb.activateControl(customNavTb.controls[0]);
-            }
-        })
-
-        this.map.addControl(customNavTb);
-
         var ls = new OpenLayers.Control.LayerSwitcher({'ascending':false});
 
         this.map.addControl(ls);
@@ -342,7 +318,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         });
         this.map.addLayer(this.vectorLayer);
 
-
         this.highlightPrimitiveManager = this.makePrimitiveManager();
         this.container = container;
         this.rendered = true;
@@ -356,6 +331,28 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
         this.map.addControl(clickControl);
         clickControl.activate();
+        
+        //VT: adds a customZoomBox which fires a afterZoom event.
+        var zoomBoxCtrl = new OpenLayers.Control.ZoomBox({alwaysZoom:true,zoomOnClick:false});
+        var panCtrl = new OpenLayers.Control.Navigation();
+        var customNavToolBar = OpenLayers.Class(OpenLayers.Control.NavToolbar, {
+            initialize: function(options) {
+                OpenLayers.Control.Panel.prototype.initialize.apply(this, [options]);
+                this.addControls([panCtrl, zoomBoxCtrl])
+            }
+        });
+
+        //VT: once we catch the afterZoom event, reset the control to panning.
+        var customNavTb=new customNavToolBar();
+        customNavTb.controls[1].events.on({
+            "afterZoom": function() {
+               customNavTb.defaultControl=customNavTb.controls[0];
+               customNavTb.activateControl(customNavTb.controls[0]);
+               clickControl.activate();
+            }
+        });
+
+        this.map.addControl(customNavTb);
 
         //If we are allowing data selection, add an extra control to the map
         if (this.allowDataSelection) {
@@ -448,6 +445,12 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
             this.map.addControl(panel);
         }
+        
+        //Finally listen for resize events on the parent container so we can pass the details
+        //on to Openlayers.
+        container.on('resize', function() {
+            this.map.updateSize();
+        }, this);
     },
 
     /**
