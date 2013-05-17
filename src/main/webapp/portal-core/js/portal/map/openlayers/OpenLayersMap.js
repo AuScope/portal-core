@@ -264,9 +264,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             controls : [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.PanZoomBar({zoomStopHeight:8}),
-                //new OpenLayers.Control.LayerSwitcher({'ascending':false}), //useful for debug
-                new OpenLayers.Control.MousePosition(),
-                new OpenLayers.Control.KeyboardDefaults()
+                new OpenLayers.Control.MousePosition()
             ],
             layers: [
                      new OpenLayers.Layer.Google(
