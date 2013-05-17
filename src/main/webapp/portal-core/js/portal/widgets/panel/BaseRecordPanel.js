@@ -213,6 +213,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             case portal.csw.OnlineResource.WCS:
             case portal.csw.OnlineResource.SOS:
             case portal.csw.OnlineResource.OPeNDAP:
+            case portal.csw.OnlineResource.CSWService:
             case portal.csw.OnlineResource.IRIS:
                 containsDataService = true;
                 break;
