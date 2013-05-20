@@ -163,17 +163,28 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 var wcsResources = portal.csw.OnlineResource.getFilteredFromArray(allResources, portal.csw.OnlineResource.WCS);
 
                 //VT: if layerswitcher layer visibility is set to false, then do not query that layer as well.
-                if(wmsResources[0]){
+                if (wmsResources[0]) {
                     var layerSwitcherVisible=true;
                     var layerName=wmsResources[0].get('name');
-                    var layerSwitcherState=this.map.controls[7].layerStates;
-                    for(var z=0; z < layerSwitcherState.length; z++){
-                        if(layerSwitcherState[z].name === layerName){
+                    
+                    // We loop over the available to controls to find the layer switcher:
+                    var layerSwitcher = null;
+                    for (var i; i < this.map.controls.length; i++) {
+                        if (this.map.controls[i] instanceof OpenLayers.Control.LayerSwitcher) {
+                            layerSwitcher = this.map.controls[i];
+                            break;
+                        }
+                    }
+                    
+                    var layerSwitcherState = layerSwitcher.layerStates;
+                    for (var z = 0; z < layerSwitcherState.length; z++) {
+                        if (layerSwitcherState[z].name === layerName) {
                             layerSwitcherVisible=layerSwitcherState[z].visibility;
                             break;
                         }
                     }
-                    if(!layerSwitcherVisible){
+                    
+                    if (!layerSwitcherVisible) {
                         continue;
                     }
                 }
