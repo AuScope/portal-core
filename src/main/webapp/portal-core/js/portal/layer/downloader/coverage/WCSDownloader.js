@@ -7,17 +7,17 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
 
     downloadData : function(layer, resources, renderedFilterer, currentFilterer) {
         var wcsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WCS);
-
-        this.showWCSDownload(wcsResources[0].get('url'), wcsResources[0].get('name'), layer.get('renderer').map);
-
+        var ftpResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.FTP);
+        var ftpURL = ftpResources.length > 0 ? ftpResources[0].get('url') : '';
+        this.showWCSDownload(wcsResources[0].get('url'), wcsResources[0].get('name'), layer.get('renderer').map, ftpURL);
     },// end downloadData
 
   //rec must be a record from the response from the describeCoverage.do handler
   //The north, south, east and west reference the EPSG:4326 latitudes/longitudes that represent the current visible section of the map
   //Alternatively pass a GLatLng bounds as the north parameter
-    showWCSDownload : function (serviceUrl, layerName, map) {
+    showWCSDownload : function (serviceUrl, layerName, map, ftpURL) {
         var currentVisibleBounds = map.getVisibleMapBounds();
-        me=this;
+        me = this;
         Ext.Ajax.request({
             url         : 'describeCoverage.do',
             timeout     : 180000,
@@ -116,7 +116,6 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                         }
                     }
                 };
-
 
                 //Contains the fields for bbox selection
                 if (rec.spatialDomain.envelopes.length > 0) {
@@ -489,8 +488,6 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                         disabled        : true,
                         anchor          : '-50',
                         submitValue     : false
-
-
                     },{
                         xtype           : 'combo',
                         id              : 'inputCrs',
@@ -600,7 +597,9 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                                     return;
                                 }
 
-                                var downloadUrl = './downloadWCSAsZip.do?' + me.getWCSInfoWindowDownloadParameters();
+                                var downloadUrl = './downloadWCSAsZip.do?' + me.getWCSInfoWindowDownloadParameters() +
+                                    (ftpURL ? '&' + Ext.Object.toQueryString({ftpURL: ftpURL}) : '');
+                                
                                 portal.util.FileDownloader.downloadFile(downloadUrl);
                             }
                         }]

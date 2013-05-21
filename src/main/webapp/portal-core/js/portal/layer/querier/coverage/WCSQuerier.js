@@ -90,11 +90,11 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
                                 value : record.label
                             },{
                                 xtype : 'displayfield',
-                                fieldLabel : "Supported RequestCRS's",
+                                fieldLabel : "Supported Request CRSs",
                                 value : portal.layer.querier.coverage.WCSQuerier._parseArrayToString(record.supportedRequestCRSs)
                             },{
                                 xtype : 'displayfield',
-                                fieldLabel : "Supported ResponseCRS's",
+                                fieldLabel : "Supported Response CRSs",
                                 value : portal.layer.querier.coverage.WCSQuerier._parseArrayToString(record.supportedResponseCRSs)
                             },{
                                 xtype : 'displayfield',
@@ -119,7 +119,6 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
                             text : 'Download WCS',
                             iconCls : 'download',
                             handler : function() {
-
                                 var layer=queryTarget.get('layer');
                                 var downloader=layer.get('downloader');
                                 var renderedFilterer = layer.get('filterer').clone();

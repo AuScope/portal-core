@@ -228,6 +228,10 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
         var opendapResource = opendapResources[0];  //we are only providing a download for 1 resource
         var opendapUrl = opendapResource.get('url');
         var variableName = opendapResource.get('name');
+        
+        // See whether or not there is an FTP resource:
+        var ftpResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.FTP);
+        var ftpURL = ftpResources.length > 0 ? ftpResources[0].get('url') : ''; 
 
         //Our objective is to build up a list of field sets
         var fieldSetsToDisplay = [];
@@ -308,7 +312,10 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
                     //POSTing JSON through the FileDownloader seems to cause some issues with FF
                     //This is our weird workaround
                     var params = this._getOPeNDAPParameters(win);
-                    var url = 'opendapMakeRequest.do?constraints=' + escape(params.constraints);
+
+                    var url = 'opendapMakeRequest.do?constraints=' + escape(params.constraints) +
+                        (ftpURL ? '&' + Ext.Object.toQueryString({ftpURL: ftpURL}) : '');
+                        
                     delete params.constraints;
 
                     portal.util.FileDownloader.downloadFile(url, params);
