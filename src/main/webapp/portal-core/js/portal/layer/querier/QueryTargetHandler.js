@@ -71,7 +71,7 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
             longitude : queryTarget.get('lng')
         });
         //function(windowLocation, width, height, content, initFunction)
-        mapWrapper.openInfoWindow(windowLocation, width, height, baseComponents);
+        mapWrapper.openInfoWindow(windowLocation, width, height, baseComponents, queryTarget.get('layer'));
     },
 
     /**

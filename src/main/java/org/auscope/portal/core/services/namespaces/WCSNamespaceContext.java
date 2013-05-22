@@ -1,10 +1,5 @@
 package org.auscope.portal.core.services.namespaces;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.xml.namespace.NamespaceContext;
 
 /**
  * Represents the namespace context of a generic WCS response to a DescribeCoverage request.

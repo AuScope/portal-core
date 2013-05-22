@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.httpclient.util.URIUtil;
-import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;

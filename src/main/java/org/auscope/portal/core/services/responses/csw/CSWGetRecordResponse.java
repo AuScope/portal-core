@@ -2,8 +2,9 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -29,6 +30,11 @@ public class CSWGetRecordResponse {
     private int recordsReturned = 0;
     private int recordsMatched = 0;
     private int nextRecord = 0;
+    
+    /** A map object for looking up a particular CSWRecord object by its file identifier */
+    private Map<String, CSWRecord> cswRecordLookupMap = new HashMap<String, CSWRecord>();
+    /** A list object that stores orphan CSWRecord objects */
+    private List<CSWRecord> stagingOrphanRecords = new ArrayList<CSWRecord>();
 
     /**
      * Creates a new instance from the specified record response by parsing its contents
@@ -69,6 +75,38 @@ public class CSWGetRecordResponse {
             newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);
             log.trace("GN layer " + (i + 1) + " : " + newRecord.toString());
+            cswRecordLookupMap.put(newRecord.getFileIdentifier(), newRecord);
+            //Links a child record to its parent and stage it as it is possible
+            //that its parent record hasn't been parsed yet.
+            linkChildToParent(newRecord, true);
+        }
+        
+        //Final check to ensure each staged child record links to its parent record.
+        //There is no need to stage a child record at this point if it doesn't have
+        //a parent - as there is a possibility the record is wrong in the registry.
+        for (CSWRecord record : stagingOrphanRecords) {
+            linkChildToParent(record, false);
+        }
+    }
+    
+    /**
+     * Links a child CSWRecord object to its parent object.
+     * @param record a CSWRecord object (can be a child or parent object)
+     * @param stageOrphanChild flag to indicate whether or not an orphan CSWRecord should be staged.
+     */
+    private void linkChildToParent(CSWRecord record, boolean stageOrphanChild) {
+        String parentId = record.getParentIdentifier();
+        if (parentId != null && !parentId.isEmpty()) {
+            CSWRecord parent = cswRecordLookupMap.get(parentId);
+            if (parent != null) {
+                parent.addChildRecord(record);
+            } else {
+                if (stageOrphanChild) {
+                    stagingOrphanRecords.add(record);
+                } else {
+                    log.trace("An orphan CSWRecord object detected. Child id=" + record.getFileIdentifier());
+                }
+            }
         }
     }
 
@@ -108,6 +146,4 @@ public class CSWGetRecordResponse {
     public int getNextRecord() {
         return nextRecord;
     }
-
-
 }

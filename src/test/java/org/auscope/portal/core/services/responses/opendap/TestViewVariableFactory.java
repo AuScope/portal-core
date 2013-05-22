@@ -12,11 +12,6 @@ import junit.framework.Assert;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
-import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
-import org.auscope.portal.core.services.responses.opendap.SimpleBounds;
-import org.auscope.portal.core.services.responses.opendap.SimpleGrid;
-import org.auscope.portal.core.services.responses.opendap.ViewVariableFactory;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.JSONModelAndView;
 import org.jmock.Expectations;

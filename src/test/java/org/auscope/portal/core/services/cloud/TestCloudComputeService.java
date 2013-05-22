@@ -2,29 +2,16 @@ package org.auscope.portal.core.services.cloud;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Properties;
-import java.util.Set;
 
 import junit.framework.Assert;
 
 import org.auscope.portal.core.cloud.CloudJob;
+import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.jclouds.Constants;
-import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.location.reference.LocationConstants;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.model.Instance;
@@ -33,8 +20,6 @@ import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 public class TestCloudComputeService extends PortalTestClass {
     /**
@@ -70,7 +55,7 @@ public class TestCloudComputeService extends PortalTestClass {
      * Tests that job execution correctly calls and parses a response from AmazonEC2
      */
     @Test
-    public void testExecuteJob() {
+    public void testExecuteJob() throws Exception {
         final String userDataString = "user-data-string";
         final String expectedInstanceId = "instance-id";
 
@@ -95,10 +80,9 @@ public class TestCloudComputeService extends PortalTestClass {
      * Tests that job execution correctly calls and parses a response from AmazonEC2
      * when EC2 reports failure by returning 0 running instances.
      */
-    @Test
-    public void testExecuteJobFailure() {
+    @Test(expected=Exception.class)
+    public void testExecuteJobFailure() throws Exception {
         final String userDataString = "user-data-string";
-        final String expectedInstanceId = null;
 
         final RunInstancesResult runInstanceResult = new RunInstancesResult();
         final Reservation reservation = new Reservation();
@@ -110,17 +94,15 @@ public class TestCloudComputeService extends PortalTestClass {
             oneOf(mockAmazonEC2).runInstances(with(any(RunInstancesRequest.class)));will(returnValue(runInstanceResult));
         }});
 
-        String actualInstanceId = service.executeJob(job, userDataString);
-
-        Assert.assertEquals(expectedInstanceId, actualInstanceId);
+        service.executeJob(job, userDataString);
     }
 
     /**
      * Tests that job execution correctly calls and parses a response from AmazonEC2
      * when EC2 reports failure by throwing an exception
      */
-    @Test(expected=AmazonServiceException.class)
-    public void testExecuteJobException() {
+    @Test(expected=PortalServiceException.class)
+    public void testExecuteJobException() throws Exception {
         final String userDataString = "user-data-string";
 
         final RunInstancesResult runInstanceResult = new RunInstancesResult();
@@ -130,11 +112,10 @@ public class TestCloudComputeService extends PortalTestClass {
         runInstanceResult.setReservation(reservation);
 
         context.checking(new Expectations() {{
-            oneOf(mockAmazonEC2).runInstances(with(any(RunInstancesRequest.class)));will(throwException(new AmazonServiceException("")));
+            oneOf(mockAmazonEC2).runInstances(with(any(RunInstancesRequest.class)));will(throwException(new PortalServiceException("")));
         }});
 
         service.executeJob(job, userDataString);
-        Assert.fail("Exception should've been thrown");
     }
 
     /**

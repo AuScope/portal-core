@@ -2,12 +2,11 @@ package org.auscope.portal.core.services;
 
 import java.awt.Dimension;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Map;
 
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -34,9 +33,7 @@ public class WCSService {
     }
 
     /**
-     * Makes a GetCoverage request, pipes the response bytes into output.
-     * Returns the number of bytes written to output
-     * @param output will receive response bytes
+     * Makes a GetCoverage request, returns the response as a stream of data
      * @param serviceUrl The WCS endpoint to query
      * @param coverageName The coverage layername to request
      * @param inputCrs the coordinate reference system to query
@@ -51,33 +48,40 @@ public class WCSService {
      *
      * @throws PortalServiceException
      */
-    public Integer getCoverage(OutputStream output, String serviceUrl, String coverageName, String downloadFormat,
+    public InputStream getCoverage(String serviceUrl, String coverageName, String downloadFormat,
             Dimension outputSize, Resolution outputResolution, String outputCrs, String inputCrs,
             CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParameters) throws PortalServiceException {
 
-        HttpRequestBase method = methodMaker.getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
+        HttpMethodBase method = methodMaker.getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
+
         try {
-            return serviceCaller.getMethodResponsePiped(method, output);
+            return serviceCaller.getMethodResponseAsStream(method);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
         }
     }
 
     /**
-     * Makes a DescribeCoverage reqeust, returns the response as an array of DescribeCoverageRecords
+     * Makes a DescribeCoverage request, returns the response as an array of DescribeCoverageRecords
      * @param serviceUrl The WCS endpoint to query
      * @param coverageName The coverage name to describe
      */
     public DescribeCoverageRecord[] describeCoverage(String serviceUrl, String coverageName) throws PortalServiceException {
-        HttpRequestBase method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
+        HttpMethodBase method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
 
         try {
-            Document responseDoc = serviceCaller.getMethodResponseAsDocument(method);
+            InputStream response = serviceCaller.getMethodResponseAsStream(method);
+
+            Document responseDoc = DOMUtil.buildDomFromStream(response);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
             return DescribeCoverageRecord.parseRecords(responseDoc);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
         }
     }
 

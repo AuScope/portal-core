@@ -7,17 +7,17 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
 
     downloadData : function(layer, resources, renderedFilterer, currentFilterer) {
         var wcsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WCS);
-
-        this.showWCSDownload(wcsResources[0].get('url'), wcsResources[0].get('name'), layer.get('renderer').map);
-
+        var ftpResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.FTP);
+        var ftpURL = ftpResources.length > 0 ? ftpResources[0].get('url') : '';
+        this.showWCSDownload(wcsResources[0].get('url'), wcsResources[0].get('name'), layer.get('renderer').map, ftpURL);
     },// end downloadData
 
   //rec must be a record from the response from the describeCoverage.do handler
   //The north, south, east and west reference the EPSG:4326 latitudes/longitudes that represent the current visible section of the map
   //Alternatively pass a GLatLng bounds as the north parameter
-    showWCSDownload : function (serviceUrl, layerName, map) {
+    showWCSDownload : function (serviceUrl, layerName, map, ftpURL) {
         var currentVisibleBounds = map.getVisibleMapBounds();
-        me=this;
+        me = this;
         Ext.Ajax.request({
             url         : 'describeCoverage.do',
             timeout     : 180000,
@@ -50,7 +50,7 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                     rec.temporalDomain = [];
                 }
                 if (!rec.spatialDomain) {
-                    rec.spatialDomain = [];
+                    rec.spatialDomain = {envelopes : [], rectifiedGrid : null};
                 }
 
                 //Add a proper date time method to each temporal domain element
@@ -99,9 +99,12 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                     }
 
                     //IE workaround
-                    if (!Ext.isIE || depth !== 0) {
-                        fieldSet.setDisabled(disabled);
-                    }
+                    //VT: I don't think we need this any. setting the disabling the fieldset from this level
+                    // disable the checkbox associted with the fieldset as well. Can be seen from the ASTER WMS Download
+                    //once bounding box is check, it cannot be unchecked anymore. disabling this works for all three browsers.
+                    //if (!Ext.isIE || depth != 0) {
+                    //    fieldSet.setDisabled(disabled);
+                    //}
 
                     for (var i = 0; i < fieldSet.items.length; i++) {
                         var item = fieldSet.items.get(i);
@@ -114,9 +117,8 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                     }
                 };
 
-
                 //Contains the fields for bbox selection
-                if (rec.spatialDomain.length > 0) {
+                if (rec.spatialDomain.envelopes.length > 0) {
                     fieldSetsToDisplay.push(new Ext.form.FieldSet({
                         id              : 'bboxFldSet',
                         title           : 'Bounding box constraint',
@@ -486,8 +488,6 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                         disabled        : true,
                         anchor          : '-50',
                         submitValue     : false
-
-
                     },{
                         xtype           : 'combo',
                         id              : 'inputCrs',
@@ -597,7 +597,9 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                                     return;
                                 }
 
-                                var downloadUrl = './downloadWCSAsZip.do?' + me.getWCSInfoWindowDownloadParameters();
+                                var downloadUrl = './downloadWCSAsZip.do?' + me.getWCSInfoWindowDownloadParameters() +
+                                    (ftpURL ? '&' + Ext.Object.toQueryString({ftpURL: ftpURL}) : '');
+                                
                                 portal.util.FileDownloader.downloadFile(downloadUrl);
                             }
                         }]

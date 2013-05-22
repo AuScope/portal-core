@@ -28,10 +28,10 @@ Ext.define('portal.widgets.panel.KnownLayerPanel', {
      */
     getOnlineResourcesForRecord : function(record) {
         var onlineResources = [];
-        var cswRecords = record.data.cswRecords;
+        var cswRecords = record.get('cswRecords');
 
         for (var i = 0; i < cswRecords.length; i++) {
-            onlineResources = onlineResources.concat(cswRecords[i].get('onlineResources'));
+            onlineResources = onlineResources.concat(cswRecords[i].getAllChildOnlineResources());
         }
 
         return onlineResources;

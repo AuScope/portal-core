@@ -18,7 +18,7 @@ public abstract class AbstractCSWOnlineResource {
      */
     public enum OnlineResourceType {
         /**
-         * The type couldnt be determined or is unsupported.
+         * The type couldn't be determined or is unsupported.
          */
         Unsupported,
         /**
@@ -51,7 +51,17 @@ public abstract class AbstractCSWOnlineResource {
         /**
          * A SOS Service
          */
-        SOS
+        SOS,
+        
+        /**
+         * IRIS Web Service
+         */
+        IRIS,
+        
+        /**
+         * A CSW Service. e.g. a GeoNetwork /csw endpoint. Can be used a dummy resource for when you don't want to cache all CSW records on load.
+         */
+        CSWService
     }
 
     /**
@@ -110,8 +120,12 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.SOS;
         } else if (lowerProtocol.contains("www:download-1.0-ftp--download")) {
             return OnlineResourceType.FTP;
+        } else if (lowerProtocol.contains("iris")) {
+            return OnlineResourceType.IRIS;
+        } else if (lowerProtocol.contains("cswservice")) {
+            return OnlineResourceType.CSWService;
         }
-
+        
         return OnlineResourceType.Unsupported;
     }
 

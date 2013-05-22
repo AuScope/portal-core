@@ -64,6 +64,10 @@
     background-image:url(../img/add.gif) !important;
 }
 
+.addall {
+    background-image:url(../img/addall.gif) !important;
+}
+
 .remove {
     background-image:url(../img/delete.gif) !important;
 }

@@ -1,6 +1,6 @@
 package org.auscope.portal.core.services;
 
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.commons.httpclient.HttpMethodBase;
 
 /**
  * Represents an exception thrown by an AuScope portal service.
@@ -9,18 +9,19 @@ import org.apache.http.client.methods.HttpRequestBase;
  * service that is causing problems
  *
  * @author Josh Vote
- *
+ * @author Richard Goh
  */
 public class PortalServiceException extends Exception {
     /** The method that was executing when this exception was thrown */
-    private HttpRequestBase rootMethod;
+    private HttpMethodBase rootMethod;
+    private String errorCorrection;
 
     /**
      * Creates a new exception
      * @param rootMethod The method that was being run when this exception was thrown
      * @param cause Root cause of this exception
      */
-    public PortalServiceException(HttpRequestBase rootMethod, Throwable cause) {
+    public PortalServiceException(HttpMethodBase rootMethod, Throwable cause) {
         super(cause);
         this.rootMethod = rootMethod;
     }
@@ -29,7 +30,7 @@ public class PortalServiceException extends Exception {
      * Creates a new exception
      * @param rootMethod The method that was being run when this exception was thrown
      */
-    public PortalServiceException(HttpRequestBase rootMethod) {
+    public PortalServiceException(HttpMethodBase rootMethod) {
         super();
         this.rootMethod = rootMethod;
     }
@@ -42,11 +43,21 @@ public class PortalServiceException extends Exception {
     }
 
     /**
+     * Creates a new exception with the specified error and its correction messages
+     * @param errorMessage The error description
+     * @param errorCorrection The error correction description
+     */
+    public PortalServiceException(String errorMessage, String errorCorrection) {
+        super(errorMessage);
+        this.errorCorrection = errorCorrection;
+    }
+
+    /**
      * Creates a new exception
      * @param rootMethod The method that was being run when this exception was thrown
      * @param message Descriptive message
      */
-    public PortalServiceException(HttpRequestBase rootMethod, String message) {
+    public PortalServiceException(HttpMethodBase rootMethod, String message) {
         super(message);
         this.rootMethod = rootMethod;
     }
@@ -57,7 +68,7 @@ public class PortalServiceException extends Exception {
      * @param message Descriptive message
      * @param cause Root cause of this exception
      */
-    public PortalServiceException(HttpRequestBase rootMethod, String message, Throwable cause) {
+    public PortalServiceException(HttpMethodBase rootMethod, String message, Throwable cause) {
         super(message, cause);
         this.rootMethod = rootMethod;
     }
@@ -66,7 +77,14 @@ public class PortalServiceException extends Exception {
      * Gets the method that was executing when this exception was thrown
      * @return
      */
-    public HttpRequestBase getRootMethod() {
+    public HttpMethodBase getRootMethod() {
         return rootMethod;
+    }
+
+    /**
+     * @return the errorCorrection
+     */
+    public String getErrorCorrection() {
+        return errorCorrection;
     }
 }

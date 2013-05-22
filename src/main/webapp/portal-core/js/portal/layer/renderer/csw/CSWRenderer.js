@@ -7,17 +7,20 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
     config : {
         icon : null
     },
+
+    polygonColor : null,
+
     constructor: function(config) {
         this.legend = Ext.create('portal.layer.legend.wfs.WFSLegend', {
             iconUrl : config.icon ? config.icon.getUrl() : ''
         });
         this.callParent(arguments);
-    },
+    }, 
 
     /**
      * A function for displaying generic data from a variety of data sources. This function will
      * raise the renderstarted and renderfinished events as appropriate. The effect of multiple calls
-     * to this function (ie calling displayData again before renderfinished is raised) is undefined.
+     * to this function (i.e. calling displayData again before renderfinished is raised) is undefined.
      *
      * This function will re-render itself entirely and thus may call removeData() during the normal
      * operation of this function
@@ -62,6 +65,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
 
 
         var cswRecords = this.parentLayer.get('cswRecords');
+               
         var numRecords = 0;
         var primitives = [];
         for (var i = 0; i < cswRecords.length; i++) {
@@ -70,6 +74,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
                     (resourceProviderFilter === '' || cswRecords[i].get('resourceProvider') === resourceProviderFilter)) {
                 numRecords++;
                 var geoEls = cswRecords[i].get('geographicElements');
+                
                 for (var j = 0; j < geoEls.length; j++) {
                     var geoEl = geoEls[j];
                     if (geoEl instanceof portal.util.BBox) {
@@ -83,7 +88,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
 
                             primitives.push(this.map.makeMarker(cswRecords[i].get('id'), cswRecords[i].get('name'), cswRecords[i], undefined, this.parentLayer, point, this.getIcon()));
                         } else { //polygon
-                            var polygonList = geoEl.toPolygon(this.map, '#0003F9', 4, 0.75,'#0055FE', 0.4, undefined,
+                            var polygonList = geoEl.toPolygon(this.map, (this._getPolygonColor(this.polygonColor))[0], 4, 0.75,(this._getPolygonColor(this.polygonColor))[1], 0.4, undefined,
                                     cswRecords[i].get('id'), cswRecords[i], undefined, this.parentLayer);
 
                             for (var k = 0; k < polygonList.length; k++) {
@@ -97,6 +102,17 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
 
         this.primitiveManager.addPrimitives(primitives);
         this.fireEvent('renderfinished', this);
+    },
+
+
+    _getPolygonColor : function(colorCSV){
+        if(colorCSV && colorCSV.length > 0){
+            var colorArray=colorCSV.split(",");
+            return colorArray;
+        }else{
+            //default blue color used if no color is specified
+            return ['#0003F9','#0055FE'];
+        }
     },
 
     /**

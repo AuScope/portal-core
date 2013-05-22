@@ -11,6 +11,9 @@ Ext.define('portal.map.gmap.ClickController', {
         _marker : function(marker, overlayLatLng) {
 
             var basePrim = marker._portalBasePrimitive;
+            if (!basePrim) {
+                return [];
+            }
 
             var id = basePrim.getId();
             var onlineResource = basePrim.getOnlineResource();

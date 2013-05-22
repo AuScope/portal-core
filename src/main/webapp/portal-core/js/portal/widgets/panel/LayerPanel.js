@@ -17,6 +17,20 @@ Ext.define('portal.widgets.panel.LayerPanel', {
         this.allowDebugWindow = cfg.allowDebugWindow ? true : false;
         this.addEvents('removelayerrequest');
 
+        this.removeAction = new Ext.Action({
+            text : 'Remove Layer',
+            iconCls : 'remove',
+            handler : Ext.bind(function(cmp) {
+                var sm = this.getSelectionModel();
+                var selectedRecords = sm.getSelection();
+                if (selectedRecords && selectedRecords.length > 0) {
+                    var store = this.getStore();
+                    store.remove(selectedRecords);
+                    this.fireEvent('removelayerrequest', this, selectedRecords[0]);//only support single selection
+                }
+            }, this)
+        });
+
         Ext.apply(cfg, {
             columns : [{
                 //legend column
@@ -29,11 +43,15 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 }
             },{
                 //Loading icon column
+                xtype : 'clickcolumn',
                 dataIndex : 'loading',
                 renderer : this._loadingRenderer,
                 hasTip : true,
                 tipRenderer : Ext.bind(this._loadingTipRenderer, this),
-                width: 32
+                width: 32,
+                listeners : {
+                    columnclick : Ext.bind(this._serviceInformationClickHandler, this)
+                }
             },{
                 //Layer name column
                 xtype : 'clickcolumn',
@@ -78,21 +96,34 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 ]
             },{
                 ptype: 'celltips'
+            },{
+                ptype : 'rowcontextmenu',
+                contextMenu : Ext.create('Ext.menu.Menu', {
+                    items: [this.removeAction]
+                })
             }],
-            bbar: [{
-                text : 'Remove Layer',
-                iconCls : 'remove',
-                handler : function(button) {
-                    var grid = button.findParentByType('layerpanel');
-                    var sm = grid.getSelectionModel();
-                    var selectedRecords = sm.getSelection();
-                    if (selectedRecords && selectedRecords.length > 0) {
-                        var store = grid.getStore();
-                        store.remove(selectedRecords);
-                        grid.fireEvent('removelayerrequest', this, selectedRecords[0]);//only support single selection
+
+            viewConfig:{
+                plugins:[{
+                    ptype: 'gridviewdragdrop',
+                    dragText: 'Drag and drop to re-order'
+                }],
+                listeners: {
+                    beforedrop: function(node, data, overModel, dropPosition,  dropFunction,  eOpts ){
+                        if(data.records[0].data.renderer instanceof portal.layer.renderer.wms.LayerRenderer){
+                            return true;
+                        }else{
+                            alert('Only wms layers can be reordered');
+                            return false;
+                        }
                     }
                 }
-            }]
+            },
+
+
+
+
+            bbar: [this.removeAction]
         });
 
         this.callParent(arguments);
@@ -159,7 +190,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                     tag : 'img',
                     width : 16,
                     height : 16,
-                    src: 'img/page_code_disabled.png'
+                    src: 'portal-core/img/page_code_disabled.png'
                 }]
             });
         }
@@ -247,6 +278,22 @@ Ext.define('portal.widgets.panel.LayerPanel', {
             downloader.downloadData(layer, onlineResources, renderedFilterer, currentFilterer);
 
         }
+    },
+
+    /**
+     * Show a popup containing info about the services that 'power' this layer
+     */
+    _serviceInformationClickHandler : function(column, record, rowIndex, colIndex) {
+        var cswRecords = record.get('cswRecords')
+        if (!cswRecords || cswRecords.length === 0) {
+            return;
+        }
+
+        var popup = Ext.create('portal.widgets.window.CSWRecordDescriptionWindow', {
+            cswRecords : cswRecords
+        });
+
+        popup.show();
     },
 
     /**

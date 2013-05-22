@@ -2,7 +2,7 @@
 <csw:GetRecordsResponse xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
   <csw:SearchStatus timestamp="2009-08-26T15:23:00" />
   <csw:SearchResults numberOfRecordsMatched="30" numberOfRecordsReturned="15" elementSet="full" nextRecord="16">
-    <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
+    <gmd:MD_Metadata xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
       <gmd:fileIdentifier>
         <gco:CharacterString>944e1417-83ca-4d62-b4b1-f3f4a5292b4d</gco:CharacterString>
       </gmd:fileIdentifier>
@@ -3056,17 +3056,18 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
       </gmd:language>
-
       <gmd:characterSet>
         <gmd:MD_CharacterSetCode codeListValue="utf8" codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_CharacterSetCode" />
       </gmd:characterSet>
+      <gmd:parentIdentifier>
+        <gco:CharacterString>7c0dcd76-60bd-46d8-ade1-5e83362bb44a</gco:CharacterString>
+      </gmd:parentIdentifier>
       <gmd:contact>
         <gmd:CI_ResponsibleParty>
           <gmd:individualName gco:nilReason="missing">
             <gco:CharacterString />
           </gmd:individualName>
           <gmd:organisationName gco:nilReason="missing">
-
             <gco:CharacterString />
           </gmd:organisationName>
           <gmd:positionName gco:nilReason="missing">
@@ -3076,7 +3077,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
             <gmd:CI_Contact>
               <gmd:phone>
                 <gmd:CI_Telephone>
-
                   <gmd:voice gco:nilReason="missing">
                     <gco:CharacterString />
                   </gmd:voice>
@@ -3086,7 +3086,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
                 </gmd:CI_Telephone>
               </gmd:phone>
               <gmd:address>
-
                 <gmd:CI_Address>
                   <gmd:deliveryPoint gco:nilReason="missing">
                     <gco:CharacterString />
@@ -3096,7 +3095,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
                   </gmd:city>
                   <gmd:administrativeArea gco:nilReason="missing">
                     <gco:CharacterString />
-
                   </gmd:administrativeArea>
                   <gmd:postalCode gco:nilReason="missing">
                     <gco:CharacterString />
@@ -3106,7 +3104,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
                   </gmd:country>
                   <gmd:electronicMailAddress gco:nilReason="missing">
                     <gco:CharacterString />
-
                   </gmd:electronicMailAddress>
                 </gmd:CI_Address>
               </gmd:address>
@@ -3116,7 +3113,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
             <gmd:CI_RoleCode codeListValue="pointOfContact" codeList="http://www.isotc211.org/2005/resources/codeList.xml#CI_RoleCode" />
           </gmd:role>
         </gmd:CI_ResponsibleParty>
-
       </gmd:contact>
       <gmd:dateStamp>
         <gco:DateTime xmlns:srv="http://www.isotc211.org/2005/srv">2009-08-19T13:46:40</gco:DateTime>
@@ -3125,7 +3121,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
         <gco:CharacterString xmlns:srv="http://www.isotc211.org/2005/srv">ISO 19115:2003/19139</gco:CharacterString>
       </gmd:metadataStandardName>
       <gmd:metadataStandardVersion>
-
         <gco:CharacterString xmlns:srv="http://www.isotc211.org/2005/srv">1.0</gco:CharacterString>
       </gmd:metadataStandardVersion>
       <gmd:spatialRepresentationInfo>
@@ -3134,7 +3129,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
             <gco:Integer>3</gco:Integer>
           </gmd:numberOfDimensions>
           <gmd:axisDimensionProperties>
-
             <gmd:MD_Dimension>
               <gmd:dimensionName>
                 <gmd:MD_DimensionNameTypeCode codeListValue="row" codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_DimensionNameTypeCode" />
@@ -3144,7 +3138,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
               </gmd:dimensionSize>
               <gmd:resolution>
                 <gco:Measure uom="" />
-
               </gmd:resolution>
             </gmd:MD_Dimension>
           </gmd:axisDimensionProperties>
@@ -3154,7 +3147,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
                 <gmd:MD_DimensionNameTypeCode codeListValue="column" codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_DimensionNameTypeCode" />
               </gmd:dimensionName>
               <gmd:dimensionSize>
-
                 <gco:Integer />
               </gmd:dimensionSize>
               <gmd:resolution>
@@ -3164,7 +3156,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
           </gmd:axisDimensionProperties>
           <gmd:axisDimensionProperties>
             <gmd:MD_Dimension>
-
               <gmd:dimensionName>
                 <gmd:MD_DimensionNameTypeCode codeListValue="vertical" codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_DimensionNameTypeCode" />
               </gmd:dimensionName>
@@ -3174,7 +3165,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
               <gmd:resolution>
                 <gco:Measure uom="" />
               </gmd:resolution>
-
             </gmd:MD_Dimension>
           </gmd:axisDimensionProperties>
           <gmd:cellGeometry>
@@ -3184,7 +3174,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
             <gco:Boolean />
           </gmd:transformationParameterAvailability>
         </gmd:MD_GridSpatialRepresentation>
-
       </gmd:spatialRepresentationInfo>
       <gmd:referenceSystemInfo>
         <gmd:MD_ReferenceSystem>
@@ -3193,7 +3182,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
               <gmd:code>
                 <gco:CharacterString>WGS 1984</gco:CharacterString>
               </gmd:code>
-
             </gmd:RS_Identifier>
           </gmd:referenceSystemIdentifier>
         </gmd:MD_ReferenceSystem>
@@ -3203,7 +3191,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
           <gmd:citation>
             <gmd:CI_Citation>
               <gmd:title>
-
                 <gco:CharacterString>Template for Raster data in ISO19139</gco:CharacterString>
               </gmd:title>
               <gmd:date>
@@ -3212,7 +3199,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
                     <gco:DateTime />
                   </gmd:date>
                   <gmd:dateType>
-
                     <gmd:CI_DateTypeCode codeListValue="publication" codeList="http://www.isotc211.org/2005/resources/codeList.xml#CI_DateTypeCode" />
                   </gmd:dateType>
                 </gmd:CI_Date>
@@ -3222,7 +3208,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
               </gmd:edition>
               <gmd:presentationForm>
                 <gmd:CI_PresentationFormCode codeListValue="mapDigital" codeList="http://www.isotc211.org/2005/resources/codeList.xml#CI_PresentationFormCode" />
-
               </gmd:presentationForm>
             </gmd:CI_Citation>
           </gmd:citation>
@@ -3231,7 +3216,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
           </gmd:abstract>
           <gmd:purpose gco:nilReason="missing">
             <gco:CharacterString />
-
           </gmd:purpose>
           <gmd:status>
             <gmd:MD_ProgressCode codeListValue="onGoing" codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_ProgressCode" />
@@ -3241,7 +3225,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
               <gmd:individualName gco:nilReason="missing">
                 <gco:CharacterString />
               </gmd:individualName>
-
               <gmd:organisationName gco:nilReason="missing">
                 <gco:CharacterString />
               </gmd:organisationName>
@@ -3462,7 +3445,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
           <gmd:scope>
             <gmd:DQ_Scope>
               <gmd:level>
-
                 <gmd:MD_ScopeCode codeListValue="dataset" codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_ScopeCode" />
               </gmd:level>
             </gmd:DQ_Scope>
@@ -3472,7 +3454,6 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
               <gmd:statement gco:nilReason="missing">
                 <gco:CharacterString />
               </gmd:statement>
-
             </gmd:LI_Lineage>
           </gmd:lineage>
         </gmd:DQ_DataQuality>
@@ -3489,6 +3470,9 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
       <gmd:characterSet>
         <gmd:MD_CharacterSetCode codeListValue="utf8" codeList="http://www.isotc211.org/2005/resources/codeList.xml#MD_CharacterSetCode" />
       </gmd:characterSet>
+      <gmd:parentIdentifier>
+        <gco:CharacterString>test-does-not-exist</gco:CharacterString>
+      </gmd:parentIdentifier>      
       <gmd:contact>
 
         <gmd:CI_ResponsibleParty>
@@ -3801,8 +3785,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
         </gmd:DQ_DataQuality>
       </gmd:dataQualityInfo>
     </gmd:MD_Metadata>
-   <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:geonet="http://www.fao.org/geonetwork">
-
+    <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
         <gco:CharacterString>7c0dcd76-60bd-46d8-ade1-5e83362bb44a</gco:CharacterString>
       </gmd:fileIdentifier>
@@ -3811,7 +3794,6 @@ The ISO19139/119 metadata standard is the preferred metadata standard
       </gmd:language>
       <gmd:characterSet>
         <gmd:MD_CharacterSetCode codeList="./resources/codeList.xml#MD_CharacterSetCode" codeListValue="utf8" />
-
       </gmd:characterSet>
       <gmd:hierarchyLevel>
         <gmd:MD_ScopeCode codeList="./resources/codeList.xml#MD_ScopeCode" codeListValue="dataset" />
@@ -3820,7 +3802,6 @@ The ISO19139/119 metadata standard is the preferred metadata standard
         <gco:DateTime>2010-07-27T09:52:25.864+08:00</gco:DateTime>
       </gmd:dateStamp>
       <gmd:metadataStandardName>
-
         <gco:CharacterString>ISO 19115:2003/19139</gco:CharacterString>
       </gmd:metadataStandardName>
       <gmd:metadataStandardVersion>
@@ -3829,7 +3810,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
       <gmd:identificationInfo>
         <gmd:MD_DataIdentification>
           <gmd:citation xmlns:srv="http://www.isotc211.org/2005/srv">
-
+    
             <gmd:CI_Citation>
               <gmd:title>
                 <gco:CharacterString>Mean period of wind waves at surface of the earth</gco:CharacterString>
@@ -3838,7 +3819,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                 <gmd:CI_Date>
                   <gmd:date>
                     <gco:DateTime>2010-07-27T09:52:25</gco:DateTime>
-
+    
                   </gmd:date>
                   <gmd:dateType>
                     <gmd:CI_DateTypeCode codeList="./resources/codeList.xml#CI_DateTypeCode" codeListValue="revision" />
@@ -3848,7 +3829,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
             </gmd:CI_Citation>
           </gmd:citation>
           <gmd:abstract xmlns:srv="http://www.isotc211.org/2005/srv">
-
+    
             <gco:CharacterString>sea_per_sfc                   s                             true  Mean period of wind waves at surface of the earth</gco:CharacterString>
           </gmd:abstract>
           <gmd:status xmlns:srv="http://www.isotc211.org/2005/srv">
@@ -3857,7 +3838,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
           <gmd:spatialRepresentationType xmlns:srv="http://www.isotc211.org/2005/srv">
             <gmd:MD_SpatialRepresentationTypeCode codeList="./resources/codeList.xml#MD_SpatialRepresentationTypeCode" codeListValue="grid" />
           </gmd:spatialRepresentationType>
-
+    
           <gmd:language xmlns:srv="http://www.isotc211.org/2005/srv" gco:nilReason="missing">
             <gco:CharacterString />
           </gmd:language>
@@ -3866,7 +3847,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
           </gmd:characterSet>
           <gmd:topicCategory xmlns:srv="http://www.isotc211.org/2005/srv">
             <gmd:MD_TopicCategoryCode>geoscientificInformation</gmd:MD_TopicCategoryCode>
-
+    
           </gmd:topicCategory>
           <gmd:extent xmlns:srv="http://www.isotc211.org/2005/srv">
             <gmd:EX_Extent>
@@ -3875,7 +3856,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                   <gmd:westBoundLongitude>
                     <gco:Decimal>
                       <gmd:xmin>-180.0</gmd:xmin>
-
+    
                     </gco:Decimal>
                   </gmd:westBoundLongitude>
                   <gmd:eastBoundLongitude>
@@ -3884,7 +3865,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                   <gmd:southBoundLatitude>
                     <gco:Decimal>-90.0</gco:Decimal>
                   </gmd:southBoundLatitude>
-
+    
                   <gmd:northBoundLatitude>
                     <gco:Decimal>90.0</gco:Decimal>
                   </gmd:northBoundLatitude>
@@ -3893,7 +3874,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
             </gmd:EX_Extent>
           </gmd:extent>
         </gmd:MD_DataIdentification>
-
+    
       </gmd:identificationInfo>
       <gmd:distributionInfo>
         <gmd:MD_Distribution>
@@ -3903,7 +3884,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                 <gco:CharacterString />
               </gmd:name>
               <gmd:version gco:nilReason="missing">
-
+    
                 <gco:CharacterString />
               </gmd:version>
             </gmd:MD_Format>
@@ -3913,7 +3894,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
               <gmd:onLine>
                 <gmd:CI_OnlineResource>
                   <gmd:linkage>
-
+    
                     <gmd:URL>http://apacsrv6/thredds/wcs/galeon/ocean.nc</gmd:URL>
                   </gmd:linkage>
                   <gmd:protocol>
@@ -3921,7 +3902,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                   </gmd:protocol>
                   <gmd:name>
                     <gco:CharacterString>sea_per_sfc</gco:CharacterString>
-
+    
                   </gmd:name>
                   <gmd:description>
                     <gco:CharacterString />
@@ -3931,7 +3912,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
             </gmd:MD_DigitalTransferOptions>
           </gmd:transferOptions>
         </gmd:MD_Distribution>
-
+    
       </gmd:distributionInfo>
       <gmd:dataQualityInfo>
         <gmd:DQ_DataQuality>
@@ -3941,7 +3922,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                 <gmd:MD_ScopeCode codeListValue="dataset" codeList="./resources/codeList.xml#MD_ScopeCode" />
               </gmd:level>
             </gmd:DQ_Scope>
-
+    
           </gmd:scope>
           <gmd:lineage>
             <gmd:LI_Lineage>
@@ -3951,7 +3932,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
             </gmd:LI_Lineage>
           </gmd:lineage>
         </gmd:DQ_DataQuality>
-
+    
       </gmd:dataQualityInfo>
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:geonet="http://www.fao.org/geonetwork">
@@ -3965,6 +3946,9 @@ The ISO19139/119 metadata standard is the preferred metadata standard
       <gmd:characterSet>
         <gmd:MD_CharacterSetCode codeList="./resources/codeList.xml#MD_CharacterSetCode" codeListValue="utf8" />
       </gmd:characterSet>
+      <gmd:parentIdentifier>
+        <gco:CharacterString>7c0dcd76-60bd-46d8-ade1-5e83362bb44a</gco:CharacterString>
+      </gmd:parentIdentifier>      
       <gmd:hierarchyLevel>
         <gmd:MD_ScopeCode codeList="./resources/codeList.xml#MD_ScopeCode" codeListValue="dataset" />
       </gmd:hierarchyLevel>

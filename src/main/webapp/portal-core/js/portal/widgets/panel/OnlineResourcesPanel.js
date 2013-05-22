@@ -13,90 +13,64 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
      * Accepts all Ext.grid.Panel options as well as
      * {
      *  cswRecords : single instance of array of portal.csw.CSWRecord objects
+     *  allow
      * }
      */
     constructor : function(cfg) {
-        if (Ext.isArray(cfg.cswRecords)) {
-            this.cswRecords = cfg.cswRecords;
-        } else {
-            this.cswRecords = [cfg.cswRecords];
-        }
+        // Ensures this.cswRecords is an array:
+        this.cswRecords = [].concat(cfg.cswRecords);
 
         //Generate our flattened 'data items' list for rendering to the grid
-        var dataItems = [];
-        for (var i = 0; i < this.cswRecords.length; i++) {
-            var onlineResources = this.cswRecords[i].get('onlineResources');
-            for (var j = 0; j < onlineResources.length; j++) {
-                var group = '';
-
-                //ensure we have a type we want to describe
-                switch (onlineResources[j].get('type')) {
-                case portal.csw.OnlineResource.WWW:
-                case portal.csw.OnlineResource.FTP:
-                    group = 'Web Link';
-                    break;
-                case portal.csw.OnlineResource.WFS:
-                    group = 'OGC Web Feature Service 1.1.0';
-                    break;
-                case portal.csw.OnlineResource.WMS:
-                    group = 'OGC Web Map Service 1.1.1';
-                    break;
-                case portal.csw.OnlineResource.WCS:
-                    group = 'OGC Web Coverage Service 1.0.0';
-                    break;
-                case portal.csw.OnlineResource.OPeNDAP:
-                    group = 'OPeNDAP Service';
-                    break;
-                case portal.csw.OnlineResource.SOS:
-                    group = 'Sensor Observation Service 2.0.0';
-                    break;
-                case portal.csw.OnlineResource.UNSUPPORTED:
-                    group = 'Others';
-                    break;
-                default:
-                    continue;//don't include anything else
-                }
-
-                dataItems.push({
-                    group : group,
-                    onlineResource : onlineResources[j],
-                    cswRecord : this.cswRecords[i]
-                });
-            }
-        }
+        var dataItems = portal.widgets.panel.OnlineResourcePanelRow.parseCswRecords(this.cswRecords);
 
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
             groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})'
         });
 
+        //The following two Configs variables can be set by the owner
+        var sortable = true;
+        var hideHeaders = true;
+        if (typeof(cfg.hideHeaders) !== 'undefined' && cfg.hideHeaders != null) {
+            hideHeaders = cfg.hideHeaders;
+        }
+        if (typeof(cfg.sortable) !== 'undefined' && cfg.sortable != null) {
+            sortable = cfg.sortable;
+        }
+
+        //We allow the owner to specify additional columns
+        var columns = [{
+            //Title column
+            dataIndex: 'onlineResource',
+            menuDisabled: true,
+            sortable: sortable,
+            flex: 1,
+            renderer: Ext.bind(this._titleRenderer, this)
+        },{
+            dataIndex: 'onlineResource',
+            width: 140,
+            renderer: Ext.bind(this._previewRenderer, this)
+        }];
+        if (cfg.columns) {
+            columns = columns.concat(cfg.columns);
+        }
+
         //Build our configuration object
         Ext.apply(cfg, {
+            selModel: cfg.selModel,
             features : [groupingFeature],
             store : Ext.create('Ext.data.Store', {
                 groupField : 'group',
-                fields : [
-                    {name : 'group', type: 'string'},
-                    {name : 'onlineResource', type: 'auto'},
-                    {name : 'cswRecord', type: 'auto'}
-                ],
+                model : 'portal.widgets.panel.OnlineResourcePanelRow',
                 data : dataItems
             }),
             plugins : [{
                 ptype : 'selectablegrid'
             }],
-            hideHeaders : true,
-            columns: [{
-                //Title column
-                dataIndex: 'onlineResource',
-                menuDisabled: true,
-                sortable: true,
-                flex: 1,
-                renderer: Ext.bind(this._titleRenderer, this)
-            },{
-                dataIndex: 'onlineResource',
-                width: 140,
-                renderer: Ext.bind(this._previewRenderer, this)
-            }]
+            hideHeaders : hideHeaders,
+            columns: columns,
+            viewConfig: {
+                enableTextSelection: true
+              }
         });
 
         this.callParent(arguments);
@@ -124,6 +98,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         switch(onlineResource.get('type')) {
         case portal.csw.OnlineResource.WWW:
         case portal.csw.OnlineResource.FTP:
+        case portal.csw.OnlineResource.IRIS:
         case portal.csw.OnlineResource.UNSUPPORTED:
             return Ext.DomHelper.markup({
                 tag : 'div',
@@ -273,4 +248,45 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             return '?';
         }
     }
+});
+/**
+ * Convenience class for representing the rows in the OnlineResourcesPanel
+ */
+Ext.define('portal.widgets.panel.OnlineResourcePanelRow', {
+    extend : 'Ext.data.Model',
+
+    statics : {
+        /**
+         * Turns an array of portal.csw.CSWRecord objects into an equivalent array of
+         * portal.widgets.panel.OnlineResourcePanelRow objects
+         */
+        parseCswRecords : function(cswRecords) {
+            var dataItems = [];
+            for (var i = 0; i < cswRecords.length; i++) {
+                var onlineResources = cswRecords[i].getAllChildOnlineResources();
+                for (var j = 0; j < onlineResources.length; j++) {
+
+                    //ensure we have a type we want to describe
+                    var group = portal.csw.OnlineResource.typeToString(onlineResources[j].get('type'));
+                    if (!group) {
+                        continue; //don't include anything else
+                    }
+
+                    dataItems.push(Ext.create('portal.widgets.panel.OnlineResourcePanelRow',{
+                        group : group,
+                        onlineResource : onlineResources[j],
+                        cswRecord : cswRecords[i]
+                    }));
+                }
+            }
+
+            return dataItems;
+        }
+    },
+
+    fields: [
+             {name : 'group', type: 'string'},
+             {name : 'onlineResource', type: 'auto'},
+             {name : 'cswRecord', type: 'auto'}
+    ]
 });

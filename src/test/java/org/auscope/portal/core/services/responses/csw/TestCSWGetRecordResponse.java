@@ -2,12 +2,7 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.auscope.portal.core.services.csw.CSWServiceItem;
-import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
-import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;
@@ -46,7 +41,7 @@ public class TestCSWGetRecordResponse extends PortalTestClass  {
      */
     @Test
     public void testGetCSWRecords() throws Exception {
-
+        String parentFileId = "7c0dcd76-60bd-46d8-ade1-5e83362bb44a";
         List<CSWRecord> recs = this.recordResponse.getRecords();
 
         Assert.assertNotNull(recs);
@@ -58,6 +53,15 @@ public class TestCSWGetRecordResponse extends PortalTestClass  {
         for (int i = 0; i < recs.size(); i++) {
             String expectedInfoUrl = String.format(this.origin.getRecordInformationUrl(), recs.get(i).getFileIdentifier());
             Assert.assertEquals(expectedInfoUrl, recs.get(i).getRecordInfoUrl());
+            
+            //Assertion that tests parent child relationship in recordset returned from the parser  
+            String fileId = recs.get(i).getFileIdentifier();
+            if (fileId.equals(parentFileId)) {
+                Assert.assertTrue(recs.get(i).hasChildRecords());
+                Assert.assertEquals(2, recs.get(i).getChildRecords().length);
+            } else {
+                Assert.assertFalse(recs.get(i).hasChildRecords());
+            }
         }
     }
 

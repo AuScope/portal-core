@@ -5,14 +5,11 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
-import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.DOMUtil;

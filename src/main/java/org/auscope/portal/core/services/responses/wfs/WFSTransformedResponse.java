@@ -1,6 +1,6 @@
 package org.auscope.portal.core.services.responses.wfs;
 
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.commons.httpclient.HttpMethodBase;
 
 /**
  * Represents a WFS response transformed by a XSLT
@@ -13,7 +13,7 @@ public class WFSTransformedResponse {
     /** The gml string after being transformed by a XSLT */
     private String transformed;
     /** The method used to make the request*/
-    private HttpRequestBase method;
+    private HttpMethodBase method;
 
     /**
      * Creates a new instance of this class
@@ -21,7 +21,7 @@ public class WFSTransformedResponse {
      * @param transformed The gml string after being transformed by a XSLT
      * @param method the method used to make the request
      */
-    public WFSTransformedResponse(String gml, String transformed, HttpRequestBase method) {
+    public WFSTransformedResponse(String gml, String transformed, HttpMethodBase method) {
         this.gml = gml;
         this.transformed = transformed;
         this.method = method;
@@ -47,7 +47,7 @@ public class WFSTransformedResponse {
      * Gets the method used to make the request
      * @return
      */
-    public HttpRequestBase getMethod() {
+    public HttpMethodBase getMethod() {
         return method;
     }
 }

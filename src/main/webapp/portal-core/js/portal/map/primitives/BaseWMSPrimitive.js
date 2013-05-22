@@ -18,11 +18,14 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
          * @param imageFormat [Optional] String - the image MIME type to request - default 'image/png'
          */
         getWmsUrl : function(serviceUrl, layer, bbox, width, height, imageFormat) {
+
+            var bbox_3857=bbox.transform(bbox,'EPSG:3857');
+
             var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
-                    bbox.westBoundLongitude,
-                    bbox.southBoundLatitude,
-                    bbox.eastBoundLongitude,
-                    bbox.northBoundLatitude);
+                    bbox_3857.westBoundLongitude,
+                    bbox_3857.southBoundLatitude,
+                    bbox_3857.eastBoundLongitude,
+                    bbox_3857.northBoundLatitude);
 
             var params = {
                 'REQUEST' : 'GetMap',
@@ -32,7 +35,7 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
                 'BGCOLOR' : '0xFFFFFF',
                 'TRANSPARENT' : 'TRUE',
                 'LAYERS' : layer,
-                'SRS' : bbox.crs,
+                'SRS' :bbox_3857.crs,
                 'BBOX' : bboxString,
                 'WIDTH' : width,
                 'HEIGHT' : height,

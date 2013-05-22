@@ -4,9 +4,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.auscope.portal.core.services.csw.CSWRecordsHostFilter;
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
-import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
-import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;

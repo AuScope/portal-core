@@ -1,8 +1,6 @@
 package org.auscope.portal.core.services.responses.wcs;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -12,7 +10,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
-import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -57,7 +54,7 @@ public class DescribeCoverageRecord implements Serializable {
     private String[] nativeCRSs;
 
     /** The spatial domain. */
-    private SpatialDomain[] spatialDomain;
+    private SpatialDomain spatialDomain;
 
     /** The temporal domain. */
     private TemporalDomain[] temporalDomain;
@@ -66,6 +63,28 @@ public class DescribeCoverageRecord implements Serializable {
     private RangeSet rangeSet;
 
     private static final String XPATHALLCHILDREN = "./*";
+
+
+
+    public DescribeCoverageRecord(String description, String name,
+            String label, String[] supportedRequestCRSs,
+            String[] supportedResponseCRSs, String[] supportedFormats,
+            String[] supportedInterpolations, String[] nativeCRSs,
+            SpatialDomain spatialDomain, TemporalDomain[] temporalDomain,
+            RangeSet rangeSet) {
+        super();
+        this.description = description;
+        this.name = name;
+        this.label = label;
+        this.supportedRequestCRSs = supportedRequestCRSs;
+        this.supportedResponseCRSs = supportedResponseCRSs;
+        this.supportedFormats = supportedFormats;
+        this.supportedInterpolations = supportedInterpolations;
+        this.nativeCRSs = nativeCRSs;
+        this.spatialDomain = spatialDomain;
+        this.temporalDomain = temporalDomain;
+        this.rangeSet = rangeSet;
+    }
 
     /**
      * Gets the text content or empty string.
@@ -148,19 +167,7 @@ public class DescribeCoverageRecord implements Serializable {
         //Parse our spatial domain (only grab gml:Envelopes and wcs:EnvelopeWithTimePeriod
         tempNode = (Node) xPath.evaluate("wcs:domainSet/wcs:spatialDomain", node, XPathConstants.NODE);
         if (tempNode != null) {
-            List<SpatialDomain> parsableItems = new ArrayList<SpatialDomain>();
-            tempNodeList = (NodeList) xPath.evaluate(XPATHALLCHILDREN, tempNode, XPathConstants.NODESET);
-
-            //Attempt to parse spatial domains (we don't support every type so we may get some exceptions)
-            for (int i = 0; i < tempNodeList.getLength(); i++) {
-                try {
-                    parsableItems.add(SpatialDomainFactory.parseFromNode(tempNodeList.item(i)));
-                } catch (IllegalArgumentException ex) {
-                    logger.debug("Unsupported spatial domain - Skipping: " + ex.getMessage());
-                }
-            }
-
-            spatialDomain = parsableItems.toArray(new SpatialDomain[parsableItems.size()]);
+            spatialDomain = new SpatialDomain(tempNode, xPath);
         }
 
         //Get the temporal range (which is optional)
@@ -271,7 +278,7 @@ public class DescribeCoverageRecord implements Serializable {
      *
      * @return the spatial domain
      */
-    public SpatialDomain[] getSpatialDomain() {
+    public SpatialDomain getSpatialDomain() {
         return spatialDomain;
     }
 

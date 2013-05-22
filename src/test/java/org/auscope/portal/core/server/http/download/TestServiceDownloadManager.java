@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.server.http.download.DownloadResponse;
-import org.auscope.portal.core.server.http.download.ServiceDownloadManager;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Assert;
@@ -20,6 +19,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
 
     private ExecutorService threadPool;
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
+
 
     @Before
     public void setUp() {
@@ -40,7 +40,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         context.checking(new Expectations() {
             {
                 // calling the service
-                exactly(2).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)));
+                exactly(2).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
                     will(returnValue(dummyJSONResponseIS));
             }
         });
@@ -68,7 +68,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         context.checking(new Expectations() {
             {
                 // calling the service
-                atLeast(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)));
+                atLeast(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
                     will(onConsecutiveCalls(
                             returnValue(dummyJSONResponseIS),
                             throwException(new Exception("test exception"))));
@@ -132,15 +132,15 @@ public class TestServiceDownloadManager extends PortalTestClass  {
             //It's also too difficult to use a JMock state for the same reason - we are stuck comparing execution times
 
             //first request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)),with(any(HttpClient.class)));
             will(delayReturnValue(responseDelays[0], responseStreams[0]));
 
             //second request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[2], null)));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[2], null)),with(any(HttpClient.class)));
             will(delayReturnValue(responseDelays[2], responseStreams[2]));
 
             //third request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)));
+            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)),with(any(HttpClient.class)));
             will(delayReturnValue(responseDelays[1], responseStreams[1]));
         }});
 
@@ -183,7 +183,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         context.checking(new Expectations() {
             {
                 // calling the service
-                exactly(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)));
+                exactly(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
                     will(returnValue(dummyJSONResponseIS));
             }
         });

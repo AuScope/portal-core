@@ -12,3 +12,9 @@ if (!window.console) {
     };
 }
 
+//Sourced from http://stackoverflow.com/questions/280634/endswith-in-javascript
+if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function(suffix) {
+        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+    };
+}

@@ -6,7 +6,7 @@ import java.util.Properties;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
@@ -59,7 +59,7 @@ public abstract class BaseWFSService {
      * @return
      * @throws Exception
      */
-    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType) {
+    protected HttpMethodBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType) {
         return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, null);
     }
 
@@ -76,7 +76,7 @@ public abstract class BaseWFSService {
      * @return
      * @throws Exception
      */
-    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat) {
+    protected HttpMethodBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat) {
         int max = maxFeatures == null ? 0 : maxFeatures.intValue();
 
         //apply default value for srs
@@ -99,10 +99,11 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    protected WFSCountResponse getWfsFeatureCount(HttpRequestBase method) throws PortalServiceException {
+    protected WFSCountResponse getWfsFeatureCount(HttpMethodBase method) throws PortalServiceException {
         try {
             //Make the request and parse the response
-            Document responseDoc = httpServiceCaller.getMethodResponseAsDocument(method);
+            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
+            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
             XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures", new WFSNamespaceContext());
@@ -112,7 +113,11 @@ public abstract class BaseWFSService {
             return new WFSCountResponse(numNodeValue);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
-        } 
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
+        }
     }
 
     /**
@@ -124,7 +129,7 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    protected WFSTransformedResponse getTransformedWFSResponse(HttpRequestBase method, PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
+    protected WFSTransformedResponse getTransformedWFSResponse(HttpMethodBase method, PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
         try {
             //Make the request and parse the response
             String responseString = httpServiceCaller.getMethodResponseAsString(method);

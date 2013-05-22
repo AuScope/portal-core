@@ -16,13 +16,13 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.URIException;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -129,7 +129,7 @@ public abstract class BasePortalController {
      * @param method The method used to make the request (used for populating debug info)
      * @return
      */
-    protected ModelAndView generateJSONResponseMAV(boolean success, String gml, String kml, HttpRequestBase method) {
+    protected ModelAndView generateJSONResponseMAV(boolean success, String gml, String kml, HttpMethodBase method) {
 
         if (kml == null || kml.isEmpty()) {
             log.error("Transform failed");
@@ -199,112 +199,28 @@ public abstract class BasePortalController {
      * @param request cannot be null
      * @return
      */
-    protected ModelMap makeDebugInfoModel(HttpRequestBase request) {
+    protected ModelMap makeDebugInfoModel(HttpMethodBase request) {
         if (request == null) {
             return null;
         }
 
         ModelMap debugInfo = new ModelMap();
-        debugInfo.put("url", request.getURI().toString());
-
         try {
-            if (request instanceof HttpPost) {
-                HttpEntity entity = ((HttpPost) request).getEntity();
-                if (entity instanceof StringEntity) {
-                    InputStream content = ((StringEntity) entity).getContent();
-                    StringWriter writer = new StringWriter();
-                    IOUtils.copy(content, writer);
-                    debugInfo.put("info", writer.toString());
-                }
+            debugInfo.put("url", request.getURI().toString());
+        } catch (URIException e) {
+            log.debug("Unable to generate URI from request", e);
+            debugInfo.put("url", String.format("Error Generating URI - %1$s", e.getMessage()));
+        }
+        if (request instanceof PostMethod) {
+            RequestEntity entity = ((PostMethod) request).getRequestEntity();
+            if (entity instanceof StringRequestEntity) {
+                debugInfo.put("info", ((StringRequestEntity) entity).getContent());
             }
-        } catch (IOException ex) {
-            log.error("Error extracting POST body contents" + ex.getMessage());
-            log.debug("Exception: ", ex);
         }
 
         return debugInfo;
     }
 
-    /**
-     * Writes output to input via an in memory buffer of a certain size
-     * @param input The input stream
-     * @param output The output stream (will receive input's bytes)
-     * @param bufferSize The size (in bytes) of the in memory buffer
-     * @param closeInput if true, the input will be closed prior to this method returning
-     * @throws IOException
-     */
-    protected void writeInputToOutputStream(InputStream input, OutputStream output, int bufferSize, boolean closeInput) throws IOException {
-        try {
-            byte[] buffer = new byte[bufferSize];
-            int dataRead;
-            do {
-                dataRead = input.read(buffer, 0, buffer.length);
-                if (dataRead > 0) {
-                    output.write(buffer, 0, dataRead);
-                }
-            } while (dataRead != -1);
-        } finally {
-            if (closeInput) {
-                FileIOUtil.closeQuietly(input);
-            }
-        }
-    }
-
-    /**
-     * Writes a series of DownloadResponse objects to a zip stream, each
-     * download response will be put into a separate zip entry.
-     *
-     * @param gmlDownloads The download responses
-     * @param zout The stream to receive the zip entries
-     */
-    protected void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs) throws IOException {
-        for (int i = 0; i < gmlDownloads.size(); i++) {
-            DownloadResponse download = gmlDownloads.get(i);
-            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml";
-
-            // Check that attempt to request is successful
-            if (!download.hasException()) {
-                InputStream stream = download.getResponseAsStream();
-
-                //Write stream into the zip entry
-                zout.putNextEntry(new ZipEntry(entryName));
-                writeInputToOutputStream(stream, zout, 1024 * 1024, closeInputs);
-                zout.closeEntry();
-            } else {
-                writeErrorToZip(zout, download.getRequestURL(), download.getException(), entryName + ".error");
-            }
-        }
-    }
-
-    /**
-     * Writes an error to a zip stream.
-     *
-     * @param zout the zout
-     * @param debugQuery the debug query
-     * @param exceptionToPrint the exception to print
-     * @param errorFileName The name of the error file in the zip (defaults to 'error.txt')
-     */
-    protected void writeErrorToZip(ZipOutputStream zout, String debugQuery, Exception exceptionToPrint, String errorFileName) {
-        String message = null;
-        StringWriter sw = null;
-        PrintWriter pw = null;
-        try {
-            sw = new StringWriter();
-            pw = new PrintWriter(sw);
-            exceptionToPrint.printStackTrace(pw);
-            message = String.format("An exception occured whilst requesting/parsing your WCS download.\r\n%1$s\r\nMessage=%2$s\r\n%3$s", debugQuery, exceptionToPrint.getMessage(), sw.toString());
-        } finally {
-            FileIOUtil.closeQuietly(pw);
-            FileIOUtil.closeQuietly(sw);
-        }
-
-        try {
-            zout.putNextEntry(new ZipEntry(errorFileName == null ? errorFileName : "error.txt"));
-            zout.write(message.getBytes());
-        } catch (IOException ex) {
-            log.error("Couldnt create debug error.txt in output", ex);
-        }
-    }
 
     /**
      * Exception resolver that maps exceptions to views presented to the user.
@@ -323,7 +239,7 @@ public abstract class BasePortalController {
      * @param request [Optional] Specify the request object that was used to make the HTTP WFS request. Its contents will be included for debug purposes
      * @return ModelAndView object with error message
      */
-    protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl, HttpRequestBase request) {
+    protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl, HttpMethodBase request) {
         log.debug(String.format("Exception! serviceUrl='%1$s'", serviceUrl), e);
 
         //Portal service exceptions wrap existing exceptions with a culprit HttpMethodBase

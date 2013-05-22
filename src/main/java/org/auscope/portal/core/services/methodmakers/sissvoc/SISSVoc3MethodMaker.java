@@ -45,7 +45,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param params The list of params
      * @return
      */
-    private GetMethod buildGetMethod(String sissVocUrl, String repository, String command, Format format, List<NameValuePair> params) {
+    protected GetMethod buildGetMethod(String sissVocUrl, String repository, String command, Format format, List<NameValuePair> params) {
         String requestUrl = this.urlPathConcat(sissVocUrl, repository, command);
 
         if (format != null) {
@@ -80,7 +80,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param pageSize
      * @param pageNumber
      */
-    private void appendPagingParams(List<NameValuePair> params, Integer pageSize, Integer pageNumber) {
+    protected void appendPagingParams(List<NameValuePair> params, Integer pageSize, Integer pageNumber) {
         if (pageSize != null) {
             params.add(new NameValuePair("_pageSize", pageSize.toString()));
         }
@@ -92,7 +92,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
 
 
     /**
-     * Generates a method for requesting all concepts in the specified repository
+     * Generates a method for requesting all concepts (as rdf:Descriptions) in the specified repository
      *
      * The request supports rudimentary paging of the returned results
      *
@@ -112,7 +112,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
     }
 
     /**
-     * Generates a method for requesting all concepts that match label in the specified repository
+     * Generates a method for requesting all concepts (as rdf:Descriptions) that match label in the specified repository
      *
      * The request supports rudimentary paging of the returned results
      *
@@ -142,7 +142,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param conceptUri The URI of the concept to lookup
      * @return
      */
-    public HttpMethodBase getConceptByUri(String sissVocUrl, String repository, String conceptUri, Format format) {
+    public HttpMethodBase getResourceByUri(String sissVocUrl, String repository, String conceptUri, Format format) {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new NameValuePair("uri", conceptUri));
 
@@ -150,7 +150,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
     }
 
     /**
-     * Generates a method for requesting all concepts that are broader than the specified concept
+     * Generates a method for requesting all concepts (as rdf:Descriptions) that are broader than the specified concept
      * as defined by skos:broader
      *
      * The request supports rudimentary paging of the returned results
@@ -173,7 +173,7 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
     }
 
     /**
-     * Generates a method for requesting all concepts that are narrower than the specified concept
+     * Generates a method for requesting all concepts (as rdf:Descriptions) that are narrower than the specified concept
      * as defined by skos:narrower
      *
      * The request supports rudimentary paging of the returned results

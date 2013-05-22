@@ -1,0 +1,16 @@
+
+--------------//VT:Style.css--------------------------------
+
+* Override style.css.olImageLoadError as pink tiles are shown when wms fail to load. I replace it to display none as follow,
+
+.olImageLoadError {
+   display: none !important;
+}
+
+--------------//VT:ZoomBox_event_trigger.patch-------------
+
+This is  patch written for the zoombox to trigger a event after it is done zooming so that we can perform
+task after it has finishing zooming. I have tried several method of overriding the ZoomBox.js but after
+it is added to a NavToolBar, the panning seem to erratically panned wrongly. As a last resort, I altered
+the file itself and created a patch file.
+

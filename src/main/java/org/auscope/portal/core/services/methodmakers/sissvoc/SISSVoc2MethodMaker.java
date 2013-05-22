@@ -1,7 +1,7 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.auscope.portal.core.services.methodmakers.AbstractMethodMaker;
 
 /**
@@ -16,8 +16,8 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
      * @param vocabUrl The SISSVoc endpoint
      * @return
      */
-    public HttpRequestBase getRepositoryInfoMethod(String vocabUrl) {
-        return new HttpGet(urlPathConcat(vocabUrl, "RepositoryInfo"));
+    public HttpMethodBase getRepositoryInfoMethod(String vocabUrl) {
+        return new GetMethod(urlPathConcat(vocabUrl, "RepositoryInfo"));
     }
 
     /**
@@ -27,9 +27,9 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
      * @param label The label to search with
      * @return
      */
-    public HttpRequestBase getConceptByLabelMethod(String vocabUrl, String repository, String label) {
-        String queryString = repository + "/" + label;
-        HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getConceptByLabel") + "?" + queryString);
+    public HttpMethodBase getConceptByLabelMethod(String vocabUrl, String repository, String label) {
+        GetMethod method = new GetMethod(urlPathConcat(vocabUrl, "getConceptByLabel"));
+        method.setQueryString(repository + "/" + label);
         return method;
     }
 
@@ -40,9 +40,9 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
      * @param uri The URI of the vocabulary concept
      * @return
      */
-    public HttpRequestBase getConceptByUriMethod(String vocabUrl, String repository, String uri) {
-        String queryString = repository + "/" + uri;
-        HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getConceptByURI") + "?" + queryString);
+    public HttpMethodBase getConceptByUriMethod(String vocabUrl, String repository, String uri) {
+        GetMethod method = new GetMethod(urlPathConcat(vocabUrl, "getConceptByURI"));
+        method.setQueryString(repository + "/" + uri);
         return method;
     }
 
@@ -55,9 +55,9 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
      * @param commodity The URI of the commodity to query
      * @return
      */
-    public HttpRequestBase getCommodityMethod(String vocabUrl, String repository, String commodity) {
-        String queryString = repository + "/" + commodity;
-        HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getCommodity") + "?" + queryString);
+    public HttpMethodBase getCommodityMethod(String vocabUrl, String repository, String commodity) {
+        GetMethod method = new GetMethod(urlPathConcat(vocabUrl, "getCommodity"));
+        method.setQueryString(repository + "/" + commodity);
         return method;
     }
 }

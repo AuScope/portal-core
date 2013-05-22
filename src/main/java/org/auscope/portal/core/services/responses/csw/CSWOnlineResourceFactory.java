@@ -34,7 +34,7 @@ public abstract class CSWOnlineResourceFactory {
 
         CSWNamespaceContext nc = new CSWNamespaceContext();
         XPathExpression protocolXpath = DOMUtil.compileXPathExpr("gmd:CI_OnlineResource/gmd:protocol/gco:CharacterString", nc);
-        XPathExpression nameXpath = DOMUtil.compileXPathExpr("gmd:CI_OnlineResource/gmd:name/gco:CharacterString", nc);
+        XPathExpression nameXpath = DOMUtil.compileXPathExpr("gmd:CI_OnlineResource/gmd:name/gco:CharacterString|gmd:CI_OnlineResource/gmd:name/gmx:MimeFileType", nc);
         XPathExpression descriptionXpath = DOMUtil.compileXPathExpr("gmd:CI_OnlineResource/gmd:description/gco:CharacterString", nc);
         XPathExpression urlXpath = DOMUtil.compileXPathExpr("gmd:CI_OnlineResource/gmd:linkage/gmd:URL", nc);
         XPathExpression applicationProfileXpath = DOMUtil.compileXPathExpr("gmd:CI_OnlineResource/gmd:applicationProfile/gco:CharacterString", nc);

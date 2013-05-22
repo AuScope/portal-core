@@ -18,7 +18,8 @@ Ext.define('portal.widgets.window.CSWRecordConstraintsWindow', {
             title: 'Copyright Information',
             autoDestroy : true,
             width       : 500,
-            autoHeight : true
+            autoHeight : true,
+            modal : true
         });
 
         //Set our 'always override' values

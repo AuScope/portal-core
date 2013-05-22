@@ -2,11 +2,10 @@ package org.auscope.portal.core.services;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
@@ -70,27 +69,49 @@ public class OpendapService {
     }
 
     /**
-     * Makes a request for the data at an OPeNDAP endpoint. Writes the response to a specified output stream.
-     *
-     * Returns the number of bytes written to output.
-     *
+     * Makes a request for the data at an OPeNDAP endpoint
      * @param serviceUrl OPeNDAP endpoint to query
      * @param downloadFormat What format should the data be downloaded in
      * @param constraints [Optional] Any constraints to apply to the download
-     * @param output will have the response data written to it.
      * @return
      * @throws PortalServiceException
      */
-    public Integer getData(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints, OutputStream output) throws PortalServiceException {
+    public InputStream getData(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
         NetcdfDataset ds = fetchDataset(serviceUrl);
-        HttpRequestBase method = null;
+        HttpMethodBase method = null;
 
         try {
             method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);
-            return serviceCaller.getMethodResponsePiped(method, output);
+            return serviceCaller.getMethodResponseAsStream(method);
         } catch (Exception ex) {
             log.error(String.format("Error requesting data from '%1$s'", serviceUrl), ex);
             throw new PortalServiceException(method, String.format("Error requesting data from '%1$s'", serviceUrl), ex);
         }
     }
+
+    /**
+     * Provide a string representation of the url request
+     * @param serviceUrl OPeNDAP endpoint to query
+     * @param downloadFormat What format should the data be downloaded in
+     * @param constraints [Optional] Any constraints to apply to the download
+     * @return
+     * @throws PortalServiceException
+     */
+    public String getQueryDetails(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
+        NetcdfDataset ds = fetchDataset(serviceUrl);
+        HttpMethodBase method = null;
+
+        try {
+            method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);
+            String details="ServiceUrl: " + method.getURI().toString();
+            details += "\n" + "DownloadFormat: " + downloadFormat;
+            details += "\n" + "DataSet: " + ds;
+
+            return details;
+        } catch (Exception ex) {
+            throw new PortalServiceException(method, String.format(
+                    "Error parsing query URI", serviceUrl), ex);
+        }
+    }
+
 }

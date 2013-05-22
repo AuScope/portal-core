@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.view.ViewKnownLayerFactory;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 import org.jmock.Expectations;

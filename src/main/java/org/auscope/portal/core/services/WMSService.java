@@ -1,13 +1,14 @@
 package org.auscope.portal.core.services;
 
+import java.io.InputStream;
+
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMaker;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
-import org.w3c.dom.Document;
 
 /**
  * Service class providing functionality for interacting with a Web Map Service
@@ -38,10 +39,12 @@ public class WMSService {
      * @return GetCapabilitiesRecord
      */
     public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl) throws PortalServiceException {
-        HttpRequestBase method = null;
+        HttpMethodBase method = null;
         try {
             // Do the request
-            Document response = serviceCaller.getMethodResponseAsDocument(method);
+            method = methodMaker.getCapabilitiesMethod(serviceUrl);
+            InputStream response = serviceCaller.getMethodResponseAsStream(method);
+
             return new GetCapabilitiesRecord(response);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Failure getting/parsing wms capabilities", ex);
@@ -74,11 +77,11 @@ public class WMSService {
      * @return
      * @throws PortalServiceException
      */
-    public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles) throws PortalServiceException {
+    public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws PortalServiceException {
         // Do the request
-        HttpRequestBase method = null;
+        HttpMethodBase method = null;
         try {
-            method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles);
+            method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sld);
             String response =  serviceCaller.getMethodResponseAsString(method);
 
             OWSExceptionParser.checkForExceptionResponse(response);

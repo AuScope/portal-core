@@ -1,14 +1,14 @@
 package org.auscope.portal.core.server.http;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpRequestBase;
 
 /**
  * An iterator class for calling a series of HTTP Methods and returning the results in an iterable instance
@@ -21,11 +21,11 @@ import org.apache.http.client.methods.HttpRequestBase;
  * @author Josh Vote
  *
  */
-public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
+public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
 
     private final Log log = LogFactory.getLog(getClass());
 
-    private List<ServiceCallStatus<T>> statusList;
+    private List<ServiceCallStatus> statusList;
     private List<Object> additionalInformationObjs;
     private Object lastAdditionalInformation;
 
@@ -36,10 +36,9 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
      *
      * @param methods The HTTP methods to call
      * @param serviceCaller The service caller that will run the specified methods
-     * @param responseHandler Will be used to parse responses for each request that will be returned via the iterator
      */
-    public DistributedHTTPServiceCaller(List<HttpRequestBase> methods, HttpServiceCaller serviceCaller, ResponseHandler<T> responseHandler) {
-        this(methods, null, serviceCaller, responseHandler);
+    public DistributedHTTPServiceCaller(List<HttpMethodBase> methods, HttpServiceCaller serviceCaller) {
+        this(methods, null, serviceCaller);
     }
 
     /**
@@ -53,17 +52,16 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
      * @param methods The HTTP methods to call
      * @param additionalInformation Must be the same length as methods. Made available through getAdditionalInformation function during iteration
      * @param serviceCaller The service caller that will run the specified methods
-     * @param responseHandler Will be used to parse responses for each request that will be returned via the iterator
      */
-    public DistributedHTTPServiceCaller(List<HttpRequestBase> methods, List<Object> additionalInformation, HttpServiceCaller serviceCaller, ResponseHandler<T> responseHandler) {
+    public DistributedHTTPServiceCaller(List<HttpMethodBase> methods, List<Object> additionalInformation, HttpServiceCaller serviceCaller) {
         if (additionalInformation != null && additionalInformation.size() != methods.size()) {
             throw new IllegalArgumentException("additionalInformation.size() != methods.size()");
         }
 
-        this.additionalInformationObjs = additionalInformation;
-        this.statusList = new ArrayList<ServiceCallStatus<T>>(methods.size());
-        for (HttpRequestBase method : methods) {
-            this.statusList.add(new ServiceCallStatus<T>(this, method, serviceCaller, responseHandler));
+        additionalInformationObjs = additionalInformation;
+        statusList = new ArrayList<ServiceCallStatus>(methods.size());
+        for (HttpMethodBase method : methods) {
+            statusList.add(new ServiceCallStatus(this, method, serviceCaller));
         }
     }
 
@@ -74,7 +72,7 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
      * @param executor
      */
     public synchronized void beginCallingServices(Executor executor) {
-        for (ServiceCallStatus<T> status : statusList) {
+        for (ServiceCallStatus status : statusList) {
             executor.execute(status);
         }
 
@@ -85,7 +83,7 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
      */
     @Override
     public synchronized boolean hasNext() {
-        for (ServiceCallStatus<T> status : statusList) {
+        for (ServiceCallStatus status : statusList) {
             if (!status.isIterated()) {
                 return true;
             }
@@ -106,20 +104,22 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
     }
 
     /**
-     * Blocking function - will return the next response that is available ONLY blocking
+     * Blocking function - will return the next input stream that is available ONLY blocking
      * if there is no input stream that is readily available.
      *
-     * responses that are ready will be returned ahead of responses that are yet to return data.
+     * Input streams that are ready will be returned ahead of input streams that are yet to return data.
+     *
+     *
      */
     @Override
-    public synchronized T next() throws DistributedHTTPServiceCallerException {
+    public synchronized InputStream next() throws DistributedHTTPServiceCallerException {
         //Find a service that hasn't been iterated AND has returned data
         for (int i = 0; i <  statusList.size(); i++) {
-            ServiceCallStatus<T> status = statusList.get(i);
+            ServiceCallStatus status = statusList.get(i);
             synchronized(status) {
                 if (!status.isIterated() && !status.isRunning()) {
                     status.setIterated(true);
-                    T data = status.getResultingData();
+                    InputStream data = status.getResultingData();
                     if (data == null) {
                         throw new DistributedHTTPServiceCallerException(status.getResultingError());
                     } else {
@@ -170,7 +170,7 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
      * No guarantee is made that 'cancelled' threads WONT attempt to make a connection.
      */
     public void dispose() {
-        for (ServiceCallStatus<T> status : statusList) {
+        for (ServiceCallStatus status : statusList) {
             status.interrupt();
         }
     }
@@ -178,24 +178,22 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
     /**
      * Utility class for lumping the request status information for a single method into a single object
      */
-    private class ServiceCallStatus<U> extends Thread {
-        private HttpRequestBase method;
+    private class ServiceCallStatus extends Thread {
+        private HttpMethodBase method;
         private HttpServiceCaller serviceCaller;
-        private DistributedHTTPServiceCaller<U> parent;
-        private ResponseHandler<U> responseHandler;
-        private U resultingData;
+        private DistributedHTTPServiceCaller parent;
+        private InputStream resultingData;
         private Exception resultingError;
         private volatile boolean running;
         private volatile boolean iterated;
         private volatile boolean abortStart;
 
-        public ServiceCallStatus(DistributedHTTPServiceCaller<U> parent, HttpRequestBase method,
-                HttpServiceCaller serviceCaller, ResponseHandler<U> responseHandler) {
+        public ServiceCallStatus(DistributedHTTPServiceCaller parent, HttpMethodBase method,
+                HttpServiceCaller serviceCaller) {
             this.parent = parent;
             this.running = true;
             this.method = method;
             this.serviceCaller = serviceCaller;
-            this.responseHandler = responseHandler;
         }
 
         public boolean isIterated() {
@@ -229,7 +227,7 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
          * This function will block if this thread is running
          * @return
          */
-        public U getResultingData() {
+        public InputStream getResultingData() {
             return resultingData;
         }
 
@@ -253,11 +251,11 @@ public class DistributedHTTPServiceCaller<T> implements Iterator<T> {
 
             this.setRunning(true);
 
-            U data = null;
+            InputStream data = null;
             Exception error = null;
 
             try {
-                data = serviceCaller.getMethodResponse(method, responseHandler);
+                data = serviceCaller.getMethodResponseAsStream(method);
             } catch (Exception e) {
                 error = e;
             } finally {

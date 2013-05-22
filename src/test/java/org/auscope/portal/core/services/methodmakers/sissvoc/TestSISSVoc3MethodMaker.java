@@ -27,7 +27,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
         Assert.assertNotNull(mm.getAllConcepts(url, repository, null, null, null));
         Assert.assertNotNull(mm.getConceptsWithLabel(url, repository, "label", null, null, null));
-        Assert.assertNotNull(mm.getConceptByUri(url, repository, "uri", null));
+        Assert.assertNotNull(mm.getResourceByUri(url, repository, "uri", null));
         Assert.assertNotNull(mm.getBroaderConcepts(url, repository, "uri", null, null, null));
         Assert.assertNotNull(mm.getNarrowerConcepts(url, repository, "uri", null, null, null));
     }
@@ -77,7 +77,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
     }
 
     /**
-     * Ensures getConceptByUri encodes the method correctly
+     * Ensures getResourceByUri encodes the method correctly
      * @throws Exception
      */
     @Test
@@ -87,7 +87,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
         final String uri = "uri";
         final Format format = Format.Rdf;
 
-        HttpMethodBase method = mm.getConceptByUri(url, repository, uri, format);
+        HttpMethodBase method = mm.getResourceByUri(url, repository, uri, format);
         String queryString = method.getQueryString();
         String path = method.getPath();
 

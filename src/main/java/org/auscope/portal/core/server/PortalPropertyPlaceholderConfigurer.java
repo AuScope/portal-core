@@ -62,7 +62,7 @@ public class PortalPropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
         try {
             if (placeholder.startsWith("HOST.")) {
-                log.info("Local Host: " + InetAddress.getLocalHost().getHostName()
+                log.debug("Local Host: " + InetAddress.getLocalHost().getHostName()
                                         + " for property " + placeholder);
 
                 String hostname = InetAddress.getLocalHost().getHostName();
@@ -77,7 +77,7 @@ public class PortalPropertyPlaceholderConfigurer extends PropertyPlaceholderConf
 
                 String property = placeholder.replaceFirst("HOST",hostname);
 
-                log.info("Translated property: " + property);
+                log.debug("Translated property: " + property);
 
                 String prop = props.getProperty(property);
 

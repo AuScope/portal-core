@@ -1,15 +1,16 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.params.BasicHttpParams;
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 /**
@@ -73,7 +74,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
         return makePostMethod(serviceURL, featureType, filterString, maxFeatures, null, null, null);
     }
 
@@ -86,7 +87,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
         return makePostMethod(serviceURL, featureType, filterString, 0, null, resultType, null);
     }
 
@@ -100,7 +101,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
         return makePostMethod(serviceURL, featureType, filterString, 0, srsName, null, null);
     }
 
@@ -115,7 +116,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
         return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, null);
     }
 
@@ -131,7 +132,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat) {
+    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat) {
 
         // Make sure the required parameters are given
         if (featureType == null || featureType.equals("")) {
@@ -142,7 +143,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
             throw new IllegalArgumentException("serviceURL parameter can not be null or empty.");
         }
 
-        HttpPost httpMethod = new HttpPost(serviceURL);
+        PostMethod httpMethod = new PostMethod(serviceURL);
 
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -193,7 +194,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
         try {
-            httpMethod.setEntity(new StringEntity(sb.toString()));
+            httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(), null, null));
         } catch (UnsupportedEncodingException e) {
             log.error("Unsupported encoding", e);
         }
@@ -212,47 +213,47 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param outputFormat [Optional] The format you wish the response to take
      * @return
      */
-    protected HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs, String outputFormat) {
-        HttpGet method = new HttpGet(serviceUrl);
+    protected HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs, String outputFormat) {
+        GetMethod method = new GetMethod(serviceUrl);
 
-        BasicHttpParams params = new BasicHttpParams();
+        ArrayList<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 
         //set all of the parameters
-        params.setParameter("service", "WFS");
-        params.setParameter("request", "GetFeature");
-        params.setParameter("typeName", typeName);
+        valuePairs.add(new NameValuePair("service", "WFS"));
+        valuePairs.add(new NameValuePair("request", "GetFeature"));
+        valuePairs.add(new NameValuePair("typeName", typeName));
         if (featureId != null) {
-            params.setParameter("featureId", featureId);
+            valuePairs.add(new NameValuePair("featureId", featureId));
         }
         if (cqlFilter != null && !cqlFilter.isEmpty()) {
-            params.setParameter("cql_filter", cqlFilter);
+            valuePairs.add(new NameValuePair("cql_filter", cqlFilter));
         }
         if (maxFeatures != null) {
-            params.setParameter("maxFeatures", maxFeatures.toString());
+            valuePairs.add(new NameValuePair("maxFeatures", maxFeatures.toString()));
         }
         if (srs != null) {
-            params.setParameter("srsName", srs);
+            valuePairs.add(new NameValuePair("srsName", srs));
         }
         if (resultType != null) {
             switch (resultType) {
             case Hits:
-                params.setParameter("resultType", "hits");
+                valuePairs.add(new NameValuePair("resultType", "hits"));
                 break;
             case Results:
-                params.setParameter("resultType", "results");
+                valuePairs.add(new NameValuePair("resultType", "results"));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown resultType " + resultType);
             }
         }
         if (outputFormat != null && !outputFormat.isEmpty()) {
-            params.setParameter("outputFormat", outputFormat);
+            valuePairs.add(new NameValuePair("outputFormat", outputFormat));
         }
 
-        params.setParameter("version", WFS_VERSION);
+        valuePairs.add(new NameValuePair("version", WFS_VERSION));
 
         //attach them to the method
-        method.setParams(params);
+        method.setQueryString((NameValuePair[]) valuePairs.toArray(new NameValuePair[valuePairs.size()]));
 
         return method;
     }
@@ -265,7 +266,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs) {
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs) {
         return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, null);
     }
 
@@ -277,7 +278,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs, String outputFormat) {
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs, String outputFormat) {
         return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, outputFormat);
     }
 
@@ -289,7 +290,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs) {
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs) {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null);
     }
 
@@ -301,7 +302,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs) {
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs) {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null);
     }
 
@@ -314,7 +315,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, String srs) {
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, String srs) {
         return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null, srs, null);
     }
 
@@ -327,7 +328,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) {
+    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) {
         return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs, null);
     }
 }

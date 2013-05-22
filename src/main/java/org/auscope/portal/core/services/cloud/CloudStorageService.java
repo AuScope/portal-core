@@ -2,6 +2,8 @@ package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Properties;
 
 import org.apache.commons.logging.Log;
@@ -9,17 +11,16 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.ContentMetadata;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import org.jclouds.rest.AuthorizationException;
 
 /**
  * Service for providing storage of objects (blobs) in a cloud using the JClouds library
@@ -29,27 +30,55 @@ import com.google.inject.Module;
  */
 public class CloudStorageService {
 
+    /** The bucket name used when no bucket is specified*/
+    public static final String DEFAULT_BUCKET = "portal-core-storage-service";
+
     private final Log log = LogFactory.getLog(getClass());
 
-    protected BlobStoreContextFactory blobStoreContextFactory;
-    /** Prefix to apply to any job files stored (will be appended with job id)*/
-    protected String jobPrefix = "job-";
+    /** Prefix to apply to any job files stored (will be appended with job id) - defaults to hostname*/
+    protected String jobPrefix;
     /** Whether security certs are required to strictly match the host*/
     protected boolean relaxHostName = false;
 
-    /**
-     * Creates a new instance of this class
-     */
-    public CloudStorageService() {
-        this(new BlobStoreContextFactory());
-    }
+    /** Username credential for accessing the storage service*/
+    private String accessKey;
+    /** Password credentials for accessing the storage service*/
+    private String secretKey;
+    /** A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'*/
+    private String provider;
+    /** The URL endpoint for the cloud storage service*/
+    private String endpoint;
+    /** The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty*/
+    private String id;
+    /** A short descriptive name for human identification of this service*/
+    private String name;
+    /** The authentication version to use when connecting to this object store - can be null or empty*/
+    private String authVersion;
 
     /**
-     * Creates a new instance of this class
+     * The bucket that this service will access - defaults to DEFAULT_BUCKET
      */
-    public CloudStorageService(BlobStoreContextFactory blobStoreContextFactory) {
+    private String bucket = DEFAULT_BUCKET;
+
+    /**
+     * Creates a new instance
+     * @param endpoint The URL endpoint for the cloud storage service
+     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey Username credential for accessing the storage service
+     * @param secretKey Password credentials for accessing the storage service
+     */
+    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey) {
         super();
-        this.blobStoreContextFactory = blobStoreContextFactory;
+        this.endpoint = endpoint;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+        this.provider = provider;
+        try {
+            this.jobPrefix = "job-" + InetAddress.getLocalHost().getHostName() + "-";
+        } catch (UnknownHostException e) {
+            this.jobPrefix = "job-";
+            log.error("Unable to lookup hostname. Defaulting prefix to " + this.jobPrefix, e);
+        }
     }
 
     /**
@@ -68,8 +97,6 @@ public class CloudStorageService {
         this.relaxHostName = relaxHostName;
     }
 
-
-
     /**
      * Prefix to apply to any job files stored (will be appended with job id)
      * @return
@@ -87,15 +114,111 @@ public class CloudStorageService {
     }
 
     /**
+     * The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty
+     * @return
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty
+     * @param id
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * The bucket where the data will be stored
+     * @return
+     */
+    public String getBucket() {
+        return bucket;
+    }
+
+    /**
+     * The bucket where the data will be stored
+     * @param bucket
+     */
+    public void setBucket(String bucket) {
+        this.bucket = bucket;
+    }
+
+    /**
+     * Username credential for accessing the storage service
+     * @return
+     */
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    /**
+     * Password credential for accessing the storage service
+     * @return
+     */
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    /**
+     * A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @return
+     */
+    public String getProvider() {
+        return provider;
+    }
+
+    /**
+     * The URL endpoint for the cloud storage service
+     * @return
+     */
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    /**
+     * The authentication version to use when connecting to this object store - can be null or empty
+     * @return
+     */
+    public String getAuthVersion() {
+        return authVersion;
+    }
+
+    /**
+     * The authentication version to use when connecting to this object store - can be null or empty
+     * @param authVersion
+     */
+    public void setAuthVersion(String authVersion) {
+        this.authVersion = authVersion;
+    }
+
+    /**
+     * A short descriptive name for human identification of this service
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * A short descriptive name for human identification of this service
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Generates a BlobStoreContext, configured
      * @param job
      * @return
      */
     protected BlobStoreContext getBlobStoreContextForJob(CloudJob job) {
         Properties properties = new Properties();
-        properties.setProperty(String.format("%1$s.endpoint", job.getStorageProvider()), job.getStorageEndpoint());
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
-        return blobStoreContextFactory.createContext(job.getStorageProvider(), job.getStorageAccessKey(), job.getStorageSecretKey(), ImmutableSet.<Module>of(), properties);
+
+        return ContextBuilder.newBuilder(provider).overrides(properties).endpoint(endpoint).credentials(accessKey, secretKey).build(BlobStoreContext.class);
     }
 
     /**
@@ -144,13 +267,11 @@ public class CloudStorageService {
      * @param job
      * @return
      */
-    protected InputStreamMap jobToInputStreamMap(CloudJob job) {
+    protected InputStreamMap jobToInputStreamMap(BlobStoreContext bsc, CloudJob job) {
         String baseKey = jobToBaseKey(job);
-        String bucket = job.getStorageBucket();
 
         log.debug(String.format("Attempting to open a InputStreamMap for bucket '%1$s' with base key '%2$s'", bucket, baseKey));
 
-        BlobStoreContext bsc = getBlobStoreContextForJob(job);
         ListContainerOptions lco = ListContainerOptions.Builder.inDirectory(baseKey);
         return bsc.createInputStreamMap(bucket,lco);
     }
@@ -166,14 +287,41 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public InputStream getJobFile(CloudJob job, String key) throws PortalServiceException {
+        BlobStoreContext bsc = null;
         try {
-            InputStreamMap map = jobToInputStreamMap(job);
+            bsc = getBlobStoreContextForJob(job);
+            InputStreamMap map = jobToInputStreamMap(bsc, job);
             return map.get(key);
         } catch (Exception ex) {
             log.error(String.format("Unable to get job file '%1$s' for job %2$s:", key, job));
             log.debug("error:", ex);
             throw new PortalServiceException(null, "Error retriving output file details", ex);
+        } finally {
+            if (bsc != null) {
+                bsc.close();
+            }
         }
+    }
+    
+    /**
+     * Gets information about every file in the specified InputStreamMap (no resources
+     * will be disposed of)
+     * @param map
+     * @return
+     * @throws PortalServiceException
+     */
+    private CloudFileInformation[] listJobFiles(InputStreamMap map) throws Exception {
+        CloudFileInformation[] fileDetails = new CloudFileInformation[map.size()];
+        Iterable<? extends StorageMetadata> fileMetaDataList = map.list();
+        
+        int i = 0;
+        for (StorageMetadata fileMetadata : fileMetaDataList) {
+            fileDetails[i++] = new CloudFileInformation(
+                    fileMetadata.getName(), getFileSize(fileMetadata),
+                    fileMetadata.getUri().toString());
+        }
+
+        return fileDetails;
     }
 
     /**
@@ -183,23 +331,19 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public CloudFileInformation[] listJobFiles(CloudJob job) throws PortalServiceException {
-        InputStreamMap map = jobToInputStreamMap(job);
-        CloudFileInformation[] fileDetails = new CloudFileInformation[map.size()];
-        Iterable<? extends StorageMetadata> fileMetaDataList = map.list();
-
+        BlobStoreContext bsc = getBlobStoreContextForJob(job);
+        
         try {
-            int i = 0;
-            for (StorageMetadata fileMetadata : fileMetaDataList) {
-                fileDetails[i++] = new CloudFileInformation(
-                        fileMetadata.getName(), getFileSize(fileMetadata),
-                        fileMetadata.getUri().toString());
-            }
-
-            return fileDetails;
+            InputStreamMap map = jobToInputStreamMap(bsc, job);
+            return listJobFiles(map);
         } catch (Exception ex) {
             log.error("Unable to list files for job:" + job.toString());
             log.debug("error:", ex);
             throw new PortalServiceException(null, "Error retriving output file details", ex);
+        } finally {
+            if (bsc != null) {
+                bsc.close();
+            }
         }
     }
 
@@ -210,31 +354,56 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public void uploadJobFiles(CloudJob job, File[] files) throws PortalServiceException {
+        BlobStoreContext bsc = getBlobStoreContextForJob(job);
+        
         try {
-            InputStreamMap map = jobToInputStreamMap(job);
+            InputStreamMap map = jobToInputStreamMap(bsc, job);
             for (File file : files) {
                 map.putFile(file.getName(), file);
-                log.debug(file.getName() + " uploaded to '" + job.getStorageBucket() + "' container");
+                log.debug(file.getName() + " uploaded to '" + bucket + "' container");
             }
+        } catch (AuthorizationException ex) {
+            log.error("Storage credentials are not valid for job: " + job, ex);
+            throw new PortalServiceException("Storage credentials are not valid.", "Please provide valid storage credentials.");
+        } catch (KeyNotFoundException ex) {
+            log.error("Storage container does not exist for job: " + job, ex);
+            throw new PortalServiceException("Storage container does not exist.", "Please provide a valid storage container.");
         } catch (Exception ex) {
-            log.error("Unable to upload files for job:" + job.toString());
-            log.debug("error:", ex);
-            throw new PortalServiceException(null, "Error uploading job files", ex);
+            log.error("Unable to upload files for job: " + job, ex);
+            throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to S3 storage.", "Please report it to cg-admin@csiro.au.");
+        } finally {
+            if (bsc != null) {
+                bsc.close();
+            }
         }
     }
 
     /**
-     * Deletes all files for the specified job
+     * Deletes all files including the container or directory for the specified job
      * @param job The whose storage space will be deleted
      * @throws PortalServiceException
      */
     public void deleteJobFiles(CloudJob job) throws PortalServiceException {
-        InputStreamMap map = jobToInputStreamMap(job);
-
-        CloudFileInformation[] files = listJobFiles(job);
-        if (files != null) {
-            for (CloudFileInformation file : files) {
-                map.remove(file.getName());
+        BlobStoreContext bsc = null;
+        try {
+            //Remove all files
+            bsc = getBlobStoreContextForJob(job);
+            InputStreamMap map = jobToInputStreamMap(bsc, job);
+            CloudFileInformation[] files = listJobFiles(map);
+            if (files != null) {
+                for (CloudFileInformation file : files) {
+                    map.remove(file.getName());
+                }
+            }
+            
+            //Remove the job storage base key (directory) from the storage bucket
+            bsc.getBlobStore().deleteDirectory(bucket, job.getStorageBaseKey());
+        } catch (Exception ex) {
+            log.error("Error in removing job files or storage key.", ex);
+            throw new PortalServiceException(null, "An unexpected error has occurred while removing job files from S3 storage", ex);
+        } finally {
+            if (bsc != null) {
+                bsc.close();
             }
         }
     }

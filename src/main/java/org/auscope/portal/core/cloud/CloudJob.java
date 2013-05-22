@@ -33,6 +33,8 @@ public class CloudJob implements Serializable {
     protected String user;
     /** date/time when this job was submitted*/
     protected Date submitDate;
+    /** date/time when this job was processed*/
+    protected Date processDate;
     /** descriptive status of this job */
     protected String status;
 
@@ -44,19 +46,13 @@ public class CloudJob implements Serializable {
     protected String computeInstanceType;
     /** The name of the key to inject into the instance at startup for root access. Can be null */
     protected String computeInstanceKey;
+    /** The unique ID of the storage service this job has been using*/
+    protected String computeServiceId;
 
-    /** A unique identifier identifying the type of storage API used to store this job's files*/
-    protected String storageProvider;
-    /** The endpoint for the cloud storage service */
-    protected String storageEndpoint;
-    /** The 'bucket' name where input/output files will be staged for this job*/
-    protected String storageBucket;
     /** The key prefix for all files associated with this job in the specified storage bucket*/
     protected String storageBaseKey;
-    /** The access key (user name) for writing to storage*/
-    protected String storageAccessKey;
-    /** the secret key (password) for writing to storage*/
-    protected String storageSecretKey;
+    /** The unique ID of the storage service this job has been using*/
+    protected String storageServiceId;
 
 
     /**
@@ -172,6 +168,22 @@ public class CloudJob implements Serializable {
     }
 
     /**
+     * date/time when this job was processed
+     * @return
+     */
+    public Date getProcessDate() {
+        return processDate;
+    }
+
+    /**
+     * date/time when this job was processed
+     * @param processDate
+     */
+    public void setProcessDate(Date processDate) {
+        this.processDate = processDate;
+    }
+    
+    /**
      * date/time when this job was submitted (expects a date in the format CloudJob.DATE_FORMAT)
      *
      * @param submitDate
@@ -259,67 +271,35 @@ public class CloudJob implements Serializable {
     }
 
     /**
-     * The 'bucket' name where input/output files will be staged for this job
+     * The unique ID of the compute service this job has been using
      * @return
      */
-    public String getStorageBucket() {
-        return storageBucket;
+    public String getComputeServiceId() {
+        return computeServiceId;
     }
 
     /**
-     * The 'bucket' name where input/output files will be staged for this job
-     * @param storageBucket
+     * The unique ID of the compute service this job has been using
+     * @param computeServiceId
      */
-    public void setStorageBucket(String storageBucket) {
-        this.storageBucket = storageBucket;
+    public void setComputeServiceId(String computeServiceId) {
+        this.computeServiceId = computeServiceId;
     }
 
     /**
-     * The endpoint for the cloud storage service
+     * The unique ID of the storage service this job has been using
      * @return
      */
-    public String getStorageEndpoint() {
-        return storageEndpoint;
+    public String getStorageServiceId() {
+        return storageServiceId;
     }
 
     /**
-     * The endpoint for the cloud storage service
-     * @param storageEndpoint
+     * The unique ID of the storage service this job has been using
+     * @param storageServiceId
      */
-    public void setStorageEndpoint(String storageEndpoint) {
-        this.storageEndpoint = storageEndpoint;
-    }
-
-    /**
-     * The access key (user name) for writing to storage
-     * @return
-     */
-    public String getStorageAccessKey() {
-        return storageAccessKey;
-    }
-
-    /**
-     * The access key (user name) for writing to storage
-     * @param storageAccessKey
-     */
-    public void setStorageAccessKey(String storageAccessKey) {
-        this.storageAccessKey = storageAccessKey;
-    }
-
-    /**
-     * the secret key (password) for writing to storage
-     * @return
-     */
-    public String getStorageSecretKey() {
-        return storageSecretKey;
-    }
-
-    /**
-     * the secret key (password) for writing to storage
-     * @param storageSecretKey
-     */
-    public void setStorageSecretKey(String storageSecretKey) {
-        this.storageSecretKey = storageSecretKey;
+    public void setStorageServiceId(String storageServiceId) {
+        this.storageServiceId = storageServiceId;
     }
 
     /**
@@ -337,24 +317,4 @@ public class CloudJob implements Serializable {
     public void setStorageBaseKey(String storageBaseKey) {
         this.storageBaseKey = storageBaseKey;
     }
-
-    /**
-     * A unique identifier identifying the type of storage API used to store this job's files
-     * @return
-     */
-    public String getStorageProvider() {
-        return storageProvider;
-    }
-
-    /**
-     * A unique identifier identifying the type of storage API used to store this job's files
-     * @param storageProvider
-     */
-    public void setStorageProvider(String storageProvider) {
-        this.storageProvider = storageProvider;
-    }
-
-
-
-
 }

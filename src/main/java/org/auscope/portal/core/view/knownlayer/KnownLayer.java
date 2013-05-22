@@ -40,11 +40,20 @@ public class KnownLayer implements Serializable {
     /** URL to proxy data count requests through*/
     private String proxyCountUrl;
 
+    /** URL to proxy data style requests through*/
+    private String proxyStyleUrl;
+
+    /** URL to proxy download requests through*/
+    private String proxyDownloadUrl;
+
     /** Class for selecting CSWRecords that belong to this known layer*/
     private KnownLayerSelector knownLayerSelector;
 
     /** If this layer is rendered, this icon will be used to mark any point geometries*/
     private String iconUrl;
+
+    /** If this layer is rendered, this color will be used for any polygon in the renderings*/
+    private String polygonColor;
 
     /** If this layer is rendered, this is the offset in pixels of where iconUrl will be anchored to the map*/
     private Point iconAnchor;
@@ -184,6 +193,40 @@ public class KnownLayer implements Serializable {
     }
 
     /**
+     * Sets the URL to proxy style requests through
+     * @param proxyUrl
+     */
+    public void setProxyStyleUrl(String proxyStyleUrl) {
+        this.proxyStyleUrl = proxyStyleUrl;
+    }
+
+    /**
+     * Gets the URL to proxy style requests through
+     * @return
+     */
+    public String getProxyStyleUrl() {
+        return proxyStyleUrl;
+    }
+
+    /**
+     * Sets the URL to proxy download requests through
+     * @param proxyUrl
+     */
+    public void setProxyDownloadUrl(String proxyDownloadUrl) {
+        this.proxyDownloadUrl = proxyDownloadUrl;
+    }
+
+    /**
+     * Gets the URL to proxy download requests through
+     * @return
+     */
+    public String getProxyDownloadUrl() {
+        return this.proxyDownloadUrl;
+    }
+
+
+
+    /**
      * Gets the selector for this known layer
      * @return
      */
@@ -214,6 +257,23 @@ public class KnownLayer implements Serializable {
      */
     public void setIconUrl(String iconUrl) {
         this.iconUrl = iconUrl;
+    }
+
+
+    /**
+     * Gets the color of a polygon used to mark any polygon geometries
+     * @return
+     */
+    public String getPolygonColor() {
+        return this.polygonColor;
+    }
+
+    /**
+     * Sets the color of a polygon used to mark any polygon geometries
+     * @param iconUrl
+     */
+    public void setPolygonColor(String polygonColor) {
+        this.polygonColor = polygonColor;
     }
 
     /**

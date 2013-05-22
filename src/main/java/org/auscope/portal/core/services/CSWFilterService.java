@@ -7,13 +7,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCaller;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCallerException;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.server.http.responses.DomResponseHandler;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
@@ -69,11 +68,12 @@ public class CSWFilterService {
     private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws PortalServiceException {
         log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-        HttpRequestBase method = null;
+        HttpMethodBase method = null;
 
         try {
-            method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex);
-            Document responseDoc = serviceCaller.getMethodResponseAsDocument(method);
+            method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,null);
+            InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
+            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
 
             return new CSWGetRecordResponse(serviceItem, responseDoc);
         } catch (Exception ex) {
@@ -93,8 +93,8 @@ public class CSWFilterService {
      * @param startIndex The first record index to start filtering from (for pagination). Set to 1 for the first record
      * @return
      */
-    private DistributedHTTPServiceCaller<Document> callAllServices(CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
-        List<HttpRequestBase> requestMethods = new ArrayList<HttpRequestBase>();
+    private DistributedHTTPServiceCaller callAllServices(CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
+        List<HttpMethodBase> requestMethods = new ArrayList<HttpMethodBase>();
         List<Object> additionalInfo = new ArrayList<Object>();
 
         //Create various HTTP Methods for making each and every CSW request
@@ -102,14 +102,14 @@ public class CSWFilterService {
             try {
                 log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
                 CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-                requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex));
+                requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,null));
                 additionalInfo.add(serviceItem);
             } catch (UnsupportedEncodingException ex) {
                 log.warn(String.format("Error generating HTTP method for serviceItem '%1$s'",serviceItem), ex);
             }
         }
 
-        DistributedHTTPServiceCaller<Document> dsc = new DistributedHTTPServiceCaller<Document>(requestMethods, additionalInfo, serviceCaller, new DomResponseHandler());
+        DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(requestMethods, additionalInfo, serviceCaller);
         dsc.beginCallingServices(executor);
 
         return dsc;
@@ -140,11 +140,12 @@ public class CSWFilterService {
         List<CSWGetRecordResponse> responses = new ArrayList<CSWGetRecordResponse>();
 
         //Call our services and start iterating the responses
-        DistributedHTTPServiceCaller<Document> dsc = callAllServices(filter, maxRecords, 1, ResultType.Results);
+        DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Results);
         while (dsc.hasNext()) {
-            Document responseDoc = dsc.next();
+            InputStream responseStream = dsc.next();
             CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
             try {
+                Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
                 responses.add(new CSWGetRecordResponse(origin, responseDoc));
             } catch (Exception ex) {
                 throw new PortalServiceException(null, "Error parsing response document", ex);
@@ -197,10 +198,11 @@ public class CSWFilterService {
         int count = 0;
 
         //Call our services and start iterating the responses
-        DistributedHTTPServiceCaller<Document> dsc = callAllServices(filter, maxRecords, 1, ResultType.Hits);
+        DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Hits);
         while (dsc.hasNext()) {
-            Document responseDoc = dsc.next();
+            InputStream responseStream = dsc.next();
             CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
+            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc);
 
             count += response.getRecordsMatched();

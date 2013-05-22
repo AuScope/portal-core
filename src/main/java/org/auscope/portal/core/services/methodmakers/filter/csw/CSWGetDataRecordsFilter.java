@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.methodmakers.filter.AbstractFilter;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
-
+import org.joda.time.DateTime;
 
 /**
  * Represents a OGC:Filter that will fetch matching records from a CS/W.
@@ -17,7 +19,8 @@ import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
  *
  */
 public class CSWGetDataRecordsFilter extends AbstractFilter {
-
+    private final Log log = LogFactory.getLog(getClass());
+    
     /**
      * How the list of keywords will be used to match records.
      */
@@ -32,6 +35,24 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The any text. */
     private String anyText;
+    
+    /** The title. */
+    private String title = null;
+    
+    /** The abstract. */
+    private String abstract_ = null;
+    
+    /** The metadata change date's lower bound. */
+    private DateTime metadataChangeDateFrom = null;
+    
+    /** The metadata change date's upper bound. */
+    private DateTime metadataChangeDateTo = null;
+    
+    /** The temporal extent's lower bound. */
+    private DateTime temporalExtentFrom = null;
+    
+    /** The temporal extent's upper bound. */
+    private DateTime temporalExtentTo = null;
 
     /** The spatial bounds. */
     private FilterBoundingBox spatialBounds;
@@ -48,6 +69,17 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /** The keyword match type. */
     private KeywordMatchType keywordMatchType;
 
+    /**
+     * Generates a new filter generator for the specified fields.
+     *
+     * @param anyText [Optional] The text used to query the 'AnyText' attribute
+     * @param spatialBounds
+     *            [Optional] The spatial bounds to filter by
+     */
+    public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds) {
+        this(anyText, spatialBounds, null, null, null, null);
+    }    
+    
     /**
      * Generates a new filter generator for the specified fields.
      *
@@ -107,6 +139,14 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         if (anyText != null && !anyText.isEmpty()) {
             fragments.add(this.generatePropertyIsLikeFragment("anytext", this.anyText));
         }
+        
+        if (title != null && !title.isEmpty()) {
+            fragments.add(this.generatePropertyIsLikeFragment("title", this.title));
+        }
+        
+        if (abstract_ != null && !abstract_.isEmpty()) {
+            fragments.add(this.generatePropertyIsLikeFragment("abstract", this.abstract_));
+        }
 
         if (spatialBounds != null) {
             fragments.add(this.generateBboxFragment(spatialBounds, "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement"));
@@ -135,8 +175,29 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         if (sensor != null && !sensor.isEmpty()) {
             fragments.add(this.generatePropertyIsEqualToFragment("sensor", sensor));
         }
+        
+        if (temporalExtentFrom != null ) {
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("TempExtent_begin", temporalExtentFrom.toString()));
+        }
+        
+        if (temporalExtentTo != null ) {
+            fragments.add(this.generatePropertyIsLessThanOrEqualTo("TempExtent_end", temporalExtentTo.toString()));
+        }
+        
+        if (metadataChangeDateFrom != null ) {
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("changeDate", metadataChangeDateFrom.toString()));
+        }
+        
+        if (metadataChangeDateTo != null ) {
+            fragments.add(this.generatePropertyIsLessThanOrEqualTo("changeDate", metadataChangeDateTo.toString()));
+        }
 
-        return this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
+        
+        String fragment = this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
+        
+        log.trace(fragment);
+        
+        return fragment;
     }
 
     /**
@@ -147,7 +208,6 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     @Override
     public String getFilterStringAllRecords() {
-
         // This is a bit of a hack - unfortunately the NamespaceContext class is
         // unsuitable here
         // as it contains no methods to iterate the contained list of
@@ -220,9 +280,73 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public String toString() {
         return "CSWGetDataRecordsFilter [spatialBounds=" + spatialBounds
                 + ", keywords=" + Arrays.toString(keywords)
-                + ", capturePlatform=" + capturePlatform + ", sensor=" + sensor
-                + ", keywordMatchType=" + keywordMatchType + "]";
+                + ", capturePlatform=" + capturePlatform 
+                + ", sensor=" + sensor
+                + ", metadataChangeDateFrom=" + metadataChangeDateFrom 
+                + ", metadataChangeDateTo=" + metadataChangeDateTo 
+                + ", temporalExtentFrom=" + temporalExtentFrom 
+                + ", temporalExtentTo=" + temporalExtentTo
+                + ", keywordMatchType=" + keywordMatchType +"]";
+        
     }
 
-
+    /** Gets the title. */
+    public String getTitle() {
+        return this.title;
+    }
+    
+    /** Gets the abstract. */
+    public String getAbstract() {
+        return this.abstract_;
+    }
+    
+    /** Gets the metadata change date's lower bound. */
+    public DateTime getMetadataChangeDateFrom() {
+        return this.metadataChangeDateFrom;
+    }
+    
+    /** Gets the metadata change date's upper bound. */
+    public DateTime getMetadataChangeDateTo() {
+        return this.metadataChangeDateTo;
+    }
+    
+    /** Gets the temporal extent's lower bound. */
+    public DateTime getTemporalExtentFrom() {
+        return this.temporalExtentFrom;
+    }
+    
+    /** Gets the temporal extent's upper bound. */
+    public DateTime getTemporalExtentTo() {
+        return this.temporalExtentTo;
+    }
+    
+    /** Sets the title. */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    /** Sets the abstract. */
+    public void setAbstract(String abstract_) {
+        this.abstract_ = abstract_;
+    }
+    
+    /** Sets metadataChangeDateFrom. */
+    public void setMetadataChangeDateFrom(DateTime metadataChangeDateFrom) {
+        this.metadataChangeDateFrom = metadataChangeDateFrom;
+    }
+    
+    /** Sets metadataChangeDateTo. */
+    public void setMetadataChangeDateTo(DateTime metadataChangeDateTo) {
+        this.metadataChangeDateTo = metadataChangeDateTo;
+    }
+        
+    /** Sets temporalExtentFrom. */
+    public void setTemporalExtentFrom(DateTime temporalExtentFrom) {
+        this.temporalExtentFrom = temporalExtentFrom;
+    }
+    
+    /** Sets temporalExtentTo. */
+    public void setTemporalExtentTo(DateTime temporalExtentTo) {
+        this.temporalExtentTo = temporalExtentTo;
+    }
 }

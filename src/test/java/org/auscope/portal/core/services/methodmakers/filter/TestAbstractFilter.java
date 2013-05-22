@@ -1,8 +1,6 @@
 package org.auscope.portal.core.services.methodmakers.filter;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.auscope.portal.core.services.methodmakers.filter.AbstractFilter;
-import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.test.AbstractFilterTestUtilities;
 import org.junit.Assert;
 import org.junit.Test;

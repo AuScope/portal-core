@@ -202,8 +202,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      */
     _serviceInformationRenderer : function(value, metaData, record, row, col, store, gridView) {
         var onlineResources = this.getOnlineResourcesForRecord(record);
-        var containsDataSource = false;
-        var containsImageSource = false;
+
+        var containsDataService = false;
+        var containsImageService = false;
 
         //We classify resources as being data or image sources.
         for (var i = 0; i < onlineResources.length; i++) {
@@ -212,26 +213,30 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             case portal.csw.OnlineResource.WCS:
             case portal.csw.OnlineResource.SOS:
             case portal.csw.OnlineResource.OPeNDAP:
-                containsDataSource = true;
+            case portal.csw.OnlineResource.CSWService:
+            case portal.csw.OnlineResource.IRIS:
+                containsDataService = true;
                 break;
             case portal.csw.OnlineResource.WMS:
             case portal.csw.OnlineResource.WWW:
             case portal.csw.OnlineResource.FTP:
+            case portal.csw.OnlineResource.CSW:
             case portal.csw.OnlineResource.UNSUPPORTED:
-                containsImageSource = true;
+                containsImageService = true;
                 break;
             }
         }
 
-        //We show an icon depending on the types
-        //of online resources that are available
-        if (containsDataSource) {
-            return this._generateHTMLIconMarkup('img/binary.png');
-        } else if (containsImageSource) {
-            return this._generateHTMLIconMarkup('img/picture.png');
+        var iconPath = null;
+        if (containsDataService) {
+            iconPath = 'img/binary.png'; //a single data service will label the entire layer as a data layer
+        } else if (containsImageService) {
+            iconPath = 'img/picture.png';
+        } else {
+            iconPath = 'img/cross.png';
         }
 
-        return this._generateHTMLIconMarkup('img/cross.png');
+        return this._generateHTMLIconMarkup(iconPath);
     },
 
     /**
@@ -278,6 +283,15 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             var bbox = spatialBoundsArray[i];
             if (bbox.southBoundLatitude !== bbox.northBoundLatitude ||
                 bbox.eastBoundLongitude !== bbox.westBoundLongitude) {
+
+                //VT: Google map uses EPSG:3857 and its maximum latitude is only 85 degrees
+                // anything more will stretch the transformation
+                if(bbox.northBoundLatitude>85){
+                    bbox.northBoundLatitude=85;
+                }
+                if(bbox.southBoundLatitude<-85){
+                    bbox.southBoundLatitude=-85;
+                }
                 nonPointBounds.push(bbox);
             }
         }

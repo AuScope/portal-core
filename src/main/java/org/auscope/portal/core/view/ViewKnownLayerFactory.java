@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.ModelMap;
 
 /**
@@ -23,9 +22,15 @@ public class ViewKnownLayerFactory {
         obj.put("id", k.getId());
         obj.put("proxyUrl", k.getProxyUrl());
         obj.put("proxyCountUrl", k.getProxyCountUrl());
+        obj.put("proxyStyleUrl", k.getProxyStyleUrl());
+        obj.put("proxyDownloadUrl", k.getProxyDownloadUrl());
 
         if (k.getIconUrl() != null) {
             obj.put("iconUrl", k.getIconUrl());
+        }
+
+        if(k.getPolygonColor() != null && k.getPolygonColor().length() > 0) {
+            obj.put("polygonColor", k.getPolygonColor());
         }
 
         if (k.getIconAnchor() != null) {

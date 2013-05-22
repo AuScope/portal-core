@@ -1,0 +1,79 @@
+<rdf:RDF
+    xmlns:gml32="http://def.seegrid.csiro.au/ogc/dataType/OGC-GML/3.2/"
+    xmlns:elda="http://www.epimorphics.com/vocabularies/lda#"
+    xmlns:sparql="http://purl.org/net/opmv/types/sparql#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:ogcsf="http://def.seegrid.csiro.au/ogc/dataType/OGC-SF/1.0/"
+    xmlns:doap="http://usefulinc.com/ns/doap#"
+    xmlns:gtrs="http://resource.geosciml.org/schema/cgi/trs/3.0/"
+    xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:tm="http://def.seegrid.csiro.au/isotc211/iso19108/2006/temporalobject/"
+    xmlns:gm="http://def.seegrid.csiro.au/isotc211/iso19107/2003/geometry/"
+    xmlns:owl="http://def.seegrid.csiro.au/isotc211//owl#"
+    xmlns:api="http://purl.org/linked-data/api/vocab#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:gts="http://resource.geosciml.org/schema/cgi/gts/3.0/"
+    xmlns:isc="http://resource.geosciml.org/classifier/ics/ischart/"
+    xmlns:geo="http://def.seegrid.csiro.au/ogc/geosparql/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:gml31="http://def.seegrid.csiro.au/ogc/dataType/OGC-GML/3.1/"
+    xmlns:sam="http://def.seegrid.csiro.au/isotc211/iso19156/2011/sampling/"
+    xmlns:basic="http://def.seegrid.csiro.au/isotc211/iso19103/2005/basictype/"
+    xmlns:svoc="http://www.seegrid.csiro.au/siss/voc/"
+    xmlns:j.0="http://www.w3.org/2002/07/owl#"
+    xmlns:opmv="http://purl.org/net/opmv/types/common#"
+    xmlns:xhv="http://www.w3.org/1999/xhtml/vocab#"
+    xmlns:trs="http://def.seegrid.csiro.au/isotc211/iso19108/2006/temporalreferencesystem/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <rdf:Description rdf:about="http://resource.auscope.org/classifier/AuScope/commodity/MetalliferousMineral">
+    <skos:narrowMatch>
+      <skos:Concept rdf:about="http://resource.auscope.org/classifier/GA/commodity/Au">
+        <skos:definition>Gold</skos:definition>
+        <skos:notation rdf:datatype="https://twiki.auscope.org/twiki/pub/Grid/MineralOccurrenceUserInterface/ga_commodities.xls"
+        >Au</skos:notation>
+        <rdfs:label xml:lang="en">gold</rdfs:label>
+        <skos:prefLabel xml:lang="en">gold</skos:prefLabel>
+        <skos:definition xml:lang="en">Gold is a highly sought-after precious metal in jewelry.</skos:definition>
+        <skos:exactMatch>
+          <rdf:Description rdf:about="http://resource.auscope.org/classifier/PIRSA/commodity/Au">
+            <skos:exactMatch rdf:resource="http://resource.auscope.org/classifier/GA/commodity/Au"/>
+          </rdf:Description>
+        </skos:exactMatch>
+        <skos:exactMatch>
+          <rdf:Description rdf:about="http://resource.auscope.org/classifier/GSWA/commodity/Au">
+            <skos:exactMatch rdf:resource="http://resource.auscope.org/classifier/GA/commodity/Au"/>
+          </rdf:Description>
+        </skos:exactMatch>
+        <skos:exactMatch>
+          <rdf:Description rdf:about="http://resource.auscope.org/classifier/MRT/commodity/15">
+            <skos:exactMatch rdf:resource="http://resource.auscope.org/classifier/GA/commodity/Au"/>
+          </rdf:Description>
+        </skos:exactMatch>
+        <skos:inScheme>
+          <rdf:Description rdf:about="http://resource.auscope.org/classifierscheme/GA/commodity">
+            <rdfs:label xml:lang="en">ga commodities name list.</rdfs:label>
+          </rdf:Description>
+        </skos:inScheme>
+        <skos:prefLabel xml:lang="fr">or</skos:prefLabel>
+        <foaf:isPrimaryTopicOf>
+          <rdf:Description rdf:about="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/resource.rdf?uri=http://resource.auscope.org/classifier/GA/commodity/Au">
+            <foaf:primaryTopic rdf:resource="http://resource.auscope.org/classifier/GA/commodity/Au"/>
+            <api:extendedMetadataVersion rdf:resource="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/resource.rdf?uri=http://resource.auscope.org/classifier/GA/commodity/Au&amp;_metadata=all"/>
+            <api:definition rdf:resource="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/resource.rdf?uri=http://resource.auscope.org/classifier/GA/commodity/Au"/>
+          </rdf:Description>
+        </foaf:isPrimaryTopicOf>
+        <rdfs:label xml:lang="fr">or</rdfs:label>
+        <rdfs:seeAlso>http://en.wikipedia.org/wiki/Gold</rdfs:seeAlso>
+        <j.0:sameAs rdf:resource="urn:cgi:classifier:GA:commodity:Au"/>
+        <skos:exactMatch>
+          <rdf:Description rdf:about="http://resource.auscope.org/classifier/GSV/commodity/Au">
+            <skos:exactMatch rdf:resource="http://resource.auscope.org/classifier/GA/commodity/Au"/>
+          </rdf:Description>
+        </skos:exactMatch>
+      </skos:Concept>
+    </skos:narrowMatch>
+  </rdf:Description>
+</rdf:RDF>

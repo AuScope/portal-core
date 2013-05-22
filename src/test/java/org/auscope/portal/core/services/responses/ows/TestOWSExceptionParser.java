@@ -1,7 +1,5 @@
 package org.auscope.portal.core.services.responses.ows;
 
-import org.auscope.portal.core.services.responses.ows.OWSException;
-import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.util.DOMUtil;

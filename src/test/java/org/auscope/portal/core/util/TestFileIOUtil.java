@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.util.FileIOUtil;
 import org.jmock.Expectations;
 import org.junit.Test;
 

@@ -5,22 +5,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
+import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWContact;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWResponsibleParty;
-import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.test.AssertViewUtility;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.view.ViewCSWRecordFactory;
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
 public class TestViewCSWRecordFactory extends PortalTestClass {
     private CSWRecord mockCSWRecord = context.mock(CSWRecord.class);
+    private CSWRecord mockCSWChildRecord1 = context.mock(CSWRecord.class, "childRecord1");
     private AbstractCSWOnlineResource mockOnlineRes = context.mock(AbstractCSWOnlineResource.class);
+    private AbstractCSWOnlineResource mockOnlineRes_1 = context.mock(AbstractCSWOnlineResource.class, "mockOnlineRes_1");
     private CSWGeographicBoundingBox mockBbox = context.mock(CSWGeographicBoundingBox.class);
     private CSWResponsibleParty mockResponsibleParty = context.mock(CSWResponsibleParty.class);
     private CSWContact mockContact = context.mock(CSWContact.class);
@@ -29,6 +30,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
     public void testToView() throws Exception {
         ViewCSWRecordFactory factory = new ViewCSWRecordFactory();
 
+        //for mockCSWRecord
         final String serviceName = "sn";
         final String administrativeArea="CSIRO";
         final String contactOrg = "co";
@@ -51,10 +53,12 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final double bboxEast = 7;
         final double bboxWest = 6;
 
+        //The ModelMap expectation objects for a parent CSWRecord object (mockCSWRecord)
         final ModelMap expectation = new ModelMap();
         final ModelMap onlineResExpectation = new ModelMap();
         final ModelMap geoExpectation = new ModelMap();
-
+        final ModelMap childRecordExpectation = new ModelMap();
+        
         expectation.put("name", serviceName);
         expectation.put("adminArea", administrativeArea);
         expectation.put("contactOrg", contactOrg);
@@ -66,6 +70,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
+        expectation.put("childRecords", Arrays.asList(childRecordExpectation));
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -77,7 +82,45 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         geoExpectation.put("westBoundLongitude", bboxWest);
         geoExpectation.put("northBoundLatitude", bboxNorth);
         geoExpectation.put("southBoundLatitude", bboxSouth);
-
+        
+        //for mockCSWChildRecord1
+        final String serviceName_1 = "sn_1";
+        final String contactOrg_1 = "Unknown";
+        final String resourceProvider_1 = "CESRE";
+        final String fileId_1 = "asb_1";
+        final String recordInfoUrl_1 = "http://bob.xom";
+        final String dataAbstract_1 = "assda_1";
+        final String descriptiveKeyword1_1 = "kw1_1";
+        final String descriptiveKeyword2_1 = "kw2_1";
+        final String constraint1_1 = "c1_1";
+        final String constraint2_1 = "c2_1";
+        
+        final URL orUrl_1 = new URL("http://hah_1.com");
+        final String orName_1 = "ascom_1";
+        final String orDesc_1 = "desc_1";
+        final OnlineResourceType orType_1 = OnlineResourceType.WCS;
+        
+        //The ModelMap expectation objects for the child of mockCSWRecord object (mockCSWChildRecord1)
+        final ModelMap onlineResExpectation_1 = new ModelMap();        
+        
+        childRecordExpectation.put("name", serviceName_1);
+        childRecordExpectation.put("adminArea", null);
+        childRecordExpectation.put("contactOrg", contactOrg_1);
+        childRecordExpectation.put("resourceProvider", resourceProvider_1);
+        childRecordExpectation.put("id", fileId_1);
+        childRecordExpectation.put("recordInfoUrl", recordInfoUrl_1);
+        childRecordExpectation.put("description", dataAbstract_1);
+        childRecordExpectation.put("onlineResources", Arrays.asList(onlineResExpectation_1));
+        childRecordExpectation.put("geographicElements", Arrays.asList());
+        childRecordExpectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1_1, descriptiveKeyword2_1));
+        childRecordExpectation.put("constraints", Arrays.asList(constraint1_1, constraint2_1));
+        childRecordExpectation.put("childRecords", Arrays.asList());
+        
+        onlineResExpectation_1.put("url", orUrl_1.toString());
+        onlineResExpectation_1.put("name", orName_1);
+        onlineResExpectation_1.put("description", orDesc_1);
+        onlineResExpectation_1.put("type", orType_1.name());
+        
         context.checking(new Expectations() {{
             allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
             allowing(mockCSWRecord).getContact();will(returnValue(mockResponsibleParty));
@@ -89,6 +132,20 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
+            allowing(mockCSWRecord).hasChildRecords();will(returnValue(true));
+            allowing(mockCSWRecord).getChildRecords();will(returnValue(new CSWRecord[] {mockCSWChildRecord1}));
+            
+            allowing(mockCSWChildRecord1).getServiceName();will(returnValue(serviceName_1));
+            allowing(mockCSWChildRecord1).getContact();will(returnValue(null));
+            allowing(mockCSWChildRecord1).getResourceProvider();will(returnValue(resourceProvider_1));
+            allowing(mockCSWChildRecord1).getFileIdentifier();will(returnValue(fileId_1));
+            allowing(mockCSWChildRecord1).getRecordInfoUrl();will(returnValue(recordInfoUrl_1));
+            allowing(mockCSWChildRecord1).getDataIdentificationAbstract();will(returnValue(dataAbstract_1));
+            allowing(mockCSWChildRecord1).getOnlineResources();will(returnValue(new AbstractCSWOnlineResource[] {mockOnlineRes_1}));
+            allowing(mockCSWChildRecord1).getCSWGeographicElements();will(returnValue(null));
+            allowing(mockCSWChildRecord1).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1_1, descriptiveKeyword2_1}));
+            allowing(mockCSWChildRecord1).getConstraints();will(returnValue(new String[] {constraint1_1, constraint2_1}));
+            allowing(mockCSWChildRecord1).hasChildRecords();will(returnValue(false));
 
             allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
             allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
@@ -99,6 +156,11 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockOnlineRes).getName();will(returnValue(orName));
             allowing(mockOnlineRes).getType();will(returnValue(orType));
             allowing(mockOnlineRes).getLinkage();will(returnValue(orUrl));
+            
+            allowing(mockOnlineRes_1).getDescription();will(returnValue(orDesc_1));
+            allowing(mockOnlineRes_1).getName();will(returnValue(orName_1));
+            allowing(mockOnlineRes_1).getType();will(returnValue(orType_1));
+            allowing(mockOnlineRes_1).getLinkage();will(returnValue(orUrl_1));
 
             allowing(mockResponsibleParty).getOrganisationName();will(returnValue(contactOrg));
             allowing(mockResponsibleParty).getContactInfo();will(returnValue(mockContact));
@@ -150,6 +212,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
+        expectation.put("childRecords", new ArrayList<ModelMap>());
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -168,6 +231,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
+            allowing(mockCSWRecord).hasChildRecords();will(returnValue(false));
 
             allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
             allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
@@ -233,6 +297,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("geographicElements", Arrays.asList(geoExpectation));
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
+        expectation.put("childRecords", new ArrayList<ModelMap>());
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -256,6 +321,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockCSWRecord).getCSWGeographicElements();will(returnValue(new CSWGeographicElement[] {mockBbox}));
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
+            allowing(mockCSWRecord).hasChildRecords();will(returnValue(false));
 
             allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
             allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));

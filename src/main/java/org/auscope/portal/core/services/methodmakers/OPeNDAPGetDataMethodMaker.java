@@ -1,10 +1,10 @@
 package org.auscope.portal.core.services.methodmakers;
 
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
 import org.auscope.portal.core.services.responses.opendap.SimpleBounds;
@@ -137,34 +137,33 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         return result.toString();
     }
 
-    public HttpRequestBase getMethod(String opendapUrl,OPeNDAPFormat format, NetcdfDataset ds,
+    public HttpMethodBase getMethod(String opendapUrl,OPeNDAPFormat format, NetcdfDataset ds,
             AbstractViewVariable[] constraints) throws Exception {
 
-        //We may only have a value constraint (when we need to know the actual index constraints)
-        //We can convert from value to index by taking the minimum bounding box.
-        String query = "";
-        if (constraints != null) {
-            for (AbstractViewVariable constraint : constraints) {
-                calculateIndexBounds(ds, constraint);
-            }
-
-            query = URIUtil.encodeQuery(generateQueryForConstraints(constraints));
-        }
-
         //Generate our base URL (which depends on the format)
-        HttpGet method = null;
+        HttpMethodBase method = null;
         switch (format) {
         case ASCII:
-            method = new HttpGet(opendapUrl + ".ascii?" + query);
+            method = new GetMethod(opendapUrl + ".ascii");
             break;
         case DODS:
-            method = new HttpGet(opendapUrl + ".dods?"+ query);
+            method = new GetMethod(opendapUrl + ".dods");
             break;
         default:
             throw new IllegalArgumentException("Unsupported format " + format.toString());
         }
 
-        logger.debug(String.format("url='%1$s' query='%2$s'", opendapUrl, query));
+        //We may only have a value constraint (when we need to know the actual index constraints)
+        //We can convert from value to index by taking the minimum bounding box.
+        if (constraints != null) {
+            for (AbstractViewVariable constraint : constraints) {
+                calculateIndexBounds(ds, constraint);
+            }
+
+            method.setQueryString(URIUtil.encodeQuery(generateQueryForConstraints(constraints)));
+        }
+
+        logger.debug(String.format("url='%1$s' query='%2$s'", opendapUrl, method.getQueryString()));
 
         return method;
     }

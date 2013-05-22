@@ -1,7 +1,6 @@
 package org.auscope.portal.core.services.responses.sos;
 
-import org.apache.http.client.methods.HttpRequestBase;
-
+import org.apache.commons.httpclient.HttpMethodBase;
 
 /**
  * Simplified view of a response from a SOS
@@ -12,14 +11,14 @@ public class SOSResponse {
     private String sos;
 
     /** The method used to make the request*/
-    private HttpRequestBase method;
+    private HttpMethodBase method;
 
     /**
      * Creates a new instance of this class
      * @param sos The original SOS response as returned by the service
      * @param method the method used to make the request
      */
-    public SOSResponse(String sos, HttpRequestBase method) {
+    public SOSResponse(String sos, HttpMethodBase method) {
         this.sos = sos;
         this.method = method;
     }
@@ -36,7 +35,7 @@ public class SOSResponse {
      * Gets the method used to make the request
      * @return
      */
-    public HttpRequestBase getMethod() {
+    public HttpMethodBase getMethod() {
         return method;
     }
 }

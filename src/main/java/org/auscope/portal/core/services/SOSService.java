@@ -2,10 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.util.Date;
 
-import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.commons.httpclient.HttpMethodBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.SOSMethodMaker;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
@@ -20,7 +17,7 @@ import org.auscope.portal.core.services.responses.sos.SOSResponse;
  */
 public  class SOSService {
 
-    protected HttpServiceCaller httpServiceCaller;
+	protected HttpServiceCaller httpServiceCaller;
     protected SOSMethodMaker sosMethodMaker;
 
     /**
@@ -33,51 +30,51 @@ public  class SOSService {
         this.httpServiceCaller = httpServiceCaller;
         this.sosMethodMaker = sosMethodMaker;
     }
-
-
+      
+    
     /**
      * Utility method for choosing the correct SOS method to generate based on specified parameters
      * @param sosUrl [required] - the sensor observation service url
-     * @param request - required, service type identifier (e.g. GetCapabilities or GetObservation)
-     * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested
-     * @param beginPosition - optional - start time period for which observations are requested
-     *                       			the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
-     * @param endPosition - optional  -	end time period(s) for which observations are requested
+     * @param request - required, service type identifier (e.g. GetCapabilities or GetObservation) 
+     * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested 
+     * @param beginPosition - optional - start time period for which observations are requested 
+     *                       			the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. 
+     * @param endPosition - optional  -	end time period(s) for which observations are requested 
      *                             		the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
-     *                                - both beginPosition and endPosition must go in pair, if one exists, the other must exists
+     *                                - both beginPosition and endPosition must go in pair, if one exists, the other must exists                               
      * @param bbox - optional         -	FilterBoundingBox object -> convert to 52NorthSOS BBOX format :
-     *                          		maxlat,minlon,minlat,maxlon(,srsURI)
-     *                             		srsURI format : "http://www.opengis.net/def/crs/EPSG/0/"+epsg code
+     *                          		maxlat,minlon,minlat,maxlon(,srsURI) 
+     *                             		srsURI format : "http://www.opengis.net/def/crs/EPSG/0/"+epsg code 							                          
      * @return HttpMethodBase object
      * @throws Exception
      */
-    protected HttpRequestBase generateSOSRequest(String sosUrl, String request, String featureOfInterest, Date beginPosition, Date endPosition, FilterBoundingBox bbox) {
+    protected HttpMethodBase generateSOSRequest(String sosUrl, String request, String featureOfInterest, Date beginPosition, Date endPosition, FilterBoundingBox bbox) {    	
             return sosMethodMaker.makePostMethod(sosUrl, request, featureOfInterest, beginPosition, endPosition, bbox);
     }
 
-
-
+    
+    
     /**
-     * Public method that receive parameters from Client, generate the SOSMethodMaker, trigger the
-     * "GetObservation" request, receive and return the response
+     * Public method that receive parameters from Client, generate the SOSMethodMaker, trigger the  
+     * "GetObservation" request, receive and return the response 
      * @param sosUrl [required] - the sensor observation service url
-     * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested
-     * @param beginPosition - optional - start time period for which observations are requested
-     *                       			the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
-     * @param endPosition - optional  -	end time period(s) for which observations are requested
+     * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested 
+     * @param beginPosition - optional - start time period for which observations are requested 
+     *                       			the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. 
+     * @param endPosition - optional  -	end time period(s) for which observations are requested 
      *                             		the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
-     *                                - both beginPosition and endPosition must go in pair, if one exists, the other must exists
+     *                                - both beginPosition and endPosition must go in pair, if one exists, the other must exists                               
      * @param bbox - optional         -	FilterBoundingBox object -> convert to 52NorthSOS BBOX format :
-     *                          		maxlat,minlon,minlat,maxlon(,srsURI)
-     *                             		srsURI format : "http://www.opengis.net/def/crs/EPSG/0/"+epsg code
+     *                          		maxlat,minlon,minlat,maxlon(,srsURI) 
+     *                             		srsURI format : "http://www.opengis.net/def/crs/EPSG/0/"+epsg code 							                          
      * @return HttpMethodBase object
-     * @throws PortalServiceException
+     * @throws PortalServiceException 
      */
     public SOSResponse getObservationsForFeature(String sosUrl, String featureOfInterest, Date beginPosition, Date endPosition, FilterBoundingBox bbox) throws PortalServiceException {
-        //Generate SOSMethodMaker
-        HttpRequestBase method = this.generateSOSRequest(sosUrl, "GetObservation", featureOfInterest, beginPosition, endPosition, bbox);
+		//Generate SOSMethodMaker
+		HttpMethodBase method = this.generateSOSRequest(sosUrl, "GetObservation", featureOfInterest, beginPosition, endPosition, bbox);
 
-        try {
+    	try {
             //Make the request and parse the response
             String responseString = httpServiceCaller.getMethodResponseAsString(method);
             OWSExceptionParser.checkForExceptionResponse(responseString);

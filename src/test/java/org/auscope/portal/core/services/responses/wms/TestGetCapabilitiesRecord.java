@@ -3,8 +3,6 @@ package org.auscope.portal.core.services.responses.wms;
 import java.io.InputStream;
 
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
-import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
-import org.auscope.portal.core.services.responses.wms.GetCapabilitiesWMSLayerRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.junit.Assert;

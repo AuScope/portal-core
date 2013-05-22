@@ -1,10 +1,10 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -86,5 +86,38 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass  {
         Assert.assertFalse(postBody.contains("csw:Constraint"));
 
         Assert.assertNotNull(DOMUtil.buildDomFromString(postBody));//this should NOT throw an exception
+    }
+
+    /**
+     * Simple test to ensure that some of the 'mandatory' parameters are set correctly
+     */
+    @Test
+    public void testKeyParameters() throws Exception {
+        final int maxRecords = 1234;
+        final String filterStr = "<filter/>";
+
+
+        context.checking(new Expectations() {{
+            allowing(mockFilter).getFilterStringAllRecords();will(returnValue(filterStr));
+        }});
+
+        //Test POST
+        HttpMethodBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
+        Assert.assertNotNull(method);
+        RequestEntity entity = ((PostMethod) method).getRequestEntity();
+        Assert.assertTrue(entity instanceof StringRequestEntity);
+        String postBody = ((StringRequestEntity) entity).getContent();
+        Assert.assertTrue(postBody.contains(String.format("version=\"2.0.2\"")));
+        Assert.assertTrue(postBody.contains(String.format("outputSchema=\"csw:IsoRecord\"")));
+        Assert.assertTrue(postBody.contains(String.format("typeNames=\"gmd:MD_Metadata\"")));
+
+        //Test GET
+        method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0);
+        Assert.assertNotNull(method);
+        String queryString = ((GetMethod)method).getQueryString();
+        Assert.assertTrue(queryString, queryString.contains("version=2.0.2"));
+        Assert.assertTrue(queryString, queryString.contains("outputSchema=csw%3AIsoRecord"));
+        Assert.assertTrue(queryString, queryString.contains("typeNames=gmd%3AMD_Metadata"));
+
     }
 }

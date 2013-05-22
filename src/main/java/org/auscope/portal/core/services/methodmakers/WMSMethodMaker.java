@@ -1,8 +1,11 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.params.BasicHttpParams;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
  * A class for generating methods that can interact with a OGC Web Map Service
@@ -16,15 +19,16 @@ public class WMSMethodMaker extends AbstractMethodMaker {
      * @param wmsUrl The WMS endpoint (will have any existing query parameters preserved)
      * @return
      */
-    public HttpRequestBase getCapabilitiesMethod(String wmsUrl) {
-        HttpGet method = new HttpGet(wmsUrl);
+    public HttpMethodBase getCapabilitiesMethod(String wmsUrl) {
+        GetMethod method = new GetMethod(wmsUrl);
+        List<NameValuePair> options = new ArrayList<NameValuePair>();
 
-        BasicHttpParams params = extractQueryParams(wmsUrl);
-        params.setParameter("service", "WMS");
-        params.setParameter("request", "GetCapabilities");
-        params.setParameter("version", "1.1.1");
+        options.addAll(this.extractQueryParams(wmsUrl)); //preserve any existing query params
+        options.add(new NameValuePair("service", "WMS"));
+        options.add(new NameValuePair("request", "GetCapabilities"));
+        options.add(new NameValuePair("version", "1.1.1"));
 
-        method.setParams(params);
+        method.setQueryString(options.toArray(new NameValuePair[options.size()]));
 
         return method;
     }
@@ -46,31 +50,32 @@ public class WMSMethodMaker extends AbstractMethodMaker {
      * @param styleBody [Optional] Only valid for Geoserver WMS, a style sheet definition
      * @return
      */
-    public HttpRequestBase getMapMethod(String wmsUrl, String layer, String imageMimeType, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, String styles, String styleBody) {
-        HttpGet method = new HttpGet(wmsUrl);
+    public HttpMethodBase getMapMethod(String wmsUrl, String layer, String imageMimeType, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, String styles, String styleBody) {
+        GetMethod method = new GetMethod(wmsUrl);
+        List<NameValuePair> options = new ArrayList<NameValuePair>();
 
-        BasicHttpParams params = extractQueryParams(wmsUrl);
-        params.setParameter("service", "WMS");
-        params.setParameter("request", "GetMap");
-        params.setParameter("version", "1.1.1");
-        params.setParameter("format", imageMimeType);
-        params.setParameter("transparent", "TRUE");
-        params.setParameter("layers", layer);
+        options.addAll(this.extractQueryParams(wmsUrl)); //preserve any existing query params
+        options.add(new NameValuePair("service", "WMS"));
+        options.add(new NameValuePair("request", "GetMap"));
+        options.add(new NameValuePair("version", "1.1.1"));
+        options.add(new NameValuePair("format", imageMimeType));
+        options.add(new NameValuePair("transparent", "TRUE"));
+        options.add(new NameValuePair("layers", layer));
         if (styles != null) {
-            params.setParameter("styles", styles);
+            options.add(new NameValuePair("styles", styles));
         }
         //This is a geoserver specific URL param
         if (styleBody != null) {
-            params.setParameter("sld_body", styleBody);
+            options.add(new NameValuePair("sld_body", styleBody));
         }
-        params.setParameter("srs", srs);
-        params.setParameter("bbox", String.format("%1$s,%2$s,%3$s,%4$s",
-                westBoundLongitude,southBoundLatitude, eastBoundLongitude, northBoundLatitude));
+        options.add(new NameValuePair("srs", srs));
+        options.add(new NameValuePair("bbox", String.format("%1$s,%2$s,%3$s,%4$s",
+                westBoundLongitude,southBoundLatitude, eastBoundLongitude, northBoundLatitude)));
 
-        params.setParameter("width", Integer.toString(width));
-        params.setParameter("height", Integer.toString(height));
+        options.add(new NameValuePair("width", Integer.toString(width)));
+        options.add(new NameValuePair("height", Integer.toString(height)));
 
-        method.setParams(params);
+        method.setQueryString(options.toArray(new NameValuePair[options.size()]));
 
         return method;
     }
@@ -84,28 +89,29 @@ public class WMSMethodMaker extends AbstractMethodMaker {
      * @param styles What style name should be applied
      * @return
      */
-    public HttpRequestBase getLegendGraphic(String wmsUrl, String layerName, int width, int height, String styles) {
-        HttpGet method = new HttpGet(wmsUrl);
+    public HttpMethodBase getLegendGraphic(String wmsUrl, String layerName, int width, int height, String styles) {
+        GetMethod method = new GetMethod(wmsUrl);
+        List<NameValuePair> options = new ArrayList<NameValuePair>();
 
-        BasicHttpParams params = extractQueryParams(wmsUrl);
-        params.setParameter("service", "WMS");
-        params.setParameter("request", "GetLegendGraphic");
-        params.setParameter("version", "1.1.1");
-        params.setParameter("format", "image/png");
-        params.setParameter("layers", layerName);
-        params.setParameter("layer", layerName);
+        options.addAll(this.extractQueryParams(wmsUrl)); //preserve any existing query params
+        options.add(new NameValuePair("service", "WMS"));
+        options.add(new NameValuePair("request", "GetLegendGraphic"));
+        options.add(new NameValuePair("version", "1.1.1"));
+        options.add(new NameValuePair("format", "image/png"));
+        options.add(new NameValuePair("layers", layerName));
+        options.add(new NameValuePair("layer", layerName));
         if (styles != null && styles.trim().length() > 0) {
-            params.setParameter("styles", styles.trim());
+            options.add(new NameValuePair("styles", styles.trim()));
         }
         if (width > 0) {
-            params.setParameter("width", Integer.toString(width));
+            options.add(new NameValuePair("width", Integer.toString(width)));
         }
         if (height > 0) {
-            params.setParameter("height", Integer.toString(height));
+            options.add(new NameValuePair("height", Integer.toString(height)));
         }
 
 
-        method.setParams(params);
+        method.setQueryString(options.toArray(new NameValuePair[options.size()]));
 
 
         return method;
@@ -131,8 +137,9 @@ public class WMSMethodMaker extends AbstractMethodMaker {
      * @param pointY Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
      * @return
      */
-    public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles) {
-        HttpGet method = new HttpGet(wmsUrl);
+    public HttpMethodBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) {
+        GetMethod method = new GetMethod(wmsUrl);
+        List<NameValuePair> options = new ArrayList<NameValuePair>();
 
         String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
                 westBoundLongitude,
@@ -140,26 +147,30 @@ public class WMSMethodMaker extends AbstractMethodMaker {
                 eastBoundLongitude,
                 northBoundLatitude);
 
-        BasicHttpParams params = extractQueryParams(wmsUrl);
-        params.setParameter("service", "WMS");
-        params.setParameter("request", "GetFeatureInfo");
-        params.setParameter("version", "1.1.1");
-        params.setParameter("layers", layer);
-        params.setParameter("layer", layer);
-        params.setParameter("BBOX", bboxString);
-        params.setParameter("QUERY_LAYERS", layer);
-        params.setParameter("INFO_FORMAT", format);
-        params.setParameter("lng", Double.toString(pointLng));
-        params.setParameter("lat", Double.toString(pointLat));
-        params.setParameter("x", Integer.toString(pointX));
-        params.setParameter("y", Integer.toString(pointY));
-        params.setParameter("width", Integer.toString(width));
-        params.setParameter("height", Integer.toString(height));
+        options.addAll(this.extractQueryParams(wmsUrl)); //preserve any existing query params
+        options.add(new NameValuePair("service", "WMS"));
+        options.add(new NameValuePair("request", "GetFeatureInfo"));
+        options.add(new NameValuePair("version", "1.1.1"));
+        options.add(new NameValuePair("layers", layer));
+        options.add(new NameValuePair("layer", layer));
+        options.add(new NameValuePair("BBOX", bboxString));
+        options.add(new NameValuePair("QUERY_LAYERS", layer));
+        options.add(new NameValuePair("INFO_FORMAT", format));
+        options.add(new NameValuePair("lng", Double.toString(pointLng)));
+        options.add(new NameValuePair("lat", Double.toString(pointLat)));
+        options.add(new NameValuePair("x", Integer.toString(pointX)));
+        options.add(new NameValuePair("y", Integer.toString(pointY)));
+        options.add(new NameValuePair("width", Integer.toString(width)));
+        options.add(new NameValuePair("height", Integer.toString(height)));
+        options.add(new NameValuePair("SRS", srs));
+        if(sld != null && sld.trim().length() > 0){
+            options.add(new NameValuePair("SLD", sld));
+        }
         if (styles != null && styles.trim().length() > 0) {
-            params.setParameter("styles", styles.trim());
+            options.add(new NameValuePair("styles", styles.trim()));
         }
 
-        method.setParams(params);
+        method.setQueryString(options.toArray(new NameValuePair[options.size()]));
 
         return method;
     }

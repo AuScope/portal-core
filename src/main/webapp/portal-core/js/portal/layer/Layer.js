@@ -13,6 +13,8 @@ Ext.define('portal.layer.Layer', {
         CSW_RECORD : 'CSWRecord' //A value for 'sourceType'
     },
 
+    visible : true,
+
     fields: [
         { name: 'id', type: 'string' }, //A unique ID of this layer - sourced from the original KnownLayer/CSWRecord
         { name: 'sourceType', type: 'string' }, //an 'enum' representing whether this Layer was constructed from a KnownLayer or CSWRecord
@@ -58,10 +60,15 @@ Ext.define('portal.layer.Layer', {
      */
     onVisibilityChanged : function(renderer, newVisibility) {
         if (newVisibility) {
-            renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
+            this.visible=true;
+            //including a fourth paramenter to displayData to capture what event caused the renderer to display because if it is
+            //just a visibility change event, our renderer should stop some popup from showing. eg UncachedCSWServiceRenderer
+            renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn, 'visibilityChange');
         } else {
+            this.visible=false;
             renderer.abortDisplay();
             renderer.removeData();
+            renderer.map.closeInfoWindow(this.get('id'));
         }
     },
 
@@ -71,6 +78,8 @@ Ext.define('portal.layer.Layer', {
     onFilterChanged : function(filterer, keys) {
         var renderer = this.get('renderer');
         if (renderer.getVisible()) {
+            renderer.removeData();
+            renderer.map.closeInfoWindow(this.get('id'));
             renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
         }
     },
@@ -85,5 +94,18 @@ Ext.define('portal.layer.Layer', {
             }
         }
         return results;
+    },
+
+    containsCSWService : function() {
+        // If the layer is a known layer, then ask the KnownLayer
+        // object if it contains a CSW service endpoint:
+        if (this.get('sourceType') == portal.layer.Layer.KNOWN_LAYER) {
+            return this.get('source').containsCSWService();
+        }
+
+        return false;
     }
 });
+
+
+

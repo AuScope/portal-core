@@ -1,6 +1,9 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import org.apache.http.params.BasicHttpParams;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.httpclient.NameValuePair;
 
 /**
  * Contains utilities common to all MethodMaker classes
@@ -44,12 +47,13 @@ public abstract class AbstractMethodMaker {
     }
 
     /**
-     * Returns a BasicHttpParams initialised to every URL parameter found in url (if any)
-     * @param url The url to check for params
+     * Returns a list of NameValuePair objects representing the
+     * URL query parameters of url (if any)
+     * @param url
      * @return
      */
-    protected BasicHttpParams extractQueryParams(String url) {
-        BasicHttpParams params = new BasicHttpParams();
+    protected List<NameValuePair> extractQueryParams(String url) {
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         String[] parts = url.split("\\?");
         if (parts.length != 2) {
@@ -60,7 +64,7 @@ public abstract class AbstractMethodMaker {
         for (String queryParam : queryParams) {
             String[] kvp = queryParam.split("=");
             if (kvp.length == 2) {
-                params.setParameter(kvp[0], kvp[1]);
+                params.add(new NameValuePair(kvp[0], kvp[1]));
             }
         }
 

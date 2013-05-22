@@ -13,10 +13,9 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.auscope.portal.core.server.controllers.BasePortalController;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.test.PortalTestClass;
-import org.auscope.portal.core.view.JSONModelAndView;
+import org.auscope.portal.core.util.FileIOUtil;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
@@ -134,7 +133,7 @@ public class TestBasePortalController extends PortalTestClass {
         ZipOutputStream zout = new ZipOutputStream(outputStream);
 
         //Write our data out
-        basePortalController.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false);
+        FileIOUtil.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false);
         zout.finish();
         zout.close();
         outputStream.close();
@@ -178,15 +177,17 @@ public class TestBasePortalController extends PortalTestClass {
             oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
         }});
 
-        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
     }
 
     /**
      * Tests piping input->output correctly closes input streams (where appropriate)
      * @throws Exception
      */
-    @Test(expected=IOException.class)
+    @Test
     public void testWriteInputToOutputStreamClosing() throws Exception {
+        //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
+        //we should return the rest and encapsulate the exception in the file to inform users.
         final InputStream mockInput = context.mock(InputStream.class);
         final int bufferSize = 134;
         final OutputStream outputStream = context.mock(OutputStream.class);
@@ -194,28 +195,30 @@ public class TestBasePortalController extends PortalTestClass {
         context.checking(new Expectations() {{
             oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
             will(throwException(new IOException()));
-
+            oneOf(outputStream).write(with(any(byte[].class)));
             oneOf(mockInput).close();
         }});
 
-        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
+        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
     }
 
     /**
      * Tests piping input->output correctly closes input streams (where appropriate)
      * @throws Exception
      */
-    @Test(expected=IOException.class)
+    @Test
     public void testWriteInputToOutputStreamClosing2() throws Exception {
         final InputStream mockInput = context.mock(InputStream.class);
         final int bufferSize = 134;
         final OutputStream outputStream = context.mock(OutputStream.class);
-
+      //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
+        //we should return the rest and encapsulate the exception in the file to inform users.
         context.checking(new Expectations() {{
             oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
             will(throwException(new IOException()));
+            oneOf(outputStream).write(with(any(byte[].class)));
         }});
 
-        basePortalController.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
+        FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
     }
 }

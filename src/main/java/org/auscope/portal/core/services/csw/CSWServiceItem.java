@@ -19,6 +19,10 @@ public class CSWServiceItem {
     private String recordInformationUrl;
     private String userName;
     private String password;
+    private String cqlText;
+    private String defaultAnyTextFilter;
+    private String[] defaultConstraints;
+    private boolean noCache = false;
 
     /**
      * Creates a new service item with NO role restrictions
@@ -188,7 +192,7 @@ public class CSWServiceItem {
     }
 
     /**
-     * Gets the user name part of the credentials for this geonetwork (can be null) 
+     * Gets the user name part of the credentials for this geonetwork (can be null)
      * @return
      */
     public String getUserName() {
@@ -218,6 +222,65 @@ public class CSWServiceItem {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    /**
+     * Get cqlText for querying the catalog
+     * @return String
+     */
+    public String getCqlText() {
+        return cqlText;
+    }
     
+    /**
+     * Set cqlText for querying the catalog
+     * @return
+     */
+    public void setCqlText(String cqlText) {
+        this.cqlText = cqlText;
+    }
     
+    /**
+     * Get the defaultAnyTextFilter for querying the catalog.
+     * @return String
+     */
+    public String getDefaultAnyTextFilter() {
+        return defaultAnyTextFilter;
+    }
+    
+    /**
+     * Set defaultAnyTextFilter for querying the catalog.
+     * @return
+     */
+    public void setDefaultAnyTextFilter(String defaultAnyTextFilter) {
+        this.defaultAnyTextFilter = defaultAnyTextFilter;
+    }
+    
+    /**
+     * Gets a value indicating whether or not the caching has been disabled for this item.
+     * @return
+     */
+    public boolean getNoCache() {
+        return this.noCache;
+    }
+    
+    public String[] getDefaultConstraints() {
+        return this.defaultConstraints;
+    }
+
+    /**
+     * Set noCache to prevent the caching of data from CSW's that have too many records.
+     * @param noCache
+     */
+    public void setNoCache(boolean noCache) {
+        this.noCache = noCache;
+    }
+    
+    /**
+     * Set an array of constraints to be applied to any dummy layers that get created from this Service item. It doesn't make sense to set this value
+     * unless noCache is being set to true.
+     * @param defaultConstraints
+     */
+    public void setDefaultConstraints(String[] defaultConstraints) {
+        this.defaultConstraints = defaultConstraints;
+    }
 }

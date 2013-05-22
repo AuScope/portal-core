@@ -9,7 +9,6 @@ import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicElement;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.services.responses.csw.CSWResponsibleParty;
-import org.springframework.stereotype.Repository;
 import org.springframework.ui.ModelMap;
 
 /**
@@ -80,6 +79,14 @@ public class ViewCSWRecordFactory {
             }
         }
         obj.put("constraints", constraints);
+        
+        List<Map<String, Object>> childRecords = new ArrayList<Map<String, Object>>();
+        if (record.hasChildRecords()) {
+            for (CSWRecord childRecord : record.getChildRecords()) {
+                childRecords.add(this.toView(childRecord));
+            }
+        }
+        obj.put("childRecords", childRecords);
 
         return obj;
     }
