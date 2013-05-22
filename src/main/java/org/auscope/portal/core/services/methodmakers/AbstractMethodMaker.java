@@ -3,7 +3,10 @@ package org.auscope.portal.core.services.methodmakers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.NameValuePair;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+
 
 /**
  * Contains utilities common to all MethodMaker classes
@@ -64,7 +67,7 @@ public abstract class AbstractMethodMaker {
         for (String queryParam : queryParams) {
             String[] kvp = queryParam.split("=");
             if (kvp.length == 2) {
-                params.add(new NameValuePair(kvp[0], kvp[1]));
+                params.add(new BasicNameValuePair(kvp[0],kvp[1]));
             }
         }
 

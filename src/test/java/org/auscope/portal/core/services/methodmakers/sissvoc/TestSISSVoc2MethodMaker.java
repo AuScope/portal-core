@@ -1,8 +1,10 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
+import java.net.URLDecoder;
+
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,9 +23,9 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
      */
     @Test
     public void testGetConceptByLabelMethod() throws Exception {
-        HttpMethodBase method = mm.getConceptByLabelMethod("http://example.org", "repo", "label");
+        HttpRequestBase method = mm.getConceptByLabelMethod("http://example.org", "repo", "label");
 
-        Assert.assertEquals("http://example.org/getConceptByLabel?repo/label", method.getURI().toString());
+        Assert.assertEquals("http://example.org/getConceptByLabel?repo/label", URLDecoder.decode(method.getURI().toString(),"UTF-8"));
     }
 
     /**
@@ -32,9 +34,9 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
      */
     @Test
     public void testGetConceptByUriMethod() throws Exception {
-        HttpMethodBase method = mm.getConceptByUriMethod("http://example.org", "repo", "uri");
+        HttpRequestBase method = mm.getConceptByUriMethod("http://example.org", "repo", "uri");
 
-        Assert.assertEquals("http://example.org/getConceptByURI?repo/uri", method.getURI().toString());
+        Assert.assertEquals("http://example.org/getConceptByURI?repo/uri", URLDecoder.decode(method.getURI().toString(),"UTF-8"));
     }
 
     /**
@@ -43,9 +45,9 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
      */
     @Test
     public void testGetCommodityMethod() throws Exception {
-        HttpMethodBase method = mm.getCommodityMethod("http://example.org", "repo", "label");
+        HttpRequestBase method = mm.getCommodityMethod("http://example.org", "repo", "label");
 
-        Assert.assertEquals("http://example.org/getCommodity?repo/label", method.getURI().toString());
+        Assert.assertEquals("http://example.org/getCommodity?repo/label", URLDecoder.decode(method.getURI().toString(),"UTF-8"));
     }
 
     /**
@@ -54,7 +56,7 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
      */
     @Test
     public void testRepoInfo() throws Exception {
-        HttpMethodBase method = mm.getRepositoryInfoMethod("http://example.org");
+        HttpRequestBase method = mm.getRepositoryInfoMethod("http://example.org");
 
         Assert.assertEquals("http://example.org/RepositoryInfo", method.getURI().toString());
     }

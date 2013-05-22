@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethodBase;
+
+
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
@@ -36,12 +37,14 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
                 + dummyGml + "\"},\"success\":true}";
         final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
+        final MyHttpResponse httpResponse=new MyHttpResponse(dummyJSONResponseIS);
+
 
         context.checking(new Expectations() {
             {
                 // calling the service
-                exactly(2).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
-                    will(returnValue(dummyJSONResponseIS));
+                exactly(2).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
+                    will(returnValue(httpResponse));
             }
         });
 
@@ -65,12 +68,14 @@ public class TestServiceDownloadManager extends PortalTestClass  {
                 + dummyGml + "\"},\"success\":true}";
         final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
+        final MyHttpResponse httpResponse=new MyHttpResponse(dummyJSONResponseIS);
+
         context.checking(new Expectations() {
             {
                 // calling the service
-                atLeast(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
+                atLeast(1).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
                     will(onConsecutiveCalls(
-                            returnValue(dummyJSONResponseIS),
+                            returnValue(httpResponse),
                             throwException(new Exception("test exception"))));
             }
         });
@@ -116,6 +121,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
             600
         };
 
+
         //The service should hit url 0 and 2 simultaneously and when one returns
         //make a further request to url 1.
         //Because our responses all take specific amounts of time we can expect
@@ -132,16 +138,16 @@ public class TestServiceDownloadManager extends PortalTestClass  {
             //It's also too difficult to use a JMock state for the same reason - we are stuck comparing execution times
 
             //first request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)),with(any(HttpClient.class)));
-            will(delayReturnValue(responseDelays[0], responseStreams[0]));
+            oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[0], null)));
+            will(delayReturnValue(responseDelays[0], new MyHttpResponse(responseStreams[0])));
 
             //second request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[2], null)),with(any(HttpClient.class)));
-            will(delayReturnValue(responseDelays[2], responseStreams[2]));
+            oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[2], null)));
+            will(delayReturnValue(responseDelays[2], new MyHttpResponse(responseStreams[2])));
 
             //third request
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)),with(any(HttpClient.class)));
-            will(delayReturnValue(responseDelays[1], responseStreams[1]));
+            oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[1], null)));
+            will(delayReturnValue(responseDelays[1], new MyHttpResponse(responseStreams[1])));
         }});
 
         //We have a pretty good idea of what the processing time and margin of error should be
@@ -183,8 +189,8 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         context.checking(new Expectations() {
             {
                 // calling the service
-                exactly(1).of(mockServiceCaller).getMethodResponseAsStream(with(any(HttpMethodBase.class)),with(any(HttpClient.class)));
-                    will(returnValue(dummyJSONResponseIS));
+                exactly(1).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
+                    will(returnValue(new MyHttpResponse(dummyJSONResponseIS)));
             }
         });
 

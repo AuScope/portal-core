@@ -14,15 +14,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import org.apache.commons.httpclient.ConnectTimeoutException;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -129,7 +127,7 @@ public abstract class BasePortalController {
      * @param method The method used to make the request (used for populating debug info)
      * @return
      */
-    protected ModelAndView generateJSONResponseMAV(boolean success, String gml, String kml, HttpMethodBase method) {
+    protected ModelAndView generateJSONResponseMAV(boolean success, String gml, String kml, HttpRequestBase method) {
 
         if (kml == null || kml.isEmpty()) {
             log.error("Transform failed");
@@ -199,7 +197,7 @@ public abstract class BasePortalController {
      * @param request cannot be null
      * @return
      */
-    protected ModelMap makeDebugInfoModel(HttpMethodBase request) {
+    protected ModelMap makeDebugInfoModel(HttpRequestBase request) {
         if (request == null) {
             return null;
         }
@@ -207,14 +205,18 @@ public abstract class BasePortalController {
         ModelMap debugInfo = new ModelMap();
         try {
             debugInfo.put("url", request.getURI().toString());
-        } catch (URIException e) {
+        } catch (Exception e) {
             log.debug("Unable to generate URI from request", e);
             debugInfo.put("url", String.format("Error Generating URI - %1$s", e.getMessage()));
         }
-        if (request instanceof PostMethod) {
-            RequestEntity entity = ((PostMethod) request).getRequestEntity();
-            if (entity instanceof StringRequestEntity) {
-                debugInfo.put("info", ((StringRequestEntity) entity).getContent());
+        if (request instanceof HttpPost) {
+            HttpEntity entity = ((HttpPost) request).getEntity();
+            if (entity instanceof StringEntity) {
+                try {
+                    debugInfo.put("info", ((StringEntity) entity).getContent());
+                } catch (IOException e) {
+                   log.error(e.toString());
+                }
             }
         }
 
@@ -239,7 +241,7 @@ public abstract class BasePortalController {
      * @param request [Optional] Specify the request object that was used to make the HTTP WFS request. Its contents will be included for debug purposes
      * @return ModelAndView object with error message
      */
-    protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl, HttpMethodBase request) {
+    protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl, HttpRequestBase request) {
         log.debug(String.format("Exception! serviceUrl='%1$s'", serviceUrl), e);
 
         //Portal service exceptions wrap existing exceptions with a culprit HttpMethodBase

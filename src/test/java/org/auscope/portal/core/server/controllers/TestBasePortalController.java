@@ -12,7 +12,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.httpclient.methods.GetMethod;
+
+import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -85,7 +86,7 @@ public class TestBasePortalController extends PortalTestClass {
         final String serviceUrl = "http://service/url";
         final ModelMap gmlKmlData = new ModelMap();
         final ModelMap debugInfo = new ModelMap();
-        final GetMethod getMethod = new GetMethod(serviceUrl);
+        final HttpGet getMethod = new HttpGet(serviceUrl);
         final String message = "message string";
         gmlKmlData.put("gml", "gmlString");
         gmlKmlData.put("kml", "kmlString");

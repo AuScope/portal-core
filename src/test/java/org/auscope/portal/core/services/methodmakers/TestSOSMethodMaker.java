@@ -5,11 +5,12 @@ import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.DOMUtil;
@@ -36,9 +37,9 @@ public class TestSOSMethodMaker extends PortalTestClass {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    private boolean testSOSParam(HttpMethodBase sosRequest, String paramName, String paramValue) throws ParserConfigurationException, IOException, SAXException {
+    private boolean testSOSParam(HttpRequestBase sosRequest, String paramName, String paramValue) throws ParserConfigurationException, IOException, SAXException {
         //Get methods involve finding the request parameter "version=X"
-        if (sosRequest instanceof GetMethod) {
+        if (sosRequest instanceof HttpGet) {
             String uriString = sosRequest.getURI().toString();
 
             if (paramValue == null) {
@@ -47,11 +48,11 @@ public class TestSOSMethodMaker extends PortalTestClass {
                 return uriString.contains(String.format("%1$s=%2$s",paramName, paramValue));
             }
 
-        } else if (sosRequest instanceof PostMethod) {
+        } else if (sosRequest instanceof HttpPost) {
             //Post methods involve deciphering the POST body
-            RequestEntity entity = ((PostMethod) sosRequest).getRequestEntity();
-            if (entity instanceof StringRequestEntity) {
-                String content = ((StringRequestEntity) entity).getContent();
+            HttpEntity entity = ((HttpPost) sosRequest).getEntity();
+            if (entity instanceof StringEntity) {
+                String content = IOUtils.toString(((StringEntity) entity).getContent());
 
                 //Assert that we can parse the contents into a DOM document (ie our XML is valid)
                 Assert.assertNotNull(DOMUtil.buildDomFromString(content));

@@ -1,11 +1,14 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.message.BasicNameValuePair;
 import org.auscope.portal.core.services.methodmakers.AbstractMethodMaker;
 
 /**
@@ -44,8 +47,9 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param format The download format
      * @param params The list of params
      * @return
+     * @throws URISyntaxException
      */
-    protected GetMethod buildGetMethod(String sissVocUrl, String repository, String command, Format format, List<NameValuePair> params) {
+    protected HttpGet buildGetMethod(String sissVocUrl, String repository, String command, Format format, List<NameValuePair> params) throws URISyntaxException {
         String requestUrl = this.urlPathConcat(sissVocUrl, repository, command);
 
         if (format != null) {
@@ -65,11 +69,14 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
             }
         }
 
-        GetMethod method = new GetMethod(requestUrl);
+        URIBuilder builder=new URIBuilder(requestUrl);
 
-        if (params != null && params.size() > 0) {
-            method.setQueryString(params.toArray(new NameValuePair[params.size()]));
+        for(NameValuePair p:params){
+            builder.setParameter(p.getName(),p.getValue());
         }
+
+        HttpGet method = new HttpGet();
+        method.setURI(builder.build());
 
         return method;
     }
@@ -82,11 +89,11 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      */
     protected void appendPagingParams(List<NameValuePair> params, Integer pageSize, Integer pageNumber) {
         if (pageSize != null) {
-            params.add(new NameValuePair("_pageSize", pageSize.toString()));
+            params.add(new BasicNameValuePair("_pageSize", pageSize.toString()));
         }
 
         if (pageNumber != null) {
-            params.add(new NameValuePair("_page", pageNumber.toString()));
+            params.add(new BasicNameValuePair("_page", pageNumber.toString()));
         }
     }
 
@@ -102,8 +109,9 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param pageSize [Optional] How many concepts should be returned per page
      * @param pageNumber [Optional] The page number to request (0 based)
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase getAllConcepts(String sissVocUrl, String repository, Format format, Integer pageSize, Integer pageNumber) {
+    public HttpRequestBase getAllConcepts(String sissVocUrl, String repository, Format format, Integer pageSize, Integer pageNumber) throws URISyntaxException {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         appendPagingParams(params, pageSize, pageNumber);
@@ -123,12 +131,13 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param pageSize [Optional] How many concepts should be returned per page
      * @param pageNumber [Optional] The page number to request (0 based)
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase getConceptsWithLabel(String sissVocUrl, String repository, String label, Format format, Integer pageSize, Integer pageNumber) {
+    public HttpRequestBase getConceptsWithLabel(String sissVocUrl, String repository, String label, Format format, Integer pageSize, Integer pageNumber) throws URISyntaxException {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         appendPagingParams(params, pageSize, pageNumber);
-        params.add(new NameValuePair("anylabel", label));
+        params.add(new BasicNameValuePair("anylabel", label));
 
         return buildGetMethod(sissVocUrl, repository, "concept", format, params);
     }
@@ -141,10 +150,11 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param format How the response should be structured.
      * @param conceptUri The URI of the concept to lookup
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase getResourceByUri(String sissVocUrl, String repository, String conceptUri, Format format) {
+    public HttpRequestBase getResourceByUri(String sissVocUrl, String repository, String conceptUri, Format format) throws URISyntaxException {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new NameValuePair("uri", conceptUri));
+        params.add(new BasicNameValuePair("uri", conceptUri));
 
         return buildGetMethod(sissVocUrl, repository, "resource", format, params);
     }
@@ -162,12 +172,13 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param pageSize [Optional] How many concepts should be returned per page
      * @param pageNumber [Optional] The page number to request (0 based)
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase getBroaderConcepts(String sissVocUrl, String repository, String baseConceptUri, Format format, Integer pageSize, Integer pageNumber) {
+    public HttpRequestBase getBroaderConcepts(String sissVocUrl, String repository, String baseConceptUri, Format format, Integer pageSize, Integer pageNumber) throws URISyntaxException {
         List<NameValuePair> params = new ArrayList<NameValuePair>();
 
         appendPagingParams(params, pageSize, pageNumber);
-        params.add(new NameValuePair("uri", baseConceptUri));
+        params.add(new BasicNameValuePair("uri", baseConceptUri));
 
         return buildGetMethod(sissVocUrl, repository, "concept/broader", format, params);
     }
@@ -185,12 +196,13 @@ public class SISSVoc3MethodMaker extends AbstractMethodMaker {
      * @param pageSize [Optional] How many concepts should be returned per page
      * @param pageNumber [Optional] The page number to request (0 based)
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase getNarrowerConcepts(String sissVocUrl, String repository, String baseConceptUri, Format format, Integer pageSize, Integer pageNumber) {
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
+    public HttpRequestBase getNarrowerConcepts(String sissVocUrl, String repository, String baseConceptUri, Format format, Integer pageSize, Integer pageNumber) throws URISyntaxException {
+        List<NameValuePair> params =  new ArrayList<NameValuePair>();
 
         appendPagingParams(params, pageSize, pageNumber);
-        params.add(new NameValuePair("uri", baseConceptUri));
+        params.add(new BasicNameValuePair("uri", baseConceptUri));
 
         return buildGetMethod(sissVocUrl, repository, "concept/narrower", format, params);
     }

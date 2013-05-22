@@ -6,7 +6,8 @@ import java.util.Arrays;
 
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
@@ -115,7 +116,7 @@ public class TestOpendapService extends PortalTestClass {
         final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s", null, new SimpleBounds(1.1, 1.3))};
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
 
-        final HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
+        final HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
         final InputStream mockResponse = context.mock(InputStream.class);
 
         context.checking(new Expectations() {{
@@ -134,7 +135,7 @@ public class TestOpendapService extends PortalTestClass {
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
 
 
-        final HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
+        final HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
 
         context.checking(new Expectations() {{
             oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);will(returnValue(mockMethod));

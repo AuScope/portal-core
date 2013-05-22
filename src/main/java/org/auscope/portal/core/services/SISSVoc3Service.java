@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
@@ -111,7 +112,7 @@ public class SISSVoc3Service {
      * @param pageSize The number of descriptions per request
      * @param model receives the response Descriptions
      */
-    protected boolean requestPageOfConcepts(HttpMethodBase method, Model model) throws PortalServiceException {
+    protected boolean requestPageOfConcepts(HttpRequestBase method, Model model) throws PortalServiceException {
         //Make our request
         InputStream is;
         try {
@@ -158,15 +159,16 @@ public class SISSVoc3Service {
      *
      * @return
      * @throws PortalServiceException
+     * @throws URISyntaxException
      */
-    public Model getAllConcepts() throws PortalServiceException {
+    public Model getAllConcepts() throws PortalServiceException, URISyntaxException {
         Model model = ModelFactory.createDefaultModel();
         int pageNumber = 0;
         int pageSize = this.pageSize;
 
         //Request each page in turn - put the results into Model
         do {
-            HttpMethodBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, pageSize, pageNumber);
+            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, pageSize, pageNumber);
             if (requestPageOfConcepts(method, model)) {
                 pageNumber++;
             } else {
@@ -184,11 +186,11 @@ public class SISSVoc3Service {
      * @throws PortalServiceException
      */
     public Resource getResourceByUri(String resourceUri) throws PortalServiceException {
-        HttpMethodBase method = sissVocMethodMaker.getResourceByUri(baseUrl, repository, resourceUri, Format.Rdf);
-        InputStream is = null;
+        InputStream is=null;
+        HttpRequestBase method=null;
         try {
+            method = sissVocMethodMaker.getResourceByUri(baseUrl, repository, resourceUri, Format.Rdf);
             is = httpServiceCaller.getMethodResponseAsStream(method);
-
             Model model = ModelFactory.createDefaultModel();
             model.read(is, null);
 

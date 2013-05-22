@@ -1,12 +1,13 @@
 package org.auscope.portal.core.services;
 
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
@@ -57,9 +58,10 @@ public abstract class BaseWFSService {
      * @param srs [optional] - The spatial reference system the response should be encoded to. If unspecified BaseWFSService.DEFAULT_SRS will be used
      * @param resultType [optional] - Whether to request all features (default) or just the count
      * @return
+     * @throws URISyntaxException
      * @throws Exception
      */
-    protected HttpMethodBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType) {
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType) throws URISyntaxException {
         return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, null);
     }
 
@@ -74,9 +76,10 @@ public abstract class BaseWFSService {
      * @param resultType [optional] - Whether to request all features (default) or just the count
      * @param outputFormat [optional] - The format the response should take
      * @return
+     * @throws URISyntaxException
      * @throws Exception
      */
-    protected HttpMethodBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat) {
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat) throws URISyntaxException {
         int max = maxFeatures == null ? 0 : maxFeatures.intValue();
 
         //apply default value for srs
@@ -99,7 +102,7 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    protected WFSCountResponse getWfsFeatureCount(HttpMethodBase method) throws PortalServiceException {
+    protected WFSCountResponse getWfsFeatureCount(HttpRequestBase method) throws PortalServiceException {
         try {
             //Make the request and parse the response
             InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
@@ -129,7 +132,7 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    protected WFSTransformedResponse getTransformedWFSResponse(HttpMethodBase method, PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
+    protected WFSTransformedResponse getTransformedWFSResponse(HttpRequestBase method, PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
         try {
             //Make the request and parse the response
             String responseString = httpServiceCaller.getMethodResponseAsString(method);

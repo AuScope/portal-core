@@ -1,15 +1,13 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.URISyntaxException;
 import java.util.Map;
-
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
@@ -36,12 +34,13 @@ public class WCSMethodMaker extends AbstractMethodMaker {
      * @param timeConstraint [Optional] Temporal bounds to limit request
      * @param customParams [Optional] a list of additional request parameters
      * @return
+     * @throws URISyntaxException
      * @throws Exception
      */
-    public HttpMethodBase getCoverageMethod(String serviceURL, String coverageName,
+    public HttpRequestBase getCoverageMethod(String serviceURL, String coverageName,
             String format, String outputCrs, Dimension outputSize, Resolution outputResolution, String inputCrs,
-            CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParams) {
-        GetMethod httpMethod = new GetMethod(serviceURL);
+            CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParams) throws URISyntaxException {
+        HttpGet httpMethod = new HttpGet(serviceURL);
 
         //Do some simple error checking to align with WCS standard
         if ((outputSize != null) && (outputResolution != null)) {
@@ -57,20 +56,20 @@ public class WCSMethodMaker extends AbstractMethodMaker {
             throw new IllegalArgumentException("You must specify an inputCrs");
         }
 
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        URIBuilder builder = new URIBuilder(serviceURL);
 
-        params.add(new NameValuePair("service", "WCS"));
-        params.add(new NameValuePair("version", "1.0.0"));
-        params.add(new NameValuePair("request", "GetCoverage"));
-        params.add(new NameValuePair("coverage", coverageName));
-        params.add(new NameValuePair("format", format));
+        builder.setParameter("service", "WCS");
+        builder.setParameter("version", "1.0.0");
+        builder.setParameter("request", "GetCoverage");
+        builder.setParameter("coverage", coverageName);
+        builder.setParameter("format", format);
 
         if (outputCrs != null && !outputCrs.isEmpty()) {
-            params.add(new NameValuePair("response_crs", outputCrs));
+            builder.setParameter("response_crs", outputCrs);
         }
 
         if (inputCrs != null && !inputCrs.isEmpty()) {
-            params.add(new NameValuePair("crs", inputCrs));
+            builder.setParameter("crs", inputCrs);
         }
 
         if (bbox != null) {
@@ -85,37 +84,39 @@ public class WCSMethodMaker extends AbstractMethodMaker {
                 adjustedEastLng = (bbox.getEastBoundLongitude() < 0) ? (180 - bbox.getEastBoundLongitude()) : bbox.getEastBoundLongitude();
             }
 
-            params.add(new NameValuePair("bbox",
+            builder.setParameter("bbox",
                     String.format("%1$f,%2$f,%3$f,%4$f",
                             Math.min(adjustedWestLng, adjustedEastLng),
                             bbox.getSouthBoundLatitude(),
                             Math.max(adjustedWestLng, adjustedEastLng),
-                            bbox.getNorthBoundLatitude())));
+                            bbox.getNorthBoundLatitude()));
         }
 
         if (timeConstraint != null) {
-            params.add(new NameValuePair("time", timeConstraint.getConstraint()));
+            builder.setParameter("time", timeConstraint.getConstraint());
         }
 
         if (outputSize != null) {
-            params.add(new NameValuePair("width", Integer.toString(outputSize.width)));
-            params.add(new NameValuePair("height", Integer.toString(outputSize.height)));
+            builder.setParameter("width", Integer.toString(outputSize.width));
+            builder.setParameter("height", Integer.toString(outputSize.height));
         }
 
         if (outputResolution != null) {
-            params.add(new NameValuePair("resx", Double.toString(outputResolution.getX())));
-            params.add(new NameValuePair("resy", Double.toString(outputResolution.getY())));
+            builder.setParameter("resx", Double.toString(outputResolution.getX()));
+            builder.setParameter("resy", Double.toString(outputResolution.getY()));
         }
 
         if (customParams != null) {
             for (String key : customParams.keySet()) {
-                params.add(new NameValuePair(key, customParams.get(key).toString()));
+                builder.setParameter(key, customParams.get(key).toString());
             }
         }
 
-        httpMethod.setQueryString(params.toArray(new NameValuePair[params.size()]));
 
-        logger.debug(String.format("url='%1$s' query='%2$s'", serviceURL, httpMethod.getQueryString()));
+        httpMethod.setURI(builder.build());
+
+
+        logger.debug(String.format("url='%1$s' query='%2$s'", serviceURL, httpMethod.getURI().getQuery()));
 
         return httpMethod;
     }
@@ -125,11 +126,12 @@ public class WCSMethodMaker extends AbstractMethodMaker {
      * @param serviceUrl The WCS endpoint to query
      * @param coverageName The name of the coverage to query
      * @return
+     * @throws URISyntaxException
      * @throws Exception
      */
-    public HttpMethodBase describeCoverageMethod(String serviceUrl, String coverageName) {
-        GetMethod httpMethod = new GetMethod(serviceUrl);
-        List<NameValuePair> params = new ArrayList<NameValuePair>();
+    public HttpRequestBase describeCoverageMethod(String serviceUrl, String coverageName) throws URISyntaxException {
+        HttpGet httpMethod = new HttpGet();
+        URIBuilder builder = new URIBuilder(serviceUrl);
 
         //Do some simple error checking to align with WCS standard
         if (serviceUrl == null || serviceUrl.isEmpty())
@@ -137,14 +139,14 @@ public class WCSMethodMaker extends AbstractMethodMaker {
         if (coverageName == null || coverageName.isEmpty())
             throw new IllegalArgumentException("You must specify a coverageName");
 
-        params.add(new NameValuePair("service", "WCS"));
-        params.add(new NameValuePair("version", "1.0.0"));
-        params.add(new NameValuePair("request", "DescribeCoverage"));
-        params.add(new NameValuePair("coverage", coverageName));
+        builder.setParameter("service", "WCS");
+        builder.setParameter("version", "1.0.0");
+        builder.setParameter("request", "DescribeCoverage");
+        builder.setParameter("coverage", coverageName);
 
-        httpMethod.setQueryString(params.toArray(new NameValuePair[params.size()]));
+        httpMethod.setURI(builder.build());
 
-        logger.debug(String.format("url='%1$s' query='%2$s'", serviceUrl, httpMethod.getQueryString()));
+        logger.debug(String.format("url='%1$s' query='%2$s'", serviceUrl, httpMethod.getURI().getQuery()));
 
         return httpMethod;
     }

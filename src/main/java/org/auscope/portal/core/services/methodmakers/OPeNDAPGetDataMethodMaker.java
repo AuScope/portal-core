@@ -1,10 +1,16 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.util.URIUtil;
+
+
+import java.net.URI;
+import java.net.URLEncoder;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
+
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
 import org.auscope.portal.core.services.responses.opendap.SimpleBounds;
@@ -137,17 +143,17 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         return result.toString();
     }
 
-    public HttpMethodBase getMethod(String opendapUrl,OPeNDAPFormat format, NetcdfDataset ds,
+    public HttpRequestBase getMethod(String opendapUrl,OPeNDAPFormat format, NetcdfDataset ds,
             AbstractViewVariable[] constraints) throws Exception {
 
         //Generate our base URL (which depends on the format)
-        HttpMethodBase method = null;
+        HttpRequestBase method = null;
         switch (format) {
         case ASCII:
-            method = new GetMethod(opendapUrl + ".ascii");
+            method = new HttpGet(opendapUrl + ".ascii");
             break;
         case DODS:
-            method = new GetMethod(opendapUrl + ".dods");
+            method = new HttpGet(opendapUrl + ".dods");
             break;
         default:
             throw new IllegalArgumentException("Unsupported format " + format.toString());
@@ -160,10 +166,12 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
                 calculateIndexBounds(ds, constraint);
             }
 
-            method.setQueryString(URIUtil.encodeQuery(generateQueryForConstraints(constraints)));
+            URIBuilder builder = new URIBuilder(method.getURI());
+            builder.setQuery(URLEncoder.encode((generateQueryForConstraints(constraints)),"UTF-8"));
+            method.setURI(builder.build());
         }
 
-        logger.debug(String.format("url='%1$s' query='%2$s'", opendapUrl, method.getQueryString()));
+        logger.debug(String.format("url='%1$s' query='%2$s'", opendapUrl, method.getURI()));
 
         return method;
     }

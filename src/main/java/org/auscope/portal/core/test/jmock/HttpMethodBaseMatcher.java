@@ -1,15 +1,18 @@
 package org.auscope.portal.core.test.jmock;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
+import org.auscope.portal.core.util.FileIOUtil;
 import org.hamcrest.Description;
 import org.junit.matchers.TypeSafeMatcher;
 
@@ -18,7 +21,7 @@ import org.junit.matchers.TypeSafeMatcher;
  * @author Josh Vote
  *
  */
-public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpMethodBase> {
+public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
     /**
      * What different types of HttpMethods we can match for
      */
@@ -64,15 +67,15 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpMethodBase> {
         description.appendText(String.format("a HttpMethodBase with type='%1$s' url='%2$s' postBody='%3$s'", type, url, postBody));
     }
     @Override
-    public boolean matchesSafely(HttpMethodBase method) {
+    public boolean matchesSafely(HttpRequestBase method) {
         boolean matches = true;
         if (type != null) {
             switch (type) {
             case GET:
-                matches &= method instanceof GetMethod;
+                matches &= method instanceof HttpGet;
                 break;
             case POST:
-                matches &= method instanceof PostMethod;
+                matches &= method instanceof HttpPost;
                 break;
             default:
                 break;
@@ -82,7 +85,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpMethodBase> {
         if (url != null) {
             try {
                 matches &= url.equals(method.getURI().toString());
-            } catch (URIException e) {
+            } catch (Exception e) {
                 Assert.fail();
             }
         }
@@ -90,16 +93,22 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpMethodBase> {
         if (urlPattern != null) {
             try {
                 matches &= urlPattern.matcher(method.getURI().toString()).matches();
-            } catch (URIException e) {
+            } catch (Exception e) {
                 Assert.fail();
             }
         }
 
-        if (method instanceof PostMethod) {
-            PostMethod postMethod = (PostMethod) method;
-            RequestEntity entity = postMethod.getRequestEntity();
-            if (entity instanceof StringRequestEntity) {
-                String content = ((StringRequestEntity) entity).getContent();
+        if (method instanceof HttpPost) {
+            HttpPost postMethod = (HttpPost) method;
+            HttpEntity entity = postMethod.getEntity();
+            if (entity instanceof StringEntity) {
+                String content="";
+                try {
+                    content = IOUtils.toString(((StringEntity) entity).getContent());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
                 if (postBody != null) {
                     matches &= postBody.equals(content);
                 }

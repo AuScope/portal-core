@@ -1,16 +1,15 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.net.URISyntaxException;
 import java.util.Iterator;
-
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 /**
@@ -74,7 +73,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
         return makePostMethod(serviceURL, featureType, filterString, maxFeatures, null, null, null);
     }
 
@@ -87,7 +86,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
         return makePostMethod(serviceURL, featureType, filterString, 0, null, resultType, null);
     }
 
@@ -101,7 +100,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
         return makePostMethod(serviceURL, featureType, filterString, 0, srsName, null, null);
     }
 
@@ -116,7 +115,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
         return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, null);
     }
 
@@ -132,7 +131,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpMethodBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat) {
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat) {
 
         // Make sure the required parameters are given
         if (featureType == null || featureType.equals("")) {
@@ -143,7 +142,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
             throw new IllegalArgumentException("serviceURL parameter can not be null or empty.");
         }
 
-        PostMethod httpMethod = new PostMethod(serviceURL);
+        HttpPost httpMethod = new HttpPost(serviceURL);
 
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
@@ -194,7 +193,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
         try {
-            httpMethod.setRequestEntity(new StringRequestEntity(sb.toString(), null, null));
+            httpMethod.setEntity(new StringEntity(sb.toString(), "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             log.error("Unsupported encoding", e);
         }
@@ -212,48 +211,49 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param srs [Optional] The spatial reference system the response should conform to
      * @param outputFormat [Optional] The format you wish the response to take
      * @return
+     * @throws URISyntaxException
      */
-    protected HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs, String outputFormat) {
-        GetMethod method = new GetMethod(serviceUrl);
+    protected HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs, String outputFormat) throws URISyntaxException {
+        HttpGet method = new HttpGet();
 
-        ArrayList<NameValuePair> valuePairs = new ArrayList<NameValuePair>();
 
-        //set all of the parameters
-        valuePairs.add(new NameValuePair("service", "WFS"));
-        valuePairs.add(new NameValuePair("request", "GetFeature"));
-        valuePairs.add(new NameValuePair("typeName", typeName));
+        URIBuilder builder = new URIBuilder(serviceUrl);
+        builder.setParameter("service", "WFS"); //The access token I am getting after the Login
+        builder.setParameter("request", "GetFeature");
+        builder.setParameter("typeName", typeName);
+
         if (featureId != null) {
-            valuePairs.add(new NameValuePair("featureId", featureId));
+            builder.setParameter("featureId", featureId);
         }
         if (cqlFilter != null && !cqlFilter.isEmpty()) {
-            valuePairs.add(new NameValuePair("cql_filter", cqlFilter));
+            builder.setParameter("cql_filter", cqlFilter);
         }
         if (maxFeatures != null) {
-            valuePairs.add(new NameValuePair("maxFeatures", maxFeatures.toString()));
+            builder.setParameter("maxFeatures", maxFeatures.toString());
         }
         if (srs != null) {
-            valuePairs.add(new NameValuePair("srsName", srs));
+            builder.setParameter("srsName", srs);
         }
         if (resultType != null) {
             switch (resultType) {
             case Hits:
-                valuePairs.add(new NameValuePair("resultType", "hits"));
+                builder.setParameter("resultType", "hits");
                 break;
             case Results:
-                valuePairs.add(new NameValuePair("resultType", "results"));
+                builder.setParameter("resultType", "results");
                 break;
             default:
                 throw new IllegalArgumentException("Unknown resultType " + resultType);
             }
         }
         if (outputFormat != null && !outputFormat.isEmpty()) {
-            valuePairs.add(new NameValuePair("outputFormat", outputFormat));
+            builder.setParameter("outputFormat", outputFormat);
         }
 
-        valuePairs.add(new NameValuePair("version", WFS_VERSION));
+        builder.setParameter("version", WFS_VERSION);
 
         //attach them to the method
-        method.setQueryString((NameValuePair[]) valuePairs.toArray(new NameValuePair[valuePairs.size()]));
+        method.setURI(builder.build());
 
         return method;
     }
@@ -265,8 +265,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param featureId [Optional] The ID of typeName to request
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs) {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, null);
     }
 
@@ -277,8 +278,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param featureId [Optional] The ID of typeName to request
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs, String outputFormat) {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs, String outputFormat) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, outputFormat);
     }
 
@@ -289,8 +291,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param maxFeatures [Optional] The maximum number of features to request
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs) {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null);
     }
 
@@ -301,8 +304,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param maxFeatures [Optional] The maximum number of features to request
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs) {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null);
     }
 
@@ -314,8 +318,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param cqlFilter A CQL filter string (not an OGC filter).
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, String srs) {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null, srs, null);
     }
 
@@ -327,8 +332,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param cqlFilter A CQL filter string (not an OGC filter).
      * @param srs [Optional] The spatial reference system the response should conform to
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs, null);
     }
 }

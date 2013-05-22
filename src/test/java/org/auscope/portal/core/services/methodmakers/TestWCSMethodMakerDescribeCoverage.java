@@ -1,6 +1,6 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +16,7 @@ public class TestWCSMethodMakerDescribeCoverage extends PortalTestClass {
         new WCSMethodMaker().describeCoverageMethod("http://fake.com", null);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void testNullUrl() throws Exception {
         new WCSMethodMaker().describeCoverageMethod(null, "layer_name");
     }
@@ -28,11 +28,11 @@ public class TestWCSMethodMakerDescribeCoverage extends PortalTestClass {
 
     @Test
     public void testSimple() throws Exception {
-        HttpMethodBase method = new WCSMethodMaker().describeCoverageMethod("http://fake.com/bob", "layer_name");
+        HttpRequestBase method = new WCSMethodMaker().describeCoverageMethod("http://fake.com/bob", "layer_name");
 
         Assert.assertNotNull(method);
-        Assert.assertTrue(method.getQueryString().contains("request=DescribeCoverage"));
-        Assert.assertTrue(method.getQueryString().contains("coverage=layer_name"));
+        Assert.assertTrue(method.getURI().getQuery().contains("request=DescribeCoverage"));
+        Assert.assertTrue(method.getURI().getQuery().contains("coverage=layer_name"));
         Assert.assertTrue(method.getURI().toString().startsWith("http://fake.com/bob"));
     }
 }

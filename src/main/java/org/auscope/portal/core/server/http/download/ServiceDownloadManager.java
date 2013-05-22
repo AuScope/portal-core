@@ -4,21 +4,19 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.util.EntityUtils;
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
+
+
 /**
  * A manager class that to control number of requests to a endpoint and also multithread a request
  * to provide more efficiency
@@ -196,18 +194,15 @@ public class ServiceDownloadManager {
         }
 
         public void download(DownloadResponse response, String url) {
-            GetMethod method = new GetMethod(url);
+            HttpGet  method = new HttpGet(url);
             try {
                 // Our request may fail (due to timeout or otherwise)
-                HttpClient client=new HttpClient();
-                HttpClientParams clientParams=new HttpClientParams();
-                int timeoutMillsSec=MAX_WAIT_TIME_MINUTE * 60 * 1000;
-                clientParams.setSoTimeout(timeoutMillsSec);
-                client.setParams(clientParams);
-                response.setResponseStream(serviceCaller.getMethodResponseAsStream(method,client));
-                Header header=method.getResponseHeader("Content-Type");
+                HttpResponse httpResponse=serviceCaller.getMethodResponseAsHttpResponse(method);
+
+                response.setResponseStream(httpResponse.getEntity().getContent());
+                Header header=httpResponse.getEntity().getContentType();
                 if(header != null && header.getValue().length() > 0){
-                    response.setContentType(method.getResponseHeader("Content-Type").getValue());
+                    response.setContentType(httpResponse.getEntity().getContentType().getValue());
                 }
 
             } catch (Exception ex) {

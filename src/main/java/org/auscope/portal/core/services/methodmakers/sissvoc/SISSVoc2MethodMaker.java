@@ -1,7 +1,11 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.GetMethod;
+
+import java.net.URISyntaxException;
+
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.services.methodmakers.AbstractMethodMaker;
 
 /**
@@ -16,8 +20,8 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
      * @param vocabUrl The SISSVoc endpoint
      * @return
      */
-    public HttpMethodBase getRepositoryInfoMethod(String vocabUrl) {
-        return new GetMethod(urlPathConcat(vocabUrl, "RepositoryInfo"));
+    public HttpRequestBase getRepositoryInfoMethod(String vocabUrl) {
+        return new HttpGet(urlPathConcat(vocabUrl, "RepositoryInfo"));
     }
 
     /**
@@ -26,10 +30,13 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
      * @param repository The repository to query
      * @param label The label to search with
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase getConceptByLabelMethod(String vocabUrl, String repository, String label) {
-        GetMethod method = new GetMethod(urlPathConcat(vocabUrl, "getConceptByLabel"));
-        method.setQueryString(repository + "/" + label);
+    public HttpRequestBase getConceptByLabelMethod(String vocabUrl, String repository, String label) throws URISyntaxException {
+        HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getConceptByLabel"));
+        URIBuilder builder = new URIBuilder(method.getURI());
+        builder.setQuery(repository + "/" + label);
+        method.setURI(builder.build());
         return method;
     }
 
@@ -39,10 +46,13 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
      * @param repository The repository to query
      * @param uri The URI of the vocabulary concept
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase getConceptByUriMethod(String vocabUrl, String repository, String uri) {
-        GetMethod method = new GetMethod(urlPathConcat(vocabUrl, "getConceptByURI"));
-        method.setQueryString(repository + "/" + uri);
+    public HttpRequestBase getConceptByUriMethod(String vocabUrl, String repository, String uri) throws URISyntaxException {
+        HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getConceptByURI"));
+        URIBuilder builder = new URIBuilder(method.getURI());
+        builder.setQuery(repository + "/" + uri);
+        method.setURI(builder.build());
         return method;
     }
 
@@ -54,10 +64,13 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
      * @param repository The repository to query
      * @param commodity The URI of the commodity to query
      * @return
+     * @throws URISyntaxException
      */
-    public HttpMethodBase getCommodityMethod(String vocabUrl, String repository, String commodity) {
-        GetMethod method = new GetMethod(urlPathConcat(vocabUrl, "getCommodity"));
-        method.setQueryString(repository + "/" + commodity);
+    public HttpRequestBase getCommodityMethod(String vocabUrl, String repository, String commodity) throws URISyntaxException {
+        HttpGet method = new HttpGet(urlPathConcat(vocabUrl, "getCommodity"));
+        URIBuilder builder = new URIBuilder(method.getURI());
+        builder.setQuery(repository + "/" + commodity);
+        method.setURI(builder.build());
         return method;
     }
 }

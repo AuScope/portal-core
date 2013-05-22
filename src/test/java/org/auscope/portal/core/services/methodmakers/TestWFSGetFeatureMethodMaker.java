@@ -4,11 +4,12 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -35,9 +36,9 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    private boolean testWFSParam(HttpMethodBase wfsRequest, String paramName, String paramValue) throws ParserConfigurationException, IOException, SAXException {
+    private boolean testWFSParam(HttpRequestBase wfsRequest, String paramName, String paramValue) throws ParserConfigurationException, IOException, SAXException {
         //Get methods involve finding the request parameter "version=X"
-        if (wfsRequest instanceof GetMethod) {
+        if (wfsRequest instanceof HttpGet) {
             String uriString = wfsRequest.getURI().toString();
 
             if (paramValue == null) {
@@ -46,11 +47,11 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
                 return uriString.contains(String.format("%1$s=%2$s",paramName, paramValue));
             }
 
-        } else if (wfsRequest instanceof PostMethod) {
+        } else if (wfsRequest instanceof HttpPost) {
             //Post methods involve deciphering the POST body
-            RequestEntity entity = ((PostMethod) wfsRequest).getRequestEntity();
-            if (entity instanceof StringRequestEntity) {
-                String content = ((StringRequestEntity) entity).getContent();
+            HttpEntity entity = ((HttpPost) wfsRequest).getEntity();
+            if (entity instanceof StringEntity) {
+                String content = IOUtils.toString((((StringEntity) entity).getContent()));
 
                 //Assert that we can parse the contents into a DOM document (ie our XML is valid)
                 Assert.assertNotNull(DOMUtil.buildDomFromString(content));

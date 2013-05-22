@@ -3,7 +3,8 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc2MethodMaker;
 import org.auscope.portal.core.services.responses.vocab.Concept;
@@ -18,7 +19,7 @@ import org.w3c.dom.Node;
 
 public class TestSISSVoc2Service extends PortalTestClass {
 
-    private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
+    private HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private ConceptFactory mockConceptFactory = context.mock(ConceptFactory.class);
     private SISSVoc2MethodMaker mockMethodMaker = context.mock(SISSVoc2MethodMaker.class);

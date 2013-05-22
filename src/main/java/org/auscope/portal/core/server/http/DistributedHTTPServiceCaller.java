@@ -6,9 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 
 /**
  * An iterator class for calling a series of HTTP Methods and returning the results in an iterable instance
@@ -37,7 +38,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
      * @param methods The HTTP methods to call
      * @param serviceCaller The service caller that will run the specified methods
      */
-    public DistributedHTTPServiceCaller(List<HttpMethodBase> methods, HttpServiceCaller serviceCaller) {
+    public DistributedHTTPServiceCaller(List<HttpRequestBase> methods, HttpServiceCaller serviceCaller) {
         this(methods, null, serviceCaller);
     }
 
@@ -53,14 +54,14 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
      * @param additionalInformation Must be the same length as methods. Made available through getAdditionalInformation function during iteration
      * @param serviceCaller The service caller that will run the specified methods
      */
-    public DistributedHTTPServiceCaller(List<HttpMethodBase> methods, List<Object> additionalInformation, HttpServiceCaller serviceCaller) {
+    public DistributedHTTPServiceCaller(List<HttpRequestBase> methods, List<Object> additionalInformation, HttpServiceCaller serviceCaller) {
         if (additionalInformation != null && additionalInformation.size() != methods.size()) {
             throw new IllegalArgumentException("additionalInformation.size() != methods.size()");
         }
 
         additionalInformationObjs = additionalInformation;
         statusList = new ArrayList<ServiceCallStatus>(methods.size());
-        for (HttpMethodBase method : methods) {
+        for (HttpRequestBase method : methods) {
             statusList.add(new ServiceCallStatus(this, method, serviceCaller));
         }
     }
@@ -179,7 +180,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
      * Utility class for lumping the request status information for a single method into a single object
      */
     private class ServiceCallStatus extends Thread {
-        private HttpMethodBase method;
+        private HttpRequestBase method;
         private HttpServiceCaller serviceCaller;
         private DistributedHTTPServiceCaller parent;
         private InputStream resultingData;
@@ -188,7 +189,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
         private volatile boolean iterated;
         private volatile boolean abortStart;
 
-        public ServiceCallStatus(DistributedHTTPServiceCaller parent, HttpMethodBase method,
+        public ServiceCallStatus(DistributedHTTPServiceCaller parent, HttpRequestBase method,
                 HttpServiceCaller serviceCaller) {
             this.parent = parent;
             this.running = true;

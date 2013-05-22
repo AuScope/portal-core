@@ -1,6 +1,8 @@
 package org.auscope.portal.core.services.responses.wfs;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
+
+
 
 /**
  * Simplified view of a response from a WFS
@@ -11,14 +13,14 @@ public class WFSResponse {
     private String gml;
 
     /** The method used to make the request*/
-    private HttpMethodBase method;
+    private HttpRequestBase method;
 
     /**
      * Creates a new instance of this class
      * @param gml The original WFS response as returned by the service
      * @param method the method used to make the request
      */
-    public WFSResponse(String gml, HttpMethodBase method) {
+    public WFSResponse(String gml, HttpRequestBase method) {
         this.gml = gml;
         this.method = method;
     }
@@ -35,7 +37,7 @@ public class WFSResponse {
      * Gets the method used to make the request
      * @return
      */
-    public HttpMethodBase getMethod() {
+    public HttpRequestBase getMethod() {
         return method;
     }
 }

@@ -1,13 +1,14 @@
 package org.auscope.portal.core.services.admin;
 
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.Header;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
@@ -61,7 +62,7 @@ public class AdminService {
             String urlString = url.toString();
 
             try {
-                GetMethod method = new GetMethod(urlString);
+                HttpGet method = new HttpGet(urlString);
                 serviceCaller.getMethodResponseAsString(method); //we dont care about the response
                 response.addDetail(String.format("Succesfully connected to %1$s via '%2$s'.", urlString, protocol));
             } catch (Exception ex) {
@@ -91,7 +92,7 @@ public class AdminService {
             InputStream responseStream = null;
             try {
                 CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-                HttpMethodBase method = methodMaker.makeMethod(item.getServiceUrl(), null, ResultType.Results, numRecordsToRequest);
+                HttpRequestBase method = methodMaker.makeMethod(item.getServiceUrl(), null, ResultType.Results, numRecordsToRequest);
                 responseStream = serviceCaller.getMethodResponseAsStream(method);
             } catch (Exception ex) {
                 response.addError(String.format("Unable to request a CSW record from '%1$s': %2$s", item.getServiceUrl(), ex));
@@ -131,7 +132,7 @@ public class AdminService {
          * @param diagnosticResponse Will receive info/warnings/errors
          * @return
          */
-        public void validateResponse(InputStream response, HttpMethodBase callingMethod, EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse);
+        public void validateResponse(InputStream response, HttpRequestBase callingMethod, EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse);
     }
     /**
      * Utility function for making a HTTP request to each and every method in methods and validating the response
@@ -146,12 +147,12 @@ public class AdminService {
      * @param validator Will be called on each successful method response
      * @return
      */
-    private AdminDiagnosticResponse httpMethodValidator(List<HttpMethodBase> methods, List<EndpointAndSelector> endpoints, ResponseValidator validator) {
+    private AdminDiagnosticResponse httpMethodValidator(List<HttpRequestBase> methods, List<EndpointAndSelector> endpoints, ResponseValidator validator) {
         AdminDiagnosticResponse diagnosticResponse = new AdminDiagnosticResponse();
         List<String> blacklistedUrls = new ArrayList<String>();
 
         for (int i = 0; i < methods.size(); i++) {
-            HttpMethodBase method = methods.get(i);
+            HttpRequestBase method = methods.get(i);
             EndpointAndSelector endpoint = endpoints.get(i);
 
             //Check for blacklist
@@ -183,9 +184,10 @@ public class AdminService {
      * @param wfsEndpoints A list of wfs endpoint/wfs type name combinations
      * @param bbox A bounding box to constrain some requests
      * @return
+     * @throws URISyntaxException
      */
-    public AdminDiagnosticResponse wfsConnectivity(List<EndpointAndSelector> wfsEndpoints, FilterBoundingBox bbox) {
-        List<HttpMethodBase> methodsToTest = new ArrayList<HttpMethodBase>();
+    public AdminDiagnosticResponse wfsConnectivity(List<EndpointAndSelector> wfsEndpoints, FilterBoundingBox bbox) throws URISyntaxException {
+        List<HttpRequestBase> methodsToTest = new ArrayList<HttpRequestBase>();
         List<EndpointAndSelector> endpointsToTest = new ArrayList<EndpointAndSelector>();
 
         //Iterate our service urls, making a basic WFS GetFeature and more complicated BBOX request to each
@@ -206,7 +208,7 @@ public class AdminService {
         }
 
         AdminDiagnosticResponse diagnosticResponse = httpMethodValidator(methodsToTest, endpointsToTest, new ResponseValidator() {
-            public void validateResponse(InputStream response, HttpMethodBase callingMethod, EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
+            public void validateResponse(InputStream response, HttpRequestBase callingMethod, EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
                 try {
                     Document doc = DOMUtil.buildDomFromStream(response);
                     OWSExceptionParser.checkForExceptionResponse(doc);
@@ -229,9 +231,10 @@ public class AdminService {
      * @param wmsEndpoints The WMS endpoints to test
      * @param bbox The bounding box to test the map query
      * @return
+     * @throws URISyntaxException
      */
-    public AdminDiagnosticResponse wmsConnectivity(List<EndpointAndSelector> wmsEndpoints, FilterBoundingBox bbox) {
-        List<HttpMethodBase> methodsToTest = new ArrayList<HttpMethodBase>();
+    public AdminDiagnosticResponse wmsConnectivity(List<EndpointAndSelector> wmsEndpoints, FilterBoundingBox bbox) throws URISyntaxException {
+        List<HttpRequestBase> methodsToTest = new ArrayList<HttpRequestBase>();
         List<EndpointAndSelector> endpointsToTest = new ArrayList<EndpointAndSelector>();
 
         //Set our constants
@@ -260,7 +263,7 @@ public class AdminService {
 
         //Validate the methods by comparing the response Content-Type header
         AdminDiagnosticResponse diagnosticResponse = httpMethodValidator(methodsToTest, endpointsToTest, new ResponseValidator() {
-            public void validateResponse(InputStream response, HttpMethodBase callingMethod, EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
+            public void validateResponse(InputStream response, HttpRequestBase callingMethod, EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
                 //We need the URL
                 String uriString = "";
                 try {
@@ -283,7 +286,7 @@ public class AdminService {
 
                 //Validate content type
                 try {
-                    Header contentType = callingMethod.getResponseHeader("Content-Type");
+                    Header contentType = callingMethod.getFirstHeader("Content-Type");
                     if (contentType == null) {
                         diagnosticResponse.addWarning(String.format("Backend received a '%1$s' response with no 'Content-Type' header for layer '%2$s' from '%3$s'", requestType, endpoint.getSelector(), endpoint.getEndpoint()));
                     } else if (!contentType.getValue().contains(expectedContentType)) {
