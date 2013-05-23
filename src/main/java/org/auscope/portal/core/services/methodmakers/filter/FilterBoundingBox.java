@@ -198,6 +198,52 @@ public class FilterBoundingBox implements Serializable {
         throw new IllegalArgumentException("obj cannot be decoded");
 
     }
+    
+    /**
+     * Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
+     *
+     * @param obj the obj
+     * @return the filter bounding box
+     * @throws Exception the exception
+     */
+    public static FilterBoundingBox parseFromJSONTemp(JSONObject obj) throws Exception {
+        //Our filter bbox can come in a couple of formats
+        if (obj.containsKey("lowerCornerPoints") && obj.containsKey("upperCornerPoints")) {
+            FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
+
+            JSONArray lowerCornerPoints = obj.getJSONArray("lowerCornerPoints");
+            JSONArray upperCornerPoints = obj.getJSONArray("upperCornerPoints");
+
+            result.lowerCornerPoints = new double[lowerCornerPoints.size()];
+            result.upperCornerPoints = new double[upperCornerPoints.size()];
+
+            for (int i = 0; i < lowerCornerPoints.size(); i++) {
+                result.lowerCornerPoints[i] = lowerCornerPoints.getDouble(i);
+            }
+
+            for (int i = 0; i < upperCornerPoints.size(); i++) {
+                result.upperCornerPoints[i] = upperCornerPoints.getDouble(i);
+            }
+
+            return result;
+        } else if (obj.containsKey("eastBoundLongitude") && obj.containsKey("westBoundLongitude") &&
+                obj.containsKey("northBoundLatitude") && obj.containsKey("southBoundLatitude")) {
+            FilterBoundingBox result = new FilterBoundingBox(obj.getString("crs"), null, null);
+
+            double eastBoundLongitude = obj.getDouble("eastBoundLongitude");
+            double westBoundLongitude = obj.getDouble("westBoundLongitude");
+            double northBoundLatitude = obj.getDouble("northBoundLatitude");
+            double southBoundLatitude = obj.getDouble("southBoundLatitude");
+            
+            result.lowerCornerPoints = new double[] {Math.min(westBoundLongitude, eastBoundLongitude), Math.min(northBoundLatitude, southBoundLatitude)};
+            result.upperCornerPoints = new double[] {Math.max(westBoundLongitude, eastBoundLongitude), Math.max(northBoundLatitude, southBoundLatitude)};
+
+            return result;
+        }
+
+        throw new IllegalArgumentException("obj cannot be decoded");
+
+    }
 
     /**
      * Convenience method to parse a bbox from a JSON string. Returns null if the parsing fails

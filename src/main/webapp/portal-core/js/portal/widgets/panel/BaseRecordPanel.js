@@ -247,7 +247,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      */
     _spatialBoundsRenderer : function(value, metaData, record, row, col, store, gridView) {
         var spatialBounds = this.getSpatialBoundsForRecord(record);
-        if (spatialBounds.length > 0) {
+        if (spatialBounds.length > 0 || record.internalId == 'portal-InSar-reports') {
+        	// create one for insar 
             return this._generateHTMLIconMarkup('img/magglass.gif');
         }
 
