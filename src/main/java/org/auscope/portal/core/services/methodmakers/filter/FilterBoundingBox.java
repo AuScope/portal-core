@@ -200,7 +200,7 @@ public class FilterBoundingBox implements Serializable {
     }
     
     /**
-     * Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
+     * TODO: Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
      *
      * @param obj the obj
      * @return the filter bounding box
@@ -243,6 +243,24 @@ public class FilterBoundingBox implements Serializable {
 
         throw new IllegalArgumentException("obj cannot be decoded");
 
+    }
+    
+    //TODO: remove after AUS:2309 is fixed
+    public static FilterBoundingBox attemptParseFromJSONTemp(String json) {
+        FilterBoundingBox bbox = null;
+        try {
+            if (json != null && !json.isEmpty()) {
+                JSONObject obj = JSONObject.fromObject(json);
+                bbox = FilterBoundingBox.parseFromJSONTemp(obj);
+                log.debug("bbox=" + bbox.toString());
+            } else {
+                log.debug("No bbox string, null will be returned");
+            }
+        } catch (Exception ex) {
+            log.warn("Couldnt parse bounding box filter (Invalid Values): " + ex);
+        }
+
+        return bbox;
     }
 
     /**
