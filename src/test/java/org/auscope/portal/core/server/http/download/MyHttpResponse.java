@@ -9,12 +9,20 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
+import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
 public class MyHttpResponse implements HttpResponse{
     InputStream content;
+    int statusCode;
     public MyHttpResponse(InputStream is){
         this.content=is;
+        this.statusCode=200;
+    }
+
+    public MyHttpResponse(InputStream is,int statusCode){
+        this.content=is;
+        this.statusCode=statusCode;
     }
 
     @Override
@@ -121,8 +129,7 @@ public class MyHttpResponse implements HttpResponse{
 
     @Override
     public StatusLine getStatusLine() {
-        // TODO Auto-generated method stub
-        return null;
+        return new BasicStatusLine(new ProtocolVersion("HTTP",1,1),this.statusCode,"reason");
     }
 
     @Override

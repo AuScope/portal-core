@@ -9,6 +9,7 @@ import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,18 +37,9 @@ public class HttpServiceCaller {
       this.connectionTimeOut=connectionTimeOut;
     }
 
-    /**
-     * Makes a call to a http GetMethod and returns the response as a string.
-     *
-     * (Creates a new HttpClient for use with this request)
-     *
-     * @param method The method to be executed
-     * @return
-     * @throws Exception
-     */
-//    public String getMethodResponseAsString(HttpRequestBase  method) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
-//        return getMethodResponseAsString(method, new DefaultHttpClient());
-//    }
+    public String getMethodResponseAsString(HttpRequestBase method) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+        return this.getMethodResponseAsString(method, null);
+    }
 
     /**
      * Makes a call to a http GetMethod and returns the response as a string.
@@ -57,9 +49,9 @@ public class HttpServiceCaller {
      * @return
      * @throws Exception
      */
-    public String getMethodResponseAsString(HttpRequestBase method) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
+    public String getMethodResponseAsString(HttpRequestBase method,HttpClient client) throws ConnectException, UnknownHostException, ConnectTimeoutException, Exception{
         //invoke the method
-        HttpResponse httpResponse = this.invokeTheMethod(method);
+        HttpResponse httpResponse = this.invokeTheMethod(method,client);
 
         //get the reponse before we close the connection
         //String response = method.getResponseBodyAsString();
@@ -84,9 +76,9 @@ public class HttpServiceCaller {
      * @param method The method to be executed
      * @return
      */
-//    public InputStream getMethodResponseAsStream(HttpRequestBase  method) throws Exception {
-//        return this.getMethodResponseAsStream(method, new DefaultHttpClient());
-//    }
+    public InputStream getMethodResponseAsStream(HttpRequestBase  method) throws Exception {
+        return this.getMethodResponseAsStream(method, null);
+    }
 
     /**
      * Invokes a method and returns the binary response as a stream.
@@ -97,9 +89,9 @@ public class HttpServiceCaller {
      * @param httpClient The client that will be used
      * @return
      */
-    public InputStream getMethodResponseAsStream(HttpRequestBase method) throws Exception {
+    public InputStream getMethodResponseAsStream(HttpRequestBase method,HttpClient client) throws Exception {
         //invoke the method
-        HttpResponse httpResponse=this.invokeTheMethod(method);
+        HttpResponse httpResponse=this.invokeTheMethod(method,client);
 
         return httpResponse.getEntity().getContent();
     }
@@ -110,9 +102,9 @@ public class HttpServiceCaller {
      * @param method The method to be executed
      * @return
      */
-//    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws Exception {
-//        return getMethodResponseAsBytes(method, new DefaultHttpClient());
-//    }
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws Exception {
+        return getMethodResponseAsBytes(method, null);
+    }
 
     /**
      * Invokes a method and returns the binary response.
@@ -121,9 +113,9 @@ public class HttpServiceCaller {
      * @param httpClient The client that will be used
      * @return
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method,HttpClient client) throws Exception {
         //invoke the method
-        HttpResponse httpResponse = this.invokeTheMethod(method);
+        HttpResponse httpResponse = this.invokeTheMethod(method,client);
 
         //get the reponse before we close the connection
         byte[] response = IOUtils.toByteArray(httpResponse.getEntity().getContent());
@@ -138,7 +130,7 @@ public class HttpServiceCaller {
 
 
     public HttpResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws Exception {
-        return this.invokeTheMethod(method);
+        return this.invokeTheMethod(method,null);
     }
 
     /**
@@ -146,14 +138,18 @@ public class HttpServiceCaller {
      * @param method
      * @param httpClient
      */
-    private HttpResponse invokeTheMethod(HttpRequestBase method) throws Exception {
+    private HttpResponse invokeTheMethod(HttpRequestBase method,HttpClient client) throws Exception {
         log.debug("method=" + method.getURI());
-
+        HttpClient httpClient=null;
         //create the connection manager and add it to the client
         // VT: Change from SimpleHttpConnectionManager (not thread safe) to
         // MultiThreadedHttpConnectionManager (thread safe)
-        ClientConnectionManager man = new PoolingClientConnectionManager();
-        HttpClient httpClient=new DefaultHttpClient(man);
+        if(client==null){
+            ClientConnectionManager man = new PoolingClientConnectionManager();
+            httpClient=new DefaultHttpClient(man);
+        }else{
+            httpClient=client;
+        }
 
 
         final HttpParams httpParams = httpClient.getParams();
