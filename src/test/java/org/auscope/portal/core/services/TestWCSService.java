@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestWCSService extends PortalTestClass {
-    private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
+    private HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private WCSMethodMaker mockMethodMaker = context.mock(WCSMethodMaker.class);
 

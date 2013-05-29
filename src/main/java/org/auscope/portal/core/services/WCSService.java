@@ -2,11 +2,11 @@ package org.auscope.portal.core.services;
 
 import java.awt.Dimension;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Map;
-
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -52,9 +52,10 @@ public class WCSService {
             Dimension outputSize, Resolution outputResolution, String outputCrs, String inputCrs,
             CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParameters) throws PortalServiceException {
 
-        HttpMethodBase method = methodMaker.getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
+        HttpRequestBase method = null;
 
         try {
+            method = methodMaker.getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
             return serviceCaller.getMethodResponseAsStream(method);
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
@@ -65,11 +66,13 @@ public class WCSService {
      * Makes a DescribeCoverage request, returns the response as an array of DescribeCoverageRecords
      * @param serviceUrl The WCS endpoint to query
      * @param coverageName The coverage name to describe
+     * @throws URISyntaxException
      */
     public DescribeCoverageRecord[] describeCoverage(String serviceUrl, String coverageName) throws PortalServiceException {
-        HttpMethodBase method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
 
+        HttpRequestBase method=null;
         try {
+            method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
             InputStream response = serviceCaller.getMethodResponseAsStream(method);
 
             Document responseDoc = DOMUtil.buildDomFromStream(response);

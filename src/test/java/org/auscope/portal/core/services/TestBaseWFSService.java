@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
@@ -23,7 +24,7 @@ public class TestBaseWFSService extends PortalTestClass {
     private PortalXSLTTransformer mockTransformer = context.mock(PortalXSLTTransformer.class);
     private Properties mockProperties = context.mock(Properties.class);
     private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
-    private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class);
+    private HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
     private WFSGetFeatureMethodMaker mockMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
     private TestableBaseWFSService service;
 

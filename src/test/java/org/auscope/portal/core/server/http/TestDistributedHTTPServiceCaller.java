@@ -10,7 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Before;
@@ -19,9 +20,9 @@ import org.junit.Test;
 
 public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
-    private HttpMethodBase mockMethod1 = context.mock(HttpMethodBase.class, "method1");
-    private HttpMethodBase mockMethod2 = context.mock(HttpMethodBase.class, "method2");
-    private HttpMethodBase mockMethod3 = context.mock(HttpMethodBase.class, "method3");
+    private HttpRequestBase mockMethod1 = context.mock(HttpRequestBase.class, "method1");
+    private HttpRequestBase mockMethod2 = context.mock(HttpRequestBase.class, "method2");
+    private HttpRequestBase mockMethod3 = context.mock(HttpRequestBase.class, "method3");
     private Object mockAdditionalInfo1 = context.mock(Object.class, "mockAddInfo1");
     private Object mockAdditionalInfo2 = context.mock(Object.class, "mockAddInfo2");
     private Object mockAdditionalInfo3 = context.mock(Object.class, "mockAddInfo3");
@@ -175,7 +176,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
     @Test
     public void testAbort() throws Exception {
         //We want a list with more methods than the threadpool has threads
-        final List<HttpMethodBase> bigMethodList = Arrays.asList(mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1);
+        final List<HttpRequestBase> bigMethodList = Arrays.asList(mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1);
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(bigMethodList, mockServiceCaller);
 
         context.checking(new Expectations() {{

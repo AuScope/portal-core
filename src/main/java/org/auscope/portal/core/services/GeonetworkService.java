@@ -3,9 +3,10 @@ package org.auscope.portal.core.services;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.GeonetworkMethodMaker;
@@ -98,7 +99,7 @@ public class GeonetworkService {
      * @return
      */
     private String convertUUIDToRecordID(String uuid, String sessionCookie) throws Exception {
-        HttpMethodBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataGetMethod(endpoint, uuid, sessionCookie);
+        HttpRequestBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataGetMethod(endpoint, uuid, sessionCookie);
         String responseString = serviceCaller.getMethodResponseAsString(metadataInfoMethod);
         Document responseDoc = DOMUtil.buildDomFromString(responseString);
 
@@ -128,17 +129,17 @@ public class GeonetworkService {
         String gnResponse = null;
 
         //Login and extract our cookies (this will be our session id)
-        HttpMethodBase methodLogin = gnMethodMaker.makeUserLoginMethod(endpoint, userName, password);
+        HttpRequestBase methodLogin = gnMethodMaker.makeUserLoginMethod(endpoint, userName, password);
         gnResponse = serviceCaller.getMethodResponseAsString(methodLogin);
         logger.debug(String.format("GN Login response: %1$s", gnResponse));
         if (!gnResponse.contains("<ok />")) {
             throw new Exception("Geonetwork login failed");
         }
 
-        String sessionCookie = methodLogin.getResponseHeader("Set-Cookie").getValue();
+        String sessionCookie = methodLogin.getFirstHeader("Set-Cookie").getValue();
 
         //Insert our record
-        HttpMethodBase methodInsertRecord = gnMethodMaker.makeInsertRecordMethod(endpoint, mdMetadataXml, sessionCookie);
+        HttpRequestBase methodInsertRecord = gnMethodMaker.makeInsertRecordMethod(endpoint, mdMetadataXml, sessionCookie);
         gnResponse = serviceCaller.getMethodResponseAsString(methodInsertRecord);
         logger.debug(String.format("GN Insert response: %1$s", gnResponse));
 
@@ -150,17 +151,17 @@ public class GeonetworkService {
         String recordId = convertUUIDToRecordID(uuid, sessionCookie);
 
         //Use our new record ID to FINALLY set the record to public
-        HttpMethodBase methodSetPublic = gnMethodMaker.makeRecordPublicMethod(endpoint, recordId, sessionCookie);
+        HttpRequestBase methodSetPublic = gnMethodMaker.makeRecordPublicMethod(endpoint, recordId, sessionCookie);
         gnResponse = serviceCaller.getMethodResponseAsString(methodSetPublic);
         logger.debug(String.format("GN setting record %1$s (uuid=%2$s) public returned: %3$s", recordId, uuid , gnResponse));
 
         //Logout (just in case)
-        HttpMethodBase methodLogout = gnMethodMaker.makeUserLogoutMethod(endpoint, sessionCookie);
+        HttpRequestBase methodLogout = gnMethodMaker.makeUserLogoutMethod(endpoint, sessionCookie);
         gnResponse = serviceCaller.getMethodResponseAsString(methodLogout);
         logger.debug(String.format("GN Logout response: %1$s", gnResponse));
 
         //Finally get the URL to access the record's page
-        HttpMethodBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataShowMethod(endpoint, uuid, sessionCookie);
+        HttpRequestBase metadataInfoMethod = gnMethodMaker.makeRecordMetadataShowMethod(endpoint, uuid, sessionCookie);
         return metadataInfoMethod.getURI().toString();
     }
 }

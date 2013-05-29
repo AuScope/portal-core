@@ -4,7 +4,8 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
@@ -22,8 +23,8 @@ import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.Statement;
 
 public class TestSISSVoc3Service extends PortalTestClass {
-    private HttpMethodBase mockMethod = context.mock(HttpMethodBase.class, "mockMethod");
-    private HttpMethodBase mockMethod2 = context.mock(HttpMethodBase.class, "mockMethod2");
+    private HttpRequestBase mockMethod = context.mock(HttpRequestBase.class, "mockMethod");
+    private HttpRequestBase mockMethod2 = context.mock(HttpRequestBase.class, "mockMethod2");
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private SISSVoc3MethodMaker mockMethodMaker = context.mock(SISSVoc3MethodMaker.class);
     private String baseUrl = "http://example.org:8080/sissvoc/path";

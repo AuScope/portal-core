@@ -3,9 +3,10 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
@@ -78,7 +79,7 @@ public class OpendapService {
      */
     public InputStream getData(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
         NetcdfDataset ds = fetchDataset(serviceUrl);
-        HttpMethodBase method = null;
+        HttpRequestBase method = null;
 
         try {
             method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);
@@ -99,7 +100,7 @@ public class OpendapService {
      */
     public String getQueryDetails(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
         NetcdfDataset ds = fetchDataset(serviceUrl);
-        HttpMethodBase method = null;
+        HttpRequestBase method = null;
 
         try {
             method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);

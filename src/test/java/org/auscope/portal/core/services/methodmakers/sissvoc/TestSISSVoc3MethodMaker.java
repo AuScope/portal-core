@@ -2,7 +2,8 @@ package org.auscope.portal.core.services.methodmakers.sissvoc;
 
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Before;
@@ -44,9 +45,9 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
         final Integer pageSize = 23;
         final Integer page = 2;
 
-        HttpMethodBase method = mm.getAllConcepts(url, repository, format, pageSize, page);
-        String queryString = method.getQueryString();
-        String path = method.getPath();
+        HttpRequestBase method = mm.getAllConcepts(url, repository, format, pageSize, page);
+        String queryString = method.getURI().getQuery();
+        String path = method.getURI().getPath();
 
         Assert.assertEquals("/repo/concept.html", path);
         Assert.assertTrue(queryString.contains(String.format("_page=%1$s", page)));
@@ -66,9 +67,9 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
         final Integer pageSize = 23;
         final Integer page = 2;
 
-        HttpMethodBase method = mm.getConceptsWithLabel(url, repository, label, format, pageSize, page);
-        String queryString = method.getQueryString();
-        String path = method.getPath();
+        HttpRequestBase method = mm.getConceptsWithLabel(url, repository, label, format, pageSize, page);
+        String queryString = method.getURI().getQuery();
+        String path = method.getURI().getPath();
 
         Assert.assertEquals("/repo/concept.ttl", path);
         Assert.assertTrue(queryString.contains(String.format("_page=%1$s", page)));
@@ -87,9 +88,9 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
         final String uri = "uri";
         final Format format = Format.Rdf;
 
-        HttpMethodBase method = mm.getResourceByUri(url, repository, uri, format);
-        String queryString = method.getQueryString();
-        String path = method.getPath();
+        HttpRequestBase method = mm.getResourceByUri(url, repository, uri, format);
+        String queryString = method.getURI().getQuery();
+        String path = method.getURI().getPath();
 
         Assert.assertEquals("/repo/resource.rdf", path);
         Assert.assertTrue(queryString.contains(String.format("uri=%1$s", uri)));
@@ -108,9 +109,9 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
         final Integer pageSize = 23;
         final Integer page = 2;
 
-        HttpMethodBase method = mm.getBroaderConcepts(url, repository, baseUri, format, pageSize, page);
-        String queryString = method.getQueryString();
-        String path = method.getPath();
+        HttpRequestBase method = mm.getBroaderConcepts(url, repository, baseUri, format, pageSize, page);
+        String queryString = method.getURI().getQuery();
+        String path = method.getURI().getPath();
 
         Assert.assertEquals("/repo/concept/broader.json", path);
         Assert.assertTrue(queryString.contains(String.format("_page=%1$s", page)));
@@ -131,9 +132,9 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
         final Integer pageSize = 23;
         final Integer page = 2;
 
-        HttpMethodBase method = mm.getNarrowerConcepts(url, repository, baseUri, format, pageSize, page);
-        String queryString = method.getQueryString();
-        String path = method.getPath();
+        HttpRequestBase method = mm.getNarrowerConcepts(url, repository, baseUri, format, pageSize, page);
+        String queryString = method.getURI().getQuery();
+        String path = method.getURI().getPath();
 
         Assert.assertEquals("/repo/concept/narrower.json", path);
         Assert.assertTrue(queryString.contains(String.format("_page=%1$s", page)));

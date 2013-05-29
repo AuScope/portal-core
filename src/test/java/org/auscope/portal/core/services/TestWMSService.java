@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.List;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -28,13 +28,13 @@ public class TestWMSService extends PortalTestClass {
     private WMSService service;
     private HttpServiceCaller mockServiceCaller;
     private WMSMethodMaker mockMethodMaker;
-    private HttpMethodBase mockMethod;
+    private HttpRequestBase mockMethod;
 
     @Before
     public void setup() throws Exception {
         mockServiceCaller = context.mock(HttpServiceCaller.class);
         mockMethodMaker = context.mock(WMSMethodMaker.class);
-        mockMethod = context.mock(HttpMethodBase.class);
+        mockMethod = context.mock(HttpRequestBase.class);
         service = new WMSService(mockServiceCaller, mockMethodMaker);
     }
 

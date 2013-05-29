@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.commons.httpclient.HttpMethodBase;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wcs.Resolution;
 import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
@@ -50,15 +50,15 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
         Dimension outputSize = new Dimension(1,2);
         Resolution outputResolution = null;
         TimeConstraint timeConstraint = null;
-        HttpMethodBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", outputSize, outputResolution, "myCrs", mockBbox, timeConstraint, null);
+        HttpRequestBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", outputSize, outputResolution, "myCrs", mockBbox, timeConstraint, null);
 
         Assert.assertNotNull(method);
 
-        String queryString = method.getQueryString();
+        String queryString = method.getURI().getQuery();
         Assert.assertNotNull(queryString);
         Assert.assertFalse(queryString.isEmpty());
 
-        Assert.assertTrue(queryString.contains("bbox=1.000000%2C3.000000%2C2.000000%2C4.000000"));
+        Assert.assertTrue(queryString.contains("bbox=1.000000,3.000000,2.000000,4.000000"));
         Assert.assertTrue(queryString.contains("crs=myCrs"));
     }
 
@@ -67,11 +67,11 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
         Dimension outputSize = new Dimension(1,1);
         Resolution outputResolution = null;
         TimeConstraint timeConstraint = new TimeConstraint("thetimeis");
-        HttpMethodBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", outputSize, outputResolution, "myCrs", mockBbox, timeConstraint, null);
+        HttpRequestBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", outputSize, outputResolution, "myCrs", mockBbox, timeConstraint, null);
 
         Assert.assertNotNull(method);
 
-        String queryString = method.getQueryString();
+        String queryString = method.getURI().getQuery();
         Assert.assertNotNull(queryString);
         Assert.assertFalse(queryString.isEmpty());
 
@@ -83,10 +83,10 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
             Resolution outputResolution, String inputCrs,CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint,
             Map<String, String> customParams) throws Exception {
 
-        HttpMethodBase method = methodMaker.getCoverageMethod(serviceURL, layerName, format, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParams);
+        HttpRequestBase method = methodMaker.getCoverageMethod(serviceURL, layerName, format, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParams);
         Assert.assertNotNull(method);
 
-        String queryString = method.getQueryString();
+        String queryString = method.getURI().getQuery();
         Assert.assertNotNull(queryString);
         Assert.assertFalse(queryString.isEmpty());
 
@@ -137,7 +137,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
         String bboxParams = sc.findInLine("&bbox=.*?&");
         bboxParams = bboxParams.split("=")[1];
         bboxParams = bboxParams.replace("&", "");
-        sc = new Scanner(bboxParams).useDelimiter("%2C");
+        sc = new Scanner(bboxParams).useDelimiter(",");
 
         Assert.assertTrue(sc.hasNextDouble());
         double minx = sc.nextDouble();
@@ -162,9 +162,9 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
      */
     @Test
     public void testBboxMeridians() throws Exception {
-        HttpMethodBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", new Dimension(1,2), null, "myCrs", mockAntiMeridianBbox, null, null);
+        HttpRequestBase method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", new Dimension(1,2), null, "myCrs", mockAntiMeridianBbox, null, null);
 
-        String queryString = method.getQueryString();
+        String queryString = method.getURI().getQuery();
         Assert.assertNotNull(queryString);
         Assert.assertFalse(queryString.isEmpty());
 
@@ -173,7 +173,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
         compareBboxesInQuery(queryString, 60, -50, 325, 1);
 
         method = methodMaker.getCoverageMethod("http://example.com/wcs", "layerName", "GeoTIFF", "outputCrs", new Dimension(1,2), null, "myCrs", mockMeridianBbox, null, null);
-        queryString = method.getQueryString();
+        queryString = method.getURI().getQuery();
         Assert.assertNotNull(queryString);
         Assert.assertFalse(queryString.isEmpty());
 

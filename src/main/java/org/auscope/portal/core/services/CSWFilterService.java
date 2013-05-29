@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
-
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCaller;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCallerException;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -68,7 +67,7 @@ public class CSWFilterService {
     private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws PortalServiceException {
         log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-        HttpMethodBase method = null;
+        HttpRequestBase method = null;
 
         try {
             method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,null);
@@ -94,7 +93,7 @@ public class CSWFilterService {
      * @return
      */
     private DistributedHTTPServiceCaller callAllServices(CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
-        List<HttpMethodBase> requestMethods = new ArrayList<HttpMethodBase>();
+        List<HttpRequestBase> requestMethods = new ArrayList<HttpRequestBase>();
         List<Object> additionalInfo = new ArrayList<Object>();
 
         //Create various HTTP Methods for making each and every CSW request

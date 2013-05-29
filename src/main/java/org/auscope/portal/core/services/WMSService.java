@@ -1,10 +1,9 @@
 package org.auscope.portal.core.services;
 
 import java.io.InputStream;
-
-import org.apache.commons.httpclient.HttpMethodBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMaker;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
@@ -39,7 +38,7 @@ public class WMSService {
      * @return GetCapabilitiesRecord
      */
     public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl) throws PortalServiceException {
-        HttpMethodBase method = null;
+        HttpRequestBase method = null;
         try {
             // Do the request
             method = methodMaker.getCapabilitiesMethod(serviceUrl);
@@ -79,7 +78,7 @@ public class WMSService {
      */
     public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws PortalServiceException {
         // Do the request
-        HttpMethodBase method = null;
+        HttpRequestBase method = null;
         try {
             method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sld);
             String response =  serviceCaller.getMethodResponseAsString(method);

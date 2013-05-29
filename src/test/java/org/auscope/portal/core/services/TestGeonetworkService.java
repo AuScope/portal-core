@@ -1,10 +1,12 @@
 package org.auscope.portal.core.services;
 
+import java.net.URI;
+
 import junit.framework.Assert;
 
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.URI;
+
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.message.BasicHeader;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.GeonetworkMethodMaker;
@@ -46,12 +48,12 @@ public class TestGeonetworkService extends PortalTestClass {
     @Test
     public void testSuccessfulRequest() throws Exception {
         final String sessionCookie = "sessionCookie";
-        final HttpMethodBase insertRecordMethod = context.mock(HttpMethodBase.class, "insertRecordMethod");
-        final HttpMethodBase recordMetadataShowMethod = context.mock(HttpMethodBase.class, "recordMetadataShowMethod");
-        final HttpMethodBase recordMetadataGetMethod = context.mock(HttpMethodBase.class, "recordMetadataGetMethod");
-        final HttpMethodBase recordPublicMethod = context.mock(HttpMethodBase.class, "recordPublicMethod");
-        final HttpMethodBase loginMethod = context.mock(HttpMethodBase.class, "loginMethod");
-        final HttpMethodBase logoutMethod = context.mock(HttpMethodBase.class, "logoutMethod");
+        final HttpRequestBase insertRecordMethod = context.mock(HttpRequestBase.class, "insertRecordMethod");
+        final HttpRequestBase recordMetadataShowMethod = context.mock(HttpRequestBase.class, "recordMetadataShowMethod");
+        final HttpRequestBase recordMetadataGetMethod = context.mock(HttpRequestBase.class, "recordMetadataGetMethod");
+        final HttpRequestBase recordPublicMethod = context.mock(HttpRequestBase.class, "recordPublicMethod");
+        final HttpRequestBase loginMethod = context.mock(HttpRequestBase.class, "loginMethod");
+        final HttpRequestBase logoutMethod = context.mock(HttpRequestBase.class, "logoutMethod");
 
         final String uuid = "4cda9dc3-9a0e-40cd-a3a9-64db5ce3c031";
         final String recordId = "21569";
@@ -62,7 +64,7 @@ public class TestGeonetworkService extends PortalTestClass {
         final String recordGetMetadata = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/geonetwork/GNMetadataGetXMLResponse.xml");
 
         final CSWRecord record = new CSWRecord("a", "b", "c", "", new CSWOnlineResourceImpl[0], new CSWGeographicElement[0]);
-        final URI responseUri = new URI("http://foo.bar.baz", false);
+        final URI responseUri = new URI("http://foo.bar.baz");
 
         context.checking(new Expectations() {{
             allowing(gnMethodMaker).makeInsertRecordMethod(with(any(String.class)), with(any(String.class)), with(any(String.class)));will(returnValue(insertRecordMethod));
@@ -72,7 +74,7 @@ public class TestGeonetworkService extends PortalTestClass {
             allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);will(returnValue(loginMethod));
             allowing(gnMethodMaker).makeUserLogoutMethod(endpoint, sessionCookie);will(returnValue(logoutMethod));
 
-            allowing(loginMethod).getResponseHeader("Set-Cookie");will(returnValue(new Header("Set-Cookie", sessionCookie)));
+            allowing(loginMethod).getFirstHeader("Set-Cookie");will(returnValue(new BasicHeader("Set-Cookie", sessionCookie)));
 
             oneOf(serviceCaller).getMethodResponseAsString(insertRecordMethod);will(returnValue(insertResponse));
             oneOf(serviceCaller).getMethodResponseAsString(recordMetadataGetMethod);will(returnValue(recordGetMetadata));
@@ -88,7 +90,7 @@ public class TestGeonetworkService extends PortalTestClass {
 
     @Test(expected=Exception.class)
     public void testBadLoginRequest() throws Exception {
-        final HttpMethodBase loginMethod = context.mock(HttpMethodBase.class, "loginMethod");
+        final HttpRequestBase loginMethod = context.mock(HttpRequestBase.class, "loginMethod");
         final String loginResponse = "<html>The contents doesn't matter as a failed GN login returns a static page</html>";
 
         final CSWRecord record = new CSWRecord("a", "b", "c", "", new CSWOnlineResourceImpl[0], new CSWGeographicElement[0]);

@@ -3,12 +3,28 @@ package org.auscope.portal.core.server.http.download;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.httpclient.HttpClient;
+
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolVersion;
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
+import org.apache.http.params.HttpParams;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
@@ -44,13 +60,17 @@ public class TestDownloadTracker extends PortalTestClass  {
         final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
         final InputStream dummyJSONResponseIS2=new ByteArrayInputStream(dummyJSONResponse2.getBytes());
 
+        final HttpResponse response1=new MyHttpResponse(dummyJSONResponseIS);
+        final HttpResponse response2=new MyHttpResponse(dummyJSONResponseIS2);
+
         context.checking(new Expectations() {
             {
-                oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)),with(any(HttpClient.class)));
-                will(delayReturnValue(3500, dummyJSONResponseIS));
-                // calling the service
-                oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)),with(any(HttpClient.class)));
-                will(delayReturnValue(200, dummyJSONResponseIS2));
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[0], null)));
+                will(delayReturnValue(250, response1));
+
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[1], null)));
+                will(delayReturnValue(3000,response2));
+
             }
         });
 
@@ -101,14 +121,16 @@ public class TestDownloadTracker extends PortalTestClass  {
 
         final InputStream dummyJSONResponseIS=new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
+        final HttpResponse response=new MyHttpResponse(dummyJSONResponseIS);
+
 
         context.checking(new Expectations() {
             {
-                oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[0], null)),with(any(HttpClient.class)));
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[0], null)));
                 will(throwException(new IOException("Test exception thrown")));
                 // calling the service
-                oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, serviceUrls[1], null)),with(any(HttpClient.class)));
-                will(delayReturnValue(200, dummyJSONResponseIS));
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[1], null)));
+                will(delayReturnValue(200, response));
             }
         });
 
@@ -146,5 +168,11 @@ public class TestDownloadTracker extends PortalTestClass  {
         }
         zis.close();
     }
+
+
+
+
+
+
 
 }

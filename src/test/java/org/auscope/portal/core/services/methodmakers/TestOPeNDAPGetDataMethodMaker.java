@@ -2,8 +2,9 @@ package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.util.URIUtil;
+
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
@@ -40,7 +41,7 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
         final String opendapUrl = "http://fake.com/blah.nc";
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, OPeNDAPFormat.ASCII, mockNetCdfDataset, null);
+        HttpRequestBase method = methodMaker.getMethod(opendapUrl, OPeNDAPFormat.ASCII, mockNetCdfDataset, null);
         Assert.assertNotNull(method);
         Assert.assertEquals(opendapUrl + ".ascii", method.getURI().toString());
 
@@ -61,12 +62,15 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
         OPeNDAPGetDataMethodMaker methodMaker = new OPeNDAPGetDataMethodMaker();
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1});
+        HttpRequestBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
-        Assert.assertEquals(URIUtil.encodeQuery(String.format("%1$s[%2$d:%3$d]", a1.getName(),(int) a1.getDimensionBounds().getFrom(),(int) a1.getDimensionBounds().getTo())),
-                            method.getQueryString());
+        URIBuilder builder=new  URIBuilder();
+        builder.setQuery(String.format("%1$s[%2$d:%3$d]", a1.getName(),(int) a1.getDimensionBounds().getFrom(),(int) a1.getDimensionBounds().getTo()));
+
+        Assert.assertEquals(builder.build().getQuery(),
+                            method.getURI().getQuery());
 
 
         //This will ensure that the dimensions bounds are used EVEN if the value bounds are specified
@@ -75,8 +79,11 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
-        Assert.assertEquals(URIUtil.encodeQuery(String.format("%1$s[%2$d:%3$d]", a2.getName(),(int) a2.getDimensionBounds().getFrom(),(int) a2.getDimensionBounds().getTo())),
-                            method.getQueryString());
+
+        builder=new  URIBuilder();
+        builder.setQuery(String.format("%1$s[%2$d:%3$d]", a2.getName(),(int) a2.getDimensionBounds().getFrom(),(int) a2.getDimensionBounds().getTo()));
+        Assert.assertEquals(builder.build().getQuery(),
+                            method.getURI().getQuery());
     }
 
     /**
@@ -106,12 +113,15 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
             allowing(mockNetCdfDataset).findVariable("/" + a1.getName());will(returnValue(mockVariable1));
         }});
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1});
+        HttpRequestBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
-        Assert.assertEquals(URIUtil.encodeQuery(String.format("%1$s[1:2]", a1.getName())),
-                            method.getQueryString());
+        URIBuilder builder=new  URIBuilder();
+        builder.setQuery(String.format("%1$s[1:2]", a1.getName()));
+
+        Assert.assertEquals(builder.build().getQuery(),
+                            method.getURI().getQuery());
 
         //Test an exact bounding box
         final SimpleAxis a2 = new SimpleAxis("name2", "FLOAT", "km/h",null, new SimpleBounds(1, 3));
@@ -132,8 +142,11 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
-        Assert.assertEquals(URIUtil.encodeQuery(String.format("%1$s[1:3]", a2.getName())),
-                            method.getQueryString());
+        builder=new  URIBuilder();
+        builder.setQuery(String.format("%1$s[1:3]", a2.getName()));
+
+        Assert.assertEquals(builder.build().getQuery(),
+                            method.getURI().getQuery());
 
         //Test a bounding box that runs off the end
         final SimpleAxis a3 = new SimpleAxis("name3", "FLOAT", "km/h",null, new SimpleBounds(-100, 500));
@@ -154,8 +167,10 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
-        Assert.assertEquals(URIUtil.encodeQuery(String.format("%1$s[0:3]", a3.getName())),
-                            method.getQueryString());
+        builder=new URIBuilder();
+        builder.setQuery(String.format("%1$s[0:3]", a3.getName()));
+        Assert.assertEquals(builder.build().getQuery(),
+                            method.getURI().getQuery());
     }
 
     /**
@@ -194,12 +209,16 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
             allowing(mockNetCdfDataset).findVariable("/" + a2.getName());will(returnValue(mockVariable2));
         }});
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {g1});
+        HttpRequestBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {g1});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
-        Assert.assertEquals(URIUtil.encodeQuery(String.format("%1$s[1:2][2:3]", g1.getName())),
-                            method.getQueryString());
+        URIBuilder builder=new URIBuilder();
+        builder.setQuery(String.format("%1$s[1:2][2:3]", g1.getName()));
+
+
+        Assert.assertEquals(builder.build().getQuery(),
+                            method.getURI().getQuery());
     }
 
     /**
@@ -237,12 +256,14 @@ public class TestOPeNDAPGetDataMethodMaker extends PortalTestClass {
             allowing(mockNetCdfDataset).findVariable("/" + a2.getName());will(returnValue(mockVariable2));
         }});
 
-        HttpMethodBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1, a2});
+        HttpRequestBase method = methodMaker.getMethod(opendapUrl, format, mockNetCdfDataset,new AbstractViewVariable[] {a1, a2});
 
         Assert.assertNotNull(method);
         Assert.assertTrue(method.getURI().toString().startsWith(opendapUrl));
-        Assert.assertEquals(URIUtil.encodeQuery(String.format("%1$s[1:2],%2$s[2:3]", a1.getName(), a2.getName())),
-                            method.getQueryString());
+        URIBuilder builder=new URIBuilder();
+        builder.setQuery(String.format("%1$s[1:2],%2$s[2:3]", a1.getName(), a2.getName()));
+        Assert.assertEquals((builder.build()).getQuery(),
+                            method.getURI().getQuery());
     }
 
     /**

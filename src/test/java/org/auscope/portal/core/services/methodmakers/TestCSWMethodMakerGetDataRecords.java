@@ -1,10 +1,10 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import org.apache.commons.httpclient.HttpMethodBase;
-import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -47,13 +47,11 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass  {
             oneOf(mockFilter).getFilterStringAllRecords();will(returnValue(filterStr));
         }});
 
-        HttpMethodBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
         Assert.assertNotNull(method);
-        Assert.assertTrue(method instanceof PostMethod); //we want this to be sent via post in case we get a large filter
 
-        RequestEntity entity = ((PostMethod) method).getRequestEntity();
-        Assert.assertTrue(entity instanceof StringRequestEntity);
-        String postBody = ((StringRequestEntity) entity).getContent();
+        Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
+        String postBody = IOUtils.toString(((HttpPost)method).getEntity().getContent());
 
         Assert.assertTrue(postBody.contains(String.format("maxRecords=\"%1$s\"", maxRecords)));
         Assert.assertTrue(postBody.contains(String.format("resultType=\"results\"")));
@@ -73,13 +71,13 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass  {
 
         }});
 
-        HttpMethodBase method = methodMaker.makeMethod(uri, null, ResultType.Hits, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, null, ResultType.Hits, maxRecords);
         Assert.assertNotNull(method);
-        Assert.assertTrue(method instanceof PostMethod); //we want this to be sent via post in case we get a large filter
 
-        RequestEntity entity = ((PostMethod) method).getRequestEntity();
-        Assert.assertTrue(entity instanceof StringRequestEntity);
-        String postBody = ((StringRequestEntity) entity).getContent();
+        Assert.assertTrue(method instanceof HttpPost); //we want this to be sent via post in case we get a large filter
+
+
+        String postBody = IOUtils.toString(((HttpPost)method).getEntity().getContent());
 
         Assert.assertTrue(postBody.contains(String.format("maxRecords=\"%1$s\"", maxRecords)));
         Assert.assertTrue(postBody.contains(String.format("resultType=\"hits\"")));
@@ -102,11 +100,9 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass  {
         }});
 
         //Test POST
-        HttpMethodBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
+        HttpRequestBase method = methodMaker.makeMethod(uri, mockFilter, ResultType.Results, maxRecords);
         Assert.assertNotNull(method);
-        RequestEntity entity = ((PostMethod) method).getRequestEntity();
-        Assert.assertTrue(entity instanceof StringRequestEntity);
-        String postBody = ((StringRequestEntity) entity).getContent();
+        String postBody = IOUtils.toString(((HttpPost)method).getEntity().getContent());
         Assert.assertTrue(postBody.contains(String.format("version=\"2.0.2\"")));
         Assert.assertTrue(postBody.contains(String.format("outputSchema=\"csw:IsoRecord\"")));
         Assert.assertTrue(postBody.contains(String.format("typeNames=\"gmd:MD_Metadata\"")));
@@ -114,10 +110,10 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass  {
         //Test GET
         method = methodMaker.makeGetMethod(uri, ResultType.Results, maxRecords, 0);
         Assert.assertNotNull(method);
-        String queryString = ((GetMethod)method).getQueryString();
+        String queryString = ((HttpGet)method).getURI().getQuery();
         Assert.assertTrue(queryString, queryString.contains("version=2.0.2"));
-        Assert.assertTrue(queryString, queryString.contains("outputSchema=csw%3AIsoRecord"));
-        Assert.assertTrue(queryString, queryString.contains("typeNames=gmd%3AMD_Metadata"));
+        Assert.assertTrue(queryString, queryString.contains("outputSchema=csw:IsoRecord"));
+        Assert.assertTrue(queryString, queryString.contains("typeNames=gmd:MD_Metadata"));
 
     }
 }
