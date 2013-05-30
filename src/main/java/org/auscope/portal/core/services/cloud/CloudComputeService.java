@@ -7,6 +7,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
+import org.auscope.portal.core.cloud.ComputeType;
 import org.auscope.portal.core.cloud.MachineImage;
 import org.auscope.portal.core.services.PortalServiceException;
 
@@ -40,6 +41,9 @@ public class CloudComputeService {
 
     /** An array of images that are available through this compute service*/
     private MachineImage[] availableImages = new MachineImage[0];
+    
+    /** An array of compute types that are available through this compute service*/
+    private ComputeType[] availableComputeTypes = new ComputeType[0];
 
     /**
      * Creates a new instance with the specified credentials
@@ -92,6 +96,22 @@ public class CloudComputeService {
      */
     public void setAvailableImages(MachineImage[] availableImages) {
         this.availableImages = availableImages;
+    }
+    
+    
+    /** 
+     * An array of compute types that are available through this compute service
+     */
+    public ComputeType[] getAvailableComputeTypes() {
+        return availableComputeTypes;
+    }
+
+    /**
+     * An array of compute types that are available through this compute service
+     * @param availableComputeTypes
+     */
+    public void setAvailableComputeTypes(ComputeType[] availableComputeTypes) {
+        this.availableComputeTypes = availableComputeTypes;
     }
 
     /**
