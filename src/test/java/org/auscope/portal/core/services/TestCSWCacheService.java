@@ -19,6 +19,7 @@ import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher.HttpMethodType;
 import org.jmock.Expectations;
 import org.jmock.Sequence;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +62,12 @@ public class TestCSWCacheService extends PortalTestClass {
           }
 
         this.cswCacheService = new CSWCacheService(threadExecutor, httpServiceCaller, serviceUrlList);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        this.threadExecutor = null;
+        this.cswCacheService = null;
     }
 
     /**
