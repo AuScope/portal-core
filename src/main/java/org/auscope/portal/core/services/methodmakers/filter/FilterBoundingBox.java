@@ -149,6 +149,63 @@ public class FilterBoundingBox implements Serializable {
      * @return the filter bounding box
      * @throws Exception the exception
      */
+//    public static FilterBoundingBox parseFromJSON(JSONObject obj) throws Exception {
+//        //Our filter bbox can come in a couple of formats
+//        if (obj.containsKey("lowerCornerPoints") && obj.containsKey("upperCornerPoints")) {
+//            FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
+//
+//            JSONArray lowerCornerPoints = obj.getJSONArray("lowerCornerPoints");
+//            JSONArray upperCornerPoints = obj.getJSONArray("upperCornerPoints");
+//
+//            result.lowerCornerPoints = new double[lowerCornerPoints.size()];
+//            result.upperCornerPoints = new double[upperCornerPoints.size()];
+//
+//            for (int i = 0; i < lowerCornerPoints.size(); i++) {
+//                result.lowerCornerPoints[i] = lowerCornerPoints.getDouble(i);
+//            }
+//
+//            for (int i = 0; i < upperCornerPoints.size(); i++) {
+//                result.upperCornerPoints[i] = upperCornerPoints.getDouble(i);
+//            }
+//
+//            return result;
+//        } else if (obj.containsKey("eastBoundLongitude") && obj.containsKey("westBoundLongitude") &&
+//                obj.containsKey("northBoundLatitude") && obj.containsKey("southBoundLatitude")) {
+//            FilterBoundingBox result = new FilterBoundingBox(obj.getString("crs"), null, null);
+//
+//            double eastBoundLongitude = obj.getDouble("eastBoundLongitude");
+//            double westBoundLongitude = obj.getDouble("westBoundLongitude");
+//            double northBoundLatitude = obj.getDouble("northBoundLatitude");
+//            double southBoundLatitude = obj.getDouble("southBoundLatitude");
+//
+//            double adjustedWestBoundLong = westBoundLongitude;
+//            double adjustedEastBoundLong = eastBoundLongitude;
+//
+//            //this is so we can fetch data when our bbox is crossing the anti meridian
+//            //Otherwise our bbox wraps around the WRONG side of the planet
+//            if (adjustedWestBoundLong <= 0 && adjustedEastBoundLong >= 0 ||
+//                adjustedWestBoundLong >= 0 && adjustedEastBoundLong <= 0) {
+//                adjustedWestBoundLong = (westBoundLongitude < 0) ? (180 - westBoundLongitude) : westBoundLongitude;
+//                adjustedEastBoundLong = (eastBoundLongitude < 0) ? (180 - eastBoundLongitude) : eastBoundLongitude;
+//            }
+//
+//            result.lowerCornerPoints = new double[] {Math.min(adjustedWestBoundLong, adjustedEastBoundLong), Math.min(northBoundLatitude, southBoundLatitude)};
+//            result.upperCornerPoints = new double[] {Math.max(adjustedWestBoundLong, adjustedEastBoundLong), Math.max(northBoundLatitude, southBoundLatitude)};
+//
+//            return result;
+//        }
+//
+//        throw new IllegalArgumentException("obj cannot be decoded");
+//
+//    }
+
+    /**
+     * TODO: Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
+     *
+     * @param obj the obj
+     * @return the filter bounding box
+     * @throws Exception the exception
+     */
     public static FilterBoundingBox parseFromJSON(JSONObject obj) throws Exception {
         //Our filter bbox can come in a couple of formats
         if (obj.containsKey("lowerCornerPoints") && obj.containsKey("upperCornerPoints")) {
@@ -178,63 +235,6 @@ public class FilterBoundingBox implements Serializable {
             double northBoundLatitude = obj.getDouble("northBoundLatitude");
             double southBoundLatitude = obj.getDouble("southBoundLatitude");
 
-            double adjustedWestBoundLong = westBoundLongitude;
-            double adjustedEastBoundLong = eastBoundLongitude;
-
-            //this is so we can fetch data when our bbox is crossing the anti meridian
-            //Otherwise our bbox wraps around the WRONG side of the planet
-            if (adjustedWestBoundLong <= 0 && adjustedEastBoundLong >= 0 ||
-                adjustedWestBoundLong >= 0 && adjustedEastBoundLong <= 0) {
-                adjustedWestBoundLong = (westBoundLongitude < 0) ? (180 - westBoundLongitude) : westBoundLongitude;
-                adjustedEastBoundLong = (eastBoundLongitude < 0) ? (180 - eastBoundLongitude) : eastBoundLongitude;
-            }
-
-            result.lowerCornerPoints = new double[] {Math.min(adjustedWestBoundLong, adjustedEastBoundLong), Math.min(northBoundLatitude, southBoundLatitude)};
-            result.upperCornerPoints = new double[] {Math.max(adjustedWestBoundLong, adjustedEastBoundLong), Math.max(northBoundLatitude, southBoundLatitude)};
-
-            return result;
-        }
-
-        throw new IllegalArgumentException("obj cannot be decoded");
-
-    }
-    
-    /**
-     * TODO: Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
-     *
-     * @param obj the obj
-     * @return the filter bounding box
-     * @throws Exception the exception
-     */
-    public static FilterBoundingBox parseFromJSONTemp(JSONObject obj) throws Exception {
-        //Our filter bbox can come in a couple of formats
-        if (obj.containsKey("lowerCornerPoints") && obj.containsKey("upperCornerPoints")) {
-            FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
-
-            JSONArray lowerCornerPoints = obj.getJSONArray("lowerCornerPoints");
-            JSONArray upperCornerPoints = obj.getJSONArray("upperCornerPoints");
-
-            result.lowerCornerPoints = new double[lowerCornerPoints.size()];
-            result.upperCornerPoints = new double[upperCornerPoints.size()];
-
-            for (int i = 0; i < lowerCornerPoints.size(); i++) {
-                result.lowerCornerPoints[i] = lowerCornerPoints.getDouble(i);
-            }
-
-            for (int i = 0; i < upperCornerPoints.size(); i++) {
-                result.upperCornerPoints[i] = upperCornerPoints.getDouble(i);
-            }
-
-            return result;
-        } else if (obj.containsKey("eastBoundLongitude") && obj.containsKey("westBoundLongitude") &&
-                obj.containsKey("northBoundLatitude") && obj.containsKey("southBoundLatitude")) {
-            FilterBoundingBox result = new FilterBoundingBox(obj.getString("crs"), null, null);
-
-            double eastBoundLongitude = obj.getDouble("eastBoundLongitude");
-            double westBoundLongitude = obj.getDouble("westBoundLongitude");
-            double northBoundLatitude = obj.getDouble("northBoundLatitude");
-            double southBoundLatitude = obj.getDouble("southBoundLatitude");
-            
             result.lowerCornerPoints = new double[] {Math.min(westBoundLongitude, eastBoundLongitude), Math.min(northBoundLatitude, southBoundLatitude)};
             result.upperCornerPoints = new double[] {Math.max(westBoundLongitude, eastBoundLongitude), Math.max(northBoundLatitude, southBoundLatitude)};
 
@@ -244,14 +244,14 @@ public class FilterBoundingBox implements Serializable {
         throw new IllegalArgumentException("obj cannot be decoded");
 
     }
-    
+
     //TODO: remove after AUS:2309 is fixed
-    public static FilterBoundingBox attemptParseFromJSONTemp(String json) {
+    public static FilterBoundingBox attemptParseFromJSON(String json) {
         FilterBoundingBox bbox = null;
         try {
             if (json != null && !json.isEmpty()) {
                 JSONObject obj = JSONObject.fromObject(json);
-                bbox = FilterBoundingBox.parseFromJSONTemp(obj);
+                bbox = FilterBoundingBox.parseFromJSON(obj);
                 log.debug("bbox=" + bbox.toString());
             } else {
                 log.debug("No bbox string, null will be returned");
@@ -269,20 +269,20 @@ public class FilterBoundingBox implements Serializable {
      * @param json the json
      * @return the filter bounding box
      */
-    public static FilterBoundingBox attemptParseFromJSON(String json) {
-        FilterBoundingBox bbox = null;
-        try {
-            if (json != null && !json.isEmpty()) {
-                JSONObject obj = JSONObject.fromObject(json);
-                bbox = FilterBoundingBox.parseFromJSON(obj);
-                log.debug("bbox=" + bbox.toString());
-            } else {
-                log.debug("No bbox string, null will be returned");
-            }
-        } catch (Exception ex) {
-            log.warn("Couldnt parse bounding box filter (Invalid Values): " + ex);
-        }
-
-        return bbox;
-    }
+//    public static FilterBoundingBox attemptParseFromJSON(String json) {
+//        FilterBoundingBox bbox = null;
+//        try {
+//            if (json != null && !json.isEmpty()) {
+//                JSONObject obj = JSONObject.fromObject(json);
+//                bbox = FilterBoundingBox.parseFromJSON(obj);
+//                log.debug("bbox=" + bbox.toString());
+//            } else {
+//                log.debug("No bbox string, null will be returned");
+//            }
+//        } catch (Exception ex) {
+//            log.warn("Couldnt parse bounding box filter (Invalid Values): " + ex);
+//        }
+//
+//        return bbox;
+//    }
 }

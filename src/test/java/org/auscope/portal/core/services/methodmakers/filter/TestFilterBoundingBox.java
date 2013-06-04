@@ -61,7 +61,7 @@ public class TestFilterBoundingBox extends PortalTestClass {
      */
     @Test
     public void testWrapAround() throws Exception {
-        FilterBoundingBox expected = new FilterBoundingBox("EPSG:4326", new double[] {160, -47}, new double[] {350, -3});
+        FilterBoundingBox expected = new FilterBoundingBox("EPSG:4326", new double[] {-170, -47}, new double[] {160, -3});
         String bbox1Json = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":-170,\"westBoundLongitude\":160,\"southBoundLatitude\":-47,\"northBoundLatitude\":-3}";
 
         FilterBoundingBox bbox1 = FilterBoundingBox.attemptParseFromJSON(bbox1Json);
