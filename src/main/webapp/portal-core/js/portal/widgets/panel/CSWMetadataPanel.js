@@ -7,9 +7,9 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
     alias : 'widget.cswmetadatapanel',
 
     cswRecord : null,
-    
+
     // TODO: description
-    extraItems : null,    
+    extraItems : null,
 
     /**
      * Constructor for this class, accepts all configuration options that can be
@@ -20,21 +20,21 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
      */
     constructor : function(cfg) {
         this.cswRecord = cfg.cswRecord;
-        
+
         var source = this.cswRecord.get('recordInfoUrl');
-        
+
         if (typeof(cfg.extraItems) === 'undefined') {
-            
+
             if (source.indexOf('eos-test.ga.gov.au') !== -1 || source.indexOf('eos.ga.gov.au') !== -1) {
                 this.extraItems = {
                         xtype : 'displayfield',
                         fieldLabel : 'Notes',
                         anchor : '100%',
-                        value : 'You will require a userid and password to download the data. You can apply for this by filling in the Terms and Conditions for the utilisation of the European Space Agency&apos;s Earth Observation Data v11/05/11 available in the link <a href="https://earth.esa.int/pi/esa?type=file&amp;ts=1127284911811&amp;table=aotarget&amp;cmd=image&amp;id=122">https://earth.esa.int/pi/esa?type=file&amp;ts=1127284911811&amp;table=aotarget&amp;cmd=image&amp;id=122</a>.<br />Forward a scan of the completed document to <a href="mailto:InSAR@ga.gov.au">InSAR@ga.gov.au</a> to obtain a userid and password.'
+                        value : 'You will require a userid and password to download the data. You can apply for this by filling in the Terms and Conditions for the utilisation of the European Space Agency&apos;s Earth Observation Data v11/05/11 available in the link <a href="https://earth.esa.int/pi/esa?type=file&amp;ts=1127284911811&amp;table=aotarget&amp;cmd=image&amp;id=122">https://earth.esa.int/pi/esa?type=file&amp;ts=1127284911811&amp;table=aotarget&amp;cmd=image&amp;id=122</a>.<br />Forward a scan of the completed document to <a href="mailto:InSAR@ga.gov.au?subject=AuScope Portal – Data Request">InSAR@ga.gov.au</a> to obtain a userid and password.'
                     };
             }
         }
-                
+
         var keywordsString = "";
         var keywords = this.cswRecord.get('descriptiveKeywords');
         for (var i = 0; i < keywords.length; i++) {
@@ -43,7 +43,7 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
                 keywordsString += ', ';
             }
         }
-        
+
         //Build our configuration object
         Ext.apply(cfg, {
             layout : 'fit',
