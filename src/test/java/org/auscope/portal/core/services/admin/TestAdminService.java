@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;

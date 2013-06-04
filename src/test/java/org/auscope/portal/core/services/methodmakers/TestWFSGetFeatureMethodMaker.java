@@ -1,9 +1,7 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
-
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;

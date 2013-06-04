@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;

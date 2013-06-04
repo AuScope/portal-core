@@ -2,7 +2,6 @@ package org.auscope.portal.core.services.methodmakers;
 
 
 import java.net.URISyntaxException;
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;

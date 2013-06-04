@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.auscope.portal.core.services.responses.wcs.Resolution;

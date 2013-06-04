@@ -1,8 +1,6 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
-
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
@@ -14,7 +12,6 @@ import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Test;
-
 import ucar.ma2.Array;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;

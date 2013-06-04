@@ -5,6 +5,7 @@ import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;
 import org.junit.Test;
 
+
 public class TestWCSMethodMakerDescribeCoverage extends PortalTestClass {
     @Test(expected=IllegalArgumentException.class)
     public void testBadLayer() throws Exception {
