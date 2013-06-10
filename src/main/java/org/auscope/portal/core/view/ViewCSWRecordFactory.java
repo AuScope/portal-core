@@ -32,6 +32,12 @@ public class ViewCSWRecordFactory {
         obj.put("recordInfoUrl", record.getRecordInfoUrl());
         obj.put("description", record.getDataIdentificationAbstract());
 
+        if(record.getVersion()==null){
+            obj.put("version", "");
+        }else{
+            obj.put("version", record.getVersion());
+        }
+
         CSWResponsibleParty rp = record.getContact();
         String adminArea = null;
         String contactOrg = "Unknown";
@@ -79,7 +85,7 @@ public class ViewCSWRecordFactory {
             }
         }
         obj.put("constraints", constraints);
-        
+
         List<Map<String, Object>> childRecords = new ArrayList<Map<String, Object>>();
         if (record.hasChildRecords()) {
             for (CSWRecord childRecord : record.getChildRecords()) {

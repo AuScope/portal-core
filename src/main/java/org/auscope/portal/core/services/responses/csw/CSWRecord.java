@@ -34,8 +34,8 @@ public class CSWRecord {
     private String fileIdentifier;
 
     /** The parent identifier. */
-    private String parentIdentifier;    
-    
+    private String parentIdentifier;
+
     /** The record info url. */
     private String recordInfoUrl;
 
@@ -65,9 +65,11 @@ public class CSWRecord {
 
     /** The data quality statement. */
     private String dataQualityStatement;
-    
+
     /** The csw child records */
     private List<CSWRecord> childRecords = new ArrayList<CSWRecord>();
+
+    private String version;
 
     /**
      * Instantiates a new empty CSWRecord
@@ -122,6 +124,24 @@ public class CSWRecord {
     }
 
     /**
+     * Sets the version
+     *
+     * @param recordInfoUrl the new record info url
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    /**
+     * Gets the version
+     *
+     * @return the record info url
+     */
+    public String getVersion() {
+        return this.version;
+    }
+
+    /**
      * Gets the file identifier.
      *
      * @return the file identifier
@@ -129,14 +149,14 @@ public class CSWRecord {
     public String getFileIdentifier() {
         return fileIdentifier;
     }
-    
+
     /**
      * Get the parent identifier.
-     * 
+     *
      */
     public String getParentIdentifier() {
         return parentIdentifier;
-    }    
+    }
 
     /**
      * Gets the service name.
@@ -254,12 +274,12 @@ public class CSWRecord {
     public void setFileIdentifier(String fileIdentifier) {
         this.fileIdentifier = fileIdentifier;
     }
-    
+
     /**
      * Sets the parent identifier.
      *
      * @param parentFileIdentifier the new parent file identifier
-     */    
+     */
     public void setParentIdentifier(String parentIdentifier) {
         this.parentIdentifier = parentIdentifier;
     }
@@ -362,7 +382,7 @@ public class CSWRecord {
     public String getDataQualityStatement() {
         return dataQualityStatement;
     }
-    
+
     /**
      * Sets the data quality statement.
      *
@@ -371,16 +391,16 @@ public class CSWRecord {
     public void setDataQualityStatement(String dataQualityStatement) {
         this.dataQualityStatement = dataQualityStatement;
     }
-    
+
     /**
      * Sets the child records of this record.
-     * 
+     *
      * @param childRecords an array of child records for this csw record
      */
     public void addChildRecord(CSWRecord childRecord) {
         this.childRecords.add(childRecord);
     }
-    
+
     /**
      * Gets the child records.
      *
@@ -389,10 +409,10 @@ public class CSWRecord {
     public CSWRecord[] getChildRecords() {
         return childRecords.toArray(new CSWRecord[childRecords.size()]);
     }
-    
+
     /**
      * Checks to see if this record has any child metadata records.
-     * 
+     *
      * @return true if this record has any child metadata records
      */
     public boolean hasChildRecords() {

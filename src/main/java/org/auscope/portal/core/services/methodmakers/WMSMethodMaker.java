@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.methodmakers;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
+import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
+import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord_1_1_1;
+import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord_1_3_0;
 import org.auscope.portal.core.util.HttpUtil;
 
 
@@ -18,7 +23,13 @@ import org.auscope.portal.core.util.HttpUtil;
  * @author Josh Vote
  *
  */
-public class WMSMethodMaker extends AbstractMethodMaker {
+public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMakerInterface {
+
+    HttpServiceCaller serviceCaller = null;
+
+    public WMSMethodMaker(HttpServiceCaller serviceCaller) {
+        this.serviceCaller = serviceCaller;
+    }
 
     /**
      * Generates a WMS method for making a GetCapabilities request
@@ -184,5 +195,42 @@ public class WMSMethodMaker extends AbstractMethodMaker {
         method.setURI(HttpUtil.parseURI(wmsUrl,existingParam));
 
         return method;
+    }
+
+
+    /**
+     * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
+     */
+    @Override
+    public boolean accepts(String wmsUrl) {
+        try{
+            List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
+
+            existingParam.add(new BasicNameValuePair("service", "WMS"));
+            existingParam.add(new BasicNameValuePair("request", "GetCapabilities"));
+            existingParam.add(new BasicNameValuePair("version", "1.1.1"));
+            //String paramString = URLEncodedUtils.format(existingParam, "utf-8");
+            HttpGet method = new HttpGet();
+            method.setURI(HttpUtil.parseURI(wmsUrl, existingParam));
+
+
+            InputStream response = serviceCaller.getMethodResponseAsStream(method);
+
+            GetCapabilitiesRecord record= new GetCapabilitiesRecord_1_1_1(response);
+
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+
+    }
+
+
+    @Override
+    public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method)
+            throws Exception {
+        InputStream response = serviceCaller.getMethodResponseAsStream(method);
+
+        return new GetCapabilitiesRecord_1_1_1(response);
     }
 }

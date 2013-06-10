@@ -143,7 +143,7 @@ public class DOMUtil {
      */
     public static XPathExpression compileXPathExpr(String xPathStr) throws XPathExpressionException {
         //Force the usage of the Saxon XPath library
-        XPathFactory factory = new XPathFactoryImpl();
+        XPathFactory factory = XPathFactory.newInstance();
         XPath xPath = factory.newXPath();
         return xPath.compile(xPathStr);
     }

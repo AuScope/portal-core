@@ -250,7 +250,7 @@ public class AdminService {
         //Build our request methods
         for(EndpointAndSelector endpoint : wmsEndpoints) {
 
-            WMSMethodMaker methodMaker = new WMSMethodMaker();
+            WMSMethodMaker methodMaker = new WMSMethodMaker(serviceCaller);
 
             //Make a GetMap request
             methodsToTest.add(methodMaker.getMapMethod(endpoint.getEndpoint(), endpoint.getSelector(), imageMimeType, bbox.getBboxSrs(), west, south, east, north, width, height, null, null));

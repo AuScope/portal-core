@@ -1,11 +1,12 @@
 package org.auscope.portal.core.services;
 
-import java.io.InputStream;
+import java.util.List;
+import javax.naming.OperationNotSupportedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.methodmakers.WMSMethodMaker;
+import org.auscope.portal.core.services.methodmakers.WMSMethodMakerInterface;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 
@@ -20,17 +21,38 @@ public class WMSService {
 
     // ----------------------------------------------------- Instance variables
     private HttpServiceCaller serviceCaller;
-    private WMSMethodMaker methodMaker;
+    private WMSMethodMakerInterface methodMaker;
+    private List<WMSMethodMakerInterface> listOfSupportedWMSMethodMaker;
 
 
     // ----------------------------------------------------------- Constructors
-    public WMSService(HttpServiceCaller serviceCaller, WMSMethodMaker methodMaker) {
+    public WMSService(HttpServiceCaller serviceCaller, List<WMSMethodMakerInterface> methodMaker) {
         this.serviceCaller = serviceCaller;
-        this.methodMaker = methodMaker;
+        this.listOfSupportedWMSMethodMaker=methodMaker;
+        this.methodMaker=null;
     }
 
 
     // ------------------------------------------- Property Setters and Getters
+
+
+    private void configWMSVersion(String wmsUrl)
+            throws OperationNotSupportedException {
+
+        for (WMSMethodMakerInterface maker : listOfSupportedWMSMethodMaker) {
+            if (maker.accepts(wmsUrl)) {
+                this.methodMaker = maker;
+                break;
+            }
+        }
+
+        if (this.methodMaker == null) {
+            throw new OperationNotSupportedException(
+                    "Can't find a suitable wms version");
+        }
+    }
+
+
     /**
      * Request GetCapabilities document from the given service
      *
@@ -40,12 +62,16 @@ public class WMSService {
     public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl) throws PortalServiceException {
         HttpRequestBase method = null;
         try {
+
+            this.configWMSVersion(serviceUrl);
             // Do the request
             method = methodMaker.getCapabilitiesMethod(serviceUrl);
-            InputStream response = serviceCaller.getMethodResponseAsStream(method);
+            return methodMaker.getGetCapabilitiesRecord(method);
 
-            return new GetCapabilitiesRecord(response);
-        } catch (Exception ex) {
+        }catch(NullPointerException npe){
+            npe.printStackTrace();
+            throw new NullPointerException("Call configWMSVersion to setup the right wms method maker to use");
+        }catch (Exception ex) {
             throw new PortalServiceException(method, "Failure getting/parsing wms capabilities", ex);
         } finally {
             if (method != null) {
@@ -80,12 +106,16 @@ public class WMSService {
         // Do the request
         HttpRequestBase method = null;
         try {
+            this.configWMSVersion(wmsUrl);
             method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sld);
             String response =  serviceCaller.getMethodResponseAsString(method);
 
             OWSExceptionParser.checkForExceptionResponse(response);
 
             return response;
+        } catch(NullPointerException npe){
+            npe.printStackTrace();
+            throw new NullPointerException("Call configWMSVersion to setup the right wms method maker to use");
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Failure getting/parsing wms capabilities", ex);
         }
