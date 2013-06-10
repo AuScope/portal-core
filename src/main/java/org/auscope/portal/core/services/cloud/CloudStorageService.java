@@ -54,6 +54,8 @@ public class CloudStorageService {
     private String name;
     /** The authentication version to use when connecting to this object store - can be null or empty*/
     private String authVersion;
+    /** The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes due to limitations in JClouds.*/
+    private String regionName;
 
     /**
      * The bucket that this service will access - defaults to DEFAULT_BUCKET
@@ -207,6 +209,22 @@ public class CloudStorageService {
      */
     public void setName(String name) {
         this.name = name;
+    }
+    
+    /**
+     * The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes due to limitations in JClouds.
+     * @return
+     */
+    public String getRegionName() {
+        return regionName;
+    }
+
+    /**
+     * The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes due to limitations in JClouds.
+     * @param regionName
+     */
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 
     /**
