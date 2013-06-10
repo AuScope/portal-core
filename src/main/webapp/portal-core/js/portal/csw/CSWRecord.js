@@ -22,6 +22,7 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'childRecords', convert: portal.csw.CSWRecordType.convert}, //an array of child portal.csw.CSWRecord objects
         { name: 'resourceProvider', type: 'string'}, //A set of portal.csw.OnlineResource objects
         { name: 'recordInfoUrl' , type:'string'},
+        { name: 'version' , type:'string'},
         { name: 'constraints' , type:'auto'} //An array of strings representing access constraints that will be shown to a user before this layer is used
     ],
 

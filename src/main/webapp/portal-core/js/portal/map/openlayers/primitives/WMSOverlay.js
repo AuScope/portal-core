@@ -16,11 +16,14 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
      */
     constructor : function(cfg) {
         this.callParent(arguments);
-
+        var wmsVersion='1.1.1';
+        if(this.getVersion() && this.getVersion().length > 0){
+            wmsVersion=this.getVersion();
+        }
 
         var wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
                 this.getWmsUrl(),
-                {layers: this.getWmsLayer(), transparent : true},
+                {layers: this.getWmsLayer(), version:wmsVersion ,transparent : true},
                 {isBaseLayer : false});
         wmsLayer.setOpacity(this.getOpacity());
         wmsLayer._portalBasePrimitive = this;

@@ -209,7 +209,12 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     thumbHeight = thumbWidth * heightRatio;
                 }
 
-                var getMapUrl = portal.map.primitives.BaseWMSPrimitive.getWmsUrl(url, name, superBbox, width, height);
+                var getMapUrl = '';
+                if(cswRecord.getVersion()=='1.3.0'){
+                    getMapUrl = portal.map.primitives.BaseWMSPrimitive.getWms_130_Url(url, name, superBbox, width, height);
+                }else{
+                    getMapUrl = portal.map.primitives.BaseWMSPrimitive.getWmsUrl(url, name, superBbox, width, height);
+                }
 
                 return Ext.DomHelper.markup({
                     tag : 'a',
