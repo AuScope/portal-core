@@ -210,8 +210,10 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 }
 
                 var getMapUrl = '';
-                if(cswRecord.getVersion()=='1.3.0'){
+                if(cswRecord.get('version')=='1.3.0'){
                     getMapUrl = portal.map.primitives.BaseWMSPrimitive.getWms_130_Url(url, name, superBbox, width, height);
+                    console.log("1.1.1:" + portal.map.primitives.BaseWMSPrimitive.getWmsUrl(url, name, superBbox, width, height));
+                    console.log("1.3.0:"+portal.map.primitives.BaseWMSPrimitive.getWms_130_Url(url, name, superBbox, width, height));
                 }else{
                     getMapUrl = portal.map.primitives.BaseWMSPrimitive.getWmsUrl(url, name, superBbox, width, height);
                 }
