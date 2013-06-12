@@ -95,7 +95,7 @@ public class CSWCacheService {
         this.serviceCaller = serviceCaller;
         this.keywordCache = new HashMap<String, Set<CSWRecord>>();
         this.recordCache = new ArrayList<CSWRecord>();
-        
+
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
         for (int i = 0; i < cswServiceList.size(); i++) {
             this.cswServiceList[i] = (CSWServiceItem) cswServiceList.get(i);
@@ -291,7 +291,7 @@ public class CSWCacheService {
             this.newKeywordCache = newKeywordCache;
             this.newRecordCache = newRecordCache;
             this.finishedExecution = false;
-            
+
             this.cswService = new CSWService(this.endpoint, serviceCaller, this.parent.forceGetMethods);
         }
 
@@ -389,44 +389,45 @@ public class CSWCacheService {
         public void run() {
             try {
                 String cswServiceUrl = this.endpoint.getServiceUrl();
-                
+
                 if (this.endpoint.getNoCache()) {
                     // Create the dummy CSWResource - to avoid confusion: this is a CSW End point, NOT a CSW record.
                     // If we're not caching the responses we need to add this endpoint as a fake CSW record so that we can query it later:
                     synchronized(newRecordCache) {
                         CSWRecord record = new CSWRecord(this.endpoint.getId());
+                        record.setNoCache(true);
                         record.setServiceName(this.endpoint.getTitle());
-                        
+
                         record.setRecordInfoUrl(this.endpoint.getRecordInformationUrl());
-                    
+
                         CSWOnlineResourceImpl cswResource = new CSWOnlineResourceImpl(
                               new URL(cswServiceUrl),
                               OnlineResourceType.CSWService.toString(), // Set the protocol to CSWService.
                               this.endpoint.getTitle(),
                                 "A link to a CSW end point.");
-                   
+
                         record.setConstraints(this.endpoint.getDefaultConstraints());
-                        
+
                         // Add the DefaultAnyTextFilter to the record so that we can use it in conjunction
                         // with whatever the user enters in the filter form.
                         record.setDescriptiveKeywords(new String[] { this.endpoint.getDefaultAnyTextFilter() });
-                    
+
                         record.setOnlineResources(new AbstractCSWOnlineResource[] { cswResource });
                         newRecordCache.add(record);
                     }
                 }
                 else {
                     int startPosition = 1;
-                    
+
                     // Request page after page of CSWRecords until we've iterated the entire store
                     do {
                         CSWGetRecordResponse response = this.cswService.queryCSWEndpoint(startPosition, MAX_QUERY_LENGTH);
-                        
+
                         synchronized(newKeywordCache) {
                             synchronized(newRecordCache) {
                                 for (CSWRecord record : response.getRecords()) {
                                     boolean recordMerged = false;
-    
+
                                     //Firstly we may possibly merge this
                                     //record into an existing record IF particular keywords
                                     //are present. In this case, record will be discarded (its contents
@@ -436,7 +437,7 @@ public class CSWCacheService {
                                         if (keyword == null || keyword.isEmpty()) {
                                             continue;
                                         }
-    
+
                                         //If we have an 'association keyword', look for existing records
                                         //to merge this record's contents in to.
                                         if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
@@ -447,23 +448,23 @@ public class CSWCacheService {
                                             }
                                         }
                                     }
-    
+
                                     //If the record was NOT merged into an existing record we then update the record cache
                                     if (!recordMerged) {
                                         //Update the keyword cache
                                         for (String keyword : record.getDescriptiveKeywords()) {
                                             addToKeywordCache(keyword, record, newKeywordCache);
                                         }
-    
+
                                         //Add record to record list
                                         newRecordCache.add(record);
                                     }
                                 }
                             }
                         }
-    
+
                         log.trace(String.format("%1$s - Response parsed!", this.endpoint.getServiceUrl()));
-    
+
                         //Prepare to request next 'page' of records (if required)
                         if (response.getNextRecord() > response.getRecordsMatched() ||
                             response.getNextRecord() <= 0) {

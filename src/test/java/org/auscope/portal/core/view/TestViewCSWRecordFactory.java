@@ -72,6 +72,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
         expectation.put("childRecords", Arrays.asList(childRecordExpectation));
         expectation.put("version", "");
+        expectation.put("noCache", false);
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -117,6 +118,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         childRecordExpectation.put("constraints", Arrays.asList(constraint1_1, constraint2_1));
         childRecordExpectation.put("childRecords", Arrays.asList());
         childRecordExpectation.put("version", "");
+        childRecordExpectation.put("noCache", false);
 
         onlineResExpectation_1.put("url", orUrl_1.toString());
         onlineResExpectation_1.put("name", orName_1);
@@ -126,6 +128,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         context.checking(new Expectations() {{
             allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
             allowing(mockCSWRecord).getVersion();will(returnValue(null));
+            allowing(mockCSWRecord).getNoCache();will(returnValue(false));
             allowing(mockCSWRecord).getContact();will(returnValue(mockResponsibleParty));
             allowing(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
             allowing(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
@@ -140,6 +143,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
 
             allowing(mockCSWChildRecord1).getServiceName();will(returnValue(serviceName_1));
             allowing(mockCSWChildRecord1).getVersion();will(returnValue(null));
+            allowing(mockCSWChildRecord1).getNoCache();will(returnValue(false));
             allowing(mockCSWChildRecord1).getContact();will(returnValue(null));
             allowing(mockCSWChildRecord1).getResourceProvider();will(returnValue(resourceProvider_1));
             allowing(mockCSWChildRecord1).getFileIdentifier();will(returnValue(fileId_1));
@@ -218,6 +222,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
         expectation.put("childRecords", new ArrayList<ModelMap>());
         expectation.put("version", "");
+        expectation.put("noCache", false);
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -228,6 +233,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         context.checking(new Expectations() {{
             allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
             allowing(mockCSWRecord).getVersion();will(returnValue(null));
+            allowing(mockCSWRecord).getNoCache();will(returnValue(false));
             allowing(mockCSWRecord).getContact();will(returnValue(mockResponsibleParty));
             allowing(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
             allowing(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));
@@ -305,6 +311,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
         expectation.put("childRecords", new ArrayList<ModelMap>());
         expectation.put("version", "");
+        expectation.put("noCache", false);
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -320,6 +327,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         context.checking(new Expectations() {{
             allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
             allowing(mockCSWRecord).getVersion();will(returnValue(null));
+            allowing(mockCSWRecord).getNoCache();will(returnValue(false));
             allowing(mockCSWRecord).getContact();will(returnValue(null));
             allowing(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
             allowing(mockCSWRecord).getFileIdentifier();will(returnValue(fileId));

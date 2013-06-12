@@ -71,6 +71,8 @@ public class CSWRecord {
 
     private String version;
 
+    private boolean noCache;
+
     /**
      * Instantiates a new empty CSWRecord
      * @param fileIdentifier
@@ -101,6 +103,7 @@ public class CSWRecord {
         this.supplementalInformation = "";
         this.descriptiveKeywords = new String[0];
         this.constraints = new String[0];
+        this.noCache=false;
 
         logger.trace(this.toString());
     }
@@ -141,6 +144,24 @@ public class CSWRecord {
         return this.version;
     }
 
+
+    /**
+     * Sets the noCache variable
+     *
+     * @param recordInfoUrl the new record info url
+     */
+    public void setNoCache(boolean nocache) {
+        this.noCache = nocache;
+    }
+
+    /**
+     * Gets the noCache variable
+     *
+     * @return the record info url
+     */
+    public boolean getNoCache() {
+        return this.noCache;
+    }
     /**
      * Gets the file identifier.
      *

@@ -31,6 +31,7 @@ public class ViewCSWRecordFactory {
         obj.put("id", record.getFileIdentifier());
         obj.put("recordInfoUrl", record.getRecordInfoUrl());
         obj.put("description", record.getDataIdentificationAbstract());
+        obj.put("noCache", record.getNoCache());
 
         if(record.getVersion()==null){
             obj.put("version", "");
