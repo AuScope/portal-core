@@ -23,6 +23,7 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'resourceProvider', type: 'string'}, //A set of portal.csw.OnlineResource objects
         { name: 'recordInfoUrl' , type:'string'},
         { name: 'version' , type:'string'},
+        { name: 'noCache' , type:'boolean'},
         { name: 'constraints' , type:'auto'} //An array of strings representing access constraints that will be shown to a user before this layer is used
     ],
 

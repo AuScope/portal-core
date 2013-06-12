@@ -45,7 +45,11 @@ Ext.define('portal.widgets.panel.KnownLayerPanel', {
         var cswRecords = record.data.cswRecords;
 
         for (var i = 0; i < cswRecords.length; i++) {
-            bboxes = bboxes.concat(cswRecords[i].get('geographicElements'));
+            if(cswRecords[i].get('noCache')==true){
+                bboxes = bboxes.concat(this.getWholeGlobeBounds());
+            }else{
+                bboxes = bboxes.concat(cswRecords[i].get('geographicElements'));
+            }
         }
 
         return bboxes;

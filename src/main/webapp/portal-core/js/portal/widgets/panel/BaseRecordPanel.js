@@ -248,7 +248,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     _spatialBoundsRenderer : function(value, metaData, record, row, col, store, gridView) {
         var spatialBounds = this.getSpatialBoundsForRecord(record);
         if (spatialBounds.length > 0 || record.internalId == 'portal-InSar-reports') {
-        	// create one for insar 
+            // create one for insar
             return this._generateHTMLIconMarkup('img/magglass.gif');
         }
 
@@ -276,12 +276,12 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      * On single click, show a highlight of all BBoxes
      */
     _spatialBoundsClickHandler : function(column, record, rowIndex, colIndex) {
-    	var spatialBoundsArray;
-    	if (record.internalId == 'portal-InSar-reports') {
-    		spatialBoundsArray = this.getWholeGlobeBounds();
-    	} else {
+        var spatialBoundsArray;
+        if (record.internalId == 'portal-InSar-reports') {
+            spatialBoundsArray = this.getWholeGlobeBounds();
+        } else {
             spatialBoundsArray = this.getSpatialBoundsForRecord(record);
-    	}
+        }
         var nonPointBounds = [];
 
         //No point showing a highlight for bboxes that are points
@@ -304,31 +304,31 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
         this.map.highlightBounds(nonPointBounds);
     },
-    
+
     /**
      * Return the max bbox for insar layer as it is a dummy CSW.
      */
     getWholeGlobeBounds : function() {
-    	var bbox = new Array();
-		bbox[0] = Ext.create('portal.util.BBox', {
-            northBoundLatitude : 90,
-            southBoundLatitude : -90,
+        var bbox = new Array();
+        bbox[0] = Ext.create('portal.util.BBox', {
+            northBoundLatitude : 85,
+            southBoundLatitude : -85,
             eastBoundLongitude : 180,
             westBoundLongitude : -180
         });
-    	return bbox;
+        return bbox;
     },
 
     /**
      * On double click, move the map so that specified bounds are visible
      */
     _spatialBoundsDoubleClickHandler : function(column, record, rowIndex, colIndex) {
-    	var spatialBoundsArray;
-    	if (record.internalId == 'portal-InSar-reports') {
-    		spatialBoundsArray = this.getWholeGlobeBounds();
-    	} else {
+        var spatialBoundsArray;
+        if (record.internalId == 'portal-InSar-reports') {
+            spatialBoundsArray = this.getWholeGlobeBounds();
+        } else {
             spatialBoundsArray = this.getSpatialBoundsForRecord(record);
-    	}
+        }
 
         if (spatialBoundsArray.length > 0) {
             var superBBox = spatialBoundsArray[0];
@@ -350,13 +350,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         //Function for testing intersection of a records's spatial bounds
         //against the current visible bounds
         var filterFn = function(rec) {
-        	var spatialBounds;
-        	if (rec.internalId == 'portal-InSar-reports') {
-        		spatialBounds = this.getWholeGlobeBounds();
-        	} else {
-                spatialBounds = this.getSpatialBoundsForRecord(rec);
-        	}
-
+            var spatialBounds;
+            spatialBounds = this.getSpatialBoundsForRecord(rec);
             for (var i = 0; i < spatialBounds.length; i++) {
                 if (spatialBounds[i].intersects(currentBounds)) {
                     return true;
