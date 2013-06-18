@@ -166,16 +166,16 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 if (wmsResources[0]) {
                     var layerSwitcherVisible=true;
                     var layerName=wmsResources[0].get('name');
-                    
+
                     // We loop over the available to controls to find the layer switcher:
                     var layerSwitcher = null;
-                    for (var i; i < this.map.controls.length; i++) {
-                        if (this.map.controls[i] instanceof OpenLayers.Control.LayerSwitcher) {
-                            layerSwitcher = this.map.controls[i];
+                    for (var y=0; y < this.map.controls.length; y++) {
+                        if (this.map.controls[y] instanceof OpenLayers.Control.LayerSwitcher) {
+                            layerSwitcher = this.map.controls[y];
                             break;
                         }
                     }
-                    
+
                     var layerSwitcherState = layerSwitcher.layerStates;
                     for (var z = 0; z < layerSwitcherState.length; z++) {
                         if (layerSwitcherState[z].name === layerName) {
@@ -183,7 +183,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                             break;
                         }
                     }
-                    
+
                     if (!layerSwitcherVisible) {
                         continue;
                     }
@@ -340,7 +340,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
         this.map.addControl(clickControl);
         clickControl.activate();
-        
+
         //VT: adds a customZoomBox which fires a afterZoom event.
         var zoomBoxCtrl = new OpenLayers.Control.ZoomBox({alwaysZoom:true,zoomOnClick:false});
         var panCtrl = new OpenLayers.Control.Navigation();
@@ -454,7 +454,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
             this.map.addControl(panel);
         }
-        
+
         //Finally listen for resize events on the parent container so we can pass the details
         //on to Openlayers.
         container.on('resize', function() {
