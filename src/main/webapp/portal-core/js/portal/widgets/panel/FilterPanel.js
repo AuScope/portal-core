@@ -101,6 +101,11 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
     clearFilter : function(){
         var layout = this.getLayout();
+        //Close active item to prevent memory leak
+        actvItem = layout.getActiveItem();
+        if (actvItem) {
+            actvItem.close();
+        }
         layout.setActiveItem(this._emptyCard);
     }
 });
