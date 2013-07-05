@@ -235,8 +235,16 @@ public class CloudStorageService {
     protected BlobStoreContext getBlobStoreContextForJob(CloudJob job) {
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
-
-        return ContextBuilder.newBuilder(provider).overrides(properties).endpoint(endpoint).credentials(accessKey, secretKey).build(BlobStoreContext.class);
+        
+        if (regionName != null) {
+            properties.setProperty("jclouds.region", regionName);
+        }
+        
+        return ContextBuilder.newBuilder(provider)
+                .overrides(properties)
+                .endpoint(endpoint)
+                .credentials(accessKey, secretKey)
+                .build(BlobStoreContext.class);
     }
 
     /**
