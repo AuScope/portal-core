@@ -102,7 +102,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     clearFilter : function(){
         var layout = this.getLayout();
         //Close active item to prevent memory leak
-        actvItem = layout.getActiveItem();
+        var actvItem = layout.getActiveItem();
         if (actvItem) {
             actvItem.close();
         }
