@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
+import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.DOMUtil;
@@ -107,6 +108,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         final String typeName = "test:typeName";
         final String srsName = "srs-name";
         final String outputFormat = "o-f";
+        final FilterBoundingBox bbox = new FilterBoundingBox("bbox-srs", new double[] {1 , 2},  new double[] {3 , 4});
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
@@ -129,6 +131,9 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, ""),"outputFormat", null));
         Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, null),"outputFormat", null));
         Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, outputFormat),"outputFormat", outputFormat));
+        
+        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (Integer)null, null, (FilterBoundingBox)null),"bbox", null));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, 99, null, bbox),"bbox", "1.0%2C2.0%2C3.0%2C4.0%2Cbbox-srs"));
     }
 
     private class MyNamespace extends WFSNamespaceContext {

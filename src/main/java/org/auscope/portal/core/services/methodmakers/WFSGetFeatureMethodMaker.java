@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
+import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 /**
@@ -210,10 +211,11 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param maxFeatures [Optional] The maximum number of features to request
      * @param srs [Optional] The spatial reference system the response should conform to
      * @param outputFormat [Optional] The format you wish the response to take
+     * @param bbox [Optional] Bounding box used to constrain request
      * @return
      * @throws URISyntaxException
      */
-    protected HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs, String outputFormat) throws URISyntaxException {
+    protected HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs, String outputFormat, FilterBoundingBox bbox) throws URISyntaxException {
         HttpGet method = new HttpGet();
 
 
@@ -233,6 +235,32 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         }
         if (srs != null) {
             builder.setParameter("srsName", srs);
+        }
+        if (bbox != null) {
+            StringBuilder sb = new StringBuilder();
+            
+            //Add lower corner points
+            for (double d : bbox.getLowerCornerPoints()) {
+                sb.append(d);
+                sb.append(',');
+            }
+            
+            //Add upper corner points
+            for (double d : bbox.getUpperCornerPoints()) {
+                sb.append(d);
+                sb.append(',');
+            }
+            
+            //And finally add the SRS (if there) otherwise just delete the superfluous ','
+            if (sb.length() > 0) {
+                if (bbox.getBboxSrs() != null && !bbox.getBboxSrs().isEmpty()) {
+                    sb.append(bbox.getBboxSrs());
+                } else {
+                    sb.deleteCharAt(sb.length() - 1);
+                }
+            }
+            
+            builder.setParameter("bbox", sb.toString());
         }
         if (resultType != null) {
             switch (resultType) {
@@ -268,7 +296,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws URISyntaxException
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, null);
+        return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, null, null);
     }
 
     /**
@@ -281,7 +309,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws URISyntaxException
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs, String outputFormat) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, outputFormat);
+        return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, outputFormat, null);
     }
 
     /**
@@ -294,7 +322,21 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws URISyntaxException
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null);
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null, null);
+    }
+    
+    /**
+     * Generates a method for requesting all instances of a specific feature type.
+     * @param serviceUrl The WFS endpoint
+     * @param typeName The typeName to query
+     * @param maxFeatures [Optional] The maximum number of features to request
+     * @param srs [Optional] The spatial reference system the response should conform to
+     * @param bbox [Optional] Bounding box used to constrain request
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs, FilterBoundingBox bbox) throws URISyntaxException {
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null, bbox);
     }
 
     /**
@@ -307,7 +349,21 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws URISyntaxException
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null);
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, null);
+    }
+    
+    /**
+     * Generates a method for requesting all instances of a specific feature type.
+     * @param serviceUrl The WFS endpoint
+     * @param typeName The typeName to query
+     * @param maxFeatures [Optional] The maximum number of features to request
+     * @param srs [Optional] The spatial reference system the response should conform to
+     * @param bbox [Optional] Bounding box used to constrain request
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs, FilterBoundingBox bbox) throws URISyntaxException {
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, bbox);
     }
 
     /**
@@ -321,7 +377,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws URISyntaxException
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, String srs) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null, srs, null);
+        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null, srs, null, null);
     }
 
     /**
@@ -335,6 +391,6 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws URISyntaxException
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs, null);
+        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs, null, null);
     }
 }
