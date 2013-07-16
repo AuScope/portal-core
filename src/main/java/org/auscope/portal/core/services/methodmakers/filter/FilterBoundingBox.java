@@ -200,6 +200,26 @@ public class FilterBoundingBox implements Serializable {
 //    }
 
     /**
+     * Utility method for creating a new FilterBoundingBox from lat/long coordinate pairs
+     * @param crs
+     * @param northBoundLatitude
+     * @param southBoundLatitude
+     * @param eastBoundLongitude
+     * @param westBoundLongitude
+     * @return
+     */
+    public static FilterBoundingBox parseFromValues(String crs, 
+            double northBoundLatitude, 
+            double southBoundLatitude, 
+            double eastBoundLongitude, 
+            double westBoundLongitude) {
+        
+        return new FilterBoundingBox(crs, 
+                new double[] {Math.min(westBoundLongitude, eastBoundLongitude), Math.min(northBoundLatitude, southBoundLatitude)}, 
+                new double[] {Math.max(westBoundLongitude, eastBoundLongitude), Math.max(northBoundLatitude, southBoundLatitude)});
+    }
+    
+    /**
      * TODO: Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
      *
      * @param obj the obj
@@ -228,17 +248,12 @@ public class FilterBoundingBox implements Serializable {
             return result;
         } else if (obj.containsKey("eastBoundLongitude") && obj.containsKey("westBoundLongitude") &&
                 obj.containsKey("northBoundLatitude") && obj.containsKey("southBoundLatitude")) {
-            FilterBoundingBox result = new FilterBoundingBox(obj.getString("crs"), null, null);
-
-            double eastBoundLongitude = obj.getDouble("eastBoundLongitude");
-            double westBoundLongitude = obj.getDouble("westBoundLongitude");
-            double northBoundLatitude = obj.getDouble("northBoundLatitude");
-            double southBoundLatitude = obj.getDouble("southBoundLatitude");
-
-            result.lowerCornerPoints = new double[] {Math.min(westBoundLongitude, eastBoundLongitude), Math.min(northBoundLatitude, southBoundLatitude)};
-            result.upperCornerPoints = new double[] {Math.max(westBoundLongitude, eastBoundLongitude), Math.max(northBoundLatitude, southBoundLatitude)};
-
-            return result;
+            
+            return parseFromValues(obj.getString("crs"), 
+                    obj.getDouble("northBoundLatitude"),
+                    obj.getDouble("southBoundLatitude"),
+                    obj.getDouble("eastBoundLongitude"),
+                    obj.getDouble("westBoundLongitude"));
         }
 
         throw new IllegalArgumentException("obj cannot be decoded");
