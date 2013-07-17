@@ -393,4 +393,25 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs, null, null);
     }
+    
+    /**
+     * Generates a method for requesting a WFS GetCapabilities response
+     * @param serviceUrl the WFS endpoint
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase makeGetCapabilitiesMethod(String serviceUrl) throws URISyntaxException {
+        HttpGet method = new HttpGet();
+
+
+        URIBuilder builder = new URIBuilder(serviceUrl);
+        builder.setParameter("service", "WFS");
+        builder.setParameter("request", "GetCapabilities");
+        builder.setParameter("version", WFS_VERSION);
+        
+        //attach them to the method
+        method.setURI(builder.build());
+
+        return method;
+    }
 }

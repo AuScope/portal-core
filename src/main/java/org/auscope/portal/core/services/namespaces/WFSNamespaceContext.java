@@ -15,5 +15,6 @@ public class WFSNamespaceContext extends IterableNamespace {
         map.put("wfs", "http://www.opengis.net/wfs");
         map.put("ogc", "http://www.opengis.net/ogc");
         map.put("gml", "http://www.opengis.net/gml");
+        map.put("ows", "http://www.opengis.net/ows");
     }
 }

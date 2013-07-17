@@ -2,6 +2,7 @@ package org.auscope.portal.core.services;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.util.Properties;
 
 
@@ -10,6 +11,7 @@ import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
+import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
@@ -168,5 +170,63 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
 
+    @Test
+    public void testGetCapabilities() throws Exception {
+        final String responseString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wfs/GetCapabilitiesResponse.xml");
+        final String wfsUrl = "http://example.org/wfs";
+        
+        context.checking(new Expectations() {{
+            oneOf(mockMethodMaker).makeGetCapabilitiesMethod(wfsUrl);will(returnValue(mockMethod));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);will(returnValue(responseString));
+            oneOf(mockMethod).releaseConnection();
+        }});
+        
+        WFSGetCapabilitiesResponse response = service.getCapabilitiesResponse(wfsUrl);
+        Assert.assertNotNull(response);
+        Assert.assertArrayEquals(new String[] {
+                "ga:aemsurveys",
+                "ga:gravitypoints"
+        }, response.getFeatureTypes());
+        Assert.assertArrayEquals(new String[] {
+                "text/xml; subtype=gml/3.1.1",
+                "GML2",
+                "SHAPE-ZIP",
+                "application/gml+xml; version=3.2",
+                "application/json",
+                "csv",
+                "gml3",
+                "gml32",
+                "json",
+                "text/xml; subtype=gml/2.1.2",
+                "text/xml; subtype=gml/3.2"
+        }, response.getGetFeatureOutputFormats());
+    }
+    
+    @Test(expected=PortalServiceException.class)
+    public void testGetCapabilities_ServiceResponseError() throws Exception {
+        final String responseString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
+        final String wfsUrl = "http://example.org/wfs";
+        
+        context.checking(new Expectations() {{
+            oneOf(mockMethodMaker).makeGetCapabilitiesMethod(wfsUrl);will(returnValue(mockMethod));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);will(returnValue(responseString));
+            oneOf(mockMethod).releaseConnection();
+        }});
+        
+        service.getCapabilitiesResponse(wfsUrl);
+    }
+    
+    @Test(expected=PortalServiceException.class)
+    public void testGetCapabilities_ServiceConnectionError() throws Exception {
+        final String wfsUrl = "http://example.org/wfs";
+        
+        context.checking(new Expectations() {{
+            oneOf(mockMethodMaker).makeGetCapabilitiesMethod(wfsUrl);will(returnValue(mockMethod));
+            oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);will(throwException(new ConnectException()));
+            oneOf(mockMethod).releaseConnection();
+        }});
+        
+        service.getCapabilitiesResponse(wfsUrl);
+    }
 
 }

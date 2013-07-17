@@ -14,11 +14,13 @@ import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.Re
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
+import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
 import org.auscope.portal.core.util.DOMUtil;
 import org.auscope.portal.core.xslt.PortalXSLTTransformer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * An abstract base class containing common functionality for all Service classes
@@ -144,5 +146,48 @@ public abstract class BaseWFSService {
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
+    }
+    
+    public WFSGetCapabilitiesResponse getCapabilitiesResponse(String wfsUrl) throws PortalServiceException {
+        HttpRequestBase method = null;
+        
+        try {
+            //Make WFS request
+            method = wfsMethodMaker.makeGetCapabilitiesMethod(wfsUrl);
+            String responseString = httpServiceCaller.getMethodResponseAsString(method);
+            
+            //Parse resulting XML
+            Document responseDoc = DOMUtil.buildDomFromString(responseString);
+            OWSExceptionParser.checkForExceptionResponse(responseDoc);
+            
+            WFSGetCapabilitiesResponse parsedGetCap = new WFSGetCapabilitiesResponse();
+            
+            //Get the output formats
+            XPathExpression xPathGetOf = DOMUtil.compileXPathExpr("wfs:WFS_Capabilities/ows:OperationsMetadata/ows:Operation[@name=\"GetFeature\"]/ows:Parameter[@name=\"outputFormat\"]/ows:Value", new WFSNamespaceContext());
+            NodeList formatNodes = (NodeList) xPathGetOf.evaluate(responseDoc, XPathConstants.NODESET);
+            String[] outputFormats = new String[formatNodes.getLength()];
+            for (int i = 0; i < formatNodes.getLength(); i++) {
+                outputFormats[i] = formatNodes.item(i).getTextContent();
+            }
+            parsedGetCap.setGetFeatureOutputFormats(outputFormats);
+            
+            //Get feature type names
+            XPathExpression xPathGetTn = DOMUtil.compileXPathExpr("wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Name", new WFSNamespaceContext());
+            NodeList nameNodes = (NodeList) xPathGetTn.evaluate(responseDoc, XPathConstants.NODESET);
+            String[] typeNames = new String[nameNodes.getLength()];
+            for (int i = 0; i < nameNodes.getLength(); i++) {
+                typeNames[i] = nameNodes.item(i).getTextContent();
+            }
+            parsedGetCap.setFeatureTypes(typeNames);
+            
+            return parsedGetCap;
+        } catch (Exception e) {
+            throw new PortalServiceException(method, e);
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
+        }
+        
     }
 }

@@ -85,6 +85,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, featureId, srsName),"version", expectedVersion));
         Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, filterString, maxFeatures, srsName),"version", expectedVersion));
         Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits),"version", expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl),"version", expectedVersion));
     }
 
     /**
@@ -135,6 +136,22 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (Integer)null, null, (FilterBoundingBox)null),"bbox", null));
         Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, 99, null, bbox),"bbox", "1.0%2C2.0%2C3.0%2C4.0%2Cbbox-srs"));
     }
+    
+    /**
+     * Ensure the GetCapabilities statement is well formed as per OGC specifications
+     * @throws Exception
+     */
+    @Test
+    public void testGetCap() throws Exception {
+        final String serviceUrl = "http://example.url";
+
+        WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
+
+        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl),"service", "WFS"));
+        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl),"version", WFSGetFeatureMethodMaker.WFS_VERSION));
+        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl),"request", "GetCapabilities"));
+    }
+    
 
     private class MyNamespace extends WFSNamespaceContext {
         public MyNamespace() {
