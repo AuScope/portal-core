@@ -365,6 +365,21 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs, FilterBoundingBox bbox) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, bbox);
     }
+    
+    /**
+     * Generates a method for requesting all instances of a specific feature type.
+     * @param serviceUrl The WFS endpoint
+     * @param typeName The typeName to query
+     * @param maxFeatures [Optional] The maximum number of features to request
+     * @param srs [Optional] The spatial reference system the response should conform to
+     * @param bbox [Optional] Bounding box used to constrain request
+     * @param outputFormat [Optional] The output format the response should takew
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs, FilterBoundingBox bbox, String outputFormat) throws URISyntaxException {
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, outputFormat, bbox);
+    }
 
     /**
      * Generates a method for requesting all instances of a specific feature type that pass a CQL filter.
@@ -396,7 +411,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     
     /**
      * Generates a method for requesting a WFS GetCapabilities response
-     * @param serviceUrl the WFS endpoint
+     * @param serviceUrl
      * @return
      * @throws URISyntaxException
      */
