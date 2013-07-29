@@ -22,6 +22,7 @@ import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWOnlineResourceImpl;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
+import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
 
 /**
  * A service for creating a cache of all keywords at a CSW.
@@ -67,7 +68,9 @@ public class CSWCacheService {
     protected HttpServiceCaller serviceCaller;
     protected Executor executor;
     protected CSWServiceItem[] cswServiceList;
-
+    protected CSWRecordTransformerFactory transformerFactory;
+    
+    
     // An array of CSWServiceItems that have noCache==true. These ones will only be loaded when explicitly requested.
     // It is useful for CSWServiceItems (i.e. endpoints) that have too many records to load at once.
     protected CSWServiceItem[] deferredCacheCSWServiceList;
@@ -76,7 +79,6 @@ public class CSWCacheService {
     /** If true, this class will force the usage of HTTP GetMethods instead of POST methods (where possible). Useful workaround for some CSW services */
     protected boolean forceGetMethods = false;
     protected Date lastCacheUpdate;
-
 
     /**
      * Creates a new instance of a CSWKeywordCacheService. This constructor is normally autowired
@@ -90,12 +92,29 @@ public class CSWCacheService {
     public CSWCacheService(Executor executor,
                       HttpServiceCaller serviceCaller,
                       ArrayList cswServiceList) {
+        this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory());
+    }
+                      
+
+    /**
+     * Creates a new instance of a CSWKeywordCacheService. This constructor is normally autowired
+     * by the spring framework.
+     *
+     * @param executor A thread executor that will be used to manage multiple simultaneous CSW requests
+     * @param serviceCaller Will be involved in actually making a HTTP request
+     * @param cswServiceList Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
+     * @throws Exception
+     */
+    public CSWCacheService(Executor executor,
+                      HttpServiceCaller serviceCaller,
+                      ArrayList cswServiceList,
+                      CSWRecordTransformerFactory transformerFactory) {
         this.updateRunning = false;
         this.executor = executor;
         this.serviceCaller = serviceCaller;
         this.keywordCache = new HashMap<String, Set<CSWRecord>>();
         this.recordCache = new ArrayList<CSWRecord>();
-
+        this.transformerFactory = transformerFactory;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
         for (int i = 0; i < cswServiceList.size(); i++) {
             this.cswServiceList[i] = (CSWServiceItem) cswServiceList.get(i);
@@ -292,7 +311,7 @@ public class CSWCacheService {
             this.newRecordCache = newRecordCache;
             this.finishedExecution = false;
 
-            this.cswService = new CSWService(this.endpoint, serviceCaller, this.parent.forceGetMethods);
+            this.cswService = new CSWService(this.endpoint, serviceCaller, this.parent.forceGetMethods, this.parent.transformerFactory);
         }
 
         /**

@@ -35,14 +35,30 @@ public class CSWGetRecordResponse {
     private Map<String, CSWRecord> cswRecordLookupMap = new HashMap<String, CSWRecord>();
     /** A list object that stores orphan CSWRecord objects */
     private List<CSWRecord> stagingOrphanRecords = new ArrayList<CSWRecord>();
-
+    
     /**
      * Creates a new instance from the specified record response by parsing its contents
+     * 
+     * The contents will be parsed according to a normal CSWRecordTransformerFactory
+     * 
      * @param getRecordResponse an XML CSW GetRecords response parsed into a DOM tree
      * @param origin Where the getRecordResponse has originated from
      * @throws XPathExpressionException
      */
     public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse) throws XPathExpressionException {
+        this(origin, getRecordResponse, new CSWRecordTransformerFactory());
+    }
+    
+    /**
+     * Creates a new instance from the specified record response by parsing its contents
+     * 
+     * The contents will be parsed according to the rules set out by the CSWRecordTransformerFactory
+     * 
+     * @param getRecordResponse an XML CSW GetRecords response parsed into a DOM tree
+     * @param origin Where the getRecordResponse has originated from
+     * @throws XPathExpressionException
+     */
+    public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse, CSWRecordTransformerFactory cswRecordTransformerFactory) throws XPathExpressionException {
         //These cannot be static pre-compiled expressions as they are NOT threadsafe
         CSWNamespaceContext nc = new CSWNamespaceContext();
         XPathExpression exprRecordsMatched = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsMatched", nc);
@@ -70,7 +86,7 @@ public class CSWGetRecordResponse {
 
         for (int i=0; i<nodes.getLength(); i++ ) {
             Node metadataNode = nodes.item(i);
-            CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
+            CSWRecordTransformer transformer = cswRecordTransformerFactory.newCSWRecordTransformer(metadataNode);
             CSWRecord newRecord = transformer.transformToCSWRecord();
             newRecord.setRecordInfoUrl(String.format(origin.getRecordInformationUrl(), newRecord.getFileIdentifier()));
             records.add(newRecord);

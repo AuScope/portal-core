@@ -17,6 +17,7 @@ import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecord
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
+import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 
@@ -33,6 +34,7 @@ public class CSWFilterService {
     private HttpServiceCaller serviceCaller;
     private Executor executor;
     private CSWServiceItem[] cswServiceList;
+    private CSWRecordTransformerFactory transformerFactory;
 
     /**
      * Creates a new instance of a CSWFilterService. This constructor is normally autowired
@@ -46,9 +48,26 @@ public class CSWFilterService {
     public CSWFilterService(Executor executor,
                       HttpServiceCaller serviceCaller,
                       ArrayList cswServiceList) {
+        this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory());
+    }
+    
+    /**
+     * Creates a new instance of a CSWFilterService. This constructor is normally autowired
+     * by the spring framework.
+     *
+     * @param executor A thread executor that will be used to manage multiple simultaneous CSW requests
+     * @param serviceCaller Will be involved in actually making a HTTP request
+     * @param cswServiceList Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
+     * @throws Exception
+     */
+    public CSWFilterService(Executor executor,
+                      HttpServiceCaller serviceCaller,
+                      ArrayList cswServiceList,
+                      CSWRecordTransformerFactory transformerFactory) {
         this.executor = executor;
         this.serviceCaller = serviceCaller;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
+        this.transformerFactory = transformerFactory;
         for (int i = 0; i < cswServiceList.size(); i++) {
             this.cswServiceList[i] = (CSWServiceItem) cswServiceList.get(i);
         }
@@ -74,7 +93,7 @@ public class CSWFilterService {
             InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
 
-            return new CSWGetRecordResponse(serviceItem, responseDoc);
+            return new CSWGetRecordResponse(serviceItem, responseDoc, transformerFactory);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
@@ -145,7 +164,7 @@ public class CSWFilterService {
             CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
             try {
                 Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-                responses.add(new CSWGetRecordResponse(origin, responseDoc));
+                responses.add(new CSWGetRecordResponse(origin, responseDoc, transformerFactory));
             } catch (Exception ex) {
                 throw new PortalServiceException(null, "Error parsing response document", ex);
             }
@@ -202,7 +221,7 @@ public class CSWFilterService {
             InputStream responseStream = dsc.next();
             CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-            CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc);
+            CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc, transformerFactory);
 
             count += response.getRecordsMatched();
         }

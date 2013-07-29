@@ -29,14 +29,14 @@ import org.w3c.dom.NodeList;
  */
 public class CSWRecordTransformer {
     public static final String TEMPLATE_FILE = "MD_MetadataTemplate.xml";
-    private final Log logger = LogFactory.getLog(getClass());
+    protected final Log logger = LogFactory.getLog(getClass());
 
-    private Document document;
-    private Node mdMetadataNode;
+    protected Document document;
+    protected Node mdMetadataNode;
 
-    private static final String DATEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
+    protected static final String DATEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
 
-    private static final CSWNamespaceContext nc = new CSWNamespaceContext();
+    protected static final CSWNamespaceContext nc = new CSWNamespaceContext();
     private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
     private static final String SERVICETITLEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
     private static final String DATAIDENTIFICATIONABSTRACTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString";
@@ -92,7 +92,7 @@ public class CSWRecordTransformer {
      * @param name The name of this node
      * @return
      */
-    private Element createChildNode(final Node parent, final String namespaceUri, final String name) {
+    protected Element createChildNode(final Node parent, final String namespaceUri, final String name) {
         Element child = this.document.createElementNS(namespaceUri, name);
 
         parent.appendChild(child);
@@ -107,7 +107,7 @@ public class CSWRecordTransformer {
      * @param name
      * @param value
      */
-    private void appendChildDate(final Node parent, final String namespaceUri, final String name, final Date value) {
+    protected void appendChildDate(final Node parent, final String namespaceUri, final String name, final Date value) {
         Element child = createChildNode(parent, namespaceUri, name);
         Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "DateTime");
 
@@ -126,7 +126,7 @@ public class CSWRecordTransformer {
      * @param name
      * @param value
      */
-    private void appendChildDecimal(final Node parent, final String namespaceUri, final String name, final double value) {
+    protected void appendChildDecimal(final Node parent, final String namespaceUri, final String name, final double value) {
         Element child = createChildNode(parent, namespaceUri, name);
         Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "Decimal");
         characterStr.setTextContent(Double.toString(value));
@@ -139,7 +139,7 @@ public class CSWRecordTransformer {
      * @param name
      * @param value
      */
-    private void appendChildCharacterString(final Node parent, final String namespaceUri, final String name, final String value) {
+    protected void appendChildCharacterString(final Node parent, final String namespaceUri, final String name, final String value) {
         Element child = createChildNode(parent, namespaceUri, name);
         Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "CharacterString");
         if (value == null || value.isEmpty()) {
@@ -156,7 +156,7 @@ public class CSWRecordTransformer {
      * @param name
      * @param geoEl
      */
-    private void appendChildExtent(final Node parent, final String namespaceUri, final String name, final CSWGeographicBoundingBox bbox) {
+    protected void appendChildExtent(final Node parent, final String namespaceUri, final String name, final CSWGeographicBoundingBox bbox) {
         Node child = createChildNode(parent, namespaceUri, name);
         Node exExtent = createChildNode(child, nc.getNamespaceURI("gmd"), "EX_Extent");
 
@@ -176,7 +176,7 @@ public class CSWRecordTransformer {
      * @param name
      * @param resource
      */
-    private void appendChildOnlineResource(final Node parent, final String namespaceUri, final String name, final AbstractCSWOnlineResource onlineResource) {
+    protected void appendChildOnlineResource(final Node parent, final String namespaceUri, final String name, final AbstractCSWOnlineResource onlineResource) {
         Node child = createChildNode(parent, namespaceUri, name);
         Node ciOnlineResource = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_OnlineResource");
 
@@ -265,7 +265,7 @@ public class CSWRecordTransformer {
      * @return
      * @throws XPathExpressionException
      */
-    public final Node transformToNode(final CSWRecord record) throws XPathExpressionException {
+    public Node transformToNode(final CSWRecord record) throws XPathExpressionException {
         Node root = this.mdMetadataNode.cloneNode(false);
 
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "fileIdentifier", record.getFileIdentifier());
@@ -396,7 +396,7 @@ public class CSWRecordTransformer {
      * @return
      * @throws XPathExpressionException
      */
-    private String evalXPathString(final Node node, final String xPath) throws XPathExpressionException {
+    protected String evalXPathString(final Node node, final String xPath) throws XPathExpressionException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (String) expression.evaluate(node, XPathConstants.STRING);
     }
@@ -409,7 +409,7 @@ public class CSWRecordTransformer {
      * @return
      * @throws XPathExpressionException
      */
-    private NodeList evalXPathNodeList(final Node node, final String xPath) throws XPathExpressionException {
+    protected NodeList evalXPathNodeList(final Node node, final String xPath) throws XPathExpressionException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (NodeList) expression.evaluate(node, XPathConstants.NODESET);
     }
@@ -422,7 +422,7 @@ public class CSWRecordTransformer {
      * @return
      * @throws XPathExpressionException
      */
-    private Node evalXPathNode(final Node node, final String xPath) throws XPathExpressionException {
+    protected Node evalXPathNode(final Node node, final String xPath) throws XPathExpressionException {
         XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (Node) expression.evaluate(node, XPathConstants.NODE);
     }
@@ -468,9 +468,19 @@ public class CSWRecordTransformer {
      * @return
      * @throws XPathExpressionException
      */
-    public final CSWRecord transformToCSWRecord() throws XPathExpressionException {
-        CSWRecord record = new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0], new CSWGeographicElement[0]);
-
+    public CSWRecord transformToCSWRecord() throws XPathExpressionException {
+        return transformToCSWRecord(new CSWRecord("", "", "", "", new AbstractCSWOnlineResource[0], new CSWGeographicElement[0]));
+    }
+    
+    /**
+     * Writes to an existing CSWRecord instance with data parsed from the internal template of this class
+     *
+     * Throws an exception if the internal template cannot be parsed correctly
+     *
+     * @return
+     * @throws XPathExpressionException
+     */
+    protected CSWRecord transformToCSWRecord(CSWRecord record) throws XPathExpressionException {
         NodeList tempNodeList = null;
 
         //Parse our simple strings

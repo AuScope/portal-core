@@ -10,6 +10,7 @@ import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecord
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
+import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
@@ -28,13 +29,14 @@ public class CSWService {
     private CSWServiceItem endpoint;
     private HttpServiceCaller serviceCaller;
     private boolean forceGetMethods;
-
-    public CSWService(CSWServiceItem endpoint, HttpServiceCaller serviceCaller, boolean forceGetMethods) {
+    private CSWRecordTransformerFactory transformerFactory;
+    
+    public CSWService(CSWServiceItem endpoint, HttpServiceCaller serviceCaller, boolean forceGetMethods, CSWRecordTransformerFactory transformerFactory) {
         this.endpoint = endpoint;
         this.serviceCaller = serviceCaller;
         this.forceGetMethods = forceGetMethods;
-
         this.methodMaker = new CSWMethodMakerGetDataRecords();
+        this.transformerFactory = transformerFactory;
     }
 
     public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength) throws Exception {
@@ -63,6 +65,6 @@ public class CSWService {
         // Parse the response into newCache (remember that maps are NOT thread safe)
         Document responseDocument = DOMUtil.buildDomFromStream(responseStream);
         OWSExceptionParser.checkForExceptionResponse(responseDocument);
-        return new CSWGetRecordResponse(this.endpoint, responseDocument);
+        return new CSWGetRecordResponse(this.endpoint, responseDocument, transformerFactory);
     }
 }

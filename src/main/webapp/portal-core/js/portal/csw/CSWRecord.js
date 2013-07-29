@@ -24,6 +24,7 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'recordInfoUrl' , type:'string'},
         { name: 'version' , type:'string'},
         { name: 'noCache' , type:'boolean'},
+        { name: 'extensions', type:'auto'}, //A normally undefined object. CSWRecord can be extended by filling in this field.
         { name: 'constraints' , type:'auto'} //An array of strings representing access constraints that will be shown to a user before this layer is used
     ],
 
