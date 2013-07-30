@@ -95,3 +95,7 @@
 .data {
     background-image:url(../img/binary-small.png) !important;
 }
+
+.edit {
+    background-image: url("../img/edit.png") !important
+}
