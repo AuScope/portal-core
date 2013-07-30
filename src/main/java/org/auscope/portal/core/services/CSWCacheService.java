@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -439,47 +440,11 @@ public class CSWCacheService {
                     int startPosition = 1;
 
                     // Request page after page of CSWRecords until we've iterated the entire store
+                    HashMap<String, CSWRecord> cswRecordMap = new HashMap<String, CSWRecord>();
                     do {
                         CSWGetRecordResponse response = this.cswService.queryCSWEndpoint(startPosition, MAX_QUERY_LENGTH);
-
-                        synchronized(newKeywordCache) {
-                            synchronized(newRecordCache) {
-                                for (CSWRecord record : response.getRecords()) {
-                                    boolean recordMerged = false;
-
-                                    //Firstly we may possibly merge this
-                                    //record into an existing record IF particular keywords
-                                    //are present. In this case, record will be discarded (its contents
-                                    //already found their way into an existing record)
-                                    //Hence we need to perform this step first
-                                    for (String keyword : record.getDescriptiveKeywords()) {
-                                        if (keyword == null || keyword.isEmpty()) {
-                                            continue;
-                                        }
-
-                                        //If we have an 'association keyword', look for existing records
-                                        //to merge this record's contents in to.
-                                        if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
-                                            Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
-                                            if (existingRecs != null && !existingRecs.isEmpty()) {
-                                                mergeRecords(existingRecs.iterator().next(), record, newKeywordCache);
-                                                recordMerged = true;
-                                            }
-                                        }
-                                    }
-
-                                    //If the record was NOT merged into an existing record we then update the record cache
-                                    if (!recordMerged) {
-                                        //Update the keyword cache
-                                        for (String keyword : record.getDescriptiveKeywords()) {
-                                            addToKeywordCache(keyword, record, newKeywordCache);
-                                        }
-
-                                        //Add record to record list
-                                        newRecordCache.add(record);
-                                    }
-                                }
-                            }
+                        for (CSWRecord rec : response.getRecords()) {
+                            cswRecordMap.put(rec.getFileIdentifier(), rec);
                         }
 
                         log.trace(String.format("%1$s - Response parsed!", this.endpoint.getServiceUrl()));
@@ -492,6 +457,65 @@ public class CSWCacheService {
                             startPosition = response.getNextRecord();
                         }
                     } while (startPosition > 0);
+                    
+                    
+                    //Iterate the cswRecordMap resolving parent/children relationships
+                    //children will NOT be removed from the map
+                    for (Iterator<String> i = cswRecordMap.keySet().iterator(); i.hasNext();) {
+                        CSWRecord next = cswRecordMap.get(i.next());
+                        
+                        String parentId = next.getParentIdentifier();
+                        if (parentId != null && !parentId.isEmpty()) {
+                            CSWRecord parent = cswRecordMap.get(parentId);
+                            if (parent == null) {
+                                log.debug(String.format("Record '%1$s' is an orphan referencing non existent parent '%2$s'", next.getFileIdentifier(), parentId));
+                            } else {
+                                parent.addChildRecord(next);
+                            }
+                        }
+                    }
+                    
+                    //After parent/children have been linked, begin the keyword merging and extraction
+                    synchronized(newKeywordCache) {
+                        synchronized(newRecordCache) {
+                            for (CSWRecord record : cswRecordMap.values()) {
+                                boolean recordMerged = false;
+
+                                //Firstly we may possibly merge this
+                                //record into an existing record IF particular keywords
+                                //are present. In this case, record will be discarded (its contents
+                                //already found their way into an existing record)
+                                //Hence we need to perform this step first
+                                for (String keyword : record.getDescriptiveKeywords()) {
+                                    if (keyword == null || keyword.isEmpty()) {
+                                        continue;
+                                    }
+
+                                    //If we have an 'association keyword', look for existing records
+                                    //to merge this record's contents in to.
+                                    if (keyword.startsWith(KEYWORD_MERGE_PREFIX)) {
+                                        Set<CSWRecord> existingRecs = newKeywordCache.get(keyword);
+                                        if (existingRecs != null && !existingRecs.isEmpty()) {
+                                            mergeRecords(existingRecs.iterator().next(), record, newKeywordCache);
+                                            recordMerged = true;
+                                        }
+                                    }
+                                }
+
+                                //If the record was NOT merged into an existing record we then update the record cache
+                                if (!recordMerged) {
+                                    //Update the keyword cache
+                                    for (String keyword : record.getDescriptiveKeywords()) {
+                                        addToKeywordCache(keyword, record, newKeywordCache);
+                                    }
+
+                                    //Add record to record list
+                                    newRecordCache.add(record);
+                                }
+                            }
+                        }
+                    }
+                    
                 }
             } catch (Exception ex) {
                 log.warn(String.format("Error updating keyword cache for '%1$s': %2$s",this.endpoint.getServiceUrl(), ex));

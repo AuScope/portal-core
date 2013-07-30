@@ -539,4 +539,75 @@ public class TestCSWCacheService extends PortalTestClass {
         //Ensure that our internal state is set to NOT RUNNING AN UPDATE
         Assert.assertFalse(this.cswCacheService.updateRunning);
     }
+    
+    /**
+     * Tests that getting a parent and child on different CSW pages will still result in the parent/child
+     * being preserved
+     * @throws Exception
+     */
+    @Test
+    public void testPagedParentChildren() throws Exception {
+        final String moreRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_ChildRecord.xml");
+        final String noMoreRecordsString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_ParentRecord.xml");
+        final ByteArrayInputStream t1r1 = new ByteArrayInputStream(moreRecordsString.getBytes());
+        final ByteArrayInputStream t1r2 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
+
+        final Sequence t1Sequence = context.sequence("t1Sequence");
+        final Sequence t2Sequence = context.sequence("t2Sequence");
+        final Sequence t3Sequence = context.sequence("t3Sequence");
+
+        final int totalRequestsMade = CONCURRENT_THREADS_TO_RUN + 2;
+
+        context.checking(new Expectations() {{
+            //Thread 1 will make 2 requests
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+            inSequence(t1Sequence);
+            will(returnValue(t1r1));
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 1), null)));
+            inSequence(t1Sequence);
+            will(returnValue(t1r2));
+
+            //Thread 2 will just fail
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+            inSequence(t2Sequence);
+            will(throwException(new ConnectException()));
+
+            //Thread 3 will just fail
+            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+            inSequence(t3Sequence);
+            will(throwException(new ConnectException()));
+        }});
+
+        //Start our updating and wait for our threads to finish
+        Assert.assertTrue(this.cswCacheService.updateCache());
+        Thread.sleep(50);
+        try {
+            threadExecutor.getExecutorService().shutdown();
+            threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
+        } catch (Exception ex) {
+            threadExecutor.getExecutorService().shutdownNow();
+            Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
+        }
+
+        //Check that we have a 2 records, one of which has a child
+        List<CSWRecord> records = cswCacheService.getRecordCache();
+        Assert.assertNotNull(records);
+        Assert.assertEquals(2, records.size());
+        
+        CSWRecord parent = null;
+        CSWRecord child = null;
+        for (CSWRecord rec : records) {
+            if (rec.getFileIdentifier().equals("ANZCW0503900100")) {
+                parent = rec;
+            }
+            if (rec.getFileIdentifier().equals("f634510e-c157-4691-888f-c84c69d2a586")) {
+                child = rec;
+            }
+        }
+        Assert.assertNotNull(parent);
+        Assert.assertNotNull(child);
+        
+        Assert.assertEquals(1, parent.getChildRecords().length);
+        Assert.assertSame(child, parent.getChildRecords()[0]);
+    }
 }

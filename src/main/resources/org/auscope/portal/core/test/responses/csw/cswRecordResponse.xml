@@ -4,7 +4,7 @@
   <csw:SearchResults numberOfRecordsMatched="30" numberOfRecordsReturned="15" elementSet="full" nextRecord="16">
     <gmd:MD_Metadata xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:csw="http://www.opengis.net/cat/csw/2.0.2">
       <gmd:fileIdentifier>
-        <gco:CharacterString>944e1417-83ca-4d62-b4b1-f3f4a5292b4d</gco:CharacterString>
+        <gco:CharacterString>2e6650ec-d3d4-4aab-be7f-ebfb60441073</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -304,7 +304,7 @@ Also, no spatial data are provided for 1:50,000 scale GeologicUnits.</gco:Charac
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:xlink="http://www.w3.org/1999/xlink">
       <gmd:fileIdentifier>
-        <gco:CharacterString>055484f0-9a74-44a2-a720-2bcd23b7cb1b</gco:CharacterString>
+        <gco:CharacterString>e544d2e1-486d-480c-829b-7697808dd4c5</gco:CharacterString>
 
       </gmd:fileIdentifier>
       <gmd:language>
@@ -588,7 +588,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:xlink="http://www.w3.org/1999/xlink">
       <gmd:fileIdentifier>
-        <gco:CharacterString>5b3c4dbf-ebc5-49df-941a-72c9bfda1c52</gco:CharacterString>
+        <gco:CharacterString>f2c49bc1-28f5-4ae9-b5c3-187033b36be0</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -824,7 +824,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
 
     <gmd:MD_Metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xsi:schemaLocation="http://www.isotc211.org/2005/gmd http://www.isotc211.org/2005/gmd/gmd.xsd http://www.isotc211.org/2005/srv http://schemas.opengis.net/iso/19139/20060504/srv/srv.xsd">
         <gmd:fileIdentifier xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:srv="http://www.isotc211.org/2005/srv">
-            <gco:CharacterString>ANZCW0503900100</gco:CharacterString>
+            <gco:CharacterString>3d3808cb-49db-4ab7-ace7-e8cd17e03217</gco:CharacterString>
         </gmd:fileIdentifier>
         <gmd:language>
             <gco:CharacterString>eng</gco:CharacterString>
@@ -1399,7 +1399,7 @@ Also, no spatial data are provided for 1:50,000 scale ShearDisplacementStructure
 
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:xlink="http://www.w3.org/1999/xlink">
       <gmd:fileIdentifier>
-        <gco:CharacterString>7f70fa18-c154-442c-8c4c-d67097b4a71f</gco:CharacterString>
+        <gco:CharacterString>725c0ca7-1663-4d8e-91d8-dfccdb2025cb</gco:CharacterString>
 
       </gmd:fileIdentifier>
       <gmd:language>
@@ -1630,7 +1630,7 @@ MiningFeatureOccurrence features from PIRSA's GeoData database.</gco:CharacterSt
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:geonet="http://www.fao.org/geonetwork" xmlns:xlink="http://www.w3.org/1999/xlink">
       <gmd:fileIdentifier>
 
-        <gco:CharacterString>1fb5ba91-ff32-49d4-9fb6-6a80abb6667b</gco:CharacterString>
+        <gco:CharacterString>0e193586-6529-4f51-b029-7bbb4ee6e73d</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -1913,7 +1913,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString>57890840-ab87-4fd5-8171-8fbead8064a1</gco:CharacterString>
+        <gco:CharacterString>503e9100-b664-4509-ad04-30808fe7e555</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -2132,7 +2132,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString>2b2dfbcd-080a-4521-be66-2810d1a8d4c8</gco:CharacterString>
+        <gco:CharacterString>b161a8d1-b7dd-4c0d-8c39-7f4344ac4a0b</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -2351,7 +2351,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString>2b5a0e23-6a5d-45f9-905a-79860b55d12c</gco:CharacterString>
+        <gco:CharacterString>dad4ddd4-3634-409b-8ff7-830a1a0e5b19</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -2570,7 +2570,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString>3603679a-ae06-4d3f-9068-c9cbe88f99ee</gco:CharacterString>
+        <gco:CharacterString>0eb77389-b809-4b65-911a-fd13085dd359</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -2810,7 +2810,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString>5856a4cf-d479-4ff0-8569-d49f22d82700</gco:CharacterString>
+        <gco:CharacterString>14b61a79-cfb3-4d0b-9b67-d108c72604aa</gco:CharacterString>
 
       </gmd:fileIdentifier>
       <gmd:language>
@@ -3051,7 +3051,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gml="http://www.opengis.net/gml" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString xmlns:srv="http://www.isotc211.org/2005/srv">567ff41b-c9c4-4576-81c1-f9974c616413</gco:CharacterString>
+        <gco:CharacterString xmlns:srv="http://www.isotc211.org/2005/srv">7a04905a-32ce-4914-b774-250c6e5121da</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -3461,7 +3461,7 @@ Also, no spatial data are provided for 1:50,000 scale Contacts.</gco:CharacterSt
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gml="http://www.opengis.net/gml" xmlns:srv="http://www.isotc211.org/2005/srv" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString>c55e4212-ecf7-4261-8c89-384f7eb65bd5</gco:CharacterString>
+        <gco:CharacterString>047a8004-b70b-40e0-8dca-0e14668d8b90</gco:CharacterString>
 
       </gmd:fileIdentifier>
       <gmd:language>
@@ -3787,7 +3787,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString>7c0dcd76-60bd-46d8-ade1-5e83362bb44a</gco:CharacterString>
+        <gco:CharacterString>6e37afae-83ad-40cf-bc75-e935851e436b</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
@@ -3937,7 +3937,7 @@ The ISO19139/119 metadata standard is the preferred metadata standard
     </gmd:MD_Metadata>
     <gmd:MD_Metadata xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:gts="http://www.isotc211.org/2005/gts" xmlns:gml="http://www.opengis.net/gml" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:geonet="http://www.fao.org/geonetwork">
       <gmd:fileIdentifier>
-        <gco:CharacterString>a1412126-fde3-4f3b-8f40-95c48e484514</gco:CharacterString>
+        <gco:CharacterString>642d35fd-8ef0-4b33-a951-a3b1f2e89a89</gco:CharacterString>
       </gmd:fileIdentifier>
       <gmd:language>
         <gco:CharacterString>eng</gco:CharacterString>
