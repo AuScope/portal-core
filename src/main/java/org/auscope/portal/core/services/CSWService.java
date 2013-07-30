@@ -31,6 +31,23 @@ public class CSWService {
     private boolean forceGetMethods;
     private CSWRecordTransformerFactory transformerFactory;
     
+    /**
+     * Creates a new instance with a new CSWRecordTransformerFactory instance
+     * @param endpoint
+     * @param serviceCaller
+     * @param forceGetMethods
+     */
+    public CSWService(CSWServiceItem endpoint, HttpServiceCaller serviceCaller, boolean forceGetMethods) {
+        this(endpoint, serviceCaller, forceGetMethods, new CSWRecordTransformerFactory());
+    }
+    
+    /**
+     * Creates a new instance with a configurable CSWRecordTransformerFactory instance
+     * @param endpoint
+     * @param serviceCaller
+     * @param forceGetMethods
+     * @param transformerFactory
+     */
     public CSWService(CSWServiceItem endpoint, HttpServiceCaller serviceCaller, boolean forceGetMethods, CSWRecordTransformerFactory transformerFactory) {
         this.endpoint = endpoint;
         this.serviceCaller = serviceCaller;
