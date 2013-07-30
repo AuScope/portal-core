@@ -2,12 +2,10 @@
  * A display field extension that makes the data component
  * of the field the most prominent (compared to the actual label).
  *
- * This field is dependent on the css defined in portal-ux.css
- *
- * Also has support for rendering units of measure.
+ * This particular display field is specialised into rendering an image as the data component
  */
-Ext.define('portal.widgets.field.DataDisplayField', {
-    alias : 'widget.datadisplayfield',
+Ext.define('portal.widgets.field.ImageDisplayField', {
+    alias : 'widget.imagedisplayfield',
     extend : 'Ext.form.field.Display',
 
     /**
@@ -15,24 +13,23 @@ Ext.define('portal.widgets.field.DataDisplayField', {
      */
     hideLabel : true,
 
-    fieldCls: Ext.baseCSSPrefix + 'form-value-field',
-    labelCls: Ext.baseCSSPrefix + 'form-value-field-label',
-    uomCls : Ext.baseCSSPrefix + 'form-value-field-uom',
+    fieldCls: Ext.baseCSSPrefix + 'form-image-field',
+    labelCls: Ext.baseCSSPrefix + 'form-image-field-label',
+
 
     /**
-     * A unit of measure that is rendered alongside the actual value. Will be omitted if null/undefined
+     * URL of the image to render
      */
-    uom : null,
+    imgHref : null,
+    /**
+     * Width of the image to render in pixels
+     */
+    imgWidth : null,
+    /**
+     * Height of the image to render in pixels
+     */
+    imgHeight : null,
     
-    /**
-     * A plain tool tip for the unit of measure attribute
-     */
-    uomTip : null,
-
-    /**
-     * Style configuration to apply to the uom portion of the field
-     */
-    uomStyle : null,
 
     /**
      * This is set in the constructor
@@ -41,10 +38,9 @@ Ext.define('portal.widgets.field.DataDisplayField', {
 
     constructor : function(config) {
 
-        this.uom = config.uom;
-        this.uomStyle = config.uomStyle;
-        this.uomCls = config.uomCls ? config.uomCls : this.uomCls;
-        this.uomTip = config.uomTip ? config.uomTip : '';
+        this.imgHref = config.imgHref;
+        this.imgWidth = config.imgWidth;
+        this.imgHeight = config.imgHeight;
         this.fieldLabel = config.fieldLabel ? config.fieldLabel : '';
 
         //This template defines the rendering of the data display field (and uom if appropriate)
@@ -52,8 +48,8 @@ Ext.define('portal.widgets.field.DataDisplayField', {
         this.fieldSubTpl = [
           '<div id="{id}"',
           '<tpl if="fieldStyle"> style="{fieldStyle}"</tpl>',
-          ' class="{fieldCls}">{value}',
-          '<tpl if="[uom]"> <span title="{[uomTip]}" class="{[uomCls]}" style="{[uomStyle]}">{[uom]}</span></tpl>',
+          ' class="{fieldCls}">',
+          '<img style="margin: auto;" width="{[imgWidth]}" height="{[imgHeight]}" src="{[imgHref]}" alt="Loading..."/>',
           '</div>',
           '<div class="x-form-value-field-label">',
           '{[fieldLabel]}',
@@ -62,10 +58,9 @@ Ext.define('portal.widgets.field.DataDisplayField', {
               disableFormats: true,
               //This is where we 'inject' our own variables for use within the template
               definitions : [
-                  this.createDefinition('uom', this.uom),
-                  this.createDefinition('uomStyle', this.uomStyle),
-                  this.createDefinition('uomCls', this.uomCls),
-                  this.createDefinition('uomTip', this.uomTip),
+                  this.createDefinition('imgHref', this.imgHref),
+                  this.createDefinition('imgHeight', this.imgHeight),
+                  this.createDefinition('imgWidth', this.imgWidth),
                   this.createDefinition('fieldLabel', this.fieldLabel)
               ]
         }];
