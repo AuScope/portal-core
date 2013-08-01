@@ -35,6 +35,8 @@ Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
             pageSize: this.pageSize,
             proxy: {
                 type: 'ajax',
+                method : 'GET',
+                noCache : false,
                 url: 'getUncachedCSWRecords.do',
                 extraParams:cfg.cswConfig.extraParams,
                 reader: {
