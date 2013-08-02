@@ -240,8 +240,6 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
             fields   : ['format'],
             proxy : {
                 type : 'ajax',
-                method : 'GET',
-                noCache : false,
                 url : 'opendapGetSupportedFormats.do',
                 reader : {
                     type : 'array'

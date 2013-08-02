@@ -28,8 +28,6 @@ Ext.define('portal.layer.downloader.wms.WMSDownloader', {
             fields : ['format'],
             proxy : {
                 type : 'ajax',
-                method : 'GET',
-                noCache : false,
                 url : 'getLayerFormats.do',
                 extraParams : {
                     serviceUrl : wmsResource.get('url')
