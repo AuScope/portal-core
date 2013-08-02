@@ -142,7 +142,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
-            wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1
+            wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1;
             wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
 
             primitives.push(this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity));

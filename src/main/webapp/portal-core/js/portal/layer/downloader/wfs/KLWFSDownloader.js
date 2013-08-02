@@ -184,7 +184,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                             return;
                         } else {
                             var bboxJson = '';
-                            var popup = button.ownerCt.ownerCt
+                            var popup = button.ownerCt.ownerCt;
                             var fieldSet = popup.items.getAt(1); //our second item is the fieldset
                             var radioGroup = fieldSet.items.getAt(0);
                             var checkedRadio = radioGroup.getChecked()[0]; //there should always be a checked radio

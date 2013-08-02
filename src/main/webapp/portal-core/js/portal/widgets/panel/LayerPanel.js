@@ -284,7 +284,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
      * Show a popup containing info about the services that 'power' this layer
      */
     _serviceInformationClickHandler : function(column, record, rowIndex, colIndex) {
-        var cswRecords = record.get('cswRecords')
+        var cswRecords = record.get('cswRecords');
         if (!cswRecords || cswRecords.length === 0) {
             return;
         }

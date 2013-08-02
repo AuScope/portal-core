@@ -127,7 +127,7 @@ GmapSubsetControl.prototype.initialize = function(map) {
   this.initStyles_();
 
   // disable text selection on map cover
-  G.mapCover.onselectstart = function() {return false};
+  G.mapCover.onselectstart = function() {return false;};
 
   return buttonContainerDiv;
 };
@@ -242,7 +242,7 @@ GmapSubsetControl.prototype.mouseup_ = function(e){
 
       try{
         G.map.addOverlay(zoomAreaPoly);
-        setTimeout (function() {G.map.removeOverlay(zoomAreaPoly)}, G.overlayRemoveTime);
+        setTimeout (function() {G.map.removeOverlay(zoomAreaPoly);}, G.overlayRemoveTime);
       }catch(e) {}
 
       var polyBounds = zoomAreaPoly.getBounds();
@@ -433,7 +433,7 @@ GmapSubsetUtil.getManyElements = function(idsString){
   var idsArray = idsString.split(',');
   var elements = [];
   for (var i = 0; i < idsArray.length; i++){
-    elements[elements.length] = GmapSubsetUtil.gE(idsArray[i])
+    elements[elements.length] = GmapSubsetUtil.gE(idsArray[i]);
   };
   return elements;
 };

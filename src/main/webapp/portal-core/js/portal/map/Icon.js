@@ -55,7 +55,7 @@ Ext.define('portal.map.Icon', {
             this.setUrl(cfg.url);
         }else{
             //VT:give this a default marker to use.
-            var order=this.self.markerOrder
+            var order=this.self.markerOrder;
             this.setUrl(this.self.genericMarkers[order]);
             if(order == 6){
                 this.self.markerOrder = 0;

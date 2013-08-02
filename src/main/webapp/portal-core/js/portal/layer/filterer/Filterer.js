@@ -57,7 +57,7 @@ Ext.define('portal.layer.filterer.Filterer', {
 
         if(bbox.crs=='EPSG:4326'){
             var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
-            bounds = bounds.transform('EPSG:4326','EPSG:3857')
+            bounds = bounds.transform('EPSG:4326','EPSG:3857');
             bbox = Ext.create('portal.util.BBox', {
                 northBoundLatitude : bounds.top,
                 southBoundLatitude : bounds.bottom,

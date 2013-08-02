@@ -81,6 +81,6 @@ Ext.define('portal.widgets.panel.CSWConstraintsPanel', {
             if (tabConfigs.length <= 1) {
                 me.getTabBar().hide();
             }
-        })
+        });
     }
 });

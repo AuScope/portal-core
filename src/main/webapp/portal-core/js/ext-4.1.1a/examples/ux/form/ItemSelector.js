@@ -327,7 +327,7 @@ Ext.define('Ext.ux.form.ItemSelector', {
         var me = this;
 
         if (me.fromField) {
-            me.fromField.store.removeAll()
+            me.fromField.store.removeAll();
             me.toField.store.removeAll();
 
             // Add everything to the from field as soon as the Store is loaded

@@ -84,7 +84,7 @@ Ext.define('portal.widgets.window.ErrorWindow', {
                     }
                 } // eo afterrender
             } // eo listeners
-        })
+        });
 
         if (info) {
             cfg.items.push({
