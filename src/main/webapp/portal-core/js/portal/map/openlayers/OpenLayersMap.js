@@ -486,11 +486,38 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     getVisibleMapBounds : function() {
         var bounds = this.map.getExtent().transform('EPSG:3857','EPSG:4326').toArray();
+        
+        // Nasty Maths - work out the precision....
+        eastWestDelta = Math.abs(Math.max(bounds[0], bounds[2]) - Math.min(bounds[0], bounds[2]));
+        northSouthDelta = Math.abs(Math.max(bounds[1], bounds[3]) - Math.min(bounds[1], bounds[3]));
+        
+        // y = np.floor(1/np.power(x,0.15))
+        /*
+         * 0.0001  :  4.0
+         * 0.001  :  3.0
+         * 0.01  :  1.0
+         * 0.1  :  1.0
+         * 1.0  :  0.0
+         * 10.0  :  0.0
+         * 100.0  :  0.0
+         */
+
+        
+        calcEWprecis = Math.floor(1/Math.pow(eastWestDelta,0.18))-0.3;
+        calcNSprecis = Math.floor(1/Math.pow(northSouthDelta,0.18))-0.3;
+        
+        if (calcEWprecis < 0) {
+        	calcEWprecis = 0
+        }
+        if (calcNSprecis < 0) {
+        	calcNSprecis = 0
+        }
+        
         return Ext.create('portal.util.BBox', {
-            westBoundLongitude : bounds[0],
-            southBoundLatitude : bounds[1],
-            eastBoundLongitude : bounds[2],
-            northBoundLatitude : bounds[3]
+            westBoundLongitude : bounds[0].toFixed(calcEWprecis),
+            southBoundLatitude : bounds[1].toFixed(calcNSprecis),
+            eastBoundLongitude : bounds[2].toFixed(calcEWprecis),
+            northBoundLatitude : bounds[3].toFixed(calcNSprecis)
         });
     },
 
