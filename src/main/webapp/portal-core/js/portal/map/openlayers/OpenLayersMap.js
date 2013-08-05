@@ -495,16 +495,16 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         /*
          * 0.0001  :  4.0
          * 0.001  :  3.0
-         * 0.01  :  1.0
+         * 0.01  :  2.0
          * 0.1  :  1.0
-         * 1.0  :  0.0
+         * 1.0  :  1.0
          * 10.0  :  0.0
          * 100.0  :  0.0
          */
 
         
-        calcEWprecis = Math.floor(1/Math.pow(eastWestDelta,0.18))-0.3;
-        calcNSprecis = Math.floor(1/Math.pow(northSouthDelta,0.18))-0.3;
+        calcEWprecis = Math.floor(1/Math.pow(eastWestDelta,0.16));
+        calcNSprecis = Math.floor(1/Math.pow(northSouthDelta,0.16));
         
         if (calcEWprecis < 0) {
         	calcEWprecis = 0
