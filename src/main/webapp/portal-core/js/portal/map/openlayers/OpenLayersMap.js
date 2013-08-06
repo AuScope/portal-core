@@ -507,17 +507,26 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         calcNSprecis = Math.floor(1/Math.pow(northSouthDelta,0.16));
         
         if (calcEWprecis < 0) {
-        	calcEWprecis = 0
+        	calcEWprecis = 0;
         }
         if (calcNSprecis < 0) {
-        	calcNSprecis = 0
+        	calcNSprecis = 0;
         }
         
+        north = bounds[3].toFixed(calcNSprecis);
+        south = bounds[1].toFixed(calcNSprecis);
+        east = bounds[2].toFixed(calcEWprecis);
+        west = bounds[0].toFixed(calcEWprecis);
+        
+        window.console.log("N: " + north + ", S:" + south + ", E:" + east + ", W:" + west)
+        window.console.log("   |   Deltas  | eastWestDelta: " + eastWestDelta + ", northSouthDelta: " + northSouthDelta);
+        
+        
         return Ext.create('portal.util.BBox', {
-            westBoundLongitude : bounds[0].toFixed(calcEWprecis),
-            southBoundLatitude : bounds[1].toFixed(calcNSprecis),
-            eastBoundLongitude : bounds[2].toFixed(calcEWprecis),
-            northBoundLatitude : bounds[3].toFixed(calcNSprecis)
+            westBoundLongitude : west,
+            southBoundLatitude : south,
+            eastBoundLongitude : east,
+            northBoundLatitude : north
         });
     },
 
