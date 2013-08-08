@@ -125,6 +125,7 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
      * @param featureTypeId String - the ID of the type to query
      */
     _makeFeatureRequestUrl : function(wfsUrl, typeName, featureTypeId) {
+        console.debug("in _makeFeatureRequestUrl...");
         return portal.util.URL.base + "requestFeature.do" + "?" +
             "serviceUrl=" + wfsUrl + "&typeName=" + typeName +
             "&featureId=" + featureTypeId;
