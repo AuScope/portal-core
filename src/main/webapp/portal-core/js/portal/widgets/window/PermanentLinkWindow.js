@@ -20,12 +20,16 @@ Ext.define('portal.widgets.window.PermanentLinkWindow', {
         urlParams.state = cfg.state;
         var linkedUrl = location.href.split('?')[0];
 
-        linkedUrl = Ext.urlAppend(linkedUrl, Ext.Object.toQueryString(urlParams));
+        var params = Ext.Object.toQueryString(urlParams);
+
+        //*HACK:* sssssshhhh dont tell anyone we don't care about escaping....
+        linkedUrl = Ext.urlAppend(linkedUrl, decodeURIComponent(params));
 
         var htmlDescription = '<p><b>Warning:</b></p>' +
                               '<p>This link will only save your selected layers and queries. The actual data received and displayed may be subject to change</p></br>';
 
         //If the URL gets too long it may not work with some common browsers or web servers
+        // - http://stackoverflow.com/a/417184/941763
         if (linkedUrl.length > 8192) {
             htmlDescription += '<p><b>Note: </b>This permanent link is very long and will be unuseable with the Internet Explorer web browser. It may also cause problems for various web servers so it is recommended you test your permanent link before saving/sharing it.</p>';
         } else if (linkedUrl.length > 2047) {

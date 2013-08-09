@@ -161,7 +161,7 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
         serializationObj.v = this.serializer.getVersion();
 
         var serializationString = Ext.JSON.encode(serializationObj);
-        serializationString = portal.util.Base64.encode(serializationString);
+
         return serializationString;
     },
 
@@ -181,7 +181,6 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
      * Throws an exception if the serialization string is in a format that cannot be recognised.
      */
     deserialize : function(serializationString) {
-        serializationString = portal.util.Base64.decode(serializationString);
         var serializationObj = Ext.JSON.decode(serializationString);
 
         var deserializer = this.baseSerializers[this._guessSerializationObjVersion(serializationObj)];
@@ -192,5 +191,6 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
         var deserializedState = deserializer.deserialize(serializationObj);
         this.mapState = deserializedState.mapState;
         this.serializedLayers = deserializedState.serializedLayers;
+
     }
 });

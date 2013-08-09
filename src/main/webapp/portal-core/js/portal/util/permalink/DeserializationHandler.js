@@ -15,6 +15,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
     cswRecordStore : null,
     layerStore : null,
     map : null,
+    state : null,
 
     /**
      * Creates a new instance of this class with the following config {
@@ -24,6 +25,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
      *  layerStore : A portal.layer.LayerStore which will be populated with deserialized layers
      *  layerFactory : A portal.layer.LayerFactory which will be used to create layers
      *  map : A portal.util.gmap.GMapWrapper instance
+     *  state : the uncompressed state object
      * }
      */
     constructor : function(cfg) {
@@ -50,8 +52,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
         //Prepare our map state serializer (if necessary)
         if (!this.mapStateSerializer) {
-            var urlParams = Ext.Object.fromQueryString(window.location.search.substring(1));
-            if (urlParams && urlParams.state) {
+            if (this.state) {
               //IE will truncate our URL at 2048 characters which destroys our state string.
                 //Let's warn the user if we suspect this to have occurred
                 if (Ext.isIE && window.location.href.length === 2047) {
@@ -65,14 +66,13 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 }
 
                 this.mapStateSerializer = Ext.create('portal.util.permalink.MapStateSerializer');
-                this.mapStateSerializer.deserialize(urlParams.state);
+                this.mapStateSerializer.deserialize(this.state);
             } else {
                 return;
             }
         }
 
-        this._deserialize();
-    },
+        this._deserialize();    },
 
     /**
      * Configures the specified layer with set parameters
