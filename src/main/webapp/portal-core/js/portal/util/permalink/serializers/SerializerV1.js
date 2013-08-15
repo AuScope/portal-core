@@ -10,7 +10,8 @@ Ext.define('portal.util.permalink.serializers.SerializerV1', {
     /**
      * See parent interface for details.
      */
-    deserialize : function(state) {
+    deserialize : function(stateStr, callback) {
+        var state = Ext.JSON.decode(stateStr);
         var minifiedMapState = state.m;
         var minifiedLayers = state.a;
 
@@ -57,9 +58,9 @@ Ext.define('portal.util.permalink.serializers.SerializerV1', {
             });
         }
 
-        return {
+        callback({
             mapState : mapState,
             serializedLayers : serializedLayers
-        };
+        });
     }
 });

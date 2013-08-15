@@ -15,7 +15,8 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
     cswRecordStore : null,
     layerStore : null,
     map : null,
-    state : null,
+    stateString : null,
+    stateVersion : null,
 
     /**
      * Creates a new instance of this class with the following config {
@@ -25,7 +26,8 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
      *  layerStore : A portal.layer.LayerStore which will be populated with deserialized layers
      *  layerFactory : A portal.layer.LayerFactory which will be used to create layers
      *  map : A portal.util.gmap.GMapWrapper instance
-     *  state : the uncompressed state object
+     *  stateString : the raw state string
+     *  stateVersion : [Optional] the serialisation version used to encode stateString. If omitted it will be guessed
      * }
      */
     constructor : function(cfg) {
@@ -52,27 +54,29 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
         //Prepare our map state serializer (if necessary)
         if (!this.mapStateSerializer) {
-            if (this.state) {
-              //IE will truncate our URL at 2048 characters which destroys our state string.
+            if (this.stateString) {
+                //IE will truncate our URL at 2048 characters which destroys our state string.
                 //Let's warn the user if we suspect this to have occurred
                 if (Ext.isIE && window.location.href.length === 2047) {
                     Ext.MessageBox.show({
                         title : 'Mangled Permanent Link',
                         icon : Ext.window.MessageBox.WARNING,
-                        msg : 'The web browser you are using (Internet Explorer) has likely truncated the permanent link you are using which will probably render it unuseable. The AuScope portal will attempt to restore the saved state anyway.',
+                        msg : 'The web browser you are using (Internet Explorer) has likely truncated the permanent link you are using which will probably render it unuseable. This portal will attempt to restore the saved state anyway.',
                         buttons : Ext.window.MessageBox.OK,
                         multiline : false
                     });
                 }
 
                 this.mapStateSerializer = Ext.create('portal.util.permalink.MapStateSerializer');
-                this.mapStateSerializer.deserialize(this.state);
             } else {
                 return;
             }
         }
 
-        this._deserialize();    },
+        this.mapStateSerializer.deserialize(this.stateString, this.stateVersion, Ext.bind(function() {
+            this._deserialize();
+        }, this));
+    },
 
     /**
      * Configures the specified layer with set parameters

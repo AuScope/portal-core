@@ -17,7 +17,10 @@ Ext.define('portal.widgets.window.PermanentLinkWindow', {
 
         //Rewrite our current URL with the new state info (leave the other URL params intact)
         var urlParams = Ext.Object.fromQueryString(location.search.substring(1));
-        urlParams.state = cfg.state;
+        urlParams.s = cfg.state;
+        if (cfg.version) {
+            urlParams.v = cfg.version;
+        }
         var linkedUrl = location.href.split('?')[0];
 
         var params = Ext.Object.toQueryString(urlParams);
