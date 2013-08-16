@@ -166,11 +166,12 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
         }, this));
     },
 
-    //Given a serializationObject this function attempts to calculate the 'schema' of the serialization object for backwards compatiblity
-    _guessSerializationObjVersion : function(serializationStr) {
+    //Given a serialization string this function attempts to calculate the 'schema' of the serialization object for backwards compatiblity
+    _guessSerializationVersion : function(serializationStr) {
         //Does this even remotely resemble JSON??
-        if (serializationStr.indexOf("{") === 0 &&
-                serializationStr.indexOf("}") === (serializationStr.length - 1)) {
+        if (serializationStr &&
+                serializationStr.charAt(0) === '{' &&
+                serializationStr.charAt(serializationStr.length - 1) === '}') {
             var serializationObj = Ext.JSON.decode(serializationStr);
             
             if (Ext.isNumber(serializationObj.v)) {
@@ -197,7 +198,7 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
         var b64Decoded = portal.util.Base64.decode(serializationString);
         
         if (!serializationVersion) {
-            serializationVersion = this._guessSerializationObjVersion(serializationObj);
+            serializationVersion = this._guessSerializationVersion(b64Decoded);
         }
         var deserializer = this.baseSerializers[serializationVersion];
         if (!deserializer) {
