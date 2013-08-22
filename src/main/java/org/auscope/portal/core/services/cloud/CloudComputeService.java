@@ -41,7 +41,7 @@ public class CloudComputeService {
 
     /** An array of images that are available through this compute service*/
     private MachineImage[] availableImages = new MachineImage[0];
-    
+
     /** An array of compute types that are available through this compute service*/
     private ComputeType[] availableComputeTypes = new ComputeType[0];
 
@@ -97,9 +97,9 @@ public class CloudComputeService {
     public void setAvailableImages(MachineImage[] availableImages) {
         this.availableImages = availableImages;
     }
-    
-    
-    /** 
+
+
+    /**
      * An array of compute types that are available through this compute service
      */
     public ComputeType[] getAvailableComputeTypes() {
