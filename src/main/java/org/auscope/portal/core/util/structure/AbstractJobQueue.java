@@ -56,8 +56,8 @@ public abstract class AbstractJobQueue implements Runnable{
         this.manageJob();
     }
 
-    public void size(){
-        this.queue.size();
+    public int size(){
+        return this.queue.size();
     }
 
 
