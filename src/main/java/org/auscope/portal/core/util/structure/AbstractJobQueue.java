@@ -60,5 +60,9 @@ public abstract class AbstractJobQueue implements Runnable{
         return this.queue.size();
     }
 
+    public void clear(){
+        this.queue.clear();
+    }
+
 
 }
