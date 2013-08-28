@@ -12,4 +12,6 @@ public interface Job {
 
     public boolean run() throws PortalServiceException;
 
+    public boolean equals(Object j);
+
 }

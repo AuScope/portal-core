@@ -12,7 +12,7 @@ import org.auscope.portal.core.services.PortalServiceException;
 public abstract class AbstractJobQueue implements Runnable{
 
     //VT: unable to decide between a ConcurrentLinkedQueue vs a LinkedBlockingQueue.
-    ConcurrentLinkedQueue<Job> queue;
+    protected ConcurrentLinkedQueue<Job> queue;
 
 
     public AbstractJobQueue(){
@@ -39,7 +39,6 @@ public abstract class AbstractJobQueue implements Runnable{
     }
 
 
-
     /**
      * Implement how the job is run. What is determined as successful and remove the job from the queue
      * or what is deemed unsuccessful and leave the job in the queue.
@@ -62,6 +61,10 @@ public abstract class AbstractJobQueue implements Runnable{
 
     public void clear(){
         this.queue.clear();
+    }
+
+    public boolean remove(Job o){
+        return this.queue.remove(o);
     }
 
 
