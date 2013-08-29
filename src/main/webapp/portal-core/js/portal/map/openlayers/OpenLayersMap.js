@@ -518,10 +518,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         east = bounds[2].toFixed(calcEWprecis);
         west = bounds[0].toFixed(calcEWprecis);
         
-        window.console.log("N: " + north + ", S:" + south + ", E:" + east + ", W:" + west)
-        window.console.log("   |   Deltas  | eastWestDelta: " + eastWestDelta + ", northSouthDelta: " + northSouthDelta);
-        
-        
         return Ext.create('portal.util.BBox', {
             westBoundLongitude : west,
             southBoundLatitude : south,
