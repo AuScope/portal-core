@@ -131,7 +131,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             home=home.replace("localhost",LOCALHOST);
         }
       //get the style format encoded as string
-        var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters())));
+        var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), unescape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters()))));
         this.sld=unescape(styleUrl);
 
         var primitives = [];
