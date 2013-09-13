@@ -1,54 +1,43 @@
 package org.auscope.portal.core.services.cloud;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.nio.charset.Charset;
 
 import junit.framework.Assert;
 
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.cloud.CloudComputeService.ProviderType;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.model.Instance;
-import com.amazonaws.services.ec2.model.Reservation;
-import com.amazonaws.services.ec2.model.RunInstancesRequest;
-import com.amazonaws.services.ec2.model.RunInstancesResult;
-import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
-import com.amazonaws.services.ec2.model.TerminateInstancesResult;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 public class TestCloudComputeService extends PortalTestClass {
-    /**
-     * For testing the protected CloudComputeService methods
-     */
-    private class TestableCloudComputeService extends CloudComputeService {
-        AmazonEC2 mockAmazonEC2;
 
-        public TestableCloudComputeService(AmazonEC2 mockAmazonEC2,String endpoint, AWSCredentials credentials) {
-            super(endpoint, credentials);
-            this.mockAmazonEC2 = mockAmazonEC2;
-        }
-
-        @Override
-        protected AmazonEC2 getAmazonEC2Instance() {
-            return mockAmazonEC2;
-        }
-    }
-
-    private final AmazonEC2 mockAmazonEC2 = context.mock(AmazonEC2.class);
-    private final String ec2Endpoint = "http://example.org/ec2";
-    private final AWSCredentials mockCredentials = context.mock(AWSCredentials.class);
+    private final ComputeService mockComputeService = context.mock(ComputeService.class);
+    private final NovaTemplateOptions mockTemplateOptions = context.mock(NovaTemplateOptions.class);
+    private final TemplateBuilder mockTemplateBuilder = context.mock(TemplateBuilder.class);
+    private final Template mockTemplate = context.mock(Template.class);
+    private final NodeMetadata mockMetadata = context.mock(NodeMetadata.class);
     private CloudComputeService service;
     private CloudJob job;
 
     @Before
     public void initJobObject() {
         job = new CloudJob(13);
-        service = new TestableCloudComputeService(mockAmazonEC2, ec2Endpoint, mockCredentials);
+        job.setComputeVmId("image-id");
+        job.setComputeInstanceType("type");
+        service = new CloudComputeService(ProviderType.NovaKeystone, mockComputeService);
+        service.setGroupName("group-name");
     }
 
     /**
@@ -59,16 +48,22 @@ public class TestCloudComputeService extends PortalTestClass {
         final String userDataString = "user-data-string";
         final String expectedInstanceId = "instance-id";
 
-        final RunInstancesResult runInstanceResult = new RunInstancesResult();
-        final Reservation reservation = new Reservation();
-        final Instance instance = new Instance();
-
-        instance.setInstanceId(expectedInstanceId);
-        reservation.setInstances(Arrays.asList(instance));
-        runInstanceResult.setReservation(reservation);
-
         context.checking(new Expectations() {{
-            oneOf(mockAmazonEC2).runInstances(with(any(RunInstancesRequest.class)));will(returnValue(runInstanceResult));
+            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
+            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+            
+            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
+            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
+            
+            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+            
+            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+            will(returnValue(ImmutableSet.<NodeMetadata>of(mockMetadata)));
+            
+            oneOf(mockMetadata).getId();will(returnValue(expectedInstanceId));
         }});
 
         String actualInstanceId = service.executeJob(job, userDataString);
@@ -80,39 +75,55 @@ public class TestCloudComputeService extends PortalTestClass {
      * Tests that job execution correctly calls and parses a response from AmazonEC2
      * when EC2 reports failure by returning 0 running instances.
      */
-    @Test(expected=Exception.class)
+    @Test(expected=PortalServiceException.class)
     public void testExecuteJobFailure() throws Exception {
         final String userDataString = "user-data-string";
-
-        final RunInstancesResult runInstanceResult = new RunInstancesResult();
-        final Reservation reservation = new Reservation();
-
-        reservation.setInstances(new ArrayList<Instance>());
-        runInstanceResult.setReservation(reservation);
+        final RunNodesException ex = context.mock(RunNodesException.class);
 
         context.checking(new Expectations() {{
-            oneOf(mockAmazonEC2).runInstances(with(any(RunInstancesRequest.class)));will(returnValue(runInstanceResult));
+            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
+            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+            
+            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
+            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
+            
+            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+            
+            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+            will(throwException(ex));
+            
+            allowing(ex).fillInStackTrace();will(returnValue(ex));
+            allowing(ex).getMessage();will(returnValue("mock-message"));
         }});
 
         service.executeJob(job, userDataString);
     }
-
+    
     /**
      * Tests that job execution correctly calls and parses a response from AmazonEC2
-     * when EC2 reports failure by throwing an exception
+     * when EC2 reports failure by returning 0 running instances.
      */
     @Test(expected=PortalServiceException.class)
-    public void testExecuteJobException() throws Exception {
+    public void testExecuteJobFailure_EmptyResults() throws Exception {
         final String userDataString = "user-data-string";
 
-        final RunInstancesResult runInstanceResult = new RunInstancesResult();
-        final Reservation reservation = new Reservation();
-
-        reservation.setInstances(new ArrayList<Instance>());
-        runInstanceResult.setReservation(reservation);
-
         context.checking(new Expectations() {{
-            oneOf(mockAmazonEC2).runInstances(with(any(RunInstancesRequest.class)));will(throwException(new PortalServiceException("")));
+            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
+            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+            
+            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
+            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
+            
+            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
+            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+            
+            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+            will(returnValue(ImmutableSet.<NodeMetadata>of()));
         }});
 
         service.executeJob(job, userDataString);
@@ -123,10 +134,11 @@ public class TestCloudComputeService extends PortalTestClass {
      */
     @Test
     public void testTerminateJob() {
-        final TerminateInstancesResult terminateInstanceResult = new TerminateInstancesResult();
 
+        job.setComputeInstanceId("running-id");
+        
         context.checking(new Expectations() {{
-            oneOf(mockAmazonEC2).terminateInstances(with(any(TerminateInstancesRequest.class)));will(returnValue(terminateInstanceResult));
+            oneOf(mockComputeService).destroyNode(job.getComputeInstanceId());
         }});
 
         service.terminateJob(job);

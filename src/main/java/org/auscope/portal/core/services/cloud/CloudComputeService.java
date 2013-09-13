@@ -1,26 +1,31 @@
 package org.auscope.portal.core.services.cloud;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.cloud.ComputeType;
 import org.auscope.portal.core.cloud.MachineImage;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.jclouds.ContextBuilder;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.reference.EC2Constants;
+import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.amazonaws.services.ec2.model.Instance;
-import com.amazonaws.services.ec2.model.RunInstancesRequest;
-import com.amazonaws.services.ec2.model.RunInstancesResult;
-import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 /**
  * Service class wrapper for interacting with a remote cloud compute service using
  * CloudJob objects.
@@ -29,41 +34,81 @@ import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
  */
 public class CloudComputeService {
 
+    public enum ProviderType {
+        /** Connect to an Openstack instance via the Keystone Identity service*/
+        NovaKeystone,
+        /** Connect to an Openstack instance via the emulated EC2 endpoint*/
+        NovaEc2,
+    }
+    
     private final Log logger = LogFactory.getLog(getClass());
 
-    private AWSCredentials credentials;
-    private String endpoint;
+    private ComputeService computeService;
 
     /** Unique ID for distinguishing instances of this class - can be null*/
     private String id;
     /** A short descriptive name for human identification of this service*/
     private String name;
+    /** What type of cloud service are we communicating with */
+    private ProviderType provider;
+    
+    
+    /** A group name that all jobs will be assigned to*/
+    private String groupName = "portal-cloud-compute-service";
 
     /** An array of images that are available through this compute service*/
     private MachineImage[] availableImages = new MachineImage[0];
 
-    /** An array of compute types that are available through this compute service*/
-    private ComputeType[] availableComputeTypes = new ComputeType[0];
-
     /**
      * Creates a new instance with the specified credentials
-     * @param endpoint (URL) The location of the EC2 service
-     * @param credentials the compute credentials
+     * @param endpoint (URL) The location of the Compute (Nova) service
+     * @param accessKey The Compute Access key (user name)
+     * @param secretKey The Compute Secret key (password)
      */
-    public CloudComputeService(String endpoint, AWSCredentials credentials) {
-        this.endpoint = endpoint;
-        this.credentials = credentials;
+    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey) {
+        this(provider, endpoint, accessKey, secretKey, null);
     }
-
+    
     /**
      * Creates a new instance with the specified credentials
-     * @param endpoint (URL) The location of the EC2 service
-     * @param accessKey The EC2 Access key (user name)
-     * @param secretKey The EC2 Secret key (password)
+     * @param endpoint (URL) The location of the Compute (Nova) service
+     * @param accessKey The Compute Access key (user name)
+     * @param secretKey The Compute Secret key (password)
      */
-    public CloudComputeService(String endpoint, String accessKey, String secretKey) {
-        this.endpoint = endpoint;
-        this.credentials = new BasicAWSCredentials(accessKey, secretKey);
+    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String apiVersion) {
+        Properties overrides = new Properties();
+        
+        String typeString = "";
+        switch (provider) {
+        case NovaEc2:
+            typeString = "openstack-nova-ec2";
+            overrides.put(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS, "false");
+            break;
+        case NovaKeystone:
+            typeString = "openstack-nova";
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported provider: " + provider.name());
+        }
+        this.provider = provider;
+        
+        ContextBuilder b = ContextBuilder.newBuilder(typeString)
+                .endpoint(endpoint)
+                .overrides(overrides)
+                .credentials(accessKey, secretKey);
+        
+        if (apiVersion != null) {
+            b.apiVersion(apiVersion);
+        }
+        
+        ComputeServiceContext context = b.buildView(ComputeServiceContext.class);
+        this.computeService = context.getComputeService();
+        
+    }
+    
+    public CloudComputeService(ProviderType provider, ComputeService computeService) {
+        this.provider = provider;
+        this.computeService = computeService;
     }
 
     /**
@@ -81,6 +126,16 @@ public class CloudComputeService {
     public void setId(String id) {
         this.id = id;
     }
+    
+    /** A group name that all jobs will be assigned to*/
+    public String getGroupName() {
+        return groupName;
+    }
+
+    /** A group name that all jobs will be assigned to*/
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
     /**
      * An array of images that are available through this compute service
@@ -96,32 +151,6 @@ public class CloudComputeService {
      */
     public void setAvailableImages(MachineImage[] availableImages) {
         this.availableImages = availableImages;
-    }
-
-
-    /**
-     * An array of compute types that are available through this compute service
-     */
-    public ComputeType[] getAvailableComputeTypes() {
-        return availableComputeTypes;
-    }
-
-    /**
-     * An array of compute types that are available through this compute service
-     * @param availableComputeTypes
-     */
-    public void setAvailableComputeTypes(ComputeType[] availableComputeTypes) {
-        this.availableComputeTypes = availableComputeTypes;
-    }
-
-    /**
-     * Gets an instance of an AmazonEC2 for use in submitting/terminating jobs
-     * @return
-     */
-    protected AmazonEC2 getAmazonEC2Instance() {
-        AmazonEC2Client client = new AmazonEC2Client(credentials);
-        client.setEndpoint(endpoint);
-        return client;
     }
 
     /**
@@ -151,39 +180,43 @@ public class CloudComputeService {
      * @return null if execution fails or the instance ID of the running VM
      */
     public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
-        try {
-            AmazonEC2 ec2 = getAmazonEC2Instance();
-            RunInstancesRequest instanceRequest = new RunInstancesRequest(job.getComputeVmId(), 1, 1);
-
-            String base64EncodedUserData = new String(Base64.encodeBase64(userDataString.toString().getBytes()));
-            instanceRequest.setUserData(base64EncodedUserData);
-            if (job.getComputeInstanceType() != null) {
-                instanceRequest.setInstanceType(job.getComputeInstanceType());
-            }
-            if (job.getComputeInstanceKey() != null) {
-                instanceRequest.setKeyName(job.getComputeInstanceKey());
-            }
-            instanceRequest.setInstanceInitiatedShutdownBehavior("terminate");
-
-            RunInstancesResult result = ec2.runInstances(instanceRequest);
-            List<Instance> instances = result.getReservation().getInstances();
-
-            //We should get a single item on success
-            if (instances.size() == 0 || instances.get(0) == null) {
-                throw new Exception("VM started but failed to fetch instance id.");
-            }
-            Instance instance = instances.get(0);
-            return instance.getInstanceId();
-        } catch (AmazonServiceException ex) {
-            logger.error("Compute service is currently unavailable.", ex);
-            throw new PortalServiceException("Compute service is currently unavailable.", "Please try again in a few minutes. [" + ex.getMessage() + "]");
-        } catch (AmazonClientException ex) {
-            logger.error("Network connection to compute service is currently unavailable.", ex);
-            throw new PortalServiceException("Network connection to compute service is currently unavailable.", "Please try again in a few minutes.");
-        } catch (Exception ex) {
-            logger.error("An unexpected error has occurred while executing job: " + job, ex);
-            throw new PortalServiceException("An unexpected error has occurred while executing your job.", "Please report it to cg-admin@csiro.au.");
+        
+        //We have different template options depending on provider
+        TemplateOptions options = null;
+        switch (provider) {
+        case NovaEc2:
+            options = ((EC2TemplateOptions) computeService.templateOptions())
+                .keyPair("vgl-developers")
+                .userData(userDataString.getBytes(Charset.forName("UTF-8")));
+            break;
+        case NovaKeystone:
+            options = ((NovaTemplateOptions)computeService.templateOptions())
+            .keyPairName("vgl-developers")
+            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
         }
+        
+        Template template = computeService.templateBuilder()
+                .imageId(job.getComputeVmId())
+                .hardwareId(job.getComputeInstanceType())
+                .options(options)
+                .build();
+        
+        //Start up the job, we should have exactly 1 node start
+        Set<? extends NodeMetadata> results;
+        try {
+            results = computeService.createNodesInGroup(groupName, 1, template);
+        } catch (RunNodesException e) {
+            logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'", e.getMessage(), job));
+            logger.debug("Exception:", e);
+            throw new PortalServiceException("An unexpected error has occured while executing your job", "Please report it to cg-admin@csiro.au : " + e.getMessage());
+        }
+        if (results.isEmpty()) {
+            logger.error("JClouds returned an empty result set. Treating it as job failure.");
+            throw new PortalServiceException("Unable to start compute node due to an unknown error");
+        }
+        NodeMetadata result = results.iterator().next();
+        
+        return result.getId();
     }
 
     /**
@@ -191,12 +224,43 @@ public class CloudComputeService {
      * @param job The job whose execution should be terminated
      */
     public void terminateJob(CloudJob job) {
-        AmazonEC2 ec2 = getAmazonEC2Instance();
+        computeService.destroyNode(job.getComputeInstanceId());
+    }
+    
+    /**
+     * An array of compute types that are available through this compute service
+     */
+    public ComputeType[] getAvailableComputeTypes() {
+        Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
+        
+        List<ComputeType> computeTypes = new ArrayList<ComputeType>();
 
-        TerminateInstancesRequest termReq = new TerminateInstancesRequest();
-        ArrayList<String> instanceIdList = new ArrayList<String>();
-        instanceIdList.add(job.getComputeInstanceId());
-        termReq.setInstanceIds(instanceIdList);
-        ec2.terminateInstances(termReq);
+        for (Hardware hw : hardwareSet) {
+            ComputeType ct = new ComputeType(hw.getId());
+            
+            ct.setDescription(hw.getName());
+            double vCpus = 0;
+            for (Processor p : hw.getProcessors()) {
+                vCpus += p.getCores();
+            }
+            ct.setVcpus((int) vCpus);
+            ct.setRamMB(hw.getRam());
+            
+            double rootDiskGB = 0;
+            double ephemeralDiskGB = 0;
+            for (Volume v : hw.getVolumes()) {
+                if (v.isBootDevice()) {
+                    rootDiskGB += v.getSize();
+                } else {
+                    ephemeralDiskGB += v.getSize();
+                }
+            }
+            ct.setRootDiskGB((int) rootDiskGB);
+            ct.setEphemeralDiskGB((int) ephemeralDiskGB);
+            
+            computeTypes.add(ct);
+        }
+        
+        return computeTypes.toArray(new ComputeType[computeTypes.size()]);
     }
 }
