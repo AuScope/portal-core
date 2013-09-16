@@ -13,6 +13,11 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Easy reference to the 'Apply Filter' button
      */
     _filterButton : null,
+    
+    /**
+     * Easy reference to the 'Reset' button
+     */
+    _resetButton : null,
 
     /**
      * Reference to the layer panel
@@ -34,14 +39,19 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             text :'Apply Filter >>',
             disabled : true,
             handler : Ext.bind(this._onApplyFilter, this)
-
         });
-
+        
+        this._resetButton = Ext.create('Ext.button.Button', {
+            text :'Reset Filter',
+            disabled : true,
+            handler : Ext.bind(this._onResetFilter, this)
+        });
+        
         Ext.apply(config, {
             layout : 'card',
             buttonAlign : 'right',
             items : [emptyCard],
-            bbar: [this._filterButton]
+            bbar: [ this._filterButton, '->', this._resetButton ]
         });
 
         this.callParent(arguments);
@@ -67,6 +77,18 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
 
         baseFilterForm.writeToFilterer(filterer);
+    },
+    
+    /**
+     * Internal handler for when the user clicks 'Reset Filter'.
+     * 
+     * Using the reset method from Ext.form.Basic. All fields in
+     * the form will be reset. However, any record bound by loadRecord
+     * will be retained.
+     */
+    _onResetFilter : function() {
+        var baseFilterForm = this.getLayout().getActiveItem();
+        baseFilterForm.getForm().reset();
     },
 
     /**
@@ -94,9 +116,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         } else {
             layout.setActiveItem(this._emptyCard);
         }
-
+        
         //Activate the filter button (if appropriate)
         this._filterButton.setDisabled(renderOnAdd || !filterForm);
+        this._resetButton.setDisabled(renderOnAdd || !filterForm);
     },
 
     clearFilter : function(){
