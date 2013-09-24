@@ -429,4 +429,24 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
         return method;
     }
+    
+    /**
+     * Generates a method for requesting a WFS DescribeFeatureType response
+     * @param serviceUrl
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase makeDescribeFeatureTypeMethod(String serviceUrl, String featureType) throws URISyntaxException {
+        HttpGet method = new HttpGet();
+
+        URIBuilder builder = new URIBuilder(serviceUrl);
+        builder.setParameter("service", "WFS");
+        builder.setParameter("request", "DescribeFeatureType");
+        builder.setParameter("version", WFS_VERSION);
+        
+        //attach them to the method
+        method.setURI(builder.build());
+
+        return method;
+    }
 }
