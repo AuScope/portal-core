@@ -443,6 +443,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         builder.setParameter("service", "WFS");
         builder.setParameter("request", "DescribeFeatureType");
         builder.setParameter("version", WFS_VERSION);
+        builder.setParameter("typeName", featureType);
         
         //attach them to the method
         method.setURI(builder.build());
