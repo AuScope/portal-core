@@ -36,7 +36,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         var emptyCard = Ext.create('portal.layer.filterer.forms.EmptyFilterForm', {}); //show this
         this._filterButton = Ext.create('Ext.button.Button', {
-            text :'Search',
+            text :'Show Results',
             disabled : true,
             handler : Ext.bind(this._onApplyFilter, this)
         });
