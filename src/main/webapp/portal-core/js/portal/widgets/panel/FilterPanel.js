@@ -36,7 +36,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         var emptyCard = Ext.create('portal.layer.filterer.forms.EmptyFilterForm', {}); //show this
         this._filterButton = Ext.create('Ext.button.Button', {
-            text :'Apply Filter >>',
+            text :'Search',
             disabled : true,
             handler : Ext.bind(this._onApplyFilter, this)
         });
@@ -95,7 +95,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Given an instance of portal.layer.Layer - update the displayed panel
      * with an appropriate filter form (as defined by portal.layer.filterer.FormFactory).
      */
-    showFilterForLayer : function(layer) {
+    showFilterForLayer : function(layer) {        
         var layout = this.getLayout();
         var filterForm = layer ? layer.get('filterForm') : null;
         var renderOnAdd = layer ? layer.get('renderOnAdd') : false;
@@ -117,13 +117,29 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             layout.setActiveItem(this._emptyCard);
         }
         
-        //Activate the filter button (if appropriate)
-        this._filterButton.setDisabled(renderOnAdd || !filterForm);
-        this._resetButton.setDisabled(renderOnAdd || !filterForm);
+        //Activate the filter and reset buttons (if appropriate)
+        disableButtons = renderOnAdd || !filterForm;
+        //false to enable, true to disable
+        this._filterButton.setDisabled(disableButtons);
+        this._resetButton.setDisabled(disableButtons);
+        
+        if (!disableButtons) {
+            this._filterButton.getEl().addCls("applyFilterCls");
+        } else {
+            this._filterButton.getEl().removeCls("applyFilterCls");
+        }
     },
 
-    clearFilter : function(){
+    clearFilter : function(){                
         var layout = this.getLayout();
+        
+        //Remove custom CSS styles for filter button
+        this._filterButton.getEl().removeCls("applyFilterCls");
+        
+        //Disable the filter and reset buttons (set to default values)
+        this._filterButton.setDisabled(true);
+        this._resetButton.setDisabled(true);
+        
         //Close active item to prevent memory leak
         var actvItem = layout.getActiveItem();
         if (actvItem) {
