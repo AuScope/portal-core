@@ -95,7 +95,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Given an instance of portal.layer.Layer - update the displayed panel
      * with an appropriate filter form (as defined by portal.layer.filterer.FormFactory).
      */
-    showFilterForLayer : function(layer) {        
+    showFilterForLayer : function(layer) {
         var layout = this.getLayout();
         var filterForm = layer ? layer.get('filterForm') : null;
         var renderOnAdd = layer ? layer.get('renderOnAdd') : false;
@@ -122,9 +122,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         //false to enable, true to disable
         this._filterButton.setDisabled(disableButtons);
         this._resetButton.setDisabled(disableButtons);
-        
+                
         if (!disableButtons) {
             this._filterButton.getEl().addCls("applyFilterCls");
+            this._filterButton.getEl().frame();
         } else {
             this._filterButton.getEl().removeCls("applyFilterCls");
         }
