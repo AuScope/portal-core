@@ -3,6 +3,7 @@ package org.auscope.portal.core.services.cloud;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import org.auscope.portal.core.cloud.CloudFileInformation;
@@ -10,10 +11,15 @@ import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.InputStreamMap;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
+import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.MutableContentMetadata;
+import org.jclouds.io.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -26,43 +32,19 @@ public class TestCloudStorageService extends PortalTestClass {
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
-    /**
-     * Utility class for testing CloudStorageService by injecting a mock BlobStoreContext
-     * @author vot002
-     *
-     */
-    private class TestableCloudStorageService extends CloudStorageService {
-
-        BlobStoreContext mockContext;
-
-        public TestableCloudStorageService(String endpoint, String provider, String accessKey, String secretKey, BlobStoreContext mockContext) {
-            super(endpoint, provider, accessKey, secretKey);
-            this.mockContext = mockContext;
-        }
-
-        @Override
-        public BlobStoreContext getBlobStoreContextForJob(CloudJob job) {
-           return mockContext;
-        }
-    }
-
-    private final String endpoint = "http://example.com/storage";
-    private final String provider = "example-storage-provider";
-    private final String accessKey = "accessKey";
-    private final String secretKey = "secretKey";
     private final String bucket = "bucket-name";
 
     private BlobStoreContext mockBlobStoreContext = context.mock(BlobStoreContext.class);
     private CloudJob job;
     private CloudStorageService service;
     
-    private final String jobStorageBaseKey = "job/base/key/";
+    private final String jobStorageBaseKey = "job/base/key";
 
     @Before
     public void initJobObject() {
         job = new CloudJob(13);
         job.setStorageBaseKey(jobStorageBaseKey);
-        service = new TestableCloudStorageService(endpoint, provider, accessKey, secretKey,  mockBlobStoreContext);
+        service = new CloudStorageService(mockBlobStoreContext);
         service.setBucket(bucket);
     }
 
@@ -70,18 +52,19 @@ public class TestCloudStorageService extends PortalTestClass {
     @Test
     public void testGetJobFileData() throws Exception {
           final String myKey = "my/key";
-          final InputStreamMap mockInputStream = context.mock(InputStreamMap.class);
+          final BlobStore mockBlobStore = context.mock(BlobStore.class);
+          final Blob mockBlob = context.mock(Blob.class);
+          final Payload mockPayload = context.mock(Payload.class);
           final InputStream mockReturnedInputStream = context.mock(InputStream.class);
 
-
           context.checking(new Expectations() {{
-              oneOf(mockBlobStoreContext).createInputStreamMap(with(bucket),with(any(ListContainerOptions.class)));
-              will(returnValue(mockInputStream));
-
-              oneOf(mockInputStream).get(myKey);
-              will(returnValue(mockReturnedInputStream));
+              oneOf(mockBlobStoreContext).getBlobStore();will(returnValue(mockBlobStore));
               
-              oneOf(mockBlobStoreContext).close();
+              oneOf(mockBlobStore).getBlob(bucket, jobStorageBaseKey +"/" + myKey);will(returnValue(mockBlob));
+              
+              oneOf(mockBlob).getPayload();will(returnValue(mockPayload));
+              
+              oneOf(mockPayload).getInput();will(returnValue(mockReturnedInputStream));
           }});
 
           InputStream actualInputStream = service.getJobFile(job, myKey);
@@ -94,15 +77,18 @@ public class TestCloudStorageService extends PortalTestClass {
      */
     @Test
     public void testListOutputJobFiles() throws Exception {
-          final InputStreamMap mockInputStreamMap = context.mock(InputStreamMap.class);
+          final BlobStore mockBlobStore = context.mock(BlobStore.class);
+          
+          final BlobMetadataImpl mockStorageMetadata1 = context.mock(BlobMetadataImpl.class, "mockStorageMetadata1");
+          final BlobMetadataImpl mockStorageMetadata2 = context.mock(BlobMetadataImpl.class, "mockStorageMetadata2");
+          
           final MutableContentMetadata mockObj1ContentMetadata=context.mock(MutableContentMetadata.class,"mockObj1Md");
           final MutableContentMetadata mockObj2ContentMetadata=context.mock(MutableContentMetadata.class,"mockObj2Md");
-
+          final PageSet<? extends StorageMetadata> mockPageSet = context.mock(PageSet.class);
+          
           LinkedList<MutableBlobMetadataImpl> ls=new LinkedList<MutableBlobMetadataImpl>();
           ls.add(context.mock(MutableBlobMetadataImpl.class,"mockObj1"));
           ls.add(context.mock(MutableBlobMetadataImpl.class,"mockObj2"));
-
-          final Iterable<? extends MutableBlobMetadataImpl> mockFileMetaDataList=ls;
 
           final String obj1Key = "key/obj1";
           final String obj1Bucket = "bucket1";
@@ -112,27 +98,26 @@ public class TestCloudStorageService extends PortalTestClass {
           final long obj2Length = 4567L;
 
           context.checking(new Expectations() {{
-              oneOf(mockBlobStoreContext).close();
+              oneOf(mockBlobStoreContext).getBlobStore();will(returnValue(mockBlobStore));
               
-              oneOf(mockBlobStoreContext).createInputStreamMap(with(any(String.class)),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
-              oneOf(mockInputStreamMap).size();will(returnValue(2));
-              oneOf(mockInputStreamMap).list();will(returnValue(mockFileMetaDataList));
-                int i = 0;
-                for (MutableBlobMetadataImpl fileMetadata : mockFileMetaDataList) {
-                    if (i == 0) {
-                        allowing(fileMetadata).getName();will(returnValue(obj1Key));
-                        allowing(fileMetadata).getUri();will(returnValue(new URI(obj1Bucket)));
-                        allowing(fileMetadata).getContentMetadata();will(returnValue(mockObj1ContentMetadata));
-                        allowing(mockObj1ContentMetadata).getContentLength();will(returnValue(obj1Length));
-                    } else {
-                        allowing(fileMetadata).getName();will(returnValue(obj2Key));
-                        allowing(fileMetadata).getUri();will(returnValue(new URI(obj2Bucket)));
-                        allowing(fileMetadata).getContentMetadata();will(returnValue(mockObj2ContentMetadata));
-                        allowing(mockObj2ContentMetadata).getContentLength();will(returnValue(obj2Length));
-                    }
-                    i++;
-                }
+              oneOf(mockBlobStore).list(with(equal(bucket)), with(any(ListContainerOptions.class)));
+              will(returnValue(mockPageSet));
+              
+              allowing(mockPageSet).getNextMarker();
+              will(returnValue(null));
+              
+              allowing(mockPageSet).iterator();
+              will(returnValue(Arrays.asList(mockStorageMetadata1, mockStorageMetadata2).iterator()));
+              
+              allowing(mockStorageMetadata1).getName();will(returnValue(obj1Key));
+              allowing(mockStorageMetadata1).getUri();will(returnValue(new URI(obj1Bucket)));
+              allowing(mockStorageMetadata1).getContentMetadata();will(returnValue(mockObj1ContentMetadata));
+              allowing(mockObj1ContentMetadata).getContentLength();will(returnValue(obj1Length));
 
+              allowing(mockStorageMetadata2).getName();will(returnValue(obj2Key));
+              allowing(mockStorageMetadata2).getUri();will(returnValue(new URI(obj2Bucket)));
+              allowing(mockStorageMetadata2).getContentMetadata();will(returnValue(mockObj2ContentMetadata));
+              allowing(mockObj2ContentMetadata).getContentLength();will(returnValue(obj2Length));
           }});
 
           CloudFileInformation[] fileInfo = service.listJobFiles(job);
@@ -142,7 +127,6 @@ public class TestCloudStorageService extends PortalTestClass {
           Assert.assertEquals(obj1Length, fileInfo[0].getSize());
           Assert.assertEquals(obj2Key, fileInfo[1].getCloudKey());
           Assert.assertEquals(obj2Length, fileInfo[1].getSize());
-
     }
 
 
@@ -152,22 +136,36 @@ public class TestCloudStorageService extends PortalTestClass {
      */
     @Test
     public void testUploadJobFiles() throws Exception {
-        final InputStreamMap mockInputStreamMap = context.mock(InputStreamMap.class);
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
+        
+        final Blob mockBlob1 = context.mock(Blob.class, "mockBlob1");
+        final Blob mockBlob2 = context.mock(Blob.class, "mockBlob2");
+        
+        final PayloadBlobBuilder mockBuilder1 = context.mock(PayloadBlobBuilder.class, "mockBuilder1");
+        final PayloadBlobBuilder mockBuilder2 = context.mock(PayloadBlobBuilder.class, "mockBuilder2");
 
         final File[] mockFiles = new File[] {
-                context.mock(File.class, "mockFile1"),
-                context.mock(File.class, "mockFile2"),
+            context.mock(File.class, "mockFile1"),
+            context.mock(File.class, "mockFile2"),
         };
 
         context.checking(new Expectations() {{
-            oneOf(mockBlobStoreContext).close();
-            oneOf(mockBlobStoreContext).createInputStreamMap(with(bucket),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
-            allowing(mockBlobStore).createDirectory(bucket, service.jobToBaseKey(job));
+            oneOf(mockBlobStoreContext).getBlobStore();will(returnValue(mockBlobStore));
+            
             allowing(mockFiles[0]).getName();will(returnValue("file1Name"));
             allowing(mockFiles[1]).getName();will(returnValue("file2Name"));
-            oneOf(mockInputStreamMap).putFile("file1Name", mockFiles[0]);
-            oneOf(mockInputStreamMap).putFile("file2Name", mockFiles[1]);
+            
+            oneOf(mockBlobStore).blobBuilder(jobStorageBaseKey + "/file1Name");will(returnValue(mockBuilder1));
+            oneOf(mockBlobStore).blobBuilder(jobStorageBaseKey + "/file2Name");will(returnValue(mockBuilder2));
+            
+            oneOf(mockBuilder1).payload(mockFiles[0]);will(returnValue(mockBuilder1));
+            oneOf(mockBuilder1).build();will(returnValue(mockBlob1));
+            
+            oneOf(mockBuilder2).payload(mockFiles[1]);will(returnValue(mockBuilder2));
+            oneOf(mockBuilder2).build();will(returnValue(mockBlob2));
+            
+            oneOf(mockBlobStore).putBlob(bucket, mockBlob1);
+            oneOf(mockBlobStore).putBlob(bucket, mockBlob2);
         }});
 
         service.uploadJobFiles(job, mockFiles);
@@ -180,53 +178,10 @@ public class TestCloudStorageService extends PortalTestClass {
     @Test
     public void testDeleteJobFiles() throws Exception {
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
-        
-        final InputStreamMap mockInputStreamMap = context.mock(InputStreamMap.class);
-        final MutableContentMetadata mockObj1ContentMetadata=context.mock(MutableContentMetadata.class,"mockObj1Md");
-        final MutableContentMetadata mockObj2ContentMetadata=context.mock(MutableContentMetadata.class,"mockObj2Md");
-
-        LinkedList<MutableBlobMetadataImpl> ls=new LinkedList<MutableBlobMetadataImpl>();
-        ls.add(context.mock(MutableBlobMetadataImpl.class,"mockObj1"));
-        ls.add(context.mock(MutableBlobMetadataImpl.class,"mockObj2"));
-
-        final Iterable<? extends MutableBlobMetadataImpl> mockFileMetaDataList=ls;
-
-        final String obj1Key = jobStorageBaseKey + "obj1";
-        final String obj1Bucket = bucket;
-        final long obj1Length = 1234L;
-        final String obj2Key = jobStorageBaseKey + "obj2";
-        final String obj2Bucket = bucket;
-        final long obj2Length = 4567L;
 
         context.checking(new Expectations() {{
-            oneOf(mockBlobStoreContext).close();
-            
             allowing(mockBlobStoreContext).getBlobStore();will(returnValue(mockBlobStore));
             oneOf(mockBlobStore).deleteDirectory(bucket, jobStorageBaseKey);
-            
-            oneOf(mockBlobStoreContext).createInputStreamMap(with(any(String.class)),with(any(ListContainerOptions.class)));will(returnValue(mockInputStreamMap));
-            oneOf(mockInputStreamMap).size();will(returnValue(2));
-            oneOf(mockInputStreamMap).list();will(returnValue(mockFileMetaDataList));
-              int i = 0;
-              for (MutableBlobMetadataImpl fileMetadata : mockFileMetaDataList) {
-                  if (i == 0) {
-                      allowing(fileMetadata).getName();will(returnValue(obj1Key));
-                      allowing(fileMetadata).getUri();will(returnValue(new URI(obj1Bucket)));
-                      allowing(fileMetadata).getContentMetadata();will(returnValue(mockObj1ContentMetadata));
-                      allowing(mockObj1ContentMetadata).getContentLength();will(returnValue(obj1Length));
-                      
-                      oneOf(mockInputStreamMap).remove("obj1");
-                  } else {
-                      allowing(fileMetadata).getName();will(returnValue(obj2Key));
-                      allowing(fileMetadata).getUri();will(returnValue(new URI(obj2Bucket)));
-                      allowing(fileMetadata).getContentMetadata();will(returnValue(mockObj2ContentMetadata));
-                      allowing(mockObj2ContentMetadata).getContentLength();will(returnValue(obj2Length));
-                      
-                      oneOf(mockInputStreamMap).remove("obj2");
-                  }
-                  i++;
-              }
-
         }});
 
         service.deleteJobFiles(job);
