@@ -59,5 +59,25 @@ Ext.define('portal.widgets.field.ClearableComboBox', {
         var trigger2 = Ext.get("trigger2" + id);
         trigger1.addClsOnOver('x-form-trigger-over');
         trigger2.addClsOnOver('x-form-trigger-over');
+    },
+    getSubmitData: function(includeEmptyText) {
+        var me = this,
+            data = null,
+            val;
+        if (!me.disabled && me.submitValue && !me.isFileUpload()) {
+            val = me.getSubmitValue(includeEmptyText);
+            if (val !== null) {
+                data = {};
+                data[me.getName()] = val;
+            }
+        }
+        return data;
+    },
+    getSubmitValue : function(includeEmptyText) {
+        var value = this.callParent(arguments);
+        if (value === null && includeEmptyText && this.emptyText) {
+            return this.emptyText;
+        }
+        return value;
     }
 });
