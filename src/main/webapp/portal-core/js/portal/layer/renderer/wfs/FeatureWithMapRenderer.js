@@ -130,18 +130,26 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         if(home.indexOf("localhost") != -1){
             home=home.replace("localhost",LOCALHOST);
         }
-      //get the style format encoded as string
-        var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), unescape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters()))));
-        this.sld=unescape(styleUrl);
 
         var primitives = [];
         for (var i = 0; i < wmsResources.length; i++) {
             var wmsUrl = wmsResources[i].get('url');
             // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
            // urls.push(wmsUrl);
-
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
+
+            //  FT: Generate serviceURL based on WFS URL, serviceURL is important for NVCL Borehole
+            //      - to display only those with Hylogger Data based on those listed in nvcl:ScannedBoreholeCollection
+            var onlineResource = wfsResources[i];
+            var serviceUrl = onlineResource.data.url;
+            var proxyUrl = home + this.parentLayer.get('source').get('proxyStyleUrl');
+            var filterParams = escape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters()) + "&serviceUrl=" + serviceUrl);
+            // FT : fix empty space for filter parameter that has been double escape
+            var filterParamsFix = filterParams.replace(/%2520/g,"%20");
+            var styleUrl = Ext.urlAppend(proxyUrl,filterParamsFix);
+            this.sld=unescape(styleUrl);
+
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1;
             wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
 

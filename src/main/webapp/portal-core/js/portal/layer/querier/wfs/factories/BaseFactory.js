@@ -11,6 +11,7 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
     XMLNS_SA : 'http://www.opengis.net/sampling/1.0',
     XMLNS_OM : 'http://www.opengis.net/om/1.0',
     XMLNS_SWE : 'http://www.opengis.net/swe/1.0.1',
+    XMLNS_GSMLP : 'http://xmlns.geosciml.org/geosciml-portrayal/2.0',
 
 
     config : {
