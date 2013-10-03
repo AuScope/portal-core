@@ -38,6 +38,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         this._filterButton = Ext.create('Ext.button.Button', {
             text :'Show Results',
             disabled : true,
+            overCls : 'showResultsOverStyle',
             handler : Ext.bind(this._onApplyFilter, this)
         });
         

@@ -27,3 +27,9 @@ body.ext-chrome table.x-btn .x-btn-small td.x-btn-mc em a {
     font-weight: normal;
     padding: 0 4px;
 }
+
+.x-showResultsOverStyle {
+    background-color: #F18B4B;
+    background-image: none;
+    border-color: #EE6A3D;
+}
