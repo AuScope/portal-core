@@ -16,7 +16,7 @@ body.ext-chrome table.x-btn .x-btn-small td.x-btn-mc em a {
 }
 
 .applyFilterCls {
-	background-color: #256490;
+	background-color: #256490 !important;
 }
 
 .applyFilterCls .x-btn-inner {
@@ -29,7 +29,7 @@ body.ext-chrome table.x-btn .x-btn-small td.x-btn-mc em a {
 }
 
 .x-showResultsOverStyle {
-    background-color: #F18B4B;
+    background-color: #F18B4B !important;
     background-image: none;
     border-color: #EE6A3D;
 }
