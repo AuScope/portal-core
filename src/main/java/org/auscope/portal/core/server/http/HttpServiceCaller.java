@@ -204,4 +204,19 @@ public class HttpServiceCaller {
 
         return stringBuffer.toString();
     }
+    
+    /**
+     * Convert a HttpResponse into a String. Closes the HttpResponse after parsing the entire string.
+     * @param stream
+     * @return
+     * @throws IOException
+     */
+    public String responseToString(HttpResponse response) throws IOException {
+        InputStream s = response.getEntity().getContent();
+        try {
+            return responseToString(s);
+        } finally {
+            s.close();
+        }
+    }
 }

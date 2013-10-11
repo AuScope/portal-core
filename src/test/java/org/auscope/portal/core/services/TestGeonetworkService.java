@@ -5,6 +5,7 @@ import java.net.URI;
 import junit.framework.Assert;
 
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -48,6 +49,7 @@ public class TestGeonetworkService extends PortalTestClass {
     @Test
     public void testSuccessfulRequest() throws Exception {
         final String sessionCookie = "sessionCookie";
+        final HttpResponse mockLoginResponse = context.mock(HttpResponse.class);
         final HttpRequestBase insertRecordMethod = context.mock(HttpRequestBase.class, "insertRecordMethod");
         final HttpRequestBase recordMetadataShowMethod = context.mock(HttpRequestBase.class, "recordMetadataShowMethod");
         final HttpRequestBase recordMetadataGetMethod = context.mock(HttpRequestBase.class, "recordMetadataGetMethod");
@@ -74,12 +76,13 @@ public class TestGeonetworkService extends PortalTestClass {
             allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);will(returnValue(loginMethod));
             allowing(gnMethodMaker).makeUserLogoutMethod(endpoint, sessionCookie);will(returnValue(logoutMethod));
 
-            allowing(loginMethod).getFirstHeader("Set-Cookie");will(returnValue(new BasicHeader("Set-Cookie", sessionCookie)));
+            allowing(mockLoginResponse).getFirstHeader("Set-Cookie");will(returnValue(new BasicHeader("Set-Cookie", sessionCookie)));
 
             oneOf(serviceCaller).getMethodResponseAsString(insertRecordMethod);will(returnValue(insertResponse));
             oneOf(serviceCaller).getMethodResponseAsString(recordMetadataGetMethod);will(returnValue(recordGetMetadata));
             oneOf(serviceCaller).getMethodResponseAsString(recordPublicMethod);will(returnValue(recordPublicResponse));
-            oneOf(serviceCaller).getMethodResponseAsString(loginMethod);will(returnValue(loginResponse));
+            oneOf(serviceCaller).getMethodResponseAsHttpResponse(loginMethod);will(returnValue(mockLoginResponse));
+            oneOf(serviceCaller).responseToString(mockLoginResponse);will(returnValue(loginResponse));
             oneOf(serviceCaller).getMethodResponseAsString(logoutMethod);will(returnValue(logoutResponse));
 
             allowing(recordMetadataShowMethod).getURI();will(returnValue(responseUri));
@@ -91,6 +94,7 @@ public class TestGeonetworkService extends PortalTestClass {
     @Test(expected=Exception.class)
     public void testBadLoginRequest() throws Exception {
         final HttpRequestBase loginMethod = context.mock(HttpRequestBase.class, "loginMethod");
+        final HttpResponse mockLoginResponse = context.mock(HttpResponse.class);
         final String loginResponse = "<html>The contents doesn't matter as a failed GN login returns a static page</html>";
 
         final CSWRecord record = new CSWRecord("a", "b", "c", "", new CSWOnlineResourceImpl[0], new CSWGeographicElement[0]);
@@ -98,7 +102,8 @@ public class TestGeonetworkService extends PortalTestClass {
         context.checking(new Expectations() {{
             allowing(gnMethodMaker).makeUserLoginMethod(endpoint, userName, password);will(returnValue(loginMethod));
 
-            oneOf(serviceCaller).getMethodResponseAsString(loginMethod);will(returnValue(loginResponse));
+            oneOf(serviceCaller).getMethodResponseAsHttpResponse(loginMethod);will(returnValue(mockLoginResponse));
+            oneOf(serviceCaller).responseToString(mockLoginResponse);will(returnValue(loginResponse));
         }});
 
         service.makeCSWRecordInsertion(record);
