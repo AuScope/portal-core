@@ -105,7 +105,6 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 text:'Add Layer to Map',
                 tooltip:'Add Layer to Map',
                 iconCls:'add',
-
                 handler: function(btn) {
                     var grid = btn.findParentByType('baserecordpanel');
                     var sm = grid.getSelectionModel();
@@ -114,6 +113,23 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                         grid.fireEvent('addlayerrequest', this, selectedRecords[0]); //we only support single selection
                     }
                 }
+            },{
+                xtype: 'tbfill'
+            },{
+                text:'Clear',
+                itemId: 'pClear',
+                tooltip:'Clear your cookie',
+                iconCls:'remove',
+                hidden:true
+
+            },{
+
+                text:'Customize',
+                itemId: 'pCustom',
+                tooltip:'Customize this Panel',
+                iconCls:'add',
+                hidden:true
+
             }]
         });
 
@@ -385,5 +401,27 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         } else {
             searchBar.hide();
         }
+    },
+
+    _personalTabActive:function(active){
+        var dockedItems = this.getDockedItems();
+        var personalBar = null;
+        for (var i = 0; i < dockedItems.length; i++) {
+            if (dockedItems[i].initialConfig.dock === 'bottom') {
+                personalBar = dockedItems[i];
+            }
+        }
+
+        var customize= personalBar.getComponent('pCustom')
+        var clear= personalBar.getComponent('pClear')
+        if(active){
+            customize.show();
+            clear.show();
+
+        }else{
+            customize.hide();
+            clear.hide();
+        }
     }
+
 });
