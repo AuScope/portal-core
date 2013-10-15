@@ -31,7 +31,7 @@ public class HttpUtil {
      * @param filterUrls - the filter urls
      * @throws MalformedURLException
      */
-    public boolean containHost(String url, String[] filterUrls)
+    public static boolean containHost(String url, String[] filterUrls)
             throws MalformedURLException {
         String urlHost = new URL(url).getHost();
         for (String filterUrl : filterUrls) {
