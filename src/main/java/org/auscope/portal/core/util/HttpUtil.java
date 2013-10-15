@@ -1,7 +1,9 @@
 package org.auscope.portal.core.util;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -19,6 +21,26 @@ public class HttpUtil {
             builder.setParameter(param.getName(), param.getValue());
         }
         return builder.build();
+    }
+
+
+    /**
+     * comparing url with a list of filter urls
+     *
+     * @param url - the url of the service to query
+     * @param filterUrls - the filter urls
+     * @throws MalformedURLException
+     */
+    public boolean containHost(String url, String[] filterUrls)
+            throws MalformedURLException {
+        String urlHost = new URL(url).getHost();
+        for (String filterUrl : filterUrls) {
+            String filterHost = new URL(filterUrl).getHost();
+            if (urlHost.equalsIgnoreCase(filterHost)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
