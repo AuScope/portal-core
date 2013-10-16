@@ -147,10 +147,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var onlineResource = wfsResources[i];
             var serviceUrl = onlineResource.data.url;
             var proxyUrl = home + this.parentLayer.get('source').get('proxyStyleUrl');
-            var filterParams = escape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters()) + "&serviceUrl=" + serviceUrl);
-            // FT : fix empty space for filter parameter that has been double escape
-            var filterParamsFix = filterParams.replace(/%2520/g,"%20");
-            var styleUrl = Ext.urlAppend(proxyUrl,filterParamsFix);
+            var filterParams = escape(unescape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters())) + "&serviceUrl=" + serviceUrl);
+            var styleUrl = Ext.urlAppend(proxyUrl,filterParams);
             this.sld=unescape(styleUrl);
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1;
             wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
