@@ -3,6 +3,8 @@
  * a multiple CSWFilterResultsPanel tabs
  *
  * The filter is designed to be generated from a CSWThemeFilterForm
+ *
+ * VT: This should be legacy code from the GA-eResearch. If you require something like this, refer to CSWSelectionWindow.
  */
 MultiCSWFilterResultsPanel = Ext.extend(Ext.TabPanel, {
 

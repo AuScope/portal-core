@@ -1,36 +1,17 @@
 /**
- *
- * This is the paging panel used for inSar.
- *
+ * This is a generic paging panal for all CSW Records.
  */
-Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
+Ext.define('portal.widgets.panel.CSWRecordPagingPanel', {
     extend : 'Ext.grid.Panel',
-    alias: 'widget.cswpagingpanel',
+    alias: 'widget.cswrecordpagingpanel',
 
-    map : null,
     cswRecordStore : null,
     pageSize: 20,
 
     constructor : function(cfg) {
         var me = this;
 
-        this.cswRecordStore = Ext.create('Ext.data.Store', {
-            id:'CSWPagingStore',
-            autoLoad: false,
-            model : 'portal.csw.CSWRecord',
-            pageSize: this.pageSize,
-            proxy: {
-                type: 'ajax',
-                url: 'getUncachedCSWRecords.do',
-                extraParams:cfg.cswConfig.extraParams,
-                reader: {
-                    type: 'json',
-                    root: 'data',
-                    successProperty: 'success',
-                    totalProperty: 'totalResults'
-                }
-            }
-        });
+        this.cswRecordStore = cfg.store;
 
 
         Ext.apply(cfg, {
@@ -72,12 +53,10 @@ Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
             }],
             listeners : {
                 afterrender : function(grid,eOpts) {
-                    grid.cswRecordStore.load({
-                        params:cfg.cswConfig.pagingConfig
-                    });
+                    grid.cswRecordStore.load();
                 },
                 itemdblclick : function(grid, record, item, index, e, eOpts ){
-                    cfg.cswConfig.callback(record);
+
                 }
 
             }

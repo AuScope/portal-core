@@ -128,7 +128,15 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 itemId: 'pCustom',
                 tooltip:'Customize this Panel',
                 iconCls:'add',
-                hidden:true
+                hidden:true,
+
+                handler: function(btn) {
+                    var cswFilterSelectionWindow = new CSWFilterSelectionWindow({
+                        title : 'Filter Registeries',
+                        store : me.getStore()
+                    });
+                    cswFilterSelectionWindow.show();
+                }
 
             }]
         });

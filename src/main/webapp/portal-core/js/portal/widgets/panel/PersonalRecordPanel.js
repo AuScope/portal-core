@@ -3,7 +3,7 @@
  * records that are loaded directly from an external WMS source
  */
 Ext.define('portal.widgets.panel.PersonalRecordPanel', {
-    extend : 'portal.widgets.panel.KnownLayerPanel',
+    extend : 'portal.widgets.panel.CSWRecordPanel',
 
     constructor : function(cfg) {
         this.callParent(arguments);
