@@ -267,7 +267,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
 
         var text = '<p>The portal will make a download request on your behalf and return the results in a ZIP archive.';
             text += 'Please check back with us later using your email as access token and click on Check Status</p>';
-            text += '<br><p>We limit the results to 2000 features per access point.';
+            text += '<br><p>We limit the results to 200 features per access point.';
             text += 'You can either modify the download filter or alternatively, you can download directly from the access points below</p><br>';
 
         var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
@@ -328,7 +328,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
 
             filterParameters.serviceUrl = url;
             filterParameters.typeName = typeName;
-            filterParameters.maxFeatures = 2000;
+            filterParameters.maxFeatures = 200;
 
 
             sUrl += '&serviceUrls=' + escape(Ext.urlEncode(filterParameters, prefixUrl));
