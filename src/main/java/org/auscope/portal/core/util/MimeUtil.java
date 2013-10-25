@@ -55,6 +55,8 @@ public class MimeUtil {
             return suffix.split("\\+|;")[0];
         } else if (mime.contains("kml")) {
             return "kml";
+        } else if (mime.contains("kmz")) {
+            return "kmz";
         } else if (mime.contains("xml")) {
             return "xml";
         }
