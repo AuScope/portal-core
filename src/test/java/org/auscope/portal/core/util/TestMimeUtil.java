@@ -26,5 +26,6 @@ public class TestMimeUtil extends PortalTestClass {
         Assert.assertEquals("", MimeUtil.mimeToFileExtension("image/"));
         Assert.assertEquals("foo", MimeUtil.mimeToFileExtension("image/foo"));
         Assert.assertEquals("png", MimeUtil.mimeToFileExtension("image/png;mode=8bit"));
+        Assert.assertEquals("tiff", MimeUtil.mimeToFileExtension("image/geotiff"));
     }
 }
