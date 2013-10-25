@@ -52,7 +52,9 @@ public class MimeUtil {
             return suffix.split("\\+|;")[0];
         } else if (mime.startsWith("text/")) {
             String suffix = mime.substring("text/".length());
-            return suffix.split("\\+")[0];
+            return suffix.split("\\+|;")[0];
+        } else if (mime.contains("kml")) {
+            return "kml";
         } else if (mime.contains("xml")) {
             return "xml";
         }
