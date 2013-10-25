@@ -28,6 +28,8 @@ public class MimeUtil {
             return "kml";
         } else if (mime.contains("xml")) {
             return "xml";
+        } else if (mime.contains("pdf")) {
+            return "pdf";
         }
 
         return "";
