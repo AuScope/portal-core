@@ -16,9 +16,11 @@ public class MimeUtil {
     public static String mimeToFileExtension(String mime) {
         if (mime == null) {
             return "";
+        } else if (mime.contains("tiff")) {
+            return "tiff";
         } else if (mime.startsWith("image/")) {
             String suffix = mime.substring("image/".length());
-            return suffix.split("\\+")[0];
+            return suffix.split("\\+|;")[0];
         } else if (mime.startsWith("text/")) {
             String suffix = mime.substring("text/".length());
             return suffix.split("\\+")[0];
