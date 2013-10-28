@@ -139,13 +139,16 @@ Ext.define('portal.util.BBox', {
         }
 
         //SPLIT CASE 3: Polygon is too wide (Gmap can't handle click events for wide polygons)
-        if (Math.abs(bbox.westBoundLongitude - bbox.eastBoundLongitude) > 60) {
-            var splits = bbox.splitAt((bbox.westBoundLongitude + bbox.eastBoundLongitude) / 2);
-            for (var i = 0; i < splits.length; i++) {
-                this._splitBboxes(splits[i], resultList);
-            }
-            return resultList;
-        }
+        //VT: There has been alot of work that have gone into calculating these bounding box and I am not sure why.
+        //it may be due to some legacy map bug but I am unable to replicate it.
+
+//        if (Math.abs(bbox.westBoundLongitude - bbox.eastBoundLongitude) > 60) {
+//            var splits = bbox.splitAt((bbox.westBoundLongitude + bbox.eastBoundLongitude) / 2);
+//            for (var i = 0; i < splits.length; i++) {
+//                this._splitBboxes(splits[i], resultList);
+//            }
+//            return resultList;
+//        }
 
         //OTHERWISE - bounding box is OK to render
         resultList.push(bbox);
