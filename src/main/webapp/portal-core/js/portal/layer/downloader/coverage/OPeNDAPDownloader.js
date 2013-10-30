@@ -228,10 +228,10 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
         var opendapResource = opendapResources[0];  //we are only providing a download for 1 resource
         var opendapUrl = opendapResource.get('url');
         var variableName = opendapResource.get('name');
-        
+
         // See whether or not there is an FTP resource:
         var ftpResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.FTP);
-        var ftpURL = ftpResources.length > 0 ? ftpResources[0].get('url') : ''; 
+        var ftpURL = ftpResources.length > 0 ? ftpResources[0].get('url') : '';
 
         //Our objective is to build up a list of field sets
         var fieldSetsToDisplay = [];
@@ -306,6 +306,7 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
 
                     //Our form must be valid + finished loading
                     if (!frm.getForm().isValid() || !loadingLabel.isHidden()) {
+                        Ext.Msg.alert('Invalid Fields','One or more fields are invalid');
                         return;
                     }
 
@@ -315,7 +316,7 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
 
                     var url = 'opendapMakeRequest.do?constraints=' + escape(params.constraints) +
                         (ftpURL ? '&' + Ext.Object.toQueryString({ftpURL: ftpURL}) : '');
-                        
+
                     delete params.constraints;
 
                     portal.util.FileDownloader.downloadFile(url, params);

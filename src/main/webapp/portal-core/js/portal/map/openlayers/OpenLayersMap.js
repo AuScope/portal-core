@@ -370,7 +370,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                    Ext.getCmp("long_max").setValue(bounds[2]); // east bound longitude
                    Ext.getCmp("long_min").setValue(bounds[0]); // west bound longitude
                }
-               
+
                // reset the control to panning.
                customNavTb.defaultControl=customNavTb.controls[0];
                customNavTb.activateControl(customNavTb.controls[0]);
@@ -486,11 +486,11 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     getVisibleMapBounds : function() {
         var bounds = this.map.getExtent().transform('EPSG:3857','EPSG:4326').toArray();
-        
+
         // Nasty Maths - work out the precision....
         eastWestDelta = Math.abs(Math.max(bounds[0], bounds[2]) - Math.min(bounds[0], bounds[2]));
         northSouthDelta = Math.abs(Math.max(bounds[1], bounds[3]) - Math.min(bounds[1], bounds[3]));
-        
+
         // y = np.floor(1/np.power(x,0.15))
         /*
          * 0.0001  :  4.0
@@ -502,22 +502,22 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
          * 100.0  :  0.0
          */
 
-        
+
         calcEWprecis = Math.floor(1/Math.pow(eastWestDelta,0.16));
         calcNSprecis = Math.floor(1/Math.pow(northSouthDelta,0.16));
-        
+
         if (calcEWprecis < 0) {
-        	calcEWprecis = 0;
+            calcEWprecis = 0;
         }
         if (calcNSprecis < 0) {
-        	calcNSprecis = 0;
+            calcNSprecis = 0;
         }
-        
+
         north = bounds[3].toFixed(calcNSprecis);
         south = bounds[1].toFixed(calcNSprecis);
         east = bounds[2].toFixed(calcEWprecis);
         west = bounds[0].toFixed(calcEWprecis);
-        
+
         return Ext.create('portal.util.BBox', {
             westBoundLongitude : west,
             southBoundLatitude : south,
@@ -622,7 +622,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     scrollToBounds : function(bbox) {
         var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
         bounds.transform('EPSG:4326','EPSG:3857');
-        this.map.zoomToExtent(bounds);
+        this.map.zoomToExtent(bounds,true);
     },
 
     /**
