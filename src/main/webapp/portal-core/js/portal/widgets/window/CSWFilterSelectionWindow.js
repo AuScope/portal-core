@@ -9,7 +9,7 @@ CSWFilterSelectionWindow = Ext.extend(Ext.Window, {
             layout: 'fit',
             items: [{
                 id : 'pagingPanel',
-                xtype: 'panel',
+                xtype: 'cswfilterformpanel',
                 layout : 'fit'
             }],
 
