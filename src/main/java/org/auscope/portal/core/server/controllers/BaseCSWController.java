@@ -109,6 +109,7 @@ public abstract class BaseCSWController extends BasePortalController {
             if (rec.getServiceName() == null || rec.getServiceName().isEmpty()) {
                 continue;//dont include any records with an empty name (it looks bad)
             }
+
             viewRecords.add(viewCSWRecordFactory.toView(rec));
         }
 
