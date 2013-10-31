@@ -35,7 +35,7 @@ Ext.define('portal.csw.OnlineResource', {
          * Utility for turning the various portal.csw.OnlineResource.* enums into an English readable string.
          * Returns null if type isn't recognised
          */
-        typeToString : function(type) {
+        typeToString : function(type,cswRecord) {
             switch (type) {
             case portal.csw.OnlineResource.WWW:
             case portal.csw.OnlineResource.FTP:
@@ -43,7 +43,11 @@ Ext.define('portal.csw.OnlineResource', {
             case portal.csw.OnlineResource.WFS:
                 return 'OGC Web Feature Service 1.1.0';
             case portal.csw.OnlineResource.WMS:
-                return 'OGC Web Map Service 1.1.1';
+                if(cswRecord.get('version')=="1.3.0"){
+                    return 'OGC Web Map Service 1.3.0';
+                }else{
+                    return 'OGC Web Map Service 1.1.1';
+                }
             case portal.csw.OnlineResource.WCS:
                 return 'OGC Web Coverage Service 1.0.0';
             case portal.csw.OnlineResource.OPeNDAP:
