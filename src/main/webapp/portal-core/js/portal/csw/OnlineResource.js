@@ -20,7 +20,8 @@ Ext.define('portal.csw.OnlineResource', {
 
     //Static value representations of the 'type' field
     statics : {
-        WMS : 'WMS', //represents a Web Map Service
+        WMS : 'WMS', //represents a Web Map Service 1.1.1
+        WMS3 : 'WMS3', //represents a Web Map Service 1.3.0
         WFS : 'WFS', //represents a Web Feature Service
         WCS : 'WCS', //represents a Web Coverage Service
         WWW : 'WWW', //represents a regular HTTP web link
@@ -44,6 +45,8 @@ Ext.define('portal.csw.OnlineResource', {
                 return 'OGC Web Feature Service 1.1.0';
             case portal.csw.OnlineResource.WMS:
                 return 'OGC Web Map Service 1.1.1';
+            case portal.csw.OnlineResource.WMS3:
+                return 'OGC Web Map Service 1.3.0';
             case portal.csw.OnlineResource.WCS:
                 return 'OGC Web Coverage Service 1.0.0';
             case portal.csw.OnlineResource.OPeNDAP:
