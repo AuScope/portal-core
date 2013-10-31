@@ -26,14 +26,9 @@ public abstract class AbstractCSWOnlineResource {
          */
         WCS,
         /**
-         * OGC Web Map Service 1.1.1.
+         * OGC Web Map Service.
          */
         WMS,
-
-        /**
-         * OGC Web Map Service 1.3.0.
-         */
-        WMS3,
         /**
          * OGC Web Feature Service.
          */
@@ -57,12 +52,12 @@ public abstract class AbstractCSWOnlineResource {
          * A SOS Service
          */
         SOS,
-
+        
         /**
          * IRIS Web Service
          */
         IRIS,
-
+        
         /**
          * A CSW Service. e.g. a GeoNetwork /csw endpoint. Can be used a dummy resource for when you don't want to cache all CSW records on load.
          */
@@ -110,11 +105,7 @@ public abstract class AbstractCSWOnlineResource {
         if (lowerProtocol.contains("wfs")) {
             return OnlineResourceType.WFS;
         } else if (lowerProtocol.contains("wms")) {
-            if(lowerProtocol.contains("1.3.0")){
-                return OnlineResourceType.WMS3;
-            }else{
-                return OnlineResourceType.WMS;
-            }
+            return OnlineResourceType.WMS;
         } else if (lowerProtocol.contains("wcs")) {
             return OnlineResourceType.WCS;
         } else if (lowerProtocol.contains("www:link-1.0-http--link") || lowerProtocol.contains("www:download-1.0-http--download")) {
@@ -134,7 +125,7 @@ public abstract class AbstractCSWOnlineResource {
         } else if (lowerProtocol.contains("cswservice")) {
             return OnlineResourceType.CSWService;
         }
-
+        
         return OnlineResourceType.Unsupported;
     }
 

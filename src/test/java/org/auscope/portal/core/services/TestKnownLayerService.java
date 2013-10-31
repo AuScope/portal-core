@@ -23,7 +23,7 @@ import org.junit.Test;
  *
  */
 public class TestKnownLayerService extends PortalTestClass {
-    
+
     /**
      * This fake class is used to test aspects of the KnownLayerService where
      * the sought behaviour requires a descendant of KnownLayer.
@@ -40,8 +40,8 @@ public class TestKnownLayerService extends PortalTestClass {
 
     private ArrayList<CSWRecord> cswRecordList; //list of 3 mock CSWRecord objects
     private KnownLayerSelector mockSelector1;
-    private KnownLayerSelector mockSelector2; 
-    private KnownLayerSelector mockSelector3; 
+    private KnownLayerSelector mockSelector2;
+    private KnownLayerSelector mockSelector3;
     @SuppressWarnings("rawtypes")
     private ArrayList mockKnownLayerList;
     private CSWCacheService mockCacheService;
@@ -56,12 +56,12 @@ public class TestKnownLayerService extends PortalTestClass {
         mockSelector1 = context.mock(KnownLayerSelector.class, "knownLayerSelector1");
         mockSelector2 = context.mock(KnownLayerSelector.class, "knownLayerSelector2");
         mockSelector3 = context.mock(KnownLayerSelector.class, "knownLayerSelector3");
-        
+
         mockKnownLayerList = new ArrayList();
         mockKnownLayerList.add(new KnownLayer("id1", mockSelector1));
         mockKnownLayerList.add(new KnownLayer("id2", mockSelector2));
         mockKnownLayerList.add(new FakeKnownLayerChild("id3", mockSelector3));
-        
+
         cswRecordList = new ArrayList<CSWRecord>();
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord1"));
         cswRecordList.add(context.mock(CSWRecord.class, "mockRecord2"));
@@ -71,12 +71,16 @@ public class TestKnownLayerService extends PortalTestClass {
             allowing(cswRecordList.get(0)).getFileIdentifier();will(returnValue("id1"));
             allowing(cswRecordList.get(1)).getFileIdentifier();will(returnValue("id2"));
             allowing(cswRecordList.get(2)).getFileIdentifier();will(returnValue("id3"));
+
+            allowing(cswRecordList.get(0)).getOnlineResources();will(returnValue(null));
+            allowing(cswRecordList.get(1)).getOnlineResources();will(returnValue(null));
+            allowing(cswRecordList.get(2)).getOnlineResources();will(returnValue(null));
         }});
 
         mockCacheService = context.mock(CSWCacheService.class);
         knownLayerService = new KnownLayerService(mockKnownLayerList, mockCacheService);
     }
-    
+
     @After
     public void tearDown() {
         cswRecordList = null;
@@ -123,7 +127,7 @@ public class TestKnownLayerService extends PortalTestClass {
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.Related));
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.Related));
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
-            
+
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.NotRelated));
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.NotRelated));
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
@@ -138,8 +142,8 @@ public class TestKnownLayerService extends PortalTestClass {
         //Interrogate our response
         List<KnownLayerAndRecords> groups = grouping.getKnownLayers();
 
-        // Only the actual KnownLayers should be returned; not any derived types. 
-        Assert.assertEquals(2, groups.size()); 
+        // Only the actual KnownLayers should be returned; not any derived types.
+        Assert.assertEquals(2, groups.size());
 
         //Results of mockSelector1
         Assert.assertSame(mockKnownLayerList.get(0), groups.get(0).getKnownLayer());
@@ -154,13 +158,13 @@ public class TestKnownLayerService extends PortalTestClass {
         assertListContentsSame(cswRecordList, grouping.getOriginalRecordSet());
         assertListContentsSame(Arrays.asList(cswRecordList.get(2)), grouping.getUnmappedRecords());
     }
-    
+
     @Test
     public void groupKnownLayerRecords_FakeKnownLayerChild_ReturnsOneFakeKnownLayer() {
         // Arrange
         context.checking(new Expectations() {{
             oneOf(mockCacheService).getRecordCache();will(returnValue(cswRecordList));
-            
+
             oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.NotRelated));
             oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.NotRelated));
             oneOf(mockSelector1).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
@@ -168,19 +172,19 @@ public class TestKnownLayerService extends PortalTestClass {
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.NotRelated));
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.NotRelated));
             oneOf(mockSelector2).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
-            
+
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(0));will(returnValue(RelationType.Belongs));
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(1));will(returnValue(RelationType.NotRelated));
             oneOf(mockSelector3).isRelatedRecord(cswRecordList.get(2));will(returnValue(RelationType.NotRelated));
         }});
-        
+
         // Act
         @SuppressWarnings("unchecked")
-        List<KnownLayerAndRecords> groups = 
+        List<KnownLayerAndRecords> groups =
             knownLayerService.groupKnownLayerRecords(FakeKnownLayerChild.class).getKnownLayers();
-        
+
         // Assert
         Assert.assertEquals(1, groups.size());
-        Assert.assertTrue(groups.get(0).getKnownLayer() instanceof FakeKnownLayerChild); 
+        Assert.assertTrue(groups.get(0).getKnownLayer() instanceof FakeKnownLayerChild);
     }
 }

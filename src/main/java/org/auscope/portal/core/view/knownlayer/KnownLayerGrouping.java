@@ -1,5 +1,6 @@
 package org.auscope.portal.core.view.knownlayer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
@@ -23,6 +24,7 @@ public class KnownLayerGrouping {
             List<CSWRecord> unmappedRecords, List<CSWRecord> originalRecordSet) {
         this.knownLayers = knownLayers;
         this.unmappedRecords = unmappedRecords;
+        this.cleanUpWMS(this.unmappedRecords);
         this.originalRecordSet = originalRecordSet;
     }
 
@@ -53,5 +55,26 @@ public class KnownLayerGrouping {
         return originalRecordSet;
     }
 
+    private void cleanUpWMS(List<CSWRecord> unmappedRecords){
+
+        //set the version by looking at the first resource protocol
+        for(CSWRecord rec:unmappedRecords){
+            if(rec.getOnlineResources()!= null && rec.getOnlineResources().length>0 ){
+                //VT: keep looping till we find a wms protocol then we "guess" its version
+                for(int i=0;i <rec.getOnlineResources().length;i++ ){
+                    if(rec.getOnlineResources()[i].getProtocol().toLowerCase().contains("wms")){
+                        if(rec.getOnlineResources()[0].getProtocol().contains("1.3.0")){
+                            rec.setVersion("1.3.0");
+                        }else{
+                            rec.setVersion("1.1.1");
+                        }
+                        break;
+                    }
+                }
+            }
+
+        }
+
+    }
 
 }
