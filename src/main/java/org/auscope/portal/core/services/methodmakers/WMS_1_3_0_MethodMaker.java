@@ -155,13 +155,19 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @throws URISyntaxException
      */
     public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws URISyntaxException {
+//VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
+//        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
+//                southBoundLatitude,
+//                westBoundLongitude,
+//                northBoundLatitude,
+//                eastBoundLongitude
+//                );
 
         String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
-                southBoundLatitude,
                 westBoundLongitude,
-                northBoundLatitude,
-                eastBoundLongitude
-                );
+                southBoundLatitude,
+                eastBoundLongitude,
+                northBoundLatitude);
 
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
 

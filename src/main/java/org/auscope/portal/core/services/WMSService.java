@@ -109,10 +109,15 @@ public class WMSService {
             this.configWMSVersion(wmsUrl);
             method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sld);
             String response =  serviceCaller.getMethodResponseAsString(method);
+            //VT: a html response may not be xml valid therefore cannot go through the same validation process.
+            //Rely on the service to return meaningful response to the user.
+            if(format.toLowerCase().equals("text/html")){
+                return response;
+            }else{
+                OWSExceptionParser.checkForExceptionResponse(response);
+                return response;
+            }
 
-            OWSExceptionParser.checkForExceptionResponse(response);
-
-            return response;
         } catch(NullPointerException npe){
             npe.printStackTrace();
             throw new NullPointerException("Call configWMSVersion to setup the right wms method maker to use");
