@@ -138,7 +138,6 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         for (var i = 0; i < wmsResources.length; i++) {
             var wmsUrl = wmsResources[i].get('url');
             // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
-           // urls.push(wmsUrl);
 
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
@@ -160,11 +159,21 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
 
             var layer=this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity)
-            layer.wmsLayer.events.register("loadend",layer,function(){
+            //VT: Handle the after wms load clean up event.
+            layer.wmsLayer.events.register("loadend",this,function(layer){
                 this.currentRequestCount--;
                 if (this.currentRequestCount === 0) {
                     this.fireEvent('renderfinished', this);
                 }
+                var listOfStatus=this.renderStatus.getParameters();
+
+                for(key in listOfStatus){
+                    if(this._getDomain(key)==this._getDomain(layer.object.url)){
+                        this.renderStatus.updateResponse(key, "WMS Loaded");
+                        break
+                    }
+                }
+
             })
             primitives.push(layer);
 
@@ -184,14 +193,12 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
             if(wmsRendered[this._getDomainWithLayerNameId(wfsUrl,wfsLayer)]){
                 wmsUrls.push(wfsUrl);
+                this.renderStatus.updateResponse(wfsUrl, "Loading WMS");
             }
         }
         this.renderStatus.initialiseResponses(urls, 'Loading...');
 
-        //VT: somehow determine wms complete?
-        for (var i =0; i < wmsUrls.length; i++){
-            this.renderStatus.updateResponse(wmsUrls[i], "Loading WMS");
-        }
+
 
         //alert any listeners that we are about to start rendering wfs
         this.fireEvent('renderstarted', this, wfsResources, filterer);
