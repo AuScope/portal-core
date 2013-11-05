@@ -252,7 +252,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             modal       : true,
             plain       : false,
             title       : 'Check Status: ',
-            height      : 100,
+            height      : 110,
             width       : 500
           });
 
@@ -268,7 +268,8 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         var text = '<p>The portal will make a download request on your behalf and return the results in a ZIP archive.';
             text += 'Please check back with us later using your email as access token and click on Check Status</p>';
             text += '<br><p>We limit the results to 200 features per access point.';
-            text += 'You can either modify the download filter or alternatively, you can download directly from the access points below</p><br>';
+            text += 'You can either modify the download filter or alternatively, you can download directly from the WFS service points below</p><br>';
+            text += "<p>Note:The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'> here</a> for more information </p><br>";
 
         var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
 
@@ -323,8 +324,15 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         for (var i = 0; i < wfsResources.length; i++) {
             //Create a copy of the last set of filter parameters
             var url = wfsResources[i].get('url');
+
+            if(filterer.getParameters().serviceFilter &&
+                    url != filterer.getParameters().serviceFilter[0]){
+                continue;
+            }
             var typeName = wfsResources[i].get('name');
             var filterParameters = filterer.getParameters();
+
+
 
             filterParameters.serviceUrl = url;
             filterParameters.typeName = typeName;
