@@ -245,9 +245,6 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                         filterParams.serviceUrl!=filterer.getParameters().serviceFilter[0]){
                     this.currentRequestCount--;
                     this.renderStatus.updateResponse(filterParams.serviceUrl, "Not Queried");
-                    if (this.currentRequestCount === 0) {
-                        this.fireEvent('renderfinished', this);
-                    }
                     continue;
                 }
 
@@ -277,6 +274,10 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             //}
 
         }
+        if (this.currentRequestCount === 0) {
+            this.fireEvent('renderfinished', this);
+        }
+
     },
 
     _getDomain : function(data) {
