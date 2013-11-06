@@ -22,7 +22,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             iconUrl : config.icon ? config.icon.getUrl() : ''
         });
         this.allDownloadManagers = [];
-
+        this.currentRequestCount = 0;
         // Call our superclass constructor to complete construction process.
         this.callParent(arguments);
     },
@@ -165,6 +165,21 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
 
             var layer=this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity)
+
+
+            layer.wmsLayer.events.register("loadstart",this,function(layer){
+                this.currentRequestCount++;
+                var listOfStatus=this.renderStatus.getParameters();
+                for(key in listOfStatus){
+                    if(this._getDomain(key)==this._getDomain(layer.object.url)){
+                        this.renderStatus.updateResponse(key, "Loading WMS");
+                        this.fireEvent('renderstarted', this, wfsResources, filterer);
+                        break
+                    }
+                }
+
+            });
+
             //VT: Handle the after wms load clean up event.
             layer.wmsLayer.events.register("loadend",this,function(layer){
                 this.currentRequestCount--;
@@ -180,7 +195,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                     }
                 }
 
-            })
+            });
             primitives.push(layer);
 
         }
@@ -208,7 +223,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
         //alert any listeners that we are about to start rendering wfs
         this.fireEvent('renderstarted', this, wfsResources, filterer);
-        this.currentRequestCount = wfsResources.length; //this will be decremented as requests return
+        //this.currentRequestCount = wfsResources.length; //this will be decremented as requests return
 
         //Each and every WFS resource will be queried with their own seperate download manager
 
@@ -218,7 +233,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var wfsLayer = wfsResources[i].get('name');
             //only if WMS has not been built
             if(!wmsRendered[this._getDomainWithLayerNameId(wfsUrl,wfsLayer)]){
-
+                this.currentRequestCount++;
                 //Build our filter params object that will make a request
                 var filterParams = filterer.getParameters();
                 var onlineResource = wfsResources[i];
