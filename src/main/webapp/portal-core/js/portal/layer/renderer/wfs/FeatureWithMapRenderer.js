@@ -138,14 +138,25 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         for (var i = 0; i < wmsResources.length; i++) {
             var wmsUrl = wmsResources[i].get('url');
             // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
-           // urls.push(wmsUrl);
 
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
             //  FT: Generate serviceURL based on WFS URL, serviceURL is important for NVCL Borehole
             //      - to display only those with Hylogger Data based on those listed in nvcl:ScannedBoreholeCollection
-            var onlineResource = wfsResources[i];
-            var serviceUrl = onlineResource.data.url;
+            for (var j=0; j<wfsResources.length; j++) {
+                var wfsHost = this._getDomain(wfsResources[j].get('url'));
+                var wmsHost = this._getDomain(wmsUrl);
+                if (wfsHost==wmsHost) {
+                    serviceUrl = wfsResources[j].get('url');
+                }
+
+            }
+
+            if(filterer.getParameters().serviceFilter &&
+                    (this._getDomain(wmsResources[i].get('url'))!= this._getDomain(filterer.getParameters().serviceFilter[0]))){
+                continue;
+            }
+
             var proxyUrl = home + this.parentLayer.get('source').get('proxyStyleUrl');
             var filterParams = escape(unescape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters())) + "&serviceUrl=" + serviceUrl);
             var styleUrl = Ext.urlAppend(proxyUrl,filterParams);
@@ -153,7 +164,24 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1;
             wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
 
-            primitives.push(this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity));
+            var layer=this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity)
+            //VT: Handle the after wms load clean up event.
+            layer.wmsLayer.events.register("loadend",this,function(layer){
+                this.currentRequestCount--;
+                if (this.currentRequestCount === 0) {
+                    this.fireEvent('renderfinished', this);
+                }
+                var listOfStatus=this.renderStatus.getParameters();
+
+                for(key in listOfStatus){
+                    if(this._getDomain(key)==this._getDomain(layer.object.url)){
+                        this.renderStatus.updateResponse(key, "WMS Loaded");
+                        break
+                    }
+                }
+
+            })
+            primitives.push(layer);
 
         }
 
@@ -171,14 +199,12 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
             if(wmsRendered[this._getDomainWithLayerNameId(wfsUrl,wfsLayer)]){
                 wmsUrls.push(wfsUrl);
+                this.renderStatus.updateResponse(wfsUrl, "Loading WMS");
             }
         }
         this.renderStatus.initialiseResponses(urls, 'Loading...');
 
-        //VT: somehow determine wms complete?
-        for (var i =0; i < wmsUrls.length; i++){
-            this.renderStatus.updateResponse(wmsUrls[i], "WMS Image");
-        }
+
 
         //alert any listeners that we are about to start rendering wfs
         this.fireEvent('renderstarted', this, wfsResources, filterer);
@@ -196,10 +222,19 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 //Build our filter params object that will make a request
                 var filterParams = filterer.getParameters();
                 var onlineResource = wfsResources[i];
-
-                filterParams.serviceUrl = onlineResource.data.url;
-                filterParams.typeName = onlineResource.data.name;
+                filterParams.serviceUrl = wfsUrl;
+                filterParams.typeName = wfsLayer;
                 filterParams.maxFeatures = 200;
+
+                if(filterer.getParameters().serviceFilter &&
+                        filterParams.serviceUrl!=filterer.getParameters().serviceFilter[0]){
+                    this.currentRequestCount--;
+                    this.renderStatus.updateResponse(filterParams.serviceUrl, "Not Queried");
+                    if (this.currentRequestCount === 0) {
+                        this.fireEvent('renderfinished', this);
+                    }
+                    continue;
+                }
 
                 //Our requesting is handled by a download manager
                 var downloadManager = Ext.create('portal.layer.renderer.wfs.FeatureDownloadManager', {
@@ -220,16 +255,20 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 downloadManager.startDownload();
 
                 this.allDownloadManagers.push(downloadManager);//save this manager in case we need to abort later on
-            }else{
-                //VT: the resource is already rendered via wms therefore we can deduct it from currentRequestCount
-                this.currentRequestCount--;
-                if (this.currentRequestCount === 0) {
-                    this.fireEvent('renderfinished', this);
-                }
             }
+            //else{
+                //VT: the resource is already rendered via wms therefore we can deduct it from currentRequestCount
+                //VT: Do nothing here cause we want to wait for the WMS to finish downloading at the top.
+            //}
 
         }
     },
+
+    _getDomain : function(data) {
+        var    a      = document.createElement('a');
+               a.href = data;
+        return a.hostname;
+      },
 
     _getDomainWithLayerNameId : function(url,name){
         return ((url.match(/:\/\/(.[^/]+)/)[1]) +'/'+ name);

@@ -277,7 +277,7 @@ public class FileIOUtil {
             sw = new StringWriter();
             pw = new PrintWriter(sw);
             exceptionToPrint.printStackTrace(pw);
-            message = String.format("An exception occured whilst requesting/parsing your WCS download.\r\n%1$s\r\nMessage=%2$s\r\n%3$s", debugQuery, exceptionToPrint.getMessage(), sw.toString());
+            message = String.format("An exception occured whilst requesting/parsing your download.\r\n%1$s\r\nMessage=%2$s\r\n%3$s", debugQuery, exceptionToPrint.getMessage(), sw.toString());
         } finally {
             FileIOUtil.closeQuietly(pw);
             FileIOUtil.closeQuietly(sw);
