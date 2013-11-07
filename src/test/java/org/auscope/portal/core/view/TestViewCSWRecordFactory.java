@@ -3,6 +3,7 @@ package org.auscope.portal.core.view;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
@@ -16,6 +17,8 @@ import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
+
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 public class TestViewCSWRecordFactory extends PortalTestClass {
     private CSWRecord mockCSWRecord = context.mock(CSWRecord.class);
@@ -73,6 +76,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("childRecords", Arrays.asList(childRecordExpectation));
         expectation.put("version", "");
         expectation.put("noCache", false);
+        expectation.put("date", "1970-01-01T00:00:00 UTC");
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -119,6 +123,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         childRecordExpectation.put("childRecords", Arrays.asList());
         childRecordExpectation.put("version", "");
         childRecordExpectation.put("noCache", false);
+        childRecordExpectation.put("date", "");
 
         onlineResExpectation_1.put("url", orUrl_1.toString());
         onlineResExpectation_1.put("name", orName_1);
@@ -140,6 +145,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
             allowing(mockCSWRecord).hasChildRecords();will(returnValue(true));
             allowing(mockCSWRecord).getChildRecords();will(returnValue(new CSWRecord[] {mockCSWChildRecord1}));
+            allowing(mockCSWRecord).getDate();will(returnValue(new Date(0L)));
 
             allowing(mockCSWChildRecord1).getServiceName();will(returnValue(serviceName_1));
             allowing(mockCSWChildRecord1).getVersion();will(returnValue(null));
@@ -154,6 +160,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockCSWChildRecord1).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1_1, descriptiveKeyword2_1}));
             allowing(mockCSWChildRecord1).getConstraints();will(returnValue(new String[] {constraint1_1, constraint2_1}));
             allowing(mockCSWChildRecord1).hasChildRecords();will(returnValue(false));
+            allowing(mockCSWChildRecord1).getDate();will(returnValue(null));
 
             allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
             allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
@@ -223,6 +230,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("childRecords", new ArrayList<ModelMap>());
         expectation.put("version", "");
         expectation.put("noCache", false);
+        expectation.put("date", "1970-01-01T00:00:00 UTC");
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -244,6 +252,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
             allowing(mockCSWRecord).hasChildRecords();will(returnValue(false));
+            allowing(mockCSWRecord).getDate();will(returnValue(new Date(0L)));
 
             allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
             allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
@@ -312,6 +321,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("childRecords", new ArrayList<ModelMap>());
         expectation.put("version", "");
         expectation.put("noCache", false);
+        expectation.put("date", "1986-10-09T00:00:00 UTC");
 
         onlineResExpectation.put("url", orUrl.toString());
         onlineResExpectation.put("name", orName);
@@ -338,6 +348,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockCSWRecord).getDescriptiveKeywords();will(returnValue(new String[] {descriptiveKeyword1, descriptiveKeyword2}));
             allowing(mockCSWRecord).getConstraints();will(returnValue(new String[] {constraint1, constraint2}));
             allowing(mockCSWRecord).hasChildRecords();will(returnValue(false));
+            allowing(mockCSWRecord).getDate();will(returnValue(new Date(529200000000L)));
 
             allowing(mockBbox).getEastBoundLongitude();will(returnValue(bboxEast));
             allowing(mockBbox).getWestBoundLongitude();will(returnValue(bboxWest));
