@@ -152,4 +152,53 @@ public class CSWGeographicBoundingBox implements Serializable, CSWGeographicElem
 
         return bbox;
     }
+    
+    /**
+     * Returns true if the specified bounding box intersects this bounding box
+     * 
+     * Algorithm sourced from - http://tekpool.wordpress.com/2006/10/11/rectangle-intersection-determine-if-two-given-rectangles-intersect-each-other-or-not/
+     * @param bbox
+     * @return
+     */
+    public boolean intersects(CSWGeographicBoundingBox bbox) {
+        return intersects(bbox.getWestBoundLongitude(), bbox.getEastBoundLongitude(), 
+                bbox.getSouthBoundLatitude(), bbox.getNorthBoundLatitude());
+    }
+    
+    /**
+     * Returns true if the specified bounding box intersects this bounding box
+     * 
+     * Algorithm sourced from - http://tekpool.wordpress.com/2006/10/11/rectangle-intersection-determine-if-two-given-rectangles-intersect-each-other-or-not/
+     * @return
+     */
+    public boolean intersects(double westBoundLongitude,
+            double eastBoundLongitude, double southBoundLatitude,
+            double northBoundLatitude) {
+       
+        //If a bbox wraps the international date line such that east is in fact less than west
+        //We should split the wrapping bbox at the dateline for an easier comparison
+        double bboxEast = eastBoundLongitude;
+        double bboxWest = westBoundLongitude;
+        double thisEast = this.eastBoundLongitude;
+        double thisWest = this.westBoundLongitude;
+        
+        if (bboxEast < bboxWest) {
+            CSWGeographicBoundingBox left = new CSWGeographicBoundingBox(bboxWest, 180, southBoundLatitude, northBoundLatitude);
+            CSWGeographicBoundingBox right = new CSWGeographicBoundingBox(-180, bboxEast, southBoundLatitude, northBoundLatitude);
+            
+            return this.intersects(left) || this.intersects(right);
+        }
+        if (thisEast < thisWest) {
+            CSWGeographicBoundingBox left = new CSWGeographicBoundingBox(thisWest, 180, this.southBoundLatitude, this.northBoundLatitude);
+            CSWGeographicBoundingBox right = new CSWGeographicBoundingBox(-180, thisEast, this.southBoundLatitude, this.northBoundLatitude);
+            
+            return left.intersects(westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude) || right.intersects(westBoundLongitude, eastBoundLongitude, southBoundLatitude, northBoundLatitude);
+        }
+
+        return !(bboxWest > thisEast
+                || bboxEast < thisWest
+                || southBoundLatitude > this.northBoundLatitude
+                || northBoundLatitude < this.southBoundLatitude);
+        
+    }
 }
