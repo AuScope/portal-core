@@ -1,8 +1,11 @@
 package org.auscope.portal.core.view;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -95,6 +98,14 @@ public class ViewCSWRecordFactory {
         }
         obj.put("childRecords", childRecords);
 
+        String dateString = "";
+        if (record.getDate() != null) {
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss zzz");
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            dateString = df.format(record.getDate());
+        }
+        obj.put("date", dateString);
+        
         return obj;
     }
 

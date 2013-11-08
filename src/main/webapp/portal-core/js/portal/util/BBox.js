@@ -203,16 +203,43 @@ Ext.define('portal.util.BBox', {
         }
 
         //If a bbox wraps the international date line such that east is in fact less than west
-        //We should wrap the values around accordingly so we can directly compare
+        //We should split the wrapping bbox at the dateline for an easier comparison
         var bboxEast = bbox.eastBoundLongitude;
         var bboxWest = bbox.westBoundLongitude;
         var thisEast = this.eastBoundLongitude;
         var thisWest = this.westBoundLongitude;
+        
         if (bboxEast < bboxWest) {
-            bboxEast += 360;
+            var left = Ext.create('portal.util.BBox',{
+                westBoundLongitude : bboxWest, 
+                eastBoundLongitude : 180, 
+                southBoundLatitude : bbox.southBoundLatitude, 
+                northBoundLatitude : bbox.northBoundLatitude
+            });
+            var right = Ext.create('portal.util.BBox',{
+                westBoundLongitude : -180, 
+                eastBoundLongitude : bboxEast, 
+                southBoundLatitude : bbox.southBoundLatitude, 
+                northBoundLatitude : bbox.northBoundLatitude
+            });
+            
+            return this.intersects(left) || this.intersects(right);
         }
         if (thisEast < thisWest) {
-            thisEast += 360;
+            var left = Ext.create('portal.util.BBox',{
+                westBoundLongitude : thisWest, 
+                eastBoundLongitude : 180, 
+                southBoundLatitude : this.southBoundLatitude, 
+                northBoundLatitude : this.northBoundLatitude
+            });
+            var right = Ext.create('portal.util.BBox',{
+                westBoundLongitude : -180, 
+                eastBoundLongitude : thisEast, 
+                southBoundLatitude : this.southBoundLatitude, 
+                northBoundLatitude : this.northBoundLatitude
+            });
+            
+            return left.intersects(bbox) || right.intersects(bbox);
         }
 
         return !(bboxWest > thisEast

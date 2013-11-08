@@ -167,11 +167,11 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var layer=this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity)
 
 
-            layer.wmsLayer.events.register("loadstart",this,function(layer){
+            layer.wmsLayer.events.register("loadstart",this,function(){
                 this.currentRequestCount++;
                 var listOfStatus=this.renderStatus.getParameters();
                 for(key in listOfStatus){
-                    if(this._getDomain(key)==this._getDomain(layer.object.url)){
+                    if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){
                         this.renderStatus.updateResponse(key, "Loading WMS");
                         this.fireEvent('renderstarted', this, wfsResources, filterer);
                         break
@@ -181,7 +181,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             });
 
             //VT: Handle the after wms load clean up event.
-            layer.wmsLayer.events.register("loadend",this,function(layer){
+            layer.wmsLayer.events.register("loadend",this,function(evt){
                 this.currentRequestCount--;
                 if (this.currentRequestCount === 0) {
                     this.fireEvent('renderfinished', this);
@@ -189,7 +189,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 var listOfStatus=this.renderStatus.getParameters();
 
                 for(key in listOfStatus){
-                    if(this._getDomain(key)==this._getDomain(layer.object.url)){
+                    if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){
                         this.renderStatus.updateResponse(key, "WMS Loaded");
                         break
                     }
