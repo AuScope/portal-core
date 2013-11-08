@@ -29,7 +29,8 @@ Ext.define('portal.layer.Layer', {
         { name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
         { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added to the map
-        { name: 'deserialized', type: 'boolean', defaultValue: false } //If true then this layer has been deserialized from a permanent link
+        { name: 'deserialized', type: 'boolean', defaultValue: false }, //If true then this layer has been deserialized from a permanent link
+        { name: 'displayed', type: 'boolean', defaultValue: false} //A flag to check if the layer has been drawn.
     ],
 
     /**
@@ -63,6 +64,10 @@ Ext.define('portal.layer.Layer', {
             this.visible=true;
             //including a fourth paramenter to displayData to capture what event caused the renderer to display because if it is
             //just a visibility change event, our renderer should stop some popup from showing. eg UncachedCSWServiceRenderer
+            if(this.get('displayed')==false){
+                Ext.Msg.alert('Alert', 'Click on "Show Results" to display');
+                return;
+            }
             renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn, 'visibilityChange');
         } else {
             this.visible=false;
@@ -80,6 +85,7 @@ Ext.define('portal.layer.Layer', {
         if (renderer.getVisible()) {
             renderer.removeData();
             renderer.map.closeInfoWindow(this.get('id'));
+            this.set('displayed',true);
             renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
         }
     },

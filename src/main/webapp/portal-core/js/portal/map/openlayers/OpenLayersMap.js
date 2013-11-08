@@ -135,7 +135,10 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         //Iterate everything with WMS/WCS - no way around this :(
         for (var i = 0; i < layerStore.getCount(); i++) {
             var layer = layerStore.getAt(i);
-
+            //if the layer have not been rendered, no point searching through it.
+            if(layer.get('displayed')==false){
+                continue;
+            }
             var cswRecords = layer.get('cswRecords');
             for(var j = 0; j < cswRecords.length; j++){
                 var cswRecord = cswRecords[j];
