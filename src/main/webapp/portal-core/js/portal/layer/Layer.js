@@ -64,6 +64,10 @@ Ext.define('portal.layer.Layer', {
             this.visible=true;
             //including a fourth paramenter to displayData to capture what event caused the renderer to display because if it is
             //just a visibility change event, our renderer should stop some popup from showing. eg UncachedCSWServiceRenderer
+            if(this.get('displayed')==false){
+                Ext.Msg.alert('Alert', 'Click on "Show Results" to display');
+                return;
+            }
             renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn, 'visibilityChange');
         } else {
             this.visible=false;
