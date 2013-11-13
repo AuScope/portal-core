@@ -4,7 +4,7 @@
  * A script builder template utilitiy for setting variables. These variables
  * will be coupled with a script template in order to generate an actual text file.
  */
-Ext.define('ScriptBuilder.templates.BaseTemplate', {
+Ext.define('portal.widgets.template.BaseTemplate', {
     extend : 'portal.util.ObservableMap',
 
     statics : {
@@ -22,15 +22,9 @@ Ext.define('ScriptBuilder.templates.BaseTemplate', {
         TEMPLATE_RESULT_ERROR : 2
     },
 
-    description : null,
-    name : null,
-    wizardState : null,
+
 
     constructor : function(config) {
-        this.description = config.description ? config.description : '';
-        this.name = config.name ? config.name : '';
-        this.wizardState = config.wizardState ? config.wizardState : {};
-
         this.callParent(arguments);
     },
 
@@ -43,7 +37,7 @@ Ext.define('ScriptBuilder.templates.BaseTemplate', {
      * formPanel - and Ext.form.Panel or equivalent constructor object that will be shown in the popup window
      * includeEmptyText - Whether the form field's empty text will be included in the template (defaults to false)
      */
-    _getTemplatedScriptGui : function(callback, templateName, formPanel, includeEmptyText) {
+    _getTemplatedScriptGui : function(callback, controllerUrl, formPanel, includeEmptyText) {
         var popup = Ext.create('Ext.window.Window', {
             title : 'Enter Parameters',
             layout : 'fit',
@@ -53,7 +47,7 @@ Ext.define('ScriptBuilder.templates.BaseTemplate', {
             items : [formPanel],
             buttons:[{
                 xtype: 'button',
-                text: 'Apply Template',
+                text: 'Search',
                 scope : this,
                 iconCls : 'add',
                 handler: function(button) {
@@ -69,14 +63,14 @@ Ext.define('ScriptBuilder.templates.BaseTemplate', {
                             parent.ignoreCloseEvent = true;
                             parent.close();
                             callback(status, script);
-                        }, templateName, additionalParams);
+                        }, controllerUrl, additionalParams);
                     }
                 }
             }],
             listeners : {
                 close : function(popup) {
                     if (!popup.ignoreCloseEvent) {
-                        callback(ScriptBuilder.templates.BaseTemplate.TEMPLATE_RESULT_CANCELLED, null);
+                        callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_CANCELLED, null);
                     }
                 }
             }
@@ -95,7 +89,7 @@ Ext.define('ScriptBuilder.templates.BaseTemplate', {
      * additionalParams - a regular object containing key/value pairs to inject into the specified template
      * templateName - the name of the template to use
      */
-    _getTemplatedScript : function(callback, templateName, additionalParams) {
+    _getTemplatedScript : function(callback, controllerUrl, additionalParams) {
         //Convert our keys/values into a form the controller can read
         var keys = [];
         var values = [];
@@ -103,8 +97,10 @@ Ext.define('ScriptBuilder.templates.BaseTemplate', {
         var denormaliseKvp = function(keyList, valueList, kvpObj) {
             if (kvpObj) {
                 for (key in kvpObj) {
-                    keyList.push(key);
-                    valueList.push(kvpObj[key]);
+                    if(kvpObj[key] && kvpObj[key].length>0){
+                        keyList.push(key);
+                        valueList.push(kvpObj[key]);
+                    }
                 }
             }
         };
@@ -112,36 +108,26 @@ Ext.define('ScriptBuilder.templates.BaseTemplate', {
         denormaliseKvp(keys, values, this.getParameters());
         denormaliseKvp(keys, values, additionalParams);
 
-        var loadMask = new Ext.LoadMask(Ext.getBody(), {
-            msg : 'Loading script...',
-            removeMask : true
-        });
-        loadMask.show();
-
-        Ext.Ajax.request({
-            url : 'getTemplatedScript.do',
-            params : {
-                templateName : templateName,
-                key : keys,
-                value : values
+      //Create our CSWRecord store (holds all CSWRecords not mapped by known layers)
+        var filterCSWStore = Ext.create('Ext.data.Store', {
+            model : 'portal.csw.CSWRecord',
+            proxy : {
+                type : 'ajax',
+                url : controllerUrl,
+                reader : {
+                    type : 'json',
+                    root : 'data'
+                },
+                extraParams: {
+                    key : keys,
+                    value : values
+                }
             },
-            callback : function(options, success, response) {
-                loadMask.hide();
-
-                if (!success) {
-                    callback(ScriptBuilder.templates.BaseTemplate.TEMPLATE_RESULT_ERROR, null);
-                    return;
-                }
-
-                var responseObj = Ext.JSON.decode(response.responseText);
-                if (!responseObj || !responseObj.success) {
-                    callback(ScriptBuilder.templates.BaseTemplate.TEMPLATE_RESULT_ERROR, null);
-                    return;
-                }
-
-                callback(ScriptBuilder.templates.BaseTemplate.TEMPLATE_RESULT_SUCCESS, responseObj.data);
-            }
+            autoLoad : true
         });
+
+        callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_SUCCESS, filterCSWStore);
+
     },
 
     /**

@@ -131,11 +131,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 hidden:true,
 
                 handler: function(btn) {
-                    var cswFilterSelectionWindow = new CSWFilterSelectionWindow({
-                        title : 'Filter Registeries',
-                        store : me.getStore()
+                    var cswFilterFormPanel = new portal.widgets.panel.CSWFilterFormPanel({
+                        name : 'test'
                     });
-                    cswFilterSelectionWindow.show();
+                    cswFilterFormPanel.requestScript();
                 }
 
             }]

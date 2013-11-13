@@ -8,24 +8,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
         this.store=cfg.store;
         var me = this;
         //this is the store after filtering the registery.
-        var recordStore = Ext.create('Ext.data.Store', {
-            id:'CSWRecordPagingStore',
-            autoLoad: false,
-            model : 'portal.csw.CSWRecord',
-            pageSize: this.pageSize,
-            proxy: {
-                type: 'ajax',
-                url: 'getUnmappedCSWRecords.do',
-                //extraParams:cfg.cswConfig.extraParams,
-                reader: {
-                    type: 'json',
-                    root: 'data',
-                    successProperty: 'success',
-                    totalProperty: 'totalResults'
-                }
-            }
-        });
-
+        var recordStore = cfg.store
 
         Ext.apply(cfg, {
             title: cfg.title,
