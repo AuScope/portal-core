@@ -6,7 +6,10 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
     extend : 'portal.widgets.template.BaseTemplate',
     alias: 'widget.cswfilterformpanel',
 
+    panelStore : null,
+
     constructor : function(config){
+        this.panelStore=config.panelStore
         this.callParent(arguments);
     },
 
@@ -48,7 +51,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
         };
 
 
-        this._getTemplatedScriptGui(this.handleResponse, 'getFilteredCSWRecords.do', {
+        this._getTemplatedScriptGui(this.handleResponse,this.panelStore, 'getFilteredCSWRecords.do', {
             xtype : 'form',
             width : 500,
             height : 520,
@@ -67,10 +70,11 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
     },
 
 
-    handleResponse : function(status,store){
+    handleResponse : function(status,panelStore,filterStore){
         var cswSelectionWindow = new CSWSelectionWindow({
             title : 'CSW Record Selection',
-            store : store
+            panelStore : panelStore,
+            filterStore : filterStore
         });
         cswSelectionWindow.show();
 

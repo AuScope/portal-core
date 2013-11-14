@@ -5,10 +5,10 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
 
     constructor : function(cfg) {
 
-        this.store=cfg.store;
+        this.store=cfg.panelStore;
         var me = this;
         //this is the store after filtering the registery.
-        var recordStore = cfg.store
+        var recordStore = cfg.filterStore
 
         Ext.apply(cfg, {
             title: cfg.title,

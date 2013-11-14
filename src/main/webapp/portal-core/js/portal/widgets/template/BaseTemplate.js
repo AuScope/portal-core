@@ -37,7 +37,7 @@ Ext.define('portal.widgets.template.BaseTemplate', {
      * formPanel - and Ext.form.Panel or equivalent constructor object that will be shown in the popup window
      * includeEmptyText - Whether the form field's empty text will be included in the template (defaults to false)
      */
-    _getTemplatedScriptGui : function(callback, controllerUrl, formPanel, includeEmptyText) {
+    _getTemplatedScriptGui : function(callback, panelStore, controllerUrl, formPanel, includeEmptyText) {
         var popup = Ext.create('Ext.window.Window', {
             title : 'Enter Parameters',
             layout : 'fit',
@@ -59,18 +59,18 @@ Ext.define('portal.widgets.template.BaseTemplate', {
 
                         //We need to close our window when finished so we wrap callback
                         //with a function that ensures closing BEFORE the callback is executed
-                        this._getTemplatedScript(function(status, script) {
+                        this._getTemplatedScript(function(status,panelStore, script) {
                             parent.ignoreCloseEvent = true;
                             parent.close();
-                            callback(status, script);
-                        }, controllerUrl, additionalParams);
+                            callback(status,panelStore, script);
+                        }, panelStore,controllerUrl, additionalParams);
                     }
                 }
             }],
             listeners : {
                 close : function(popup) {
                     if (!popup.ignoreCloseEvent) {
-                        callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_CANCELLED, null);
+                        callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_CANCELLED,panelStore, null);
                     }
                 }
             }
@@ -89,7 +89,7 @@ Ext.define('portal.widgets.template.BaseTemplate', {
      * additionalParams - a regular object containing key/value pairs to inject into the specified template
      * templateName - the name of the template to use
      */
-    _getTemplatedScript : function(callback, controllerUrl, additionalParams) {
+    _getTemplatedScript : function(callback,panelStore, controllerUrl, additionalParams) {
         //Convert our keys/values into a form the controller can read
         var keys = [];
         var values = [];
@@ -111,22 +111,28 @@ Ext.define('portal.widgets.template.BaseTemplate', {
       //Create our CSWRecord store (holds all CSWRecords not mapped by known layers)
         var filterCSWStore = Ext.create('Ext.data.Store', {
             model : 'portal.csw.CSWRecord',
+            pageSize: 15,
+            autoLoad: false,
             proxy : {
                 type : 'ajax',
                 url : controllerUrl,
                 reader : {
                     type : 'json',
-                    root : 'data'
+                    root : 'data',
+                    successProperty: 'success',
+                    totalProperty: 'totalResults'
                 },
                 extraParams: {
                     key : keys,
                     value : values
                 }
-            },
-            autoLoad : true
+
+            }
+
         });
 
-        callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_SUCCESS, filterCSWStore);
+
+        callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_SUCCESS,panelStore, filterCSWStore);
 
     },
 

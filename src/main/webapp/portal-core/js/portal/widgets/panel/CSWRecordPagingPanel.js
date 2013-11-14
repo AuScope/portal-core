@@ -6,7 +6,7 @@ Ext.define('portal.widgets.panel.CSWRecordPagingPanel', {
     alias: 'widget.cswrecordpagingpanel',
 
     cswRecordStore : null,
-    pageSize: 20,
+    pageSize: 15,
 
     constructor : function(cfg) {
         var me = this;

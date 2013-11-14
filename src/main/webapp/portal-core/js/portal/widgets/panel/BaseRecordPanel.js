@@ -132,6 +132,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
                 handler: function(btn) {
                     var cswFilterFormPanel = new portal.widgets.panel.CSWFilterFormPanel({
+                        panelStore:cfg.store,
                         name : 'test'
                     });
                     cswFilterFormPanel.requestScript();
