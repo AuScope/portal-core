@@ -16,11 +16,12 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
             width: 650,
             layout: 'fit',
             items: [{
-                id : 'pagingRecordPanel',
-                xtype: 'cswrecordpagingpanel',
-                layout : 'fit',
-                store : recordStore
+                xtype:'tabpanel',
+                itemId: 'pagingRecordtabPanel',
+                layout: 'fit',
+                items : cfg.resultpanels
             }],
+
 
             buttonAlign : 'right',
             buttons : [{
@@ -28,7 +29,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                 text : 'Add Selected Records',
                 iconCls : 'add',
                 handler : function(button, e) {
-                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordPanel');
+                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getComponent('pagingRecordPanel');
                     var csw = cswPagingPanel.getSelectionModel().getSelection();
                     me.store.add(csw);
                     //me.store.load();
@@ -38,7 +39,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                 text : 'Add All Current Page Records',
                 iconCls : 'addall',
                 handler : function(button, e) {
-                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordPanel');
+                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getComponent('pagingRecordPanel');
                     var allStore = cswPagingPanel.getStore();
                     var cswRecords = allStore.getRange();
                     me.store.add(csw);
@@ -50,7 +51,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                 text : 'Add All Records',
                 iconCls : 'addall',
                 handler : function(button, e) {
-                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordPanel');
+                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getComponent('pagingRecordPanel');
                     var allStore = cswPagingPanel.getStore();
                     var cswRecords = allStore.getRange();
                     me.store.add(csw);

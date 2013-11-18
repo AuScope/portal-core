@@ -3,7 +3,7 @@
  *
  */
 Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
-    extend : 'portal.widgets.template.BaseTemplate',
+    extend : 'portal.widgets.template.BaseCSWFilterForm',
     alias: 'widget.cswfilterformpanel',
 
     panelStore : null,
@@ -15,6 +15,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
 
     requestScript : function() {
+
 
         var generalTab = {
                 title : 'General filter',
@@ -28,6 +29,57 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                     fieldLabel : 'Match Any Text'
                 }]
         };
+
+
+        var registriesTab = {
+                title : 'Registries Filter',
+                xtype : 'panel',
+                items:[{
+                    xtype: 'checkboxgroup',
+                    name : 'cswServiceId',
+                    id : 'registryTabCheckboxGroup',
+                    fieldLabel: 'Registries',
+                    // Arrange checkboxes into two columns, distributed vertically
+                    columns: 1,
+                    vertical: true
+
+                }]
+        };
+
+        var checkBoxItems = [];
+
+        var cswServiceItemStore = new Ext.data.Store({
+            model   : 'portal.widgets.model.CSWServices',
+            proxy : {
+                type : 'ajax',
+                url : 'getCSWServices.do',
+                reader : {
+                    type : 'json',
+                    root : 'data'
+                }
+            },
+            listeners : {
+                load  :  function(store, records, successful, eopts){
+                    for (var i = 0; i < records.length; i++) {
+                        var cswServiceItemRec = records[i];
+                        checkBoxItems.push({
+                            boxLabel : cswServiceItemRec.get('title'),
+                            name : 'cswServiceId',
+                            inputValue: cswServiceItemRec.get('id'),
+                            checked : cswServiceItemRec.get('selectedByDefault')
+                        });
+                    }
+
+                    Ext.getCmp('registryTabCheckboxGroup').add(checkBoxItems);
+                }
+            }
+
+        });
+        cswServiceItemStore.load();
+
+
+
+
 
         var spatialTab ={
                 title : 'Spatial filter',
@@ -51,7 +103,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
         };
 
 
-        this._getTemplatedScriptGui(this.handleResponse,this.panelStore, 'getFilteredCSWRecords.do', {
+        this._getFilteredResult(this.panelStore, 'getFilteredCSWRecords.do', {
             xtype : 'form',
             width : 500,
             height : 520,
@@ -60,6 +112,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                      layout: 'fit',
                      items : [
                               generalTab,
+                              registriesTab,
                               spatialTab
                          ]
             }]
@@ -67,18 +120,8 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
 
 
-    },
-
-
-    handleResponse : function(status,panelStore,filterStore){
-        var cswSelectionWindow = new CSWSelectionWindow({
-            title : 'CSW Record Selection',
-            panelStore : panelStore,
-            filterStore : filterStore
-        });
-        cswSelectionWindow.show();
-
     }
+
 
 
 

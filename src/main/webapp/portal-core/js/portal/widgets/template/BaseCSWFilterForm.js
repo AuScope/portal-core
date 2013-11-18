@@ -1,10 +1,5 @@
-/**
- * The base template that all other ScriptBuilder templates should inherit from.
- *
- * A script builder template utilitiy for setting variables. These variables
- * will be coupled with a script template in order to generate an actual text file.
- */
-Ext.define('portal.widgets.template.BaseTemplate', {
+
+Ext.define('portal.widgets.template.BaseCSWFilterForm', {
     extend : 'portal.util.ObservableMap',
 
     statics : {
@@ -37,7 +32,7 @@ Ext.define('portal.widgets.template.BaseTemplate', {
      * formPanel - and Ext.form.Panel or equivalent constructor object that will be shown in the popup window
      * includeEmptyText - Whether the form field's empty text will be included in the template (defaults to false)
      */
-    _getTemplatedScriptGui : function(callback, panelStore, controllerUrl, formPanel, includeEmptyText) {
+    _getFilteredResult : function(panelStore, controllerUrl, formPanel, includeEmptyText) {
         var popup = Ext.create('Ext.window.Window', {
             title : 'Enter Parameters',
             layout : 'fit',
@@ -56,21 +51,32 @@ Ext.define('portal.widgets.template.BaseTemplate', {
 
                     if (panel.getForm().isValid()) {
                         var additionalParams = panel.getForm().getValues(false, false, includeEmptyText, false);
+                        var filteredResultPanels=[];
+                        for(additionalParamKey in additionalParams){
+                            if(additionalParamKey == 'cswServiceId'){
+                                for(var j=0; j < additionalParams[additionalParamKey].length;j++){
+                                    //VT:
+                                    filteredResultPanels.push(this._getTabPanels(panelStore,controllerUrl, additionalParams,additionalParams[additionalParamKey][j]));
+                                }
+                            }
+                        }
 
-                        //We need to close our window when finished so we wrap callback
-                        //with a function that ensures closing BEFORE the callback is executed
-                        this._getTemplatedScript(function(status,panelStore, script) {
-                            parent.ignoreCloseEvent = true;
-                            parent.close();
-                            callback(status,panelStore, script);
-                        }, panelStore,controllerUrl, additionalParams);
+
+                        var cswSelectionWindow = new CSWSelectionWindow({
+                            title : 'CSW Record Selection',
+                            panelStore : panelStore,
+                            resultpanels : filteredResultPanels
+                        });
+                     cswSelectionWindow.show();
+
+
                     }
                 }
             }],
             listeners : {
                 close : function(popup) {
                     if (!popup.ignoreCloseEvent) {
-                        callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_CANCELLED,panelStore, null);
+                        //callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_CANCELLED,panelStore, null);
                     }
                 }
             }
@@ -89,15 +95,18 @@ Ext.define('portal.widgets.template.BaseTemplate', {
      * additionalParams - a regular object containing key/value pairs to inject into the specified template
      * templateName - the name of the template to use
      */
-    _getTemplatedScript : function(callback,panelStore, controllerUrl, additionalParams) {
+    _getTabPanels : function(panelStore, controllerUrl, params,cswServiceId) {
         //Convert our keys/values into a form the controller can read
         var keys = [];
         var values = [];
+
+        var additionalParams = params;
+
         //Utility function
         var denormaliseKvp = function(keyList, valueList, kvpObj) {
             if (kvpObj) {
                 for (key in kvpObj) {
-                    if(kvpObj[key] && kvpObj[key].length>0){
+                    if(kvpObj[key] && kvpObj[key].length>0 && key != 'cswServiceId'){
                         keyList.push(key);
                         valueList.push(kvpObj[key]);
                     }
@@ -107,11 +116,13 @@ Ext.define('portal.widgets.template.BaseTemplate', {
 
         denormaliseKvp(keys, values, this.getParameters());
         denormaliseKvp(keys, values, additionalParams);
+        keys.push('cswServiceId');
+        values.push(cswServiceId);
 
       //Create our CSWRecord store (holds all CSWRecords not mapped by known layers)
         var filterCSWStore = Ext.create('Ext.data.Store', {
             model : 'portal.csw.CSWRecord',
-            pageSize: 15,
+            pageSize: 35,
             autoLoad: false,
             proxy : {
                 type : 'ajax',
@@ -131,8 +142,24 @@ Ext.define('portal.widgets.template.BaseTemplate', {
 
         });
 
+        var registriesArray = Ext.getCmp('registryTabCheckboxGroup').getChecked();
+        var title = "Error retrieving title";
+        for(var i = 0; i < registriesArray.length; i ++){
+            if(registriesArray[i].inputValue === cswServiceId){
+                title = registriesArray[i].boxLabel;
+                break;
+            }
+        }
 
-        callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_SUCCESS,panelStore, filterCSWStore);
+
+        var result={
+                title : title,
+                xtype: 'cswrecordpagingpanel',
+                layout : 'fit',
+                store : filterCSWStore
+            };
+
+        return result;
 
     },
 
