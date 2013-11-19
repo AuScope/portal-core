@@ -16,19 +16,102 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
     requestScript : function() {
 
+        var keywordMatchTypeStore = Ext.create('Ext.data.Store', {
+            fields: ['display', 'value'],
+            data : [
+                {"display":"Any", "value":"Any"},
+                {"display":"All", "value":"All"}
+            ]
+        });
+
+        var keywordStore = new Ext.data.Store({
+            autoload: true,
+            fields: ['keyword', 'count'],
+            proxy : {
+                type : 'ajax',
+                url : 'getCSWKeywords.do',
+                reader : {
+                    type : 'json',
+                    root : 'data'
+                }
+            }
+
+        });
+
+
 
         var generalTab = {
                 title : 'General filter',
+                layout : 'anchor',
                 items : [{
-                    xtype : 'textfield',
-                    name : 'keywords',
-                    fieldLabel : 'Keywords'
+                    xtype:'fieldset',
+                    title : 'Match Type',
+                    items:[{
+                        xtype : 'combobox',
+                        name : 'keywordMatchType',
+                        queryMode:'local',
+                        valueField:'value',
+                        displayField:'display',
+                        fieldLabel : 'Match Type',
+                        store: keywordMatchTypeStore
+                    },{
+                        xtype : 'fieldset',
+                        layout : 'column',
+                        anchor : '100%',
+                        border : false,
+                        style : 'padding:0px 0px 0px 0px',
+                        items : [{
+                            xtype : 'combobox',
+                            width : 380,
+                            name : 'keywords',
+                            queryMode : 'remote',
+                            typeAhead: true,
+                            typeAheadDelay : 500,
+                            forceSelection : true,
+                            triggerAction : 'all',
+                            valueField:'keyword',
+
+                            fieldLabel : 'Keywords',
+                            store :    keywordStore,
+                            tpl: Ext.create('Ext.XTemplate',
+                                    '<tpl for=".">',
+                                        '<div class="x-boundlist-item">{keyword} - <b>({count})</b></div>',
+                                    '</tpl>'
+                                ),
+                                // template for the content inside text field
+                            displayTpl: Ext.create('Ext.XTemplate',
+                                    '<tpl for=".">',
+                                        '{keyword}',
+                                    '</tpl>'
+                                )
+
+                        },{
+                            xtype : 'button',
+                            iconCls : 'add',
+                            keypos : 0,
+                            width : 21
+
+                        },{
+                            xtype : 'button',
+                            iconCls : 'remove',
+                            keypos : 0,
+                            hidden : true,
+                            width : 21,
+                        }]
+                    }]
                 },{
-                    xtype : 'textfield',
-                    name : 'any',
-                    fieldLabel : 'Match Any Text'
+                    xtype:'fieldset',
+                    title : 'Match Text',
+                    items:[{
+                        xtype : 'textfield',
+                        name : 'anyText',
+                        fieldLabel : 'Match Any Text'
+                    }]
                 }]
         };
+
+
+
 
 
         var registriesTab = {
@@ -105,6 +188,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
         this._getFilteredResult(this.panelStore, 'getFilteredCSWRecords.do', {
             xtype : 'form',
+            id : 'personalpanelcswfilterform',
             width : 500,
             height : 520,
             items : [{
@@ -121,7 +205,6 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
 
     }
-
 
 
 

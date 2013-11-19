@@ -54,6 +54,9 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
                         var filteredResultPanels=[];
                         for(additionalParamKey in additionalParams){
                             if(additionalParamKey == 'cswServiceId'){
+                                if(!(additionalParams[additionalParamKey] instanceof Array)){
+                                    additionalParams[additionalParamKey]=[additionalParams[additionalParamKey]]
+                                }
                                 for(var j=0; j < additionalParams[additionalParamKey].length;j++){
                                     //VT:
                                     filteredResultPanels.push(this._getTabPanels(panelStore,controllerUrl, additionalParams,additionalParams[additionalParamKey][j]));
