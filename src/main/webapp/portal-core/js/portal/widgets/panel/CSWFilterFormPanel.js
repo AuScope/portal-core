@@ -7,24 +7,15 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
     alias: 'widget.cswfilterformpanel',
 
     panelStore : null,
+    keywordStore : null,
+    keywordIDCounter : 0,
+    spacerHeight : 22,
+    keywordMatchTypeStore : null,
 
     constructor : function(config){
-        this.panelStore=config.panelStore
-        this.callParent(arguments);
-    },
+        this.panelStore=config.panelStore;
 
-
-    requestScript : function() {
-
-        var keywordMatchTypeStore = Ext.create('Ext.data.Store', {
-            fields: ['display', 'value'],
-            data : [
-                {"display":"Any", "value":"Any"},
-                {"display":"All", "value":"All"}
-            ]
-        });
-
-        var keywordStore = new Ext.data.Store({
+        this.keywordStore = new Ext.data.Store({
             autoload: true,
             fields: ['keyword', 'count'],
             proxy : {
@@ -39,7 +30,24 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
         });
 
 
+        this.keywordMatchTypeStore = Ext.create('Ext.data.Store', {
+            fields: ['display', 'value'],
+            data : [
+                {"display":"Any", "value":"Any"},
+                {"display":"All", "value":"All"}
+            ]
+        });
 
+
+
+        this.callParent(arguments);
+    },
+
+
+    requestScript : function() {
+
+
+        var keywordsComponent = this;
         var generalTab = {
                 title : 'General filter',
                 layout : 'anchor',
@@ -53,52 +61,37 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         valueField:'value',
                         displayField:'display',
                         fieldLabel : 'Match Type',
-                        store: keywordMatchTypeStore
+                        store: this.keywordMatchTypeStore
                     },{
                         xtype : 'fieldset',
+                        itemId : 'cswfilterkeywordfieldsetitemid',
                         layout : 'column',
                         anchor : '100%',
                         border : false,
-                        style : 'padding:0px 0px 0px 0px',
+                        style : 'padding:5px 10px 0px 10px',
                         items : [{
-                            xtype : 'combobox',
-                            width : 380,
-                            name : 'keywords',
-                            queryMode : 'remote',
-                            typeAhead: true,
-                            typeAheadDelay : 500,
-                            forceSelection : true,
-                            triggerAction : 'all',
-                            valueField:'keyword',
-
-                            fieldLabel : 'Keywords',
-                            store :    keywordStore,
-                            tpl: Ext.create('Ext.XTemplate',
-                                    '<tpl for=".">',
-                                        '<div class="x-boundlist-item">{keyword} - <b>({count})</b></div>',
-                                    '</tpl>'
-                                ),
-                                // template for the content inside text field
-                            displayTpl: Ext.create('Ext.XTemplate',
-                                    '<tpl for=".">',
-                                        '{keyword}',
-                                    '</tpl>'
-                                )
-
+                            columnWidth : 1,
+                            border : false,
+                            layout : 'anchor',
+                            bodyStyle:'padding:0px 0 0px 2px',
+                            items : []
                         },{
-                            xtype : 'button',
-                            iconCls : 'add',
-                            keypos : 0,
-                            width : 21
-
-                        },{
-                            xtype : 'button',
-                            iconCls : 'remove',
-                            keypos : 0,
-                            hidden : true,
-                            width : 21,
+                            width : 25,
+                            border : false,
+                            bodyStyle:'padding:0px 0 0px 0px',
+                            items : []
+                        }, {
+                            width : 25,
+                            border : false,
+                            bodyStyle:'padding:0px 0 0px 0px',
+                            items : []
                         }]
-                    }]
+                    }],
+                    listeners : {
+                        afterrender : function() {
+                            keywordsComponent.handlerNewKeywordField();
+                        }
+                    }
                 },{
                     xtype:'fieldset',
                     title : 'Match Text',
@@ -204,7 +197,135 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
 
 
+    },
+
+    /**
+     * Updates the visibility on all add/remove buttons
+     */
+    updateAddRemoveButtons : function() {
+        var keywordFieldSet = Ext.getCmp('personalpanelcswfilterform').query('fieldset[itemId=cswfilterkeywordfieldsetitemid]')[0]
+
+        var comboKeywordColumn = keywordFieldSet.items.items[0];
+        var buttonRemoveColumn = keywordFieldSet.items.items[1];
+        var buttonAddColumn = keywordFieldSet.items.items[2];
+
+        var existingKeywordFields = comboKeywordColumn.items.getCount();
+
+        for (var i = 0; i < existingKeywordFields; i++) {
+            var addButton = buttonAddColumn.items.items[i];
+            var removeButton = buttonRemoveColumn.items.items[i];
+
+            //We can always remove so long as we have at least 1 keyword
+            if (existingKeywordFields <= 1) {
+                removeButton.hide();
+            } else {
+                removeButton.show();
+            }
+        }
+    },
+
+
+    /**
+     * This function removes the buttons and keywords associated with button
+     */
+    handlerRemoveKeywordField : function(button, e) {
+        var keywordFieldSet = Ext.getCmp('personalpanelcswfilterform').query('fieldset[itemId=cswfilterkeywordfieldsetitemid]')[0]
+
+        var comboKeywordColumn = keywordFieldSet.items.items[0];
+        var buttonRemoveColumn = keywordFieldSet.items.items[1];
+        var buttonAddColumn = keywordFieldSet.items.items[2];
+
+        //Figure out what component index we are attempting to remove
+        var id = button.initialConfig.keywordIDCounter;
+        var index = buttonRemoveColumn.items.findIndexBy(function(cmp) {
+            return cmp === button;
+        });
+
+        //Remove that index from each column
+        comboKeywordColumn.remove(comboKeywordColumn.getComponent(index));
+        buttonRemoveColumn.remove(buttonRemoveColumn.getComponent(index));
+        buttonAddColumn.remove(buttonAddColumn.getComponent(0)); //always remove spacers
+
+        //Update our add/remove buttons
+        this.updateAddRemoveButtons();
+        keywordFieldSet.doLayout();
+    },
+
+
+
+    handlerNewKeywordField : function(button, e) {
+        var keywordFieldSet = Ext.getCmp('personalpanelcswfilterform').query('fieldset[itemId=cswfilterkeywordfieldsetitemid]')[0]
+
+        var comboKeywordColumn = keywordFieldSet.items.items[0];
+        var buttonRemoveColumn = keywordFieldSet.items.items[1];
+        var buttonAddColumn = keywordFieldSet.items.items[2];
+
+
+        //Add our combo for selecting keywords
+        comboKeywordColumn.add({
+            xtype : 'combobox',
+            width : 380,
+            name : 'keywords',
+            queryMode : 'remote',
+            typeAhead: true,
+            style: {
+                marginBottom: '0px'
+            },
+            typeAheadDelay : 500,
+            forceSelection : true,
+            triggerAction : 'all',
+            valueField:'keyword',
+            fieldLabel : 'keyword',
+            store :    this.keywordStore,
+            tpl: Ext.create('Ext.XTemplate',
+                    '<tpl for=".">',
+                        '<div class="x-boundlist-item">{keyword} - <b>({count})</b></div>',
+                    '</tpl>'
+                ),
+                // template for the content inside text field
+            displayTpl: Ext.create('Ext.XTemplate',
+                    '<tpl for=".">',
+                        '{keyword}',
+                    '</tpl>'
+                )
+        });
+
+        //We also need a button to remove this keyword field
+        buttonRemoveColumn.add({
+            xtype : 'button',
+            iconCls : 'remove',
+            width : 22,
+            height : this.spacerHeight,
+            scope : this,
+            keywordIDCounter : this.keywordIDCounter,
+            handler : this.handlerRemoveKeywordField
+        });
+
+        //Because our add button will always be at the bottom of the list
+        //we need to pad preceding elements with spacers
+        if (buttonAddColumn.items.getCount()===0) {
+            buttonAddColumn.add({
+                xtype : 'button',
+                iconCls : 'add',
+                width : 22,
+                height : this.spacerHeight,
+                scope : this,
+                handler : this.handlerNewKeywordField
+            });
+        } else {
+            buttonAddColumn.insert(0, {
+                xtype : 'box',
+                width : 22,
+                height : this.spacerHeight
+            })
+        }
+
+        this.keywordIDCounter++;
+        this.updateAddRemoveButtons();
+        keywordFieldSet.doLayout();
+
     }
+
 
 
 
