@@ -11,6 +11,8 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
     keywordIDCounter : 0,
     spacerHeight : 22,
     keywordMatchTypeStore : null,
+    miniMap : null,
+    boxLayer : null,
 
     constructor : function(config){
         this.panelStore=config.panelStore;
@@ -154,27 +156,74 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
         cswServiceItemStore.load();
 
 
-
-
+        var cswFilterFormPanelMe = this;
 
         var spatialTab ={
                 title : 'Spatial filter',
+                layout : 'fit',
                 items : [{
-                    xtype : 'textfield',
-                    name : 'north',
-                    fieldLabel : 'North'
+                    xtype : 'fieldset',
+                    itemId : 'cswspatialfiltercoordfieldset',
+                    title : 'Coordinates',
+                    items : [{
+                        xtype : 'textfield',
+                        name : 'north',
+                        itemId : 'north',
+                        fieldLabel : 'North'
+                    },{
+                        xtype : 'textfield',
+                        name : 'south',
+                        itemId : 'south',
+                        fieldLabel : 'South'
+                    },{
+                        xtype : 'textfield',
+                        name : 'east',
+                        itemId : 'east',
+                        fieldLabel : 'East'
+                    },{
+                        xtype : 'textfield',
+                        name : 'west',
+                        itemId : 'west',
+                        fieldLabel : 'West'
+                    },{
+                        xtype : 'button',
+                        toggle : true,
+                        text: 'Draw Bounds',
+                        handler: function() {
+                            var myMap = cswFilterFormPanelMe.miniMap;
+                            for(var i in myMap.controls){
+                                if(myMap.controls[i] instanceof OpenLayers.Control.DrawFeature){
+                                    //VT : get a hold of the DrawFeature and toggle it.
+                                    if(this.toggle == true){
+                                        this.toggle = false;
+                                        this.setText('Clear bounds')
+                                        myMap.controls[i].activate();
+                                    }else{
+                                        this.toggle = true;
+                                        this.setText('Draw Bounds')
+                                        cswFilterFormPanelMe.boxLayer.removeAllFeatures();
+                                        this.ownerCt.getComponent('north').setValue('');
+                                        this.ownerCt.getComponent('south').setValue('');
+                                        this.ownerCt.getComponent('east').setValue('');
+                                        this.ownerCt.getComponent('west').setValue('');
+                                        myMap.controls[i].deactivate();
+                                    }
+
+                                }
+                            }
+                        }
+
+                    }]
                 },{
-                    xtype : 'textfield',
-                    name : 'south',
-                    fieldLabel : 'South'
-                },{
-                    xtype : 'textfield',
-                    name : 'east',
-                    fieldLabel : 'East'
-                },{
-                    xtype : 'textfield',
-                    name : 'west',
-                    fieldLabel : 'West'
+                    xtype:'panel',
+                    id: 'cswminimapselection',
+                    width : 500,
+                    height : 450,
+                    listeners : {
+                        afterrender : function() {
+                            cswFilterFormPanelMe._getMap(this);
+                        }
+                    }
                 }]
         };
 
@@ -323,6 +372,98 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
         this.keywordIDCounter++;
         this.updateAddRemoveButtons();
         keywordFieldSet.doLayout();
+
+    },
+
+
+
+    _getMap : function(container){
+        var containerId = container.body.dom.id;
+        var map = new OpenLayers.Map(containerId, {
+            projection: 'EPSG:3857',
+            controls : [
+                new OpenLayers.Control.Navigation(),
+                new OpenLayers.Control.PanZoomBar({zoomStopHeight:8}),
+            ],
+            layers: [
+                     new OpenLayers.Layer.Google(
+                             "Google Hybrid",
+                             {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
+                         ),
+                     new OpenLayers.Layer.Google(
+                         "Google Physical",
+                         {type: google.maps.MapTypeId.TERRAIN}
+                     ),
+                     new OpenLayers.Layer.Google(
+                         "Google Streets", // the default
+                         {numZoomLevels: 20}
+                     ),
+                     new OpenLayers.Layer.Google(
+                         "Google Satellite",
+                         {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
+                     )
+                 ],
+                 center: new OpenLayers.LonLat(133.3, -36)
+                     // Google.v3 uses web mercator as projection, so we have to
+                     // transform our coordinates
+                     .transform('EPSG:4326', 'EPSG:3857'),
+                 zoom: 3
+        });
+
+
+
+        this.boxLayer = new OpenLayers.Layer.Vector("Box layer");
+        map.addLayer(this.boxLayer);
+
+
+        var box= new OpenLayers.Control.DrawFeature(this.boxLayer,
+                OpenLayers.Handler.RegularPolygon, {
+                    handlerOptions: {
+                        sides: 4,
+                        irregular: true
+                    }
+                }
+            )
+        map.addControl(box);
+
+
+      //We need to listen for when a feature is drawn and act accordingly
+        box.events.register('featureadded', {}, Ext.bind(function(e,c){
+            var ctrl = e.object;
+            var feature = e.feature;
+
+            //raise the data selection event
+            var originalBounds = feature.geometry.getBounds();
+            var bounds = originalBounds.transform('EPSG:3857','EPSG:4326').toArray();
+            var spatialCoordFieldSet = c.ownerLayout.owner.getComponent('cswspatialfiltercoordfieldset');
+            spatialCoordFieldSet.getComponent('north').setValue(bounds[3]);
+            spatialCoordFieldSet.getComponent('south').setValue(bounds[1]);
+            spatialCoordFieldSet.getComponent('east').setValue(bounds[2]);
+            spatialCoordFieldSet.getComponent('west').setValue(bounds[0]);
+
+
+
+
+
+            //Because click events are still 'caught' even if the click control is deactive, the click event
+            //still gets fired. To work around this, add a tiny delay to when we reactivate click events
+            var task = new Ext.util.DelayedTask(Ext.bind(function(ctrl){
+                ctrl.deactivate();
+            }, this, [ctrl]));
+            task.delay(50);
+        }, this,container,true));
+
+
+
+
+
+
+
+        container.on('resize', function() {
+            map.updateSize();
+        }, this);
+
+        this.miniMap = map;
 
     }
 
