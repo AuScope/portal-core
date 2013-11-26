@@ -71,7 +71,7 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
                             resultpanels : filteredResultPanels
                         });
                      cswSelectionWindow.show();
-
+                     parent.close();
 
                     }
                 }
