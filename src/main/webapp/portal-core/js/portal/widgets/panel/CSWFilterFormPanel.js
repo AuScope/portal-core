@@ -237,8 +237,8 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                      xtype:'tabpanel',
                      layout: 'fit',
                      items : [
-                              generalTab,
                               registriesTab,
+                              generalTab,
                               spatialTab
                          ]
             }]
