@@ -5,7 +5,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
 
     constructor : function(cfg) {
 
-        this.store=cfg.panelStore;
+
         var me = this;
         //this is the store after filtering the registery.
         var recordStore = cfg.filterStore
@@ -31,8 +31,8 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                 handler : function(button, e) {
                     var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
                     var csw = cswPagingPanel.getSelectionModel().getSelection();
-                    me.store.add(csw);
-                    //me.store.load();
+                    //me.store.add(csw);
+
                  }
             },{
                 xtype : 'button',
@@ -42,8 +42,8 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                     var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
                     var allStore = cswPagingPanel.getStore();
                     var cswRecords = allStore.getRange();
-                    me.store.add(csw);
-                    me.store.load();
+                    //me.store.add(csw);
+
                  }
 
             },{
@@ -54,8 +54,8 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                     var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
                     var allStore = cswPagingPanel.getStore();
                     var cswRecords = allStore.getRange();
-                    me.store.add(csw);
-                    me.store.load();
+                    //me.store.add(csw);
+
                 }
 
             }]

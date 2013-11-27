@@ -116,26 +116,25 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             },{
                 xtype: 'tbfill'
             },{
-                text:'Clear',
-                itemId: 'pClear',
-                tooltip:'Clear your cookie',
-                iconCls:'remove',
-                hidden:true
 
-            },{
-
-                text:'Customize',
-                itemId: 'pCustom',
-                tooltip:'Customize this Panel',
-                iconCls:'add',
+                text:'Browse Catalogue',
+                itemId: 'browseCatalogue',
+                tooltip:'Browse and filter through the available catalogue',
+                iconCls:'magglass',
                 hidden:true,
 
                 handler: function(btn) {
-                    var cswFilterFormPanel = new portal.widgets.panel.CSWFilterFormPanel({
-                        panelStore:cfg.store,
-                        name : 'test'
+                    var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
+                        name : 'test',
+                        listener : {
+                            filterselectcomplete : function(filteredResultPanels){
+                                alert('Victor rocks');
+                            }
+                        }
                     });
-                    cswFilterFormPanel.requestScript();
+
+                    cswFilterWindow.show();
+
                 }
 
             }]
@@ -420,15 +419,12 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             }
         }
 
-        var customize= personalBar.getComponent('pCustom')
-        var clear= personalBar.getComponent('pClear')
+        var customize= personalBar.getComponent('browseCatalogue')
+
         if(active){
             customize.show();
-            clear.show();
-
         }else{
             customize.hide();
-            clear.hide();
         }
     }
 

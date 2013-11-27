@@ -1,45 +1,24 @@
 
-Ext.define('portal.widgets.template.BaseCSWFilterForm', {
-    extend : 'portal.util.ObservableMap',
+Ext.define('portal.widgets.window.CSWFilterWindow', {
+    extend : 'Ext.window.Window',
 
-    statics : {
-        /**
-         * The templating operation succeeded
-         */
-        TEMPLATE_RESULT_SUCCESS : 0,
-        /**
-         * The templating operation was cancelled by the user
-         */
-        TEMPLATE_RESULT_CANCELLED : 1,
-        /**
-         * The templating operation failed and the user should be warned
-         */
-        TEMPLATE_RESULT_ERROR : 2
-    },
+
+    constructor : function(cfg) {
+        this.addEvents('filterselectcomplete');
+
+        var cswFilterFormPanel = new portal.widgets.panel.CSWFilterFormPanel({
+            name : 'test'
+        });
 
 
 
-    constructor : function(config) {
-        this.callParent(arguments);
-    },
-
-    /**
-     * Utility for getting the templated script AFTER showing a popup GUI where the user can
-     * enter in additional parameters.
-     *
-     * callback(Number status, String script) - called by the template when a script snippet has finished templating.
-     * templateName - the name of the template to use
-     * formPanel - and Ext.form.Panel or equivalent constructor object that will be shown in the popup window
-     * includeEmptyText - Whether the form field's empty text will be included in the template (defaults to false)
-     */
-    _getFilteredResult : function(panelStore, controllerUrl, formPanel, includeEmptyText) {
-        var popup = Ext.create('Ext.window.Window', {
+        Ext.apply(cfg, {
             title : 'Enter Parameters',
             layout : 'fit',
             modal : true,
-            width : (formPanel.width ? formPanel.width : 500),
-            height : (formPanel.height ? formPanel.height : 400),
-            items : [formPanel],
+            width : 500,
+            height : 500,
+            items : [cswFilterFormPanel],
             buttons:[{
                 xtype: 'button',
                 text: 'Search',
@@ -50,7 +29,7 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
                     var panel = parent.getComponent(0);
 
                     if (panel.getForm().isValid()) {
-                        var additionalParams = panel.getForm().getValues(false, false, includeEmptyText, false);
+                        var additionalParams = panel.getForm().getValues(false, false, false, false);
                         var filteredResultPanels=[];
                         for(additionalParamKey in additionalParams){
                             if(additionalParamKey == 'cswServiceId'){
@@ -59,15 +38,15 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
                                 }
                                 for(var j=0; j < additionalParams[additionalParamKey].length;j++){
                                     //VT:
-                                    filteredResultPanels.push(this._getTabPanels(panelStore,controllerUrl, additionalParams,additionalParams[additionalParamKey][j]));
+                                    filteredResultPanels.push(this._getTabPanels(additionalParams,additionalParams[additionalParamKey][j]));
                                 }
                             }
                         }
 
+                        parent.fireEvent('filterselectcomplete',filteredResultPanels);
 
                         var cswSelectionWindow = new CSWSelectionWindow({
                             title : 'CSW Record Selection',
-                            panelStore : panelStore,
                             resultpanels : filteredResultPanels
                         });
                      cswSelectionWindow.show();
@@ -75,18 +54,15 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
 
                     }
                 }
-            }],
-            listeners : {
-                close : function(popup) {
-                    if (!popup.ignoreCloseEvent) {
-                        //callback(portal.widgets.template.BaseTemplate.TEMPLATE_RESULT_CANCELLED,panelStore, null);
-                    }
-                }
-            }
+            }]
         });
 
-        popup.show();
+
+
+        this.callParent(arguments);
     },
+
+
 
     /**
      * Utility for calling a template function getTemplatedScript.do
@@ -98,7 +74,7 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
      * additionalParams - a regular object containing key/value pairs to inject into the specified template
      * templateName - the name of the template to use
      */
-    _getTabPanels : function(panelStore, controllerUrl, params,cswServiceId) {
+    _getTabPanels : function(params,cswServiceId) {
         //Convert our keys/values into a form the controller can read
         var keys = [];
         var values = [];
@@ -117,7 +93,7 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
             }
         };
 
-        denormaliseKvp(keys, values, this.getParameters());
+
         denormaliseKvp(keys, values, additionalParams);
         keys.push('cswServiceId');
         values.push(cswServiceId);
@@ -129,7 +105,7 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
             autoLoad: false,
             proxy : {
                 type : 'ajax',
-                url : controllerUrl,
+                url : 'getFilteredCSWRecords.do',
                 reader : {
                     type : 'json',
                     root : 'data',
@@ -164,15 +140,8 @@ Ext.define('portal.widgets.template.BaseCSWFilterForm', {
 
         return result;
 
-    },
+    }
 
-    /**
-     * Function for generating a script snippet (string) representing this components values
-     *
-     * function(Function callback) - returns void
-     *
-     * callback(Number status, String script) - called by the template when a script snippet has finished templating.
-     */
-    requestScript : portal.util.UnimplementedFunction
+
 });
 
