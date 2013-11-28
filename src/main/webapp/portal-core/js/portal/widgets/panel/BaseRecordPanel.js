@@ -122,14 +122,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 tooltip:'Browse and filter through the available catalogue',
                 iconCls:'magglass',
                 hidden:true,
-
+                scope:this,
                 handler: function(btn) {
+
                     var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
                         name : 'test',
-                        listener : {
-                            filterselectcomplete : function(filteredResultPanels){
-                                alert('Victor rocks');
-                            }
+                        listeners : {
+                            filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
                         }
                     });
 
@@ -141,6 +140,20 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         });
 
         this.callParent(arguments);
+    },
+
+    handleFilterSelectComplete : function(filteredResultPanels){
+
+        var grid = this.findParentByType('baserecordpanel');
+
+        var cswSelectionWindow = new CSWSelectionWindow({
+            title : 'CSW Record Selection',
+            resultpanels : filteredResultPanels
+        });
+        cswSelectionWindow.show();
+
+
+        //grid.fireEvent('addlayerrequest', this, filteredResultPanels[0]);
     },
 
     //-------- Abstract methods requiring implementation ---------

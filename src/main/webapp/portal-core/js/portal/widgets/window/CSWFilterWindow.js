@@ -44,13 +44,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
                         }
 
                         parent.fireEvent('filterselectcomplete',filteredResultPanels);
-
-                        var cswSelectionWindow = new CSWSelectionWindow({
-                            title : 'CSW Record Selection',
-                            resultpanels : filteredResultPanels
-                        });
-                     cswSelectionWindow.show();
-                     parent.close();
+                        parent.close();
 
                     }
                 }
