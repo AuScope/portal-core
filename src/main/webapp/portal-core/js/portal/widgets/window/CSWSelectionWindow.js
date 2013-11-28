@@ -5,6 +5,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
 
     constructor : function(cfg) {
 
+        this.addEvents('selectioncomplete');
 
         var me = this;
         //this is the store after filtering the registery.
@@ -28,35 +29,26 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                 xtype : 'button',
                 text : 'Add Selected Records',
                 iconCls : 'add',
+                scope : this,
                 handler : function(button, e) {
                     var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
                     var csw = cswPagingPanel.getSelectionModel().getSelection();
-                    //me.store.add(csw);
+                    this.fireEvent('selectioncomplete',csw);
+
 
                  }
             },{
                 xtype : 'button',
                 text : 'Add All Current Page Records',
                 iconCls : 'addall',
+                scope : this,
                 handler : function(button, e) {
                     var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
                     var allStore = cswPagingPanel.getStore();
-                    var cswRecords = allStore.getRange();
-                    //me.store.add(csw);
+                    var csw = allStore.getRange();
+                    this.fireEvent('selectioncomplete',csw);
 
                  }
-
-            },{
-                xtype : 'button',
-                text : 'Add All Records',
-                iconCls : 'addall',
-                handler : function(button, e) {
-                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
-                    var allStore = cswPagingPanel.getStore();
-                    var cswRecords = allStore.getRange();
-                    //me.store.add(csw);
-
-                }
 
             }]
         });

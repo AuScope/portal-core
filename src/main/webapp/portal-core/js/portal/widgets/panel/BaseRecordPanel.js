@@ -143,17 +143,20 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     },
 
     handleFilterSelectComplete : function(filteredResultPanels){
-
-        var grid = this.findParentByType('baserecordpanel');
-
+        var me = this;
         var cswSelectionWindow = new CSWSelectionWindow({
             title : 'CSW Record Selection',
-            resultpanels : filteredResultPanels
+            resultpanels : filteredResultPanels,
+            listeners : {
+                selectioncomplete : function(csws){
+                    me.fireEvent('addlayerrequest', me, csws);
+                }
+            }
         });
         cswSelectionWindow.show();
 
 
-        //grid.fireEvent('addlayerrequest', this, filteredResultPanels[0]);
+        //
     },
 
     //-------- Abstract methods requiring implementation ---------

@@ -194,7 +194,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                     xtype:'panel',
                     id: 'cswminimapselection',
                     width : 500,
-                    height : 450,
+                    height : 600,
                     listeners : {
                         afterrender : function() {
                             cswFilterFormPanelMe._getMap(this);
@@ -413,7 +413,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                          {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
                      )
                  ],
-                 center: new OpenLayers.LonLat(133.3, -36)
+                 center: new OpenLayers.LonLat(133.3, -53)
                      // Google.v3 uses web mercator as projection, so we have to
                      // transform our coordinates
                      .transform('EPSG:4326', 'EPSG:3857'),
