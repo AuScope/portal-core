@@ -25,7 +25,10 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'version' , type:'string'},
         { name: 'noCache' , type:'boolean'},
         { name: 'extensions', type:'auto'}, //A normally undefined object. CSWRecord can be extended by filling in this field.
-        { name: 'constraints' , type:'auto'} //An array of strings representing access constraints that will be shown to a user before this layer is used
+        { name: 'constraints' , type:'auto'}, //An array of strings representing access constraints that will be shown to a user before this layer is used
+        { name: 'date' , type:'date', convert: function(dateString) {
+            return new Date(Date.parse(dateString.replace(' UTC', ''))); 
+        }} //The date of this CSWRecord
     ],
 
     /**
@@ -116,6 +119,38 @@ Ext.define('portal.csw.CSWRecord', {
         }
 
         return onlineResources;
+    },
+    
+    /**
+     * Iterates this CSWRecord and optionally all child CSWRecords. Every CSWRecord will be searched
+     * for an online resource with the specified orId. Returns a portal.csw.OnlineResource object
+     * with the specified ID or null
+     * 
+     * @param orId The ID to search for
+     * @param searchChildren If true, any child records will be searched for a matching OnlineResource
+     */
+    getOnlineResourceById : function(orId, searchChildren) {
+        var onlineResources = this.get('onlineResources');
+        var childRecs = this.get('childRecords');
+
+        if(onlineResources) {
+            for (var i = 0; i < onlineResources.length; i++) {
+                if (onlineResources[i].get('id') === orId) {
+                    return onlineResources[i];
+                }
+            }
+        }
+        
+        if(searchChildren && childRecs) {
+            for (var i = 0; i < childRecs.length; i++) {
+                var matchingOr = childRecs[i].getOnlineResourceById(orId, searchChildren);
+                if (matchingOr) {
+                    return matchingOr;
+                }
+            }
+        }
+        
+        return null;
     }
 
 });
