@@ -355,4 +355,25 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         Assert.assertEquals(OnlineResourceType.WWW, ors[0].getType());
         Assert.assertEquals("Cooper_Basin_3D_Map_geology.vo", ors[0].getName());
     }
+
+    @Test
+    public void testCSWGeographicBoundboxConversion(){
+        CSWGeographicBoundingBox box= new CSWGeographicBoundingBox(Double.NaN,Double.NaN,Double.NaN,Double.NaN);
+
+        Assert.assertEquals(180, box.getEastBoundLongitude(),0.1);
+        Assert.assertEquals(-180, box.getWestBoundLongitude(),0.1);
+        Assert.assertEquals(90, box.getNorthBoundLatitude(),0.1);
+        Assert.assertEquals(-90, box.getSouthBoundLatitude(),0.1);
+
+        box =  new CSWGeographicBoundingBox();
+        box.setEastBoundLongitude(Double.NaN);
+        box.setWestBoundLongitude(Double.NaN);
+        box.setNorthBoundLatitude(Double.NaN);
+        box.setSouthBoundLatitude(Double.NaN);
+
+        Assert.assertEquals(180, box.getEastBoundLongitude(),0.1);
+        Assert.assertEquals(-180, box.getWestBoundLongitude(),0.1);
+        Assert.assertEquals(90, box.getNorthBoundLatitude(),0.1);
+        Assert.assertEquals(-90, box.getSouthBoundLatitude(),0.1);
+    }
 }
