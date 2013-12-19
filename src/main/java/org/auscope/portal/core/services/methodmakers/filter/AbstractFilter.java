@@ -49,6 +49,10 @@ public abstract class AbstractFilter implements IFilter {
     protected String generateGmlObjectIdFragment(String gmlId) {
         return String.format("<ogc:GmlObjectId gml:id=\"%1$s\"/>", gmlId);
     }
+    
+    protected String generateFeatureIdFragment(String fid) {
+    	return String.format("<ogc:FeatureId fid=\"%1$s\"/>", escapeLiteral(fid));
+    }
 
     /**
      * returns a ogc:Filter string fragment that can be embedded in
