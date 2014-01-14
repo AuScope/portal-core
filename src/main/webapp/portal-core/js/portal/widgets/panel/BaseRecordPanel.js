@@ -126,7 +126,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 handler: function(btn) {
 
                     var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
-                        name : 'test',
+                        name : 'CSW Filter',
                         listeners : {
                             filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
                         }
