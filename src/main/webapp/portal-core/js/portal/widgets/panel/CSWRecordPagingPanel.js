@@ -33,7 +33,7 @@ Ext.define('portal.widgets.panel.CSWRecordPagingPanel', {
                 dataIndex:  'onlineResources',
                 width: 100,
                 renderer : function(value){
-                    return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
+                    return this._serviceInformationRenderer(value);
                 }
             }],
             store : this.cswRecordStore,
@@ -56,7 +56,7 @@ Ext.define('portal.widgets.panel.CSWRecordPagingPanel', {
                     grid.cswRecordStore.load();
                 },
                 itemdblclick : function(grid, record, item, index, e, eOpts ){
-
+                    this._callBackDisplayInfo(record);
                 }
 
             }
@@ -64,5 +64,85 @@ Ext.define('portal.widgets.panel.CSWRecordPagingPanel', {
         });
 
       this.callParent(arguments);
-    }
+    },
+
+
+    /**
+     * Call back function to handle double click of the CSW to bring up a window to display its information
+     */
+    _callBackDisplayInfo : function(record){
+        Ext.create('Ext.window.Window', {
+            title : 'CSW Record Information',
+            items : [{
+                xtype : 'cswmetadatapanel',
+                width : 500,
+                border : false,
+                cswRecord : record
+            }]
+        }).show();
+    },
+
+
+    /**
+     * Internal method, acts as an ExtJS 4 column renderer function for rendering
+     * the service information of the record.
+     *
+     * http://docs.sencha.com/ext-js/4-0/#!/api/Ext.grid.column.Column-cfg-renderer
+     */
+    _serviceInformationRenderer : function(onlineResources) {
+
+        var containsDataService = false;
+        var containsImageService = false;
+
+        //We classify resources as being data or image sources.
+        for (var i = 0; i < onlineResources.length; i++) {
+            switch(onlineResources[i].get('type')) {
+            case portal.csw.OnlineResource.WFS:
+            case portal.csw.OnlineResource.WCS:
+            case portal.csw.OnlineResource.SOS:
+            case portal.csw.OnlineResource.OPeNDAP:
+            case portal.csw.OnlineResource.CSWService:
+            case portal.csw.OnlineResource.IRIS:
+                containsDataService = true;
+                break;
+            case portal.csw.OnlineResource.WMS:
+            case portal.csw.OnlineResource.WWW:
+            case portal.csw.OnlineResource.FTP:
+            case portal.csw.OnlineResource.CSW:
+            case portal.csw.OnlineResource.UNSUPPORTED:
+                containsImageService = true;
+                break;
+            }
+        }
+
+        var iconPath = null;
+        if (containsDataService) {
+            iconPath = 'img/binary.png'; //a single data service will label the entire layer as a data layer
+        } else if (containsImageService) {
+            iconPath = 'img/picture.png';
+        } else {
+            iconPath = 'img/cross.png';
+        }
+
+        return this._generateHTMLIconMarkup(iconPath);
+    },
+
+    /**
+     * Generates an Ext.DomHelper.markup for the specified imageUrl
+     * for usage as an image icon within this grid.
+     */
+    _generateHTMLIconMarkup : function(imageUrl) {
+        return Ext.DomHelper.markup({
+            tag : 'div',
+            style : 'text-align:center;',
+            children : [{
+                tag : 'img',
+                width : 16,
+                height : 16,
+                align: 'CENTER',
+                src: imageUrl
+            }]
+        });
+    },
+
 });

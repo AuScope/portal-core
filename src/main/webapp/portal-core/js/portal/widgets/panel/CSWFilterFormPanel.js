@@ -121,6 +121,18 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         name : 'anyText',
                         fieldLabel : 'Match Any Text'
                     }]
+                },{
+                    xtype:'fieldset',
+                    title : 'Text Search',
+                    items:[{
+                        xtype : 'textfield',
+                        name : 'title',
+                        fieldLabel : 'Search Title'
+                    },{
+                        xtype : 'textfield',
+                        name : 'abstract',
+                        fieldLabel : 'Search abstract'
+                    }]
                 }]
         };
 

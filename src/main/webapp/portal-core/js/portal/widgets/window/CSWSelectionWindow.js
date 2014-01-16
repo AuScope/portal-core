@@ -1,3 +1,7 @@
+/**
+ * This is the window used to display the results from the csw filtering use by master catalogue.
+ */
+
 CSWSelectionWindow = Ext.extend(Ext.Window, {
     //this is the store of the personal panal.
     store : null,
@@ -20,7 +24,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                 xtype:'tabpanel',
                 itemId: 'pagingRecordtabPanel',
                 layout: 'fit',
-                items : cfg.resultpanels
+                items : cfg.resultpanels //VT: CSWRecordPagingPanel
             }],
 
 

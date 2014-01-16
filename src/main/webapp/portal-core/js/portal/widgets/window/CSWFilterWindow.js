@@ -7,7 +7,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
         this.addEvents('filterselectcomplete');
 
         var cswFilterFormPanel = new portal.widgets.panel.CSWFilterFormPanel({
-            name : 'test'
+            name : 'Filter Form'
         });
 
 
@@ -59,14 +59,10 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
 
 
     /**
-     * Utility for calling a template function getTemplatedScript.do
+     * Return configuration for the tabpanels
      *
-     * The keys from getValues and baseTemplateVariables will be used to populate
-     * the keys/values list for the template
-     *
-     * callback(Number status, String script) - called by the template when a script snippet has finished templating.
-     * additionalParams - a regular object containing key/value pairs to inject into the specified template
-     * templateName - the name of the template to use
+     * params - the parameter used to filter results for each tab panel
+     * cswServiceId - The id of the csw registry.
      */
     _getTabPanels : function(params,cswServiceId) {
         //Convert our keys/values into a form the controller can read
