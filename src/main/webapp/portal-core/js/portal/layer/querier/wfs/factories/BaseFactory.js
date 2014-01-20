@@ -134,6 +134,8 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
                 result = result + "&" + optionalParams[i].key + "=" + optionalParams[i].value
             }
         }
+
+        return result;
     },
 
     /**
