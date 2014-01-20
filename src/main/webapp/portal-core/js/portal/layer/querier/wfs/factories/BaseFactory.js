@@ -125,10 +125,15 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
      * @param typeName String - WFS type to query
      * @param featureTypeId String - the ID of the type to query
      */
-    _makeFeatureRequestUrl : function(wfsUrl, typeName, featureTypeId) {
-        return portal.util.URL.base + "requestFeature.do" + "?" +
+    _makeFeatureRequestUrl : function(wfsUrl, typeName, featureTypeId, optionalParams) {
+        var result = portal.util.URL.base + "requestFeature.do" + "?" +
             "serviceUrl=" + wfsUrl + "&typeName=" + typeName +
             "&featureId=" + featureTypeId;
+        if(optionalParams){
+            for (var i=0; i < optionalParams.length; i++){
+                result = result + "&" + optionalParams[i].key + "=" + optionalParams[i].value
+            }
+        }
     },
 
     /**
