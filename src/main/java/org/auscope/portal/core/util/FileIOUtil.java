@@ -223,8 +223,8 @@ public class FileIOUtil {
      * @throws IOException
      */
     public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads,ZipOutputStream zout) throws IOException{
-      if(gmlDownloads.get(0).getContentType().equals("text/xml")){
-          writeResponseToZip(gmlDownloads,zout,true);
+      if(gmlDownloads.get(0).getContentType().contains("text")){
+          writeResponseToZip(gmlDownloads,zout,true,MimeUtil.mimeToFileExtension(gmlDownloads.get(0).getContentType()));
       }else{ //VT: TODO: the different response type should be handled differently.
              //VT: eg. handle application/json and a final catch all.
           log.warn("No content type found, defaulting to handling JSON responses");
@@ -242,10 +242,10 @@ public class FileIOUtil {
      * @param zout The stream to receive the zip entries
      * @param closeInput true to close all the input stream in the gmlDownloads
      */
-    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs) throws IOException {
+    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs,String FileExtension) throws IOException {
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
-            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + ".xml";
+            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + "." + FileExtension;
             //TODO: VT - this method can be further improved if we thread this method as we are processing each stream one by one.
             // Check that attempt to request is successful
             if (!download.hasException()) {

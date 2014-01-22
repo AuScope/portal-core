@@ -23,6 +23,8 @@ public class MimeUtil {
         table.put("image/geotiff8", "tiff");
         table.put("image/svg", "svg");
         table.put("application/pdf", "pdf");
+        table.put("text/xml", "xml");
+        table.put("text/csv", "csv");
         table.put("rss", "rss");
         table.put("kml", "kml");
         table.put("kmz", "kmz");

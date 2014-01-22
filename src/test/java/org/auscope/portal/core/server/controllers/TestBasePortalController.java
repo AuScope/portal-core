@@ -134,7 +134,7 @@ public class TestBasePortalController extends PortalTestClass {
         ZipOutputStream zout = new ZipOutputStream(outputStream);
 
         //Write our data out
-        FileIOUtil.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false);
+        FileIOUtil.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false,"xml");
         zout.finish();
         zout.close();
         outputStream.close();
