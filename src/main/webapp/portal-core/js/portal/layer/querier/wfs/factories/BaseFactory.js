@@ -138,6 +138,39 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
         return result;
     },
 
+
+    /**
+     * Parse a wfs request to the spatial server
+     * The resulting XML will be returned.
+     *
+     * @param wfsUrl String - WFS url to query
+     * @param typeName String - WFS type to query
+     * @param featureTypeId String - the ID of the type to query
+     */
+    _makeWFSFeatureRequestUrl : function(wfsUrl, typeName, featureTypeId, optionalParams) {
+
+        // VT: ugly hack to convert a wms url to a wfs url. This is ugly because in Openlayer.map getQueryTarget,
+        // we hav to iterate through a wms resource to make a GetFeatureInfo request. we did not design it to handle
+        // wfs resources. this solution will have to suffice for now until we see the need to redesign the QueryTarget object.
+        // I thought of adding wfsonlineresource but that would just add more confusion. so far we only require the wfs url. if the
+        // need arise we can then refactor.
+        wfsUrl=wfsUrl.substring(0,wfsUrl.indexOf("?"));
+        if(wfsUrl.substring((wfsUrl.length -3),wfsUrl.length).toLowerCase() == "wms"){
+            wfsUrl=wfsUrl.substring(0,(wfsUrl.length - 3));
+        }
+        wfsUrl = wfsUrl + "wfs";
+
+        var result = wfsUrl + "?service=WFS&version=1.1.0&request=GetFeature&typeName=" + typeName +
+            "&featureId=" + featureTypeId;
+        if(optionalParams){
+            for (var i=0; i < optionalParams.length; i++){
+                result = result + "&" + optionalParams[i].key + "=" + optionalParams[i].value
+            }
+        }
+
+        return result;
+    },
+
     /**
      * Decomposes a 'normal' URL in the form http://url.com/long/path/name to just its prefix + hostname http://url.com
      * @param url The url to decompose
