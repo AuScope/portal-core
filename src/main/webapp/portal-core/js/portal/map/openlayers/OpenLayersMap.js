@@ -164,7 +164,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 var allResources = cswRecord.get('onlineResources');
                 var wmsResources = portal.csw.OnlineResource.getFilteredFromArray(allResources, portal.csw.OnlineResource.WMS);
                 var wcsResources = portal.csw.OnlineResource.getFilteredFromArray(allResources, portal.csw.OnlineResource.WCS);
-                var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(allResources, portal.csw.OnlineResource.WFS);
+
 
                 //VT: if layerswitcher layer visibility is set to false, then do not query that layer as well.
                 if (wmsResources[0]) {
