@@ -41,10 +41,10 @@ Ext.define('portal.layer.querier.Querier', {
 
         var typeName = wmsOnlineResource.get('name');
         var serviceUrl = wmsOnlineResource.get('url');
-        var sld=null;
+        var sld_body=null;
 
-        if(queryTarget.get('layer').get('renderer').sld){
-            sld=queryTarget.get('layer').get('renderer').sld;
+        if(queryTarget.get('layer').get('renderer').sld_body){
+            sld_body=queryTarget.get('layer').get('renderer').sld_body;
         }
 
         var bbox = tileInfo.getTileBounds();
@@ -67,7 +67,7 @@ Ext.define('portal.layer.querier.Querier', {
             WIDTH : tileInfo.getWidth(),
             HEIGHT : tileInfo.getHeight(),
             INFO_FORMAT : infoFormat,
-            SLD : sld
+            SLD_BODY : sld_body
         });
         return Ext.urlAppend('wmsMarkerPopup.do', queryString);
     },

@@ -14,7 +14,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
     legend : null,
     allDownloadManagers : null,
-    sld : null,
+    sld_body : null,
 
     constructor: function(config) {
         this.currentRequestCount = 0;//how many requests are still running
@@ -134,7 +134,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
       //  var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), unescape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters()))));
       //  this.sld=unescape(styleUrl);
 
-        var primitives = [];
+
         for (var i = 0; i < wmsResources.length; i++) {
             var wmsUrl = wmsResources[i].get('url');
             // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
@@ -157,50 +157,30 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 continue;
             }
 
-            var proxyUrl = home + this.parentLayer.get('source').get('proxyStyleUrl');
-            var filterParams = escape(unescape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters())) + "&serviceUrl=" + serviceUrl);
+            var proxyUrl = this.parentLayer.get('source').get('proxyStyleUrl');
+            var filterParams = unescape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters())) + "&serviceUrl=" + escape(serviceUrl);
             var styleUrl = Ext.urlAppend(proxyUrl,filterParams);
-            this.sld=unescape(styleUrl);
+
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1;
-            wmsUrl=Ext.urlAppend(wmsUrl, 'SLD=' + styleUrl);
+            this.currentRequestCount++;
 
-            var layer=this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity)
-
-
-            layer.wmsLayer.events.register("loadstart",this,function(){
-                this.currentRequestCount++;
-                var listOfStatus=this.renderStatus.getParameters();
-                for(key in listOfStatus){
-                    if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){
-                        this.renderStatus.updateResponse(key, "Loading WMS");
-                        this.fireEvent('renderstarted', this, wfsResources, filterer);
-                        break
-                    }
+            Ext.Ajax.request({
+                url: styleUrl,
+                timeout : 180000,
+                scope : this,
+                success: Ext.bind(this._getRenderLayer,this,[wmsResources[i], wmsUrl, wmsLayer, wmsOpacity,wfsResources, filterer],true),
+                failure: function(response, opts) {
+                     this.currentRequestCount--;
+                     if (this.currentRequestCount === 0) {
+                         this.fireEvent('renderfinished', this);
+                     }
+                    console.log('server-side failure with status code ' + response.status);
                 }
-
             });
-
-            //VT: Handle the after wms load clean up event.
-            layer.wmsLayer.events.register("loadend",this,function(evt){
-                this.currentRequestCount--;
-                if (this.currentRequestCount === 0) {
-                    this.fireEvent('renderfinished', this);
-                }
-                var listOfStatus=this.renderStatus.getParameters();
-
-                for(key in listOfStatus){
-                    if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){
-                        this.renderStatus.updateResponse(key, "WMS Loaded");
-                        break
-                    }
-                }
-
-            });
-            primitives.push(layer);
 
         }
 
-        this.primitiveManager.addPrimitives(primitives);
+
         this.hasData = true;
         //this array will contain a list of wfs url that are process by its wms component.
         var wmsUrls = [];
@@ -278,6 +258,49 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             this.fireEvent('renderfinished', this);
         }
 
+    },
+
+
+    _getRenderLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,wfsResources,filterer){
+        var sld_body = response.responseText;
+        this.sld_body = sld_body;
+        wmsUrl=Ext.urlAppend(wmsUrl, 'SLD_BODY=' + escape(sld_body));
+
+        var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity)
+
+
+        layer.wmsLayer.events.register("loadstart",this,function(){
+
+            var listOfStatus=this.renderStatus.getParameters();
+            for(key in listOfStatus){
+                if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){
+                    this.renderStatus.updateResponse(key, "Loading WMS");
+                    this.fireEvent('renderstarted', this, wfsResources, filterer);
+                    break
+                }
+            }
+
+        });
+
+        //VT: Handle the after wms load clean up event.
+        layer.wmsLayer.events.register("loadend",this,function(evt){
+            this.currentRequestCount--;
+            if (this.currentRequestCount === 0) {
+                this.fireEvent('renderfinished', this);
+            }
+            var listOfStatus=this.renderStatus.getParameters();
+
+            for(key in listOfStatus){
+                if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){
+                    this.renderStatus.updateResponse(key, "WMS Loaded");
+                    break
+                }
+            }
+
+        });
+        var primitives = [];
+        primitives.push(layer);
+        this.primitiveManager.addPrimitives(primitives);
     },
 
     _getDomain : function(data) {
