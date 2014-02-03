@@ -154,7 +154,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws URISyntaxException {
+    public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws URISyntaxException {
 //VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
 //        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
 //                southBoundLatitude,
@@ -186,8 +186,8 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("width", Integer.toString(width)));
         existingParam.add(new BasicNameValuePair("height", Integer.toString(height)));
         existingParam.add(new BasicNameValuePair("crs", srs));
-        if(sld != null && sld.trim().length() > 0){
-            existingParam.add(new BasicNameValuePair("SLD", sld));
+        if(sldBody != null && sldBody.trim().length() > 0){
+            existingParam.add(new BasicNameValuePair("SLD_BODY", sldBody));
         }
         if (styles != null && styles.trim().length() > 0) {
             existingParam.add(new BasicNameValuePair("styles", styles.trim()));

@@ -102,12 +102,12 @@ public class WMSService {
      * @return
      * @throws PortalServiceException
      */
-    public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws PortalServiceException {
+    public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws PortalServiceException {
         // Do the request
         HttpRequestBase method = null;
         try {
             this.configWMSVersion(wmsUrl);
-            method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sld);
+            method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sldBody);
             String response =  serviceCaller.getMethodResponseAsString(method);
             //VT: a html response may not be xml valid therefore cannot go through the same validation process.
             //Rely on the service to return meaningful response to the user.

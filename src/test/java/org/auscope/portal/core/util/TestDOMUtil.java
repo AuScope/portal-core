@@ -1,11 +1,18 @@
 package org.auscope.portal.core.util;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -19,6 +26,7 @@ import org.auscope.portal.core.test.ResourceUtil;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Unit tests for DOMUtil
@@ -112,4 +120,5 @@ public class TestDOMUtil extends PortalTestClass {
         testNode = (Node) failingExpr.evaluate(doc, XPathConstants.NODE);
         Assert.assertNull(testNode);
     }
+
 }
