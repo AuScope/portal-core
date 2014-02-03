@@ -162,7 +162,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var styleUrl = Ext.urlAppend(proxyUrl,filterParams);
 
             wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1;
-            this.currentRequestCount++;
+
 
             Ext.Ajax.request({
                 url: styleUrl,
@@ -270,7 +270,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
 
         layer.wmsLayer.events.register("loadstart",this,function(){
-
+            this.currentRequestCount++;
             var listOfStatus=this.renderStatus.getParameters();
             for(key in listOfStatus){
                 if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){

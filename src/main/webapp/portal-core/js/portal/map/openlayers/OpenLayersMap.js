@@ -141,6 +141,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             }
             var cswRecords = layer.get('cswRecords');
             for(var j = 0; j < cswRecords.length; j++){
+
                 var cswRecord = cswRecords[j];
 
                 //ensure this click lies within this CSW record
@@ -206,6 +207,12 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                     var type = resourcesToIterate[k].get('type');
                     if (type === portal.csw.OnlineResource.WMS ||
                         type === portal.csw.OnlineResource.WCS) {
+
+                        if(layer.get('filterer').getParameters().serviceFilter &&
+                                (this._getDomain(resourcesToIterate[i].get('url'))!= this._getDomain(layer.get('filterer').getParameters().serviceFilter[0]))){
+                            continue;
+                        }
+
                         queryTargets.push(Ext.create('portal.layer.querier.QueryTarget', {
                             id : '',
                             lat : latitude,
@@ -791,5 +798,11 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             renderer.removeData();
             this.closeInfoWindow(layer.get('id'));
         }
-    }
+    },
+
+    _getDomain : function(data) {
+        var    a      = document.createElement('a');
+               a.href = data;
+        return a.hostname;
+      },
 });
