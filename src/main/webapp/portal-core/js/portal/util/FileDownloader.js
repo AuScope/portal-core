@@ -54,6 +54,8 @@ Ext.define('portal.util.FileDownloader', {
             children : inputs
         });
 
+        _gaq.push(['_trackEvent', 'FileDownloader', 'DOWNLOAD', 'Download:' + url]);
+
         form.dom.action = url;
         form.dom.submit();
     };
