@@ -55,7 +55,7 @@ Ext.define('portal.util.FileDownloader', {
         });
 
 
-        portal.util.GoogleAnalytic.trackevent('FileDownloader', 'Download', url);
+        portal.util.GoogleAnalytic.trackevent('FileDownloader','Download', url);
 
         form.dom.action = url;
         form.dom.submit();
