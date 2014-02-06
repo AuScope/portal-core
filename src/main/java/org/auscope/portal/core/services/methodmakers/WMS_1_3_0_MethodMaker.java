@@ -2,10 +2,13 @@ package org.auscope.portal.core.services.methodmakers;
 
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicNameValuePair;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -197,6 +200,80 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
 
         HttpGet method = new HttpGet(wmsUrl);
         method.setURI(HttpUtil.parseURI(wmsUrl,existingParam));
+
+        return method;
+    }
+
+    /**
+     * Generates a WMS request for downloading information about a user click on a particular
+     * GetMap request via the post method.
+     * @param wmsUrl The WMS endpoint (will have any existing query parameters preserved)
+     * @param format The desired mime type of the response
+     * @param layer The name of the layer to download
+     * @param srs The spatial reference system for the bounding box
+     * @param westBoundLongitude The west bound longitude of the bounding box
+     * @param southBoundLatitude The south bound latitude of the bounding box
+     * @param eastBoundLongitude The east bound longitude of the bounding box
+     * @param northBoundLatitude The north bound latitude of the bounding box
+     * @param width The desired output image width in pixels
+     * @param height The desired output image height in pixels
+     * @param styles [Optional] What style should be included
+     * @param pointLng Where the user clicked (longitude)
+     * @param pointLat Where the user clicked (latitude)
+     * @param pointX Where the user clicked in pixel coordinates relative to the GetMap that was used (X direction)
+     * @param pointY Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws URISyntaxException {
+//VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
+//        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
+//                southBoundLatitude,
+//                westBoundLongitude,
+//                northBoundLatitude,
+//                eastBoundLongitude
+//                );
+
+        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
+                westBoundLongitude,
+                southBoundLatitude,
+                eastBoundLongitude,
+                northBoundLatitude);
+
+        List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
+
+        existingParam.add(new BasicNameValuePair("service", "WMS"));
+        existingParam.add(new BasicNameValuePair("request", "GetFeatureInfo"));
+        existingParam.add(new BasicNameValuePair("version", "1.3.0"));
+        existingParam.add(new BasicNameValuePair("layers", layer));
+        existingParam.add(new BasicNameValuePair("layer", layer));
+        existingParam.add(new BasicNameValuePair("BBOX", bboxString));
+        existingParam.add(new BasicNameValuePair("QUERY_LAYERS", layer));
+        existingParam.add(new BasicNameValuePair("INFO_FORMAT", format));
+        existingParam.add(new BasicNameValuePair("lng", Double.toString(pointLng)));
+        existingParam.add(new BasicNameValuePair("lat", Double.toString(pointLat)));
+        existingParam.add(new BasicNameValuePair("i", Integer.toString(pointX)));
+        existingParam.add(new BasicNameValuePair("j", Integer.toString(pointY)));
+        existingParam.add(new BasicNameValuePair("width", Integer.toString(width)));
+        existingParam.add(new BasicNameValuePair("height", Integer.toString(height)));
+        existingParam.add(new BasicNameValuePair("crs", srs));
+        if(sldBody != null && sldBody.trim().length() > 0){
+            existingParam.add(new BasicNameValuePair("SLD_BODY", sldBody));
+        }
+        if (styles != null && styles.trim().length() > 0) {
+            existingParam.add(new BasicNameValuePair("styles", styles.trim()));
+        }
+
+
+
+        HttpPost method = new HttpPost(wmsUrl);
+        UrlEncodedFormEntity entity;
+        try {
+            entity = new UrlEncodedFormEntity(existingParam, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new URISyntaxException(e.getMessage(),"Error parsing UrlEncodedFormEntity");
+        }
+        method.setEntity(entity);
 
         return method;
     }

@@ -83,4 +83,28 @@ public interface WMSMethodMakerInterface {
     public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws URISyntaxException;
 
 
+    /**
+     * Generates a WMS request for downloading information about a user click on a particular
+     * GetMap request via the post method.
+     * @param wmsUrl The WMS endpoint (will have any existing query parameters preserved)
+     * @param format The desired mime type of the response
+     * @param layer The name of the layer to download
+     * @param srs The spatial reference system for the bounding box
+     * @param westBoundLongitude The west bound longitude of the bounding box
+     * @param southBoundLatitude The south bound latitude of the bounding box
+     * @param eastBoundLongitude The east bound longitude of the bounding box
+     * @param northBoundLatitude The north bound latitude of the bounding box
+     * @param width The desired output image width in pixels
+     * @param height The desired output image height in pixels
+     * @param styles [Optional] What style should be included
+     * @param pointLng Where the user clicked (longitude)
+     * @param pointLat Where the user clicked (latitude)
+     * @param pointX Where the user clicked in pixel coordinates relative to the GetMap that was used (X direction)
+     * @param pointY Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
+     * @return
+     * @throws URISyntaxException
+     */
+    public HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws URISyntaxException;
+
+
 }

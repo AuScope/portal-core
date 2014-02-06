@@ -2,6 +2,8 @@ package org.auscope.portal.core.services.methodmakers;
 
 
 import java.net.URISyntaxException;
+
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Assert;
@@ -25,6 +27,9 @@ public class TestWMSMethodMaker extends PortalTestClass {
         HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0, 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
+        HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
+
+        Assert.assertTrue(getFeatureMethodPost instanceof HttpPost);
 
         Assert.assertTrue(getCapMethod.getURI().getQuery().contains("service=WMS"));
         Assert.assertTrue(getCapMethod.getURI().getQuery().contains("request=GetCapabilities"));
@@ -84,6 +89,9 @@ public class TestWMSMethodMaker extends PortalTestClass {
         HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0, 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
+        HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
+
+        Assert.assertTrue(getFeatureMethodPost instanceof HttpPost);
 
         Assert.assertTrue(getCapMethod.getURI().getQuery().contains("service=WMS"));
         Assert.assertTrue(getCapMethod.getURI().getQuery().contains("request=GetCapabilities"));

@@ -78,6 +78,15 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
             } else {
                 log.debug("Adding non WMS's are not yet implimented");
             }
+          /**
+           * VT:We should not catch the exception rather, we should rethrow it. The reason
+           * I didn't change it right now is because of this bug, GSWA is working
+           *  http://geossdi.dmp.wa.gov.au/services/schemas/wms/1.1.1/WMS_MS_Capabilities.dtd
+           *  is not accessible and when http://geossdi.dmp.wa.gov.au/services/wms?SERVICE=WMS&service=WMS&request=GetCapabilities&version=1.1.1
+           *  the parser trys to access the dtd and fails
+           *  BECAUSE this exception is swallowed, GetCapabilitiesRecord_1_3_0 and GetCapabilitiesRecord.accepts returns true but the proper
+           *  behaviour and the correct behavior is to fail.
+           */
 
         } catch (SAXException e) {
             log.error("Parsing error: " + e.getMessage());

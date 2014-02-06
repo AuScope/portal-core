@@ -162,7 +162,41 @@ public class TestWMSService extends PortalTestClass {
         }});
 
 
-        Assert.assertEquals(response, service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null));
+        Assert.assertEquals(response, service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,false));
+    }
+
+    @Test
+    public void testGetFeatureInfoPost() throws Exception {
+        final String wmsUrl = "http://example.org/wms";
+        final String format = "format";
+        final String layer = "layer";
+        final String srs = "srs";
+        final double westBoundLongitude = 1;
+        final double southBoundLatitude = 2;
+        final double eastBoundLongitude = 3;
+        final double northBoundLatitude = 4;
+        final int width = 5;
+        final int height = 6;
+        final double pointLng = 7;
+        final double pointLat = 8;
+        final int pointX = 9;
+        final int pointY = 10;
+        final String styles = "styles";
+
+        final String response = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
+
+        context.checking(new Expectations() {{
+            oneOf(mockMethodMaker).accepts(with(any(String.class)));will(returnValue(true));
+
+            oneOf(mockMethodMaker).getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null);
+            will(returnValue(mockMethod));
+
+            oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
+            will(returnValue(response));
+        }});
+
+
+        Assert.assertEquals(response, service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,true));
     }
 
     @Test(expected=PortalServiceException.class)
@@ -194,7 +228,7 @@ public class TestWMSService extends PortalTestClass {
         }});
 
 
-        service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null);
+        service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,false);
     }
 
     @Test(expected=PortalServiceException.class)
@@ -228,6 +262,6 @@ public class TestWMSService extends PortalTestClass {
         }});
 
 
-        service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null);
+        service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,false);
     }
 }
