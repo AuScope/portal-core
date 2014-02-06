@@ -232,20 +232,24 @@ public class CloudComputeService {
      */
     public ComputeType[] getAvailableComputeTypes() {
         Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
-        
+        System.out.println("hardwareSet = " + hardwareSet);
         List<ComputeType> computeTypes = new ArrayList<ComputeType>();
-
+        System.out.println("computeTypes = " + computeTypes);
         for (Hardware hw : hardwareSet) {
             ComputeType ct = new ComputeType(hw.getId());
-            
+            System.out.println("computeTypes ID = " + hw.getId());
             ct.setDescription(hw.getName());
+            System.out.println("computeTypes desc = " + hw.getName());
+            
+            
             double vCpus = 0;
             for (Processor p : hw.getProcessors()) {
                 vCpus += p.getCores();
             }
             ct.setVcpus((int) vCpus);
             ct.setRamMB(hw.getRam());
-            
+            System.out.println("computeTypes Vcpus = " + vCpus);
+            System.out.println("computeTypes RamMB = " + hw.getRam());
             double rootDiskGB = 0;
             double ephemeralDiskGB = 0;
             for (Volume v : hw.getVolumes()) {
@@ -257,6 +261,8 @@ public class CloudComputeService {
             }
             ct.setRootDiskGB((int) rootDiskGB);
             ct.setEphemeralDiskGB((int) ephemeralDiskGB);
+            System.out.println("computeTypes rootDiskGB = " + rootDiskGB);
+            System.out.println("computeTypes ephemeralDiskGB = " + ephemeralDiskGB);
             
             computeTypes.add(ct);
         }
