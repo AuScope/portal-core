@@ -56,15 +56,58 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
 
 
     _handleWMSQuery : function(queryTarget,callback,scope){
-        //VT:app-schema wms requires the gml version to be declared in the info_format
-        var proxyUrl = this.generateWmsProxyQuery(queryTarget, 'application/vnd.ogc.gml/3.1.1');
+      //VT:app-schema wms requires the gml version to be declared in the info_format
+        var methodPost = false;
+
+
+        var sld_body=null;
+        if(queryTarget.get('layer').get('renderer').sld_body){
+            sld_body=queryTarget.get('layer').get('renderer').sld_body;
+            if(sld_body.length > 1500){//VT; if the length of the sld is too long we HAVE to use post
+                methodPost = true
+            }
+        }
+
+
+        var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
+        var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
+        lonLat = lonLat.transform('EPSG:4326','EPSG:3857');
+
+        var tileInfo = this.map.getTileInformationForPoint(point);
+        var layer = queryTarget.get('layer');
+        var wmsOnlineResource = queryTarget.get('onlineResource');
+
+        var typeName = wmsOnlineResource.get('name');
+        var serviceUrl = wmsOnlineResource.get('url');
+
+        var bbox = tileInfo.getTileBounds();
+        var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
+                bbox.eastBoundLongitude,
+                bbox.northBoundLatitude,
+                bbox.westBoundLongitude,
+                bbox.southBoundLatitude);
+
 
         //Start off by making a request for the GML at the specified location
         //We need to extract the survey line ID of the place we clicked
         Ext.Ajax.request({
-            url : proxyUrl,
+            url : 'wmsMarkerPopup.do',
             timeout : 180000,
             scope : this,
+            params : {
+                WMS_URL : serviceUrl,
+                lat : lonLat.lat,
+                lng : lonLat.lon,
+                QUERY_LAYERS : typeName,
+                x : tileInfo.getOffset().x,
+                y : tileInfo.getOffset().y,
+                BBOX : bboxString,
+                WIDTH : tileInfo.getWidth(),
+                HEIGHT : tileInfo.getHeight(),
+                INFO_FORMAT : 'application/vnd.ogc.gml/3.1.1',
+                SLD_BODY : sld_body,
+                postMethod : methodPost
+            },
             method : 'POST',//VT: potentially long sld_body forces us to use "POST" instead of "GET"
             callback : function(options, success, response) {
                 if (!success) {

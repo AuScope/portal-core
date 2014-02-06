@@ -41,6 +41,9 @@ Ext.define('portal.layer.querier.Querier', {
             //VT: we are goign to take a best guess approach and use post instead of get
             if(post === undefined && sld_body.length > 1500){
                 postMethod = true;
+                console.log('You really should not be using this method if the query' +
+                        'is going be long as it generates a GET spring request to and' +
+                        ' there are limitation to the lenght of a URI in GET method');
             }
         }
 
