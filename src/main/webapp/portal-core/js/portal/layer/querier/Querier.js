@@ -30,7 +30,24 @@ Ext.define('portal.layer.querier.Querier', {
      * @param queryTarget A portal.layer.querier.QueryTarget
      * @param infoFormat a String representing a MIME type
      */
-    generateWmsProxyQuery : function(queryTarget, infoFormat) {
+    generateWmsProxyQuery : function(queryTarget, infoFormat, post) {
+        //VT: default to use GET rather then post.
+        var postMethod = false;
+        var sld_body=null;
+
+        if(queryTarget.get('layer').get('renderer').sld_body){
+            sld_body=queryTarget.get('layer').get('renderer').sld_body;
+            //VT: if post is undefined and we have a very long sld_body
+            //VT: we are goign to take a best guess approach and use post instead of get
+            if(post === undefined && sld_body.length > 1500){
+                postMethod = true;
+            }
+        }
+
+        if(post != undefined){
+            postMethod = post;
+        }
+
         var point = Ext.create('portal.map.Point', {latitude : queryTarget.get('lat'), longitude : queryTarget.get('lng')});
         var lonLat = new OpenLayers.LonLat(point.getLongitude(), point.getLatitude());
         lonLat = lonLat.transform('EPSG:4326','EPSG:3857');
@@ -41,11 +58,7 @@ Ext.define('portal.layer.querier.Querier', {
 
         var typeName = wmsOnlineResource.get('name');
         var serviceUrl = wmsOnlineResource.get('url');
-        var sld_body=null;
 
-        if(queryTarget.get('layer').get('renderer').sld_body){
-            sld_body=queryTarget.get('layer').get('renderer').sld_body;
-        }
 
         var bbox = tileInfo.getTileBounds();
         var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
@@ -67,7 +80,8 @@ Ext.define('portal.layer.querier.Querier', {
             WIDTH : tileInfo.getWidth(),
             HEIGHT : tileInfo.getHeight(),
             INFO_FORMAT : infoFormat,
-            SLD_BODY : sld_body
+            SLD_BODY : sld_body,
+            postMethod : postMethod
         });
         return Ext.urlAppend('wmsMarkerPopup.do', queryString);
     },

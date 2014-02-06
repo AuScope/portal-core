@@ -65,6 +65,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
             url : proxyUrl,
             timeout : 180000,
             scope : this,
+            method : 'POST',//VT: potentially long sld_body forces us to use "POST" instead of "GET"
             callback : function(options, success, response) {
                 if (!success) {
                     callback(this, [this.generateErrorComponent('There was an error when attempting to contact the remote WMS instance for information about this point.')], queryTarget);
