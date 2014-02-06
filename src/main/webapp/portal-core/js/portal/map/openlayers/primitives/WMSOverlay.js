@@ -21,10 +21,18 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
             wmsVersion=this.getVersion();
         }
 
-        var wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
-                this.getWmsUrl(),
-                {layers: this.getWmsLayer(), version:wmsVersion ,transparent : true},
-                {isBaseLayer : false});
+        var wmsLayer = null;
+        if(this.getSld_body() && this.getSld_body().length > 0){
+             wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
+                    this.getWmsUrl(),
+                    {layers: this.getWmsLayer(), version:wmsVersion ,transparent : true, sld_body : this.getSld_body()},
+                    {tileOptions: {maxGetUrlLength: 2048}, isBaseLayer : false});
+        }else{
+            wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
+                    this.getWmsUrl(),
+                    {layers: this.getWmsLayer(), version:wmsVersion ,transparent : true},
+                    {tileOptions: {maxGetUrlLength: 2048}, isBaseLayer : false});
+        }
         wmsLayer.setOpacity(this.getOpacity());
         wmsLayer._portalBasePrimitive = this;
 

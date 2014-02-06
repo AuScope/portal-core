@@ -264,9 +264,9 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
     _getRenderLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,wfsResources,filterer){
         var sld_body = response.responseText;
         this.sld_body = sld_body;
-        wmsUrl=Ext.urlAppend(wmsUrl, 'SLD_BODY=' + escape(sld_body));
+        //wmsUrl=Ext.urlAppend(wmsUrl, 'SLD_BODY=' + escape(sld_body));
 
-        var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity)
+        var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity,sld_body)
 
 
         layer.wmsLayer.events.register("loadstart",this,function(){

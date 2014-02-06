@@ -66,7 +66,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     /**
      * See parent class for information.
      */
-    makeWms : function(id, sourceCswRecord, sourceOnlineResource, sourceLayer, wmsUrl, wmsLayer, opacity) {
+    makeWms : function(id, sourceCswRecord, sourceOnlineResource, sourceLayer, wmsUrl, wmsLayer, opacity,sld_body) {
         return Ext.create('portal.map.openlayers.primitives.WMSOverlay', {
             id : id,
             layer : sourceLayer,
@@ -75,7 +75,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             wmsUrl : wmsUrl,
             wmsLayer : wmsLayer,
             opacity : opacity,
-            map : this.map
+            map : this.map,
+            sld_body : sld_body
         });
     },
 

@@ -101,7 +101,10 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
          */
         opacity : 1.0,
 
-        version : ''
+        version : '',
+
+        sld_body : ''
+
     },
 
     /**
@@ -117,6 +120,7 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
         this.setWmsUrl(cfg.wmsUrl);
         this.setWmsLayer(cfg.wmsLayer);
         this.setOpacity(cfg.opacity);
+        this.setSld_body(cfg.sld_body);
         if(cfg.layer.get('cswRecords')[0]){
             this.setVersion(cfg.layer.get('cswRecords')[0].get('version'));
         }
