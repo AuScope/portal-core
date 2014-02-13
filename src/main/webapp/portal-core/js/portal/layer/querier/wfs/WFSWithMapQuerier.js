@@ -115,6 +115,10 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                     return;
                 }
 
+                // VT: notes: we might be able to improve this. IF the wms getfeatureinfo response is the same as wfs GetFeature response, we can
+                // jump straight in and use the response rather then getting the feature right now and then getting the wfs version of it.
+                // I am unsure why it was implemented this way unless getFeatureInfo response is different from its wfs counterpart.
+
                 //TODO: There is a convergence here between this and the WFSQuerier (parsing a wfs:FeatureCollection)
                 var domDoc = portal.util.xml.SimpleDOM.parseStringToDOM(response.responseText);
                 var featureMemberNodes = portal.util.xml.SimpleDOM.getMatchingChildNodes(domDoc.documentElement, 'http://www.opengis.net/gml', 'featureMember');
