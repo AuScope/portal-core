@@ -319,6 +319,21 @@ Ext.define('portal.widgets.panel.LayerPanel', {
         var renderer = layer.get('renderer');
         var legend = renderer.getLegend(onlineResources, filterer);
 
-        legend.getLegendComponent(onlineResources, filterer, Ext.bind(legendCallback, this, [layer], true));
+        //VT: this style is just for the legend therefore no filter is required.
+        var styleUrl = layer.get('renderer').parentLayer.get('source').get('proxyStyleUrl');
+
+        Ext.Ajax.request({
+            url: styleUrl,
+            timeout : 180000,
+            scope : this,
+            success:function(response,opts){
+                legend.getLegendComponent(onlineResources, filterer,response.responseText, Ext.bind(legendCallback, this, [layer], true));
+            },
+            failure: function(response, opts) {
+                legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
+            }
+        });
+
+
     }
 });

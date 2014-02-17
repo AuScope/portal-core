@@ -10,11 +10,16 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
         var wmsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(config.resources, portal.csw.OnlineResource.WMS);
 
         for (var j = 0; j < wmsOnlineResources.length; j++) {
-            var url = portal.layer.legend.wfs.WMSLegend.generateImageUrl(wmsOnlineResources[j].get('url'), wmsOnlineResources[j].get('name'));
+            var url = portal.layer.legend.wfs.WMSLegend.generateImageUrl(wmsOnlineResources[j].get('url'), wmsOnlineResources[j].get('name'),config.sld_body);
             html += '<a target="_blank" href="' + url + '">';
             html += '<img onerror="this.alt=\'There was an error loading this legend. Click here to try again in a new window or contact the data supplier.\'" alt="Loading legend..." src="' + url + '"/>';
             html += '</a>';
             html += '<br/>';
+            if(config.sld_body && config.sld_body.length > 0 && config.sld_body.length < 1800){
+                //VT: if we are supplying the SLD, we are controlling the legends. Therefore we only need to
+                // loop once
+                break;
+            }
         }
 
         Ext.apply(config, {

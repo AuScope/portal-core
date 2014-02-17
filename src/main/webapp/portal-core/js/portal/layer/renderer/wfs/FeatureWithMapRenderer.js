@@ -18,9 +18,20 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
     constructor: function(config) {
         this.currentRequestCount = 0;//how many requests are still running
-        this.legend = Ext.create('portal.layer.legend.wfs.WFSLegend', {
-            iconUrl : config.icon ? config.icon.getUrl() : ''
-        });
+
+        //VT: ALL KNOWLAYER ICON in FeatureWithMapRenderer has to be assigned a marker color in
+        // the auscope-knownlayer config file else we will treat it has a pure WMS layer and
+        // give it a wms legend.
+
+        if(config.icon.getIsDefault()===true){
+            this.legend = Ext.create('portal.layer.legend.wfs.WMSLegend', {
+                iconUrl : config.iconCfg ? config.iconCfg.url : 'img/key.png'
+            });
+        }else{
+            this.legend = Ext.create('portal.layer.legend.wfs.WFSLegend', {
+                iconUrl : config.icon ? config.icon.getUrl() : ''
+            });
+        }
         this.allDownloadManagers = [];
         this.currentRequestCount = 0;
         // Call our superclass constructor to complete construction process.

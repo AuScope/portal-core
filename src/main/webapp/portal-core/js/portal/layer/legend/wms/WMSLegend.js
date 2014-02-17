@@ -20,8 +20,8 @@ Ext.define('portal.layer.legend.wfs.WMSLegend', {
     /**
      * Implemented function, see parent class
      */
-    getLegendComponent : function(resources, filterer, callback) {
-        var form = Ext.create('portal.layer.legend.wms.WMSLegendForm',{resources : resources,filterer : filterer});
+    getLegendComponent : function(resources, filterer,sld_body, callback) {
+        var form = Ext.create('portal.layer.legend.wms.WMSLegendForm',{resources : resources,filterer : filterer,sld_body:sld_body});
         callback(this, resources, filterer, true, form); //this layer cannot generate a GUI popup
     },
 
@@ -48,7 +48,7 @@ Ext.define('portal.layer.legend.wfs.WMSLegend', {
 
     statics : {
 
-        generateImageUrl : function(wmsURL,wmsName,styles) {
+        generateImageUrl : function(wmsURL,wmsName,sld_body,styles) {
             var url = wmsURL;
             var last_char = url.charAt(url.length - 1);
             if ((last_char !== "?") && (last_char !== "&")) {
@@ -65,6 +65,12 @@ Ext.define('portal.layer.legend.wfs.WMSLegend', {
             url += '&BGCOLOR=0xFFFFFF';
             url += '&LAYER=' + escape(wmsName);
             url += '&LAYERS=' + escape(wmsName);
+            url += '&legend_options=forceLabels:on';
+            //vt: The sld for legend does not require any filter therefore it should be
+            // able to accomadate all sld length.
+            if(sld_body && sld_body.length< 1800){
+                url += '&SLD_BODY=' + escape(sld_body);
+            }
             if (this.styles) {
                 url += '&STYLES=' + escape(this.styles);
             }

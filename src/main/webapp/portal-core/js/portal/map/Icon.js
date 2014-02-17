@@ -22,6 +22,11 @@ Ext.define('portal.map.Icon', {
          * String - URL of the icon image
          */
         url : '',
+
+        /**
+         * Mark this icon has a randomly allocated icon
+         */
+        isDefault : false,
         /**
          * Number - the width of the icon in pixels
          */
@@ -62,10 +67,12 @@ Ext.define('portal.map.Icon', {
             }else{
                 this.self.markerOrder ++;
             }
+            this.setIsDefault(true);
         }
         this.setWidth(cfg.width);
         this.setHeight(cfg.height);
         this.setAnchorOffsetX(cfg.anchorOffsetX);
         this.setAnchorOffsetY(cfg.anchorOffsetY);
+
     }
 });
