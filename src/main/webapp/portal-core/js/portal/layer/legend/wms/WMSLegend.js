@@ -68,7 +68,7 @@ Ext.define('portal.layer.legend.wfs.WMSLegend', {
             url += '&legend_options=forceLabels:on';
             //vt: The sld for legend does not require any filter therefore it should be
             // able to accomadate all sld length.
-            if(sld_body && sld_body.length< 1800){
+            if(sld_body && sld_body.length< 2000){
                 url += '&SLD_BODY=' + escape(sld_body);
             }
             if (this.styles) {

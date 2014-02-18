@@ -15,7 +15,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
             html += '<img onerror="this.alt=\'There was an error loading this legend. Click here to try again in a new window or contact the data supplier.\'" alt="Loading legend..." src="' + url + '"/>';
             html += '</a>';
             html += '<br/>';
-            if(config.sld_body && config.sld_body.length > 0 && config.sld_body.length < 1800){
+            if(config.sld_body && config.sld_body.length > 0 && config.sld_body.length < 2000){
                 //VT: if we are supplying the SLD, we are controlling the legends. Therefore we only need to
                 // loop once
                 break;
