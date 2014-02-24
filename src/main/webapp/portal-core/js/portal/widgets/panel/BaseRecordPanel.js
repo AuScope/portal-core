@@ -20,7 +20,7 @@
 Ext.define('portal.widgets.panel.BaseRecordPanel', {
     extend : 'Ext.grid.Panel',
     alias: 'widget.baserecordpanel',
-
+    browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
     map : null,
 
     constructor : function(cfg) {
@@ -125,14 +125,39 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 scope:this,
                 handler: function(btn) {
 
-                    var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
-                        name : 'CSW Filter',
-                        listeners : {
-                            filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
-                        }
-                    });
+                    if(me.browseCatalogueDNSMessage==true){
+                        var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
+                            name : 'CSW Filter',
+                            listeners : {
+                                filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
+                            }
+                        });
+                        cswFilterWindow.show();
+                    }else{
+                        Ext.MessageBox.show({
+                            title:    'Browse Catalogue',
+                            msg:      'Select the filters across the tabs and once you are happy with the result, click on OK to apply all the filters<br><br><input type="checkbox" id="do_not_show_again" value="true" checked/>Do not show this message again',
+                            buttons:  Ext.MessageBox.OK,
+                            fn: function(btn) {
+                                if( btn == 'ok') {
+                                    if (Ext.get('do_not_show_again').getValue() == 'true'){
+                                        me.browseCatalogueDNSMessage=true;
+                                        var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
+                                            name : 'CSW Filter',
+                                            listeners : {
+                                                filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
+                                            }
+                                        });
 
-                    cswFilterWindow.show();
+                                        cswFilterWindow.show();
+
+                                    } else {
+                                        Ext.MessageBox.alert('Demo', 'Admin approval not acquired');
+                                    }
+                                }
+                            }
+                        });
+                    }
 
                 }
 

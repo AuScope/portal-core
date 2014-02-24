@@ -16,12 +16,17 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
     constructor : function(cfg){
 
+
+
         this.keywordStore = new Ext.data.Store({
             autoload: true,
             fields: ['keyword', 'count'],
             proxy : {
                 type : 'ajax',
-                url : 'getCSWKeywords.do',
+                url : 'getFilteredCSWKeywords.do',
+                extraParams : {
+                    cswServiceIds : []
+                 },
                 reader : {
                     type : 'json',
                     root : 'data'
@@ -83,6 +88,10 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         displayField:'display',
                         fieldLabel : 'Match Type',
                         store: this.keywordMatchTypeStore
+                    },{
+                        xtype : 'label',
+                        html : '<font size="0.7" color="red">The keywords here are generated dynamically based on the registries that are ticked on the Registries Filter Tab</font>'
+
                     },{
                         xtype : 'fieldset',
                         itemId : 'cswfilterkeywordfieldsetitemid',
@@ -221,6 +230,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
 
     getRegistryTab : function(){
+        var me = this;
         var registriesTab = {
                 title : 'Registries Filter',
                 xtype : 'panel',
@@ -231,7 +241,15 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                     fieldLabel: 'Registries',
                     // Arrange checkboxes into two columns, distributed vertically
                     columns: 1,
-                    vertical: true
+                    vertical: true,
+                    listeners : {
+                        change : function(scope,newValue, oldValue, eOpts ){
+                            me.keywordStore.getProxy().extraParams = {
+                                cswServiceIds : scope.getValue().cswServiceId
+                            };
+                        }
+
+                    }
 
                 }]
         };
@@ -260,7 +278,11 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         });
                     }
 
-                    Ext.getCmp('registryTabCheckboxGroup').add(checkBoxItems);
+                    var registry=Ext.getCmp('registryTabCheckboxGroup');
+                    registry.add(checkBoxItems);
+                    me.keywordStore.getProxy().extraParams = {
+                        cswServiceIds : registry.getValue().cswServiceId
+                    };
                 }
             }
 
@@ -334,7 +356,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
         //Add our combo for selecting keywords
         comboKeywordColumn.add({
-            xtype : 'combobox',
+            xtype : 'combo',
             width : 380,
             name : 'keywords',
             queryMode : 'remote',
@@ -343,11 +365,20 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                 marginBottom: '0px'
             },
             typeAheadDelay : 500,
-            forceSelection : true,
-            triggerAction : 'all',
+            forceSelection : false,
+            //triggerAction : 'all',
+            queryParam: 'keyword',
             valueField:'keyword',
             fieldLabel : 'keyword',
             store :    this.keywordStore,
+            listeners: {
+                beforequery: function(qe){
+                    delete qe.combo.lastQuery;
+                },
+                expand : function(field,eOpts){
+                    this.clearValue();
+                }
+            },
             tpl: Ext.create('Ext.XTemplate',
                     '<tpl for=".">',
                         '<div class="x-boundlist-item">{keyword} - <b>({count})</b></div>',
