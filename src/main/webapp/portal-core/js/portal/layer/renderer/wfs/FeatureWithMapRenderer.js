@@ -323,13 +323,18 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
     },
 
     _getDomain : function(data) {
-        var    a      = document.createElement('a');
-               a.href = data;
+        var a = document.createElement('a');
+        a.href = data;
+
+        var pathArray=a.pathname.split("/");
+        if(pathArray.length > 2){
+            return a.hostname + "/" + pathArray[1];
+        }
         return a.hostname;
       },
 
     _getDomainWithLayerNameId : function(url,name){
-        return ((url.match(/:\/\/(.[^/]+)/)[1]) +'/'+ name);
+        return (this._getDomain(url) +'/'+ name);
     },
     /**
      * An abstract function for creating a legend that can describe the displayed data. If no
