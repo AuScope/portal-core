@@ -14,8 +14,29 @@ Ext.define('portal.map.Icon', {
             'http://maps.google.com/mapfiles/ms/micons/pink-pushpin.png',
             'http://maps.google.com/mapfiles/ms/micons/purple-pushpin.png',
             'http://maps.google.com/mapfiles/ms/micons/red-pushpin.png'
-        ]
+        ],
+        colorMap : {
+            purple : '#9C16F0',
+            orange : '#F59B0A',
+            wht : '#E8DECF',
+            red : '#CF082D',
+            pink : '#F249A9',
+            grn : '#65ED4A',
+            blu : '#442BE3',
+            ltblu : '#66EDD4',
+            ylw : '#E8E527',
+            defaultColor : '#78686C'
+        },//VT: This is to generate the right wms color to match the marker icon color.
+        mapIconColor : function(url){
+            for(var key in portal.map.Icon.colorMap){
+                if(url.indexOf(key)!==-1){
+                    return portal.map.Icon.colorMap[key];
+                }
+            }
+        }
     },
+
+
 
     config : {
         /**
