@@ -112,9 +112,11 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
 
             var shortTitle = cswRecord.get('name');
             var maxTitleLength = 90;
-            if (onlineResource && onlineResource.get('name')) {
-                shortTitle += ' - ' + onlineResource.get('name');
-            }
+//            if (onlineResource && onlineResource.get('name')) {
+//                shortTitle += ' - ' + onlineResource.get('name');
+//            }
+            shortTitle += ' - ' + cswRecord.get('adminArea');
+
             if(shortTitle.length > maxTitleLength) {
                 shortTitle = shortTitle.substr(0, maxTitleLength) + "...";
             }
