@@ -28,6 +28,7 @@ public class TestCSWGetDataRecordsFilter extends PortalTestClass {
                 null,
                 null,
                 null,
+                null,
                 null);
         String filterStr = filter.getFilterStringAllRecords();
         Assert.assertNotNull(filterStr);
@@ -43,7 +44,7 @@ public class TestCSWGetDataRecordsFilter extends PortalTestClass {
                 new String[] {"kw1", "kw2"},
                 "capturePlatform",
                 "sensor",
-                KeywordMatchType.All,null,null);
+                KeywordMatchType.All,null,null,null);
         filterStr = filter.getFilterStringAllRecords();
         Assert.assertNotNull(filterStr);
         Assert.assertFalse(filterStr.isEmpty());

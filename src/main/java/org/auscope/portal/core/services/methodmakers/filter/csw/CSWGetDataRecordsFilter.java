@@ -33,6 +33,17 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         All
     }
 
+    public enum Type {
+
+        /** Any record that matches ANY of the specified keywords will pass. */
+        service,
+
+        /** Any record that matches EACH AND EVERY keyword in the specified list will pass. */
+        dataset,
+
+        all
+    }
+
     /** The any text. */
     private String anyText;
 
@@ -69,6 +80,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /** The keyword match type. */
     private KeywordMatchType keywordMatchType;
 
+    private Type type;
+
 
 
     /**
@@ -79,7 +92,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      *            [Optional] The spatial bounds to filter by
      */
     public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds) {
-        this(anyText, spatialBounds, null, null, null, null,null,null);
+        this(anyText, spatialBounds, null, null, null, null,null,null,null);
     }
 
     /**
@@ -100,7 +113,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor) {
-        this(anyText, spatialBounds, keywords, capturePlatform, sensor, null,null,null);
+        this(anyText, spatialBounds, keywords, capturePlatform, sensor, null,null,null,null);
     }
 
     /**
@@ -122,7 +135,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor,
-            KeywordMatchType keywordMatchType,String dataIdentificationAbstract,String title) {
+            KeywordMatchType keywordMatchType,String dataIdentificationAbstract,String title,Type type) {
         this.anyText = anyText;
         this.spatialBounds = spatialBounds;
         this.keywords = keywords;
@@ -131,6 +144,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         this.keywordMatchType = keywordMatchType;
         this.abstract_= dataIdentificationAbstract;
         this.title=title;
+        this.type=type;
     }
 
     /**
@@ -146,6 +160,14 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
         if (title != null && !title.isEmpty()) {
             fragments.add(this.generatePropertyIsLikeFragment("title", this.title));
+        }
+
+        if (type != null && type != Type.all) {
+            if(type==Type.dataset){
+                fragments.add(this.generatePropertyIsEqualToFragment("type", "dataset"));
+            }else{
+                fragments.add(this.generatePropertyIsLikeFragment("type", "service"));
+            }
         }
 
         if (abstract_ != null && !abstract_.isEmpty()) {
