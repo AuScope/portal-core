@@ -138,6 +138,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                             title:    'Browse Catalogue',
                             msg:      'Select the filters across the tabs and once you are happy with the result, click on OK to apply all the filters<br><br><input type="checkbox" id="do_not_show_again" value="true" checked/>Do not show this message again',
                             buttons:  Ext.MessageBox.OK,
+                            scope : this,
                             fn: function(btn) {
                                 if( btn == 'ok') {
                                     if (Ext.get('do_not_show_again').getValue() == 'true'){
