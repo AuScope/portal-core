@@ -73,9 +73,10 @@ Ext.define('portal.layer.downloader.wms.WMSDownloader', {
                    var queryString = Ext.Object.toQueryString({
                       request : 'GetMap',
                       service : 'WMS',
-                      version : '1.1.0',
+                      version : '1.1.1',
                       layers : wmsResource.get('name'),
                       format : format,
+                      styles : '',
                       bgcolor : '0xFFFFFF',
                       transparent : true,
                       srs : 'EPSG:4326',
