@@ -4,6 +4,8 @@
 Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
     extend : 'portal.layer.downloader.Downloader',
 
+    map : null,
+
     /**
      * Utility function for extracting all selected parameters as a config object
      */
@@ -111,6 +113,15 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
             if (variable.valueBounds) {
                 bounds = variable.valueBounds;
                 title = variable.name + '[' + bounds.from + ', ' + bounds.to + ']' + ' - ' + variable.units;
+                if(variable.name==='lat'){
+                    var currentVisibleBounds = this.map.getVisibleMapBounds();
+                    bounds.fromValue = (currentVisibleBounds.southBoundLatitude > bounds.from)?currentVisibleBounds.southBoundLatitude:bounds.from ;
+                    bounds.toValue = (currentVisibleBounds.northBoundLatitude < bounds.to)?currentVisibleBounds.northBoundLatitude:bounds.to;
+                }else if(variable.name==='lon'){
+                    var currentVisibleBounds = this.map.getVisibleMapBounds();
+                    bounds.fromValue = (currentVisibleBounds.westBoundLongitude > bounds.from)?currentVisibleBounds.westBoundLongitude:bounds.from ;
+                    bounds.toValue = (currentVisibleBounds.eastBoundLongitude < bounds.to)?currentVisibleBounds.eastBoundLongitude:bounds.to;
+                }
                 usingDimensionBounds = false;
             } else {
                 bounds = variable.dimensionBounds;
@@ -128,7 +139,7 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
                     xtype       : 'numberfield',
                     fieldLabel  : 'From',
                     allowBlank  : false,
-                    value       : bounds.from,
+                    value       : bounds.fromValue,
                     minValue    : bounds.from,
                     maxValue    : bounds.to,
                     allowDecimals : !usingDimensionBounds,
@@ -139,7 +150,7 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
                     xtype       : 'numberfield',
                     fieldLabel  : 'To',
                     allowBlank  : false,
-                    value       : bounds.to,
+                    value       : bounds.toValue,
                     minValue    : bounds.from,
                     maxValue    : bounds.to,
                     allowDecimals : !usingDimensionBounds,
@@ -221,6 +232,7 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
      * Overridden method, See parent class for details.
      */
     downloadData : function(layer, resources, renderedFilterer, currentFilterer) {
+        this.map=layer.get('renderer').map;
         var opendapResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.OPeNDAP);
         if (opendapResources.length === 0) {
             return;
