@@ -143,6 +143,6 @@ Ext.define('portal.widgets.panel.CSWRecordPagingPanel', {
                 src: imageUrl
             }]
         });
-    },
+    }
 
 });

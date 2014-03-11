@@ -805,5 +805,5 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var    a      = document.createElement('a');
                a.href = data;
         return a.hostname;
-      },
+      }
 });
