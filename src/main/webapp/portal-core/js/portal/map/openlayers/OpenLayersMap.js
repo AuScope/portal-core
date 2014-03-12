@@ -210,7 +210,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                         type === portal.csw.OnlineResource.WCS) {
 
                         if(layer.get('filterer').getParameters().serviceFilter &&
-                                (this._getDomain(resourcesToIterate[i].get('url'))!= this._getDomain(layer.get('filterer').getParameters().serviceFilter[0]))){
+                                (this._getDomain(resourcesToIterate[k].get('url'))!= this._getDomain(layer.get('filterer').getParameters().serviceFilter[0]))){
                             continue;
                         }
 
