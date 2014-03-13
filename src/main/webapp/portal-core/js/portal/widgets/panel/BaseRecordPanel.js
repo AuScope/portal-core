@@ -124,7 +124,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 hidden:true,
                 scope:this,
                 handler: function(btn) {
-
+                    //VT: TODO use BrowserWindowWithWarning.js
                     if(me.browseCatalogueDNSMessage==true){
                         var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
                             name : 'CSW Filter',
@@ -141,20 +141,16 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                             scope : this,
                             fn: function(btn) {
                                 if( btn == 'ok') {
-                                    if (Ext.get('do_not_show_again').getValue() == 'true'){
+                                    if (Ext.get('do_not_show_again').dom.checked == true){
                                         me.browseCatalogueDNSMessage=true;
-                                        var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
-                                            name : 'CSW Filter',
-                                            listeners : {
-                                                filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
-                                            }
-                                        });
-
-                                        cswFilterWindow.show();
-
-                                    } else {
-                                        Ext.MessageBox.alert('Demo', 'Admin approval not acquired');
                                     }
+                                    var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
+                                        name : 'CSW Filter',
+                                        listeners : {
+                                            filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
+                                        }
+                                    });
+                                    cswFilterWindow.show();
                                 }
                             }
                         });
