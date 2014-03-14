@@ -55,6 +55,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 },{
                     xtype : 'button',
                     text : 'Visible',
+                    tooltip: 'Filter the layers based on its bounding box and the map\'s visible bound',
                     handler : Ext.bind(this._handleVisibleFilterClick, this)
                 }]
             }],
