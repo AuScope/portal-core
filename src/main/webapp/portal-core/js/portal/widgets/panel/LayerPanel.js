@@ -190,7 +190,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                     tag : 'img',
                     width : 16,
                     height : 16,
-                    src: 'portal-core/img/drop-no.gif'
+                    src: 'portal-core/img/download_disable.png'
                 }]
             });
         }
