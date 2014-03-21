@@ -188,6 +188,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 href : 'javascript: void(0)',
                 children : [{
                     tag : 'img',
+                    title : 'Layer not ready for download, render the layer on the map first',
                     width : 16,
                     height : 16,
                     src: 'portal-core/img/download_disable.png'
