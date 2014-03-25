@@ -234,23 +234,118 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
         var registriesTab = {
                 title : 'Registries Filter',
                 xtype : 'panel',
+                type: 'vbox',
                 items:[{
-                    xtype: 'checkboxgroup',
-                    name : 'cswServiceId',
-                    id : 'registryTabCheckboxGroup',
-                    fieldLabel: 'Registries',
-                    // Arrange checkboxes into two columns, distributed vertically
-                    columns: 1,
-                    vertical: true,
-                    listeners : {
-                        change : function(scope,newValue, oldValue, eOpts ){
-                            me.keywordStore.getProxy().extraParams = {
-                                cswServiceIds : scope.getValue().cswServiceId
-                            };
+                    xtype:'fieldset',
+                    title:'Default Registries',
+                    flex : 1,
+                    items:[{
+                        xtype: 'checkboxgroup',
+                        name : 'cswServiceId',
+                        id : 'registryTabCheckboxGroup',
+                        fieldLabel: 'Registries',
+                        // Arrange checkboxes into two columns, distributed vertically
+                        columns: 1,
+                        vertical: true,
+                        listeners : {
+                            change : function(scope,newValue, oldValue, eOpts ){
+                                me.keywordStore.getProxy().extraParams = {
+                                    cswServiceIds : scope.getValue().cswServiceId
+                                };
+                            }
+
                         }
 
-                    }
+                    }]
 
+                },{
+                    xtype:'fieldset',
+                    title:'Add custom registry',
+                    items:[{
+                        xtype: 'form',
+                        border: false,
+                        flex : 1,
+                        buttonAlign : 'right',
+                        buttons:[{
+                            xtype : 'button',
+                            text : 'Add registry',
+                            handler : function(){
+
+                                Ext.Ajax.request({
+                                    url: 'testCSWConnection.do',
+                                    scope : this,
+                                    params: {
+                                        cswServiceUrl: this.ownerCt.ownerCt.getValues().DNA_serviceUrl + '?request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml'
+                                    },
+                                    callback : function(options, success, response) {
+                                        //Check for errors
+                                        if (success) {
+                                            var registry=Ext.getCmp('registryTabCheckboxGroup');
+                                            var checkBoxItems = [];
+                                            checkBoxItems.push({
+                                                boxLabel : this.ownerCt.ownerCt.getValues().DNA_title,
+                                                name : 'cswServiceId',
+                                                inputValue: {
+
+                                                    id:this.ownerCt.ownerCt.getValues().DNA_RegistryId,
+                                                    title:this.ownerCt.ownerCt.getValues().DNA_title,
+                                                    serviceUrl:this.ownerCt.ownerCt.getValues().DNA_serviceUrl,
+                                                    recordInformationUrl : this.ownerCt.ownerCt.getValues().DNA_recordInformationUrl
+                                                },
+                                                checked : true
+                                            });
+
+                                            Ext.each(this.ownerCt.ownerCt.getForm().getFields().items, function(field){
+                                                if(field.getName()=='DNA_RegistryId'){
+                                                    field.setValue('randomIdGen_' + Ext.id());
+                                                }else{
+                                                    field.setValue('');
+                                                    field.clearInvalid();
+                                                }
+                                            });
+
+                                            registry.add(checkBoxItems);
+                                        }else{
+                                            Ext.Msg.alert('WARNING', 'Failure to connect to the registry. Check your URL and ensure it is in the right format e.g http://test/gn/srv/eng/csw');
+                                        }
+
+                                    }
+                                });
+                            }
+                        }],
+                        items:[{
+                            xtype : 'textfield',
+                            anchor:'100%',
+                            //VT: DNA_ marks this value as Do Not Add so it doesn't get send through the key and values
+                            //VT: via the Form.getForm().getValue()
+                            name : 'DNA_RegistryId',
+                            fieldLabel : 'Registry Id',
+                            allowBlank: true,
+                            value : 'randomIdGen_' + Ext.id(),
+                            emptyText: 'Assign any random id to your registry'
+                        },{
+                            xtype : 'textfield',
+                            anchor:'100%',
+                            name : 'DNA_title',
+                            allowBlank: true,
+                            fieldLabel : 'Title',
+                            emptyText: 'Provide a title for identification'
+                        },{
+                            xtype : 'textfield',
+                            anchor:'100%',
+                            name : 'DNA_serviceUrl',
+                            allowBlank: true,
+                            fieldLabel : 'Service Url',
+                            emptyText: 'CSW url in the format: http://test/gn/srv/eng/csw'
+                        },{
+                            xtype : 'textfield',
+                            anchor:'100%',
+                            name : 'DNA_recordInformationUrl',
+                            allowBlank: true,
+                            fieldLabel : 'RecordInformation Url',
+                            emptyText: 'Record url in the format: http://test/gn/srv/eng/main.home'
+                        }]
+                    }]
                 }]
         };
 

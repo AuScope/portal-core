@@ -68,6 +68,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
         //Convert our keys/values into a form the controller can read
         var keys = [];
         var values = [];
+        var customRegistries=[];
 
         var additionalParams = params;
 
@@ -75,7 +76,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
         var denormaliseKvp = function(keyList, valueList, kvpObj) {
             if (kvpObj) {
                 for (key in kvpObj) {
-                    if(kvpObj[key] && kvpObj[key].length>0 && key != 'cswServiceId'){
+                    if(kvpObj[key] && kvpObj[key].length>0 && key != 'cswServiceId' && !(key.slice(0, 4) == 'DNA_')){
                         keyList.push(key);
                         valueList.push(kvpObj[key]);
                     }
@@ -85,14 +86,17 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
 
 
         denormaliseKvp(keys, values, additionalParams);
-        keys.push('cswServiceId');
-        values.push(cswServiceId);
+        if(typeof cswServiceId.id == 'undefined'){
+            keys.push('cswServiceId');
+            values.push(cswServiceId);
+        }
 
       //Create our CSWRecord store (holds all CSWRecords not mapped by known layers)
         var filterCSWStore = Ext.create('Ext.data.Store', {
             model : 'portal.csw.CSWRecord',
             pageSize: 35,
             autoLoad: false,
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
             proxy : {
                 type : 'ajax',
                 url : 'getFilteredCSWRecords.do',
@@ -104,7 +108,13 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
                 },
                 extraParams: {
                     key : keys,
-                    value : values
+                    value : values,
+                    customregistries : {
+                        id: cswServiceId.id,
+                        title: cswServiceId.title,
+                        serviceUrl: cswServiceId.serviceUrl,
+                        recordInformationUrl: cswServiceId.recordInformationUrl
+                    }
                 }
 
             }
