@@ -13,6 +13,7 @@ import org.auscope.portal.core.server.http.DistributedHTTPServiceCaller;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCallerException;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
+import org.auscope.portal.core.services.csw.custom.CustomRegistryInt;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
@@ -50,7 +51,7 @@ public class CSWFilterService {
                       ArrayList cswServiceList) {
         this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory());
     }
-    
+
     /**
      * Creates a new instance of a CSWFilterService. This constructor is normally autowired
      * by the spring framework.
@@ -195,6 +196,23 @@ public class CSWFilterService {
         if (cswServiceItem == null) {
             throw new IllegalArgumentException(String.format("serviceId '%1$s' DNE", serviceId));
         }
+
+        return callSingleService(cswServiceItem, filter, maxRecords, startPosition, ResultType.Results);
+    }
+
+    /**
+     * Makes a request to the specified CSW service (on this thread) before parsing and returning the response
+     *
+     * If serviceId does not match an existing CSWService an exception will be thrown
+     *
+     * @param filter An optional filter to apply to each of the subset requests
+     * @param maxRecords The max records PER SERVICE that will be requested
+     * @param startPosition 1 based index to begin searching from
+     * @return
+     */
+    public CSWGetRecordResponse getFilteredRecords(CustomRegistryInt registry, CSWGetDataRecordsFilter filter, int maxRecords, int startPosition) throws Exception {
+        //Lookup the service to call
+        CSWServiceItem cswServiceItem = new CSWServiceItem(registry.getId(),registry.getServiceUrl(),registry.getRecordInformationUrl(),registry.getTitle());
 
         return callSingleService(cswServiceItem, filter, maxRecords, startPosition, ResultType.Results);
     }
