@@ -16,8 +16,9 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
             title : 'Enter Parameters',
             layout : 'fit',
             modal : true,
+            //autoScroll :true,
             width : 500,
-            height : 500,
+            height : 520,
             items : [cswFilterFormPanel],
             buttons:[{
                 xtype: 'button',
