@@ -92,7 +92,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         store: this.keywordMatchTypeStore
                     },{
                         xtype : 'label',
-                        html : '<font size="0.7" color="red">The keywords here are generated dynamically based on the registries that are ticked on the Registries Filter Tab</font>'
+                        html : '<font size="0.7" color="red">The keywords here are generated dynamically based on the NON CUSTOM registries that are ticked on the Registries Filter Tab</font>'
 
                     },{
                         xtype : 'fieldset',
