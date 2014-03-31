@@ -211,6 +211,9 @@ public class CSWFilterService {
      * @return
      */
     public CSWGetRecordResponse getFilteredRecords(CustomRegistryInt registry, CSWGetDataRecordsFilter filter, int maxRecords, int startPosition) throws Exception {
+        if (registry == null) {
+            throw new IllegalArgumentException(String.format("CustomRegistry required"));
+        }
         //Lookup the service to call
         CSWServiceItem cswServiceItem = new CSWServiceItem(registry.getId(),registry.getServiceUrl(),registry.getRecordInformationUrl(),registry.getTitle());
 
