@@ -474,9 +474,6 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
             listeners: {
                 beforequery: function(qe){
                     delete qe.combo.lastQuery;
-                },
-                expand : function(field,eOpts){
-                    this.clearValue();
                 }
             },
             tpl: Ext.create('Ext.XTemplate',
