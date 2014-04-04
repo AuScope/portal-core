@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCaller;
 import org.auscope.portal.core.server.http.DistributedHTTPServiceCallerException;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -17,6 +19,7 @@ import org.auscope.portal.core.services.csw.custom.CustomRegistryInt;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords.ResultType;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
+import org.auscope.portal.core.services.responses.csw.CSWGetCapabilities;
 import org.auscope.portal.core.services.responses.csw.CSWGetRecordResponse;
 import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactory;
 import org.auscope.portal.core.util.DOMUtil;
@@ -273,5 +276,25 @@ public class CSWFilterService {
 
         CSWGetRecordResponse response = callSingleService(cswServiceItem, filter, maxRecords, 1, ResultType.Hits);
         return response.getRecordsMatched();
+    }
+
+    public CSWGetCapabilities getCapabilities(String cswServiceUrl) throws Exception{
+        CSWGetCapabilities getCap = null;
+        try{
+            HttpGet method = new HttpGet(cswServiceUrl);
+            URIBuilder builder= new URIBuilder(cswServiceUrl);
+            // test request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml
+            builder.addParameter("request", "GetCapabilities");
+            builder.addParameter("service", "CSW");
+            builder.addParameter("acceptVersions", "2.0.2");
+            builder.addParameter("acceptFormats", "application/xml");
+            method.setURI(builder.build());
+            getCap = new CSWGetCapabilities(this.serviceCaller.getMethodResponseAsStream(method));
+            return getCap;
+
+        }catch(Exception e){
+            throw e;
+        }
+
     }
 }
