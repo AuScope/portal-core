@@ -10,7 +10,7 @@ Ext.define('portal.widgets.panel.CustomRegistryTreeGrid', {
     xtype: 'tree-grid',
 
 
-    title: 'Cached Custom Registries',
+    title: 'Saved Registries',
     layout : 'fit',
     useArrows: true,
     rootVisible: false,

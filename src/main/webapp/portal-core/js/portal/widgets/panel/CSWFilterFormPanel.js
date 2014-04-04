@@ -218,7 +218,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                     xtype:'panel',
                     id: 'cswminimapselection',
                     width : 500,
-                    height : 430,
+                    height : 800,
                     listeners : {
                         afterrender : function() {
                             cswFilterFormPanelMe._getMap(this);
@@ -273,11 +273,11 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         buttonAlign : 'left',
                         buttons:[{
                             xtype : 'button',
-                            text : 'Manage Cookies',
+                            text : 'Manage Saved Registries',
                             handler : function(){
                                 var CustomRegistryTreeGridPanel = new portal.widgets.panel.CustomRegistryTreeGrid();
                                 Ext.create('Ext.window.Window', {
-                                    title: 'Manage Cookie',
+                                    title: 'Manage Saved Registries',
                                     height: 200,
                                     width: 600,
                                     layout: 'fit',
@@ -286,24 +286,12 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                             }
                         },{
                             xtype : 'button',
-                            text : 'Save to Cookies',
+                            text : 'Save Registries',
                             scope : this,
                             handler : function(){
                                 var customRegistryForm = this.query('form[itemId=customRegistryFormID]')[0];
-
-                                var registry = {
-                                        id:customRegistryForm.getValues().DNA_RegistryId,
-                                        title:customRegistryForm.getValues().DNA_title,
-                                        serviceUrl:customRegistryForm.getValues().DNA_serviceUrl,
-                                        recordInformationUrl : customRegistryForm.getValues().DNA_recordInformationUrl
-                                }
-
-
-                                if(this._saveToCookie(registry)){
-                                    this._addFormToRegistry();
-                                }else{
-                                    Ext.Msg.alert('WARNING', 'Only a maximum of 3 registry are allowed to be store in the cookie due to space limitation. Click on Manage Cookie to delete');
-                                }
+                                //VT:_addFormToRegistry(true) true to add to cookies
+                                this._addFormToRegistry(true);
                             }
                         },{
                             xtype: 'tbfill'
@@ -318,34 +306,10 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         items:[{
                             xtype : 'textfield',
                             anchor:'100%',
-                            //VT: DNA_ marks this value as Do Not Add so it doesn't get send through the key and values
-                            //VT: via the Form.getForm().getValue()
-                            name : 'DNA_RegistryId',
-                            fieldLabel : 'Registry Id',
-                            allowBlank: true,
-                            value : 'randomIdGen_' + Ext.id(),
-                            emptyText: 'Assign any random id to your registry'
-                        },{
-                            xtype : 'textfield',
-                            anchor:'100%',
-                            name : 'DNA_title',
-                            allowBlank: true,
-                            fieldLabel : 'Title',
-                            emptyText: 'Provide a title for identification'
-                        },{
-                            xtype : 'textfield',
-                            anchor:'100%',
                             name : 'DNA_serviceUrl',
                             allowBlank: true,
                             fieldLabel : 'Service Url',
                             emptyText: 'CSW url in the format: http://test/gn/srv/eng/csw'
-                        },{
-                            xtype : 'textfield',
-                            anchor:'100%',
-                            name : 'DNA_recordInformationUrl',
-                            allowBlank: true,
-                            fieldLabel : 'RecordInformation Url',
-                            emptyText: 'Record url in the format: http://test/gn/srv/eng/main.home'
                         }]
                     }]
                 }]
@@ -553,7 +517,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                          {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
                      )
                  ],
-                 center: new OpenLayers.LonLat(133.3, -42)
+                 center: new OpenLayers.LonLat(133.3, -61)
                      // Google.v3 uses web mercator as projection, so we have to
                      // transform our coordinates
                      .transform('EPSG:4326', 'EPSG:3857'),
@@ -617,49 +581,76 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
     },
 
-    _addFormToRegistry : function(){
+    /**
+     * addToCookie if set to true will also add this registry to cookie
+     */
+    _addFormToRegistry : function(addToCookie){
+
         var customRegistryForm = this.query('form[itemId=customRegistryFormID]')[0]
 
         Ext.Ajax.request({
-            url: 'testCSWConnection.do',
+            url: 'getCSWGetCapabilities.do',
             scope : this,
             params: {
-                cswServiceUrl: customRegistryForm.getValues().DNA_serviceUrl + '?request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml'
+                cswServiceUrl: customRegistryForm.getValues().DNA_serviceUrl
             },
             callback : function(options, success, response) {
                 //Check for errors
+                //VT: title should be extracted from the response;
                 if (success) {
+                    //VT if title == null pop up box to ask user for title;
+                    var title = Ext.decode(response.responseText).data.title;
+
+
                     var registry=Ext.getCmp('registryTabCheckboxGroup');
                     var checkBoxItems = [];
+                    var cswUrl = customRegistryForm.getValues().DNA_serviceUrl;
+
+                    var registryEntity = {
+                        id:'randomIdGen_' + Ext.id(),
+                        title:title,
+                        serviceUrl:cswUrl,
+                        recordInformationUrl : this._covertCSWtoRecordInfoUrl(cswUrl)
+                    }
+
                     checkBoxItems.push({
-                        boxLabel : customRegistryForm.getValues().DNA_title,
+                        boxLabel : title,
                         name : 'cswServiceId',
                         inputValue: {
-
-                            id:customRegistryForm.getValues().DNA_RegistryId,
-                            title:customRegistryForm.getValues().DNA_title,
-                            serviceUrl:customRegistryForm.getValues().DNA_serviceUrl,
-                            recordInformationUrl : customRegistryForm.getValues().DNA_recordInformationUrl
+                            id: registryEntity.id,
+                            title: registryEntity.title,
+                            serviceUrl:registryEntity.serviceUrl,
+                            recordInformationUrl : registryEntity.recordInformationUrl
                         },
                         checked : true
                     });
 
                     Ext.each(customRegistryForm.getForm().getFields().items, function(field){
-                        if(field.getName()=='DNA_RegistryId'){
-                            field.setValue('randomIdGen_' + Ext.id());
-                        }else{
-                            field.setValue('');
-                            field.clearInvalid();
-                        }
+                        field.setValue('');
+                        field.clearInvalid();
                     });
 
                     registry.add(checkBoxItems);
+
+                    if(addToCookie && addToCookie==true){
+                        if(!(this._saveToCookie(registryEntity))){
+                            Ext.Msg.alert('WARNING', 'Only a maximum of 3 registry are allowed to be store locally due to space limitation. This record is not saved but will be added to the registries above. Click on "Manage Saved Registries" to delete');
+                        }
+                    }
+
                 }else{
                     Ext.Msg.alert('WARNING', 'Failure to connect to the registry. Check your URL and ensure it is in the right format e.g http://test/gn/srv/eng/csw');
                 }
 
             }
         });
+    },
+
+    _covertCSWtoRecordInfoUrl:function(cswUrl){
+        if(cswUrl.substring(cswUrl.length -3,cswUrl.length).toLowerCase()=='csw'){
+            return cswUrl.slice(0,cswUrl.length - 3) + 'main.home';
+        }
+        return cswUrl;
     },
 
     _addCookieToRegistry : function(registry){
