@@ -170,9 +170,12 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
             var color = portal.map.Icon.mapIconColor(this.parentLayer.get('source').get('iconUrl'));
 
+
             var proxyUrl = this.parentLayer.get('source').get('proxyStyleUrl');
             var filterParams = (Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters()));
-            filterParams += "&color=" + escape(color);
+            if(typeof(color) != "undefined"){
+                filterParams += "&color=" + escape(color);
+            }
             filterParams += "&serviceUrl=" + escape(serviceUrl);
             var styleUrl = Ext.urlAppend(proxyUrl,filterParams);
 
