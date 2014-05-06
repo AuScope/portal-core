@@ -137,10 +137,10 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
         //VT: portal.util.URL.base is unable to resolve the name of the
         // local machine instead return localhost. eg localhost:8080/Auscope-Portal/
-         var home="http://auscope-portal-dev.arrc.csiro.au/portal/";
+        var home=portal.util.URL.base;
         if(home.indexOf("localhost") != -1){
-             home=home.replace("localhost",LOCALHOST);
-         }
+            home=home.replace("localhost",LOCALHOST);
+        }
       //get the style format encoded as string
       //  var styleUrl = escape(Ext.urlAppend(home + this.parentLayer.get('source').get('proxyStyleUrl'), unescape(Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters()))));
       //  this.sld=unescape(styleUrl);
