@@ -26,7 +26,8 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'iconAnchor', type: 'auto' }, //An object containing x,y for the pixel location of where the icon gets anchored to the map
         { name: 'iconSize', type: 'auto' }, //An object containing width,height for the pixel size of the icon
         { name: 'cswRecords', convert: portal.csw.CSWRecordType.convert}, //a set of portal.csw.CSWRecord objects that belong to this KnownLayer grouping
-        { name: 'relatedRecords', convert: portal.csw.CSWRecordType.convert}// a set of portal.csw.CSWRecord objects that relate to this knownlayer
+        { name: 'relatedRecords', convert: portal.csw.CSWRecordType.convert},// a set of portal.csw.CSWRecord objects that relate to this knownlayer
+        { name: 'layer', type: 'auto'} // store the layer after it has been converted.
     ],
 
     /**
@@ -74,7 +75,7 @@ Ext.define('portal.knownlayer.KnownLayer', {
         }
         return results;
     },
-    
+
     containsCSWService : function() {
         var cswRecords = this.get('cswRecords');
         if (cswRecords.length == 1) {
@@ -83,7 +84,7 @@ Ext.define('portal.knownlayer.KnownLayer', {
                 return onlineResources[0].get('type') == portal.csw.OnlineResource.CSWService;
             }
         }
-        
+
         return false;
     }
 });

@@ -105,6 +105,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             bbar: [{
                 text:'Add Layer to Map',
                 tooltip:'Add Layer to Map',
+                hidden : true,
                 iconCls:'add',
                 handler: function(btn) {
                     var grid = btn.findParentByType('baserecordpanel');
@@ -163,6 +164,17 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         });
 
         this.callParent(arguments);
+    },
+
+
+    addSelectedLayerToActive : function (){
+        var grid = this;
+        var sm = grid.getSelectionModel();
+        var selectedRecords = sm.getSelection();
+        if (selectedRecords && selectedRecords.length > 0) {
+            selectedRecords[0].get('layer').set('displayed',true);
+            grid.fireEvent('addlayerrequest', this, selectedRecords[0]); //we only support single selection
+        }
     },
 
     handleFilterSelectComplete : function(filteredResultPanels){

@@ -85,8 +85,9 @@ Ext.define('portal.layer.Layer', {
         if (renderer.getVisible()) {
             renderer.removeData();
             renderer.map.closeInfoWindow(this.get('id'));
-            this.set('displayed',true);
-            renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
+            if(this.get('displayed')==true){
+                renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
+            }
         }
     },
 

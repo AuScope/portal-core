@@ -5,6 +5,8 @@
  * as it is in charge of displayed appropriate filter forms matching the current
  * selection
  *
+ * Events : filterselectioncomplete : trigger when the user have finished filter selection.
+ *
  */
 Ext.define('portal.widgets.panel.FilterPanel', {
     extend: 'Ext.Panel',
@@ -13,7 +15,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Easy reference to the 'Apply Filter' button
      */
     _filterButton : null,
-    
+
     /**
      * Easy reference to the 'Reset' button
      */
@@ -33,21 +35,21 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     constructor : function(config) {
         this._layerPanel = config.layerPanel;
         this._map = config.map;
-
+        this.addEvents('filterselectioncomplete');
         var emptyCard = Ext.create('portal.layer.filterer.forms.EmptyFilterForm', {}); //show this
         this._filterButton = Ext.create('Ext.button.Button', {
             text :'Show Results',
-            disabled : true,
+            disabled : false,
             overCls : 'showResultsOverStyle',
             handler : Ext.bind(this._onApplyFilter, this)
         });
-        
+
         this._resetButton = Ext.create('Ext.button.Button', {
             text :'Reset Filter',
             disabled : true,
             handler : Ext.bind(this._onResetFilter, this)
         });
-        
+
         Ext.apply(config, {
             layout : 'card',
             buttonAlign : 'right',
@@ -61,7 +63,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     },
 
     _onLayerPanelSelect : function(sm, layer, index) {
-        this.showFilterForLayer(layer);
+        //VT: This should no longer show up because filter form showing depends on tabpanel selection now
+        //this.showFilterForLayer(layer);
     },
 
     /**
@@ -71,6 +74,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * of renderers/layers to listen for filterer updates.
      */
     _onApplyFilter : function() {
+        this.fireEvent('filterselectioncomplete');
+
         var baseFilterForm = this.getLayout().getActiveItem();
         var filterer = baseFilterForm.layer.get('filterer');
 
@@ -79,10 +84,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         baseFilterForm.writeToFilterer(filterer);
     },
-    
+
     /**
      * Internal handler for when the user clicks 'Reset Filter'.
-     * 
+     *
      * Using the reset method from Ext.form.Basic. All fields in
      * the form will be reset. However, any record bound by loadRecord
      * will be retained.
@@ -117,31 +122,27 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         } else {
             layout.setActiveItem(this._emptyCard);
         }
-        
+
         //Activate the filter and reset buttons (if appropriate)
         disableButtons = renderOnAdd || !filterForm;
         //false to enable, true to disable
-        this._filterButton.setDisabled(disableButtons);
-        this._resetButton.setDisabled(disableButtons);
-                
-        if (!disableButtons) {
-            this._filterButton.getEl().addCls("applyFilterCls");
-            this._filterButton.getEl().frame();
-        } else {
-            this._filterButton.getEl().removeCls("applyFilterCls");
-        }
+
+        this._filterButton.getEl().addCls("applyFilterCls");
+        this._filterButton.getEl().frame();
+
+
     },
 
-    clearFilter : function(){                
+    clearFilter : function(){
         var layout = this.getLayout();
-        
+
         //Remove custom CSS styles for filter button
-        this._filterButton.getEl().removeCls("applyFilterCls");
-        
+        //this._filterButton.getEl().removeCls("applyFilterCls");
+
         //Disable the filter and reset buttons (set to default values)
-        this._filterButton.setDisabled(true);
+        //this._filterButton.setDisabled(true);
         this._resetButton.setDisabled(true);
-        
+
         //Close active item to prevent memory leak
         var actvItem = layout.getActiveItem();
         if (actvItem) {
