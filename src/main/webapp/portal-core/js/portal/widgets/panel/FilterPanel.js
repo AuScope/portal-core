@@ -38,7 +38,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         this.addEvents('filterselectioncomplete');
         var emptyCard = Ext.create('portal.layer.filterer.forms.EmptyFilterForm', {}); //show this
         this._filterButton = Ext.create('Ext.button.Button', {
-            text :'Show Results',
+            text :'Add to Map',
             disabled : false,
             overCls : 'showResultsOverStyle',
             handler : Ext.bind(this._onApplyFilter, this)
@@ -46,7 +46,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         this._resetButton = Ext.create('Ext.button.Button', {
             text :'Reset Filter',
-            disabled : true,
+            disabled : false,
             handler : Ext.bind(this._onResetFilter, this)
         });
 
