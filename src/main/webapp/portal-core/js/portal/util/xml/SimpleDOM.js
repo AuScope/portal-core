@@ -108,6 +108,7 @@ portal.util.xml.SimpleDOM.getNodeTextContent = function(domNode) {
  * Parse string to DOM
  */
 portal.util.xml.SimpleDOM.parseStringToDOM = function(xmlString){
+    var isIE11 = !!navigator.userAgent.match(/Trident.*rv[ :]*11\./)
     // Load our xml string into DOM
     var xmlDocument = null;
     if(window.DOMParser) {

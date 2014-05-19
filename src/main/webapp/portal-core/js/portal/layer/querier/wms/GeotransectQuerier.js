@@ -77,8 +77,10 @@ Ext.define('portal.layer.querier.wms.GeotransectQuerier', {
             callback : function(options, success, response) {
                 if (success) {
                     var xmlResponse = response.responseText;
-                    var domDoc = portal.util.xml.SimpleDOM.parseStringToDOM(response.responseText);
-                    var cswUrl = portal.util.xml.SimpleXPath.evaluateXPathString(domDoc.childNodes[0], "//*[local-name()='FIELDS']/@url");
+                    var domDoc = portal.util.xml.SimpleDOM.parseStringToDOM(xmlResponse);
+                    //VT: The default namespace is causing alot of grief in IE cause javeline xpath is unable to handle complex xpath.
+                    //var cswUrl = portal.util.xml.SimpleXPath.evaluateXPathString(domDoc.childNodes[0], "//*[local-name()='FIELDS']/@url");
+                    var cswUrl = domDoc.childNodes[0].firstElementChild.getAttribute("url");
                     //VT: The response back from GA is a invalid url. Further it gets redirected to another URL
                     //VT: therefore concatenating /xml to the returned url won't work.
                     //VT: Rini advise to hardcode the URL.
