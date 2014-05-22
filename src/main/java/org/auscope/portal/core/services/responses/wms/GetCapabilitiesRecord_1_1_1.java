@@ -62,8 +62,11 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord{
     /**
      * Constructor.
      * @param inXml GetCapabilites string response
+     * @throws IOException
+     * @throws ParserConfigurationException
+     * @throws SAXException
      */
-    public GetCapabilitiesRecord_1_1_1(InputStream inXml) {
+    public GetCapabilitiesRecord_1_1_1(InputStream inXml) throws IOException, ParserConfigurationException, SAXException {
         try {
             Document doc = DOMUtil.buildDomFromStream(inXml);
 
@@ -80,10 +83,13 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord{
 
         } catch (SAXException e) {
             log.error("Parsing error: " + e.getMessage());
+            throw e;
         } catch (IOException e) {
             log.error("IO error: " + e.getMessage());
+            throw e;
         } catch (ParserConfigurationException e) {
             log.error("Parser Config Error: " + e.getMessage());
+            throw e;
         }
     }
 
