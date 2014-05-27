@@ -7,6 +7,13 @@
    display: none !important;
 }
 
+* A IE9 specific hack that renders scroll bar unnecessary instead of wrapping the text.
+
+.olFramedCloudPopupContent {
+    padding: 5px;
+    overflow: hidden;
+}
+
 --------------//VT:ZoomBox_event_trigger.patch-------------
 
 This is  patch written for the zoombox to trigger a event after it is done zooming so that we can perform
