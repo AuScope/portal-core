@@ -54,6 +54,23 @@ Ext.define('portal.layer.filterer.Filterer', {
         var params = this.getParameters();
 
         var bbox = this.getSpatialParam();
+        
+    	// get the CSW bbox if it is there
+    	var cswBbox = Ext.JSON.decode(this.getParameters().cswBbox);
+    	
+    	if (cswBbox) {
+    		cswBbox = Ext.create('portal.util.BBox', {
+                northBoundLatitude : cswBbox.northBoundLatitude,
+                southBoundLatitude : cswBbox.southBoundLatitude,
+                eastBoundLongitude : cswBbox.eastBoundLongitude,
+                westBoundLongitude : cswBbox.westBoundLongitude,
+                crs : cswBbox.crs
+            });
+    		if (!bbox || !cswBbox.containsBbox(bbox)) {
+    			// if the viewport bbox is larger than the CSW bbox, return the CSW bbox
+    			bbox = cswBbox;
+    		}
+    	}
 
         if(bbox.crs=='EPSG:4326'){
             var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
@@ -67,10 +84,8 @@ Ext.define('portal.layer.filterer.Filterer', {
             });
         }
 
-
-
         if (bbox) {
-            params[portal.layer.filterer.Filterer.BBOX_FIELD] = null;
+            params[portal.layer.filterer.Filterer.BBOX_FIELD] = Ext.JSON.encode(bbox);
         }
 
         return params;
