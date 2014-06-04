@@ -66,7 +66,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
         var sld_body=null;
         if(queryTarget.get('layer').get('renderer').sld_body){
             sld_body=queryTarget.get('layer').get('renderer').sld_body;
-            if(!methodPost && sld_body.length > 1500){//VT; if the length of the sld is too long we HAVE to use post
+            if(!methodPost && sld_body.length > 1200){//VT; if the length of the sld is too long we HAVE to use post
                 methodPost = true
             }
         }
