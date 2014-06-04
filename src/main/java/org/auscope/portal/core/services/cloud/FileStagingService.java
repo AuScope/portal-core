@@ -124,7 +124,7 @@ public class FileStagingService {
 
         logger.debug("Attempting to generate job input dir " + jobInputDir);
 
-        boolean success = new File(jobInputDir).mkdir();
+        boolean success = new File(jobInputDir).mkdirs();
         if (!success) {
             throw new PortalServiceException("Failed to create stage in directory: " + jobInputDir);
         }
