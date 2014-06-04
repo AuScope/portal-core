@@ -60,7 +60,7 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
         var methodPost = false;
 
         if(queryTarget.get('layer').get('filterer').getParameters().postMethod){
-        	methodPost = queryTarget.get('layer').get('filterer').getParameters().postMethod;
+            methodPost = queryTarget.get('layer').get('filterer').getParameters().postMethod;
         }
 
         var sld_body=null;
@@ -168,7 +168,10 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                     var allComponents = [];
                     allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url')));
                     if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(id, knownLayer, onlineResource, layer)) {
-                        allComponents.push(me.knownLayerParser.parseKnownLayerFeature(id, knownLayer, onlineResource, layer));
+                        var knownLayerFeature = me.knownLayerParser.parseKnownLayerFeature(id, knownLayer, onlineResource, layer);
+                        if(knownLayerFeature){
+                            allComponents.push(knownLayerFeature);
+                        }
                     }
 
                     callback(me, allComponents, queryTarget);

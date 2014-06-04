@@ -66,7 +66,10 @@ Ext.define('portal.layer.querier.wfs.WFSQuerier', {
             var allComponents = [];
             allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url')));
             if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer)) {
-                allComponents.push(me.knownLayerParser.parseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer));
+                var knownLayerFeature = me.knownLayerParser.parseKnownLayerFeature(queryTarget.get('id'), knownLayer, onlineResource, layer);
+                if(knownLayerFeature){
+                    allComponents.push(knownLayerFeature);
+                }
             }
 
             callback(me, allComponents, queryTarget);
