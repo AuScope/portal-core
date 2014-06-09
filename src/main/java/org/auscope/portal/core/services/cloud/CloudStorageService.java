@@ -100,17 +100,31 @@ public class CloudStorageService {
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName) {
         this(endpoint, provider, accessKey, secretKey, regionName, false);
     }
-    
+
     /**
      * Creates a new instance for connecting to the specified parameters
      * @param endpoint The URL endpoint for the cloud storage service
      * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
      * @param accessKey Username credential for accessing the storage service
      * @param secretKey Password credentials for accessing the storage service
-     * @param relaxHostName Whether security certs are required to strictly match the host
      * @param regionName The region identifier string for this service (if any). Can be null/empty.
+     * @param relaxHostName Whether security certs are required to strictly match the host
      */
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName, boolean relaxHostName) {
+        this(endpoint, provider, accessKey, secretKey, regionName, relaxHostName, false);
+    }
+        
+    /**
+     * Creates a new instance for connecting to the specified parameters
+     * @param endpoint The URL endpoint for the cloud storage service
+     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey Username credential for accessing the storage service
+     * @param secretKey Password credentials for accessing the storage service
+     * @param regionName The region identifier string for this service (if any). Can be null/empty.
+     * @param relaxHostName Whether security certs are required to strictly match the host
+     * @param stripExpectHeader Whether to remove HTTP Expect header from requests; set to true for blobstores that do not support 100-Continue
+     */
+    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName, boolean relaxHostName, boolean stripExpectHeader) {
         super();
         
         this.endpoint = endpoint;
@@ -128,6 +142,7 @@ public class CloudStorageService {
         
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
+        properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
         
         if (regionName != null) {
             properties.setProperty("jclouds.region", regionName);
