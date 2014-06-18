@@ -60,11 +60,12 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         this.callParent(arguments);
 
         this._layerPanel.on('select', this._onLayerPanelSelect, this);
+
+
     },
 
     _onLayerPanelSelect : function(sm, layer, index) {
-        //VT: This should no longer show up because filter form showing depends on tabpanel selection now
-        //this.showFilterForLayer(layer);
+        this.showFilterForLayer(layer);
     },
 
     /**

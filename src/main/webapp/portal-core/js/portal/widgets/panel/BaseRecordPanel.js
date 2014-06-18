@@ -166,7 +166,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         this.callParent(arguments);
     },
 
-
+    /**
+     * returns true if selection is found on the layer and false if not.
+     */
     addSelectedLayerToActive : function (){
         var grid = this;
         var sm = grid.getSelectionModel();
@@ -174,6 +176,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         if (selectedRecords && selectedRecords.length > 0) {
             selectedRecords[0].get('layer').set('displayed',true);
             grid.fireEvent('addlayerrequest', this, selectedRecords[0]); //we only support single selection
+            return true;
+        }else{
+            return false;
         }
     },
 
