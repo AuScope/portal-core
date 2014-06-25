@@ -162,6 +162,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
                 //Create our new layer
                 var newLayer = this.layerFactory.generateLayerFromKnownLayer(knownLayer);
+                newLayer.set('displayed',true);
                 knownLayer.set('layer', newLayer);
 
                 //Configure it
@@ -191,6 +192,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 }
 
                 var newLayer = this.layerFactory.generateLayerFromCSWRecord(cswRecord);
+                newLayer.set('displayed',true);
                 cswRecord.set('layer', newLayer);
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
