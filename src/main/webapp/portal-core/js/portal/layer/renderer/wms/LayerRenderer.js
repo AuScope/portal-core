@@ -34,6 +34,13 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
         this.removeData();
         var wmsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WMS);
 
+        var urls = [];
+        for (var i = 0; i < wmsResources.length; i++) {
+            urls.push(wmsResources[i].get('url'));
+        }
+        this.renderStatus.initialiseResponses(urls, 'Loading...');
+        this.currentRequestCount = wmsResources.length;
+
         this.fireEvent('renderstarted', this, wmsResources, filterer);
 
         var primitives = [];
@@ -42,13 +49,29 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
 
-            primitives.push(this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity));
+            var layer = this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity);
+
+            //VT: Handle the after wms load clean up event.
+            layer.wmsLayer.events.register("loadend",this,function(evt){
+                this.currentRequestCount--;
+                var listOfStatus=this.renderStatus.getParameters();
+                for(key in listOfStatus){
+                    if(key==layer.wmsUrl){
+                        this.renderStatus.updateResponse(key, "WMS Loaded");
+                        this.fireEvent('renderfinished', this);
+                        break
+                    }
+                }
+
+            });
+
+            primitives.push(layer);
 
         }
 
         this.primitiveManager.addPrimitives(primitives);
         this.hasData = true;
-        this.fireEvent('renderfinished', this);
+
     },
 
     /**
