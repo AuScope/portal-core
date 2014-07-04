@@ -1,0 +1,56 @@
+<rdf:RDF
+    xmlns:gml32="http://def.seegrid.csiro.au/ogc/dataType/OGC-GML/3.2/"
+    xmlns:elda="http://www.epimorphics.com/vocabularies/lda#"
+    xmlns:sparql="http://purl.org/net/opmv/types/sparql#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:ogcsf="http://def.seegrid.csiro.au/ogc/dataType/OGC-SF/1.0/"
+    xmlns:doap="http://usefulinc.com/ns/doap#"
+    xmlns:gtrs="http://resource.geosciml.org/schema/cgi/trs/3.0/"
+    xmlns:os="http://a9.com/-/spec/opensearch/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:tm="http://def.seegrid.csiro.au/isotc211/iso19108/2006/temporalobject/"
+    xmlns:gm="http://def.seegrid.csiro.au/isotc211/iso19107/2003/geometry/"
+    xmlns:owl="http://def.seegrid.csiro.au/isotc211//owl#"
+    xmlns:api="http://purl.org/linked-data/api/vocab#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:gts="http://resource.geosciml.org/schema/cgi/gts/3.0/"
+    xmlns:isc="http://resource.geosciml.org/classifier/ics/ischart/"
+    xmlns:geo="http://def.seegrid.csiro.au/ogc/geosparql/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:gml31="http://def.seegrid.csiro.au/ogc/dataType/OGC-GML/3.1/"
+    xmlns:sam="http://def.seegrid.csiro.au/isotc211/iso19156/2011/sampling/"
+    xmlns:basic="http://def.seegrid.csiro.au/isotc211/iso19103/2005/basictype/"
+    xmlns:svoc="http://www.seegrid.csiro.au/siss/voc/"
+    xmlns:opmv="http://purl.org/net/opmv/types/common#"
+    xmlns:xhv="http://www.w3.org/1999/xhtml/vocab#"
+    xmlns:trs="http://def.seegrid.csiro.au/isotc211/iso19108/2006/temporalreferencesystem/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+  <api:ListEndpoint rdf:about="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/concept.rdf">
+    <api:definition rdf:resource="http://auscope-services-test.arrc.csiro.au/sissvoc/api/meta/commodity-vocab/concept.rdf?_page=24&amp;_pageSize=50"/>
+    <dcterms:hasPart>
+      <api:Page rdf:about="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/concept.rdf?_pageSize=50&amp;_page=24">
+        <xhv:prev rdf:resource="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/concept.rdf?_pageSize=50&amp;_page=23"/>
+        <api:items rdf:parseType="Collection">
+          <rdf:Description rdf:about="http://resource.auscope.org/classifier/PIRSA/commodity/U">
+            <skos:prefLabel xml:lang="en">uranium</skos:prefLabel>
+          </rdf:Description>
+          <rdf:Description rdf:about="http://resource.auscope.org/classifier/PIRSA/commodity/U3O8">
+            <skos:prefLabel xml:lang="en">uranium oxide</skos:prefLabel>
+          </rdf:Description>
+        </api:items>
+        <os:itemsPerPage rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >5</os:itemsPerPage>
+        <api:extendedMetadataVersion rdf:resource="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/concept.rdf?_pageSize=50&amp;_page=24&amp;_metadata=all"/>
+        <api:page rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >1</api:page>
+        <api:definition rdf:resource="http://auscope-services-test.arrc.csiro.au/sissvoc/api/meta/commodity-vocab/concept.rdf?_page=24&amp;_pageSize=50"/>
+        <dcterms:isPartOf rdf:resource="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/concept.rdf"/>
+        <os:startIndex rdf:datatype="http://www.w3.org/2001/XMLSchema#long"
+        >6</os:startIndex>
+        <xhv:first rdf:resource="http://auscope-services-test.arrc.csiro.au/sissvoc/api/commodity-vocab/concept.rdf?_pageSize=50&amp;_page=0"/>
+      </api:Page>
+    </dcterms:hasPart>
+  </api:ListEndpoint>
+</rdf:RDF>

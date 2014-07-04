@@ -1,0 +1,24 @@
+.x-form-value-field {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  font: normal 22px impact, sans-serif;
+}
+
+.x-form-value-field-uom {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  font: normal 18px impact, sans-serif;
+  color: #D05353;
+}
+
+.x-form-value-field-label {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  font: normal 11px tahoma,arial,verdana,sans-serif;;
+  text-align: center;
+  color: black;
+}
+
+.x-form-image-field {
+  text-align: center;
+}

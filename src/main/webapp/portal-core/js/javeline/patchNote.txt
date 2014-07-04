@@ -1,0 +1,2 @@
+javeline_xpath doesn't detect IE11 as the userAgent string has changed for IE11
+IS_IE =  ()!!navigator.userAgent.match(/Trident.*rv[ :]*11\./) || (document.all && !IS_OPERA));

@@ -1,0 +1,56 @@
+<CoverageDescription xmlns="http://www.opengis.net/wcs" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gml="http://www.opengis.net/gml" version="1.0.0">
+  <CoverageOffering>
+    <description>onshore_only_Bouguer_geodetic Degree                        true  onshore_only_Bouguer_geodetic</description>
+    <name>onshore_only_Bouguer_geodetic</name>
+    <label>onshore_only_Bouguer_geodetic</label>
+    <lonLatEnvelope srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+      <gml:pos>112.87212699999998 -43.69864800000154</gml:pos>
+      <gml:pos>153.62049699996703 -8.991703000000008</gml:pos>
+    </lonLatEnvelope>
+    <domainSet>
+      <spatialDomain>
+        <Envelope srsName="urn:ogc:def:crs:OGC:1.3:CRS84">
+          <gml:pos dimension="2">112.87212699999998 -43.69864800000154</gml:pos>
+          <gml:pos dimension="2">153.62049699996703 -8.991703000000008</gml:pos>
+        </Envelope>
+        <gml:RectifiedGrid dimension="2" srsName="EPSG:0 [Latitude_Longitude]">
+          <gml:limits>
+            <gml:GridEnvelope>
+              <gml:low>0 0</gml:low>
+              <gml:high>4890 4165</gml:high>
+            </gml:GridEnvelope>
+          </gml:limits>
+          <gml:axisName>x</gml:axisName>
+          <gml:axisName>y</gml:axisName>
+          <gml:origin>
+            <gml:pos>112.87212699999998 -43.69864800000154</gml:pos>
+          </gml:origin>
+          <gml:offsetVector>0.008332999999993262 0.0</gml:offsetVector>
+          <gml:offsetVector>0.0 0.008333000000000368</gml:offsetVector>
+        </gml:RectifiedGrid>
+      </spatialDomain>
+    </domainSet>
+    <rangeSet>
+      <RangeSet>
+        <description xmlns="">onshore_only_Bouguer_geodetic Degree                        true  onshore_only_Bouguer_geodetic</description>
+        <name>onshore_only_Bouguer_geodetic</name>
+        <label>onshore_only_Bouguer_geodetic</label>
+        <nullValues>
+          <singleValue>NaN</singleValue>
+        </nullValues>
+      </RangeSet>
+    </rangeSet>
+    <supportedCRSs>
+      <requestCRSs>OGC:CRS84</requestCRSs>
+      <responseCRSs>EPSG:0 [Latitude_Longitude]</responseCRSs>
+    </supportedCRSs>
+    <supportedFormats>
+      <formats>GeoTIFF</formats>
+      <formats>GeoTIFF_Float</formats>
+      <formats>NetCDF3</formats>
+    </supportedFormats>
+    <supportedInterpolations>
+      <interpolationMethod>none</interpolationMethod>
+    </supportedInterpolations>
+  </CoverageOffering>
+</CoverageDescription>

@@ -1,0 +1,155 @@
+<!-- This must come BEFORE javascript includes! -->
+<link rel="stylesheet" type="text/css" href="portal-core/js/ext-4.1.1a/resources/css/ext-all.css">
+<link rel="stylesheet" type="text/css" href="portal-core/js/ext-4.1.1a/examples/ux/css/CheckHeader.css">
+
+<!-- link extjs 4 -->
+<!--  <script type="text/javascript" src="portal-core/js/ext-4.1.1a/ext-all-debug.js"></script> -->
+<script type="text/javascript" src="portal-core/js/ext-4.1.1a/ext-all.js"></script>
+
+<!-- link extjs 4 - user extensions -->
+<script type="text/javascript" src="portal-core/js/ext-4.1.1a/examples/ux/form/SearchField.js"></script>
+<script type="text/javascript" src="portal-core/js/ext-4.1.1a/examples/ux/CheckColumn.js"></script>
+<script type="text/javascript" src="portal-core/js/ext-4.1.1a/examples/ux/RowExpander.js"></script>
+<script type="text/javascript" src="portal-core/js/ext-4.1.1a/examples/ux/Spotlight.js"></script>
+<script type="text/javascript" src="portal-core/js/extjs-ux-externals/form/plugin/FieldHelpText.js"></script>
+<script type="text/javascript" src="portal-core/js/extjs-patches/ext-4.1.1a/EXTJSIV-6745.js"></script>
+<script type="text/javascript" src="portal-core/js/extjs-patches/ext-4.1.1a/UxSearchField.js"></script>
+<link rel="stylesheet" href="portal-core/js/extjs-ux-externals/form/plugin/FieldHelpText.css">
+
+<!-- Link other external libraries -->
+<script type="text/javascript" src="portal-core/js/javeline/javeline_xpath.js"></script>
+
+<script src="portal-core/js/portal/Compatibility.js" type="text/javascript"></script>
+
+<!-- load the portal javascript -->
+<script src="portal-core/js/portal/util/help/Instruction.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/help/InstructionManager.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/xml/SimpleDOM.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/xml/SimpleXPath.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/Base64.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/BBoxType.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/BBox.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/GoogleAnalytic.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/misc/BrowserWindowWithWarning.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/FileDownloader.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/ObservableMap.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/UnimplementedFunction.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/URL.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/permalink/serializers/BaseSerializer.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/permalink/serializers/SerializerV0.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/permalink/serializers/SerializerV1.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/permalink/serializers/SerializerV2.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/permalink/serializers/SerializerV3.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/permalink/DeserializationHandler.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/permalink/MapStateSerializer.js" type="text/javascript"></script>
+
+<script src="portal-core/js/portal/map/BaseMap.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/BasePrimitiveManager.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/Icon.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/Point.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/Size.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/TileInformation.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/primitives/BasePrimitive.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/primitives/BaseWMSPrimitive.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/primitives/Marker.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/primitives/Polygon.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/map/primitives/Polyline.js" type="text/javascript"></script>
+<!-- Provider specific mapping API's are excluded from this file. They can be found in seperate jsimports-*.htm files. -->
+
+<script src="portal-core/js/portal/csw/OnlineResourceType.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/csw/OnlineResource.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/csw/CSWRecordType.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/csw/CSWRecord.js" type="text/javascript"></script>
+
+<script src="portal-core/js/portal/knownlayer/KnownLayer.js" type="text/javascript"></script>
+
+<script src="portal-core/js/portal/layer/downloader/Downloader.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/downloader/DownloaderFactory.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/downloader/coverage/WCSDownloader.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/downloader/coverage/OPeNDAPDownloader.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/downloader/wfs/WFSDownloader.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/downloader/wfs/KLWFSDownloader.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/downloader/wms/WMSDownloader.js" type="text/javascript"></script>
+
+<script src="portal-core/js/portal/layer/filterer/BaseFilterForm.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/filterer/forms/EmptyFilterForm.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/filterer/forms/WMSLayerFilterForm.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/filterer/Filterer.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/filterer/FormFactory.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/legend/BaseComponent.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/legend/Legend.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/legend/wfs/WFSLegend.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/legend/wms/WMSLegend.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/legend/wms/WMSLegendForm.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/BaseComponent.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/Querier.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/QuerierFactory.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/QueryTarget.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/QueryTargetHandler.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/csw/CSWQuerier.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/factories/BaseFactory.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/factories/SimpleFactory.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/knownlayerfactories/BaseFactory.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/FeatureSource.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/featuresources/WFSFeatureSource.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/featuresources/WFSFeatureByPropertySource.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/KnownLayerParser.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/Parser.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/WFSQuerier.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wfs/WFSWithMapQuerier.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wms/WMSQuerier.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/coverage/WCSQuerier.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wms/GeotransectQuerier.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/querier/wms/AsterChileWMS.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/RenderDebuggerData.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/Renderer.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/RendererFactory.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/RenderStatus.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/wfs/FeatureDownloadManager.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/wfs/FeatureRenderer.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/wfs/FeatureWithMapRenderer.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/wfs/KMLParser.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/renderer/csw/CSWRenderer.js" type="text/javascript"></script>
+
+<script src="portal-core/js/portal/layer/renderer/wms/LayerRenderer.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/Layer.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/LayerFactory.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/layer/LayerStore.js" type="text/javascript"></script>
+
+<script src="portal-core/js/portal/widgets/field/ClearableComboBox.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/field/ClientSearchField.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/field/DataDisplayField.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/field/ImageDisplayField.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/grid/column/ClickColumn.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/grid/column/RenderableCheckColumn.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/grid/plugin/CellTips.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/grid/plugin/SelectableGrid.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/grid/plugin/RowContextMenu.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/BaseRecordPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/CSWConstraintsPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/CSWMetadataPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/CSWRecordPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/CustomRecordPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/CustomRegistryTreeGrid.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/FilterPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/KnownLayerPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/LayerPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/OnlineResourcesPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/tab/ActivePreRenderTabPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/window/CSWRecordConstraintsWindow.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/window/CSWSelectionWindow.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/window/CSWRecordDescriptionWindow.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/window/PermanentLinkWindow.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/window/ErrorWindow.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/CSWReportPagingPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/CSWRecordPagingPanel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/window/CSWFilterWindow.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/model/CSWServices.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/model/CustomRegistryModel.js" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/CSWFilterFormPanel.js" type="text/javascript"></script>
+
+
+
+
+<script src="portal-core/js/lzma/lzma.js" type="text/javascript"></script>
+<script src="portal-core/js/lzma/lzma_worker.js" type="text/javascript"></script>
