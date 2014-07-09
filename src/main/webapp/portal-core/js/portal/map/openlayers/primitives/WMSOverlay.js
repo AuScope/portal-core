@@ -36,10 +36,8 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
                     {
                          layers: this.getWmsLayer(), 
                          version:wmsVersion ,
-                         transparent : true,
-                         //VT: Geoserver wms 1.1.1 doesn't support blank currently
-                         //exceptions : 'application/vnd.ogc.se_blank',
-                         exceptions : 'application/vnd.ogc.se_inimage',
+                         transparent : true,                       
+                         exceptions : 'BLANK',
                          sld_body : this.getSld_body()
                     },{
                          tileOptions: {maxGetUrlLength: 1500}, 
@@ -52,9 +50,8 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
                     this.getWmsUrl(),
                     {
                         layers: this.getWmsLayer(), 
-                        version:wmsVersion ,
-                        //exceptions : 'application/vnd.ogc.se_blank',
-                        exceptions : 'application/vnd.ogc.se_inimage',
+                        version:wmsVersion ,                      
+                        exceptions : 'BLANK',
                         transparent : true
                     },{
                         tileOptions: {maxGetUrlLength: 1500}, 
