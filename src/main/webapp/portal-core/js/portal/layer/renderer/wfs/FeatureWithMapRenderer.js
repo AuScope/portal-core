@@ -267,11 +267,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
                 this.allDownloadManagers.push(downloadManager);//save this manager in case we need to abort later on
             }
-            //else{
-                //VT: the resource is already rendered via wms therefore we can deduct it from currentRequestCount
-                //VT: Do nothing here cause we want to wait for the WMS to finish downloading at the top.
-            //}
-
+            
         }
         if (this.currentRequestCount === 0) {
             this.fireEvent('renderfinished', this);
@@ -284,12 +280,40 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         var sld_body = response.responseText;
         this.sld_body = sld_body;
         if(sld_body.indexOf("<?xml version=")!=0){
-            this.renderStatus.updateResponse(wmsUrl, "error: invalid SLD response");
+            this._updateStatusforWFSWMS(wmsUrl, "error: invalid SLD response");
             return
         }
-
+        
+        this._updateStatusforWFSWMS(wmsUrl, "Testing Connection");
+        this.fireEvent('renderstarted', this, wfsResources, filterer);
+        //VT: add for test connection
+        this.currentRequestCount++;
+        
+        Ext.Ajax.request({
+            url: "testServiceGetCap.do",
+            timeout : 180000,  
+            params : {
+                serviceUrl : wmsUrl  
+            },
+            scope : this,
+            success: Ext.bind(this._addWMSLayer,this,[wmsResource, wmsUrl, wmsLayer, wmsOpacity,wfsResources, filterer,sld_body],true),
+            failure: function(response, opts) {
+                 this.currentRequestCount--;
+                 if (this.currentRequestCount === 0) {
+                     this.fireEvent('renderfinished', this);
+                 }
+                 this._updateStatusforWFSWMS(wmsUrl, "Address cannot be reached");                
+            }
+        });
+        
+       
+    },
+    
+    _addWMSLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,wfsResources,filterer,sld_body){
+        //VT: minus test connection
+        this.currentRequestCount--;
+        
         var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity,sld_body)
-
 
         layer.wmsLayer.events.register("loadstart",this,function(){
             this.currentRequestCount++;
@@ -311,18 +335,22 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 this.fireEvent('renderfinished', this);
             }
             var listOfStatus=this.renderStatus.getParameters();
-
-            for(key in listOfStatus){
-                if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){
-                    this.renderStatus.updateResponse(key, "WMS Loaded");
-                    break
-                }
-            }
-
+            this._updateStatusforWFSWMS(layer.wmsUrl,"WMS Loaded");                        
         });
+        
         var primitives = [];
         primitives.push(layer);
         this.primitiveManager.addPrimitives(primitives);
+        
+    },
+    
+    _updateStatusforWFSWMS : function(updateKey,newValue){
+        for(key in this.renderStatus.getParameters()){
+            if(this._getDomain(key)==this._getDomain(updateKey)){
+                this.renderStatus.updateResponse(key, newValue);
+                break
+            }
+        }
     },
 
     _getDomain : function(data) {
