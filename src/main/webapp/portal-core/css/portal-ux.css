@@ -22,3 +22,7 @@
 .x-form-image-field {
   text-align: center;
 }
+
+.refresh {
+    background-image:url(../img/refresh.png) !important;
+}
