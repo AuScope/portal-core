@@ -252,7 +252,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             modal       : true,
             plain       : false,
             title       : 'Check Status: ',
-            height      : 110,
+            height      : 120,
             width       : 500
           });
 
