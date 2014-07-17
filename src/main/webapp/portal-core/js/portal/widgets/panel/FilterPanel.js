@@ -46,6 +46,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         this._resetButton = Ext.create('Ext.button.Button', {
             text :'Reset Filter',
+            iconCls:'refresh',
             disabled : false,
             handler : Ext.bind(this._onResetFilter, this)
         });

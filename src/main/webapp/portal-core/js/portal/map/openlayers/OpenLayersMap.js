@@ -802,8 +802,13 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     },
 
     _getDomain : function(data) {
-        var    a      = document.createElement('a');
-               a.href = data;
+        var a = document.createElement('a');
+        a.href = data;
+
+        var pathArray=a.pathname.split("/");
+        if(pathArray.length > 1){
+            return a.hostname + "/" + pathArray[pathArray.length-1];
+        }
         return a.hostname;
       }
 });

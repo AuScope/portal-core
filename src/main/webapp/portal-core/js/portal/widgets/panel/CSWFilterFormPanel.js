@@ -703,7 +703,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         id: cookieRegistry.id,
                         title: cookieRegistry.title,
                         serviceUrl:cookieRegistry.serviceUrl,
-                        recordInformation:cookieRegistry.recordInformationUrl,
+                        recordInformation:cookieRegistry.recordInformationUrl
                 }
                 children.push(registry);
             }

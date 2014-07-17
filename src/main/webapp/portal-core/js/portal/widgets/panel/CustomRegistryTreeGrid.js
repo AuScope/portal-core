@@ -90,7 +90,7 @@ Ext.define('portal.widgets.panel.CustomRegistryTreeGrid', {
                         recordInformation:cookieRegistry.recordInformation,
                         active:false,
                         leaf: true, // this is a branch
-                        expanded: false,
+                        expanded: false
                 }
                 children.push(registry);
             }

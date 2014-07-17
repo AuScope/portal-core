@@ -21,7 +21,7 @@ body.ext-chrome table.x-btn .x-btn-small td.x-btn-mc em a {
 
 .applyFilterCls .x-btn-inner {
     background-repeat: no-repeat;
-    color: #FFFFFF;
+    color: #FFFFFF !important;
     font-family: tahoma,arial,verdana,sans-serif;
     font-size: 11px;
     font-weight: normal;

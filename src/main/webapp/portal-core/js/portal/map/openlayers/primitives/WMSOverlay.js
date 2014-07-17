@@ -33,14 +33,34 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         if(this.getSld_body() && this.getSld_body().length > 0){
              wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
                     this.getWmsUrl(),
-                    {layers: this.getWmsLayer(), version:wmsVersion ,transparent : true, sld_body : this.getSld_body()},
-                    {tileOptions: {maxGetUrlLength: 1500}, isBaseLayer : false, projection: srs, maxExtent: bounds});
+                    {
+                         layers: this.getWmsLayer(), 
+                         version:wmsVersion ,
+                         transparent : true,                       
+                         exceptions : 'BLANK',
+                         sld_body : this.getSld_body()
+                    },{
+                         tileOptions: {maxGetUrlLength: 1500}, 
+                         isBaseLayer : false, 
+                         projection: srs, 
+                         maxExtent: bounds
+                    });
         }else{
             wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
                     this.getWmsUrl(),
-                    {layers: this.getWmsLayer(), version:wmsVersion ,transparent : true},
-                    {tileOptions: {maxGetUrlLength: 1500}, isBaseLayer : false, projection: srs, maxExtent: bounds});
+                    {
+                        layers: this.getWmsLayer(), 
+                        version:wmsVersion ,                      
+                        exceptions : 'BLANK',
+                        transparent : true
+                    },{
+                        tileOptions: {maxGetUrlLength: 1500}, 
+                        isBaseLayer : false, 
+                        projection: srs, 
+                        maxExtent: bounds
+                    });
         }
+        
         wmsLayer.setOpacity(this.getOpacity());
         wmsLayer._portalBasePrimitive = this;
 

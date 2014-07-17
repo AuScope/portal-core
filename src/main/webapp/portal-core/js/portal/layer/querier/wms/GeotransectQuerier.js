@@ -81,7 +81,12 @@ Ext.define('portal.layer.querier.wms.GeotransectQuerier', {
                     //VT: The default namespace is causing alot of grief in IE cause javeline xpath is unable to handle complex xpath.
                     if(domDoc.querySelector){
                         //VT: IE's version of selectSingleNode is querySelector.
-                        var cswUrl = domDoc.querySelector('FeatureInfoResponse').querySelector('FIELDS').getAttribute('url')
+                        if(domDoc.querySelector('FeatureInfoResponse').querySelector('FIELDS')){
+                            var cswUrl = domDoc.querySelector('FeatureInfoResponse').querySelector('FIELDS').getAttribute('url');
+                        }else{
+                            callback(this,[],queryTarget);
+                            return;
+                        }
                     }else{
                         var cswUrl = portal.util.xml.SimpleXPath.evaluateXPathString(domDoc.childNodes[0], "//*[local-name()='FIELDS']/@url");
                     }
