@@ -359,7 +359,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
         var pathArray=a.pathname.split("/");
         if(pathArray.length > 1){
-            return a.hostname + "/" + pathArray[pathArray.length-1];
+            return a.hostname + "/" + pathArray[pathArray.length-2];
         }
         return a.hostname;
       },
