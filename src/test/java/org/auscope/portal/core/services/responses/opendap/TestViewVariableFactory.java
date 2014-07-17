@@ -16,6 +16,7 @@ import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.JSONModelAndView;
 import org.jmock.Expectations;
 import org.junit.Test;
+import org.springframework.web.servlet.view.AbstractView;
 
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -120,6 +121,7 @@ public class TestViewVariableFactory extends PortalTestClass {
         }});
 
         JSONModelAndView mav = new JSONModelAndView(JSONArray.fromObject(vars));
+        ((AbstractView) mav.getView()).setExposePathVariables(false);
         mav.getView().render(mav.getModel(), null, mockHttpResponse);
 
         String jsonText = String.format("{\"vars\":%1$s}", actualJSONResponse.toString());
