@@ -6,12 +6,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 /**
- * An extension of UserDetails that also adds fields for full name and emails
- * @author vot002
+ * An extension of UserDetails that also adds fields for full name and email addresses
+ * @author Josh Vote
  *
  */
 public class PortalUser extends User {
-
 
     private String fullName;
     private String email;
