@@ -286,10 +286,10 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                             }
                         },{
                             xtype : 'button',
-                            text : 'Save Registries',
+                            text : 'Save Registry',
+                            tooltip : 'Add custom registry and save it to the cookies for future use.',
                             scope : this,
-                            handler : function(){
-                                var customRegistryForm = this.query('form[itemId=customRegistryFormID]')[0];
+                            handler : function(){                                
                                 //VT:_addFormToRegistry(true) true to add to cookies
                                 this._addFormToRegistry(true);
                             }
@@ -297,7 +297,8 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                             xtype: 'tbfill'
                         },{
                             xtype : 'button',
-                            text : 'Add to registry',
+                            text : 'Add Registry',
+                            tooltip : 'Add custom registry to the registry list',
                             scope : this,
                             handler : function(){
                                 this._addFormToRegistry();
