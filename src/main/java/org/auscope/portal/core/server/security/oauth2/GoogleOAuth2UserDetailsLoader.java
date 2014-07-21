@@ -1,7 +1,11 @@
 package org.auscope.portal.core.server.security.oauth2;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +19,8 @@ import com.racquettrack.security.oauth.OAuth2UserDetailsLoader;
  * is identical to createUser). For a true persistence layer, extend this class
  * and override methods.
  *
+ * Additional roles can be configured for select users based on user ID
+ *
  * @author Josh Vote
  *
  */
@@ -22,6 +28,7 @@ public class GoogleOAuth2UserDetailsLoader implements
         OAuth2UserDetailsLoader<PortalUser> {
 
     private String defaultRole;
+    private Map<String, List<SimpleGrantedAuthority>> rolesByUser;
 
     /**
      * Creates a new GoogleOAuth2UserDetailsLoader that will assign defaultRole to every user
@@ -29,7 +36,30 @@ public class GoogleOAuth2UserDetailsLoader implements
      * @param defaultRole
      */
     public GoogleOAuth2UserDetailsLoader(String defaultRole) {
+        this(defaultRole, null);
+    }
+
+    /**
+     * Creates a new GoogleOAuth2UserDetailsLoader that will assign defaultRole to every user
+     * AND any authorities found in rolesByUser if the ID matches the current user ID
+     * @param defaultRole
+     * @param rolesByUser
+     */
+    public GoogleOAuth2UserDetailsLoader(String defaultRole, Map<String, List<String>> rolesByUser) {
         this.defaultRole = defaultRole;
+        this.rolesByUser = new HashMap<String, List<SimpleGrantedAuthority>>();
+
+        if (rolesByUser != null) {
+            for (Entry<String, List<String>> entry : rolesByUser.entrySet()) {
+                List<String> authorityStrings = entry.getValue();
+                List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(authorityStrings.size());
+                for (String authority : authorityStrings) {
+                    authorities.add(new SimpleGrantedAuthority(authority));
+                }
+
+                this.rolesByUser.put(entry.getKey(), authorities);
+            }
+        }
     }
 
     /**
@@ -57,10 +87,17 @@ public class GoogleOAuth2UserDetailsLoader implements
 
     @Override
     public UserDetails createUser(String id, Map<String, Object> userInfo) {
-        PortalUser newUser = new PortalUser(id, "", Collections.singleton(new SimpleGrantedAuthority(defaultRole)));
+        List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority(defaultRole));
+        if (rolesByUser != null) {
+            List<SimpleGrantedAuthority> additionalAuthorities = rolesByUser.get(id);
+            if (additionalAuthorities != null) {
+                authorities.addAll(additionalAuthorities);
+            }
+        }
 
+        PortalUser newUser = new PortalUser(id, "", authorities);
         applyInfoToUser(newUser, userInfo);
-
         return newUser;
     }
 
