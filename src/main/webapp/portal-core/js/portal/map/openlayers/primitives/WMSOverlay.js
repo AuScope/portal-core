@@ -23,12 +23,10 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
 
         var wmsLayer = null;
 
-        var bbox = Ext.JSON.decode(cfg.layer.data.filterer.getMercatorCompatibleParameters()[portal.layer.filterer.Filterer.BBOX_FIELD]);
+        //var bbox = Ext.JSON.decode(cfg.layer.data.filterer.getMercatorCompatibleParameters()[portal.layer.filterer.Filterer.BBOX_FIELD]);
 
-        // bounds
-        var bounds = bbox ? new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude) : null;
-
-        var srs = bbox ? bbox.crs : null;
+        // bounds must be in EPSG:3857
+        var bounds = this.getBbox() ? this.getBbox().transform(this.getBbox_crs(),"EPSG:3857") : null;
 
         if(this.getSld_body() && this.getSld_body().length > 0){
              wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
@@ -43,7 +41,7 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
                     },{
                          tileOptions: {maxGetUrlLength: 1500},
                          isBaseLayer : false,
-                         projection: srs,
+                         projection: 'EPSG:3857',
                          maxExtent: bounds,
                          tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34)
                     });
@@ -59,7 +57,7 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
                     },{
                         tileOptions: {maxGetUrlLength: 1500},
                         isBaseLayer : false,
-                        projection: srs,
+                        projection: 'EPSG:3857',
                         maxExtent: bounds,
                         tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34)
                     });

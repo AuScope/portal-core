@@ -103,7 +103,11 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
 
         version : '',
 
-        sld_body : ''
+        sld_body : '',
+
+        bbox : '',
+
+        bbox_crs : ''
 
     },
 
@@ -123,6 +127,13 @@ Ext.define('portal.map.primitives.BaseWMSPrimitive', {
         this.setSld_body(cfg.sld_body);
         if(cfg.layer.get('cswRecords')[0]){
             this.setVersion(cfg.layer.get('cswRecords')[0].get('version'));
+            var index;
+            for (index = 0; index < cfg.layer.get('cswRecords').length; ++index) {
+                if (cfg.layer.get('cswRecords')[index].get('onlineResources').indexOf(cfg.onlineResource) >= 0) {
+                    this.setBbox(new OpenLayers.Bounds(cfg.layer.get('cswRecords')[index].get('geographicElements')[0].westBoundLongitude,cfg.layer.get('cswRecords')[index].get('geographicElements')[0].southBoundLatitude,cfg.layer.get('cswRecords')[index].get('geographicElements')[0].eastBoundLongitude,cfg.layer.get('cswRecords')[index].get('geographicElements')[0].northBoundLatitude));
+                    this.setBbox_crs(cfg.layer.get('cswRecords')[index].get('geographicElements')[0].crs);
+                }
+            }
         }
     }
 
