@@ -24,43 +24,47 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         var wmsLayer = null;
 
         var bbox = Ext.JSON.decode(cfg.layer.data.filterer.getMercatorCompatibleParameters()[portal.layer.filterer.Filterer.BBOX_FIELD]);
-        
+
         // bounds
         var bounds = bbox ? new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude) : null;
-        
+
         var srs = bbox ? bbox.crs : null;
-        
+
         if(this.getSld_body() && this.getSld_body().length > 0){
              wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
                     this.getWmsUrl(),
                     {
-                         layers: this.getWmsLayer(), 
+                         layers: this.getWmsLayer(),
                          version:wmsVersion ,
-                         transparent : true,                       
+                         transparent : true,
                          exceptions : 'BLANK',
-                         sld_body : this.getSld_body()
+                         sld_body : this.getSld_body(),
+                         tiled:true
                     },{
-                         tileOptions: {maxGetUrlLength: 1500}, 
-                         isBaseLayer : false, 
-                         projection: srs, 
-                         maxExtent: bounds
+                         tileOptions: {maxGetUrlLength: 1500},
+                         isBaseLayer : false,
+                         projection: srs,
+                         maxExtent: bounds,
+                         tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34)
                     });
         }else{
             wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
                     this.getWmsUrl(),
                     {
-                        layers: this.getWmsLayer(), 
-                        version:wmsVersion ,                      
+                        layers: this.getWmsLayer(),
+                        version:wmsVersion ,
                         exceptions : 'BLANK',
-                        transparent : true
+                        transparent : true,
+                        tiled:true
                     },{
-                        tileOptions: {maxGetUrlLength: 1500}, 
-                        isBaseLayer : false, 
-                        projection: srs, 
-                        maxExtent: bounds
+                        tileOptions: {maxGetUrlLength: 1500},
+                        isBaseLayer : false,
+                        projection: srs,
+                        maxExtent: bounds,
+                        tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34)
                     });
         }
-        
+
         wmsLayer.setOpacity(this.getOpacity());
         wmsLayer._portalBasePrimitive = this;
 
