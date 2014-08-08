@@ -22,20 +22,19 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         }
 
         var wmsLayer = null;
+                        
+        var cswboundingBox= this._getCSWBoundingBox(cfg.layer.getCSWRecordsByResourceURL(cfg.wmsUrl));
+        
+        var bounds = cswboundingBox.bounds;
 
-        var bbox = Ext.JSON.decode(cfg.layer.data.filterer.getMercatorCompatibleParameters()[portal.layer.filterer.Filterer.BBOX_FIELD]);
-
-        // bounds
-        var bounds = bbox ? new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude) : null;
-
-        var srs = bbox ? bbox.crs : null;
+        var srs = cswboundingBox.crs;
 
         if(this.getSld_body() && this.getSld_body().length > 0){
              wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
                     this.getWmsUrl(),
                     {
                          layers: this.getWmsLayer(),
-                         version:wmsVersion ,
+                         version:wmsVersion,
                          transparent : true,
                          exceptions : 'BLANK',
                          sld_body : this.getSld_body(),
@@ -69,5 +68,32 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         wmsLayer._portalBasePrimitive = this;
 
         this.setWmsLayer(wmsLayer);
+    },
+    
+    _getCSWBoundingBox : function(cswrecords){
+        var bbox = null;
+        var crs = null;
+        for(var i=0;i<cswrecords.length;i++){
+            var geoEl = cswrecords[i].get('geographicElements')[0]
+            if(bbox){
+                bbox = bbox.combine(geoEl);
+            }else{
+                bbox = geoEl;
+            }
+            crs=geoEl.crs;
+        }
+        
+        var openlayerBoundObject = {
+                bounds : new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude),
+                crs : crs
+        }
+        
+        if(crs != 'EPSG:3857'){
+            openlayerBoundObject.crs='EPSG:3857';
+            openlayerBoundObject.bounds = openlayerBoundObject.bounds.transform(crs,'EPSG:3857');
+        }
+        
+        return openlayerBoundObject;
+        
     }
 });

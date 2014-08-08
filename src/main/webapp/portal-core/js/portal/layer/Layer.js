@@ -102,6 +102,18 @@ Ext.define('portal.layer.Layer', {
         }
         return results;
     },
+    
+    getCSWRecordsByResourceURL : function(resourceURL){
+        //Filter our results
+        var results = [];
+        var cswRecords=this.get('cswRecords');
+        for(var i=0; i < cswRecords.length;i++){
+            if(cswRecords[i].containsOnlineResourceUrl(resourceURL)){
+                results.push(cswRecords[i]);
+            }            
+        }
+        return results;
+    },
 
     containsCSWService : function() {
         // If the layer is a known layer, then ask the KnownLayer

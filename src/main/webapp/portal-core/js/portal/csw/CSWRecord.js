@@ -100,6 +100,18 @@ Ext.define('portal.csw.CSWRecord', {
 
         return false;
     },
+    
+    containsOnlineResourceUrl : function(url) {
+        
+        var resourcesToMatch = this.getAllChildOnlineResources();
+        for (var i = 0; i < resourcesToMatch.length; i++) {
+            if (resourcesToMatch[i].get('url').toLowerCase()===url.toLowerCase()) {
+                return true;
+            }
+        }
+
+        return false;
+    },
 
     /**
      * Iterates this CSWRecord and all child CSWRecords. Each record will have it's OnlineResource
