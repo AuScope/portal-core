@@ -17,9 +17,9 @@
         <url>https://cgsrv8.arrc.csiro.au/jenkins</url>
     </ciManagement>
     <scm>
-        <connection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/portal-core/trunk</connection>
-        <developerConnection>scm:svn:https://svn.auscope.org/subversion/AuScopePortal/portal-core/trunk</developerConnection>
-        <url>https://svn.auscope.org/subversion/AuScopePortal/portal-core/trunk</url>
+        <connection>scm:git:https://github.com/AuScope/portal-core.git</connection>
+        <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
+        <url>https://github.com/AuScope/portal-core</url>
     </scm>
     <!-- Build Configuration -->
     <organization>
