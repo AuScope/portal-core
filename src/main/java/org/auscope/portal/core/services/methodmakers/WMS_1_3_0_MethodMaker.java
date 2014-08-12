@@ -37,6 +37,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getCapabilitiesMethod(String wmsUrl) throws URISyntaxException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
@@ -69,6 +70,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getMapMethod(String wmsUrl, String layer, String imageMimeType, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, String styles, String styleBody) throws URISyntaxException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
@@ -108,6 +110,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getLegendGraphic(String wmsUrl, String layerName, int width, int height, String styles) throws URISyntaxException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
@@ -157,14 +160,15 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws URISyntaxException {
-//VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
-//        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
-//                southBoundLatitude,
-//                westBoundLongitude,
-//                northBoundLatitude,
-//                eastBoundLongitude
-//                );
+        //VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
+        //        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
+        //                southBoundLatitude,
+        //                westBoundLongitude,
+        //                northBoundLatitude,
+        //                eastBoundLongitude
+        //                );
 
         String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
                 westBoundLongitude,
@@ -182,6 +186,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("BBOX", bboxString));
         existingParam.add(new BasicNameValuePair("QUERY_LAYERS", layer));
         existingParam.add(new BasicNameValuePair("INFO_FORMAT", format));
+        existingParam.add(new BasicNameValuePair("feature_count", "10"));
         existingParam.add(new BasicNameValuePair("lng", Double.toString(pointLng)));
         existingParam.add(new BasicNameValuePair("lat", Double.toString(pointLat)));
         existingParam.add(new BasicNameValuePair("i", Integer.toString(pointX)));
@@ -225,14 +230,15 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws URISyntaxException {
-//VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
-//        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
-//                southBoundLatitude,
-//                westBoundLongitude,
-//                northBoundLatitude,
-//                eastBoundLongitude
-//                );
+        //VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
+        //        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
+        //                southBoundLatitude,
+        //                westBoundLongitude,
+        //                northBoundLatitude,
+        //                eastBoundLongitude
+        //                );
 
         String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
                 westBoundLongitude,
@@ -250,6 +256,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("BBOX", bboxString));
         existingParam.add(new BasicNameValuePair("QUERY_LAYERS", layer));
         existingParam.add(new BasicNameValuePair("INFO_FORMAT", format));
+        existingParam.add(new BasicNameValuePair("feature_count", "10"));
         existingParam.add(new BasicNameValuePair("lng", Double.toString(pointLng)));
         existingParam.add(new BasicNameValuePair("lat", Double.toString(pointLat)));
         existingParam.add(new BasicNameValuePair("i", Integer.toString(pointX)));
