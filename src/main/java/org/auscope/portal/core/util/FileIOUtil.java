@@ -1,5 +1,6 @@
 package org.auscope.portal.core.util;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
@@ -223,13 +224,14 @@ public class FileIOUtil {
      * @throws IOException
      */
     public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads,ZipOutputStream zout) throws IOException{
-      if(gmlDownloads.get(0).getContentType().contains("text")){
-          writeResponseToZip(gmlDownloads,zout,true,MimeUtil.mimeToFileExtension(gmlDownloads.get(0).getContentType()));
-      }else{ //VT: TODO: the different response type should be handled differently.
-             //VT: eg. handle application/json and a final catch all.
-          log.warn("No content type found, defaulting to handling JSON responses");
-          writeResponseJSONToZip(gmlDownloads,zout);
-      }
+        //VT: this assume all files will be of the sme extension. With paging, we have .zip in the mix.
+        if(gmlDownloads.get(0).getContentType().contains("text") || gmlDownloads.get(0).getContentType().contains("zip")){
+            writeResponseToZip(gmlDownloads,zout,true);
+        }else{ //VT: TODO: the different response type should be handled differently.
+            //VT: eg. handle application/json and a final catch all.
+            log.warn("No content type found, defaulting to handling JSON responses");
+            writeResponseJSONToZip(gmlDownloads,zout);
+        }
     }
 
 
@@ -242,10 +244,10 @@ public class FileIOUtil {
      * @param zout The stream to receive the zip entries
      * @param closeInput true to close all the input stream in the gmlDownloads
      */
-    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs,String FileExtension) throws IOException {
+    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs) throws IOException {
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
-            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + "." + FileExtension;
+            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + "." + MimeUtil.mimeToFileExtension(gmlDownloads.get(i).getContentType());
             //TODO: VT - this method can be further improved if we thread this method as we are processing each stream one by one.
             // Check that attempt to request is successful
             if (!download.hasException()) {
@@ -402,10 +404,58 @@ public class FileIOUtil {
             out.write(error.getBytes());
         } catch (IOException e1) {
             log.error(e1.getCause());
-           throw e1;
+            throw e1;
         }finally{
             if(closeStream){
                 out.close();
+            }
+        }
+    }
+
+
+    public static File writeStreamToFile(InputStream ins,File f,boolean closeIns) throws IOException {
+        BufferedOutputStream out=null;
+
+        try{
+            out= new BufferedOutputStream(new FileOutputStream(f));
+            FileIOUtil.writeInputToOutputStream(ins, out, 8 * 1024, false);
+            out.flush();
+            out.close();
+
+            //VT: After we have finish writing the stream to file we want to return it.
+            log.info(f.getName() + " : Complete writing of temporary file");
+            return f;
+
+        }catch(IOException e){
+            throw e;
+        }finally{
+            out.close();
+            if(closeIns){
+                ins.close();
+            }
+        }
+    }
+
+    public static File writeStreamToFileTemporary(InputStream ins,String identifier,String fileSuffix,boolean closeIns) throws IOException {
+        BufferedOutputStream out=null;
+        File f=null;
+        try{
+            f = File.createTempFile(identifier, fileSuffix);
+            out= new BufferedOutputStream(new FileOutputStream(f));
+            FileIOUtil.writeInputToOutputStream(ins, out, 8 * 1024, false);
+            out.flush();
+            out.close();
+
+            //VT: After we have finish writing the stream to file we want to return it.
+            log.info(f.getName() + " : Complete writing of temporary file");
+            return f;
+
+        }catch(IOException e){
+            throw e;
+        }finally{
+            out.close();
+            if(closeIns){
+                ins.close();
             }
         }
     }
