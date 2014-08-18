@@ -8,7 +8,20 @@ import java.util.concurrent.Executors;
 
 
 
+
+
+
+
+
+
+
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.configuration.ServiceConfiguration;
+import org.auscope.portal.core.configuration.ServiceConfigurationItem;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
@@ -20,7 +33,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
 
     private ExecutorService threadPool;
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
-
+    private ServiceConfiguration mockServiceConfiguration= context.mock(ServiceConfiguration.class);
 
     @Before
     public void setUp() {
@@ -32,7 +45,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
     public void testDownloadAll() throws Exception {
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
-                "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
+        "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
                 + dummyGml + "\"},\"success\":true}";
@@ -44,11 +57,14 @@ public class TestServiceDownloadManager extends PortalTestClass  {
             {
                 // calling the service
                 exactly(2).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
-                    will(returnValue(httpResponse));
+                will(returnValue(httpResponse));
+
+                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+                will(returnValue(null));
             }
         });
 
-        ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool);
+        ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool,mockServiceConfiguration);
         ArrayList<DownloadResponse> gmlDownloads=sdm.downloadAll();
         for(DownloadResponse response:gmlDownloads){
             Assert.assertEquals(dummyJSONResponseIS,response.getResponseAsStream());
@@ -58,11 +74,87 @@ public class TestServiceDownloadManager extends PortalTestClass  {
 
     }
 
+
+    @Test
+    public void testDownloadAllWithPaging() throws Exception {
+
+        final ServiceConfigurationItem scItem= new ServiceConfigurationItem("exampleTestId","exampleTest.com/test",true);
+
+        final String[] serviceUrls = {
+                "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://exampleTest.com/test/geoserverBH/wfs",
+        "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
+
+
+        final String dummyXMLResponse = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><wfs:FeatureCollection xmlns:wfs=\"http://www.opengis.net/wfs\" numberOfFeatures=\"5\" timeStamp=\"2014-08-18T07:03:37.594Z\" ></wfs:FeatureCollection>";
+
+        final String dummyXML0FeatureResponse = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><wfs:FeatureCollection xmlns:wfs=\"http://www.opengis.net/wfs\" numberOfFeatures=\"0\" timeStamp=\"2014-08-18T07:03:37.594Z\" ></wfs:FeatureCollection>";
+
+        final InputStream dummyXMLResponseIS=new ByteArrayInputStream(dummyXMLResponse.getBytes());
+        final InputStream dummyXMLResponseIS2=new ByteArrayInputStream(dummyXMLResponse.getBytes());
+
+        final InputStream dummy0FeatureResponse=new ByteArrayInputStream(dummyXML0FeatureResponse.getBytes());
+
+        final HttpResponse response1=new MyHttpResponse(dummyXMLResponseIS);
+        final HttpResponse response2=new MyHttpResponse(dummyXMLResponseIS2);
+        final HttpResponse ZeroFeatureResponse=new MyHttpResponse(dummy0FeatureResponse);
+
+        context.checking(new Expectations() {
+            {
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[0]+"&startIndex=0", null)));
+                will(delayReturnValue(250, response1));
+
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[0]+"&startIndex=5", null)));
+                will(delayReturnValue(250, ZeroFeatureResponse));
+
+                oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[1], null)));
+                will(delayReturnValue(3000,response2));
+
+                oneOf(mockServiceConfiguration).getServiceConfigurationItem(with(serviceUrls[0]));
+                will(returnValue(scItem));
+
+                oneOf(mockServiceConfiguration).getServiceConfigurationItem(with(serviceUrls[1]));
+                will(returnValue(null));
+            }
+        });
+
+        ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool,mockServiceConfiguration);
+        ArrayList<DownloadResponse> gmlDownloads=sdm.downloadAll();
+        for(DownloadResponse response:gmlDownloads){
+            Assert.assertFalse(response.hasException());
+            Assert.assertNull(response.getException());
+            String contentType = response.getContentType();
+            if(contentType.equals("application/zip")){
+                ZipInputStream zis = new ZipInputStream(response.getResponseAsStream());
+                ZipEntry entry;
+                while ((entry = zis.getNextEntry()) != null){
+                    byte[] bytes= new byte[1024];
+                    Assert.assertNotNull(entry);
+                    Assert.assertTrue(entry.getName().endsWith(".xml"));
+                    zis.read(bytes, 0, bytes.length);
+                    String result= new String(bytes);
+                    result=result.trim();
+                    Assert.assertTrue(dummyXMLResponse.equals(result));
+                }
+                zis.close();
+
+            }else if(contentType.equals("application/xml")){
+                dummyXMLResponse.equals(response.getResponseAsString());
+            }else{
+                //VT:It should have never come here
+                Assert.assertTrue(false);
+            }
+
+
+
+        }
+
+    }
+
     @Test
     public void testDownloadAllException() throws Exception {
         final String[] serviceUrls = {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
-                "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://www.mrt.tas.gov.au:80/web-services/wfs"};
+        "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://www.mrt.tas.gov.au:80/web-services/wfs"};
         final String dummyGml = "<someGmlHere/>";
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
                 + dummyGml + "\"},\"success\":true}";
@@ -74,13 +166,16 @@ public class TestServiceDownloadManager extends PortalTestClass  {
             {
                 // calling the service
                 atLeast(1).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
-                    will(onConsecutiveCalls(
-                            returnValue(httpResponse),
-                            throwException(new Exception("test exception"))));
+                will(onConsecutiveCalls(
+                        returnValue(httpResponse),
+                        throwException(new Exception("test exception"))));
+
+                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+                will(returnValue(null));
             }
         });
 
-        ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool);
+        ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool,mockServiceConfiguration);
         ArrayList<DownloadResponse> gmlDownloads=sdm.downloadAll();
         Assert.assertEquals(serviceUrls.length, gmlDownloads.size());
         for(DownloadResponse response:gmlDownloads){
@@ -106,19 +201,19 @@ public class TestServiceDownloadManager extends PortalTestClass  {
     @Test
     public void testServiceFairness() throws Exception {
         final String[] serviceUrls = {
-            "http://localhost/portal?serviceUrl=http://domain1/wfs",
-            "http://localhost/portal?serviceUrl=http://domain1/wfs",
-            "http://localhost/portal?serviceUrl=http://domain2/wfs",
+                "http://localhost/portal?serviceUrl=http://domain1/wfs",
+                "http://localhost/portal?serviceUrl=http://domain1/wfs",
+                "http://localhost/portal?serviceUrl=http://domain2/wfs",
         };
         final InputStream[] responseStreams = {
-            context.mock(InputStream.class, "is-1"),
-            context.mock(InputStream.class, "is-2"),
-            context.mock(InputStream.class, "is-3"),
+                context.mock(InputStream.class, "is-1"),
+                context.mock(InputStream.class, "is-2"),
+                context.mock(InputStream.class, "is-3"),
         };
         final long[] responseDelays = {
-            400,
-            800,
-            600
+                400,
+                800,
+                600
         };
 
 
@@ -148,6 +243,9 @@ public class TestServiceDownloadManager extends PortalTestClass  {
             //third request
             oneOf(mockServiceCaller).getMethodResponseAsHttpResponse(with(aHttpMethodBase(null, serviceUrls[1], null)));
             will(delayReturnValue(responseDelays[1], new MyHttpResponse(responseStreams[1])));
+
+            allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+            will(returnValue(null));
         }});
 
         //We have a pretty good idea of what the processing time and margin of error should be
@@ -157,7 +255,7 @@ public class TestServiceDownloadManager extends PortalTestClass  {
         long maxProcessingTime = processingTime + marginOfError;
 
         //Create our service downloader
-        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool);
+        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool,mockServiceConfiguration);
 
         startTimer();
         ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
@@ -190,11 +288,14 @@ public class TestServiceDownloadManager extends PortalTestClass  {
             {
                 // calling the service
                 exactly(1).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
-                    will(returnValue(new MyHttpResponse(dummyJSONResponseIS)));
+                will(returnValue(new MyHttpResponse(dummyJSONResponseIS)));
+
+                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+                will(returnValue(null));
             }
         });
 
-        ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool);
+        ServiceDownloadManager sdm=new ServiceDownloadManager(serviceUrls,mockServiceCaller,threadPool,mockServiceConfiguration);
         ArrayList<DownloadResponse> gmlDownloads=sdm.downloadAll();
         for(DownloadResponse response:gmlDownloads){
             Assert.assertEquals(dummyJSONResponseIS,response.getResponseAsStream());
