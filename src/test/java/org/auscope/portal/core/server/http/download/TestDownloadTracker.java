@@ -148,9 +148,10 @@ public class TestDownloadTracker extends PortalTestClass  {
         downloadTracker.startTrack(sdm);
         Assert.assertEquals(Progression.INPROGRESS, downloadTracker.getProgress());
 
-        //&& System.currentTimeMillis() < (startTime + 15000)
 
-        while(downloadTracker.getProgress()!=Progression.COMPLETED ){
+        //VT: && System.currentTimeMillis() < (startTime + 15000) a backup to ensure this unit test breaks and finishes in a
+        //certain amount of time
+        while(downloadTracker.getProgress()!=Progression.COMPLETED && System.currentTimeMillis() < (startTime + 15000) ){
             synchronized(this){
                 this.wait(2000);
             }
