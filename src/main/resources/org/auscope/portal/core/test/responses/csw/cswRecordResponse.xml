@@ -4099,6 +4099,24 @@ The ISO19139/119 metadata standard is the preferred metadata standard
                   </gmd:description>
                 </gmd:CI_OnlineResource>
               </gmd:onLine>
+              <gmd:onLine>
+
+                <gmd:CI_OnlineResource>
+                  <gmd:linkage>
+                    <gmd:URL>http://apacsrv6/thredds/ncss/galeon/ocean.nc</gmd:URL>
+                  </gmd:linkage>
+                  <gmd:protocol>
+                    <gco:CharacterString>OGC:NCSS-1.0.0-http-get-coverage</gco:CharacterString>
+                  </gmd:protocol>
+                  <gmd:name>
+
+                    <gco:CharacterString>netcdf_subset_service</gco:CharacterString>
+                  </gmd:name>
+                  <gmd:description>
+                    <gco:CharacterString />
+                  </gmd:description>
+                </gmd:CI_OnlineResource>
+              </gmd:onLine>
             </gmd:MD_DigitalTransferOptions>
 
           </gmd:transferOptions>

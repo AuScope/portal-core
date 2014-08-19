@@ -104,7 +104,7 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         AbstractCSWOnlineResource[] resources = this.records[14].getOnlineResources();
-        Assert.assertEquals(3, resources.length);
+        Assert.assertEquals(4, resources.length);
 
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS);
         Assert.assertEquals(1, resources.length);
@@ -117,6 +117,10 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.FTP);
         Assert.assertEquals(1, resources.length);
         Assert.assertEquals("ftp://example.org/ftp", resources[0].getLinkage().toString());
+
+        resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.NCSS);
+        Assert.assertEquals(1, resources.length);
+        Assert.assertEquals("http://apacsrv6/thredds/ncss/galeon/ocean.nc", resources[0].getLinkage().toString());
 
         resources = this.records[14].getOnlineResourcesByType();
         Assert.assertEquals(0, resources.length);
