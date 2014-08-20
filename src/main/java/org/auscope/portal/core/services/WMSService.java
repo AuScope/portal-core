@@ -21,7 +21,7 @@ public class WMSService {
 
     // ----------------------------------------------------- Instance variables
     private HttpServiceCaller serviceCaller;
-    private WMSMethodMakerInterface methodMaker;
+
     private List<WMSMethodMakerInterface> listOfSupportedWMSMethodMaker;
 
 
@@ -29,27 +29,22 @@ public class WMSService {
     public WMSService(HttpServiceCaller serviceCaller, List<WMSMethodMakerInterface> methodMaker) {
         this.serviceCaller = serviceCaller;
         this.listOfSupportedWMSMethodMaker=methodMaker;
-        this.methodMaker=null;
+
     }
 
 
     // ------------------------------------------- Property Setters and Getters
 
 
-    private void configWMSVersion(String wmsUrl)
+    private WMSMethodMakerInterface getSupportedMethodMaker(String wmsUrl,String version)
             throws OperationNotSupportedException {
-
         for (WMSMethodMakerInterface maker : listOfSupportedWMSMethodMaker) {
-            if (maker.accepts(wmsUrl)) {
-                this.methodMaker = maker;
-                break;
+            if (maker.accepts(wmsUrl,version)) {
+                return maker;
             }
         }
-
-        if (this.methodMaker == null) {
-            throw new OperationNotSupportedException(
-                    "Can't find a suitable wms version");
-        }
+        throw new OperationNotSupportedException(
+                "Can't find a suitable wms version");
     }
 
 
@@ -59,11 +54,11 @@ public class WMSService {
      * @param serviceUrl Url of WMS service
      * @return GetCapabilitiesRecord
      */
-    public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl) throws PortalServiceException {
+    public GetCapabilitiesRecord getWmsCapabilities(final String serviceUrl,String version) throws PortalServiceException {
         HttpRequestBase method = null;
         try {
 
-            this.configWMSVersion(serviceUrl);
+            WMSMethodMakerInterface methodMaker = getSupportedMethodMaker(serviceUrl,version);
             // Do the request
             method = methodMaker.getCapabilitiesMethod(serviceUrl);
             return methodMaker.getGetCapabilitiesRecord(method);
@@ -102,11 +97,14 @@ public class WMSService {
      * @return
      * @throws PortalServiceException
      */
-    public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody, boolean postMethod) throws PortalServiceException {
+    public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude,
+            double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height,
+            double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody, boolean postMethod,
+            String version) throws PortalServiceException {
         // Do the request
         HttpRequestBase method = null;
         try {
-            this.configWMSVersion(wmsUrl);
+            WMSMethodMakerInterface methodMaker = getSupportedMethodMaker(wmsUrl,version);
             if(postMethod){
                 method = methodMaker.getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sldBody);
             }else{

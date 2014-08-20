@@ -36,12 +36,6 @@ public class ViewCSWRecordFactory {
         obj.put("description", record.getDataIdentificationAbstract());
         obj.put("noCache", record.getNoCache());
 
-        if(record.getVersion()==null){
-            obj.put("version", "");
-        }else{
-            obj.put("version", record.getVersion());
-        }
-
         CSWResponsibleParty rp = record.getContact();
         String adminArea = null;
         String contactOrg = "Unknown";
@@ -105,7 +99,7 @@ public class ViewCSWRecordFactory {
             dateString = df.format(record.getDate());
         }
         obj.put("date", dateString);
-        
+
         return obj;
     }
 
@@ -121,6 +115,7 @@ public class ViewCSWRecordFactory {
         obj.put("type", res.getType().name());
         obj.put("name", res.getName());
         obj.put("description", res.getDescription().toString());
+        obj.put("version", res.getVersion());
 
         return obj;
     }

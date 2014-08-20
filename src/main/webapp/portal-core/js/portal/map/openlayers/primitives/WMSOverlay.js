@@ -16,14 +16,19 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
      */
     constructor : function(cfg) {
         this.callParent(arguments);
-        var wmsVersion='1.1.1';
-        if(this.getVersion() && this.getVersion().length > 0){
-            wmsVersion=this.getVersion();
-        }
-
+       
         var wmsLayer = null;
+        
+        var cswRecord = cfg.layer.getCSWRecordsByResourceURL(cfg.wmsUrl)
+        //VT: We work on the assumption that 1 CSW Record == 1 wms layer.         
+        var wmsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(cswRecord[0].get('onlineResources'), portal.csw.OnlineResource.WMS);
+        var wmsVersion='1.1.1';//VT:Default to 1.1.1 unless specified
+        if(wmsOnlineResources.length > 0 && wmsOnlineResources[0].get('version')){
+            wmsVersion = wmsOnlineResources[0].get('version');
+        }
+        
                         
-        var cswboundingBox= this._getCSWBoundingBox(cfg.layer.getCSWRecordsByResourceURL(cfg.wmsUrl));
+        var cswboundingBox= this._getCSWBoundingBox(cswRecord);
         
         var bounds = cswboundingBox.bounds;
 

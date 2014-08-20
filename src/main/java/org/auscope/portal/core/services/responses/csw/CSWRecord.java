@@ -69,8 +69,6 @@ public class CSWRecord {
     /** The csw child records */
     private List<CSWRecord> childRecords = new ArrayList<CSWRecord>();
 
-    private String version;
-
     private boolean noCache;
 
     /**
@@ -125,25 +123,6 @@ public class CSWRecord {
     public String getRecordInfoUrl() {
         return recordInfoUrl;
     }
-
-    /**
-     * Sets the version
-     *
-     * @param recordInfoUrl the new record info url
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
-    /**
-     * Gets the version
-     *
-     * @return the record info url
-     */
-    public String getVersion() {
-        return this.version;
-    }
-
 
     /**
      * Sets the noCache variable

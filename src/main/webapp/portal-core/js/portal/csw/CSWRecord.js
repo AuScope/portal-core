@@ -21,8 +21,7 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'onlineResources', convert: portal.csw.OnlineResourceType.convert}, //A set of portal.csw.OnlineResource objects
         { name: 'childRecords', convert: portal.csw.CSWRecordType.convert}, //an array of child portal.csw.CSWRecord objects
         { name: 'resourceProvider', type: 'string'}, //A set of portal.csw.OnlineResource objects
-        { name: 'recordInfoUrl' , type:'string'},
-        { name: 'version' , type:'string'},
+        { name: 'recordInfoUrl' , type:'string'},        
         { name: 'noCache' , type:'boolean'},
         { name: 'extensions', type:'auto'}, //A normally undefined object. CSWRecord can be extended by filling in this field.
         { name: 'constraints' , type:'auto'}, //An array of strings representing access constraints that will be shown to a user before this layer is used

@@ -84,7 +84,8 @@ Ext.define('portal.layer.querier.Querier', {
             HEIGHT : tileInfo.getHeight(),
             INFO_FORMAT : infoFormat,
             SLD_BODY : sld_body,
-            postMethod : postMethod
+            postMethod : postMethod,
+            version : wmsOnlineResource.get('version')
         });
         return Ext.urlAppend('wmsMarkerPopup.do', queryString);
     },

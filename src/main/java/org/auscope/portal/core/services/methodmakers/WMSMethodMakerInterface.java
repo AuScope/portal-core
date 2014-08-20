@@ -6,6 +6,12 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 
 public interface WMSMethodMakerInterface {
+
+    /**
+     *
+     * @return the supported version
+     */
+    public String getSupportedVersion();
     /**
      * Generates a WMS method for making a GetCapabilities request
      * @param wmsUrl The WMS endpoint (will have any existing query parameters preserved)
@@ -19,7 +25,7 @@ public interface WMSMethodMakerInterface {
     /**
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      */
-    public boolean accepts(String wmsUrl);
+    public boolean accepts(String wmsUrl,String version);
 
 
 

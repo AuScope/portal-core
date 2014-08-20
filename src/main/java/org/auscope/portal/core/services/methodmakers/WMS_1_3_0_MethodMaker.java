@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -26,6 +27,7 @@ import org.auscope.portal.core.util.HttpUtil;
 public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMethodMakerInterface {
 
     HttpServiceCaller serviceCaller = null;
+    public static final String VERSION="1.3.0";
 
     public WMS_1_3_0_MethodMaker(HttpServiceCaller serviceCaller) {
         this.serviceCaller = serviceCaller;
@@ -289,7 +291,10 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      */
     @Override
-    public boolean accepts(String wmsUrl) {
+    public boolean accepts(String wmsUrl,String version) {
+        if(version != null && version.equals(this.getSupportedVersion())){
+            return true;
+        }
         try{
             List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
 
@@ -319,5 +324,10 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         InputStream response = serviceCaller.getMethodResponseAsStream(method);
 
         return new GetCapabilitiesRecord_1_3_0(response);
+    }
+
+    @Override
+    public String getSupportedVersion(){
+        return WMS_1_3_0_MethodMaker.VERSION;
     }
 }

@@ -109,7 +109,8 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                 HEIGHT : tileInfo.getHeight(),
                 INFO_FORMAT : 'application/vnd.ogc.gml/3.1.1',
                 SLD_BODY : sld_body,
-                postMethod : methodPost
+                postMethod : methodPost,
+                version : wmsOnlineResource.get('version')                
             },
             method : 'POST',//VT: potentially long sld_body forces us to use "POST" instead of "GET"
             callback : function(options, success, response) {

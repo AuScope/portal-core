@@ -26,10 +26,13 @@ import org.auscope.portal.core.util.HttpUtil;
 public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMakerInterface {
 
     HttpServiceCaller serviceCaller = null;
+    public static final String VERSION="1.1.1";
 
     public WMSMethodMaker(HttpServiceCaller serviceCaller) {
         this.serviceCaller = serviceCaller;
     }
+
+
 
     /**
      * Generates a WMS method for making a GetCapabilities request
@@ -276,7 +279,12 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      */
     @Override
-    public boolean accepts(String wmsUrl) {
+    public boolean accepts(String wmsUrl,String version) {
+        //VT: if version is already specified, just return
+        if(version != null && version.equals(this.getSupportedVersion())){
+            return true;
+        }
+
         try{
             List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
 
@@ -306,5 +314,10 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
         InputStream response = serviceCaller.getMethodResponseAsStream(method);
 
         return new GetCapabilitiesRecord_1_1_1(response);
+    }
+
+    @Override
+    public String getSupportedVersion(){
+        return WMSMethodMaker.VERSION;
     }
 }
