@@ -226,10 +226,14 @@ public class ServiceDownloadManager {
         }
 
         public void download(DownloadResponse response, String url) {
-            ServiceConfigurationItem serviceConfigurationItem = ServiceDownloadManager.this.serviceConfiguration.getServiceConfigurationItem(url);
+            if(ServiceDownloadManager.this.serviceConfiguration != null){
+                ServiceConfigurationItem serviceConfigurationItem = ServiceDownloadManager.this.serviceConfiguration.getServiceConfigurationItem(url);
 
-            if(serviceConfigurationItem != null && serviceConfigurationItem.doesPaging()){
-                this.downloadPaging(response, url);
+                if(serviceConfigurationItem != null && serviceConfigurationItem.doesPaging()){
+                    this.downloadPaging(response, url);
+                }else{
+                    this.downloadNormal(response, url);
+                }
             }else{
                 this.downloadNormal(response, url);
             }
