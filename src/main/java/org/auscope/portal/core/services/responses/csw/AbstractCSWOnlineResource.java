@@ -61,7 +61,12 @@ public abstract class AbstractCSWOnlineResource {
         /**
          * A CSW Service. e.g. a GeoNetwork /csw endpoint. Can be used a dummy resource for when you don't want to cache all CSW records on load.
          */
-        CSWService
+        CSWService,
+        
+        /**
+         * A NetCDF Subset Service.
+         */
+        NCSS
     }
 
     /**
@@ -130,6 +135,8 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.IRIS;
         } else if (lowerProtocol.contains("cswservice")) {
             return OnlineResourceType.CSWService;
+        } else if (lowerProtocol.contains("ncss")) {
+            return OnlineResourceType.NCSS;
         }
 
         return OnlineResourceType.Unsupported;

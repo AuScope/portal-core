@@ -30,6 +30,7 @@ Ext.define('portal.csw.OnlineResource', {
         UNSUPPORTED : 'Unsupported', //The backend doesn't recognise the type of service/protocol
         IRIS : 'IRIS', // IRIS web service
         CSWService : 'CSWService', // A CSW Service such as a GeoNetwork endpoint.
+        NCSS : 'NCSS', // A NetCDF Subset Service.
 
         /**
          * Utility for turning the various portal.csw.OnlineResource.* enums into an English readable string.
@@ -60,6 +61,8 @@ Ext.define('portal.csw.OnlineResource', {
                 return 'IRIS Web Service';
             case portal.csw.OnlineResource.CSWService:
                 return 'CSW Service';
+            case portal.csw.OnlineResource.NCSS:
+                return 'NetCDF Subset Service';
             default:
                 return null;
             }
