@@ -12,9 +12,19 @@ Ext.define('portal.util.FileDownloader', {
      * @param url The URL to download to
      * @param parameters [Optional] a javascript object containing parameter key value pairs to be posted. The values may consist of Javascript primitives or Arrays
      */
-    portal.util.FileDownloader.downloadFile = function(url, parameters) {
+    portal.util.FileDownloader.downloadFile = function(url, parameters, method) {
         //build our list of input children first
         var inputs = [];
+
+        if (typeof method === "undefined") {
+        	method = "POST"; 
+        }
+        if (method == "GET") {
+        	// Populate inputs from the url
+        	Ext.apply(parameters, Ext.urlDecode(url.split('?')[1]));
+        }
+       
+        
         if (parameters) {
             for (var key in parameters) {
                 if (!key) {
@@ -50,14 +60,12 @@ Ext.define('portal.util.FileDownloader', {
             tag : 'form',
             id : 'portal-form',
             target : 'portal-iframe',
-            method : 'POST',
+            method : method,
             children : inputs
         });
 
-
         portal.util.GoogleAnalytic.trackevent('FileDownloader','Download', url);
-
-        form.dom.action = url;
+        form.dom.action = url;	
         form.dom.submit();
     };
 });
