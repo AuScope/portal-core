@@ -31,6 +31,15 @@ public class PortalServiceException extends Exception {
     /**
      * Creates a new exception
      * @param rootMethod The method that was being run when this exception was thrown
+     * @param cause Root cause of this exception
+     */
+    public PortalServiceException(String message, Throwable cause) {
+        super(message,cause);
+    }
+
+    /**
+     * Creates a new exception
+     * @param rootMethod The method that was being run when this exception was thrown
      */
     public PortalServiceException(HttpRequestBase rootMethod) {
         super();
@@ -53,6 +62,17 @@ public class PortalServiceException extends Exception {
         super(errorMessage);
         this.errorCorrection = errorCorrection;
     }
+
+    /**
+     * Creates a new exception with the specified error and its correction messages
+     * @param errorMessage The error description
+     * @param errorCorrection The error correction description
+     */
+    public PortalServiceException(String errorMessage, String errorCorrection, Throwable cause) {
+        super(errorMessage,cause);
+        this.errorCorrection = errorCorrection;
+    }
+
 
     /**
      * Creates a new exception
@@ -89,4 +109,6 @@ public class PortalServiceException extends Exception {
     public String getErrorCorrection() {
         return errorCorrection;
     }
+
+
 }

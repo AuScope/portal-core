@@ -50,8 +50,8 @@ public class CSWFilterService {
      * @throws Exception
      */
     public CSWFilterService(Executor executor,
-                      HttpServiceCaller serviceCaller,
-                      ArrayList cswServiceList) {
+            HttpServiceCaller serviceCaller,
+            ArrayList cswServiceList) {
         this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory());
     }
 
@@ -65,9 +65,9 @@ public class CSWFilterService {
      * @throws Exception
      */
     public CSWFilterService(Executor executor,
-                      HttpServiceCaller serviceCaller,
-                      ArrayList cswServiceList,
-                      CSWRecordTransformerFactory transformerFactory) {
+            HttpServiceCaller serviceCaller,
+            ArrayList cswServiceList,
+            CSWRecordTransformerFactory transformerFactory) {
         this.executor = executor;
         this.serviceCaller = serviceCaller;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
@@ -170,7 +170,7 @@ public class CSWFilterService {
                 Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
                 responses.add(new CSWGetRecordResponse(origin, responseDoc, transformerFactory));
             } catch (Exception ex) {
-                throw new PortalServiceException(null, "Error parsing response document", ex);
+                throw new PortalServiceException("Error parsing response document", ex);
             }
 
         }

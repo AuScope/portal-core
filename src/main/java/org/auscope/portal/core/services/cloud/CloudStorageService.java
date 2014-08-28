@@ -58,14 +58,14 @@ public class CloudStorageService {
     private String provider;
     /** The URL endpoint for the cloud storage service*/
     private String endpoint;
-    
+
     /**
      * The bucket that this service will access - defaults to DEFAULT_BUCKET
      */
     private String bucket = DEFAULT_BUCKET;
 
     private BlobStoreContext blobStoreContext;
-    
+
     /**
      * Creates a new instance for connecting to the specified parameters
      * @param endpoint The URL endpoint for the cloud storage service
@@ -76,7 +76,7 @@ public class CloudStorageService {
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey) {
         this(endpoint, provider, accessKey, secretKey, null, false);
     }
-    
+
     /**
      * Creates a new instance for connecting to the specified parameters
      * @param endpoint The URL endpoint for the cloud storage service
@@ -88,7 +88,7 @@ public class CloudStorageService {
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, boolean relaxHostName) {
         this(endpoint, provider, accessKey, secretKey, null, relaxHostName);
     }
-    
+
     /**
      * Creates a new instance for connecting to the specified parameters
      * @param endpoint The URL endpoint for the cloud storage service
@@ -113,7 +113,7 @@ public class CloudStorageService {
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName, boolean relaxHostName) {
         this(endpoint, provider, accessKey, secretKey, regionName, relaxHostName, false);
     }
-        
+
     /**
      * Creates a new instance for connecting to the specified parameters
      * @param endpoint The URL endpoint for the cloud storage service
@@ -126,7 +126,7 @@ public class CloudStorageService {
      */
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName, boolean relaxHostName, boolean stripExpectHeader) {
         super();
-        
+
         this.endpoint = endpoint;
         this.provider = provider;
         this.accessKey = accessKey;
@@ -139,22 +139,22 @@ public class CloudStorageService {
             this.jobPrefix = "job-";
             log.error("Unable to lookup hostname. Defaulting prefix to " + this.jobPrefix, e);
         }
-        
+
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
-        
+
         if (regionName != null) {
             properties.setProperty("jclouds.region", regionName);
         }
-        
+
         this.blobStoreContext = ContextBuilder.newBuilder(provider)
                 .overrides(properties)
                 .endpoint(endpoint)
                 .credentials(accessKey, secretKey)
                 .build(BlobStoreContext.class);
     }
-    
+
     /**
      * Creates a new instance for connecting to the specified blob store. Please note that the
      * connection credentials will NOT be available via this instances get methods if this constructor
@@ -196,7 +196,7 @@ public class CloudStorageService {
     public String getEndpoint() {
         return endpoint;
     }
-    
+
     /**
      * Prefix to apply to any job files stored (will be appended with job id)
      * @return
@@ -276,7 +276,7 @@ public class CloudStorageService {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     /**
      * The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes due to limitations in JClouds.
      * @return
@@ -292,7 +292,7 @@ public class CloudStorageService {
     public void setRegionName(String regionName) {
         this.regionName = regionName;
     }
-    
+
     /**
      * Utility for allowing only whitelisted characters
      * @param s
@@ -311,7 +311,7 @@ public class CloudStorageService {
         String baseKey = String.format("%1$s%2$s-%3$010d", jobPrefix, job.getUser(), job.getId());
         return sanitise(baseKey);
     }
-    
+
     /**
      * Utility for generating the full path for a specific job file
      * @param job The job whose storage space will be queried for
@@ -370,10 +370,10 @@ public class CloudStorageService {
         } catch (Exception ex) {
             log.error(String.format("Unable to get job file '%1$s' for job %2$s:", key, job));
             log.debug("error:", ex);
-            throw new PortalServiceException(null, "Error retriving output file details", ex);
+            throw new PortalServiceException("Error retriving output file details", ex);
         }
     }
-    
+
     /**
      * Gets information about every file in the job's cloud storage space
      * @param job The job whose storage space will be queried
@@ -381,12 +381,12 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public CloudFileInformation[] listJobFiles(CloudJob job) throws PortalServiceException {
-        
-        
+
+
         try {
             BlobStore bs = blobStoreContext.getBlobStore();
             String baseKey = generateBaseKey(job);
-            
+
             //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
             PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucket, ListContainerOptions.Builder.inDirectory(baseKey));
             String nextMarker = null;
@@ -397,7 +397,7 @@ public class CloudStorageService {
                             .inDirectory(baseKey)
                             .afterMarker(nextMarker));
                 }
-                
+
                 //Turn our StorageMetadata objects into simpler CloudFileInformation objects
                 for (StorageMetadata md : currentMetadataPage) {
                     long fileSize = 1L;
@@ -410,16 +410,16 @@ public class CloudStorageService {
                     }
                     jobFiles.add(new CloudFileInformation(md.getName(), fileSize, md.getUri().toString()));
                 }
-                
+
                 nextMarker = currentMetadataPage.getNextMarker();
             } while(nextMarker != null);
-            
+
             return jobFiles.toArray(new CloudFileInformation[jobFiles.size()]);
         } catch (Exception ex) {
             log.error("Unable to list files for job:" + job.toString());
             log.debug("error:", ex);
-            throw new PortalServiceException(null, "Error retriving output file details", ex);
-        } 
+            throw new PortalServiceException("Error retriving output file details", ex);
+        }
     }
 
     /**
@@ -429,18 +429,18 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public void uploadJobFiles(CloudJob job, File[] files) throws PortalServiceException {
-        
+
         try {
             BlobStore bs = blobStoreContext.getBlobStore();
-            
+
             for (File file : files) {
-                
+
                 Blob newBlob = bs.blobBuilder(keyForJobFile(job, file.getName()))
                         .payload(file)
                         .build();
-                
+
                 bs.putBlob(bucket, newBlob);
-                
+
                 log.debug(file.getName() + " uploaded to '" + bucket + "' container");
             }
         } catch (AuthorizationException ex) {
@@ -452,7 +452,7 @@ public class CloudStorageService {
         } catch (Exception ex) {
             log.error("Unable to upload files for job: " + job, ex);
             throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to storage.", "Please report it to cg-admin@csiro.au.");
-        } 
+        }
     }
 
     /**
@@ -466,7 +466,7 @@ public class CloudStorageService {
             bs.deleteDirectory(bucket, jobToBaseKey(job));
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
-            throw new PortalServiceException(null, "An unexpected error has occurred while removing job files from S3 storage", ex);
+            throw new PortalServiceException("An unexpected error has occurred while removing job files from S3 storage", ex);
         }
     }
 }

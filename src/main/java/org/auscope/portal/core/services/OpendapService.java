@@ -46,7 +46,7 @@ public class OpendapService {
         } catch (IOException ex) {
             log.info(String.format("Error connecting to '%1$s'", serviceUrl));
             log.debug("Exception...", ex);
-            throw new PortalServiceException(null, String.format("Error connecting to '%1$s'", serviceUrl), ex);
+            throw new PortalServiceException(String.format("Error connecting to '%1$s'", serviceUrl), ex);
         }
     }
 
@@ -65,7 +65,7 @@ public class OpendapService {
             return ViewVariableFactory.fromNetCDFDataset(ds, variableFilter);
         } catch (IOException ex) {
             log.error(String.format("Error parsing from '%1$s'", serviceUrl), ex);
-            throw new PortalServiceException(null, String.format("Error parsing to '%1$s'", serviceUrl), ex);
+            throw new PortalServiceException(String.format("Error parsing to '%1$s'", serviceUrl), ex);
         }
     }
 
