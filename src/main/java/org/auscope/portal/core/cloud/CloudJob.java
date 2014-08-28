@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 /**
  * Base class representing the base state of a job that is sent to the
  * cloud for processing.
@@ -55,12 +56,14 @@ public class CloudJob implements Serializable {
     protected String storageServiceId;
 
 
+
     /**
      * Creates a new cloud job will null entries for every field
      */
     protected CloudJob() {
         super();
     }
+
 
     /**
      * Creates a new cloud job with the following fields
@@ -182,7 +185,7 @@ public class CloudJob implements Serializable {
     public void setProcessDate(Date processDate) {
         this.processDate = processDate;
     }
-    
+
     /**
      * date/time when this job was submitted (expects a date in the format CloudJob.DATE_FORMAT)
      *

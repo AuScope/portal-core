@@ -60,7 +60,7 @@ public class FileStagingService {
         if (p1.endsWith(File.separator) && p2.startsWith(File.separator)) {
             return p1 + p2.substring(1);
         } else if ((!p1.endsWith(File.separator) && p2.startsWith(File.separator)) ||
-                    (p1.endsWith(File.separator) && !p2.startsWith(File.separator))) {
+                (p1.endsWith(File.separator) && !p2.startsWith(File.separator))) {
             return p1 + p2;
         } else {
             return p1 + File.separator + p2;
@@ -187,7 +187,7 @@ public class FileStagingService {
             }
             return fis;
         } catch (Exception e) {
-            throw new PortalServiceException(null, e.getMessage(), e);
+            throw new PortalServiceException(e.getMessage(), e);
         }
     }
 
@@ -230,7 +230,7 @@ public class FileStagingService {
         try {
             return new FileOutputStream(f, append);
         } catch (Exception e) {
-            throw new PortalServiceException(null, e.getMessage(), e);
+            throw new PortalServiceException(e.getMessage(), e);
         }
     }
 
@@ -265,7 +265,7 @@ public class FileStagingService {
         } catch (Exception ex) {
             logger.error("Failure during transfer:" + ex.getMessage());
             logger.debug("error:", ex);
-            throw new PortalServiceException(null, "Failure during transfer", ex);
+            throw new PortalServiceException("Failure during transfer", ex);
         }
 
         return new StagedFile(job, originalFileName, destination);
@@ -327,7 +327,7 @@ public class FileStagingService {
         } catch (IOException ex) {
             logger.error("Failure during download:" + ex.getMessage());
             logger.debug("error:", ex);
-            throw new PortalServiceException(null, "Failure during transfer", ex);
+            throw new PortalServiceException("Failure during transfer", ex);
         } finally {
             FileIOUtil.closeQuietly(fin);
         }
