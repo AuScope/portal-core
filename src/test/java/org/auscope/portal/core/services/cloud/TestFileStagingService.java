@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -276,6 +278,38 @@ public class TestFileStagingService extends PortalTestClass {
         assertStagedDirectory(job, false);
     }
 
+    /**
+     * Tests that multi-file uploads can be handled
+     * @throws Exception
+     */
+    @Test
+    public void testMultiFileUpload() throws Exception {
+        final MultipartHttpServletRequest request = context.mock(MultipartHttpServletRequest.class);
+        final MultipartFile file = context.mock(MultipartFile.class);
+        final String fileName = "myFileName";
+        final ArrayList<MultipartFile> files = new ArrayList<MultipartFile>();
+        files.add(file);
+        files.add(file);
+        
+        context.checking(new Expectations() {{
+            oneOf(request).getFiles("file");will(returnValue(files));
+            exactly(2).of(file).getOriginalFilename();will(returnValue(fileName));
+            exactly(2).of(file).transferTo(with(aFileWithName(fileName)));
+        }});
+
+        service.generateStageInDirectory(job);
+
+        //"Upload" the file and check it gets created
+        List<StagedFile> newlyStagedFiles = service.handleMultiFileUpload(job, request);
+        Assert.assertNotNull(newlyStagedFiles);
+        Assert.assertEquals(files.size(), newlyStagedFiles.size());
+        Assert.assertEquals(job, newlyStagedFiles.get(0).getOwner());
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+    }
+    
+    
     /**
      * Tests that file downloads are handled correctly
      * @throws Exception

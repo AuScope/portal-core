@@ -6,6 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,7 +62,7 @@ public class FileStagingService {
         if (p1.endsWith(File.separator) && p2.startsWith(File.separator)) {
             return p1 + p2.substring(1);
         } else if ((!p1.endsWith(File.separator) && p2.startsWith(File.separator)) ||
-                (p1.endsWith(File.separator) && !p2.startsWith(File.separator))) {
+                    (p1.endsWith(File.separator) && !p2.startsWith(File.separator))) {
             return p1 + p2;
         } else {
             return p1 + File.separator + p2;
@@ -233,24 +235,20 @@ public class FileStagingService {
             throw new PortalServiceException(e.getMessage(), e);
         }
     }
-
-    /**
-     * Given a MultipartHttpServletRequest with an internal file parameter, write that
-     * file to the staging directory of the specified job
-     *
-     * returns a FileInfo object describing the file on the file system
-     *
-     * @param job Must have its fileStorageId parameter set
-     * @param request
-     * @throws IOException
-     */
-    public StagedFile handleFileUpload(CloudJob job, MultipartHttpServletRequest request) throws PortalServiceException {
-        MultipartFile f = request.getFile("file");
-        if (f == null) {
-            throw new PortalServiceException("No file parameter provided.");
-        }
-
-        String originalFileName = f.getOriginalFilename();
+    
+    
+	/**
+	 * Upload files to the staging directory of the specified job.
+	 * Helper function for code deduplication 
+	 * 
+	 * @param job
+	 * @param f
+	 * @return
+	 * @throws PortalServiceException
+	 */
+	private StagedFile fileUploadHelper(CloudJob job, MultipartFile f)
+			throws PortalServiceException {
+		String originalFileName = f.getOriginalFilename();
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
         String destinationPath = pathConcat(directory, originalFileName);
         logger.debug("Saving uploaded file to " + destinationPath);
@@ -269,8 +267,61 @@ public class FileStagingService {
         }
 
         return new StagedFile(job, originalFileName, destination);
+	}
+
+	
+    /**
+     * Given a MultipartHttpServletRequest with an internal file parameter, write that
+     * file to the staging directory of the specified job
+     *
+     * returns a FileInfo object describing the file on the file system
+     *
+     * @param job Must have its fileStorageId parameter set
+     * @param request
+     * @throws PortalServiceException
+     */
+    public StagedFile handleFileUpload(CloudJob job, MultipartHttpServletRequest request) throws PortalServiceException {
+        MultipartFile f = request.getFile("file");
+        if (f == null) {
+            throw new PortalServiceException("No file parameter provided.");
+        }
+
+        return fileUploadHelper(job, f);
     }
 
+
+    /**
+     * Given a MultipartHttpServletRequest with an internal file parameter for several files, write that
+     * files to the staging directory of the specified job
+     *
+     * returns a List of FileInfo objects describing the file on the file system
+     *
+     * @param job Must have its fileStorageId parameter set
+     * @param request
+     * @throws IOException
+     */
+    public List<StagedFile> handleMultiFileUpload(CloudJob job, MultipartHttpServletRequest request) throws PortalServiceException {
+
+    	List<StagedFile> result = new ArrayList<StagedFile>();
+    	
+        List<MultipartFile> files = request.getFiles("file");
+        if (files == null) {
+            throw new PortalServiceException("No file parameter provided.");
+        }
+                
+        if(null != files && files.size() > 0) {
+            for (MultipartFile multipartFile : files) {
+                result.add(fileUploadHelper(job, multipartFile));
+            }
+        } else {
+             throw new PortalServiceException("No file parameter provided.");            
+        }
+
+        return result;
+    }
+
+    
+    
     /**
      * This function will attempt to download fileName from job's staging directory by writing
      * directly to the output stream of response.
