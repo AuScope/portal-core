@@ -253,18 +253,18 @@
         <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>            
-			<url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/osgeo/</url>
+			<url>http://download.osgeo.org/webdav/geotools</url>
         </repository>
         <repository>
             <id>geotoolkit</id>
             <name>Geo Toolkit Repository</name>
-            <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/geotoolkit/</url>
+            <url>http://maven.geotoolkit.org/</url>
         </repository>
         <!-- This is only for the temporary usage of JClouds snapshots-->
         <repository>
             <id>apache-snapshots</id>
             <name>snapshots apache maven repo</name>
-            <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/apache-snapshots/</url>
+            <url>https://repository.apache.org/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
