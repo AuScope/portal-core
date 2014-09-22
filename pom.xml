@@ -4,7 +4,7 @@
     <groupId>org.auscope.portal</groupId>
     <artifactId>portal-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.0-SNAPSHOT</version>
+    <version>0.0.0-TEST</version>
     <name>Portal-Core</name>
     <description>Core functionality common to various AuScope portals.</description>
     <url>http://portal.auscope.org</url>
