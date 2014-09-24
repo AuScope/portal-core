@@ -55,11 +55,11 @@ public class TestCSWCacheService extends PortalTestClass {
 
         this.threadExecutor = new BasicThreadExecutor();
 
-          //Create our service list
-          ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
-          for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
-              serviceUrlList.add(new CSWServiceItem(String.format("id:%1$s", i + 1) ,String.format(serviceUrlFormatString, i + 1)));
-          }
+        //Create our service list
+        ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
+        for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
+            serviceUrlList.add(new CSWServiceItem(String.format("id:%1$s", i + 1) ,String.format(serviceUrlFormatString, i + 1)));
+        }
 
         this.cswCacheService = new CSWCacheService(threadExecutor, httpServiceCaller, serviceUrlList);
     }
@@ -280,16 +280,16 @@ public class TestCSWCacheService extends PortalTestClass {
             will(returnValue(t1r1));
 
             //Thread 2 will error
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             will(throwException(new ConnectException()));
 
             //Thread 3 will make 2 requests
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             will(throwException(new ConnectException()));
         }});
 
         //Start our updating and wait for our threads to finish
-        Assert.assertTrue(this.cswCacheService.updateCache());
+        Assert.assertTrue(this.cswCacheService.updateCache(3,2000));
         Thread.sleep(50);
         try {
             threadExecutor.getExecutorService().shutdown();
@@ -339,16 +339,16 @@ public class TestCSWCacheService extends PortalTestClass {
             will(returnValue(t1r1));
 
             //Thread 2 will error
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             will(throwException(new ConnectException()));
 
             //Thread 3 will error
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             will(throwException(new ConnectException()));
         }});
 
         //Start our updating and wait for our threads to finish
-        Assert.assertTrue(this.cswCacheService.updateCache());
+        Assert.assertTrue(this.cswCacheService.updateCache(3,2000));
         Thread.sleep(50);
         try {
             threadExecutor.getExecutorService().shutdown();
@@ -403,16 +403,16 @@ public class TestCSWCacheService extends PortalTestClass {
             will(returnValue(t1r1));
 
             //Thread 2 will error
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             will(throwException(new ConnectException()));
 
             //Thread 3 will error
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             will(throwException(new ConnectException()));
         }});
 
         //Start our updating and wait for our threads to finish
-        Assert.assertTrue(this.cswCacheService.updateCache());
+        Assert.assertTrue(this.cswCacheService.updateCache(3,2000));
         Thread.sleep(50);
         try {
             threadExecutor.getExecutorService().shutdown();
@@ -445,16 +445,16 @@ public class TestCSWCacheService extends PortalTestClass {
             will(returnValue(t1r1));
 
             //Thread 2 will make a single request
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             will(throwException(new ConnectException()));
 
             //Thread 3 will make a single request
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             will(throwException(new ConnectException()));
         }});
 
         //Start our updating and wait for our threads to finish
-        Assert.assertTrue(this.cswCacheService.updateCache());
+        Assert.assertTrue(this.cswCacheService.updateCache(3,2000));
         Thread.sleep(50);
         try {
             threadExecutor.getExecutorService().shutdown();
@@ -539,7 +539,7 @@ public class TestCSWCacheService extends PortalTestClass {
         //Ensure that our internal state is set to NOT RUNNING AN UPDATE
         Assert.assertFalse(this.cswCacheService.updateRunning);
     }
-    
+
     /**
      * Tests that getting a parent and child on different CSW pages will still result in the parent/child
      * being preserved
@@ -568,18 +568,18 @@ public class TestCSWCacheService extends PortalTestClass {
             will(returnValue(t1r2));
 
             //Thread 2 will just fail
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 2), null)));
             inSequence(t2Sequence);
             will(throwException(new ConnectException()));
 
             //Thread 3 will just fail
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
+            exactly(3).of(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(HttpMethodType.POST, String.format(serviceUrlFormatString, 3), null)));
             inSequence(t3Sequence);
             will(throwException(new ConnectException()));
         }});
 
         //Start our updating and wait for our threads to finish
-        Assert.assertTrue(this.cswCacheService.updateCache());
+        Assert.assertTrue(this.cswCacheService.updateCache(3,2000));
         Thread.sleep(50);
         try {
             threadExecutor.getExecutorService().shutdown();
@@ -593,7 +593,7 @@ public class TestCSWCacheService extends PortalTestClass {
         List<CSWRecord> records = cswCacheService.getRecordCache();
         Assert.assertNotNull(records);
         Assert.assertEquals(2, records.size());
-        
+
         CSWRecord parent = null;
         CSWRecord child = null;
         for (CSWRecord rec : records) {
@@ -606,7 +606,7 @@ public class TestCSWCacheService extends PortalTestClass {
         }
         Assert.assertNotNull(parent);
         Assert.assertNotNull(child);
-        
+
         Assert.assertEquals(1, parent.getChildRecords().length);
         Assert.assertSame(child, parent.getChildRecords()[0]);
     }
