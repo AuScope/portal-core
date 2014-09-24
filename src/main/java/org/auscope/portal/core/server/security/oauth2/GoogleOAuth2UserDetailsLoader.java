@@ -27,8 +27,8 @@ import com.racquettrack.security.oauth.OAuth2UserDetailsLoader;
 public class GoogleOAuth2UserDetailsLoader implements
         OAuth2UserDetailsLoader<PortalUser> {
 
-    private String defaultRole;
-    private Map<String, List<SimpleGrantedAuthority>> rolesByUser;
+    protected String defaultRole;
+    protected Map<String, List<SimpleGrantedAuthority>> rolesByUser;
 
     /**
      * Creates a new GoogleOAuth2UserDetailsLoader that will assign defaultRole to every user
