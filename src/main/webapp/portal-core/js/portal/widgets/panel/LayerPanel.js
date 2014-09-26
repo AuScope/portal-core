@@ -30,6 +30,14 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 }
             }, this)
         });
+        
+        
+        this.downloadLayerAction = new Ext.Action({
+            text : 'Download Layer',
+            iconCls : 'download',
+            handler : Ext.bind(this._downloadClickHandler,this)
+        });
+        
 
         Ext.apply(cfg, {
             columns : [{
@@ -85,8 +93,16 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 dataIndex : 'renderer',
                 width : 32,
                 renderer : this._downloadRenderer,
-                listeners : {
-                    columnclick : Ext.bind(this._downloadClickHandler, this)
+                listeners : {                                                            
+                    columnclick : function( column, record, recordIndex, cellIndex, e){
+                        var menu = Ext.create('Ext.menu.Menu', {
+                            items: [
+                                    me.removeAction,
+                                    me.downloadLayerAction
+                                    ]                
+                        });
+                        menu.showAt(e.getXY());
+                    }
                 }
             }],
             plugins: [{
@@ -99,7 +115,10 @@ Ext.define('portal.widgets.panel.LayerPanel', {
             },{
                 ptype : 'rowcontextmenu',
                 contextMenu : Ext.create('Ext.menu.Menu', {
-                    items: [this.removeAction]
+                    items: [
+                            this.removeAction,
+                            this.downloadLayerAction
+                            ]                
                 })
             }],
 
@@ -118,12 +137,8 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                         }
                     }
                 }
-            },
-
-
-
-
-            bbar: [this.removeAction]
+            }
+           
         });
 
         this.callParent(arguments);
@@ -170,8 +185,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
      * Renderer for download column
      */
     _downloadRenderer : function(value, metaData, record, row, col, store, gridView) {
-        var downloader = record.get('downloader');
-        if (value.getHasData() && downloader) { //value is a portal.layer.renderer.Renderer
+      
             return Ext.DomHelper.markup({
                 tag : 'a',
                 href : 'javascript: void(0)',
@@ -179,22 +193,10 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                     tag : 'img',
                     width : 16,
                     height : 16,
-                    src: 'img/download.png'
+                    src: 'img/setting.png'
                 }]
             });
-        } else {
-            return Ext.DomHelper.markup({
-                tag : 'a',
-                href : 'javascript: void(0)',
-                children : [{
-                    tag : 'img',
-                    title : 'Layer not ready for download, render the layer on the map first',
-                    width : 16,
-                    height : 16,
-                    src: 'portal-core/img/download_disable.png'
-                }]
-            });
-        }
+      
     },
 
     /**
@@ -260,7 +262,8 @@ Ext.define('portal.widgets.panel.LayerPanel', {
     /**
      * Raised whenever the download column is clicked
      */
-    _downloadClickHandler : function(column, layer, rowIndex, colIndex) {
+    _downloadClickHandler : function() {
+        var layer = this.getSelectionModel().getSelection()[0];
         var downloader = layer.get('downloader');
         var renderer = layer.get('renderer');
         if (downloader && renderer.getHasData()) {

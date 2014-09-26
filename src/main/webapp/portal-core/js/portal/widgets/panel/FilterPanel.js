@@ -143,7 +143,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         //Disable the filter and reset buttons (set to default values)
         //this._filterButton.setDisabled(true);
-        this._resetButton.setDisabled(true);
+        //this._resetButton.setDisabled(true);
 
         //Close active item to prevent memory leak
         var actvItem = layout.getActiveItem();

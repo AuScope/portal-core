@@ -46,7 +46,7 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
             var record = view.panel.store.getAt(recordIndex);
 
             // cancel selection.
-            return this.fireEvent('columnclick', this, record, recordIndex, cellIndex);
+            return this.fireEvent('columnclick', this, record, recordIndex, cellIndex,e);
         } else if (type === 'dblclick') {
             var record = view.panel.store.getAt(recordIndex);
             return this.fireEvent('columndblclick', this, record, recordIndex, cellIndex);
