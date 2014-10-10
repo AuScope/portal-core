@@ -50,10 +50,12 @@ Ext.define('portal.layer.Layer', {
 
     onRenderStarted : function(renderer, onlineResources, filterer) {
         this.set('loading', true);
+        this.get('source').set('loading', true);
     },
 
     onRenderFinished : function(renderer) {
         this.set('loading', false);
+        this.get('source').set('loading', false);
     },
 
     /**
@@ -61,13 +63,9 @@ Ext.define('portal.layer.Layer', {
      */
     onVisibilityChanged : function(renderer, newVisibility) {
         if (newVisibility) {
-            this.visible=true;
-            //including a fourth paramenter to displayData to capture what event caused the renderer to display because if it is
-            //just a visibility change event, our renderer should stop some popup from showing. eg UncachedCSWServiceRenderer
-            if(this.get('displayed')==false){
-                Ext.Msg.alert('Alert', 'Click on "Show Results" to display');
-                return;
-            }
+            this.visible=true; 
+            renderer.removeData();
+            renderer.map.closeInfoWindow(this.get('id'));    
             renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn, 'visibilityChange');
         } else {
             this.visible=false;
@@ -81,14 +79,11 @@ Ext.define('portal.layer.Layer', {
      * Whenever our filter changes, update the rendered page
      */
     onFilterChanged : function(filterer, keys) {
-        var renderer = this.get('renderer');
-        if (renderer.getVisible()) {
-            renderer.removeData();
-            renderer.map.closeInfoWindow(this.get('id'));
-            if(this.get('displayed')==true){
-                renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
-            }
-        }
+        var renderer = this.get('renderer');       
+        renderer.removeData();
+        renderer.map.closeInfoWindow(this.get('id'));            
+        renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);            
+       
     },
 
     getCSWRecordsByKeywords : function(keyword){

@@ -28,7 +28,9 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'date' , type:'date', convert: function(dateString) {
             return new Date(Date.parse(dateString.replace(' UTC', '')));
         }},//The date of this CSWRecord
-        { name: 'layer', type: 'auto'} // store the layer after it has been converted.
+        { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
+        { name: 'layer', type: 'auto'}, // store the layer after it has been converted.
+        { name: 'visible', type: 'boolean', defaultValue: false }//Whether this layer is set to visible or not, this is tied to the UI
     ],
 
     /**

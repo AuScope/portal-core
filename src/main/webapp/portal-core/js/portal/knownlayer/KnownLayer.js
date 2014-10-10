@@ -27,7 +27,9 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'iconSize', type: 'auto' }, //An object containing width,height for the pixel size of the icon
         { name: 'cswRecords', convert: portal.csw.CSWRecordType.convert}, //a set of portal.csw.CSWRecord objects that belong to this KnownLayer grouping
         { name: 'relatedRecords', convert: portal.csw.CSWRecordType.convert},// a set of portal.csw.CSWRecord objects that relate to this knownlayer
-        { name: 'layer', type: 'auto'} // store the layer after it has been converted.
+        { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
+        { name: 'layer', type: 'auto'}, // store the layer after it has been converted.
+        { name: 'visible', type: 'boolean', defaultValue: false }//Whether this layer is set to visible or not. This is tied to the UI
     ],
 
     /**

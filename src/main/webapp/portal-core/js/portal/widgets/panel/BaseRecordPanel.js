@@ -35,6 +35,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         this.listeners = cfg.listeners;
 
         Ext.apply(cfg, {
+            cls : 'auscope-dark-grid',
             hideHeaders : true,
             features : [groupingFeature],
             viewConfig : {
@@ -60,6 +61,43 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 }]
             }],
             columns : [{
+                //Visibility column
+                xtype : 'renderablecheckcolumn',
+                text : 'Visible',
+                //disabled : true,
+                dataIndex : 'visible',  
+                getCustomValueBool : function(header, checked, record) {
+                    var layer = record.get('layer')
+                    if(layer){
+                        return layer.get('renderer').getVisible();
+                    }else{
+                        return false;
+                    }
+                },
+                setCustomValueBool : function(header, checked, record) {
+                    //update our bbox silently before updating visibility
+                    var layer = record.get('layer')
+                    if (checked) {
+                        var filterer = layer.get('filterer');
+                        filterer.setSpatialParam(me.map.getVisibleMapBounds(), true);
+                        layer.get('renderer').setVisible(checked);
+                    }                                        
+                   return checked;
+                    
+                },
+                width : 40
+            },{
+                //Loading icon column
+                xtype : 'clickcolumn',
+                dataIndex : 'loading',
+                renderer : this._loadingRenderer,
+                hasTip : true,
+                tipRenderer : Ext.bind(this._loadingTipRenderer, this),
+                width: 32,
+                listeners : {
+                    columnclick : Ext.bind(this._loadingClickHandler, this)
+                }
+            },{
                 //Title column
                 text : 'Title',
                 dataIndex : 'name',
@@ -93,29 +131,25 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     columndblclick : Ext.bind(this._spatialBoundsDoubleClickHandler, this)
                 }
             }],
-            plugins: [{
-                ptype: 'rowexpander',
-                rowBodyTpl : [
-                    '<p>{description}</p><br>'
-                ]
-            },{
-                ptype: 'celltips'
-            }],
+          plugins:[{                
+              ptype : 'rowexpandercontainer',
+              generateContainer : function(record, parentElId) {
+                  var newLayer=null;
+                  if(record instanceof portal.csw.CSWRecord){                        
+                      newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);
+                  }else{
+                      newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);
+                  }           
+                  record.set('layer',newLayer);            
+                  var filterForm = newLayer ? newLayer.get('filterForm') : null;                                    
+                  var filterPanel = Ext.bind(me._getInlineLayerPanel(filterForm, parentElId), this) ;                     
+                  return filterPanel;
+             }
+         },{
+          ptype: 'celltips'
+         }],
             buttonAlign : 'right',
             bbar: [{
-                text:'Add Layer to Map',
-                tooltip:'Add Layer to Map',
-                hidden : true,
-                iconCls:'add',
-                handler: function(btn) {
-                    var grid = btn.findParentByType('baserecordpanel');
-                    var sm = grid.getSelectionModel();
-                    var selectedRecords = sm.getSelection();
-                    if (selectedRecords && selectedRecords.length > 0) {
-                        grid.fireEvent('addlayerrequest', this, selectedRecords[0]); //we only support single selection
-                    }
-                }
-            },{
                 xtype: 'tbfill'
             },{
 
@@ -165,22 +199,20 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
         this.callParent(arguments);
     },
-
-    /**
-     * returns true if selection is found on the layer and false if not.
-     */
-    addSelectedLayerToActive : function (){
-        var grid = this;
-        var sm = grid.getSelectionModel();
-        var selectedRecords = sm.getSelection();
-        if (selectedRecords && selectedRecords.length > 0) {
-            selectedRecords[0].get('layer').set('displayed',true);
-            grid.fireEvent('addlayerrequest', this, selectedRecords[0]); //we only support single selection
-            return true;
-        }else{
-            return false;
-        }
+    
+    
+    _getInlineLayerPanel : function(filterForm, parentElId){                             
+             
+        var panel =Ext.create('portal.widgets.panel.FilterPanel', {            
+            filterForm  : filterForm,                       
+            map         : this.map,
+            renderTo    : parentElId           
+        });   
+        
+        return panel
     },
+
+ 
 
     handleFilterSelectComplete : function(filteredResultPanels){
         var me = this;
@@ -482,6 +514,76 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         }else{
             customize.hide();
         }
+    },   
+    
+    /**
+     * Renderer for the loading column
+     */
+    _loadingRenderer : function(value, metaData, record, row, col, store, gridView) {
+        if (value) {
+            return Ext.DomHelper.markup({
+                tag : 'img',
+                width : 16,
+                height : 16,
+                src: 'img/loading.gif'
+            });
+        } else {
+            return Ext.DomHelper.markup({
+                tag : 'img',
+                width : 16,
+                height : 16,
+                src: 'img/notloading.gif'
+            });
+        }
+    },
+    
+    /**
+     * A renderer for generating the contents of the tooltip that shows when the
+     * layer is loading
+     */
+    _loadingTipRenderer : function(value, record, column, tip) {
+        var layer = record.get('layer');
+        if(!layer){//VT:The layer has yet to be created.
+            return;
+        }
+        var renderer = layer.get('renderer');
+        var update = function(renderStatus, keys) {
+            tip.update(renderStatus.renderHtml());
+        };
+
+        //Update our tooltip as the underlying status changes
+        renderer.renderStatus.on('change', update, this);
+        tip.on('hide', function() {
+            renderer.renderStatus.un('change', update); //ensure we remove the handler when the tip closes
+        });
+
+        return renderer.renderStatus.renderHtml();
+    },
+    
+    _loadingClickHandler : function(value, record, column, tip) {
+        
+        var layer = record.get('layer');
+        
+        var html = '<p>No Service recorded, Click on Add layer to map</p>';    
+        
+        if(layer){
+            var renderer = layer.get('renderer');
+            html =  renderer.renderStatus.renderHtml();
+        }        
+        var win = Ext.create('Ext.window.Window', {
+            title: 'Service Loading Status',
+            height: 200,
+            width: 500,
+            layout: 'fit',
+            items: {  // Let's put an empty grid in just to illustrate fit layout
+                xtype: 'panel',
+                autoScroll : true,                
+                html : html
+            }
+        });
+        
+        win.show();
     }
+  
 
 });

@@ -92530,7 +92530,13 @@ Ext.define('Ext.view.Table', {
             index = me.store.indexOf(record);
             columns = me.headerCt.getGridColumns();
             overItemCls = me.overItemCls;
-
+            focusedItemCls = me.focusedItemCls;
+            beforeFocusedItemCls = me.beforeFocusedItemCls;
+            selectedItemCls = me.selectedItemCls;
+            beforeSelectedItemCls = me.beforeSelectedItemCls;
+            
+            
+            
             
             
             if (columns.length && index > -1) {
@@ -92539,6 +92545,22 @@ Ext.define('Ext.view.Table', {
                 if (oldRow) {
                     oldRowDom = oldRow.dom;
                     isHovered = oldRow.hasCls(overItemCls);
+                    
+                    if (oldRow.hasCls(overItemCls)) {
+                        Ext.fly(newRow).addCls(overItemCls);
+                    }
+                    if (oldRow.hasCls(focusedItemCls)) {
+                        Ext.fly(newRow).addCls(focusedItemCls);
+                    }
+                    if (oldRow.hasCls(beforeFocusedItemCls)) {
+                        Ext.fly(newRow).addCls(beforeFocusedItemCls);
+                    }
+                    if (oldRow.hasCls(selectedItemCls)) {
+                        Ext.fly(newRow).addCls(selectedItemCls);
+                    }
+                    if (oldRow.hasCls(beforeSelectedItemCls)) {
+                        Ext.fly(newRow).addCls(beforeSelectedItemCls);
+                    }
 
                     
                     if (oldRowDom.mergeAttributes) {

@@ -5,27 +5,16 @@
  * as it is in charge of displayed appropriate filter forms matching the current
  * selection
  *
- * Events : filterselectioncomplete : trigger when the user have finished filter selection.
- *
+ * VT: THIS CLASS IS TO BE DELETED WITH THE NEW INLINE UI
  */
 Ext.define('portal.widgets.panel.FilterPanel', {
     extend: 'Ext.Panel',
 
-    /**
-     * Easy reference to the 'Apply Filter' button
-     */
-    _filterButton : null,
+   
+    _addLayerButton : null,
 
-    /**
-     * Easy reference to the 'Reset' button
-     */
-    _resetButton : null,
-
-    /**
-     * Reference to the layer panel
-     */
-    _layerPanel : null,
-
+    filterForm : null,
+    
     /**
      * Accepts all parameters for a normal Ext.Panel instance with the following additions
      * {
@@ -33,41 +22,49 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * }
      */
     constructor : function(config) {
-        this._layerPanel = config.layerPanel;
+ 
         this._map = config.map;
-        this.addEvents('filterselectioncomplete');
-        var emptyCard = Ext.create('portal.layer.filterer.forms.EmptyFilterForm', {}); //show this
-        this._filterButton = Ext.create('Ext.button.Button', {
-            text :'Add to Map',
-            disabled : false,
-            overCls : 'showResultsOverStyle',
-            handler : Ext.bind(this._onApplyFilter, this)
+        this.filterForm = config.filterForm;
+        
+        this._addLayerButton = Ext.create('Ext.button.Button', {
+            xtype : 'button',
+            text      : 'Add layer to Map',
+            iconCls    :   'add',
+            handler : Ext.bind(this._onAddLayer, this)
         });
+         
 
-        this._resetButton = Ext.create('Ext.button.Button', {
-            text :'Reset Filter',
-            iconCls:'refresh',
-            disabled : false,
-            handler : Ext.bind(this._onResetFilter, this)
-        });
-
-        Ext.apply(config, {
-            layout : 'card',
-            buttonAlign : 'right',
-            items : [emptyCard],
-            bbar: [ this._filterButton, '->', this._resetButton ]
+        Ext.apply(config, { 
+            items : [
+                this.filterForm
+            ],
+            buttons : [
+                this._addLayerButton,
+            {
+                xtype:'tbfill'
+            },{
+                xtype : 'button',
+                text      : 'Access options',
+                iconCls    :   'setting',
+                arrowAlign: 'right',
+                menu      : [
+                    {text: 'Item 1'},
+                    {text: 'Item 2'},
+                    {text: 'Item 3'},
+                    {text: 'Item 4'}
+                ]               
+            }]
+        
         });
 
         this.callParent(arguments);
 
-        this._layerPanel.on('select', this._onLayerPanelSelect, this);
+ 
 
 
     },
 
-    _onLayerPanelSelect : function(sm, layer, index) {
-        this.showFilterForLayer(layer);
-    },
+
 
     /**
      * Internal handler for when the user clicks 'Apply Filter'.
@@ -75,16 +72,39 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Simply updates the appropriate layer filterer. It's the responsibility
      * of renderers/layers to listen for filterer updates.
      */
-    _onApplyFilter : function() {
-        this.fireEvent('filterselectioncomplete');
+    _onAddLayer : function() {      
+        var layer = this.filterForm.layer; 
+        var filterer = layer.get('filterer');      
 
-        var baseFilterForm = this.getLayout().getActiveItem();
-        var filterer = baseFilterForm.layer.get('filterer');
+        this._showConstraintWindow(layer);
 
         //Before applying filter, update the spatial bounds (silently)
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
 
-        baseFilterForm.writeToFilterer(filterer);
+        this.filterForm.writeToFilterer(filterer);
+    },
+    
+    _showConstraintWindow : function(layer){
+        var cswRecords = layer.get('cswRecords');
+        for (var i = 0; i < cswRecords.length; i++) {
+            if (cswRecords[i].hasConstraints()) {
+                var popup = Ext.create('portal.widgets.window.CSWRecordConstraintsWindow', {
+                    width : 625,
+                    cswRecords : cswRecords
+                });
+
+                popup.show();
+
+                  //HTML images may take a moment to load which stuffs up our layout
+                  //This is a horrible, horrible workaround.
+                var task = new Ext.util.DelayedTask(function(){
+                    popup.doLayout();
+                });
+                task.delay(1000);
+
+                break;
+            }
+        }
     },
 
     /**
@@ -99,41 +119,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         baseFilterForm.getForm().reset();
     },
 
-    /**
-     * Given an instance of portal.layer.Layer - update the displayed panel
-     * with an appropriate filter form (as defined by portal.layer.filterer.FormFactory).
-     */
-    showFilterForLayer : function(layer) {
-        var layout = this.getLayout();
-        var filterForm = layer ? layer.get('filterForm') : null;
-        var renderOnAdd = layer ? layer.get('renderOnAdd') : false;
-
-        //Load the form (by either switching to it or adding it)
-        if (filterForm) {
-            if (!layout.setActiveItem(filterForm)) {
-                //Now this will return false when activating the current card
-                //or activating a form that DNE. We can eliminate the first
-                //problem with a simple ID check
-                if (layout.getActiveItem().id !== filterForm.id) {
-                    //So now we can be sure the setting failed because it's the first
-                    //time this form has been added to this panel
-                    this.add(filterForm);
-                    layout.setActiveItem(filterForm);
-                }
-            }
-        } else {
-            layout.setActiveItem(this._emptyCard);
-        }
-
-        //Activate the filter and reset buttons (if appropriate)
-        disableButtons = renderOnAdd || !filterForm;
-        //false to enable, true to disable
-
-        this._filterButton.getEl().addCls("applyFilterCls");
-        this._filterButton.getEl().frame();
-
-
-    },
+   
 
     clearFilter : function(){
         var layout = this.getLayout();

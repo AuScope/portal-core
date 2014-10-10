@@ -14,7 +14,7 @@ Ext.define('portal.layer.renderer.Renderer', {
     extend: 'Ext.util.Observable',
 
     map : null, //portal.map.BaseMap
-    visible : true, //whether the render is currently 'visible' or not,
+    visible : false, //whether the render is currently 'visible' or not,
     hasData : false, //whether the renderer has rendered any data or not,
     proxyUrl : '',  //a url to proxy data requests through (implementation specific)
     proxyCountUrl : '', //a url to proxy data count requests through (implementation specific)
