@@ -3,10 +3,7 @@ package org.auscope.portal.core.services.responses.ows;
 import java.util.Iterator;
 
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,31 +28,41 @@ public class OWSExceptionParser {
      * Returns an XPath object that is configured to read the ows:Namespace.
      *
      * @return the XPath object
+     * @throws OWSException
      */
-    private static XPath createNamespaceAwareXPath() {
-        XPath xPath = XPathFactory.newInstance().newXPath();
+    private static XPath createNamespaceAwareXPath() throws OWSException {
+        XPath xPath = null;
+        try {
+            xPath = XPathFactory.newInstance(
+                    XPathFactory.DEFAULT_OBJECT_MODEL_URI,
+                    "net.sf.saxon.xpath.XPathFactoryImpl",
+                    OWSExceptionParser.class.getClassLoader()).newXPath();
 
-        //use our own bodgy namespace context that just recognizes xmlns:ows
-        xPath.setNamespaceContext(new NamespaceContext() {
+            // use our own bodgy namespace context that just recognizes
+            // xmlns:ows
+            xPath.setNamespaceContext(new NamespaceContext() {
 
-            public Iterator getPrefixes(String namespaceURI) {
-                return null; //not used
-            }
-
-            public String getPrefix(String namespaceURI) {
-                return null; //not used
-            }
-
-            public String getNamespaceURI(String prefix) {
-                if (prefix.equals("ows")) {
-                    return "http://www.opengis.net/ows";
-                } else {
-                    return null;
+                @SuppressWarnings("rawtypes")
+                public Iterator getPrefixes(String namespaceURI) {
+                    return null; // not used
                 }
-            }
-        });
 
-        return xPath;
+                public String getPrefix(String namespaceURI) {
+                    return null; // not used
+                }
+
+                public String getNamespaceURI(String prefix) {
+                    if (prefix.equals("ows")) {
+                        return "http://www.opengis.net/ows";
+                    } else {
+                        return null;
+                    }
+                }
+            });
+            return xPath;
+        } catch (XPathFactoryConfigurationException e) {
+            throw new OWSException("Can't load XPath parser: "+e.getMessage(), e);
+        }
     }
 
     /**
