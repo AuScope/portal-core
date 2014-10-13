@@ -3,7 +3,8 @@ package org.auscope.portal.core.services.responses.ows;
 import java.util.Iterator;
 
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.*;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,39 +31,28 @@ public class OWSExceptionParser {
      * @return the XPath object
      * @throws OWSException
      */
-    private static XPath createNamespaceAwareXPath() throws OWSException {
-        XPath xPath = null;
-        try {
-            xPath = XPathFactory.newInstance(
-                    XPathFactory.DEFAULT_OBJECT_MODEL_URI,
-                    "net.sf.saxon.xpath.XPathFactoryImpl",
-                    OWSExceptionParser.class.getClassLoader()).newXPath();
+    private static NamespaceContext createNamespaceContext() throws OWSException {
+        // use our own bodgy namespace context that just recognizes
+        // xmlns:ows
+        return new NamespaceContext() {
 
-            // use our own bodgy namespace context that just recognizes
-            // xmlns:ows
-            xPath.setNamespaceContext(new NamespaceContext() {
+            @SuppressWarnings("rawtypes")
+            public Iterator getPrefixes(String namespaceURI) {
+                return null; // not used
+            }
 
-                @SuppressWarnings("rawtypes")
-                public Iterator getPrefixes(String namespaceURI) {
-                    return null; // not used
+            public String getPrefix(String namespaceURI) {
+                return null; // not used
+            }
+
+            public String getNamespaceURI(String prefix) {
+                if (prefix.equals("ows")) {
+                    return "http://www.opengis.net/ows";
+                } else {
+                    return null;
                 }
-
-                public String getPrefix(String namespaceURI) {
-                    return null; // not used
-                }
-
-                public String getNamespaceURI(String prefix) {
-                    if (prefix.equals("ows")) {
-                        return "http://www.opengis.net/ows";
-                    } else {
-                        return null;
-                    }
-                }
-            });
-            return xPath;
-        } catch (XPathFactoryConfigurationException e) {
-            throw new OWSException("Can't load XPath parser: "+e.getMessage(), e);
-        }
+            }
+        };
     }
 
     /**
@@ -95,17 +85,17 @@ public class OWSExceptionParser {
      * @throws OWSException the oWS exception
      */
     public static void checkForExceptionResponse(Document doc) throws OWSException {
-        XPath xPath = createNamespaceAwareXPath();
+        NamespaceContext nc = createNamespaceContext();
 
         try {
             //Check for an exception response
-            NodeList exceptionNodes = (NodeList) xPath.evaluate("/ows:ExceptionReport/ows:Exception", doc, XPathConstants.NODESET);
+            NodeList exceptionNodes = (NodeList) DOMUtil.compileXPathExpr("/ows:ExceptionReport/ows:Exception", nc).evaluate(doc, XPathConstants.NODESET);
             if (exceptionNodes.getLength() > 0) {
                 Node exceptionNode = exceptionNodes.item(0);
 
-                Node exceptionTextNode = (Node) xPath.evaluate("ows:ExceptionText", exceptionNode, XPathConstants.NODE);
+                Node exceptionTextNode = (Node) DOMUtil.compileXPathExpr("ows:ExceptionText", nc).evaluate(exceptionNode, XPathConstants.NODE);
                 String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]" : exceptionTextNode.getTextContent();
-                String exceptionCode = (String) xPath.evaluate("@exceptionCode", exceptionNode, XPathConstants.STRING);
+                String exceptionCode = (String) DOMUtil.compileXPathExpr("@exceptionCode", nc).evaluate(exceptionNode, XPathConstants.STRING);
 
                 throw new OWSException(String.format("Code='%1$s' Message='%2$s'", exceptionCode, exceptionText));
             }
