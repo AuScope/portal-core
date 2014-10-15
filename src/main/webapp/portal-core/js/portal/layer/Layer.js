@@ -26,11 +26,10 @@ Ext.define('portal.layer.Layer', {
         { name: 'downloader', type: 'auto' }, //A concrete implementation of a portal.layer.downloader.Downloader
         { name: 'querier', type: 'auto' }, //A concrete implementation of a portal.layer.querier.Querier
         { name: 'cswRecords', type: 'auto'}, //The source of all underlying data is an array of portal.csw.CSWRecord objects
-        { name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
+        //{ name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
-        { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added to the map
-        { name: 'deserialized', type: 'boolean', defaultValue: false }, //If true then this layer has been deserialized from a permanent link
-        { name: 'displayed', type: 'boolean', defaultValue: false} //A flag to check if the layer has been drawn.
+        { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added to the map:VT: Mark for deletion
+        { name: 'deserialized', type: 'boolean', defaultValue: false } //If true then this layer has been deserialized from a permanent link        
     ],
 
     /**
@@ -49,42 +48,33 @@ Ext.define('portal.layer.Layer', {
     },
 
     onRenderStarted : function(renderer, onlineResources, filterer) {
-        this.set('loading', true);
+        //this.set('loading', true);
         this.get('source').set('loading', true);
+        this.get('source').set('active', true);
     },
 
     onRenderFinished : function(renderer) {
-        this.set('loading', false);
+        //this.set('loading', false);
         this.get('source').set('loading', false);
     },
 
-    /**
-     * Whenever our layer is told to update visibility - let's take the brute force approach of deleting/re-adding the layer
-     */
-    onVisibilityChanged : function(renderer, newVisibility) {
-        if (newVisibility) {
-            this.visible=true; 
-            renderer.removeData();
-            renderer.map.closeInfoWindow(this.get('id'));    
-            renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn, 'visibilityChange');
-        } else {
-            this.visible=false;
-            renderer.abortDisplay();
-            renderer.removeData();
-            renderer.map.closeInfoWindow(this.get('id'));
-        }
-    },
 
     /**
      * Whenever our filter changes, update the rendered page
      */
     onFilterChanged : function(filterer, keys) {
-        var renderer = this.get('renderer');       
-        renderer.removeData();
-        renderer.map.closeInfoWindow(this.get('id'));            
+        var renderer = this.get('renderer');      
+        this.removeDataFromMap();                  
         renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);            
        
     },
+    
+   removeDataFromMap:function(){
+       var renderer = this.get('renderer');       
+       renderer.removeData();
+       renderer.map.closeInfoWindow(this.get('id')); 
+       this.get('source').set('active', false);
+   },
 
     getCSWRecordsByKeywords : function(keyword){
         //Filter our results

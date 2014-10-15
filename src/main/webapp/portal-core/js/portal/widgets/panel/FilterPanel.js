@@ -20,11 +20,18 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * {
      *  layerPanel : [Required] an instance of a portal.widgets.panel.LayerPanel - selection events will be listend for
      * }
+     * 
+     * Adds the following event:
+     * addlayer - fire when we request to add a layer
+     * removelayer - fire when a request to remove layer is made
      */
     constructor : function(config) {
  
         this._map = config.map;
         this.filterForm = config.filterForm;
+        
+        this.addEvents('addlayer');
+        this.addEvents('removelayer');
         
         this._addLayerButton = Ext.create('Ext.button.Button', {
             xtype : 'button',
@@ -48,10 +55,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 iconCls    :   'setting',
                 arrowAlign: 'right',
                 menu      : [
-                    {text: 'Item 1'},
-                    {text: 'Item 2'},
-                    {text: 'Item 3'},
-                    {text: 'Item 4'}
+                    this._getDownloadAction(),
+                    this._getDeleteAction(),
+                    this._getLegendAction()
+                   
                 ]               
             }]
         
@@ -63,7 +70,103 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
 
     },
+    
+    _getLegendAction : function(){                 
+        var me = this;
+        var layer = me.filterForm.layer;
+        var legend = layer.get('renderer').getLegend();
+    
+        
+        var getLegendAction = new Ext.Action({
+            text : 'Get Legend',
+            icon : legend.iconUrl,
+            handler : function(){
+                var legendCallback = function(legend, resources, filterer, success, form, layer){
+                    if (success && form) {
+                        var win = Ext.create('Ext.window.Window', {
+                            title       : 'Legend: '+ layer.get('name'),
+                            layout      : 'fit',
+                            width       : 200,
+                            height      : 300,
+                            items: form
+                        });
+                        return win.show();
+                    }
+                };
 
+                var onlineResources = layer.getAllOnlineResources();
+                var filterer = layer.get('filterer');
+                var renderer = layer.get('renderer');
+                var legend = renderer.getLegend(onlineResources, filterer);
+
+                //VT: this style is just for the legend therefore no filter is required.
+                var styleUrl = layer.get('renderer').parentLayer.get('source').get('proxyStyleUrl');
+
+                Ext.Ajax.request({
+                    url: styleUrl,
+                    timeout : 180000,
+                    scope : this,
+                    success:function(response,opts){
+                        legend.getLegendComponent(onlineResources, filterer,response.responseText, Ext.bind(legendCallback, this, [layer], true));
+                    },
+                    failure: function(response, opts) {
+                        legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
+                    }
+                });
+            }
+        });
+        
+        return getLegendAction;
+    },
+
+    
+    _getDownloadAction : function(){
+        var me = this;
+        var downloadLayerAction = new Ext.Action({
+            text : 'Download Layer',
+            iconCls : 'download',
+            handler : function(){
+                var layer = me.filterForm.layer; 
+                var downloader = layer.get('downloader');
+                var renderer = layer.get('renderer');
+                if (downloader) {// && renderer.getHasData() -> VT: It is too confusing when the download will be active. We will treat it as always active to 
+                                 // make it easier for the user.
+                    //We need a copy of the current filter object (in case the user
+                    //has filled out filter options but NOT hit apply filter) and
+                    //the original filter objects
+                    var renderedFilterer = layer.get('filterer').clone();
+                    var currentFilterer = Ext.create('portal.layer.filterer.Filterer', {});
+                    var currentFilterForm = layer.get('filterForm');
+
+                    currentFilterer.setSpatialParam(me._map.getVisibleMapBounds(), true);
+                    currentFilterForm.writeToFilterer(currentFilterer);
+
+                    //Finally pass off the download handling to the appropriate downloader (if it exists)
+                    var onlineResources = layer.getAllOnlineResources();
+                    downloader.downloadData(layer, onlineResources, renderedFilterer, currentFilterer);
+
+                }
+            }
+        });
+        
+        return downloadLayerAction
+    },
+    
+    
+    _getDeleteAction : function(){
+        var me = this;
+        var downloadLayerAction = new Ext.Action({
+            text : 'Remove Layer',
+            iconCls : 'remove',
+            handler : function(){
+                var layer = me.filterForm.layer; 
+                layer.removeDataFromMap();
+                me.fireEvent('removelayer', layer);
+            }
+        });
+        
+        return downloadLayerAction
+    },
 
 
     /**
@@ -82,6 +185,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
 
         this.filterForm.writeToFilterer(filterer);
+        this.fireEvent('addlayer', layer);
     },
     
     _showConstraintWindow : function(layer){

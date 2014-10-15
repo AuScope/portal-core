@@ -185,9 +185,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
 
     _onContextMenuItemClick : function( view, td, cellIndex, record, tr, index, e, eOpts ) {
-        if(cellIndex <= 2){
-            this.toggleContainer(index);
-        }
+        this.toggleContainer(index);        
     }
 
   

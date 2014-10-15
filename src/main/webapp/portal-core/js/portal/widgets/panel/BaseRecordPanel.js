@@ -22,11 +22,12 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     alias: 'widget.baserecordpanel',
     browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
     map : null,
+    activelayerstore : null,
 
     constructor : function(cfg) {
         var me = this;
         this.map = cfg.map;
-
+        this.activelayerstore = cfg.activelayerstore;
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
             groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})'
         });
@@ -61,31 +62,22 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 }]
             }],
             columns : [{
-                //Visibility column
-                xtype : 'renderablecheckcolumn',
-                text : 'Visible',
-                //disabled : true,
-                dataIndex : 'visible',  
-                getCustomValueBool : function(header, checked, record) {
-                    var layer = record.get('layer')
-                    if(layer){
-                        return layer.get('renderer').getVisible();
+                //Loading icon column
+                xtype : 'clickcolumn',
+                dataIndex : 'active',
+                renderer : this._deleteRenderer,
+                hasTip : true,
+                tipRenderer : function(value, layer, column, tip) {
+                    if(layer.get('active')){
+                        return 'Click to remove layer from map';
                     }else{
-                        return false;
+                        return 'Click to anywhere on this row to select drop down menu';
                     }
                 },
-                setCustomValueBool : function(header, checked, record) {
-                    //update our bbox silently before updating visibility
-                    var layer = record.get('layer')
-                    if (checked) {
-                        var filterer = layer.get('filterer');
-                        filterer.setSpatialParam(me.map.getVisibleMapBounds(), true);
-                        layer.get('renderer').setVisible(checked);
-                    }                                        
-                   return checked;
-                    
-                },
-                width : 40
+                width: 32,
+                listeners : {
+                    columnclick : Ext.bind(this._deleteClickHandler, this)
+                }
             },{
                 //Loading icon column
                 xtype : 'clickcolumn',
@@ -135,10 +127,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
               ptype : 'rowexpandercontainer',
               generateContainer : function(record, parentElId) {
                   var newLayer=null;
-                  if(record instanceof portal.csw.CSWRecord){                        
-                      newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);
+                  //VT:if this is deserialized, we don't need to regenerate the layer
+                  if(record.get('layer') && record.get('layer').get('deserialized')){                        
+                      newLayer =  record.get('layer');                                           
+                  }else if(record instanceof portal.csw.CSWRecord){                        
+                      newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);                                                     
                   }else{
-                      newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);
+                      newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);                      
                   }           
                   record.set('layer',newLayer);            
                   var filterForm = newLayer ? newLayer.get('filterForm') : null;                                    
@@ -202,11 +197,19 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     
     
     _getInlineLayerPanel : function(filterForm, parentElId){                             
-             
+        var me = this;   
         var panel =Ext.create('portal.widgets.panel.FilterPanel', {            
             filterForm  : filterForm,                       
             map         : this.map,
-            renderTo    : parentElId           
+            renderTo    : parentElId,
+            listeners : {
+                addlayer : function(layer){
+                    me.activelayerstore.insert(0,layer); //this adds the layer to our store       
+                },
+                removelayer : function(layer){
+                    me.activelayerstore.remove(layer);
+                }
+            }
         });   
         
         return panel
@@ -516,6 +519,33 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         }
     },   
     
+    
+    _deleteRenderer : function(value, metaData, record, row, col, store, gridView) {
+        if (value) {
+            return Ext.DomHelper.markup({
+                tag : 'img',
+                width : 16,
+                height : 16,
+                src: 'img/delete.gif'
+            });
+        } else {
+            return Ext.DomHelper.markup({
+                tag : 'img',
+                width : 16,
+                height : 16,
+                src: 'img/downArrow.png'
+            });
+        }
+    },
+    
+    _deleteClickHandler :  function(value, record, column, tip) {
+        var layer = record.get('layer');
+        if(layer && layer.get('source').get('active')){
+            layer.removeDataFromMap();
+            this.activelayerstore.remove(layer);
+        }               
+    },
+    
     /**
      * Renderer for the loading column
      */
@@ -544,7 +574,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     _loadingTipRenderer : function(value, record, column, tip) {
         var layer = record.get('layer');
         if(!layer){//VT:The layer has yet to be created.
-            return;
+            return 'No status has been recorded';
         }
         var renderer = layer.get('renderer');
         var update = function(renderStatus, keys) {

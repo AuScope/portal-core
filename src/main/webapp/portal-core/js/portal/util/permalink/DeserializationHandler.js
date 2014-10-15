@@ -92,8 +92,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         filterer.suspendEvents(false);
 
         //Configure our layer/dependencies
-        layer.set('deserialized', true);
-        renderer.setVisible(visible);
+        layer.set('deserialized', true);       
         if (filterParams) {
             filterer.setParameters(filterParams);
         }
@@ -162,7 +161,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
                 //Create our new layer
                 var newLayer = this.layerFactory.generateLayerFromKnownLayer(knownLayer);
-                newLayer.set('displayed',true);
+                
                 knownLayer.set('layer', newLayer);
 
                 //Configure it

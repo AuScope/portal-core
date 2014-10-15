@@ -29,8 +29,8 @@ Ext.define('portal.csw.CSWRecord', {
             return new Date(Date.parse(dateString.replace(' UTC', '')));
         }},//The date of this CSWRecord
         { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
-        { name: 'layer', type: 'auto'}, // store the layer after it has been converted.
-        { name: 'visible', type: 'boolean', defaultValue: false }//Whether this layer is set to visible or not, this is tied to the UI
+        { name: 'layer', type: 'auto'}, // store the layer after it has been converted.        
+        { name: 'active', type: 'active', defaultValue: false }//Whether this layer is current active on the map.
     ],
 
     /**

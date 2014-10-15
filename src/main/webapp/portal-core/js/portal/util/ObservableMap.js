@@ -75,9 +75,13 @@ Ext.define('portal.util.ObservableMap', {
      *
      * key - a string key whose value will be set. Will override any existing key of the same name
      * value - The object value to set
+     * quiet[optional] - setting to true won't fire any events
      */
-    setParameter : function(key, value){
+    setParameter : function(key, value, quiet){
         this.parameters[key] = value;
+        if(quiet){
+            return;
+        }
         this.fireEvent('change', this, [key]);
     },
 

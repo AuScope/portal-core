@@ -1,7 +1,7 @@
 /**
  * A specialised Ext.grid.Panel instance for
  * displaying a store of portal.layer.Layer objects.
- *
+ * VT:Mark for deletion
  */
 Ext.define('portal.widgets.panel.LayerPanel', {
     extend : 'Ext.grid.Panel',

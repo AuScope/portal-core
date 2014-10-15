@@ -119,16 +119,14 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
             return {
                 id : layer.get('id'), //This is only persistent for KnownLayers
                 filter : filterer.getParameters(),
-                source : source,
-                visible : renderer.getVisible()
+                source : source               
             };
         } else if (source === portal.layer.Layer.CSW_RECORD) {
             var cswRecord = layer.get('cswRecords')[0];
 
             return {
                 filter : filterer.getParameters(),
-                source : source,
-                visible : renderer.getVisible(),
+                source : source,               
                 onlineResources : this._serializeOnlineResources(cswRecord.get('onlineResources'))
             };
         }

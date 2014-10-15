@@ -111,8 +111,9 @@ Ext.define('portal.layer.renderer.Renderer', {
 
     /**
      * A function for setting this layer's visibility.
-     *
+     *  
      * visible - a bool
+     * VT: not in use: Mark for deletion
      */
     getVisible : function() {
         return this.visible;
@@ -120,8 +121,10 @@ Ext.define('portal.layer.renderer.Renderer', {
 
     /**
      * A function for setting this layer's visibility.
-     *
+     * 
      * visible - a bool
+     * 
+     * VT: not in use: Mark for deletion
      */
     setVisible : function(visible) {
         this.visible = visible;

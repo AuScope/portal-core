@@ -18,7 +18,7 @@ Ext.define('portal.layer.filterer.forms.WMSLayerFilterForm', {
         };
 
         if(!filterer.getParameter('opacity')){
-            filterer.setParameter('opacity',100);
+            filterer.setParameter('opacity',100,true);
         }
 
         Ext.apply(config, {
