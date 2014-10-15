@@ -18,17 +18,20 @@ Ext.define('portal.widgets.grid.plugin.InlineContextMenu', {
     alias: 'plugin.inlinecontextmenu',
 
     actions : null,
+    align : null,
 
     /**
      * Supported config options
      * {
      *  actions : Ext.Action[] - *required* Actions to be shown/hidden according to row selection.
+     *  align : [Optional] String - Choose from values: 'center' 'left' 'right'. Default is 'right' 
      * }
      */
     constructor : function(cfg) {
 
         cfg.generateContainer = this.generateToolbar;
         cfg.allowMultipleOpen = false;
+        this.align = cfg.align ? cfg.align : 'right';
         this.callParent(arguments);
     },
 
@@ -37,18 +40,20 @@ Ext.define('portal.widgets.grid.plugin.InlineContextMenu', {
         Ext.each(this.actions, function(action) {
             items.push(Ext.create('Ext.button.Button', action));
         });
-
+        
         return Ext.create('Ext.container.Container', {
             renderTo : renderTo,
             items : items,
             defaults : {
-                margins : '0 0 0 10'
+                margin : '0 0 0 5'
             },
             padding : '5 10 5 0',
             layout : {
-                type : 'hbox',
-                pack: 'end'
-            }
+                type : 'anchor',
+            },
+            style : {
+                'text-align' : this.align
+            },
          });
     }
 });
