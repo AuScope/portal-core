@@ -29,7 +29,8 @@ Ext.define('portal.layer.Layer', {
         //{ name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
         { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added to the map:VT: Mark for deletion
-        { name: 'deserialized', type: 'boolean', defaultValue: false } //If true then this layer has been deserialized from a permanent link        
+        { name: 'deserialized', type: 'boolean', defaultValue: false } //If true then this layer has been deserialized from a permanent link
+        
     ],
 
     /**

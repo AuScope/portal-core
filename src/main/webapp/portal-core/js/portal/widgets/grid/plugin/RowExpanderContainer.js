@@ -115,7 +115,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         row.addCls(this.rowCollapsedCls);
         nextBd.addCls(this.rowBodyHiddenCls);
-        this.rowsExpanded[rowIdx] = false;
+        this.rowsExpanded[record.internalId] = false;
         //this.recordComponents[rowIdx].destroy();
         view.refreshSize();
         view.fireEvent('contexthide', rowNode, record, nextBd.dom);
@@ -124,7 +124,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     /**
      * Show a specifc container (by row index)
      */
-    showContainer : function(rowIdx) {
+    showContainer : function(rowIdx,internalId) {
         var grid = this.getCmp(),
             view = grid.getView(),
             rowNode = view.getNode(rowIdx),
@@ -139,12 +139,12 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         row.removeCls(this.rowCollapsedCls);
         nextBd.removeCls(this.rowBodyHiddenCls);
-        this.rowsExpanded[rowIdx] = true;
+        this.rowsExpanded[record.internalId] = true;
         view.refreshSize();
         view.fireEvent('contextshow', rowNode, record, nextBd.dom);
         
-        if(!this.recordComponents[rowIdx]){
-            this.recordComponents[rowIdx] = this.generateContainer(record, this.recordComponentIds[rowIdx]);
+        if(!this.recordComponents[record.internalId]){
+            this.recordComponents[record.internalId] = this.generateContainer(record, this.recordComponentIds[record.internalId]);
         }
     },
 
@@ -166,17 +166,17 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     _getRowBodyFeatureData: function(data, idx, record, orig) {
         var o = Ext.grid.feature.RowBody.prototype.getAdditionalData.apply(this, arguments),
             id = this.columnId,
-            componentId = this.recordComponentIds[idx];
+            componentId = this.recordComponentIds[record.internalId];
 
         if (!componentId) {
-            this.recordComponentIds[idx] = componentId = Ext.id();
+            this.recordComponentIds[record.internalId] = componentId = Ext.id();
         }
 
         var rowBody = this.rowBodyTpl.applyTemplate({'component-id' : componentId});
 
         o.rowBody = rowBody;
-        o.rowCls = this.rowsExpanded[idx] ? '' : this.rowCollapsedCls;
-        o.rowBodyCls = this.rowsExpanded[idx] ? '' : this.rowBodyHiddenCls;
+        o.rowCls = this.rowsExpanded[record.internalId] ? '' : this.rowCollapsedCls;
+        o.rowBodyCls = this.rowsExpanded[record.internalId] ? '' : this.rowBodyHiddenCls;
         o[id + '-tdAttr'] = ' valign="top" rowspan="2" ';
         if (orig[id+'-tdAttr']) {
             o[id+'-tdAttr'] += orig[id+'-tdAttr'];

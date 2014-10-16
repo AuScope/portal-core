@@ -126,7 +126,8 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
 
             return {
                 filter : filterer.getParameters(),
-                source : source,               
+                source : source,   
+                customlayer : cswRecord.get('customlayer'),
                 onlineResources : this._serializeOnlineResources(cswRecord.get('onlineResources'))
             };
         }

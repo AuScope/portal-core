@@ -186,6 +186,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         this.filterForm.writeToFilterer(filterer);
         this.fireEvent('addlayer', layer);
+        this._addLayerButton.setText('Update layer on Map');
     },
     
     _showConstraintWindow : function(layer){

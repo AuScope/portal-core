@@ -37,6 +37,7 @@ Ext.define('portal.util.permalink.serializers.SerializerV2', {
                 f : serializedLayers[i].filter,
                 v : serializedLayers[i].visible,
                 i : serializedLayers[i].id,
+                c : serializedLayers[i].customlayer,
                 r : minifiedOnlineResources
             });
         }
@@ -82,6 +83,7 @@ Ext.define('portal.util.permalink.serializers.SerializerV2', {
                 filter : minifiedLayers[i].f,
                 visible : minifiedLayers[i].v,
                 id : minifiedLayers[i].i,
+                customlayer : minifiedLayers[i].c,
                 onlineResources : onlineResources
             });
         }

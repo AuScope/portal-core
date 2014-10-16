@@ -13,9 +13,6 @@
  * other row types will be injected by implementing the abstract
  * functions of this class
  *
- * Adds the following events :
- *      addlayerrequest(this, Ext.data.Model) - raised whenever the user has indicated to this panel that it wishes
- *                                              to add a specified record to the map as a new layer
  */
 Ext.define('portal.widgets.panel.BaseRecordPanel', {
     extend : 'Ext.grid.Panel',
@@ -29,10 +26,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         this.map = cfg.map;
         this.activelayerstore = cfg.activelayerstore;
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-            groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})'
+            groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})',
+            startCollapsed : true
         });
-
-        this.addEvents('addlayerrequest');
+       
         this.listeners = cfg.listeners;
 
         Ext.apply(cfg, {
@@ -137,59 +134,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                   }           
                   record.set('layer',newLayer);            
                   var filterForm = newLayer ? newLayer.get('filterForm') : null;                                    
-                  var filterPanel = Ext.bind(me._getInlineLayerPanel(filterForm, parentElId), this) ;                     
+                  var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);                     
                   return filterPanel;
              }
          },{
           ptype: 'celltips'
-         }],
-            buttonAlign : 'right',
-            bbar: [{
-                xtype: 'tbfill'
-            },{
-
-                text:'Browse Catalogue',
-                itemId: 'browseCatalogue',
-                tooltip:'Browse and filter through the available catalogue',
-                iconCls:'magglass',
-                hidden:true,
-                scope:this,
-                handler: function(btn) {
-                    //VT: TODO use BrowserWindowWithWarning.js
-                    if(me.browseCatalogueDNSMessage==true){
-                        var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
-                            name : 'CSW Filter',
-                            listeners : {
-                                filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
-                            }
-                        });
-                        cswFilterWindow.show();
-                    }else{
-                        Ext.MessageBox.show({
-                            title:    'Browse Catalogue',
-                            msg:      'Select the filters across the tabs and once you are happy with the result, click on OK to apply all the filters<br><br><input type="checkbox" id="do_not_show_again" value="true" checked/>Do not show this message again',
-                            buttons:  Ext.MessageBox.OK,
-                            scope : this,
-                            fn: function(btn) {
-                                if( btn == 'ok') {
-                                    if (Ext.get('do_not_show_again').dom.checked == true){
-                                        me.browseCatalogueDNSMessage=true;
-                                    }
-                                    var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
-                                        name : 'CSW Filter',
-                                        listeners : {
-                                            filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
-                                        }
-                                    });
-                                    cswFilterWindow.show();
-                                }
-                            }
-                        });
-                    }
-
-                }
-
-            }]
+         }]
+                  
         });
 
         this.callParent(arguments);
@@ -223,8 +174,18 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             title : 'CSW Record Selection',
             resultpanels : filteredResultPanels,
             listeners : {
-                selectioncomplete : function(csws){
-                    me.fireEvent('addlayerrequest', me, csws);
+                selectioncomplete : function(csws){  
+                    var tabpanel =  Ext.getCmp('auscope-tabs-panel');
+                    var customPanel = me.ownerCt.getComponent('org-auscope-custom-record-panel');
+                    tabpanel.setActiveTab(customPanel);
+                    if(!(csws instanceof Array)){
+                        csws = [csws];
+                    }
+                    for(var i=0; i < csws.length; i++){
+                        csws[i].set('customlayer',true);
+                        customPanel.getStore().insert(0,csws[i]);
+                    }
+                    
                 }
             }
         });
@@ -500,26 +461,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             searchBar.hide();
         }
     },
-
-    _personalTabActive:function(active){
-        var dockedItems = this.getDockedItems();
-        var personalBar = null;
-        for (var i = 0; i < dockedItems.length; i++) {
-            if (dockedItems[i].initialConfig.dock === 'bottom') {
-                personalBar = dockedItems[i];
-            }
-        }
-
-        var customize= personalBar.getComponent('browseCatalogue')
-
-        if(active){
-            customize.show();
-        }else{
-            customize.hide();
-        }
-    },   
-    
-    
+        
     _deleteRenderer : function(value, metaData, record, row, col, store, gridView) {
         if (value) {
             return Ext.DomHelper.markup({
@@ -533,7 +475,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 tag : 'img',
                 width : 16,
                 height : 16,
-                src: 'img/downArrow.png'
+                src: 'img/play_blue.png'
             });
         }
     },

@@ -191,13 +191,22 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 }
 
                 var newLayer = this.layerFactory.generateLayerFromCSWRecord(cswRecord);
-                newLayer.set('displayed',true);
+              
                 cswRecord.set('layer', newLayer);
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
 
                 //Add this layer to the internal store
                 this.layerStore.add(newLayer);
+                
+                if(serializedLayer.customlayer){
+                    cswRecord.set('customlayer', true);
+                    var tabpanel =  Ext.getCmp('auscope-tabs-panel');
+                    var customPanel = tabpanel.getComponent('org-auscope-custom-record-panel');
+                    tabpanel.setActiveTab(customPanel);                                       
+                    customPanel.getStore().insert(0,cswRecord);                    
+                }
+                
             }
         }
 
