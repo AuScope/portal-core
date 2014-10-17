@@ -161,6 +161,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             handler : function(){
                 var layer = me.filterForm.layer; 
                 layer.removeDataFromMap();
+                me.updateButton(false);
                 me.fireEvent('removelayer', layer);
             }
         });
@@ -186,7 +187,20 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         this.filterForm.writeToFilterer(filterer);
         this.fireEvent('addlayer', layer);
-        this._addLayerButton.setText('Update layer on Map');
+        this.updateButton(true);
+    },
+    
+    /**
+     * Change the state of the button
+     * State 1: original text "Add layer to Map"
+     * State 2: after adding layer "Update layer on Map")
+     */
+    updateButton : function(islayerOnMap){
+        if(islayerOnMap){
+            this._addLayerButton.setText('Update layer on Map');
+        }else{
+            this._addLayerButton.setText('Add layer to Map');
+        }
     },
     
     _showConstraintWindow : function(layer){

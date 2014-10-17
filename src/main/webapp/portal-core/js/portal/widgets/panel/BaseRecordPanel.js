@@ -482,6 +482,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     
     _deleteClickHandler :  function(value, record, column, tip) {
         var layer = record.get('layer');
+        layer.data.filterForm.ownerCt.updateButton(false);
         if(layer && layer.get('source').get('active')){
             layer.removeDataFromMap();
             this.activelayerstore.remove(layer);

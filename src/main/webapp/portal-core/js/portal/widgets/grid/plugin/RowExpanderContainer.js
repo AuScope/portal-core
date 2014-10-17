@@ -96,11 +96,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
      */
     closeAllContainers : function() {
         for (idx in this.rowsExpanded) {
-            if (this.rowsExpanded[idx] === true) {
-                this.hideContainer(parseInt(idx));
-            }
-        }
-    },
+            var i = parseInt(this.rowsExpanded[idx]);            
+            this.hideContainer(i);            
+        }                      
+    },      
 
     /**
      * Hide a specifc container (by row index)
@@ -115,7 +114,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         row.addCls(this.rowCollapsedCls);
         nextBd.addCls(this.rowBodyHiddenCls);
-        this.rowsExpanded[record.internalId] = false;
+        delete this.rowsExpanded[record.internalId];
         //this.recordComponents[rowIdx].destroy();
         view.refreshSize();
         view.fireEvent('contexthide', rowNode, record, nextBd.dom);
@@ -124,7 +123,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     /**
      * Show a specifc container (by row index)
      */
-    showContainer : function(rowIdx,internalId) {
+    showContainer : function(rowIdx) {
         var grid = this.getCmp(),
             view = grid.getView(),
             rowNode = view.getNode(rowIdx),
@@ -139,7 +138,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         row.removeCls(this.rowCollapsedCls);
         nextBd.removeCls(this.rowBodyHiddenCls);
-        this.rowsExpanded[record.internalId] = true;
+        this.rowsExpanded[record.internalId] = rowIdx;
         view.refreshSize();
         view.fireEvent('contextshow', rowNode, record, nextBd.dom);
         
@@ -175,8 +174,14 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         var rowBody = this.rowBodyTpl.applyTemplate({'component-id' : componentId});
 
         o.rowBody = rowBody;
-        o.rowCls = this.rowsExpanded[record.internalId] ? '' : this.rowCollapsedCls;
-        o.rowBodyCls = this.rowsExpanded[record.internalId] ? '' : this.rowBodyHiddenCls;
+        if(parseInt(this.rowsExpanded[record.internalId])>=0){
+            o.rowCls =  '' ;
+            o.rowBodyCls ='';
+        }else{
+            o.rowCls = this.rowCollapsedCls;
+            o.rowBodyCls = this.rowBodyHiddenCls
+        }
+               
         o[id + '-tdAttr'] = ' valign="top" rowspan="2" ';
         if (orig[id+'-tdAttr']) {
             o[id+'-tdAttr'] += orig[id+'-tdAttr'];
