@@ -59,14 +59,19 @@ public class CloudComputeService {
     /** An array of images that are available through this compute service*/
     private MachineImage[] availableImages = new MachineImage[0];
 
+    /** Name of the developers' keypair to inject into instances on
+     * this provider. */
+    private String keypair;
+
     /**
      * Creates a new instance with the specified credentials
      * @param endpoint (URL) The location of the Compute (Nova) service
      * @param accessKey The Compute Access key (user name)
      * @param secretKey The Compute Secret key (password)
+     * @param keypair The name of the developers' keypair
      */
-    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey) {
-        this(provider, endpoint, accessKey, secretKey, null);
+    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String keypair) {
+        this(provider, endpoint, accessKey, secretKey, keypair, null);
     }
 
     /**
@@ -74,9 +79,11 @@ public class CloudComputeService {
      * @param endpoint (URL) The location of the Compute (Nova) service
      * @param accessKey The Compute Access key (user name)
      * @param secretKey The Compute Secret key (password)
+     * @param keypair The name of the developers' keypair
      */
-    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String apiVersion) {
+    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String keypair, String apiVersion) {
         Properties overrides = new Properties();
+        this.keypair = keypair;
 
         String typeString = "";
         switch (provider) {
@@ -186,12 +193,12 @@ public class CloudComputeService {
         switch (provider) {
         case NovaEc2:
             options = ((EC2TemplateOptions) computeService.templateOptions())
-            .keyPair("vgl-developers")
+            .keyPair(this.keypair)
             .userData(userDataString.getBytes(Charset.forName("UTF-8")));
             break;
         case NovaKeystone:
             options = ((NovaTemplateOptions)computeService.templateOptions())
-            .keyPairName("vgl-developers")
+            .keyPairName(this.keypair)
             .userData(userDataString.getBytes(Charset.forName("UTF-8")));
         }
 
@@ -263,5 +270,13 @@ public class CloudComputeService {
         }
 
         return computeTypes.toArray(new ComputeType[computeTypes.size()]);
+    }
+
+    public String getKeypair() {
+        return keypair;
+    }
+
+    public void setKeypair(String keypair) {
+        this.keypair = keypair;
     }
 }
