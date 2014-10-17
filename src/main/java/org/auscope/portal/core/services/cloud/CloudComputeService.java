@@ -68,10 +68,10 @@ public class CloudComputeService {
      * @param endpoint (URL) The location of the Compute (Nova) service
      * @param accessKey The Compute Access key (user name)
      * @param secretKey The Compute Secret key (password)
-     * @param keypair The name of the developers' keypair
+     *
      */
-    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String keypair) {
-        this(provider, endpoint, accessKey, secretKey, keypair, null);
+    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey) {
+        this(provider, endpoint, accessKey, secretKey, null);
     }
 
     /**
@@ -79,11 +79,10 @@ public class CloudComputeService {
      * @param endpoint (URL) The location of the Compute (Nova) service
      * @param accessKey The Compute Access key (user name)
      * @param secretKey The Compute Secret key (password)
-     * @param keypair The name of the developers' keypair
+     * @param apiVersion The API version
      */
-    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String keypair, String apiVersion) {
+    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String apiVersion) {
         Properties overrides = new Properties();
-        this.keypair = keypair;
 
         String typeString = "";
         switch (provider) {
@@ -193,12 +192,12 @@ public class CloudComputeService {
         switch (provider) {
         case NovaEc2:
             options = ((EC2TemplateOptions) computeService.templateOptions())
-            .keyPair(this.keypair)
+            .keyPair(getKeypair())
             .userData(userDataString.getBytes(Charset.forName("UTF-8")));
             break;
         case NovaKeystone:
             options = ((NovaTemplateOptions)computeService.templateOptions())
-            .keyPairName(this.keypair)
+            .keyPairName(getKeypair())
             .userData(userDataString.getBytes(Charset.forName("UTF-8")));
         }
 
@@ -273,7 +272,9 @@ public class CloudComputeService {
     }
 
     public String getKeypair() {
-        return keypair;
+        // Default to the old behaviour until a different keypair is
+        // configured.
+        return keypair != null ? keypair : "vgl-developers";
     }
 
     public void setKeypair(String keypair) {
