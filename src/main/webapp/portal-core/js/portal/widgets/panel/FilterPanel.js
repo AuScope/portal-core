@@ -157,7 +157,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         var me = this;
         var downloadLayerAction = new Ext.Action({
             text : 'Remove Layer',
-            iconCls : 'remove',
+            iconCls : 'trash',
             handler : function(){
                 var layer = me.filterForm.layer; 
                 layer.removeDataFromMap();

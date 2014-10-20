@@ -468,7 +468,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 tag : 'img',
                 width : 16,
                 height : 16,
-                src: 'img/delete.gif'
+                src: 'img/trash.png'
             });
         } else {
             return Ext.DomHelper.markup({
@@ -482,10 +482,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     
     _deleteClickHandler :  function(value, record, column, tip) {
         var layer = record.get('layer');
-        layer.data.filterForm.ownerCt.updateButton(false);
-        if(layer && layer.get('source').get('active')){
+        if(layer && record.get('active')){
             layer.removeDataFromMap();
             this.activelayerstore.remove(layer);
+            layer.data.filterForm.ownerCt.updateButton(false);
         }               
     },
     
@@ -501,15 +501,66 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 src: 'img/loading.gif'
             });
         } else {
-            return Ext.DomHelper.markup({
-                tag : 'img',
-                width : 16,
-                height : 16,
-                src: 'img/notloading.gif'
-            });
+            
+            if(record.get('active')){
+            
+                var renderStatus = record.get('layer').get('renderer').renderStatus;
+                var listOfStatus=renderStatus.getParameters();                
+                var errorCount = this._statusListErrorCount(listOfStatus);
+                var sizeOfList = Ext.Object.getSize(listOfStatus);
+                if(errorCount > 0 && errorCount == sizeOfList){
+                    return Ext.DomHelper.markup({
+                        tag : 'img',
+                        width : 16,
+                        height : 16,
+                        src: 'img/exclamation.png'
+                    });
+                }else if(errorCount > 0 && errorCount < sizeOfList){
+                    return Ext.DomHelper.markup({
+                        tag : 'img',
+                        width : 16,
+                        height : 16,
+                        src: 'img/warning.png'
+                    });
+                }else{
+                    return Ext.DomHelper.markup({
+                        tag : 'img',
+                        width : 16,
+                        height : 16,
+                        src: 'img/tick.png'
+                    });
+                }
+                
+            }else{
+                return Ext.DomHelper.markup({
+                    tag : 'img',
+                    width : 16,
+                    height : 16,
+                    src: 'img/notloading.gif'
+                });
+            }
+            
+            
         }
     },
     
+    _statusListErrorCount : function(listOfStatus){
+        var match =["can not be reached","error","did not complete"];
+        
+        var erroCount = 0;
+        
+        for(key in listOfStatus){
+            for(var i=0; i< match.length; i++){
+                if(listOfStatus[key].indexOf(match[i]) > -1){
+                    erroCount++;
+                    break;
+                }
+            }
+        }
+        return erroCount;
+    },
+    
+  
     /**
      * A renderer for generating the contents of the tooltip that shows when the
      * layer is loading
