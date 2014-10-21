@@ -38,6 +38,7 @@ public class TestCloudComputeService extends PortalTestClass {
         job.setComputeInstanceType("type");
         service = new CloudComputeService(ProviderType.NovaKeystone, mockComputeService);
         service.setGroupName("group-name");
+        service.setKeypair("vgl-developers");
     }
 
     /**
