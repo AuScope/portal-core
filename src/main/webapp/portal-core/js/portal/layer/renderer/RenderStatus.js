@@ -46,7 +46,7 @@ Ext.define('portal.layer.renderer.RenderStatus', {
      */
     renderHtml : function() {
         var parameterAddCount = 0;
-        var htmlString = '<table border="0">' ;
+        var htmlString = '<div class="auscope-servicestatus-grid"><table><tr><td>Request Status</td></tr>' ;
 
         for(i in this.parameters) {
             if(!this.parameters[i].toString().match('function')) {
@@ -58,7 +58,7 @@ Ext.define('portal.layer.renderer.RenderStatus', {
                 }
             }
         }
-        htmlString += '</table>' ;
+        htmlString += '</table></div>' ;
 
         if (parameterAddCount === 0) {
             return 'No status has been recorded';

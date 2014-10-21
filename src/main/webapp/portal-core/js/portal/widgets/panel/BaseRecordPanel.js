@@ -13,28 +13,27 @@
  * other row types will be injected by implementing the abstract
  * functions of this class
  *
- * Adds the following events :
- *      addlayerrequest(this, Ext.data.Model) - raised whenever the user has indicated to this panel that it wishes
- *                                              to add a specified record to the map as a new layer
  */
 Ext.define('portal.widgets.panel.BaseRecordPanel', {
     extend : 'Ext.grid.Panel',
     alias: 'widget.baserecordpanel',
     browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
     map : null,
+    activelayerstore : null,
 
     constructor : function(cfg) {
         var me = this;
         this.map = cfg.map;
-
+        this.activelayerstore = cfg.activelayerstore;
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-            groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})'
+            groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})',
+            startCollapsed : true
         });
-
-        this.addEvents('addlayerrequest');
+       
         this.listeners = cfg.listeners;
 
         Ext.apply(cfg, {
+            cls : 'auscope-dark-grid',
             hideHeaders : true,
             features : [groupingFeature],
             viewConfig : {
@@ -60,6 +59,34 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 }]
             }],
             columns : [{
+                //Loading icon column
+                xtype : 'clickcolumn',
+                dataIndex : 'active',
+                renderer : this._deleteRenderer,
+                hasTip : true,
+                tipRenderer : function(value, layer, column, tip) {
+                    if(layer.get('active')){
+                        return 'Click to remove layer from map';
+                    }else{
+                        return 'Click to anywhere on this row to select drop down menu';
+                    }
+                },
+                width: 32,
+                listeners : {
+                    columnclick : Ext.bind(this._deleteClickHandler, this)
+                }
+            },{
+                //Loading icon column
+                xtype : 'clickcolumn',
+                dataIndex : 'loading',
+                renderer : this._loadingRenderer,
+                hasTip : true,
+                tipRenderer : Ext.bind(this._loadingTipRenderer, this),
+                width: 32,
+                listeners : {
+                    columnclick : Ext.bind(this._loadingClickHandler, this)
+                }
+            },{
                 //Title column
                 text : 'Title',
                 dataIndex : 'name',
@@ -93,94 +120,53 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     columndblclick : Ext.bind(this._spatialBoundsDoubleClickHandler, this)
                 }
             }],
-            plugins: [{
-                ptype: 'rowexpander',
-                rowBodyTpl : [
-                    '<p>{description}</p><br>'
-                ]
-            },{
-                ptype: 'celltips'
-            }],
-            buttonAlign : 'right',
-            bbar: [{
-                text:'Add Layer to Map',
-                tooltip:'Add Layer to Map',
-                hidden : true,
-                iconCls:'add',
-                handler: function(btn) {
-                    var grid = btn.findParentByType('baserecordpanel');
-                    var sm = grid.getSelectionModel();
-                    var selectedRecords = sm.getSelection();
-                    if (selectedRecords && selectedRecords.length > 0) {
-                        grid.fireEvent('addlayerrequest', this, selectedRecords[0]); //we only support single selection
-                    }
-                }
-            },{
-                xtype: 'tbfill'
-            },{
-
-                text:'Browse Catalogue',
-                itemId: 'browseCatalogue',
-                tooltip:'Browse and filter through the available catalogue',
-                iconCls:'magglass',
-                hidden:true,
-                scope:this,
-                handler: function(btn) {
-                    //VT: TODO use BrowserWindowWithWarning.js
-                    if(me.browseCatalogueDNSMessage==true){
-                        var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
-                            name : 'CSW Filter',
-                            listeners : {
-                                filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
-                            }
-                        });
-                        cswFilterWindow.show();
-                    }else{
-                        Ext.MessageBox.show({
-                            title:    'Browse Catalogue',
-                            msg:      'Select the filters across the tabs and once you are happy with the result, click on OK to apply all the filters<br><br><input type="checkbox" id="do_not_show_again" value="true" checked/>Do not show this message again',
-                            buttons:  Ext.MessageBox.OK,
-                            scope : this,
-                            fn: function(btn) {
-                                if( btn == 'ok') {
-                                    if (Ext.get('do_not_show_again').dom.checked == true){
-                                        me.browseCatalogueDNSMessage=true;
-                                    }
-                                    var cswFilterWindow = new portal.widgets.window.CSWFilterWindow({
-                                        name : 'CSW Filter',
-                                        listeners : {
-                                            filterselectcomplete : Ext.bind(this.handleFilterSelectComplete, this)
-                                        }
-                                    });
-                                    cswFilterWindow.show();
-                                }
-                            }
-                        });
-                    }
-
-                }
-
-            }]
+          plugins:[{                
+              ptype : 'rowexpandercontainer',
+              generateContainer : function(record, parentElId) {
+                  var newLayer=null;
+                  //VT:if this is deserialized, we don't need to regenerate the layer
+                  if(record.get('layer') && record.get('layer').get('deserialized')){                        
+                      newLayer =  record.get('layer');                                           
+                  }else if(record instanceof portal.csw.CSWRecord){                        
+                      newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);                                                     
+                  }else{
+                      newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);                      
+                  }           
+                  record.set('layer',newLayer);            
+                  var filterForm = newLayer ? newLayer.get('filterForm') : null;                                    
+                  var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);                     
+                  return filterPanel;
+             }
+         },{
+          ptype: 'celltips'
+         }]
+                  
         });
 
         this.callParent(arguments);
     },
-
-    /**
-     * returns true if selection is found on the layer and false if not.
-     */
-    addSelectedLayerToActive : function (){
-        var grid = this;
-        var sm = grid.getSelectionModel();
-        var selectedRecords = sm.getSelection();
-        if (selectedRecords && selectedRecords.length > 0) {
-            selectedRecords[0].get('layer').set('displayed',true);
-            grid.fireEvent('addlayerrequest', this, selectedRecords[0]); //we only support single selection
-            return true;
-        }else{
-            return false;
-        }
+    
+    
+    _getInlineLayerPanel : function(filterForm, parentElId){                             
+        var me = this;   
+        var panel =Ext.create('portal.widgets.panel.FilterPanel', {            
+            filterForm  : filterForm,                       
+            map         : this.map,
+            renderTo    : parentElId,
+            listeners : {
+                addlayer : function(layer){
+                    me.activelayerstore.insert(0,layer); //this adds the layer to our store       
+                },
+                removelayer : function(layer){
+                    me.activelayerstore.remove(layer);
+                }
+            }
+        });   
+        
+        return panel
     },
+
+ 
 
     handleFilterSelectComplete : function(filteredResultPanels){
         var me = this;
@@ -188,8 +174,18 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             title : 'CSW Record Selection',
             resultpanels : filteredResultPanels,
             listeners : {
-                selectioncomplete : function(csws){
-                    me.fireEvent('addlayerrequest', me, csws);
+                selectioncomplete : function(csws){  
+                    var tabpanel =  Ext.getCmp('auscope-tabs-panel');
+                    var customPanel = me.ownerCt.getComponent('org-auscope-custom-record-panel');
+                    tabpanel.setActiveTab(customPanel);
+                    if(!(csws instanceof Array)){
+                        csws = [csws];
+                    }
+                    for(var i=0; i < csws.length; i++){
+                        csws[i].set('customlayer',true);
+                        customPanel.getStore().insert(0,csws[i]);
+                    }
+                    
                 }
             }
         });
@@ -465,23 +461,153 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             searchBar.hide();
         }
     },
-
-    _personalTabActive:function(active){
-        var dockedItems = this.getDockedItems();
-        var personalBar = null;
-        for (var i = 0; i < dockedItems.length; i++) {
-            if (dockedItems[i].initialConfig.dock === 'bottom') {
-                personalBar = dockedItems[i];
+        
+    _deleteRenderer : function(value, metaData, record, row, col, store, gridView) {
+        if (value) {
+            return Ext.DomHelper.markup({
+                tag : 'img',
+                width : 16,
+                height : 16,
+                src: 'img/trash.png'
+            });
+        } else {
+            return Ext.DomHelper.markup({
+                tag : 'img',
+                width : 16,
+                height : 16,
+                src: 'img/play_blue.png'
+            });
+        }
+    },
+    
+    _deleteClickHandler :  function(value, record, column, tip) {
+        var layer = record.get('layer');
+        if(layer && record.get('active')){
+            layer.removeDataFromMap();
+            this.activelayerstore.remove(layer);
+            layer.data.filterForm.ownerCt.updateButton(false);
+        }               
+    },
+    
+    /**
+     * Renderer for the loading column
+     */
+    _loadingRenderer : function(value, metaData, record, row, col, store, gridView) {
+        if (value) {
+            return Ext.DomHelper.markup({
+                tag : 'img',
+                width : 16,
+                height : 16,
+                src: 'img/loading.gif'
+            });
+        } else {
+            
+            if(record.get('active')){
+            
+                var renderStatus = record.get('layer').get('renderer').renderStatus;
+                var listOfStatus=renderStatus.getParameters();                
+                var errorCount = this._statusListErrorCount(listOfStatus);
+                var sizeOfList = Ext.Object.getSize(listOfStatus);
+                if(errorCount > 0 && errorCount == sizeOfList){
+                    return Ext.DomHelper.markup({
+                        tag : 'img',
+                        width : 16,
+                        height : 16,
+                        src: 'img/exclamation.png'
+                    });
+                }else if(errorCount > 0 && errorCount < sizeOfList){
+                    return Ext.DomHelper.markup({
+                        tag : 'img',
+                        width : 16,
+                        height : 16,
+                        src: 'img/warning.png'
+                    });
+                }else{
+                    return Ext.DomHelper.markup({
+                        tag : 'img',
+                        width : 16,
+                        height : 16,
+                        src: 'img/tick.png'
+                    });
+                }
+                
+            }else{
+                return Ext.DomHelper.markup({
+                    tag : 'img',
+                    width : 16,
+                    height : 16,
+                    src: 'img/notloading.gif'
+                });
+            }
+            
+            
+        }
+    },
+    
+    _statusListErrorCount : function(listOfStatus){
+        var match =["reached","error","did not complete"];
+        
+        var erroCount = 0;  
+        
+        for(key in listOfStatus){
+            for(var i=0; i< match.length; i++){
+                if(listOfStatus[key].indexOf(match[i]) > -1){
+                    erroCount++;
+                    break;
+                }
             }
         }
-
-        var customize= personalBar.getComponent('browseCatalogue')
-
-        if(active){
-            customize.show();
-        }else{
-            customize.hide();
+        return erroCount;
+    },
+    
+  
+    /**
+     * A renderer for generating the contents of the tooltip that shows when the
+     * layer is loading
+     */
+    _loadingTipRenderer : function(value, record, column, tip) {
+        var layer = record.get('layer');
+        if(!layer){//VT:The layer has yet to be created.
+            return 'No status has been recorded';
         }
+        var renderer = layer.get('renderer');
+        var update = function(renderStatus, keys) {
+            tip.update(renderStatus.renderHtml());
+        };
+
+        //Update our tooltip as the underlying status changes
+        renderer.renderStatus.on('change', update, this);
+        tip.on('hide', function() {
+            renderer.renderStatus.un('change', update); //ensure we remove the handler when the tip closes
+        });
+
+        return renderer.renderStatus.renderHtml();
+    },
+    
+    _loadingClickHandler : function(value, record, column, tip) {
+        
+        var layer = record.get('layer');
+        
+        var html = '<p>No Service recorded, Click on Add layer to map</p>';    
+        
+        if(layer){
+            var renderer = layer.get('renderer');
+            html =  renderer.renderStatus.renderHtml();
+        }        
+        var win = Ext.create('Ext.window.Window', {
+            title: 'Service Loading Status',
+            height: 200,
+            width: 500,
+            layout: 'fit',
+            items: {  // Let's put an empty grid in just to illustrate fit layout
+                xtype: 'panel',
+                autoScroll : true,                
+                html : html
+            }
+        });
+        
+        win.show();
     }
+  
 
 });

@@ -12,7 +12,8 @@
 Ext.define('portal.widgets.grid.column.RenderableCheckColumn', {
     extend: 'Ext.ux.CheckColumn',
     alias: 'widget.renderablecheckcolumn',
-
+    
+    
     /**
      * A function that will be called when the column needs
      * to get the custom value for this column for the particular value
@@ -20,10 +21,12 @@ Ext.define('portal.widgets.grid.column.RenderableCheckColumn', {
      * function(portal.widgets.grid.column.RenderableCheckColumn, value, Ext.data.Model)
      */
     getCustomValueBool : portal.util.UnimplementedFunction,
+
+    
     /**
      * A function that will be called to update the custom value of field
      *
-     * function(portal.widgets.grid.column.RenderableCheckColumn, value, checked, Ext.data.Model)
+     * function(portal.widgets.grid.column.RenderableCheckColumn, checked, Ext.data.Model)
      */
     setCustomValueBool : portal.util.UnimplementedFunction,
 
@@ -40,15 +43,16 @@ Ext.define('portal.widgets.grid.column.RenderableCheckColumn', {
     /**
      * @private
      * Process and refire events routed from the GridView's processEvent method.
+     * VT:I don't think this is needed anymore
      */
     processEvent: function(type, view, cell, recordIndex, cellIndex, e) {
         if (type === 'mousedown' || (type === 'keydown' && (e.getKey() === e.ENTER || e.getKey() === e.SPACE))) {
             var record = view.panel.store.getAt(recordIndex),
                 dataIndex = this.dataIndex,
-                value = record.get(dataIndex),
-                checked = !this.getCustomValueBool(this, value, record);
+                value = record.get(dataIndex);
+                checked = !this.getCustomValueBool(this, value,record);
 
-            this.setCustomValueBool(this, value, checked, record);
+            this.setCustomValueBool(this, checked, record);
             record.afterEdit(dataIndex);//trick record into triggering an update
             this.fireEvent('checkchange', this, recordIndex, checked);
             // cancel selection.
@@ -60,7 +64,9 @@ Ext.define('portal.widgets.grid.column.RenderableCheckColumn', {
 
     renderer : function(value, metadata, record, rowIndex, colIndex, store, view) {
         var header = view.getHeaderAtIndex(colIndex);
-        return this.callParent([header.getCustomValueBool(header, value)]);
+        return this.callParent([header.getCustomValueBool(header, value,record)]);
+
+        
     }
 });
 

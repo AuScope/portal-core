@@ -31,14 +31,9 @@ Ext.define('portal.util.permalink.serializers.SerializerV2', {
                     });
                 }
             }
+            
+            serializationObj.a.push(this.createSerializedObject(serializedLayers[i],minifiedOnlineResources));
 
-            serializationObj.a.push({
-                s : serializedLayers[i].source,
-                f : serializedLayers[i].filter,
-                v : serializedLayers[i].visible,
-                i : serializedLayers[i].id,
-                r : minifiedOnlineResources
-            });
         }
 
         callback(Ext.JSON.encode(serializationObj));
@@ -76,19 +71,38 @@ Ext.define('portal.util.permalink.serializers.SerializerV2', {
                     });
                 }
             }
-
-            serializedLayers.push({
-                source : minifiedLayers[i].s,
-                filter : minifiedLayers[i].f,
-                visible : minifiedLayers[i].v,
-                id : minifiedLayers[i].i,
-                onlineResources : onlineResources
-            });
+            
+            serializedLayers.push(this.createDeSerializedObject(minifiedLayers[i],onlineResources));
+                      
         }
 
         callback({
             mapState : mapState,
             serializedLayers : serializedLayers
         });
+    },
+    
+    createDeSerializedObject : function(value, onlineResources){
+        var result = {
+            source : value.s,
+            filter : value.f,
+            visible : value.v,
+            id : value.i,           
+            onlineResources : onlineResources
+        };
+        
+        return result;
+    },
+    
+    createSerializedObject : function(value, onlineResources){
+        var result = {
+            s : value.source,
+            f : value.filter,
+            v : value.visible,
+            i : value.id,           
+            r : onlineResources
+        };
+        
+        return result;
     }
 });

@@ -10,6 +10,37 @@
  *
  * Contains two events:
  *  contexthide, contextshow
+ *  
+ *  Example usage:
+ *  
+ *  var removeAction = new Ext.Action({
+                  text : 'Remove',
+                  iconCls : 'remove',
+                  handler : function(cmp) {
+                      console.log('remove click');
+                  }
+              });
+              
+              
+              var downloadLayerAction = new Ext.Action({
+                  text : 'Download',
+                  iconCls : 'download',
+                  handler : function(cmp) {
+                      console.log('download click');
+                  }
+              });
+
+    var panel = Ext.create('Ext.grid.Panel', {
+                      title : 'Grid Panel Test',
+                      store : store,
+                      split: true,
+                      renderTo: 'foo',
+                      plugins : [{
+                          ptype : 'inlinecontextmenu',
+                          actions : [removeAction,downloadLayerAction]
+                      }]
+    })
+
  *
  */
 Ext.define('portal.widgets.grid.plugin.InlineContextMenu', {

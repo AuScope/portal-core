@@ -92,8 +92,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         filterer.suspendEvents(false);
 
         //Configure our layer/dependencies
-        layer.set('deserialized', true);
-        renderer.setVisible(visible);
+        layer.set('deserialized', true);       
         if (filterParams) {
             filterer.setParameters(filterParams);
         }
@@ -162,7 +161,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
                 //Create our new layer
                 var newLayer = this.layerFactory.generateLayerFromKnownLayer(knownLayer);
-                newLayer.set('displayed',true);
+                
                 knownLayer.set('layer', newLayer);
 
                 //Configure it
@@ -192,13 +191,22 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 }
 
                 var newLayer = this.layerFactory.generateLayerFromCSWRecord(cswRecord);
-                newLayer.set('displayed',true);
+              
                 cswRecord.set('layer', newLayer);
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
 
                 //Add this layer to the internal store
                 this.layerStore.add(newLayer);
+                
+                if(serializedLayer.customlayer){
+                    cswRecord.set('customlayer', true);
+                    var tabpanel =  Ext.getCmp('auscope-tabs-panel');
+                    var customPanel = tabpanel.getComponent('org-auscope-custom-record-panel');
+                    tabpanel.setActiveTab(customPanel);                                       
+                    customPanel.getStore().insert(0,cswRecord);                    
+                }
+                
             }
         }
 

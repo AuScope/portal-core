@@ -12,6 +12,20 @@
  * Contains two events:
  *  containerhide, containershow
  *
+ * Example usage:
+ *  var panel = Ext.create('Ext.grid.Panel', {
+                  title : 'Grid Panel Test',
+                  store : store,
+                 split: true,
+                  renderTo: 'foo',
+                  plugins : [{
+                      ptype : 'rowexpandercontainer',
+                      generateContainer : function(record, parentElId) {
+                           return Ext.create('Ext.panel.Panel', {});
+                     }
+                  }]
+    });
+
  */
 Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     extend: 'Ext.AbstractPlugin',
@@ -68,12 +82,13 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             grid.features = features.concat(grid.features);
         } else {
             grid.features = features;
-        }
+        }               
 
     },
 
     init: function(grid) {
-        grid.on('cellclick', this._onContextMenuCell, this);
+        grid.on('cellclick', this._onContextMenuItemClick, this);      
+      
     },
 
     /**
@@ -81,11 +96,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
      */
     closeAllContainers : function() {
         for (idx in this.rowsExpanded) {
-            if (this.rowsExpanded[idx] === true) {
-                this.hideContainer(parseInt(idx));
-            }
-        }
-    },
+            var i = parseInt(this.rowsExpanded[idx]);            
+            this.hideContainer(i);            
+        }                      
+    },      
 
     /**
      * Hide a specifc container (by row index)
@@ -100,8 +114,8 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         row.addCls(this.rowCollapsedCls);
         nextBd.addCls(this.rowBodyHiddenCls);
-        this.rowsExpanded[rowIdx] = false;
-        this.recordComponents[rowIdx].destroy();
+        delete this.rowsExpanded[record.internalId];
+        //this.recordComponents[rowIdx].destroy();
         view.refreshSize();
         view.fireEvent('contexthide', rowNode, record, nextBd.dom);
     },
@@ -124,11 +138,13 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         row.removeCls(this.rowCollapsedCls);
         nextBd.removeCls(this.rowBodyHiddenCls);
-        this.rowsExpanded[rowIdx] = true;
+        this.rowsExpanded[record.internalId] = rowIdx;
         view.refreshSize();
         view.fireEvent('contextshow', rowNode, record, nextBd.dom);
-
-        this.recordComponents[rowIdx] = this.generateContainer(record, this.recordComponentIds[rowIdx]);
+        
+        if(!this.recordComponents[record.internalId]){
+            this.recordComponents[record.internalId] = this.generateContainer(record, this.recordComponentIds[record.internalId]);
+        }
     },
 
     /**
@@ -149,17 +165,23 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     _getRowBodyFeatureData: function(data, idx, record, orig) {
         var o = Ext.grid.feature.RowBody.prototype.getAdditionalData.apply(this, arguments),
             id = this.columnId,
-            componentId = this.recordComponentIds[idx];
+            componentId = this.recordComponentIds[record.internalId];
 
         if (!componentId) {
-            this.recordComponentIds[idx] = componentId = Ext.id();
+            this.recordComponentIds[record.internalId] = componentId = Ext.id();
         }
 
         var rowBody = this.rowBodyTpl.applyTemplate({'component-id' : componentId});
 
         o.rowBody = rowBody;
-        o.rowCls = this.rowsExpanded[idx] ? '' : this.rowCollapsedCls;
-        o.rowBodyCls = this.rowsExpanded[idx] ? '' : this.rowBodyHiddenCls;
+        if(parseInt(this.rowsExpanded[record.internalId])>=0){
+            o.rowCls =  '' ;
+            o.rowBodyCls ='';
+        }else{
+            o.rowCls = this.rowCollapsedCls;
+            o.rowBodyCls = this.rowBodyHiddenCls
+        }
+               
         o[id + '-tdAttr'] = ' valign="top" rowspan="2" ';
         if (orig[id+'-tdAttr']) {
             o[id+'-tdAttr'] += orig[id+'-tdAttr'];
@@ -167,9 +189,9 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         return o;
     },
 
-    _onContextMenuCell : function(view, td, cellIndex, record, tr, index, e, eOpts) {
-        e.stopEvent();
-
-        this.toggleContainer(index);
+    _onContextMenuItemClick : function( view, td, cellIndex, record, tr, index, e, eOpts ) {
+        this.toggleContainer(index);        
     }
+
+  
 });
