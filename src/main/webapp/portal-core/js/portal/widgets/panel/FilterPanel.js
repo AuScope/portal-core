@@ -51,7 +51,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 xtype:'tbfill'
             },{
                 xtype : 'button',
-                text      : 'Access options',
+                text      : 'Options',
                 iconCls    :   'setting',
                 arrowAlign: 'right',
                 menu      : [

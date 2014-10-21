@@ -46,5 +46,17 @@ Ext.define('portal.util.permalink.serializers.BaseSerializer', {
      *
      * returns Nothing - Use the callback parameter 
      */
-    deserialize : portal.util.UnimplementedFunction
+    deserialize : portal.util.UnimplementedFunction,
+    
+    
+    /**
+     * This function allows us to override and control what parameters we serialize in each version of the Serializer.
+     */
+    createSerializedObject : portal.util.UnimplementedFunction,
+    
+    
+    /**
+     * This function allows us to override and control what parameters we deserialize in each version of the Serializer.
+     */
+    createDeSerializedObject : portal.util.UnimplementedFunction
 });
