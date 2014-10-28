@@ -428,6 +428,43 @@ public class TestFileStagingService extends PortalTestClass {
         assertStagedFile(job, "testFile2", false);
     }
 
+    /**
+     * Tests that creating and renaming files in a job staging area works when the target file already exists
+     * @throws IOException
+     */
+    @Test
+    public void testFileExists() throws Exception {
+        service.generateStageInDirectory(job);
+
+        final byte[] file1Data = new byte[] {1,2,3};
+        final byte[] file2Data = new byte[] {4,3,1};
+
+        OutputStream file1 = service.writeFile(job, "testFile1");
+        OutputStream file2 = service.writeFile(job, "testFile2");
+
+        file1.write(file1Data);
+        file2.write(file2Data);
+        file1.close();
+        file2.close();
+
+        assertStagedDirectory(job, true);
+        assertStagedFile(job, "testFile1", true, file1Data);
+        assertStagedFile(job, "testFile2", true, file2Data);
+
+        Assert.assertTrue(service.stageInFileExists(job, "testFile1"));
+        Assert.assertTrue(service.stageInFileExists(job, "testFile2"));
+        Assert.assertFalse(service.stageInFileExists(job, "fileDNE"));
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "testFile2", false);
+
+        Assert.assertFalse(service.stageInFileExists(job, "testFile1"));
+        Assert.assertFalse(service.stageInFileExists(job, "testFile2"));
+        Assert.assertFalse(service.stageInFileExists(job, "fileDNE"));
+    }
+
 }
 
 

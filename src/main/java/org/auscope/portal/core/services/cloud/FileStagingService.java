@@ -140,6 +140,17 @@ public class FileStagingService {
     }
 
     /**
+     * Returns true if the specified file in the job staging area exists. False otherwise.
+     *
+     * @param job Must have its fileStorageId parameter set
+     * @param currentFileName The file to be checked
+     * @return
+     */
+    public boolean stageInFileExists(CloudJob job, String fileName) {
+        return getFile(job, fileName).exists();
+    }
+
+    /**
      * Given a job create a folder that is unique to that job in the internal staging area.
      *
      * @param job Must have its fileStorageId parameter set
