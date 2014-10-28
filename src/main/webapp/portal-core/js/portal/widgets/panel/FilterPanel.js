@@ -75,10 +75,16 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         var me = this;
         var layer = me.filterForm.layer;
         var legend = layer.get('renderer').getLegend();
-    
+        var text = 'Get Legend';
+        if(!legend){
+            legend = Ext.create('portal.layer.legend.wfs.WFSLegend',{
+                iconUrl: ''
+            });
+            text = 'Legend not supported';
+        }
         
         var getLegendAction = new Ext.Action({
-            text : 'Get Legend',
+            text : text,
             icon : legend.iconUrl,
             handler : function(){
                 var legendCallback = function(legend, resources, filterer, success, form, layer){
