@@ -157,6 +157,18 @@ public class FileStagingService {
     }
 
     /**
+     * Given a job see if a folder for the internal staging area has been created.
+     *
+     * @param job Must have its fileStorageId parameter set
+     * @return
+     * @throws IOException If the directory creation fails
+     */
+    public boolean stageInDirectoryExists(CloudJob job) throws PortalServiceException {
+        String jobInputDir = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
+        return new File(jobInputDir).exists();
+    }
+
+    /**
      * Given a job create a folder that is unique to that job in the internal staging area.
      *
      * @param job Must have its fileStorageId parameter set

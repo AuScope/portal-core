@@ -492,6 +492,23 @@ public class TestFileStagingService extends PortalTestClass {
         Assert.assertFalse(service.stageInFileExists(job, "fileDNE"));
     }
 
+    /**
+     * Tests that creating a job staging works and that it can be detected
+     * @throws IOException
+     */
+    @Test
+    public void testStagingDirectoryExists() throws Exception {
+        service.generateStageInDirectory(job);
+
+
+        assertStagedDirectory(job, true);
+        Assert.assertTrue(service.stageInDirectoryExists(job));
+        service.deleteStageInDirectory(job);
+
+        assertStagedDirectory(job, false);
+        Assert.assertFalse(service.stageInDirectoryExists(job));
+    }
+
 }
 
 
