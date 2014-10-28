@@ -290,7 +290,7 @@ public class TestFileStagingService extends PortalTestClass {
         final ArrayList<MultipartFile> files = new ArrayList<MultipartFile>();
         files.add(file);
         files.add(file);
-        
+
         context.checking(new Expectations() {{
             oneOf(request).getFiles("file");will(returnValue(files));
             exactly(2).of(file).getOriginalFilename();will(returnValue(fileName));
@@ -308,8 +308,8 @@ public class TestFileStagingService extends PortalTestClass {
         service.deleteStageInDirectory(job);
         assertStagedDirectory(job, false);
     }
-    
-    
+
+
     /**
      * Tests that file downloads are handled correctly
      * @throws Exception
@@ -343,6 +343,91 @@ public class TestFileStagingService extends PortalTestClass {
         service.deleteStageInDirectory(job);
         assertStagedDirectory(job, false);
     }
+
+    /**
+     * Tests that creating and renaming files in a job staging area works
+     * @throws IOException
+     */
+    @Test
+    public void testFileRenaming() throws Exception {
+        service.generateStageInDirectory(job);
+
+        final byte[] file1Data = new byte[] {1,2,3};
+
+        OutputStream file1 = service.writeFile(job, "testFile1");
+        file1.write(file1Data);
+        file1.close();
+
+        service.renameStageInFile(job, "testFile1", "renamedTestFile1");
+
+        assertStagedDirectory(job, true);
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "renamedTestFile1", true, file1Data);
+
+        //Ensure that listing returns all the files (in no particular order)
+        StagedFile[] expectedFiles = new StagedFile[] {new StagedFile(job, "renamedTestFile1", null)};
+        StagedFile[] listedFiles = service.listStageInDirectoryFiles(job);
+        Assert.assertNotNull(listedFiles);
+        Assert.assertEquals(expectedFiles.length, listedFiles.length);
+        for (StagedFile expectedFile : expectedFiles) {
+            boolean foundFile = false;
+            for (StagedFile listedFile : listedFiles) {
+                if (listedFile.equals(expectedFile)) {
+                    Assert.assertNotNull("File reference in StagedFile not set!", listedFile.getFile());
+                    Assert.assertEquals(job, listedFile.getOwner());
+                    foundFile = true;
+                    break;
+                }
+            }
+
+            Assert.assertTrue(String.format("File '%1$s' not listed", expectedFile), foundFile);
+        }
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "renamedTestFile1", false);
+    }
+
+    /**
+     * Tests that creating and renaming files in a job staging area works when the target file already exists
+     * @throws IOException
+     */
+    @Test
+    public void testFileRenamingOverwrite() throws Exception {
+        service.generateStageInDirectory(job);
+
+        final byte[] file1Data = new byte[] {1,2,3};
+        final byte[] file2Data = new byte[] {4,3,1};
+
+        OutputStream file1 = service.writeFile(job, "testFile1");
+        OutputStream file2 = service.writeFile(job, "testFile2");
+
+        file1.write(file1Data);
+        file2.write(file2Data);
+        file1.close();
+        file2.close();
+
+        assertStagedDirectory(job, true);
+        assertStagedFile(job, "testFile1", true, file1Data);
+        assertStagedFile(job, "testFile2", true, file2Data);
+
+        Assert.assertTrue(service.renameStageInFile(job, "testFile1", "testFile2"));
+
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "testFile2", true, file1Data);
+
+        Assert.assertFalse(service.renameStageInFile(job, "testFile1", "testFile2"));
+
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "testFile2", true, file1Data);
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "testFile2", false);
+    }
+
 }
 
 
