@@ -429,6 +429,33 @@ public class TestFileStagingService extends PortalTestClass {
     }
 
     /**
+     * Tests that renaming file to itself does nothing
+     * @throws IOException
+     */
+    @Test
+    public void testFileRenamingSameFile() throws Exception {
+        service.generateStageInDirectory(job);
+
+        final byte[] file1Data = new byte[] {1,2,3};
+
+        OutputStream file1 = service.writeFile(job, "testFile1");
+
+        file1.write(file1Data);
+        file1.close();
+
+        assertStagedDirectory(job, true);
+        assertStagedFile(job, "testFile1", true, file1Data);
+
+        Assert.assertTrue(service.renameStageInFile(job, "testFile1", "testFile1"));
+
+        assertStagedFile(job, "testFile1", true, file1Data);
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+        assertStagedFile(job, "testFile1", false);
+    }
+
+    /**
      * Tests that creating and renaming files in a job staging area works when the target file already exists
      * @throws IOException
      */

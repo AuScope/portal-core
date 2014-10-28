@@ -116,7 +116,8 @@ public class FileStagingService {
 
     /**
      * Renames a specific file in the job stage in directory. If currentFileName DNE, this will return false.
-     * If newFileName exists, it will be deleted first.
+     * If newFileName exists, it will be deleted first. if currentFileName equals newFileName this will return
+     * true and perform no operations.
      *
      * @param job Must have its fileStorageId parameter set
      * @param currentFileName The file to be renamed
@@ -126,6 +127,11 @@ public class FileStagingService {
     public boolean renameStageInFile(CloudJob job, String currentFileName, String newFileName) {
         File currentFile = getFile(job, currentFileName);
         File newFile = getFile(job, newFileName);
+
+        //In case we rename something into itself
+        if (newFile.getAbsolutePath().equals(currentFile.getAbsolutePath())) {
+            return true;
+        }
 
         if (!currentFile.exists()) {
             return false;
