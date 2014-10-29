@@ -40,6 +40,18 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             handler : Ext.bind(this._onAddLayer, this)
         });
          
+        
+        var menuItems = [this._getDownloadAction(),this._getDeleteAction()];
+        var legendAction=this._getLegendAction();
+        if(legendAction){
+            menuItems.push(legendAction);
+        }
+        
+        var group = this.filterForm.layer.get('source').get('group');
+        if(group && group.indexOf('Analytic') >= 0){
+            menuItems.push(this._getAnalyticLink());
+        }
+            
 
         Ext.apply(config, { 
             items : [
@@ -54,12 +66,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 text      : 'Options',
                 iconCls    :   'setting',
                 arrowAlign: 'right',
-                menu      : [
-                    this._getDownloadAction(),
-                    this._getDeleteAction(),
-                    this._getLegendAction()
-                   
-                ]               
+                menu      : menuItems           
             }]
         
         });
@@ -77,10 +84,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         var legend = layer.get('renderer').getLegend();
         var text = 'Get Legend';
         if(!legend){
-            legend = Ext.create('portal.layer.legend.wfs.WFSLegend',{
-                iconUrl: ''
-            });
-            text = 'Legend not supported';
+           return null;
         }
         
         var getLegendAction = new Ext.Action({
@@ -123,6 +127,42 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         });
         
         return getLegendAction;
+    },
+    
+    _getAnalyticLink : function(){
+        var me=this;
+        var layer = this.filterForm.layer; 
+        
+        return new Ext.Action({
+            text : 'Vgl Analytics',
+            iconCls : 'link',
+            handler : function(){                
+                
+                var mss = Ext.create('portal.util.permalink.MapStateSerializer');
+                var layerStore = Ext.create('portal.layer.LayerStore', {});
+                layerStore.insert(0,layer);
+
+                mss.addMapState(me._map);
+                mss.addLayers(layerStore);
+                mss.serialize(function(state, version) {
+                    var urlParams = Ext.Object.fromQueryString(location.search.substring(1));
+                    urlParams.s = state;
+                    if (version) {
+                        urlParams.v = version;
+                    }
+                    //VT: Hardcoding this for now, don't foresee any changes anytime soon.
+                    var linkedUrl = "http://vgl.auscope.org/VGL-Portal/gmap.html";
+
+                    var params = Ext.Object.toQueryString(urlParams);
+
+                    //*HACK:* sssssshhhh dont tell anyone we don't care about escaping....
+                    linkedUrl = Ext.urlAppend(linkedUrl, decodeURIComponent(params));
+                    window.open(linkedUrl);
+                });
+                
+            }
+        });
+        
     },
 
     
