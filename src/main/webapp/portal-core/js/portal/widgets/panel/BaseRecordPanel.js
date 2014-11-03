@@ -53,7 +53,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     store : cfg.store
                 },{
                     xtype : 'button',
-                    text : 'Visible',
+                    text : 'Filter Visible',
+                    iconCls : 'visible_eye',
                     tooltip: 'Filter the layers based on its bounding box and the map\'s visible bound',
                     handler : Ext.bind(this._handleVisibleFilterClick, this)
                 }]
@@ -420,6 +421,16 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      * When the visible fn is clicked, ensure only the visible records pass the filter
      */
     _handleVisibleFilterClick : function(button) {
+       if(button.getText()=='Filter Visible'){
+           button.setText('Clear Filter');
+           this._visibleFilterClick(button);
+       }else{
+           button.setText('Filter Visible');
+           this._clearVisibleFilterClick(button);
+       }
+    },
+    
+    _visibleFilterClick : function(button) {
         var currentBounds = this.map.getVisibleMapBounds();
 
         //Function for testing intersection of a records's spatial bounds
@@ -438,6 +449,12 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
         var searchField = button.ownerCt.items.getAt(1);
         searchField.runCustomFilter('<visible layers>', Ext.bind(filterFn, this));
+    },
+    
+    _clearVisibleFilterClick : function(button) {
+      
+        var searchField = button.ownerCt.items.getAt(1);
+        searchField.clearCustomFilter();
     },
 
     /**
