@@ -5,69 +5,216 @@
  * as it is in charge of displayed appropriate filter forms matching the current
  * selection
  *
- * Events : filterselectioncomplete : trigger when the user have finished filter selection.
- *
+ * VT: THIS CLASS IS TO BE DELETED WITH THE NEW INLINE UI
  */
 Ext.define('portal.widgets.panel.FilterPanel', {
     extend: 'Ext.Panel',
 
-    /**
-     * Easy reference to the 'Apply Filter' button
-     */
-    _filterButton : null,
+   
+    _addLayerButton : null,
 
-    /**
-     * Easy reference to the 'Reset' button
-     */
-    _resetButton : null,
-
-    /**
-     * Reference to the layer panel
-     */
-    _layerPanel : null,
-
+    filterForm : null,
+    
     /**
      * Accepts all parameters for a normal Ext.Panel instance with the following additions
      * {
      *  layerPanel : [Required] an instance of a portal.widgets.panel.LayerPanel - selection events will be listend for
      * }
+     * 
+     * Adds the following event:
+     * addlayer - fire when we request to add a layer
+     * removelayer - fire when a request to remove layer is made
      */
     constructor : function(config) {
-        this._layerPanel = config.layerPanel;
+ 
         this._map = config.map;
-        this.addEvents('filterselectioncomplete');
-        var emptyCard = Ext.create('portal.layer.filterer.forms.EmptyFilterForm', {}); //show this
-        this._filterButton = Ext.create('Ext.button.Button', {
-            text :'Add to Map',
-            disabled : false,
-            overCls : 'showResultsOverStyle',
-            handler : Ext.bind(this._onApplyFilter, this)
+        this.filterForm = config.filterForm;
+        
+        this.addEvents('addlayer');
+        this.addEvents('removelayer');
+        
+        this._addLayerButton = Ext.create('Ext.button.Button', {
+            xtype : 'button',
+            text      : 'Add layer to Map',
+            iconCls    :   'add',
+            handler : Ext.bind(this._onAddLayer, this)
         });
+         
+        
+        var menuItems = [this._getDownloadAction(),this._getDeleteAction()];
+        var legendAction=this._getLegendAction();
+        if(legendAction){
+            menuItems.push(legendAction);
+        }
+        
+        var group = this.filterForm.layer.get('source').get('group');
+        if(group && group.indexOf('Analytic') >= 0){
+            menuItems.push(this._getAnalyticLink());
+        }
+            
 
-        this._resetButton = Ext.create('Ext.button.Button', {
-            text :'Reset Filter',
-            iconCls:'refresh',
-            disabled : false,
-            handler : Ext.bind(this._onResetFilter, this)
-        });
-
-        Ext.apply(config, {
-            layout : 'card',
-            buttonAlign : 'right',
-            items : [emptyCard],
-            bbar: [ this._filterButton, '->', this._resetButton ]
+        Ext.apply(config, { 
+            items : [
+                this.filterForm
+            ],
+            buttons : [
+                this._addLayerButton,
+            {
+                xtype:'tbfill'
+            },{
+                xtype : 'button',
+                text      : 'Options',
+                iconCls    :   'setting',
+                arrowAlign: 'right',
+                menu      : menuItems           
+            }]
+        
         });
 
         this.callParent(arguments);
 
-        this._layerPanel.on('select', this._onLayerPanelSelect, this);
+ 
 
 
     },
+    
+    _getLegendAction : function(){                 
+        var me = this;
+        var layer = me.filterForm.layer;
+        var legend = layer.get('renderer').getLegend();
+        var text = 'Get Legend';
+        if(!legend){
+           return null;
+        }
+        
+        var getLegendAction = new Ext.Action({
+            text : text,
+            icon : legend.iconUrl,
+            handler : function(){
+                var legendCallback = function(legend, resources, filterer, success, form, layer){
+                    if (success && form) {
+                        var win = Ext.create('Ext.window.Window', {
+                            title       : 'Legend: '+ layer.get('name'),
+                            layout      : 'fit',
+                            width       : 200,
+                            height      : 300,
+                            items: form
+                        });
+                        return win.show();
+                    }
+                };
 
-    _onLayerPanelSelect : function(sm, layer, index) {
-        this.showFilterForLayer(layer);
+                var onlineResources = layer.getAllOnlineResources();
+                var filterer = layer.get('filterer');
+                var renderer = layer.get('renderer');
+                var legend = renderer.getLegend(onlineResources, filterer);
+
+                //VT: this style is just for the legend therefore no filter is required.
+                var styleUrl = layer.get('renderer').parentLayer.get('source').get('proxyStyleUrl');
+
+                Ext.Ajax.request({
+                    url: styleUrl,
+                    timeout : 180000,
+                    scope : this,
+                    success:function(response,opts){
+                        legend.getLegendComponent(onlineResources, filterer,response.responseText, Ext.bind(legendCallback, this, [layer], true));
+                    },
+                    failure: function(response, opts) {
+                        legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
+                    }
+                });
+            }
+        });
+        
+        return getLegendAction;
     },
+    
+    _getAnalyticLink : function(){
+        var me=this;
+        var layer = this.filterForm.layer; 
+        
+        return new Ext.Action({
+            text : 'Vgl Analytics',
+            iconCls : 'link',
+            handler : function(){                
+                
+                var mss = Ext.create('portal.util.permalink.MapStateSerializer');
+                var layerStore = Ext.create('portal.layer.LayerStore', {});
+                layerStore.insert(0,layer);
+
+                mss.addMapState(me._map);
+                mss.addLayers(layerStore);
+                mss.serialize(function(state, version) {
+                    var urlParams = Ext.Object.fromQueryString(location.search.substring(1));
+                    urlParams.s = state;
+                    if (version) {
+                        urlParams.v = version;
+                    }
+                    //VT: Hardcoding this for now, don't foresee any changes anytime soon.
+                    var linkedUrl = "http://vgl.auscope.org/VGL-Portal/gmap.html";
+
+                    var params = Ext.Object.toQueryString(urlParams);
+
+                    //*HACK:* sssssshhhh dont tell anyone we don't care about escaping....
+                    linkedUrl = Ext.urlAppend(linkedUrl, decodeURIComponent(params));
+                    window.open(linkedUrl);
+                });
+                
+            }
+        });
+        
+    },
+
+    
+    _getDownloadAction : function(){
+        var me = this;
+        var downloadLayerAction = new Ext.Action({
+            text : 'Download Layer',
+            iconCls : 'download',
+            handler : function(){
+                var layer = me.filterForm.layer; 
+                var downloader = layer.get('downloader');
+                var renderer = layer.get('renderer');
+                if (downloader) {// && renderer.getHasData() -> VT: It is too confusing when the download will be active. We will treat it as always active to 
+                                 // make it easier for the user.
+                    //We need a copy of the current filter object (in case the user
+                    //has filled out filter options but NOT hit apply filter) and
+                    //the original filter objects
+                    var renderedFilterer = layer.get('filterer').clone();
+                    var currentFilterer = Ext.create('portal.layer.filterer.Filterer', {});
+                    var currentFilterForm = layer.get('filterForm');
+
+                    currentFilterer.setSpatialParam(me._map.getVisibleMapBounds(), true);
+                    currentFilterForm.writeToFilterer(currentFilterer);
+
+                    //Finally pass off the download handling to the appropriate downloader (if it exists)
+                    var onlineResources = layer.getAllOnlineResources();
+                    downloader.downloadData(layer, onlineResources, renderedFilterer, currentFilterer);
+
+                }
+            }
+        });
+        
+        return downloadLayerAction
+    },
+    
+    
+    _getDeleteAction : function(){
+        var me = this;
+        var downloadLayerAction = new Ext.Action({
+            text : 'Remove Layer',
+            iconCls : 'trash',
+            handler : function(){
+                var layer = me.filterForm.layer; 
+                layer.removeDataFromMap();
+                me.updateButton(false);
+                me.fireEvent('removelayer', layer);
+            }
+        });
+        
+        return downloadLayerAction
+    },
+
 
     /**
      * Internal handler for when the user clicks 'Apply Filter'.
@@ -75,16 +222,54 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Simply updates the appropriate layer filterer. It's the responsibility
      * of renderers/layers to listen for filterer updates.
      */
-    _onApplyFilter : function() {
-        this.fireEvent('filterselectioncomplete');
+    _onAddLayer : function() {      
+        var layer = this.filterForm.layer; 
+        var filterer = layer.get('filterer');      
 
-        var baseFilterForm = this.getLayout().getActiveItem();
-        var filterer = baseFilterForm.layer.get('filterer');
+        this._showConstraintWindow(layer);
 
         //Before applying filter, update the spatial bounds (silently)
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
 
-        baseFilterForm.writeToFilterer(filterer);
+        this.filterForm.writeToFilterer(filterer);
+        this.fireEvent('addlayer', layer);
+        this.updateButton(true);
+    },
+    
+    /**
+     * Change the state of the button
+     * State 1: original text "Add layer to Map"
+     * State 2: after adding layer "Update layer on Map")
+     */
+    updateButton : function(islayerOnMap){
+        if(islayerOnMap){
+            this._addLayerButton.setText('Update layer on Map');
+        }else{
+            this._addLayerButton.setText('Add layer to Map');
+        }
+    },
+    
+    _showConstraintWindow : function(layer){
+        var cswRecords = layer.get('cswRecords');
+        for (var i = 0; i < cswRecords.length; i++) {
+            if (cswRecords[i].hasConstraints()) {
+                var popup = Ext.create('portal.widgets.window.CSWRecordConstraintsWindow', {
+                    width : 625,
+                    cswRecords : cswRecords
+                });
+
+                popup.show();
+
+                  //HTML images may take a moment to load which stuffs up our layout
+                  //This is a horrible, horrible workaround.
+                var task = new Ext.util.DelayedTask(function(){
+                    popup.doLayout();
+                });
+                task.delay(1000);
+
+                break;
+            }
+        }
     },
 
     /**
@@ -99,41 +284,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         baseFilterForm.getForm().reset();
     },
 
-    /**
-     * Given an instance of portal.layer.Layer - update the displayed panel
-     * with an appropriate filter form (as defined by portal.layer.filterer.FormFactory).
-     */
-    showFilterForLayer : function(layer) {
-        var layout = this.getLayout();
-        var filterForm = layer ? layer.get('filterForm') : null;
-        var renderOnAdd = layer ? layer.get('renderOnAdd') : false;
-
-        //Load the form (by either switching to it or adding it)
-        if (filterForm) {
-            if (!layout.setActiveItem(filterForm)) {
-                //Now this will return false when activating the current card
-                //or activating a form that DNE. We can eliminate the first
-                //problem with a simple ID check
-                if (layout.getActiveItem().id !== filterForm.id) {
-                    //So now we can be sure the setting failed because it's the first
-                    //time this form has been added to this panel
-                    this.add(filterForm);
-                    layout.setActiveItem(filterForm);
-                }
-            }
-        } else {
-            layout.setActiveItem(this._emptyCard);
-        }
-
-        //Activate the filter and reset buttons (if appropriate)
-        disableButtons = renderOnAdd || !filterForm;
-        //false to enable, true to disable
-
-        this._filterButton.getEl().addCls("applyFilterCls");
-        this._filterButton.getEl().frame();
-
-
-    },
+   
 
     clearFilter : function(){
         var layout = this.getLayout();
@@ -143,7 +294,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         //Disable the filter and reset buttons (set to default values)
         //this._filterButton.setDisabled(true);
-        this._resetButton.setDisabled(true);
+        //this._resetButton.setDisabled(true);
 
         //Close active item to prevent memory leak
         var actvItem = layout.getActiveItem();

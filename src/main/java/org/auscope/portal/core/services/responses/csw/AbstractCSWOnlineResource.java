@@ -52,16 +52,21 @@ public abstract class AbstractCSWOnlineResource {
          * A SOS Service
          */
         SOS,
-        
+
         /**
          * IRIS Web Service
          */
         IRIS,
-        
+
         /**
          * A CSW Service. e.g. a GeoNetwork /csw endpoint. Can be used a dummy resource for when you don't want to cache all CSW records on load.
          */
-        CSWService
+        CSWService,
+        
+        /**
+         * A NetCDF Subset Service.
+         */
+        NCSS
     }
 
     /**
@@ -90,6 +95,12 @@ public abstract class AbstractCSWOnlineResource {
      * @return
      */
     public abstract String getApplicationProfile();
+
+    /**
+     * provide the protocol version if possible. eg WMS 1.1.1 vs 1.3
+     * @return version if possible
+     */
+    public abstract String getVersion();
 
     /**
      * Gets a simplification of the protocol that this online resource represents.
@@ -124,8 +135,10 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.IRIS;
         } else if (lowerProtocol.contains("cswservice")) {
             return OnlineResourceType.CSWService;
+        } else if (lowerProtocol.contains("ncss")) {
+            return OnlineResourceType.NCSS;
         }
-        
+
         return OnlineResourceType.Unsupported;
     }
 

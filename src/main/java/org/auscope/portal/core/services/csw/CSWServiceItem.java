@@ -23,6 +23,7 @@ public class CSWServiceItem {
     private String defaultAnyTextFilter;
     private String[] defaultConstraints;
     private boolean noCache = false;
+    private boolean hideFromCatalogue = false;
 
     /**
      * Creates a new service item with NO role restrictions
@@ -230,7 +231,7 @@ public class CSWServiceItem {
     public String getCqlText() {
         return cqlText;
     }
-    
+
     /**
      * Set cqlText for querying the catalog
      * @return
@@ -238,7 +239,7 @@ public class CSWServiceItem {
     public void setCqlText(String cqlText) {
         this.cqlText = cqlText;
     }
-    
+
     /**
      * Get the defaultAnyTextFilter for querying the catalog.
      * @return String
@@ -246,7 +247,7 @@ public class CSWServiceItem {
     public String getDefaultAnyTextFilter() {
         return defaultAnyTextFilter;
     }
-    
+
     /**
      * Set defaultAnyTextFilter for querying the catalog.
      * @return
@@ -254,7 +255,7 @@ public class CSWServiceItem {
     public void setDefaultAnyTextFilter(String defaultAnyTextFilter) {
         this.defaultAnyTextFilter = defaultAnyTextFilter;
     }
-    
+
     /**
      * Gets a value indicating whether or not the caching has been disabled for this item.
      * @return
@@ -262,7 +263,7 @@ public class CSWServiceItem {
     public boolean getNoCache() {
         return this.noCache;
     }
-    
+
     public String[] getDefaultConstraints() {
         return this.defaultConstraints;
     }
@@ -274,7 +275,7 @@ public class CSWServiceItem {
     public void setNoCache(boolean noCache) {
         this.noCache = noCache;
     }
-    
+
     /**
      * Set an array of constraints to be applied to any dummy layers that get created from this Service item. It doesn't make sense to set this value
      * unless noCache is being set to true.
@@ -282,5 +283,13 @@ public class CSWServiceItem {
      */
     public void setDefaultConstraints(String[] defaultConstraints) {
         this.defaultConstraints = defaultConstraints;
+    }
+
+    public boolean getHideFromCatalogue() {
+        return hideFromCatalogue;
+    }
+
+    public void setHideFromCatalogue(boolean hideFromCatalogue) {
+        this.hideFromCatalogue = hideFromCatalogue;
     }
 }

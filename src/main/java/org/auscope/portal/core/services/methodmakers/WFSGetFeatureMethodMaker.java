@@ -75,7 +75,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws Exception if service URL or featureType is not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
-        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, null, null, null);
+        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, null, null, null,null);
     }
 
     /**
@@ -88,7 +88,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws Exception if service URL or featureType is not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
-        return makePostMethod(serviceURL, featureType, filterString, 0, null, resultType, null);
+        return makePostMethod(serviceURL, featureType, filterString, 0, null, resultType, null,null);
     }
 
     /**
@@ -102,7 +102,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws Exception if service URL or featureType is not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
-        return makePostMethod(serviceURL, featureType, filterString, 0, srsName, null, null);
+        return makePostMethod(serviceURL, featureType, filterString, 0, srsName, null, null,null);
     }
 
     /**
@@ -117,7 +117,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @throws Exception if service URL or featureType is not provided
      */
     public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
-        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, null);
+        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, null,null);
     }
 
     /**
@@ -132,7 +132,24 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @return
      * @throws Exception if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat) {
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat){
+        return makePostMethod(serviceURL,featureType,filterString,maxFeatures,srsName,resultType,outputFormat,null);
+    }
+
+    /**
+     * Creates a PostMethod given the following parameters.
+     * @param serviceURL - required, exception thrown if not provided
+     * @param featureType - required, exception thrown if not provided
+     * @param filterString - optional - an OGC Filter String
+     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
+     * @param srsName - Can be null or empty
+     * @param resultType - Can be null - The type of response set you wish to request (default is Results)
+     * @param outputFormat - Can be null - The format you wish the response to take
+     * @param startIndex - This is for services that supports paging.
+     * @return
+     * @throws Exception if service URL or featureType is not provided
+     */
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat, String startIndex) {
 
         // Make sure the required parameters are given
         if (featureType == null || featureType.equals("")) {
@@ -159,6 +176,11 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         if (maxFeatures > 0) {
             sb.append("                maxFeatures=\"" + Integer.toString(maxFeatures) + "\"");
         }
+
+        if (startIndex !=  null) {
+            sb.append("                startIndex=\"" + startIndex + "\"");
+        }
+
         if (resultType != null) {
             switch (resultType) {
             case Hits:
@@ -238,19 +260,19 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         }
         if (bbox != null) {
             StringBuilder sb = new StringBuilder();
-            
+
             //Add lower corner points
             for (double d : bbox.getLowerCornerPoints()) {
                 sb.append(d);
                 sb.append(',');
             }
-            
+
             //Add upper corner points
             for (double d : bbox.getUpperCornerPoints()) {
                 sb.append(d);
                 sb.append(',');
             }
-            
+
             //And finally add the SRS (if there) otherwise just delete the superfluous ','
             if (sb.length() > 0) {
                 if (bbox.getBboxSrs() != null && !bbox.getBboxSrs().isEmpty()) {
@@ -259,7 +281,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
                     sb.deleteCharAt(sb.length() - 1);
                 }
             }
-            
+
             builder.setParameter("bbox", sb.toString());
         }
         if (resultType != null) {
@@ -305,6 +327,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      * @param typeName The typeName to query
      * @param featureId [Optional] The ID of typeName to request
      * @param srs [Optional] The spatial reference system the response should conform to
+     * @param outputFormat The output format the response to be parsed in.
      * @return
      * @throws URISyntaxException
      */
@@ -324,7 +347,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null, null);
     }
-    
+
     /**
      * Generates a method for requesting all instances of a specific feature type.
      * @param serviceUrl The WFS endpoint
@@ -351,7 +374,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, null);
     }
-    
+
     /**
      * Generates a method for requesting all instances of a specific feature type.
      * @param serviceUrl The WFS endpoint
@@ -365,7 +388,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs, FilterBoundingBox bbox) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, bbox);
     }
-    
+
     /**
      * Generates a method for requesting all instances of a specific feature type.
      * @param serviceUrl The WFS endpoint
@@ -408,7 +431,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs, null, null);
     }
-    
+
     /**
      * Generates a method for requesting a WFS GetCapabilities response
      * @param serviceUrl
@@ -423,13 +446,13 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         builder.setParameter("service", "WFS");
         builder.setParameter("request", "GetCapabilities");
         builder.setParameter("version", WFS_VERSION);
-        
+
         //attach them to the method
         method.setURI(builder.build());
 
         return method;
     }
-    
+
     /**
      * Generates a method for requesting a WFS DescribeFeatureType response
      * @param serviceUrl
@@ -444,7 +467,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         builder.setParameter("request", "DescribeFeatureType");
         builder.setParameter("version", WFS_VERSION);
         builder.setParameter("typeName", featureType);
-        
+
         //attach them to the method
         method.setURI(builder.build());
 

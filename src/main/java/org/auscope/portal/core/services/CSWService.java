@@ -30,7 +30,7 @@ public class CSWService {
     private HttpServiceCaller serviceCaller;
     private boolean forceGetMethods;
     private CSWRecordTransformerFactory transformerFactory;
-    
+
     /**
      * Creates a new instance with a new CSWRecordTransformerFactory instance
      * @param endpoint
@@ -40,7 +40,7 @@ public class CSWService {
     public CSWService(CSWServiceItem endpoint, HttpServiceCaller serviceCaller, boolean forceGetMethods) {
         this(endpoint, serviceCaller, forceGetMethods, new CSWRecordTransformerFactory());
     }
-    
+
     /**
      * Creates a new instance with a configurable CSWRecordTransformerFactory instance
      * @param endpoint
@@ -56,8 +56,23 @@ public class CSWService {
         this.transformerFactory = transformerFactory;
     }
 
-    public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength) throws Exception {
-        return this.queryCSWEndpoint(startPosition, maxQueryLength, null);
+    public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength,int numberOfAttempts,long timeBetweenAttempts) throws Exception {
+
+        try{
+            while(numberOfAttempts > 0){
+                return this.queryCSWEndpoint(startPosition, maxQueryLength, null);
+            }
+            throw new Exception("The code should have never reach here");
+        }catch(java.io.IOException e){
+            log.warn("Attempt to query CSW end point failed. Number of attempts left:" + --numberOfAttempts);
+            if(numberOfAttempts >0){
+                Thread.sleep(timeBetweenAttempts);
+                return queryCSWEndpoint(startPosition,maxQueryLength,numberOfAttempts,timeBetweenAttempts);
+            }else{
+                throw e;
+            }
+        }
+
     }
 
     public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength, CSWGetDataRecordsFilter filter) throws Exception {

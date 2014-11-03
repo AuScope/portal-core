@@ -109,7 +109,8 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                 HEIGHT : tileInfo.getHeight(),
                 INFO_FORMAT : 'application/vnd.ogc.gml/3.1.1',
                 SLD_BODY : sld_body,
-                postMethod : methodPost
+                postMethod : methodPost,
+                version : wmsOnlineResource.get('version')                
             },
             method : 'POST',//VT: potentially long sld_body forces us to use "POST" instead of "GET"
             callback : function(options, success, response) {
@@ -134,49 +135,54 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
                     return;
                 }
 
-                var featureTypeRoot = featureMemberNodes[0].childNodes[0];
-
-                //Extract the line ID of what we clicked
-                var id = portal.util.xml.SimpleXPath.evaluateXPathString(featureTypeRoot, '@gml:id');
-
-
-                //VT:handle the wfs download
-
-                var layer = queryTarget.get('layer');
-                //var id = queryTarget.get('id');
-                var layer = queryTarget.get('layer');
-                var onlineResource = queryTarget.get('onlineResource');
-                var typeName = onlineResource.get('name');
-                var wfsUrl = onlineResource.get('url');
-
-
-                //we need to get a reference to the parent known layer (if it is a known layer)
-                var knownLayer = null;
-                if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
-                    knownLayer = layer.get('source');
-                }
-
-                //Download the DOM of the feature we are interested in
-                var me = this;
-                this.featureSource.getFeature(id, typeName, wfsUrl, function(wfsResponseRoot, id, typeName, wfsUrl) {
-                    if (!wfsResponseRoot) {
+                var featureTypeRoots = featureMemberNodes[0].childNodes;
+                var allComponents = [];
+                
+                for(var i=0; i < featureTypeRoots.length; i++){
+                    var featureTypeRoot = featureTypeRoots[i];
+    
+                    //Extract the line ID of what we clicked
+                    var id = portal.util.xml.SimpleXPath.evaluateXPathString(featureTypeRoot, '@gml:id');                         
+    
+                    var layer = queryTarget.get('layer');
+                    var onlineResource = queryTarget.get('onlineResource');
+                    var typeName = onlineResource.get('name');
+                    var wfsUrl = onlineResource.get('url');        
+                    //we need to get a reference to the parent known layer (if it is a known layer)
+                    var knownLayer = null;
+                    if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
+                        knownLayer = layer.get('source');
+                    }    
+                    var me = this;                                       
+                    if (!featureTypeRoot) {
                         callback(me, [me._generateErrorComponent(Ext.util.Format.format('There was a problem when looking up the feature with id \"{0}\"', id))], queryTarget);
                         return;
-                    }
-
-                    //Parse our response into a number of GUI components, pass those along to the callback
-                    var allComponents = [];
-                    allComponents.push(me.parser.parseNode(wfsResponseRoot, onlineResource.get('url')));
+                    }                                                            
+                    var base = me.parser.parseNode(featureTypeRoot, onlineResource.get('url'));                    
                     if (knownLayer && me.knownLayerParser.canParseKnownLayerFeature(id, knownLayer, onlineResource, layer)) {
                         var knownLayerFeature = me.knownLayerParser.parseKnownLayerFeature(id, knownLayer, onlineResource, layer);
-                        if(knownLayerFeature){
-                            allComponents.push(knownLayerFeature);
+                        if(knownLayerFeature){                            
+                            var tabTitle = id;
+                            if(base.tabTitle){
+                                tabTitle = base.tabTitle;
+                            }                            
+                            //VT: if we have tabs within tabs, we use the tabTitles in each component to assign values to the title.
+                            base.setTitle(base.tabTitle);                               
+                            knownLayerFeature.setTitle(knownLayerFeature.tabTitle);                                                                                
+                            var colateComponent =   Ext.create('Ext.tab.Panel',{
+                                tabTitle : tabTitle,
+                                layout : 'fit',                                                                                      
+                                items : [base,knownLayerFeature]
+                            });                            
+                            allComponents.push(colateComponent);
+                        }else{
+                            allComponents.push(base);
                         }
-                    }
-
-                    callback(me, allComponents, queryTarget);
-                });
-
+                    }else{
+                        allComponents.push(base);
+                    }                    
+                }
+                callback(me, allComponents, queryTarget);                                
             }
         });
     },

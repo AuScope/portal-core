@@ -274,7 +274,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanelRow', {
                 for (var j = 0; j < onlineResources.length; j++) {
 
                     //ensure we have a type we want to describe
-                    var group = portal.csw.OnlineResource.typeToString(onlineResources[j].get('type'),cswRecords[i]);
+                    var group = portal.csw.OnlineResource.typeToString(onlineResources[j].get('type'),onlineResources[j].get('version'));
                     if (!group) {
                         continue; //don't include anything else
                     }

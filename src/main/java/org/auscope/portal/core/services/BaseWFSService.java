@@ -64,7 +64,11 @@ public abstract class BaseWFSService {
      * @throws Exception
      */
     protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType) throws URISyntaxException {
-        return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, null);
+        return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, null,null);
+    }
+
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat) throws URISyntaxException {
+        return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, outputFormat,null);
     }
 
     /**
@@ -81,7 +85,7 @@ public abstract class BaseWFSService {
      * @throws URISyntaxException
      * @throws Exception
      */
-    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat) throws URISyntaxException {
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat, String startIndex) throws URISyntaxException {
         int max = maxFeatures == null ? 0 : maxFeatures.intValue();
 
         //apply default value for srs
@@ -90,7 +94,7 @@ public abstract class BaseWFSService {
         }
 
         if (featureId == null) {
-            return wfsMethodMaker.makePostMethod(wfsUrl, featureType, filterString, max, srs, resultType, outputFormat);
+            return wfsMethodMaker.makePostMethod(wfsUrl, featureType, filterString, max, srs, resultType, outputFormat,startIndex);
         } else {
             return wfsMethodMaker.makeGetMethod(wfsUrl, featureType, featureId, srs, outputFormat);
         }

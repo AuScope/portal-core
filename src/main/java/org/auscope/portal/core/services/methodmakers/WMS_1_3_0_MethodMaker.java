@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.List;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -26,6 +27,7 @@ import org.auscope.portal.core.util.HttpUtil;
 public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMethodMakerInterface {
 
     HttpServiceCaller serviceCaller = null;
+    public static final String VERSION="1.3.0";
 
     public WMS_1_3_0_MethodMaker(HttpServiceCaller serviceCaller) {
         this.serviceCaller = serviceCaller;
@@ -37,6 +39,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getCapabilitiesMethod(String wmsUrl) throws URISyntaxException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
@@ -69,6 +72,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getMapMethod(String wmsUrl, String layer, String imageMimeType, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, String styles, String styleBody) throws URISyntaxException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
@@ -108,6 +112,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getLegendGraphic(String wmsUrl, String layerName, int width, int height, String styles) throws URISyntaxException {
 
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
@@ -157,14 +162,15 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws URISyntaxException {
-//VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
-//        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
-//                southBoundLatitude,
-//                westBoundLongitude,
-//                northBoundLatitude,
-//                eastBoundLongitude
-//                );
+        //VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
+        //        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
+        //                southBoundLatitude,
+        //                westBoundLongitude,
+        //                northBoundLatitude,
+        //                eastBoundLongitude
+        //                );
 
         String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
                 westBoundLongitude,
@@ -182,6 +188,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("BBOX", bboxString));
         existingParam.add(new BasicNameValuePair("QUERY_LAYERS", layer));
         existingParam.add(new BasicNameValuePair("INFO_FORMAT", format));
+        existingParam.add(new BasicNameValuePair("feature_count", "10"));
         existingParam.add(new BasicNameValuePair("lng", Double.toString(pointLng)));
         existingParam.add(new BasicNameValuePair("lat", Double.toString(pointLat)));
         existingParam.add(new BasicNameValuePair("i", Integer.toString(pointX)));
@@ -225,14 +232,15 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @return
      * @throws URISyntaxException
      */
+    @Override
     public HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws URISyntaxException {
-//VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
-//        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
-//                southBoundLatitude,
-//                westBoundLongitude,
-//                northBoundLatitude,
-//                eastBoundLongitude
-//                );
+        //VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
+        //        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
+        //                southBoundLatitude,
+        //                westBoundLongitude,
+        //                northBoundLatitude,
+        //                eastBoundLongitude
+        //                );
 
         String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
                 westBoundLongitude,
@@ -250,6 +258,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("BBOX", bboxString));
         existingParam.add(new BasicNameValuePair("QUERY_LAYERS", layer));
         existingParam.add(new BasicNameValuePair("INFO_FORMAT", format));
+        existingParam.add(new BasicNameValuePair("feature_count", "10"));
         existingParam.add(new BasicNameValuePair("lng", Double.toString(pointLng)));
         existingParam.add(new BasicNameValuePair("lat", Double.toString(pointLat)));
         existingParam.add(new BasicNameValuePair("i", Integer.toString(pointX)));
@@ -282,7 +291,10 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
      */
     @Override
-    public boolean accepts(String wmsUrl) {
+    public boolean accepts(String wmsUrl,String version) {
+        if(version != null && version.equals(this.getSupportedVersion())){
+            return true;
+        }
         try{
             List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
 
@@ -312,5 +324,10 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         InputStream response = serviceCaller.getMethodResponseAsStream(method);
 
         return new GetCapabilitiesRecord_1_3_0(response);
+    }
+
+    @Override
+    public String getSupportedVersion(){
+        return WMS_1_3_0_MethodMaker.VERSION;
     }
 }

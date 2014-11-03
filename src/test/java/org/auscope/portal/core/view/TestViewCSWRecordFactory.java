@@ -45,6 +45,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String descriptiveKeyword2 = "kw1";
         final String constraint1 = "c1";
         final String constraint2 = "c2";
+        final String version="1.1.1";
 
         final URL orUrl = new URL("http://hah.com");
         final String orName = "ascom";
@@ -74,7 +75,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
         expectation.put("childRecords", Arrays.asList(childRecordExpectation));
-        expectation.put("version", "");
         expectation.put("noCache", false);
         expectation.put("date", "1970-01-01T00:00:00 UTC");
 
@@ -82,6 +82,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation.put("name", orName);
         onlineResExpectation.put("description", orDesc);
         onlineResExpectation.put("type", orType.name());
+        onlineResExpectation.put("version", version);
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -121,7 +122,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         childRecordExpectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1_1, descriptiveKeyword2_1));
         childRecordExpectation.put("constraints", Arrays.asList(constraint1_1, constraint2_1));
         childRecordExpectation.put("childRecords", Arrays.asList());
-        childRecordExpectation.put("version", "");
         childRecordExpectation.put("noCache", false);
         childRecordExpectation.put("date", "");
 
@@ -129,10 +129,10 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation_1.put("name", orName_1);
         onlineResExpectation_1.put("description", orDesc_1);
         onlineResExpectation_1.put("type", orType_1.name());
+        onlineResExpectation_1.put("version", version);
 
         context.checking(new Expectations() {{
             allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
-            allowing(mockCSWRecord).getVersion();will(returnValue(null));
             allowing(mockCSWRecord).getNoCache();will(returnValue(false));
             allowing(mockCSWRecord).getContact();will(returnValue(mockResponsibleParty));
             allowing(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
@@ -148,7 +148,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockCSWRecord).getDate();will(returnValue(new Date(0L)));
 
             allowing(mockCSWChildRecord1).getServiceName();will(returnValue(serviceName_1));
-            allowing(mockCSWChildRecord1).getVersion();will(returnValue(null));
             allowing(mockCSWChildRecord1).getNoCache();will(returnValue(false));
             allowing(mockCSWChildRecord1).getContact();will(returnValue(null));
             allowing(mockCSWChildRecord1).getResourceProvider();will(returnValue(resourceProvider_1));
@@ -171,11 +170,13 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockOnlineRes).getName();will(returnValue(orName));
             allowing(mockOnlineRes).getType();will(returnValue(orType));
             allowing(mockOnlineRes).getLinkage();will(returnValue(orUrl));
+            allowing(mockOnlineRes).getVersion();will(returnValue(version));
 
             allowing(mockOnlineRes_1).getDescription();will(returnValue(orDesc_1));
             allowing(mockOnlineRes_1).getName();will(returnValue(orName_1));
             allowing(mockOnlineRes_1).getType();will(returnValue(orType_1));
             allowing(mockOnlineRes_1).getLinkage();will(returnValue(orUrl_1));
+            allowing(mockOnlineRes_1).getVersion();will(returnValue(version));
 
             allowing(mockResponsibleParty).getOrganisationName();will(returnValue(contactOrg));
             allowing(mockResponsibleParty).getContactInfo();will(returnValue(mockContact));
@@ -228,7 +229,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
         expectation.put("childRecords", new ArrayList<ModelMap>());
-        expectation.put("version", "");
         expectation.put("noCache", false);
         expectation.put("date", "1970-01-01T00:00:00 UTC");
 
@@ -240,7 +240,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
 
         context.checking(new Expectations() {{
             allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
-            allowing(mockCSWRecord).getVersion();will(returnValue(null));
             allowing(mockCSWRecord).getNoCache();will(returnValue(false));
             allowing(mockCSWRecord).getContact();will(returnValue(mockResponsibleParty));
             allowing(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
@@ -294,6 +293,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         final String constraint2 = "c2";
 
         final URL orUrl = new URL("http://hah.com");
+        final String version = "1.3.0";
         final String orName = "ascom";
         final String orDesc = "desc";
         final OnlineResourceType orType = OnlineResourceType.WFS;
@@ -319,7 +319,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         expectation.put("descriptiveKeywords", Arrays.asList(descriptiveKeyword1, descriptiveKeyword2));
         expectation.put("constraints", Arrays.asList(constraint1, constraint2));
         expectation.put("childRecords", new ArrayList<ModelMap>());
-        expectation.put("version", "");
         expectation.put("noCache", false);
         expectation.put("date", "1986-10-09T00:00:00 UTC");
 
@@ -327,6 +326,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
         onlineResExpectation.put("name", orName);
         onlineResExpectation.put("description", orDesc);
         onlineResExpectation.put("type", orType.name());
+        onlineResExpectation.put("version", version);
 
         geoExpectation.put("type", "bbox");
         geoExpectation.put("eastBoundLongitude", bboxEast);
@@ -336,7 +336,6 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
 
         context.checking(new Expectations() {{
             allowing(mockCSWRecord).getServiceName();will(returnValue(serviceName));
-            allowing(mockCSWRecord).getVersion();will(returnValue(null));
             allowing(mockCSWRecord).getNoCache();will(returnValue(false));
             allowing(mockCSWRecord).getContact();will(returnValue(null));
             allowing(mockCSWRecord).getResourceProvider();will(returnValue(resourceProvider));
@@ -359,6 +358,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
             allowing(mockOnlineRes).getName();will(returnValue(orName));
             allowing(mockOnlineRes).getType();will(returnValue(orType));
             allowing(mockOnlineRes).getLinkage();will(returnValue(orUrl));
+            allowing(mockOnlineRes).getVersion();will(returnValue(version));
 
             allowing(mockResponsibleParty).getOrganisationName();will(returnValue(contactOrg));
         }});

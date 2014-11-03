@@ -21,15 +21,17 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'onlineResources', convert: portal.csw.OnlineResourceType.convert}, //A set of portal.csw.OnlineResource objects
         { name: 'childRecords', convert: portal.csw.CSWRecordType.convert}, //an array of child portal.csw.CSWRecord objects
         { name: 'resourceProvider', type: 'string'}, //A set of portal.csw.OnlineResource objects
-        { name: 'recordInfoUrl' , type:'string'},
-        { name: 'version' , type:'string'},
+        { name: 'recordInfoUrl' , type:'string'},        
         { name: 'noCache' , type:'boolean'},
         { name: 'extensions', type:'auto'}, //A normally undefined object. CSWRecord can be extended by filling in this field.
         { name: 'constraints' , type:'auto'}, //An array of strings representing access constraints that will be shown to a user before this layer is used
         { name: 'date' , type:'date', convert: function(dateString) {
             return new Date(Date.parse(dateString.replace(' UTC', '')));
         }},//The date of this CSWRecord
-        { name: 'layer', type: 'auto'} // store the layer after it has been converted.
+        { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
+        { name: 'layer', type: 'auto'}, // store the layer after it has been converted.        
+        { name: 'active', type: 'active', defaultValue: false },//Whether this layer is current active on the map.
+        { name: 'customlayer', type: 'boolean', defaultValue: false } //If true, this layer is added from browse catalogue
     ],
 
     /**
@@ -94,6 +96,18 @@ Ext.define('portal.csw.CSWRecord', {
         var resourcesToMatch = this.get('onlineResources');
         for (var i = 0; i < resourcesToMatch.length; i++) {
             if (comparator(resourcesToMatch[i], onlineResource)) {
+                return true;
+            }
+        }
+
+        return false;
+    },
+    
+    containsOnlineResourceUrl : function(url) {
+        
+        var resourcesToMatch = this.getAllChildOnlineResources();
+        for (var i = 0; i < resourcesToMatch.length; i++) {
+            if (resourcesToMatch[i].get('url').toLowerCase()===url.toLowerCase()) {
                 return true;
             }
         }

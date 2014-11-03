@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -277,6 +279,38 @@ public class TestFileStagingService extends PortalTestClass {
     }
 
     /**
+     * Tests that multi-file uploads can be handled
+     * @throws Exception
+     */
+    @Test
+    public void testMultiFileUpload() throws Exception {
+        final MultipartHttpServletRequest request = context.mock(MultipartHttpServletRequest.class);
+        final MultipartFile file = context.mock(MultipartFile.class);
+        final String fileName = "myFileName";
+        final ArrayList<MultipartFile> files = new ArrayList<MultipartFile>();
+        files.add(file);
+        files.add(file);
+
+        context.checking(new Expectations() {{
+            oneOf(request).getFiles("file");will(returnValue(files));
+            exactly(2).of(file).getOriginalFilename();will(returnValue(fileName));
+            exactly(2).of(file).transferTo(with(aFileWithName(fileName)));
+        }});
+
+        service.generateStageInDirectory(job);
+
+        //"Upload" the file and check it gets created
+        List<StagedFile> newlyStagedFiles = service.handleMultiFileUpload(job, request);
+        Assert.assertNotNull(newlyStagedFiles);
+        Assert.assertEquals(files.size(), newlyStagedFiles.size());
+        Assert.assertEquals(job, newlyStagedFiles.get(0).getOwner());
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+    }
+
+
+    /**
      * Tests that file downloads are handled correctly
      * @throws Exception
      */
@@ -309,6 +343,172 @@ public class TestFileStagingService extends PortalTestClass {
         service.deleteStageInDirectory(job);
         assertStagedDirectory(job, false);
     }
+
+    /**
+     * Tests that creating and renaming files in a job staging area works
+     * @throws IOException
+     */
+    @Test
+    public void testFileRenaming() throws Exception {
+        service.generateStageInDirectory(job);
+
+        final byte[] file1Data = new byte[] {1,2,3};
+
+        OutputStream file1 = service.writeFile(job, "testFile1");
+        file1.write(file1Data);
+        file1.close();
+
+        service.renameStageInFile(job, "testFile1", "renamedTestFile1");
+
+        assertStagedDirectory(job, true);
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "renamedTestFile1", true, file1Data);
+
+        //Ensure that listing returns all the files (in no particular order)
+        StagedFile[] expectedFiles = new StagedFile[] {new StagedFile(job, "renamedTestFile1", null)};
+        StagedFile[] listedFiles = service.listStageInDirectoryFiles(job);
+        Assert.assertNotNull(listedFiles);
+        Assert.assertEquals(expectedFiles.length, listedFiles.length);
+        for (StagedFile expectedFile : expectedFiles) {
+            boolean foundFile = false;
+            for (StagedFile listedFile : listedFiles) {
+                if (listedFile.equals(expectedFile)) {
+                    Assert.assertNotNull("File reference in StagedFile not set!", listedFile.getFile());
+                    Assert.assertEquals(job, listedFile.getOwner());
+                    foundFile = true;
+                    break;
+                }
+            }
+
+            Assert.assertTrue(String.format("File '%1$s' not listed", expectedFile), foundFile);
+        }
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "renamedTestFile1", false);
+    }
+
+    /**
+     * Tests that creating and renaming files in a job staging area works when the target file already exists
+     * @throws IOException
+     */
+    @Test
+    public void testFileRenamingOverwrite() throws Exception {
+        service.generateStageInDirectory(job);
+
+        final byte[] file1Data = new byte[] {1,2,3};
+        final byte[] file2Data = new byte[] {4,3,1};
+
+        OutputStream file1 = service.writeFile(job, "testFile1");
+        OutputStream file2 = service.writeFile(job, "testFile2");
+
+        file1.write(file1Data);
+        file2.write(file2Data);
+        file1.close();
+        file2.close();
+
+        assertStagedDirectory(job, true);
+        assertStagedFile(job, "testFile1", true, file1Data);
+        assertStagedFile(job, "testFile2", true, file2Data);
+
+        Assert.assertTrue(service.renameStageInFile(job, "testFile1", "testFile2"));
+
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "testFile2", true, file1Data);
+
+        Assert.assertFalse(service.renameStageInFile(job, "testFile1", "testFile2"));
+
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "testFile2", true, file1Data);
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "testFile2", false);
+    }
+
+    /**
+     * Tests that renaming file to itself does nothing
+     * @throws IOException
+     */
+    @Test
+    public void testFileRenamingSameFile() throws Exception {
+        service.generateStageInDirectory(job);
+
+        final byte[] file1Data = new byte[] {1,2,3};
+
+        OutputStream file1 = service.writeFile(job, "testFile1");
+
+        file1.write(file1Data);
+        file1.close();
+
+        assertStagedDirectory(job, true);
+        assertStagedFile(job, "testFile1", true, file1Data);
+
+        Assert.assertTrue(service.renameStageInFile(job, "testFile1", "testFile1"));
+
+        assertStagedFile(job, "testFile1", true, file1Data);
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+        assertStagedFile(job, "testFile1", false);
+    }
+
+    /**
+     * Tests that creating and renaming files in a job staging area works when the target file already exists
+     * @throws IOException
+     */
+    @Test
+    public void testFileExists() throws Exception {
+        service.generateStageInDirectory(job);
+
+        final byte[] file1Data = new byte[] {1,2,3};
+        final byte[] file2Data = new byte[] {4,3,1};
+
+        OutputStream file1 = service.writeFile(job, "testFile1");
+        OutputStream file2 = service.writeFile(job, "testFile2");
+
+        file1.write(file1Data);
+        file2.write(file2Data);
+        file1.close();
+        file2.close();
+
+        assertStagedDirectory(job, true);
+        assertStagedFile(job, "testFile1", true, file1Data);
+        assertStagedFile(job, "testFile2", true, file2Data);
+
+        Assert.assertTrue(service.stageInFileExists(job, "testFile1"));
+        Assert.assertTrue(service.stageInFileExists(job, "testFile2"));
+        Assert.assertFalse(service.stageInFileExists(job, "fileDNE"));
+
+        service.deleteStageInDirectory(job);
+        assertStagedDirectory(job, false);
+        assertStagedFile(job, "testFile1", false);
+        assertStagedFile(job, "testFile2", false);
+
+        Assert.assertFalse(service.stageInFileExists(job, "testFile1"));
+        Assert.assertFalse(service.stageInFileExists(job, "testFile2"));
+        Assert.assertFalse(service.stageInFileExists(job, "fileDNE"));
+    }
+
+    /**
+     * Tests that creating a job staging works and that it can be detected
+     * @throws IOException
+     */
+    @Test
+    public void testStagingDirectoryExists() throws Exception {
+        service.generateStageInDirectory(job);
+
+
+        assertStagedDirectory(job, true);
+        Assert.assertTrue(service.stageInDirectoryExists(job));
+        service.deleteStageInDirectory(job);
+
+        assertStagedDirectory(job, false);
+        Assert.assertFalse(service.stageInDirectoryExists(job));
+    }
+
 }
 
 

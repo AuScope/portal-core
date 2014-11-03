@@ -53,24 +53,7 @@ Ext.define('portal.layer.filterer.Filterer', {
     getMercatorCompatibleParameters : function() {
         var params = this.getParameters();
 
-        var bbox = this.getSpatialParam();
-        
-    	// get the CSW bbox if it is there
-    	var cswBbox = Ext.JSON.decode(this.getParameters().cswBbox);
-    	
-    	if (cswBbox) {
-    		cswBbox = Ext.create('portal.util.BBox', {
-                northBoundLatitude : cswBbox.northBoundLatitude,
-                southBoundLatitude : cswBbox.southBoundLatitude,
-                eastBoundLongitude : cswBbox.eastBoundLongitude,
-                westBoundLongitude : cswBbox.westBoundLongitude,
-                crs : cswBbox.crs
-            });
-    		if (!bbox || !cswBbox.containsBbox(bbox)) {
-    			// if the viewport bbox is larger than the CSW bbox, return the CSW bbox
-    			bbox = cswBbox;
-    		}
-    	}
+        var bbox = this.getSpatialParam();            	
 
         if(bbox.crs=='EPSG:4326'){
             var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
@@ -153,8 +136,9 @@ Ext.define('portal.layer.filterer.Filterer', {
      *
      * key - a string key whose value will be set. Will override any existing key of the same name
      * value - The object value to set
+     * quiet[optional] - qu
      */
-    setParameter : function(key, value){
+    setParameter : function(key, value, quiet){
         if (key === portal.layer.filterer.Filterer.BBOX_FIELD) {
             this._setBboxField(value);
             this.fireEvent('change', this, [key]);

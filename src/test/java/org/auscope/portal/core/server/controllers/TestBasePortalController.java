@@ -71,10 +71,10 @@ public class TestBasePortalController extends PortalTestClass {
             }
         }
 
-      //Test some special cases of data
-      if (map.containsKey("matchedResults")) {
-          Assert.assertTrue("matchedResults must be an int", map.get("matchedResults") instanceof Integer);
-      }
+        //Test some special cases of data
+        if (map.containsKey("matchedResults")) {
+            Assert.assertTrue("matchedResults must be an int", map.get("matchedResults") instanceof Integer);
+        }
     }
 
     /**
@@ -134,7 +134,7 @@ public class TestBasePortalController extends PortalTestClass {
         ZipOutputStream zout = new ZipOutputStream(outputStream);
 
         //Write our data out
-        FileIOUtil.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false,"xml");
+        FileIOUtil.writeResponseToZip(Arrays.asList(dr1, dr2), zout, false);
         zout.finish();
         zout.close();
         outputStream.close();
@@ -212,7 +212,7 @@ public class TestBasePortalController extends PortalTestClass {
         final InputStream mockInput = context.mock(InputStream.class);
         final int bufferSize = 134;
         final OutputStream outputStream = context.mock(OutputStream.class);
-      //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
+        //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
         //we should return the rest and encapsulate the exception in the file to inform users.
         context.checking(new Expectations() {{
             oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));

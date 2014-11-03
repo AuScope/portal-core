@@ -32,8 +32,8 @@ public class JSONView extends AbstractView {
     }
 
     public JSONView(JSONArray jsonArray) {
+        this();
         this.jsonArray = jsonArray;
-        initialiseConfig();
     }
 
     private void initialiseConfig() {

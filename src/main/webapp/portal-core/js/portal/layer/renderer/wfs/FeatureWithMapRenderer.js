@@ -299,10 +299,11 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             success: Ext.bind(this._addWMSLayer,this,[wmsResource, wmsUrl, wmsLayer, wmsOpacity,wfsResources, filterer,sld_body],true),
             failure: function(response, opts) {
                  this.currentRequestCount--;
-                 if (this.currentRequestCount === 0) {
+                 this._updateStatusforWFSWMS(wmsUrl, "Address cannot be reached");
+                 if (this.currentRequestCount === 0) {                     
                      this.fireEvent('renderfinished', this);
                  }
-                 this._updateStatusforWFSWMS(wmsUrl, "Address cannot be reached");                
+                           
             }
         });
         

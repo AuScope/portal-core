@@ -155,6 +155,7 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
         var menu = Ext.create('Ext.menu.Menu', {
             id : 'querytargethandler-selection-menu',
             autoWidth : true,
+            closable : true,
             margin: '0 0 10 0',
             enableScrolling: true,
             items : items
