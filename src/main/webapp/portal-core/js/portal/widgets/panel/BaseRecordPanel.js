@@ -37,7 +37,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             hideHeaders : true,
             features : [groupingFeature],
             viewConfig : {
-                emptyText : '<p class="centeredlabel">No records match the current filter.</p>'
+                emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
+                preserveScrollOnRefresh: true    
             },
             dockedItems : [{
                 xtype : 'toolbar',
@@ -625,6 +626,4 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         
         win.show();
     }
-  
-
 });

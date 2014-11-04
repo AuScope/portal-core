@@ -144,6 +144,12 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         if(!this.recordComponents[record.internalId]){
             this.recordComponents[record.internalId] = this.generateContainer(record, this.recordComponentIds[record.internalId]);
+        }else{
+            //VT:Check that the dom still exist as grid:refresh can wipe the panel clean.
+            var parentEl = Ext.get(this.recordComponentIds[record.internalId]);
+            if(parentEl.dom.firstChild == null && parentEl){             
+                this.recordComponents[record.internalId].render(parentEl.dom);               
+            }
         }
     },
 
