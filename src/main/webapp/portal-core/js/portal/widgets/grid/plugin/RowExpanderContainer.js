@@ -181,6 +181,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         o.rowBody = rowBody;
         if(parseInt(this.rowsExpanded[record.internalId])>=0){
+            //VT: if the number of layers and position have changed, update the rowsExpanded list
+            if(parseInt(this.rowsExpanded[record.internalId]) != idx ){
+                this.rowsExpanded[record.internalId] = idx;
+            }
             o.rowCls =  '' ;
             o.rowBodyCls ='';
         }else{
