@@ -55,8 +55,6 @@ public class TestHttpServiceCaller extends PortalTestClass {
         context.checking(new Expectations() {
             {
                 oneOf(client).execute(with(any(HttpRequestBase.class))); will(returnValue(new org.auscope.portal.core.server.http.download.MyHttpResponse(dummyJSONResponseIS)));
-                oneOf(client).getParams();will(returnValue(new BasicHttpParams()));
-
             }
         });
 
@@ -79,8 +77,6 @@ public class TestHttpServiceCaller extends PortalTestClass {
         context.checking(new Expectations() {
             {
                 oneOf(client).execute(with(any(HttpRequestBase.class))); will(returnValue(new org.auscope.portal.core.server.http.download.MyHttpResponse(dummyJSONResponseIS,503)));
-                oneOf(client).getParams();will(returnValue(new BasicHttpParams()));
-
             }
         });
 

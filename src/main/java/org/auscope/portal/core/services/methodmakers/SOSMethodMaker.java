@@ -140,11 +140,7 @@ public class SOSMethodMaker extends AbstractMethodMaker {
         log.debug("Get Feature Query:\n" + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
-        try {
-            httpMethod.setEntity(new StringEntity(sb.toString(), "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            log.error("Unsupported encoding", e);
-        }
+        httpMethod.setEntity(new StringEntity(sb.toString(), "UTF-8"));
 
         return httpMethod;
     }
