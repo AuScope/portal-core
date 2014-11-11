@@ -87,9 +87,18 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
 
     init: function(grid) {
-        grid.on('cellclick', this._onContextMenuItemClick, this);      
+        grid.on('cellclick', this._onContextMenuItemClick, this);    
+        grid.on('resize', this._handleResize, this);    
       
     },
+    
+    
+    _handleResize : function(){
+        for (idx in this.rowsExpanded) {
+            this.recordComponents[idx].doComponentLayout();
+        }    
+    },
+    
 
     /**
      * Close any open containers
