@@ -124,6 +124,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             }],
           plugins:[{                
               ptype : 'rowexpandercontainer',
+              pluginId : 'maingrid_rowexpandercontainer',
               generateContainer : function(record, parentElId) {
                   var newLayer=null;
                   //VT:if this is deserialized, we don't need to regenerate the layer
@@ -421,8 +422,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     /**
      * When the visible fn is clicked, ensure only the visible records pass the filter
      */
-    _handleVisibleFilterClick : function(button) {
+    _handleVisibleFilterClick : function(button) {                
        if(button.getText()=='Filter Visible'){
+           var rowExpander = this.getPlugin('maingrid_rowexpandercontainer');
+           rowExpander.closeAllContainers();
            button.setText('Clear Filter');
            this._visibleFilterClick(button);
        }else{

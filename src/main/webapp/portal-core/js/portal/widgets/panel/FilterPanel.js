@@ -41,7 +41,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         });
          
         
-        var menuItems = [this._getDownloadAction(),this._getDeleteAction()];
+        var menuItems = [this._getResetFormAction(),this._getDownloadAction(),this._getDeleteAction()];
         var legendAction=this._getLegendAction();
         if(legendAction){
             menuItems.push(legendAction);
@@ -76,6 +76,19 @@ Ext.define('portal.widgets.panel.FilterPanel', {
  
 
 
+    },
+    
+    _getResetFormAction : function(){
+        var baseform = this.filterForm;
+        
+        return new Ext.Action({
+            text : 'Reset Form',
+            iconCls : 'refresh',
+            handler : function(){
+                baseform.getForm().reset();
+            }
+        })
+        
     },
     
     _getLegendAction : function(){                 
