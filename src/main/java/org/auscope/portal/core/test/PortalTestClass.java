@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import junit.framework.Assert;
 
 import org.auscope.portal.core.test.jmock.DelayedReturnValueAction;
+import org.auscope.portal.core.test.jmock.DelayedThrowAction;
 import org.auscope.portal.core.test.jmock.FileWithNameMatcher;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher.HttpMethodType;
@@ -93,6 +94,20 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      */
     protected Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
         return new DelayedReturnValueAction(msDelay, returnValue);
+    }
+
+    /**
+     * A JMock action similar to throwException but that only throws the exception AFTER a specified delay
+     *
+     * It can provide a neat workaround for testing multiple competing threads
+     *
+     * @param msDelay The delay in milli seconds to wait
+     * @param throwable The object to throw
+     * @return
+     * @throws Exception
+     */
+    protected Action delayThrowException(long msDelay, Throwable throwable) throws Exception {
+        return new DelayedThrowAction(throwable, msDelay);
     }
 
     /**
