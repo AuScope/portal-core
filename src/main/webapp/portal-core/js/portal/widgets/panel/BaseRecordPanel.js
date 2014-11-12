@@ -37,7 +37,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             hideHeaders : true,
             features : [groupingFeature],
             viewConfig : {
-                emptyText : '<p class="centeredlabel">No records match the current filter.</p>'
+                emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
+                preserveScrollOnRefresh: true    
             },
             dockedItems : [{
                 xtype : 'toolbar',
@@ -53,7 +54,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     store : cfg.store
                 },{
                     xtype : 'button',
-                    text : 'Visible',
+                    text : 'Filter Visible',
+                    iconCls : 'visible_eye',
                     tooltip: 'Filter the layers based on its bounding box and the map\'s visible bound',
                     handler : Ext.bind(this._handleVisibleFilterClick, this)
                 }]
@@ -122,6 +124,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             }],
           plugins:[{                
               ptype : 'rowexpandercontainer',
+              pluginId : 'maingrid_rowexpandercontainer',
               generateContainer : function(record, parentElId) {
                   var newLayer=null;
                   //VT:if this is deserialized, we don't need to regenerate the layer
@@ -419,7 +422,19 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     /**
      * When the visible fn is clicked, ensure only the visible records pass the filter
      */
-    _handleVisibleFilterClick : function(button) {
+    _handleVisibleFilterClick : function(button) {                
+       if(button.getText()=='Filter Visible'){
+           var rowExpander = this.getPlugin('maingrid_rowexpandercontainer');
+           rowExpander.closeAllContainers();
+           button.setText('Clear Filter');
+           this._visibleFilterClick(button);
+       }else{
+           button.setText('Filter Visible');
+           this._clearVisibleFilterClick(button);
+       }
+    },
+    
+    _visibleFilterClick : function(button) {
         var currentBounds = this.map.getVisibleMapBounds();
 
         //Function for testing intersection of a records's spatial bounds
@@ -438,6 +453,12 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
         var searchField = button.ownerCt.items.getAt(1);
         searchField.runCustomFilter('<visible layers>', Ext.bind(filterFn, this));
+    },
+    
+    _clearVisibleFilterClick : function(button) {
+      
+        var searchField = button.ownerCt.items.getAt(1);
+        searchField.clearCustomFilter();
     },
 
     /**
@@ -608,6 +629,4 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         
         win.show();
     }
-  
-
 });

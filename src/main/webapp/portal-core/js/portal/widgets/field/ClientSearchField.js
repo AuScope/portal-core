@@ -102,10 +102,31 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         this.setValue(text);
 
         this.store.filterBy(func);
-        this.triggerCell.item(0).setDisplayed(true);
+        this.triggerCell.item(0).setDisplayed(false);
         this.triggerCell.item(1).setDisplayed(false);
 
         this._setTextFieldDisabled(true);
+        //inputFieldEl.mask();
+
+
+        this.doComponentLayout();
+    },
+    
+    /**
+     * text : The text to include in the box (to indicate that a custom filter has been run)
+     * func : function(record, id) that should return true/false for each record it receives
+     */
+    clearCustomFilter : function() {
+        //Clear any existing filter
+        this.onTrigger1Click();
+
+        this.hasSearch = false;
+        this.setValue("");
+      
+        this.triggerCell.item(0).setDisplayed(false);
+        this.triggerCell.item(1).setDisplayed(true);
+
+        this._setTextFieldDisabled(false);
         //inputFieldEl.mask();
 
 

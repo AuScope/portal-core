@@ -196,6 +196,14 @@
     background-image:url(../img/setting.png) !important;
 }
 
+.visible_eye {
+    background-image:url(../img/eye.png) !important;
+}
+
+.link {
+    background-image:url(../img/link.png) !important;
+}
+
 .magglass {
     background-image:url(../img/magglass.gif) !important;
 }

@@ -87,9 +87,18 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
 
     init: function(grid) {
-        grid.on('cellclick', this._onContextMenuItemClick, this);      
+        grid.on('cellclick', this._onContextMenuItemClick, this);    
+        grid.on('resize', this._handleResize, this);    
       
     },
+    
+    
+    _handleResize : function(){
+        for (idx in this.rowsExpanded) {
+            this.recordComponents[idx].doComponentLayout();
+        }    
+    },
+    
 
     /**
      * Close any open containers
@@ -144,6 +153,12 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         if(!this.recordComponents[record.internalId]){
             this.recordComponents[record.internalId] = this.generateContainer(record, this.recordComponentIds[record.internalId]);
+        }else{
+            //VT:Check that the dom still exist as grid:refresh can wipe the panel clean.
+            var parentEl = Ext.get(this.recordComponentIds[record.internalId]);
+            if(parentEl.dom.firstChild == null && parentEl){             
+                this.recordComponents[record.internalId].render(parentEl.dom);               
+            }
         }
     },
 
@@ -175,6 +190,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         o.rowBody = rowBody;
         if(parseInt(this.rowsExpanded[record.internalId])>=0){
+            //VT: if the number of layers and position have changed, update the rowsExpanded list
+            if(parseInt(this.rowsExpanded[record.internalId]) != idx ){
+                this.rowsExpanded[record.internalId] = idx;
+            }
             o.rowCls =  '' ;
             o.rowBodyCls ='';
         }else{
