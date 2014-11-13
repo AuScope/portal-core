@@ -26,7 +26,9 @@ Ext.define('Ext.view.AuScopeTable', {
             beforeFocusedItemCls = me.beforeFocusedItemCls;
             selectedItemCls = me.selectedItemCls;
             beforeSelectedItemCls = me.beforeSelectedItemCls;
-            
+            rowBodyTrSelector = '.x-grid-rowbody-tr';
+            rowBodyHiddenCls = 'x-grid-row-body-hidden';
+            rowCollapsedCls = 'x-grid-row-collapsed';
             
             
             
@@ -52,6 +54,15 @@ Ext.define('Ext.view.AuScopeTable', {
                     }
                     if (oldRow.hasCls(beforeSelectedItemCls)) {
                         Ext.fly(newRow).addCls(beforeSelectedItemCls);
+                    }
+                    if (oldRow.hasCls(rowBodyTrSelector)) {
+                        Ext.fly(newRow).addCls(rowBodyTrSelector);
+                    }
+                    if (oldRow.hasCls(rowBodyHiddenCls)) {
+                        Ext.fly(newRow).addCls(rowBodyHiddenCls);
+                    }
+                    if (oldRow.hasCls(rowCollapsedCls)) {
+                        Ext.fly(newRow).addCls(rowCollapsedCls);
                     }
 
                     
