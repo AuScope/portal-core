@@ -3,6 +3,7 @@ package org.auscope.portal.core.view.knownlayer;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
+import org.auscope.portal.core.view.knownlayer.KnownLayerSelector.RelationType;
 
 /**
  * Used for selecting individual WMS's
@@ -17,11 +18,27 @@ public class WMSSelector implements KnownLayerSelector {
     /** The related layer names. */
     private String[] relatedLayerNames;
 
+    private String[] serviceEndpoints;
+    private boolean includeEndpoints;
+
     /**
      * @param layerName The layerName that identifies which WMS this KnownLayer is identifying
      */
     public WMSSelector(String layerName) {
        this.layerName = layerName;
+    }
+
+    /**
+     * @param layerName The layerName that identifies which WMS this KnownLayer is identifying
+     * @param serviceEndpoints A list of the end points that will either be included or
+     *  excluded from the WMS, depending on the value of includeEndpoints
+     * @param includeEndpoints A flag indicating whether the listed service end points
+     *  will be included or excluded from the WMS
+     */
+    public WMSSelector(String layerName, String[] serviceEndpoints, boolean includeEndpoints) {
+       this.layerName = layerName;
+       this.serviceEndpoints = serviceEndpoints;
+       this.includeEndpoints = includeEndpoints;
     }
 
     /**
@@ -70,7 +87,28 @@ public class WMSSelector implements KnownLayerSelector {
         //Check for strong association to begin with
         for (AbstractCSWOnlineResource onlineResource : wmsResources) {
             if (layerName.equals(onlineResource.getName())) {
-                return RelationType.Belongs;
+                //OK we have a match, check we don't explicitly/implicitly exclude it
+                //based on its URL
+                if (serviceEndpoints != null && serviceEndpoints.length > 0) {
+                    boolean matched = false;
+                    for (String url : serviceEndpoints) {
+                        if (url.equals(onlineResource.getLinkage().toString())) {
+                            matched = true;
+                            break;
+                        }
+                    }
+
+                    //Our list of endpoints will be saying either
+                    //'Include only this list of urls'
+                    //'Exclude any of these urls'
+                    if ((includeEndpoints && matched) ||
+                        (!includeEndpoints && !matched)) {
+                        return RelationType.Belongs;
+                    }
+                } else {
+                    //Otherwise this knownlayer makes no restrictions on URL
+                    return RelationType.Belongs;
+                }
             }
         }
 
@@ -87,5 +125,13 @@ public class WMSSelector implements KnownLayerSelector {
         }
 
         return RelationType.NotRelated;
+    }
+
+    public String[] getServiceEndpoints() {
+        return serviceEndpoints;
+    }
+
+    public boolean includeEndpoints() {
+        return includeEndpoints;
     }
 }
