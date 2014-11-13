@@ -3,7 +3,6 @@ package org.auscope.portal.core.view.knownlayer;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
-import org.auscope.portal.core.view.knownlayer.KnownLayerSelector.RelationType;
 
 /**
  * Used for selecting individual WMS's
@@ -25,7 +24,7 @@ public class WMSSelector implements KnownLayerSelector {
      * @param layerName The layerName that identifies which WMS this KnownLayer is identifying
      */
     public WMSSelector(String layerName) {
-       this.layerName = layerName;
+        this.layerName = layerName;
     }
 
     /**
@@ -36,9 +35,9 @@ public class WMSSelector implements KnownLayerSelector {
      *  will be included or excluded from the WMS
      */
     public WMSSelector(String layerName, String[] serviceEndpoints, boolean includeEndpoints) {
-       this.layerName = layerName;
-       this.serviceEndpoints = serviceEndpoints;
-       this.includeEndpoints = includeEndpoints;
+        this.layerName = layerName;
+        this.serviceEndpoints = serviceEndpoints;
+        this.includeEndpoints = includeEndpoints;
     }
 
     /**
@@ -102,7 +101,7 @@ public class WMSSelector implements KnownLayerSelector {
                     //'Include only this list of urls'
                     //'Exclude any of these urls'
                     if ((includeEndpoints && matched) ||
-                        (!includeEndpoints && !matched)) {
+                            (!includeEndpoints && !matched)) {
                         return RelationType.Belongs;
                     }
                 } else {
