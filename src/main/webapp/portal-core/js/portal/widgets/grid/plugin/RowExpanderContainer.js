@@ -160,6 +160,8 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
                 this.recordComponents[record.internalId].render(parentEl.dom);               
             }
         }
+        
+        this._handleResize();
     },
 
     /**
