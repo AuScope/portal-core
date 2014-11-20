@@ -33,6 +33,7 @@
         <log4j.version>1.2.17</log4j.version>
         <spring.version>3.2.10.RELEASE</spring.version>
         <spring.security.version>3.2.4.RELEASE</spring.security.version>
+        <jclouds.version>1.8.1</jclouds.version>
     </properties>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -509,7 +510,7 @@
         <dependency>
             <groupId>org.apache.jclouds</groupId>
             <artifactId>jclouds-all</artifactId>
-            <version>1.7.1</version>
+            <version>${jclouds.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
