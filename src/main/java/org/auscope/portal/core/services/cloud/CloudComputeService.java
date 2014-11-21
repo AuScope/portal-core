@@ -13,6 +13,7 @@ import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.cloud.ComputeType;
 import org.auscope.portal.core.cloud.MachineImage;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.jclouds.Context;
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
@@ -28,6 +29,15 @@ import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
+import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
+import static com.google.common.base.Predicates.*;
+import static org.jclouds.compute.predicates.NodePredicates.*;
 
 /**
  * Service class wrapper for interacting with a remote cloud compute service using
@@ -47,6 +57,7 @@ public class CloudComputeService {
     private final Log logger = LogFactory.getLog(getClass());
 
     private ComputeService computeService;
+    private ComputeServiceContext context;
     private NovaApi lowLevelApi;
 
 
@@ -109,8 +120,8 @@ public class CloudComputeService {
         //Terry -just in case...
         this.lowLevelApi = b.buildApi(NovaApi.class);
 
-        ComputeServiceContext context = b.buildView(ComputeServiceContext.class);
-        this.computeService = context.getComputeService();
+        this.context = b.buildView(ComputeServiceContext.class);
+        this.computeService = this.context.getComputeService();
 
     }
 
@@ -223,29 +234,47 @@ public class CloudComputeService {
 
         }
         else {
-        	for (Location tryHere : computeService.listAssignableLocations()) {
-	            options = ((NovaTemplateOptions)computeService.templateOptions())
-	            .keyPairName(getKeypair())
-	            .availabilityZone(tryHere.getId())
-	            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
+        	
+        	//Brute force anyone?
+            for (String location: lowLevelApi.getConfiguredZones()) {
+	    		Optional<? extends AvailabilityZoneApi> serverApi = lowLevelApi.getAvailabilityZoneApi(location);
+	    		Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
-	            Template template = computeService.templateBuilder()
-	                    .imageId(job.getComputeVmId())
-	                    .hardwareId(job.getComputeInstanceType())
-	                    .options(options)
-	                    .build();
-
-	            try {
-	                results = computeService.createNodesInGroup(groupName, 1, template);
-	            } catch (RunNodesException e) {
-	                logger.error(String.format("launch failed at '%1$s'", tryHere.toString()));
-	                logger.debug("Exception:", e);
-	                continue;
-	            }
-	            if (results.isEmpty()) {
-	                logger.error("JClouds returned an empty result set. try again?");
-	                continue;
-	            }
+	    		for (AvailabilityZone currentZone : zones) {
+	    			if (currentZone.getName().equalsIgnoreCase("tasmania")) 
+	    					continue;
+	        	
+		            options = ((NovaTemplateOptions)computeService.templateOptions())
+		            .keyPairName(getKeypair())
+		            .availabilityZone(currentZone.getName())
+		            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
+	
+		            Template template = computeService.templateBuilder()
+		                    .imageId(job.getComputeVmId())
+		                    .hardwareId(job.getComputeInstanceType())
+		                    .options(options)
+		                    .build();
+	
+		            try {
+		                results = computeService.createNodesInGroup(groupName, 1, template);
+		                break;
+		            } catch (RunNodesException e) {
+		                logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone));
+		                logger.debug("Exception:", e);
+		                try {
+		                	// FIXME: 
+		                	// I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
+		                	// JClouds is not very clever here - 
+		                	// issue: how do you delete thing you didnt name and dont have an ID for??
+		                	computeService.destroyNodesMatching(Predicates.<NodeMetadata> and(not(TERMINATED), not(RUNNING), inGroup(groupName)));
+		                	logger.warn("cleaned it up");
+		                }
+		                catch (Exception z) {
+		                    logger.warn("couldnt clean it up");
+		                }
+		                continue;
+		            }
+	    		}
         	}
             if (results.isEmpty()) {
             	//Now we have tried everything....
@@ -259,13 +288,10 @@ public class CloudComputeService {
 
         }
 
-
-
-
         return result.getId();
     }
 
-    /**
+	/**
      * Makes a request that the VM started by job be terminated
      * @param job The job whose execution should be terminated
      */
