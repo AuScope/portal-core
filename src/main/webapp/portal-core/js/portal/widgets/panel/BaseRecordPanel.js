@@ -501,13 +501,14 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         }
     },
     
-    _deleteClickHandler :  function(value, record, column, tip) {
+    _deleteClickHandler :  function(value, record, rowIdx, tip) {
         var layer = record.get('layer');
-        if(layer && record.get('active')){
+        if(layer && record.get('active')){            
             layer.removeDataFromMap();
             this.activelayerstore.remove(layer);
             layer.data.filterForm.ownerCt.updateButton(false);
-        }               
+            this.fireEvent('cellclick',this,undefined,undefined,record,undefined,rowIdx);
+        }             
     },
     
     /**
@@ -605,7 +606,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         return renderer.renderStatus.renderHtml();
     },
     
-    _loadingClickHandler : function(value, record, column, tip) {
+    _loadingClickHandler : function(value, record, rowIdx, tip) {
         
         var layer = record.get('layer');
         
