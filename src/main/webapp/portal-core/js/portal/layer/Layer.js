@@ -66,8 +66,22 @@ Ext.define('portal.layer.Layer', {
     onFilterChanged : function(filterer, keys) {
         var renderer = this.get('renderer');      
         this.removeDataFromMap();                  
-        renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);            
-       
+        renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
+        
+        var group = 'group';
+        if(this.get('sourceType')=='CSWRecord'){
+            group='contactOrg';
+        }
+        
+        this._expandGridGroup(this.get('source').get(group));
+                       
+    },
+    
+    _expandGridGroup : function(groupname){
+        var activeTab = Ext.getCmp('auscope-tabs-panel').activeTab;
+        var feature = activeTab.features[2]
+        feature.expand(groupname,true);
+        
     },
     
    removeDataFromMap:function(){

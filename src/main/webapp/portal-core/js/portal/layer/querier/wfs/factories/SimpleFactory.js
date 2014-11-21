@@ -47,10 +47,11 @@ Ext.define('portal.layer.querier.wfs.factories.SimpleFactory', {
                 }
             }
         }
-        
+
         var panelConfig = {
             layout : 'fit',
-            height: 300, 
+            tabTitle : gmlId,
+            height: 300,
             items : [{
                 xtype : 'treepanel',
                 autoScroll : true,
