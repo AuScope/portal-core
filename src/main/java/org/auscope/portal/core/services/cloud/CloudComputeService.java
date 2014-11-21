@@ -2,6 +2,8 @@ package org.auscope.portal.core.services.cloud;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -125,9 +127,10 @@ public class CloudComputeService {
 
     }
 
-    public CloudComputeService(ProviderType provider, ComputeService computeService) {
+    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi lowLevelApi) {
         this.provider = provider;
         this.computeService = computeService;
+        this.lowLevelApi = lowLevelApi;
     }
 
     /**
@@ -202,7 +205,7 @@ public class CloudComputeService {
 
         //We have different template options depending on provider
         TemplateOptions options = null;
-        Set<? extends NodeMetadata> results = new TreeSet<NodeMetadata>();
+        Set<? extends NodeMetadata> results = Collections.emptySet();
         NodeMetadata result;
 
         if (provider == ProviderType.NovaEc2) {
@@ -241,7 +244,7 @@ public class CloudComputeService {
 	    		Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
 	    		for (AvailabilityZone currentZone : zones) {
-	    			if (currentZone.getName().equalsIgnoreCase("tasmania")) 
+	    			if (currentZone.getName().startsWith("tasmania")) 
 	    					continue;
 	        	
 		            options = ((NovaTemplateOptions)computeService.templateOptions())
@@ -260,7 +263,7 @@ public class CloudComputeService {
 		                break;
 		            } catch (RunNodesException e) {
 		                logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone));
-		                logger.debug("Exception:", e);
+		                logger.debug(e.getMessage());
 		                try {
 		                	// FIXME: 
 		                	// I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
