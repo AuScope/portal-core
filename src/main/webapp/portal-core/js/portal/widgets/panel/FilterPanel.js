@@ -15,6 +15,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
     filterForm : null,
     
+    constraintShown : false,
+    
     /**
      * Accepts all parameters for a normal Ext.Panel instance with the following additions
      * {
@@ -41,11 +43,14 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         });
          
         
-        var menuItems = [this._getResetFormAction(),this._getDownloadAction(),this._getDeleteAction()];
+        var menuItems = [this._getResetFormAction(),this._getDeleteAction()];
         var legendAction=this._getLegendAction();
         if(legendAction){
             menuItems.push(legendAction);
         }
+        if(this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
+            menuItems.push(this._getDownloadAction());
+        }        
         
         var group = this.filterForm.layer.get('source').get('group');
         if(group && group.indexOf('Analytic') >= 0){
@@ -238,15 +243,14 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     _onAddLayer : function() {      
         var layer = this.filterForm.layer; 
         var filterer = layer.get('filterer');      
-
-        this._showConstraintWindow(layer);
-
+        
         //Before applying filter, update the spatial bounds (silently)
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
 
         this.filterForm.writeToFilterer(filterer);
         this.fireEvent('addlayer', layer);
         this.updateButton(true);
+        this._showConstraintWindow(layer);
     },
     
     /**
@@ -263,6 +267,9 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     },
     
     _showConstraintWindow : function(layer){
+        if(this.constraintShown){
+            return;
+        }
         var cswRecords = layer.get('cswRecords');
         for (var i = 0; i < cswRecords.length; i++) {
             if (cswRecords[i].hasConstraints()) {
@@ -283,6 +290,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 break;
             }
         }
+        this.constraintShown = true;
     },
 
     /**
