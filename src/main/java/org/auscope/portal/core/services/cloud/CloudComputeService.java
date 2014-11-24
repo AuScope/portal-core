@@ -1,13 +1,17 @@
 package org.auscope.portal.core.services.cloud;
 
+import static com.google.common.base.Predicates.not;
+import static org.jclouds.compute.predicates.NodePredicates.RUNNING;
+import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
+
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +19,6 @@ import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.cloud.ComputeType;
 import org.auscope.portal.core.cloud.MachineImage;
 import org.auscope.portal.core.services.PortalServiceException;
-import org.jclouds.Context;
 import org.jclouds.ContextBuilder;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
@@ -26,7 +29,6 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Location;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
@@ -37,9 +39,6 @@ import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-
-import static com.google.common.base.Predicates.*;
-import static org.jclouds.compute.predicates.NodePredicates.*;
 
 /**
  * Service class wrapper for interacting with a remote cloud compute service using
@@ -61,8 +60,9 @@ public class CloudComputeService {
     private ComputeService computeService;
     private ComputeServiceContext context;
     private NovaApi lowLevelApi;
-
-
+    
+    private Predicate<NodeMetadata> terminateFilter;
+    
     /** Unique ID for distinguishing instances of this class - can be null*/
     private String id;
     /** A short descriptive name for human identification of this service*/
@@ -124,13 +124,16 @@ public class CloudComputeService {
 
         this.context = b.buildView(ComputeServiceContext.class);
         this.computeService = this.context.getComputeService();
+        
+        this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(groupName));
 
     }
 
-    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi lowLevelApi) {
+    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi lowLevelApi, Predicate<NodeMetadata> terminPredicate) {
         this.provider = provider;
         this.computeService = computeService;
         this.lowLevelApi = lowLevelApi;
+        this.terminateFilter = terminPredicate;
     }
 
     /**
@@ -269,7 +272,7 @@ public class CloudComputeService {
 		                	// I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
 		                	// JClouds is not very clever here - 
 		                	// issue: how do you delete thing you didnt name and dont have an ID for??
-		                	computeService.destroyNodesMatching(Predicates.<NodeMetadata> and(not(TERMINATED), not(RUNNING), inGroup(groupName)));
+		                	computeService.destroyNodesMatching(this.terminateFilter);
 		                	logger.warn("cleaned it up");
 		                }
 		                catch (Exception z) {

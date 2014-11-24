@@ -10,7 +10,6 @@ import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.cloud.CloudComputeService.ProviderType;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
@@ -24,8 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -40,8 +39,8 @@ public class TestCloudComputeService extends PortalTestClass {
     private final AvailabilityZoneApi mockAZA = context.mock(AvailabilityZoneApi.class);
     private final AvailabilityZone mockAvailZone = context.mock(AvailabilityZone.class);
     private final FluentIterable mockAvailZoneList = context.mock(FluentIterable.class);
-    
-    
+    private final Predicate<NodeMetadata> mockFilter = context.mock(Predicate.class);
+
     private CloudComputeService service;
 
 
@@ -55,7 +54,7 @@ public class TestCloudComputeService extends PortalTestClass {
         job = new CloudJob(13);
         job.setComputeVmId("image-id");
         job.setComputeInstanceType("type");
-        service = new CloudComputeService(ProviderType.NovaKeystone, mockComputeService, mockNovaApi);
+        service = new CloudComputeService(ProviderType.NovaKeystone, mockComputeService, mockNovaApi, mockFilter);
         service.setGroupName("group-name");
         
         
@@ -70,6 +69,8 @@ public class TestCloudComputeService extends PortalTestClass {
         final String expectedInstanceId = "instance-id";
 
         context.checking(new Expectations() {{
+            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
+        	
             oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
             oneOf(mockOptAZA).get();will(returnValue(mockAZA));
             oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
@@ -110,6 +111,7 @@ public class TestCloudComputeService extends PortalTestClass {
         final RunNodesException ex = context.mock(RunNodesException.class);
 
         context.checking(new Expectations() {{
+            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
 
             oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
             oneOf(mockOptAZA).get();will(returnValue(mockAZA));
@@ -134,6 +136,8 @@ public class TestCloudComputeService extends PortalTestClass {
             oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
             will(throwException(ex));
             
+			allowing(mockComputeService).destroyNodesMatching(mockFilter);
+            
             allowing(ex).fillInStackTrace();will(returnValue(ex));
             allowing(ex).getMessage();will(returnValue("mock-message"));
         }});
@@ -151,6 +155,8 @@ public class TestCloudComputeService extends PortalTestClass {
 
         context.checking(new Expectations() {{
 
+            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
+        	
             oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
             oneOf(mockOptAZA).get();will(returnValue(mockAZA));
             oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
@@ -173,7 +179,6 @@ public class TestCloudComputeService extends PortalTestClass {
             oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);           
             will(returnValue(ImmutableSet.<NodeMetadata>of()));
             
-            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
         }});
 
         service.executeJob(job, userDataString);
