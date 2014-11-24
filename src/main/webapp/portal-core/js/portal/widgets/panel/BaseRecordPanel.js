@@ -49,13 +49,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     text : 'Search: '
                 },{
                     xtype : 'clientsearchfield',
-                    id : 'hh-searchfield',
+                    id : 'hh-searchfield-' + cfg.title,
                     width : 200,
                     fieldName: 'name',
                     store : cfg.store
                 },{
                     xtype : 'button',
-                    id : 'hh-filterVisible',
+                    id : 'hh-filterVisible-' + cfg.title,
                     text : 'Filter Visible',
                     iconCls : 'visible_eye',
                     tooltip: 'Filter the layers based on its bounding box and the map\'s visible bound',
