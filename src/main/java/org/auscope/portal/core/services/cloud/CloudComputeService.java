@@ -248,7 +248,7 @@ public class CloudComputeService {
 	    					continue;
 	        	
 		            options = ((NovaTemplateOptions)computeService.templateOptions())
-		            .keyPairName(getKeypair())
+		            .keyPairName("vgl-developers")
 		            .availabilityZone(currentZone.getName())
 		            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
 	
