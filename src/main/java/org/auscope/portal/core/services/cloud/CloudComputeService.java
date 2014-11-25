@@ -63,6 +63,9 @@ public class CloudComputeService {
     
     private Predicate<NodeMetadata> terminateFilter;
     
+    private String itActuallyLaunchedHere;
+    
+    
     /** Unique ID for distinguishing instances of this class - can be null*/
     private String id;
     /** A short descriptive name for human identification of this service*/
@@ -240,16 +243,34 @@ public class CloudComputeService {
 
         }
         else {
-        	
         	//Brute force anyone?
+        	logger.info(lowLevelApi.getConfiguredZones());
+        	
             for (String location: lowLevelApi.getConfiguredZones()) {
 	    		Optional<? extends AvailabilityZoneApi> serverApi = lowLevelApi.getAvailabilityZoneApi(location);
 	    		Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
 	    		for (AvailabilityZone currentZone : zones) {
-	    			if (currentZone.getName().startsWith("tasmania")) 
+	    			
+	    			String zoneName = currentZone.getName().toLowerCase();
+	    			
+	    			if (zoneName.startsWith("tasmania") //firewall issues 
+	    					|| 
+    					zoneName.startsWith("mon") //network issues
+    						||
+						zoneName.startsWith("melb") //always errors
+    					
+	    				) { 
+	    					logger.info(String.format("skipping: '%1$s' - hardcoded in class", currentZone.getName()));
 	    					continue;
+	    			}
+	    			
+	    			if (!currentZone.getState().available()) {
+    					logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));	    				
+	    				continue;
+	    			}
 	        	
+	    			logger.info(String.format("Trying '%1$s'", currentZone.getName()));
 		            options = ((NovaTemplateOptions)computeService.templateOptions())
 		            .keyPairName("vgl-developers")
 		            .availabilityZone(currentZone.getName())
@@ -263,9 +284,10 @@ public class CloudComputeService {
 	
 		            try {
 		                results = computeService.createNodesInGroup(groupName, 1, template);
+		                this.itActuallyLaunchedHere = currentZone.getName(); 
 		                break;
 		            } catch (RunNodesException e) {
-		                logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone));
+		                logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
 		                logger.debug(e.getMessage());
 		                try {
 		                	// FIXME: 
@@ -293,6 +315,8 @@ public class CloudComputeService {
             }
 
         }
+        logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
+        
 
         return result.getId();
     }
