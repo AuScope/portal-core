@@ -249,75 +249,75 @@ public class CloudComputeService {
 
         }
         else {
-        	//Brute force anyone?
-        	logger.info(lowLevelApi.getConfiguredZones());
-        	
+            //Brute force anyone?
+            logger.info(lowLevelApi.getConfiguredZones());
+            
             for (String location: lowLevelApi.getConfiguredZones()) {
-	    		Optional<? extends AvailabilityZoneApi> serverApi = lowLevelApi.getAvailabilityZoneApi(location);
-	    		Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
+                Optional<? extends AvailabilityZoneApi> serverApi = lowLevelApi.getAvailabilityZoneApi(location);
+                Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
-	    		for (AvailabilityZone currentZone : zones) {
-	    			
-	    			String zoneName = currentZone.getName().toLowerCase();
-	    			
-	    			if (zoneName.startsWith("tasmania") //firewall issues 
-	    					|| 
-    					zoneName.startsWith("mon") //network issues
-    						||
-						zoneName.startsWith("melb") //always errors
-    					
-	    				) { 
-	    					logger.info(String.format("skipping: '%1$s' - hardcoded in class", currentZone.getName()));
-	    					continue;
-	    			}
-	    			
-	    			if (!currentZone.getState().available()) {
-    					logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));	    				
-	    				continue;
-	    			}
-	        	
-	    			logger.info(String.format("Trying '%1$s'", currentZone.getName()));
-		            options = ((NovaTemplateOptions)computeService.templateOptions())
-		            .keyPairName(getKeypair())
-		            .availabilityZone(currentZone.getName())
-		            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
-	
-		            Template template = computeService.templateBuilder()
-		                    .imageId(job.getComputeVmId())
-		                    .hardwareId(job.getComputeInstanceType())
-		                    .options(options)
-		                    .build();
-	
-		            try {
-		                results = computeService.createNodesInGroup(groupName, 1, template);
-		                this.itActuallyLaunchedHere = currentZone.getName(); 
-		                break;
-		            } catch (RunNodesException e) {
-		                logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
-		                logger.debug(e.getMessage());
-		                try {
-		                	// FIXME: 
-		                	// I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
-		                	// JClouds is not very clever here - 
-		                	// issue: how do you delete thing you didnt name and dont have an ID for??
-		                	computeService.destroyNodesMatching(this.terminateFilter);
-		                	logger.warn("cleaned it up");
-		                }
-		                catch (Exception z) {
-		                    logger.warn("couldnt clean it up");
-		                }
-		                continue;
-		            }
-	    		}
-        	}
+                for (AvailabilityZone currentZone : zones) {
+                    
+                    String zoneName = currentZone.getName().toLowerCase();
+                    
+                    if (zoneName.startsWith("tasmania") //firewall issues 
+                            || 
+                        zoneName.startsWith("mon") //network issues
+                            ||
+                        zoneName.startsWith("melb") //always errors
+                        
+                        ) { 
+                            logger.info(String.format("skipping: '%1$s' - hardcoded in class", currentZone.getName()));
+                            continue;
+                    }
+                    
+                    if (!currentZone.getState().available()) {
+                        logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));                        
+                        continue;
+                    }
+                
+                    logger.info(String.format("Trying '%1$s'", currentZone.getName()));
+                    options = ((NovaTemplateOptions)computeService.templateOptions())
+                    .keyPairName(getKeypair())
+                    .availabilityZone(currentZone.getName())
+                    .userData(userDataString.getBytes(Charset.forName("UTF-8")));
+    
+                    Template template = computeService.templateBuilder()
+                            .imageId(job.getComputeVmId())
+                            .hardwareId(job.getComputeInstanceType())
+                            .options(options)
+                            .build();
+    
+                    try {
+                        results = computeService.createNodesInGroup(groupName, 1, template);
+                        this.itActuallyLaunchedHere = currentZone.getName(); 
+                        break;
+                    } catch (RunNodesException e) {
+                        logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
+                        logger.debug(e.getMessage());
+                        try {
+                            // FIXME: 
+                            // I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
+                            // JClouds is not very clever here - 
+                            // issue: how do you delete thing you didnt name and dont have an ID for??
+                            computeService.destroyNodesMatching(this.terminateFilter);
+                            logger.warn("cleaned it up");
+                        }
+                        catch (Exception z) {
+                            logger.warn("couldnt clean it up");
+                        }
+                        continue;
+                    }
+                }
+            }
             if (results.isEmpty()) {
-            	//Now we have tried everything....
-            	logger.error("run out of places to try...");
-            	throw new PortalServiceException("An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                //Now we have tried everything....
+                logger.error("run out of places to try...");
+                throw new PortalServiceException("An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
                     + "a smaller virtual machine", "Please report it to cg-admin@csiro.au ");
             }
             else {
-            	result = results.iterator().next();
+                result = results.iterator().next();
             }
 
         }
@@ -327,7 +327,7 @@ public class CloudComputeService {
         return result.getId();
     }
 
-	/**
+    /**
      * Makes a request that the VM started by job be terminated
      * @param job The job whose execution should be terminated
      */

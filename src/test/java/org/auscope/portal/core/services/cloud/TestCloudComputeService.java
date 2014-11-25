@@ -70,7 +70,7 @@ public class TestCloudComputeService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
-        	
+            
             oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
             oneOf(mockOptAZA).get();will(returnValue(mockAZA));
             oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
@@ -119,7 +119,7 @@ public class TestCloudComputeService extends PortalTestClass {
             oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone).iterator()));
             
             allowing(mockAvailZone).getName();will(returnValue("my-zone"));
-        	
+            
             oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
             oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
             
@@ -136,7 +136,7 @@ public class TestCloudComputeService extends PortalTestClass {
             oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
             will(throwException(ex));
             
-			allowing(mockComputeService).destroyNodesMatching(mockFilter);
+            allowing(mockComputeService).destroyNodesMatching(mockFilter);
             
             allowing(ex).fillInStackTrace();will(returnValue(ex));
             allowing(ex).getMessage();will(returnValue("mock-message"));
@@ -156,7 +156,7 @@ public class TestCloudComputeService extends PortalTestClass {
         context.checking(new Expectations() {{
 
             oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
-        	
+            
             oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
             oneOf(mockOptAZA).get();will(returnValue(mockAZA));
             oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
@@ -164,7 +164,7 @@ public class TestCloudComputeService extends PortalTestClass {
             
             allowing(mockAvailZone).getName();will(returnValue("my-zone"));
             
-        	oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
+            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
             oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
             
             oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));

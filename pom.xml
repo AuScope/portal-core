@@ -227,9 +227,6 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
             </plugin>
-            
-            
-            
         </plugins>
         <resources>
          <resource>
@@ -239,7 +236,6 @@
            <directory>src/main/webapp</directory>
          </resource>
        </resources>
-    
     </build>
     <reporting>
         <plugins>
@@ -250,7 +246,6 @@
             </plugin>
         </plugins>
     </reporting>
-
     <repositories>
         <repository>
             <id>osgeo</id>
@@ -297,13 +292,11 @@
             <artifactId>xercesImpl</artifactId>
             <version>2.11.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -319,13 +312,11 @@
             <artifactId>spring-tx</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${spring.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -446,12 +437,6 @@
             <artifactId>netcdf</artifactId>
             <version>4.2</version>
             <optional>false</optional>
-            <!--<exclusions>
-                <exclusion>
-                    <groupId>commons-httpclient</groupId>
-                    <artifactId>commons-httpclient</artifactId>
-                </exclusion>
-            </exclusions> -->
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
