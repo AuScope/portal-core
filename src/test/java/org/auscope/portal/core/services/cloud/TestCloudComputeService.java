@@ -17,6 +17,7 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
+import org.jclouds.openstack.nova.v2_0.domain.zonescoped.ZoneState;
 import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
 import org.jmock.Expectations;
 import org.junit.Before;
@@ -38,15 +39,16 @@ public class TestCloudComputeService extends PortalTestClass {
     private final NovaApi mockNovaApi = context.mock(NovaApi.class);
     private final AvailabilityZoneApi mockAZA = context.mock(AvailabilityZoneApi.class);
     private final AvailabilityZone mockAvailZone = context.mock(AvailabilityZone.class);
+    private final ZoneState mockZoneState = context.mock(ZoneState.class);
     private final FluentIterable mockAvailZoneList = context.mock(FluentIterable.class);
     private final Predicate<NodeMetadata> mockFilter = context.mock(Predicate.class);
 
     private CloudComputeService service;
 
 
-    private Optional<? extends AvailabilityZoneApi> mockOptAZA = context.mock(Optional.class);  
-   
-    
+    private Optional<? extends AvailabilityZoneApi> mockOptAZA = context.mock(Optional.class);
+
+
     private CloudJob job;
 
     @Before
@@ -57,7 +59,7 @@ public class TestCloudComputeService extends PortalTestClass {
         service = new CloudComputeService(ProviderType.NovaKeystone, mockComputeService, mockNovaApi, mockFilter);
         service.setGroupName("group-name");
         service.setKeypair("vgl-developers");
-        
+
     }
 
     /**
@@ -70,29 +72,31 @@ public class TestCloudComputeService extends PortalTestClass {
 
         context.checking(new Expectations() {{
             oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
-            
+
             oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
             oneOf(mockOptAZA).get();will(returnValue(mockAZA));
             oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
             oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone).iterator()));
-            
+
             allowing(mockAvailZone).getName();will(returnValue("my-zone"));
-            
+            allowing(mockAvailZone).getState();will(returnValue(mockZoneState));
+            allowing(mockZoneState).available();will(returnValue(true));
+
             oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
             oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
-            
+
             oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
             oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
             oneOf(mockTemplateOptions).availabilityZone("my-zone");will(returnValue(mockTemplateOptions));
-            
+
             oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
-            
+
             oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
             will(returnValue(ImmutableSet.<NodeMetadata>of(mockMetadata)));
-            
+
             oneOf(mockMetadata).getId();will(returnValue(expectedInstanceId));
         }});
 
@@ -117,34 +121,36 @@ public class TestCloudComputeService extends PortalTestClass {
             oneOf(mockOptAZA).get();will(returnValue(mockAZA));
             oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
             oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone).iterator()));
-            
+
             allowing(mockAvailZone).getName();will(returnValue("my-zone"));
-            
+            allowing(mockAvailZone).getState();will(returnValue(mockZoneState));
+            allowing(mockZoneState).available();will(returnValue(true));
+
             oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
             oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
-            
+
             oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
             oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
             oneOf(mockTemplateOptions).availabilityZone("my-zone");will(returnValue(mockTemplateOptions));
-            
-            
+
+
             oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
-            
+
             oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
             will(throwException(ex));
-            
+
             allowing(mockComputeService).destroyNodesMatching(mockFilter);
-            
+
             allowing(ex).fillInStackTrace();will(returnValue(ex));
             allowing(ex).getMessage();will(returnValue("mock-message"));
         }});
 
         service.executeJob(job, userDataString);
     }
-    
+
     /**
      * Tests that job execution correctly calls and parses a response from AmazonEC2
      * when EC2 reports failure by returning 0 running instances.
@@ -156,29 +162,31 @@ public class TestCloudComputeService extends PortalTestClass {
         context.checking(new Expectations() {{
 
             oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
-            
+
             oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
             oneOf(mockOptAZA).get();will(returnValue(mockAZA));
             oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
             oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone).iterator()));
-            
+
             allowing(mockAvailZone).getName();will(returnValue("my-zone"));
-            
+            allowing(mockAvailZone).getState();will(returnValue(mockZoneState));
+            allowing(mockZoneState).available();will(returnValue(true));
+
             oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
             oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
-            
+
             oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
             oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
             oneOf(mockTemplateOptions).availabilityZone("my-zone");will(returnValue(mockTemplateOptions));
-            
+
             oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
             oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
-            
-            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);           
+
+            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
             will(returnValue(ImmutableSet.<NodeMetadata>of()));
-            
+
         }});
 
         service.executeJob(job, userDataString);
@@ -191,7 +199,7 @@ public class TestCloudComputeService extends PortalTestClass {
     public void testTerminateJob() {
 
         job.setComputeInstanceId("running-id");
-        
+
         context.checking(new Expectations() {{
             oneOf(mockComputeService).destroyNode(job.getComputeInstanceId());
         }});
