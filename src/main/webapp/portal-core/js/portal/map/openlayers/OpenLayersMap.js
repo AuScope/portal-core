@@ -136,10 +136,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         //Iterate everything with WMS/WCS - no way around this :(
         for (var i = 0; i < layerStore.getCount(); i++) {
             var layer = layerStore.getAt(i);
-            //if the layer have not been rendered, no point searching through it.
-            if(layer.get('displayed')==false){
-                continue;
-            }
+          
             var cswRecords = layer.get('cswRecords');
             for(var j = 0; j < cswRecords.length; j++){
 
@@ -287,7 +284,24 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             controls : [
                 new OpenLayers.Control.Navigation(),
                 new OpenLayers.Control.PanZoomBar({zoomStopHeight:8}),
-                new OpenLayers.Control.MousePosition()
+                new OpenLayers.Control.MousePosition({
+                    "numDigits": 2,
+                    displayProjection: new OpenLayers.Projection("EPSG:4326"),
+                    prefix: 'Coordinates <a target="_blank" href="http://spatialreference.org/ref/epsg/4326/">EPSG:4326</a>:<br>' ,
+                    suffix : ' / lat lng',
+                    emptyString : 'Coordinates <a target="_blank" href="http://spatialreference.org/ref/epsg/4326/">EPSG:4326</a>:<br> Out of bound',
+                    element : Ext.get('latlng').dom,
+                    formatOutput: function(lonLat) {
+                        var digits = parseInt(this.numDigits);
+                        var newHtml =
+                            this.prefix +
+                            lonLat.lat.toFixed(digits) +
+                            this.separator +
+                            lonLat.lon.toFixed(digits) +
+                            this.suffix;
+                        return newHtml;
+                     }
+                })
             ],
             layers: [
                      new OpenLayers.Layer.Google(

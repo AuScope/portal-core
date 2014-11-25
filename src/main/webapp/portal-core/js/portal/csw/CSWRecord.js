@@ -28,7 +28,10 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'date' , type:'date', convert: function(dateString) {
             return new Date(Date.parse(dateString.replace(' UTC', '')));
         }},//The date of this CSWRecord
-        { name: 'layer', type: 'auto'} // store the layer after it has been converted.
+        { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
+        { name: 'layer', type: 'auto'}, // store the layer after it has been converted.        
+        { name: 'active', type: 'active', defaultValue: false },//Whether this layer is current active on the map.
+        { name: 'customlayer', type: 'boolean', defaultValue: false } //If true, this layer is added from browse catalogue
     ],
 
     /**

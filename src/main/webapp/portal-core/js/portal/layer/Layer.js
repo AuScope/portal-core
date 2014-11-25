@@ -26,11 +26,11 @@ Ext.define('portal.layer.Layer', {
         { name: 'downloader', type: 'auto' }, //A concrete implementation of a portal.layer.downloader.Downloader
         { name: 'querier', type: 'auto' }, //A concrete implementation of a portal.layer.querier.Querier
         { name: 'cswRecords', type: 'auto'}, //The source of all underlying data is an array of portal.csw.CSWRecord objects
-        { name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
+        //{ name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
-        { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added to the map
-        { name: 'deserialized', type: 'boolean', defaultValue: false }, //If true then this layer has been deserialized from a permanent link
-        { name: 'displayed', type: 'boolean', defaultValue: false} //A flag to check if the layer has been drawn.
+        { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added to the map:VT: Mark for deletion
+        { name: 'deserialized', type: 'boolean', defaultValue: false } //If true then this layer has been deserialized from a permanent link
+        
     ],
 
     /**
@@ -49,47 +49,47 @@ Ext.define('portal.layer.Layer', {
     },
 
     onRenderStarted : function(renderer, onlineResources, filterer) {
-        this.set('loading', true);
+        //this.set('loading', true);
+        this.get('source').set('loading', true);
+        this.get('source').set('active', true);
     },
 
     onRenderFinished : function(renderer) {
-        this.set('loading', false);
+        //this.set('loading', false);
+        this.get('source').set('loading', false);
     },
 
-    /**
-     * Whenever our layer is told to update visibility - let's take the brute force approach of deleting/re-adding the layer
-     */
-    onVisibilityChanged : function(renderer, newVisibility) {
-        if (newVisibility) {
-            this.visible=true;
-            //including a fourth paramenter to displayData to capture what event caused the renderer to display because if it is
-            //just a visibility change event, our renderer should stop some popup from showing. eg UncachedCSWServiceRenderer
-            if(this.get('displayed')==false){
-                Ext.Msg.alert('Alert', 'Click on "Show Results" to display');
-                return;
-            }
-            renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn, 'visibilityChange');
-        } else {
-            this.visible=false;
-            renderer.abortDisplay();
-            renderer.removeData();
-            renderer.map.closeInfoWindow(this.get('id'));
-        }
-    },
 
     /**
      * Whenever our filter changes, update the rendered page
      */
     onFilterChanged : function(filterer, keys) {
-        var renderer = this.get('renderer');
-        if (renderer.getVisible()) {
-            renderer.removeData();
-            renderer.map.closeInfoWindow(this.get('id'));
-            if(this.get('displayed')==true){
-                renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
-            }
+        var renderer = this.get('renderer');      
+        this.removeDataFromMap();                  
+        renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
+        
+        var group = 'group';
+        if(this.get('sourceType')=='CSWRecord'){
+            group='contactOrg';
         }
+        
+        this._expandGridGroup(this.get('source').get(group));
+                       
     },
+    
+    _expandGridGroup : function(groupname){
+        var activeTab = Ext.getCmp('auscope-tabs-panel').activeTab;
+        var feature = activeTab.features[2]
+        feature.expand(groupname,true);
+        
+    },
+    
+   removeDataFromMap:function(){
+       var renderer = this.get('renderer');       
+       renderer.removeData();
+       renderer.map.closeInfoWindow(this.get('id')); 
+       this.get('source').set('active', false);
+   },
 
     getCSWRecordsByKeywords : function(keyword){
         //Filter our results

@@ -10,6 +10,9 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 
 
+
+
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,12 +20,12 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ConnectTimeoutException;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.client.config.RequestConfig;
 
 
 
@@ -138,24 +141,26 @@ public class HttpServiceCaller {
      * @param method
      * @param httpClient
      */
-    private HttpResponse invokeTheMethod(HttpRequestBase method,HttpClient client) throws Exception {
+    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws Exception {
         log.debug("method=" + method.getURI());
         HttpClient httpClient=null;
-        //create the connection manager and add it to the client
-        // VT: Change from SimpleHttpConnectionManager (not thread safe) to
-        // MultiThreadedHttpConnectionManager (thread safe)
+
         if(client==null){
-            ClientConnectionManager man = new PoolingClientConnectionManager();
-            httpClient=new DefaultHttpClient(man);
+            RequestConfig requestConfig = RequestConfig.custom().
+            	    setConnectTimeout(this.connectionTimeOut)
+            	    .setSocketTimeout(this.connectionTimeOut)
+            	    .build();
+            
+            HttpClientConnectionManager man = new PoolingHttpClientConnectionManager();
+            
+            httpClient = HttpClientBuilder.create()
+            		.useSystemProperties()
+            		.setConnectionManager(man)
+            		.setDefaultRequestConfig(requestConfig)
+            		.build();
         }else{
             httpClient=client;
         }
-
-
-        final HttpParams httpParams = httpClient.getParams();
-        HttpConnectionParams.setConnectionTimeout(httpParams, this.connectionTimeOut );
-        HttpConnectionParams.setSoTimeout( httpParams, this.connectionTimeOut );
-
 
         log.trace("Outgoing request headers: "
                 + Arrays.toString(method.getAllHeaders()));

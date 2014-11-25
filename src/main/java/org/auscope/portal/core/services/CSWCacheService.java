@@ -70,8 +70,8 @@ public class CSWCacheService {
     protected Executor executor;
     protected CSWServiceItem[] cswServiceList;
     protected CSWRecordTransformerFactory transformerFactory;
-    
-    
+
+
     // An array of CSWServiceItems that have noCache==true. These ones will only be loaded when explicitly requested.
     // It is useful for CSWServiceItems (i.e. endpoints) that have too many records to load at once.
     protected CSWServiceItem[] deferredCacheCSWServiceList;
@@ -91,11 +91,11 @@ public class CSWCacheService {
      * @throws Exception
      */
     public CSWCacheService(Executor executor,
-                      HttpServiceCaller serviceCaller,
-                      ArrayList cswServiceList) {
+            HttpServiceCaller serviceCaller,
+            ArrayList cswServiceList) {
         this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory());
     }
-                      
+
 
     /**
      * Creates a new instance of a CSWKeywordCacheService. This constructor is normally autowired
@@ -107,9 +107,9 @@ public class CSWCacheService {
      * @throws Exception
      */
     public CSWCacheService(Executor executor,
-                      HttpServiceCaller serviceCaller,
-                      ArrayList cswServiceList,
-                      CSWRecordTransformerFactory transformerFactory) {
+            HttpServiceCaller serviceCaller,
+            ArrayList cswServiceList,
+            CSWRecordTransformerFactory transformerFactory) {
         this.updateRunning = false;
         this.executor = executor;
         this.serviceCaller = serviceCaller;
@@ -213,8 +213,25 @@ public class CSWCacheService {
      *
      * The update will occur on a separate thread so this function will return immediately
      * with true if an update has started or false if an update is already running
+     * default to make 3 attemps at 15 seconds interval if fail to connect.
      */
     public boolean updateCache() {
+        return updateCache(3,15000);
+    }
+
+    /**
+     * Updates the internal keyword/record cache by querying all known CSW's
+     *
+     * If an update is already running this function will have no effect
+     *
+     * The update will occur on a separate thread so this function will return immediately
+     * with true if an update has started or false if an update is already running
+     *
+     * @param connectionAttempts - number of attempts to try connecting
+     * @param timeBtwConnectionAttempts - length of time in millisecond between each attempt to connect.
+     * @return
+     */
+    public boolean updateCache(int connectionAttempts, long timeBtwConnectionAttempts) {
         if (!okToUpdate()) {
             return false;
         }
@@ -226,7 +243,9 @@ public class CSWCacheService {
         //Create our worker threads (ensure they are all aware of each other)
         CSWCacheUpdateThread[] updateThreads = new CSWCacheUpdateThread[cswServiceList.length];
         for (int i = 0; i < updateThreads.length; i++) {
-            updateThreads[i] = new CSWCacheUpdateThread(this, updateThreads, cswServiceList[i], newKeywordCache, newRecordCache, serviceCaller);
+            updateThreads[i] = new CSWCacheUpdateThread(this, updateThreads, cswServiceList[i],
+                    newKeywordCache, newRecordCache, serviceCaller, connectionAttempts,
+                    timeBtwConnectionAttempts);
         }
 
         //Fire off our worker threads, the last one to finish will update the
@@ -300,10 +319,12 @@ public class CSWCacheService {
         private List<CSWRecord> newRecordCache;
         private boolean finishedExecution;
         private CSWService cswService;
+        private int connectionAttempts;
+        private long timeBtwConnectionAttempts;
 
         public CSWCacheUpdateThread(CSWCacheService parent,
                 CSWCacheUpdateThread[] siblings, CSWServiceItem endpoint,
-                Map<String, Set<CSWRecord>> newKeywordCache, List<CSWRecord> newRecordCache, HttpServiceCaller serviceCaller) {
+                Map<String, Set<CSWRecord>> newKeywordCache, List<CSWRecord> newRecordCache, HttpServiceCaller serviceCaller,int connectionAttempts, long timeBtwConnectionAttempts) {
             super();
             this.parent = parent;
             this.siblings = siblings;
@@ -311,7 +332,8 @@ public class CSWCacheService {
             this.newKeywordCache = newKeywordCache;
             this.newRecordCache = newRecordCache;
             this.finishedExecution = false;
-
+            this.connectionAttempts = connectionAttempts;
+            this.timeBtwConnectionAttempts = timeBtwConnectionAttempts;
             this.cswService = new CSWService(this.endpoint, serviceCaller, this.parent.forceGetMethods, this.parent.transformerFactory);
         }
 
@@ -421,9 +443,9 @@ public class CSWCacheService {
                         record.setRecordInfoUrl(this.endpoint.getRecordInformationUrl());
 
                         CSWOnlineResourceImpl cswResource = new CSWOnlineResourceImpl(
-                              new URL(cswServiceUrl),
-                              OnlineResourceType.CSWService.toString(), // Set the protocol to CSWService.
-                              this.endpoint.getTitle(),
+                                new URL(cswServiceUrl),
+                                OnlineResourceType.CSWService.toString(), // Set the protocol to CSWService.
+                                this.endpoint.getTitle(),
                                 "A link to a CSW end point.");
 
                         record.setConstraints(this.endpoint.getDefaultConstraints());
@@ -442,7 +464,7 @@ public class CSWCacheService {
                     // Request page after page of CSWRecords until we've iterated the entire store
                     HashMap<String, CSWRecord> cswRecordMap = new HashMap<String, CSWRecord>();
                     do {
-                        CSWGetRecordResponse response = this.cswService.queryCSWEndpoint(startPosition, MAX_QUERY_LENGTH);
+                        CSWGetRecordResponse response = this.cswService.queryCSWEndpoint(startPosition, MAX_QUERY_LENGTH,this.connectionAttempts,this.timeBtwConnectionAttempts);
                         for (CSWRecord rec : response.getRecords()) {
                             cswRecordMap.put(rec.getFileIdentifier(), rec);
                         }
@@ -451,19 +473,19 @@ public class CSWCacheService {
 
                         //Prepare to request next 'page' of records (if required)
                         if (response.getNextRecord() > response.getRecordsMatched() ||
-                            response.getNextRecord() <= 0) {
+                                response.getNextRecord() <= 0) {
                             startPosition = -1; //we are done in this case
                         } else {
                             startPosition = response.getNextRecord();
                         }
                     } while (startPosition > 0);
-                    
-                    
+
+
                     //Iterate the cswRecordMap resolving parent/children relationships
                     //children will NOT be removed from the map
                     for (Iterator<String> i = cswRecordMap.keySet().iterator(); i.hasNext();) {
                         CSWRecord next = cswRecordMap.get(i.next());
-                        
+
                         String parentId = next.getParentIdentifier();
                         if (parentId != null && !parentId.isEmpty()) {
                             CSWRecord parent = cswRecordMap.get(parentId);
@@ -474,7 +496,7 @@ public class CSWCacheService {
                             }
                         }
                     }
-                    
+
                     //After parent/children have been linked, begin the keyword merging and extraction
                     synchronized(newKeywordCache) {
                         synchronized(newRecordCache) {
@@ -515,7 +537,7 @@ public class CSWCacheService {
                             }
                         }
                     }
-                    
+
                 }
             } catch (Exception ex) {
                 log.warn(String.format("Error updating keyword cache for '%1$s': %2$s",this.endpoint.getServiceUrl(), ex));

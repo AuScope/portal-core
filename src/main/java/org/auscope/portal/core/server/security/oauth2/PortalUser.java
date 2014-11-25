@@ -81,5 +81,8 @@ public class PortalUser extends User {
         this.email = email;
     }
 
-
+    @Override
+    public String toString() {
+        return "PortalUser [fullName=" + fullName + ", email=" + email + "]";
+    }
 }

@@ -136,8 +136,9 @@ Ext.define('portal.layer.filterer.Filterer', {
      *
      * key - a string key whose value will be set. Will override any existing key of the same name
      * value - The object value to set
+     * quiet[optional] - qu
      */
-    setParameter : function(key, value){
+    setParameter : function(key, value, quiet){
         if (key === portal.layer.filterer.Filterer.BBOX_FIELD) {
             this._setBboxField(value);
             this.fireEvent('change', this, [key]);

@@ -71,6 +71,8 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
         this.baseSerializers[tmpSerializer.getVersion()] = tmpSerializer;
         tmpSerializer = Ext.create('portal.util.permalink.serializers.SerializerV3');
         this.baseSerializers[tmpSerializer.getVersion()] = tmpSerializer;
+        tmpSerializer = Ext.create('portal.util.permalink.serializers.SerializerV4');
+        this.baseSerializers[tmpSerializer.getVersion()] = tmpSerializer;
         this.serializer = tmpSerializer; //we serialize using the latest version
 
         this.callParent(arguments);
@@ -119,16 +121,15 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
             return {
                 id : layer.get('id'), //This is only persistent for KnownLayers
                 filter : filterer.getParameters(),
-                source : source,
-                visible : renderer.getVisible()
+                source : source               
             };
         } else if (source === portal.layer.Layer.CSW_RECORD) {
             var cswRecord = layer.get('cswRecords')[0];
 
             return {
                 filter : filterer.getParameters(),
-                source : source,
-                visible : renderer.getVisible(),
+                source : source,   
+                customlayer : cswRecord.get('customlayer'),
                 onlineResources : this._serializeOnlineResources(cswRecord.get('onlineResources'))
             };
         }
@@ -160,7 +161,7 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
      * 
      * callback - function(string state, string version) will be passed the serialisation string asynchronously and the identifiable version of the serialiser used in the encoding
      */
-    serialize : function(callback) {
+    serialize : function(callback) {      
         this.serializer.serialize(this.mapState, this.serializedLayers, Ext.bind(function(stateStr) {            
             callback(portal.util.Base64.encode(stateStr), this.serializer.getVersion());
         }, this));
@@ -200,6 +201,7 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
         if (!serializationVersion) {
             serializationVersion = this._guessSerializationVersion(b64Decoded);
         }
+        
         var deserializer = this.baseSerializers[serializationVersion];
         if (!deserializer) {
             callback(false, 'Unsupported serialization version');

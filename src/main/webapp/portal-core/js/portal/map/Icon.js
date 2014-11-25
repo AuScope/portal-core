@@ -27,7 +27,7 @@ Ext.define('portal.map.Icon', {
             ylw : '#E8E527',
             defaultColor : '#78686C'
         },//VT: This is to generate the right wms color to match the marker icon color.
-        mapIconColor : function(url){
+        mapIconColor : function(url){         
             for(var key in portal.map.Icon.colorMap){
                 if(url.indexOf(key)!==-1){
                     return portal.map.Icon.colorMap[key];

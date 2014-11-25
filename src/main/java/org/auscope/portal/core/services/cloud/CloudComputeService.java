@@ -80,11 +80,16 @@ public class CloudComputeService {
     /** An array of images that are available through this compute service*/
     private MachineImage[] availableImages = new MachineImage[0];
 
+    /** Name of the developers' keypair to inject into instances on
+     * this provider. */
+    private String keypair;
+
     /**
      * Creates a new instance with the specified credentials
      * @param endpoint (URL) The location of the Compute (Nova) service
      * @param accessKey The Compute Access key (user name)
      * @param secretKey The Compute Secret key (password)
+     *
      */
     public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey) {
         this(provider, endpoint, accessKey, secretKey, null);
@@ -95,6 +100,7 @@ public class CloudComputeService {
      * @param endpoint (URL) The location of the Compute (Nova) service
      * @param accessKey The Compute Access key (user name)
      * @param secretKey The Compute Secret key (password)
+     * @param apiVersion The API version
      */
     public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String apiVersion) {
         Properties overrides = new Properties();
@@ -216,7 +222,7 @@ public class CloudComputeService {
 
         if (provider == ProviderType.NovaEc2) {
             options = ((EC2TemplateOptions) computeService.templateOptions())
-            .keyPair("vgl-developers")
+            .keyPair(getKeypair())
             .userData(userDataString.getBytes(Charset.forName("UTF-8")));
 
 
@@ -272,7 +278,7 @@ public class CloudComputeService {
 	        	
 	    			logger.info(String.format("Trying '%1$s'", currentZone.getName()));
 		            options = ((NovaTemplateOptions)computeService.templateOptions())
-		            .keyPairName("vgl-developers")
+		            .keyPairName(getKeypair())
 		            .availabilityZone(currentZone.getName())
 		            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
 	
@@ -364,5 +370,15 @@ public class CloudComputeService {
         }
 
         return computeTypes.toArray(new ComputeType[computeTypes.size()]);
+    }
+
+    public String getKeypair() {
+        // Default to the old behaviour until a different keypair is
+        // configured.
+        return keypair != null ? keypair : "vgl-developers";
+    }
+
+    public void setKeypair(String keypair) {
+        this.keypair = keypair;
     }
 }

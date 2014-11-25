@@ -38,11 +38,18 @@ Ext.define('Ext.ux.form.SearchField', {
         if (me.hasSearch) {
             me.setValue('');
             proxy.extraParams[me.paramName] = '';
-            //store.loadPage(1);
+            this._clearLayerStore(store);            
             me.hasSearch = false;
             me.triggerCell.item(0).setDisplayed(false);
             me.doComponentLayout();
         }
+    },
+    
+    _clearLayerStore : function(store){
+        store.query("active",true).each(function(record){
+            record.get('layer').removeDataFromMap();
+        })
+        store.removeAll();
     },
 
     onTrigger2Click : function(){
