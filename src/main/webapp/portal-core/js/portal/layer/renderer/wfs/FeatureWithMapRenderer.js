@@ -177,10 +177,16 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 filterParams += "&color=" + escape(color);
             }
             filterParams += "&serviceUrl=" + escape(serviceUrl);
-            var styleUrl = Ext.urlAppend(proxyUrl,filterParams);
+            var styleUrl="";
+            if(proxyUrl){
+                styleUrl = Ext.urlAppend(proxyUrl,filterParams);
+            }else{
+                //VT: if style proxy url is not defined, we assign it a default.
+                styleUrl = Ext.urlAppend("getDefaultStyle.do","layerName="+wmsLayer);
+            }
 
 
-            wmsRendered[this._getDomainWithLayerNameId(wmsUrl,wmsLayer)]=1;
+            wmsRendered[this._getDomain(wmsUrl)]=1;
 
 
             Ext.Ajax.request({
@@ -211,7 +217,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var wfsLayer = wfsResources[i].get('name');
             urls.push(wfsUrl);
             // VT: Instead of rendering the WMS url in the status, it is neater to display the wfs url
-            if(wmsRendered[this._getDomainWithLayerNameId(wfsUrl,wfsLayer)]){
+            if(wmsRendered[this._getDomain(wfsUrl)]){
                 wmsUrls.push(wfsUrl);
                 this.renderStatus.updateResponse(wfsUrl, "Loading WMS");
             }
@@ -231,7 +237,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             var wfsUrl = wfsResources[i].get('url');
             var wfsLayer = wfsResources[i].get('name');
             //only if WMS has not been built
-            if(!wmsRendered[this._getDomainWithLayerNameId(wfsUrl,wfsLayer)]){
+            if(!wmsRendered[this._getDomain(wfsUrl)]){
                 this.currentRequestCount++;
                 //Build our filter params object that will make a request
                 var filterParams = filterer.getParameters();
@@ -365,9 +371,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         return a.hostname;
       },
 
-    _getDomainWithLayerNameId : function(url,name){
-        return (this._getDomain(url) +'/'+ name);
-    },
+  
     /**
      * An abstract function for creating a legend that can describe the displayed data. If no
      * such thing exists for this renderer then null should be returned.
