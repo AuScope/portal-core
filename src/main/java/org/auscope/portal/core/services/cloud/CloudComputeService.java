@@ -3,12 +3,12 @@ package org.auscope.portal.core.services.cloud;
 import static com.google.common.base.Predicates.not;
 import static org.jclouds.compute.predicates.NodePredicates.RUNNING;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
-
 import static org.jclouds.compute.predicates.NodePredicates.inGroup;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -60,6 +60,7 @@ public class CloudComputeService {
     private ComputeService computeService;
     private ComputeServiceContext context;
     private NovaApi lowLevelApi;
+    private Set<String> skippedZones = new HashSet<String>();
 
     private Predicate<NodeMetadata> terminateFilter;
 
@@ -255,15 +256,9 @@ public class CloudComputeService {
                 Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
                 for (AvailabilityZone currentZone : zones) {
-                    String zoneName = currentZone.getName().toLowerCase();
-                    if (zoneName.startsWith("tasmania") //firewall issues
-                            ||
-                        zoneName.startsWith("mon") //network issues
-                            ||
-                        zoneName.startsWith("melb") //always errors
-                        ) {
-                            logger.info(String.format("skipping: '%1$s' - hardcoded in class", currentZone.getName()));
-                            continue;
+                    if (skippedZones.contains(currentZone.getName())) {
+                        logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
+                        continue;
                     }
 
                     if (!currentZone.getState().available()) {
@@ -295,8 +290,8 @@ public class CloudComputeService {
                             // I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
                             // JClouds is not very clever here -
                             // issue: how do you delete thing you didnt name and dont have an ID for??
-                            computeService.destroyNodesMatching(this.terminateFilter);
-                            logger.warn("cleaned it up");
+                            Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
+                            logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
                         }
                         catch (Exception z) {
                             logger.warn("couldnt clean it up");
@@ -375,5 +370,23 @@ public class CloudComputeService {
 
     public void setKeypair(String keypair) {
         this.keypair = keypair;
+    }
+
+    /**
+     * Gets the set of zone names that should be skipped when attempting to find
+     * a zone to run a job at.
+     * @return
+     */
+    public Set<String> getSkippedZones() {
+        return skippedZones;
+    }
+
+    /**
+     * Sets the set of zone names that should be skipped when attempting to find
+     * a zone to run a job at.
+     * @param skippedZones
+     */
+    public void setSkippedZones(Set<String> skippedZones) {
+        this.skippedZones = skippedZones;
     }
 }
