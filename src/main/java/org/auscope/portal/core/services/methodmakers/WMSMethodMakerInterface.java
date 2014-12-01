@@ -83,10 +83,11 @@ public interface WMSMethodMakerInterface {
      * @param pointLat Where the user clicked (latitude)
      * @param pointX Where the user clicked in pixel coordinates relative to the GetMap that was used (X direction)
      * @param pointY Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
+     * @param feature_count Maximum number of features that should be returned in the getFeatureInfo request
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws URISyntaxException;
+    public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld,String feature_count) throws URISyntaxException;
 
 
     /**
@@ -107,10 +108,11 @@ public interface WMSMethodMakerInterface {
      * @param pointLat Where the user clicked (latitude)
      * @param pointX Where the user clicked in pixel coordinates relative to the GetMap that was used (X direction)
      * @param pointY Where the user clicked in pixel coordinates relative to the GetMap that was used (Y direction)
+     * @param feature_count Maximum number of features that should be returned in the getFeatureInfo request
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld) throws URISyntaxException;
+    public HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sld,String feature_count) throws URISyntaxException;
 
 
 }

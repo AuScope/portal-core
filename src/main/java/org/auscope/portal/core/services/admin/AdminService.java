@@ -68,9 +68,9 @@ public class AdminService {
             } catch (Exception ex) {
                 //We treat HTTP errors as critical, non http as warnings (such as https)
                 if (protocol.equals("http")) {
-                   response.addError(String.format("Unable to connect to %1$s via http. The error was %2$s", urlString, ex));
+                    response.addError(String.format("Unable to connect to %1$s via http. The error was %2$s", urlString, ex));
                 } else {
-                   response.addWarning(String.format("Unable to connect to %1$s via '%2$s'. The error was %3$s", urlString, protocol, ex));
+                    response.addWarning(String.format("Unable to connect to %1$s via '%2$s'. The error was %3$s", urlString, protocol, ex));
                 }
             }
         }
@@ -208,6 +208,7 @@ public class AdminService {
         }
 
         AdminDiagnosticResponse diagnosticResponse = httpMethodValidator(methodsToTest, endpointsToTest, new ResponseValidator() {
+            @Override
             public void validateResponse(InputStream response, HttpRequestBase callingMethod, EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
                 try {
                     Document doc = DOMUtil.buildDomFromStream(response);
@@ -257,12 +258,13 @@ public class AdminService {
             endpointsToTest.add(endpoint);
 
             //Make a GetFeatureInfo request
-            methodsToTest.add(methodMaker.getFeatureInfo(endpoint.getEndpoint(), infoMimeType, endpoint.getSelector(), bbox.getBboxSrs(), west, south, east, north, width, height, west, north, 0, 0, null,null));
+            methodsToTest.add(methodMaker.getFeatureInfo(endpoint.getEndpoint(), infoMimeType, endpoint.getSelector(), bbox.getBboxSrs(), west, south, east, north, width, height, west, north, 0, 0, null,null,"0"));
             endpointsToTest.add(endpoint);
         }
 
         //Validate the methods by comparing the response Content-Type header
         AdminDiagnosticResponse diagnosticResponse = httpMethodValidator(methodsToTest, endpointsToTest, new ResponseValidator() {
+            @Override
             public void validateResponse(InputStream response, HttpRequestBase callingMethod, EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
                 //We need the URL
                 String uriString = "";

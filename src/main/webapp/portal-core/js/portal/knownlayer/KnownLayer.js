@@ -29,7 +29,8 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'relatedRecords', convert: portal.csw.CSWRecordType.convert},// a set of portal.csw.CSWRecord objects that relate to this knownlayer
         { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
         { name: 'layer', type: 'auto'}, // store the layer after it has been converted.        
-        { name: 'active', type: 'active', defaultValue: false }//Whether this layer is current active on the map.
+        { name: 'active', type: 'active', defaultValue: false },//Whether this layer is current active on the map.
+        { name: 'feature_count', type: 'string'} //GetFeatureInfo feature_count attribute, 0 would be to default to whatever is set on the server.
     ],
 
     /**

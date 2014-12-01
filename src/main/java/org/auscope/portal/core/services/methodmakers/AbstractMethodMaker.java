@@ -14,6 +14,7 @@ import org.apache.http.message.BasicNameValuePair;
  *
  */
 public abstract class AbstractMethodMaker {
+    public final String defaultFeature_count="10";
     /**
      * Concatenates one or more path elements onto the end of url
      *
