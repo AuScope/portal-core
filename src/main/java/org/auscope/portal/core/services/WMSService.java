@@ -100,15 +100,15 @@ public class WMSService {
     public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude,
             double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height,
             double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody, boolean postMethod,
-            String version) throws PortalServiceException {
+            String version,String feature_count) throws PortalServiceException {
         // Do the request
         HttpRequestBase method = null;
         try {
             WMSMethodMakerInterface methodMaker = getSupportedMethodMaker(wmsUrl,version);
             if(postMethod){
-                method = methodMaker.getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sldBody);
+                method = methodMaker.getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sldBody,feature_count);
             }else{
-                method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sldBody);
+                method = methodMaker.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sldBody,feature_count);
             }
             String response =  serviceCaller.getMethodResponseAsString(method);
             //VT: a html response may not be xml valid therefore cannot go through the same validation process.

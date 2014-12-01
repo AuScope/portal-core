@@ -24,10 +24,10 @@ public class TestWMSMethodMaker extends PortalTestClass {
     public void testParamParsing_NoParams() throws URISyntaxException {
         WMSMethodMaker mm = new WMSMethodMaker(null);
         HttpRequestBase getCapMethod = mm.getCapabilitiesMethod("http://example.com");
-        HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
+        HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null,"0");
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0, 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
-        HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
+        HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null,"0");
 
         Assert.assertTrue(getFeatureMethodPost instanceof HttpPost);
 
@@ -52,7 +52,7 @@ public class TestWMSMethodMaker extends PortalTestClass {
     public void testParamParsing_ExtraParams() throws URISyntaxException {
         WMSMethodMaker mm = new WMSMethodMaker(null);
         HttpRequestBase getCapMethod = mm.getCapabilitiesMethod("http://example.com?param1=val1&param2=val2");
-        HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com?param1=val1&param2=val2", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
+        HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com?param1=val1&param2=val2", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null,"0");
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com?param1=val1&param2=val2", "layer", "imageMimeType", "srs", 1.0, 2.0, 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com?param1=val1&param2=val2", "layerName", 100, 200, "styles");
 
@@ -86,10 +86,10 @@ public class TestWMSMethodMaker extends PortalTestClass {
     public void test_1_3_0_ParamParsing_NoParams() throws URISyntaxException {
         WMS_1_3_0_MethodMaker mm = new WMS_1_3_0_MethodMaker(null);
         HttpRequestBase getCapMethod = mm.getCapabilitiesMethod("http://example.com");
-        HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
+        HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null,"0");
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com", "layer", "imageMimeType", "srs", 1.0, 2.0, 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com", "layerName", 100, 200, "styles");
-        HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
+        HttpRequestBase getFeatureMethodPost = mm.getFeatureInfoPost("http://example.com", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null,"0");
 
         Assert.assertTrue(getFeatureMethodPost instanceof HttpPost);
 
@@ -114,7 +114,7 @@ public class TestWMSMethodMaker extends PortalTestClass {
     public void test_1_3_0_ParamParsing_ExtraParams() throws URISyntaxException {
         WMS_1_3_0_MethodMaker mm = new WMS_1_3_0_MethodMaker(null);
         HttpRequestBase getCapMethod = mm.getCapabilitiesMethod("http://example.com?param1=val1&param2=val2");
-        HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com?param1=val1&param2=val2", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null);
+        HttpRequestBase getFeatureMethod = mm.getFeatureInfo("http://example.com?param1=val1&param2=val2", "format", "layer", "EPSG:4326", 1.0, 2.0, 3.0, 4.0, 100, 200, 6.0, 7.0, 20, 30, "styles",null,"0");
         HttpRequestBase getMapMethod = mm.getMapMethod("http://example.com?param1=val1&param2=val2", "layer", "imageMimeType", "srs", 1.0, 2.0, 3.0, 4.0, 100, 200, "styles", "styleBody");
         HttpRequestBase getLegendMethod = mm.getLegendGraphic("http://example.com?param1=val1&param2=val2", "layerName", 100, 200, "styles");
 
