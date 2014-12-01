@@ -1,7 +1,14 @@
 package org.auscope.portal.core.services.cloud;
 
+import static com.google.common.base.Predicates.not;
+import static org.jclouds.compute.predicates.NodePredicates.RUNNING;
+import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
+import static org.jclouds.compute.predicates.NodePredicates.inGroup;
+
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -24,7 +31,14 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.ec2.reference.EC2Constants;
+import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
+import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
+import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 /**
  * Service class wrapper for interacting with a remote cloud compute service using
@@ -44,6 +58,14 @@ public class CloudComputeService {
     private final Log logger = LogFactory.getLog(getClass());
 
     private ComputeService computeService;
+    private ComputeServiceContext context;
+    private NovaApi lowLevelApi;
+    private Set<String> skippedZones = new HashSet<String>();
+
+    private Predicate<NodeMetadata> terminateFilter;
+
+    private String itActuallyLaunchedHere;
+
 
     /** Unique ID for distinguishing instances of this class - can be null*/
     private String id;
@@ -107,14 +129,21 @@ public class CloudComputeService {
             b.apiVersion(apiVersion);
         }
 
-        ComputeServiceContext context = b.buildView(ComputeServiceContext.class);
-        this.computeService = context.getComputeService();
+        //Terry -just in case...
+        this.lowLevelApi = b.buildApi(NovaApi.class);
+
+        this.context = b.buildView(ComputeServiceContext.class);
+        this.computeService = this.context.getComputeService();
+
+        this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(groupName));
 
     }
 
-    public CloudComputeService(ProviderType provider, ComputeService computeService) {
+    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi lowLevelApi, Predicate<NodeMetadata> terminPredicate) {
         this.provider = provider;
         this.computeService = computeService;
+        this.lowLevelApi = lowLevelApi;
+        this.terminateFilter = terminPredicate;
     }
 
     /**
@@ -189,39 +218,101 @@ public class CloudComputeService {
 
         //We have different template options depending on provider
         TemplateOptions options = null;
-        switch (provider) {
-        case NovaEc2:
+        Set<? extends NodeMetadata> results = Collections.emptySet();
+        NodeMetadata result;
+
+        if (provider == ProviderType.NovaEc2) {
             options = ((EC2TemplateOptions) computeService.templateOptions())
             .keyPair(getKeypair())
             .userData(userDataString.getBytes(Charset.forName("UTF-8")));
-            break;
-        case NovaKeystone:
-            options = ((NovaTemplateOptions)computeService.templateOptions())
-            .keyPairName(getKeypair())
-            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
-        }
 
-        Template template = computeService.templateBuilder()
-                .imageId(job.getComputeVmId())
-                .hardwareId(job.getComputeInstanceType())
-                .options(options)
-                .build();
 
-        //Start up the job, we should have exactly 1 node start
-        Set<? extends NodeMetadata> results;
-        try {
-            results = computeService.createNodesInGroup(groupName, 1, template);
-        } catch (RunNodesException e) {
-            logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'", e.getMessage(), job));
-            logger.debug("Exception:", e);
-            throw new PortalServiceException("An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-                    + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : " + e.getMessage(),e);
+            Template template = computeService.templateBuilder()
+                    .imageId(job.getComputeVmId())
+                    .hardwareId(job.getComputeInstanceType())
+                    .options(options)
+                    .build();
+
+            //Start up the job, we should have exactly 1 node start
+            try {
+                results = computeService.createNodesInGroup(groupName, 1, template);
+            } catch (RunNodesException e) {
+                logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'", e.getMessage(), job));
+                logger.debug("Exception:", e);
+                throw new PortalServiceException("An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                        + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : " + e.getMessage(),e);
+            }
+            if (results.isEmpty()) {
+                logger.error("JClouds returned an empty result set. Treating it as job failure.");
+                throw new PortalServiceException("Unable to start compute node due to an unknown error, no nodes returned");
+            }
+            result = results.iterator().next();
+
         }
-        if (results.isEmpty()) {
-            logger.error("JClouds returned an empty result set. Treating it as job failure.");
-            throw new PortalServiceException("Unable to start compute node due to an unknown error, no nodes returned");
+        else {
+            //Brute force anyone?
+            for (String location: lowLevelApi.getConfiguredZones()) {
+                Optional<? extends AvailabilityZoneApi> serverApi = lowLevelApi.getAvailabilityZoneApi(location);
+                Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
+
+                for (AvailabilityZone currentZone : zones) {
+                    if (skippedZones.contains(currentZone.getName())) {
+                        logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
+                        continue;
+                    }
+
+                    if (!currentZone.getState().available()) {
+                        logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
+                        continue;
+                    }
+
+                    logger.info(String.format("Trying '%1$s'", currentZone.getName()));
+                    options = ((NovaTemplateOptions)computeService.templateOptions())
+                    .keyPairName(getKeypair())
+                    .availabilityZone(currentZone.getName())
+                    .userData(userDataString.getBytes(Charset.forName("UTF-8")));
+
+                    Template template = computeService.templateBuilder()
+                            .imageId(job.getComputeVmId())
+                            .hardwareId(job.getComputeInstanceType())
+                            .options(options)
+                            .build();
+
+                    try {
+                        results = computeService.createNodesInGroup(groupName, 1, template);
+                        this.itActuallyLaunchedHere = currentZone.getName();
+                        break;
+                    } catch (RunNodesException e) {
+                        logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
+                        logger.debug(e.getMessage());
+                        try {
+                            // FIXME:
+                            // I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
+                            // JClouds is not very clever here -
+                            // issue: how do you delete thing you didnt name and dont have an ID for??
+                            Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
+                            logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
+                        }
+                        catch (Exception z) {
+                            logger.warn("couldnt clean it up");
+                        }
+                        continue;
+                    }
+                }
+            }
+            if (results.isEmpty()) {
+                //Now we have tried everything....
+                logger.error("run out of places to try...");
+                throw new PortalServiceException("An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                    + "a smaller virtual machine", "Please report it to cg-admin@csiro.au ");
+            }
+            else {
+                result = results.iterator().next();
+            }
+
         }
-        NodeMetadata result = results.iterator().next();
+        logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
+
 
         return result.getId();
     }
@@ -279,5 +370,23 @@ public class CloudComputeService {
 
     public void setKeypair(String keypair) {
         this.keypair = keypair;
+    }
+
+    /**
+     * Gets the set of zone names that should be skipped when attempting to find
+     * a zone to run a job at.
+     * @return
+     */
+    public Set<String> getSkippedZones() {
+        return skippedZones;
+    }
+
+    /**
+     * Sets the set of zone names that should be skipped when attempting to find
+     * a zone to run a job at.
+     * @param skippedZones
+     */
+    public void setSkippedZones(Set<String> skippedZones) {
+        this.skippedZones = skippedZones;
     }
 }
