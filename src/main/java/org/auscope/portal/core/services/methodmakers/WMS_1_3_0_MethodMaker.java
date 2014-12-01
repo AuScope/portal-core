@@ -163,7 +163,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @throws URISyntaxException
      */
     @Override
-    public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws URISyntaxException {
+    public HttpRequestBase getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody,String feature_count) throws URISyntaxException {
         //VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
         //        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
         //                southBoundLatitude,
@@ -178,6 +178,10 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
                 eastBoundLongitude,
                 northBoundLatitude);
 
+        if(feature_count.equals("0")||feature_count.isEmpty()){
+            feature_count=this.defaultFeature_count;
+        }
+
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
 
         existingParam.add(new BasicNameValuePair("service", "WMS"));
@@ -188,7 +192,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("BBOX", bboxString));
         existingParam.add(new BasicNameValuePair("QUERY_LAYERS", layer));
         existingParam.add(new BasicNameValuePair("INFO_FORMAT", format));
-        existingParam.add(new BasicNameValuePair("feature_count", "10"));
+        existingParam.add(new BasicNameValuePair("feature_count", feature_count));
         existingParam.add(new BasicNameValuePair("lng", Double.toString(pointLng)));
         existingParam.add(new BasicNameValuePair("lat", Double.toString(pointLat)));
         existingParam.add(new BasicNameValuePair("i", Integer.toString(pointX)));
@@ -233,7 +237,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      * @throws URISyntaxException
      */
     @Override
-    public HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody) throws URISyntaxException {
+    public HttpRequestBase getFeatureInfoPost(String wmsUrl, String format, String layer, String srs, double westBoundLongitude, double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height, double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody,String feature_count) throws URISyntaxException {
         //VT: this is the same axis ordering as the GetMap request that works but somehow the GetFeatureInfo request is opposite
         //        String bboxString = String.format("%1$s,%2$s,%3$s,%4$s",
         //                southBoundLatitude,
@@ -248,6 +252,10 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
                 eastBoundLongitude,
                 northBoundLatitude);
 
+        if(feature_count.equals("0")||feature_count.isEmpty()){
+            feature_count=this.defaultFeature_count;
+        }
+
         List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params
 
         existingParam.add(new BasicNameValuePair("service", "WMS"));
@@ -258,7 +266,7 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
         existingParam.add(new BasicNameValuePair("BBOX", bboxString));
         existingParam.add(new BasicNameValuePair("QUERY_LAYERS", layer));
         existingParam.add(new BasicNameValuePair("INFO_FORMAT", format));
-        existingParam.add(new BasicNameValuePair("feature_count", "10"));
+        existingParam.add(new BasicNameValuePair("feature_count", feature_count));
         existingParam.add(new BasicNameValuePair("lng", Double.toString(pointLng)));
         existingParam.add(new BasicNameValuePair("lat", Double.toString(pointLat)));
         existingParam.add(new BasicNameValuePair("i", Integer.toString(pointX)));

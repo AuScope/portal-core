@@ -41,6 +41,8 @@ public class ViewKnownLayerFactory {
             obj.put("iconSize", toView(k.getIconSize()));
         }
 
+        obj.put("feature_count", k.getFeature_count());
+
         String group = "Others";
         if (k.getGroup() != null && !k.getGroup().isEmpty()) {
             group = k.getGroup();

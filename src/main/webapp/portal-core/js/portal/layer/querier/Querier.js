@@ -57,6 +57,12 @@ Ext.define('portal.layer.querier.Querier', {
 
         var tileInfo = this.map.getTileInformationForPoint(point);
         var layer = queryTarget.get('layer');
+        var feature_count=0;//VT:0 is to default to server setting
+        
+        if(layer.get('sourceType')==portal.layer.Layer.KNOWN_LAYER){
+            feature_count = layer.get('source').get('feature_count');
+        }
+        
         var wmsOnlineResource = queryTarget.get('onlineResource');
 
         var typeName = wmsOnlineResource.get('name');
@@ -85,7 +91,8 @@ Ext.define('portal.layer.querier.Querier', {
             INFO_FORMAT : infoFormat,
             SLD_BODY : sld_body,
             postMethod : postMethod,
-            version : wmsOnlineResource.get('version')
+            version : wmsOnlineResource.get('version'),
+            feature_count : feature_count
         });
         return Ext.urlAppend('wmsMarkerPopup.do', queryString);
     },

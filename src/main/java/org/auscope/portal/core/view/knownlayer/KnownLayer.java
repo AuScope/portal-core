@@ -61,6 +61,8 @@ public class KnownLayer implements Serializable {
     /** This is the size of point icon in pixels  */
     private Dimension iconSize;
 
+    private int feature_count;
+
     /**
      * Creates a new KnownLayer
      *
@@ -306,6 +308,14 @@ public class KnownLayer implements Serializable {
      */
     public void setIconSize(Dimension iconSize) {
         this.iconSize = iconSize;
+    }
+
+    public int getFeature_count() {
+        return feature_count;
+    }
+
+    public void setFeature_count(int feature_count) {
+        this.feature_count = feature_count;
     }
 
 
