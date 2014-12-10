@@ -21,6 +21,13 @@
         <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
         <url>https://github.com/AuScope/portal-core</url>
     </scm>
+    <distributionManagement>
+        <repository>
+            <id>deployment</id>
+            <name>Internal nexus</name>
+            <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/PortalRelease/</url>
+        </repository>
+    </distributionManagement>
     <!-- Build Configuration -->
     <organization>
         <name>AuScope</name>
