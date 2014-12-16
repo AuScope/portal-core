@@ -21,6 +21,7 @@ Ext.define('portal.charts.BaseD3Chart', {
      *  preserveAspectRatio - boolean - Should the graph preserve a 4x2 aspect ratio or should it stretch. Default false
      *  targetWidth - Number - (Only useful if preserveAspectRatio is set) - The target width to use in aspect ratio
      *  targetHeight - Number - (Only useful if preserveAspectRatio is set)  - The target height to use in aspect ratio
+     *  svgClass - String - [Optional] - CSS Class to apply to underlying SVG element (defaults to nothing)
      * }
      *
      */
@@ -111,8 +112,11 @@ Ext.define('portal.charts.BaseD3Chart', {
         var container = d3.select("#" + this.innerId);
         this.d3svg = container.append("svg")
             .attr("preserveAspectRatio", this.preserveAspectRatio ? "xMidYMid" : "none")
-            .attr("class", "pdf-chart-svg")
             .attr("viewBox",  Ext.util.Format.format("0 0 {0} {1}", this.targetWidth, this.targetHeight));
+        
+        if (this.svgClass) {
+            this.d3svg.attr("class", this.svgClass)
+        }
 
         //Force a resize
         this._onResize(container.node().offsetWidth, container.node().offsetHeight);
