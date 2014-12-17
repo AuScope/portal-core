@@ -49,7 +49,8 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
                          isBaseLayer : false,
                          projection: srs,
                          maxExtent: bounds,
-                         tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34)
+                         tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34),
+                         displayInLayerSwitcher : false
                     });
         }else{
             wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
@@ -65,7 +66,8 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
                         isBaseLayer : false,
                         projection: srs,
                         maxExtent: bounds,
-                        tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34)
+                        tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34),
+                        displayInLayerSwitcher : false
                     });
         }
 

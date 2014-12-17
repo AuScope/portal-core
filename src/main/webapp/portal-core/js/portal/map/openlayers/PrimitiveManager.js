@@ -23,6 +23,18 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
         this.layers = [];
         this.vectors = [];
     },
+    
+    setVisibility : function(visibility){                
+        
+        if(this.vectorLayer){
+            this.vectorLayer.setVisibility(visibility);
+        }
+        
+        for (var i = 0; i < this.layers.length; i++) {
+            this.layers[i].setVisibility(visibility);
+        }
+        
+    },
 
     /**
      * See parent class for info
