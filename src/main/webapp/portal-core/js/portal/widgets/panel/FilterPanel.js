@@ -43,7 +43,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         });
          
         
-        var menuItems = [this._getResetFormAction(),this._getDeleteAction()];
+        var menuItems = [this._getResetFormAction(),this._getDeleteAction(),this._setVisibilityAction()];
         var legendAction=this._getLegendAction();
         if(legendAction){
             menuItems.push(legendAction);
@@ -230,7 +230,27 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             }
         });
         
-        return downloadLayerAction
+        return downloadLayerAction;
+    },
+    
+    _setVisibilityAction : function(){
+        var me = this;
+        var visibleLayerAction = new Ext.Action({
+            text : 'Toggle Layer Visibility OFF',
+            iconCls : 'visible_eye',
+            handler : function(){
+                var layer = me.filterForm.layer;                 
+                layer.setLayerVisibility(!layer.visible);
+                if(layer.visible){
+                    this.setText('Toggle Layer Visibility OFF');
+                }else{
+                    this.setText('Toggle Layer Visibility ON');
+                }
+                
+            }
+        });
+        
+        return visibleLayerAction;
     },
 
 
