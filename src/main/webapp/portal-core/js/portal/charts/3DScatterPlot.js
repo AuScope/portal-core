@@ -109,12 +109,14 @@ Ext.define('portal.charts.3DScatterPlot', {
             this.threeJs.raycaster.params.PointCloud.threshold = this.pointSize / 3;
         }
 
+        var container = document.getElementById(this.innerId);
+        
         this.threeJs.camera = new THREE.PerspectiveCamera(60, this.threeJs.width / this.threeJs.height, 1, 10000);
         this.threeJs.camera.position.z = 180;
         this.threeJs.camera.position.y = 18;
         this.threeJs.scene.add(this.threeJs.camera);
 
-        this.threeJs.controls = new THREE.OrbitControls( this.threeJs.camera);
+        this.threeJs.controls = new THREE.OrbitControls( this.threeJs.camera, container);
         this.threeJs.controls.damping = 0.2;
         this.threeJs.controls.target = new THREE.Vector3(0, 0, 0);
         this.threeJs.controls.addEventListener('change', Ext.bind(this._renderThreeJs, this));
@@ -124,7 +126,6 @@ Ext.define('portal.charts.3DScatterPlot', {
         this.threeJs.renderer.setClearColor(0xffffff, 1);
         this.threeJs.renderer.setSize(this.threeJs.width, this.threeJs.height);
 
-        var container = document.getElementById(this.innerId);
         container.appendChild(this.threeJs.renderer.domElement);
 
         // Need a perpetual animation loop for updating the user controls
