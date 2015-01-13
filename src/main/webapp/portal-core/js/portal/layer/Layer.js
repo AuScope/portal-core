@@ -47,6 +47,11 @@ Ext.define('portal.layer.Layer', {
         }
         return resources;
     },
+    
+    setLayerVisibility : function(visibility){
+        this.get('renderer').primitiveManager.setVisibility(visibility);
+        this.visible = visibility;
+    },                
 
     onRenderStarted : function(renderer, onlineResources, filterer) {
         //this.set('loading', true);

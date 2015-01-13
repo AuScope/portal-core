@@ -5,7 +5,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     extend : 'portal.map.BaseMap',
 
     map : null, //Instance of OpenLayers.Map
-    vectorLayer : null,
+    vectorLayers : [],
     selectControl : null,
 
     constructor : function(cfg) {
@@ -88,25 +88,28 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         //Iterate all features on the map, those that intersect the given lat/lon should
         //have query targets generated for them as it isn't clear which one the user meant
         //to click
-        for (var i = 0; i < this.vectorLayer.features.length; i++) {
-            var featureToTest = this.vectorLayer.features[i];
-            if (featureToTest.geometry.atPoint(lonLat)) {
-                var primitiveToTest = featureToTest.attributes['portalBasePrimitive'];
-                if (primitiveToTest) {
-                    var id = primitiveToTest.getId();
-                    var onlineResource = primitiveToTest.getOnlineResource();
-                    var layer = primitiveToTest.getLayer();
-                    var cswRecord = primitiveToTest.getCswRecord();
-
-                    queryTargets.push(Ext.create('portal.layer.querier.QueryTarget', {
-                        id : id,
-                        lat : latitude,
-                        lng : longitude,
-                        onlineResource : onlineResource,
-                        layer : layer,
-                        cswRecord : cswRecord,
-                        explicit : true
-                    }));
+        for(var j = 0; j < this.vectorLayers.length;j++){
+            var vectorLayer = this.vectorLayers[j];
+            for (var i = 0; i < vectorLayer.features.length; i++) {
+                var featureToTest = vectorLayer.features[i];
+                if (featureToTest.geometry.atPoint(lonLat)) {
+                    var primitiveToTest = featureToTest.attributes['portalBasePrimitive'];
+                    if (primitiveToTest) {
+                        var id = primitiveToTest.getId();
+                        var onlineResource = primitiveToTest.getOnlineResource();
+                        var layer = primitiveToTest.getLayer();
+                        var cswRecord = primitiveToTest.getCswRecord();
+    
+                        queryTargets.push(Ext.create('portal.layer.querier.QueryTarget', {
+                            id : id,
+                            lat : latitude,
+                            lng : longitude,
+                            onlineResource : onlineResource,
+                            layer : layer,
+                            cswRecord : cswRecord,
+                            explicit : true
+                        }));
+                    }
                 }
             }
         }
@@ -333,39 +336,13 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         this.map.addControl(ls);
         ls.maximizeControl();
 
-        this.vectorLayer = new OpenLayers.Layer.Vector("Vectors", {
-            preFeatureInsert: function(feature) {
-                // Google.v3 uses web mercator as projection, so we have to
-                // transform our coordinates
-
-                var bounds = feature.geometry.getBounds();
-
-                //JJV - Here be dragons... this is a horrible, horrible workaround. I am so very sorry :(
-                //Because we want to let portal core *think* its in EPSG:4326 and because our base map is in EPSG:3857
-                //we automagically transform the geometry on the fly. That isn't a problem until you come across
-                //various openlayers controls that add to the map in the native projection (EPSG:3857). To workaround this
-                //we simply don't transform geometry that's already EPSG:3857. The scary part is how we go about testing for that...
-                //The below should work except for tiny bounding boxes off the west coast of Africa
-                if (bounds.top <= 90 && bounds.top >= -90) {
-                    feature.geometry.transform('EPSG:4326','EPSG:3857');
-                }
-            }
-        });
-        this.map.addLayer(this.vectorLayer);
+      
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
         this.container = container;
         this.rendered = true;
 
-        //Control for handling click events on the map
-        var clickableLayers = [this.vectorLayer];
-        var clickControl = new portal.map.openlayers.ClickControl(clickableLayers, {
-            map : this.map,
-            trigger : Ext.bind(this._onClick, this)
-        });
-
-        this.map.addControl(clickControl);
-        clickControl.activate();
+       
 
         //VT: adds a customZoomBox which fires a afterZoom event.
         var zoomBoxCtrl = new OpenLayers.Control.ZoomBox({alwaysZoom:true,zoomOnClick:false});
@@ -432,8 +409,10 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                     return button;
                 }
             });
-
-            var drawFeatureCtrl = new OpenLayers.Control.DrawFeature(this.vectorLayer, OpenLayers.Handler.RegularPolygon, {
+            
+            var vectorLayer = this._getNewVectorLayer();
+                       
+            var drawFeatureCtrl = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.RegularPolygon, {
                 handlerOptions: {
                     sides: 4,
                     irregular: true
@@ -468,7 +447,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
                 //Remove box after it's added (delayed by 3 seconds so the user can see it)
                 var task = new Ext.util.DelayedTask(Ext.bind(function(feature){
-                    this.vectorLayer.removeFeatures([feature]);
+                    vectorLayer.removeFeatures([feature]);
                 }, this, [feature]));
                 task.delay(3000);
 
@@ -505,6 +484,30 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         }, this);
     },
 
+    
+    _getNewVectorLayer : function(){
+        var vectorLayer = new OpenLayers.Layer.Vector("Vectors", {
+            preFeatureInsert: function(feature) {
+                // Google.v3 uses web mercator as projection, so we have to
+                // transform our coordinates
+
+                var bounds = feature.geometry.getBounds();
+
+                //JJV - Here be dragons... this is a horrible, horrible workaround. I am so very sorry :(
+                //Because we want to let portal core *think* its in EPSG:4326 and because our base map is in EPSG:3857
+                //we automagically transform the geometry on the fly. That isn't a problem until you come across
+                //various openlayers controls that add to the map in the native projection (EPSG:3857). To workaround this
+                //we simply don't transform geometry that's already EPSG:3857. The scary part is how we go about testing for that...
+                //The below should work except for tiny bounding boxes off the west coast of Africa
+                if (bounds.top <= 90 && bounds.top >= -90) {
+                    feature.geometry.transform('EPSG:4326','EPSG:3857');
+                }
+            },
+            displayInLayerSwitcher : false
+        });
+        this.map.addLayer(vectorLayer);
+        return vectorLayer;
+    },
     /**
      * Returns the currently visible map bounds as a portal.util.BBox object.
      *
@@ -559,9 +562,28 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * function()
      */
     makePrimitiveManager : function() {
+        var newVectorLayer = this._getNewVectorLayer();
+        this.vectorLayers.push(newVectorLayer);                
+       
+        var clickableLayers = this.vectorLayers
+        var clickControl = new portal.map.openlayers.ClickControl(clickableLayers, {
+            map : this.map,
+            trigger : Ext.bind(this._onClick, this)
+        });
+                
+        var controlList = this.map.getControlsByClass('portal.map.openlayers.ClickControl');
+                
+        //VT: update the map clickControl with the updated layer
+        for(var i = 0; i < controlList.length; i++){
+            this.map.removeControl(controlList[i]);                        
+        }
+        
+        this.map.addControl(clickControl);
+        clickControl.activate();
+                                     
         return Ext.create('portal.map.openlayers.PrimitiveManager', {
             baseMap : this,
-            vectorLayer : this.vectorLayer
+            vectorLayer : newVectorLayer
         });
     },
 
