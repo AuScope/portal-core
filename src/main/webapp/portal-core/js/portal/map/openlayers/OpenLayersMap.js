@@ -281,6 +281,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     renderToContainer : function(container) {
         var containerId = container.body.dom.id;
+        var me = this;
 
         this.map = new OpenLayers.Map(containerId, {
             projection: 'EPSG:3857',
@@ -377,7 +378,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                // reset the control to panning.
                customNavTb.defaultControl=customNavTb.controls[0];
                customNavTb.activateControl(customNavTb.controls[0]);
-               clickControl.activate();
+               me._activateClickControl();
             }
         });
 
@@ -426,13 +427,13 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
             //We need to ensure the click controller and other controls aren't active at the same time
             drawFeatureCtrl.events.register('activate', {}, function() {
-                clickControl.deactivate();
+                me._deactivateClickControl();
                 Ext.each(customNavTb.controls, function(ctrl) {
                    ctrl.deactivate();
                 });
             });
             drawFeatureCtrl.events.register('deactivate', {}, function() {
-                clickControl.activate();
+                me._activateClickControl();
             });
             Ext.each(customNavTb.controls, function(ctrl) {
                 ctrl.events.register('activate', {}, function() {
@@ -846,5 +847,19 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             return a.hostname + "/" + pathArray[pathArray.length-2];
         }
         return a.hostname;
-      }
+    },
+
+    _activateClickControl : function() {
+        var controlList = this.map.getControlsByClass('portal.map.openlayers.ClickControl');
+        for(var i = 0; i < controlList.length; i++){
+            controlList[i].activate();
+        }
+    },
+
+    _deactivateClickControl : function() {
+        var controlList = this.map.getControlsByClass('portal.map.openlayers.ClickControl');
+        for(var i = 0; i < controlList.length; i++){
+            controlList[i].deactivate();
+        }
+    }
 });
