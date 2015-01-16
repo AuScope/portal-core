@@ -48,9 +48,11 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         if(legendAction){
             menuItems.push(legendAction);
         }
-        if(this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
+        
+        if(this.filterForm.layer.get('cswRecords').length > 0 &&
+           this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
             menuItems.push(this._getDownloadAction());
-        }        
+        }
         
         var group = this.filterForm.layer.get('source').get('group');
         if(group && group.indexOf('Analytic') >= 0){
