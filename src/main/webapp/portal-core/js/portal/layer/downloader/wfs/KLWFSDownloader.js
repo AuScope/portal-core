@@ -89,7 +89,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         xtype : 'box',
                         autoEl : {
                             tag : 'img',
-                            src : 'img/magglass.gif',
+                            src : 'portal-core/img/magglass.gif',
                             qtip : 'Click to display the spatial bounds, double click to pan the map so they are visible.'
                         },
                         width : 18,
@@ -109,7 +109,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         xtype : 'box',
                         autoEl : {
                             tag : 'img',
-                            src : 'img/magglass.gif',
+                            src : 'portal-core/img/magglass.gif',
                             qtip : 'Click to display the spatial bounds, double click to pan the map so they are visible.'
                         },
                         width : 18,

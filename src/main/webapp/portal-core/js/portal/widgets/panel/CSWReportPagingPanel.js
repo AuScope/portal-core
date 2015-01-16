@@ -52,7 +52,7 @@ Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
                 dataIndex:  'onlineResources',
                 width: 100,
                 renderer : function(value){
-                    return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
+                    return '<div style="text-align:center"><img src="portal-core/img/picture.png" width="16" height="16" align="CENTER"/></div>';
                 }
             }],
             store : this.cswRecordStore,

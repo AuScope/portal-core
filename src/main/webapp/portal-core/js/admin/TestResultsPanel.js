@@ -98,17 +98,17 @@ Ext.define('admin.TestResultsPanel', {
                     renderer: function(value, metaData, record) {
                         switch(value) {
                         case admin.tests.TestStatus.Success:
-                            return '<img src="img/tick.png">';
+                            return '<img src="portal-core/img/tick.png">';
                         case admin.tests.TestStatus.Warning:
-                            return '<img src="img/warning.png">';
+                            return '<img src="portal-core/img/warning.png">';
                         case admin.tests.TestStatus.Error:
-                            return '<img src="img/exclamation.png">';
+                            return '<img src="portal-core/img/exclamation.png">';
                         case admin.tests.TestStatus.Running:
-                            return '<img src="img/loading.gif">';
+                            return '<img src="portal-core/img/loading.gif">';
                         case admin.tests.TestStatus.Initialising:
-                            return '<img src="img/notloading.gif">';
+                            return '<img src="portal-core/img/notloading.gif">';
                         default:
-                            return '<img src="img/cross.png">';
+                            return '<img src="portal-core/img/cross.png">';
                         }
                     }
                 }
