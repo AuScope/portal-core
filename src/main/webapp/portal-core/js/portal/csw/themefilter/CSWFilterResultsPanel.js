@@ -50,11 +50,11 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
                     for (var i = 0; i < value.length; i++) {
                         if (value[i].onlineResourceType === portal.csw.OnlineResource.WCS ||
                             value[i].onlineResourceType === portal.csw.OnlineResource.WFS) {
-                            return '<div style="text-align:center"><img src="img/binary.png" width="16" height="16" align="CENTER"/></div>';
+                            return '<div style="text-align:center"><img src="portal-core/img/binary.png" width="16" height="16" align="CENTER"/></div>';
                         }
                     }
 
-                    return '<div style="text-align:center"><img src="img/picture.png" width="16" height="16" align="CENTER"/></div>';
+                    return '<div style="text-align:center"><img src="portal-core/img/picture.png" width="16" height="16" align="CENTER"/></div>';
                 }
             }, {
                 id:'search',
@@ -67,7 +67,7 @@ CSWFilterResultsPanel = Ext.extend(Ext.grid.GridPanel, {
                 fixed: true,
                 renderer: function (value) {
                     if (value.length > 0) {
-                        return '<img src="img/magglass.gif"/>';
+                        return '<img src="portal-core/img/magglass.gif"/>';
                     } else {
                         return '';
                     }
