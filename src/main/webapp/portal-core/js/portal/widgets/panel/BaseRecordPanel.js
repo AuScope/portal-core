@@ -309,11 +309,11 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
         var iconPath = null;
         if (containsDataService) {
-            iconPath = 'img/binary.png'; //a single data service will label the entire layer as a data layer
+            iconPath = 'portal-core/img/binary.png'; //a single data service will label the entire layer as a data layer
         } else if (containsImageService) {
-            iconPath = 'img/picture.png';
+            iconPath = 'portal-core/img/picture.png';
         } else {
-            iconPath = 'img/cross.png';
+            iconPath = 'portal-core/img/cross.png';
         }
 
         return this._generateHTMLIconMarkup(iconPath);
@@ -329,7 +329,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         var spatialBounds = this.getSpatialBoundsForRecord(record);
         if (spatialBounds.length > 0 || record.internalId == 'portal-InSar-reports') {
             // create one for insar
-            return this._generateHTMLIconMarkup('img/magglass.gif');
+            return this._generateHTMLIconMarkup('portal-core/img/magglass.gif');
         }
 
         return '';
@@ -491,14 +491,14 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 tag : 'img',
                 width : 16,
                 height : 16,
-                src: 'img/trash.png'
+                src: 'portal-core/img/trash.png'
             });
         } else {
             return Ext.DomHelper.markup({
                 tag : 'img',
                 width : 16,
                 height : 16,
-                src: 'img/play_blue.png'
+                src: 'portal-core/img/play_blue.png'
             });
         }
     },
@@ -522,7 +522,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 tag : 'img',
                 width : 16,
                 height : 16,
-                src: 'img/loading.gif'
+                src: 'portal-core/img/loading.gif'
             });
         } else {
             
@@ -537,21 +537,21 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                         tag : 'img',
                         width : 16,
                         height : 16,
-                        src: 'img/exclamation.png'
+                        src: 'portal-core/img/exclamation.png'
                     });
                 }else if(errorCount > 0 && errorCount < sizeOfList){
                     return Ext.DomHelper.markup({
                         tag : 'img',
                         width : 16,
                         height : 16,
-                        src: 'img/warning.png'
+                        src: 'portal-core/img/warning.png'
                     });
                 }else{
                     return Ext.DomHelper.markup({
                         tag : 'img',
                         width : 16,
                         height : 16,
-                        src: 'img/tick.png'
+                        src: 'portal-core/img/tick.png'
                     });
                 }
                 
@@ -560,7 +560,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     tag : 'img',
                     width : 16,
                     height : 16,
-                    src: 'img/notloading.gif'
+                    src: 'portal-core/img/notloading.gif'
                 });
             }
             

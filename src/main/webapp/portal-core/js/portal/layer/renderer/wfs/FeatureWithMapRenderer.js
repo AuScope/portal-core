@@ -25,7 +25,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
         if(config.icon.getIsDefault()===true){
             this.legend = Ext.create('portal.layer.legend.wfs.WMSLegend', {
-                iconUrl : config.iconCfg ? config.iconCfg.url : 'img/key.png'
+                iconUrl : config.iconCfg ? config.iconCfg.url : 'portal-core/img/key.png'
             });
         }else{
             this.legend = Ext.create('portal.layer.legend.wfs.WFSLegend', {

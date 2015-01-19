@@ -169,14 +169,14 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 tag : 'img',
                 width : 16,
                 height : 16,
-                src: 'img/loading.gif'
+                src: 'portal-core/img/loading.gif'
             });
         } else {
             return Ext.DomHelper.markup({
                 tag : 'img',
                 width : 16,
                 height : 16,
-                src: 'img/notloading.gif'
+                src: 'portal-core/img/notloading.gif'
             });
         }
     },
@@ -193,7 +193,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                     tag : 'img',
                     width : 16,
                     height : 16,
-                    src: 'img/setting.png'
+                    src: 'portal-core/img/setting.png'
                 }]
             });
       

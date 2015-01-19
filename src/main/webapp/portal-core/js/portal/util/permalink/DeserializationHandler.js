@@ -21,8 +21,8 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
     /**
      * Creates a new instance of this class with the following config {
      *  mapStateSerializer : [Optional] The portal.util.permalink.MapStateSerializer to load from (if empty, it will be decoded from window.location)
-     *  knownLayerStore : A Ext.data.Store containing portal.knownlayer.KnownLayer models
-     *  cswRecordStore : A Ext.data.Store containing portal.csw.CSWRecord models
+     *  knownLayerStore : [Optional] A Ext.data.Store containing portal.knownlayer.KnownLayer models
+     *  cswRecordStore : [Optional] A Ext.data.Store containing portal.csw.CSWRecord models
      *  layerStore : A portal.layer.LayerStore which will be populated with deserialized layers
      *  layerFactory : A portal.layer.LayerFactory which will be used to create layers
      *  map : A portal.util.gmap.GMapWrapper instance
@@ -40,15 +40,19 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         this.callParent(arguments);
 
         //Ensure our deserialisation occurs now (if appropriate) or when our datastores finish loading
-        this.knownLayerStore.on('load', this._deserializeIfReady, this, {single : true});
-        this.cswRecordStore.on('load', this._deserializeIfReady, this, {single : true});
+        if (this.knownLayerStore) {
+            this.knownLayerStore.on('load', this._deserializeIfReady, this, {single : true});
+        }
+        if (this.cswRecordStore) {
+            this.cswRecordStore.on('load', this._deserializeIfReady, this, {single : true});
+        }
         this._deserializeIfReady();
     },
 
     _deserializeIfReady : function() {
         //Ensure both stores are loaded before proceeding
-        if (this.knownLayerStore.getCount() === 0 ||
-            this.cswRecordStore.getCount() === 0) {
+        if ((this.knownLayerStore && this.knownLayerStore.getCount() === 0) ||
+            (this.cswRecordStore && this.cswRecordStore.getCount() === 0)) {
             return;
         }
 

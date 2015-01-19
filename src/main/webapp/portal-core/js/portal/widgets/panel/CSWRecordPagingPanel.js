@@ -117,11 +117,11 @@ Ext.define('portal.widgets.panel.CSWRecordPagingPanel', {
 
         var iconPath = null;
         if (containsDataService) {
-            iconPath = 'img/binary.png'; //a single data service will label the entire layer as a data layer
+            iconPath = 'portal-core/img/binary.png'; //a single data service will label the entire layer as a data layer
         } else if (containsImageService) {
-            iconPath = 'img/picture.png';
+            iconPath = 'portal-core/img/picture.png';
         } else {
-            iconPath = 'img/cross.png';
+            iconPath = 'portal-core/img/cross.png';
         }
 
         return this._generateHTMLIconMarkup(iconPath);
