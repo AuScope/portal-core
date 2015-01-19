@@ -12,7 +12,7 @@ import java.util.Date;
  *
  * @author Josh Vote
  */
-public class CloudJob implements Serializable {
+public class CloudJob implements Serializable, VmJob {
 
     /**
      * Generated 2012-06-07

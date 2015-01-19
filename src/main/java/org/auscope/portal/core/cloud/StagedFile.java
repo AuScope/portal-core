@@ -9,7 +9,7 @@ import java.io.File;
  */
 public class StagedFile {
     /** The job that owns this staged file*/
-    private CloudJob owner;
+    private VmJob owner;
     /** The name of this staged file (unique per job)*/
     private String name;
     /** can be null - the underlying reference to the HDD where this file is staged*/
@@ -20,7 +20,7 @@ public class StagedFile {
      * @param name The name of this staged file (unique per job)
      * @param file can be null - the underlying reference to the HDD where this file is staged
      */
-    public StagedFile(CloudJob owner, String name, File file) {
+    public StagedFile(VmJob owner, String name, File file) {
         super();
         this.owner = owner;
         this.name = name;
@@ -31,7 +31,7 @@ public class StagedFile {
      * The job that owns this staged file
      * @return
      */
-    public CloudJob getOwner() {
+    public VmJob getOwner() {
         return owner;
     }
 
@@ -39,7 +39,7 @@ public class StagedFile {
      * The job that owns this staged file
      * @param owner
      */
-    public void setOwner(CloudJob owner) {
+    public void setOwner(VmJob owner) {
         this.owner = owner;
     }
 
