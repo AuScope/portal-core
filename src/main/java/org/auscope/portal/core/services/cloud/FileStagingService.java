@@ -13,9 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.cloud.StagedFile;
 import org.auscope.portal.core.cloud.StagingInformation;
+import org.auscope.portal.core.cloud.StagedFileOwner;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,7 +40,7 @@ public class FileStagingService {
      * @param fileName
      * @return
      */
-    private File getFile(CloudJob job, String fileName) {
+    private File getFile(StagedFileOwner job, String fileName) {
         if (fileName.contains(File.pathSeparator) || fileName.contains(File.separator)) {
             throw new IllegalArgumentException("fileName cannot include " + File.pathSeparator + " or " + File.separator);
         }
@@ -74,7 +74,7 @@ public class FileStagingService {
      * @param job
      * @return
      */
-    public static String getBaseFolderForJob(CloudJob job) {
+    public static String getBaseFolderForJob(StagedFileOwner job) {
         return String.format("job-%1$s", job.getId());
     }
 
@@ -83,7 +83,7 @@ public class FileStagingService {
      * It silently fails and log the failure message to error log if the operation failed.
      * @param job Must have its fileStorageId parameter set
      */
-    public boolean deleteStageInDirectory(CloudJob job) {
+    public boolean deleteStageInDirectory(StagedFileOwner job) {
         boolean status = false;
         try {
             File jobInputDir = new File(pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job)));
@@ -104,7 +104,7 @@ public class FileStagingService {
      * @param fileName
      * @return
      */
-    public boolean deleteStageInFile(CloudJob job, String fileName) {
+    public boolean deleteStageInFile(StagedFileOwner job, String fileName) {
         File file = getFile(job, fileName);
         logger.debug("deleting " + file.getPath());
         if (!file.exists()) {
@@ -124,7 +124,7 @@ public class FileStagingService {
      * @param newFileName The new file name (if it exists, it will be overwritten)
      * @return
      */
-    public boolean renameStageInFile(CloudJob job, String currentFileName, String newFileName) {
+    public boolean renameStageInFile(StagedFileOwner job, String currentFileName, String newFileName) {
         File currentFile = getFile(job, currentFileName);
         File newFile = getFile(job, newFileName);
 
@@ -152,7 +152,7 @@ public class FileStagingService {
      * @param currentFileName The file to be checked
      * @return
      */
-    public boolean stageInFileExists(CloudJob job, String fileName) {
+    public boolean stageInFileExists(StagedFileOwner job, String fileName) {
         return getFile(job, fileName).exists();
     }
 
@@ -163,7 +163,7 @@ public class FileStagingService {
      * @return
      * @throws IOException If the directory creation fails
      */
-    public boolean stageInDirectoryExists(CloudJob job) throws PortalServiceException {
+    public boolean stageInDirectoryExists(StagedFileOwner job) throws PortalServiceException {
         String jobInputDir = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
         return new File(jobInputDir).exists();
     }
@@ -175,7 +175,7 @@ public class FileStagingService {
      * @return
      * @throws IOException If the directory creation fails
      */
-    public void generateStageInDirectory(CloudJob job) throws PortalServiceException {
+    public void generateStageInDirectory(StagedFileOwner job) throws PortalServiceException {
         String jobInputDir = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
 
         logger.debug("Attempting to generate job input dir " + jobInputDir);
@@ -192,7 +192,7 @@ public class FileStagingService {
      * @return
      * @throws IOException
      */
-    public StagedFile[] listStageInDirectoryFiles(CloudJob job) throws PortalServiceException {
+    public StagedFile[] listStageInDirectoryFiles(StagedFileOwner job) throws PortalServiceException {
         //List files in directory, add them to array
         File directory = new File(pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job)));
         logger.debug("Attempting to list files at " + directory.getPath());
@@ -234,7 +234,7 @@ public class FileStagingService {
      * @param fileName
      * @return the staging file input stream if the file exists otherwise null
      */
-    public InputStream readFile(CloudJob job, String fileName) throws PortalServiceException {
+    public InputStream readFile(StagedFileOwner job, String fileName) throws PortalServiceException {
         try {
             File f = getFile(job, fileName);
             FileInputStream fis = null;
@@ -267,7 +267,7 @@ public class FileStagingService {
      * @param fileName
      * @return
      */
-    public OutputStream writeFile(CloudJob job, String fileName) throws PortalServiceException{
+    public OutputStream writeFile(StagedFileOwner job, String fileName) throws PortalServiceException{
         return writeFile(job, fileName, false);
     }
 
@@ -281,7 +281,7 @@ public class FileStagingService {
      * @param append Should the file be overwritten or appended to. true to append, false to overwrite
      * @return
      */
-    public OutputStream writeFile(CloudJob job, String fileName, boolean append) throws PortalServiceException {
+    public OutputStream writeFile(StagedFileOwner job, String fileName, boolean append) throws PortalServiceException {
         File f = getFile(job, fileName);
         try {
             return new FileOutputStream(f, append);
@@ -300,7 +300,7 @@ public class FileStagingService {
 	 * @return
 	 * @throws PortalServiceException
 	 */
-	private StagedFile fileUploadHelper(CloudJob job, MultipartFile f)
+	private StagedFile fileUploadHelper(StagedFileOwner job, MultipartFile f)
 			throws PortalServiceException {
 		String originalFileName = f.getOriginalFilename();
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
@@ -334,7 +334,7 @@ public class FileStagingService {
      * @param request
      * @throws PortalServiceException
      */
-    public StagedFile handleFileUpload(CloudJob job, MultipartHttpServletRequest request) throws PortalServiceException {
+    public StagedFile handleFileUpload(StagedFileOwner job, MultipartHttpServletRequest request) throws PortalServiceException {
         MultipartFile f = request.getFile("file");
         if (f == null) {
             throw new PortalServiceException("No file parameter provided.");
@@ -354,7 +354,7 @@ public class FileStagingService {
      * @param request
      * @throws IOException
      */
-    public List<StagedFile> handleMultiFileUpload(CloudJob job, MultipartHttpServletRequest request) throws PortalServiceException {
+    public List<StagedFile> handleMultiFileUpload(StagedFileOwner job, MultipartHttpServletRequest request) throws PortalServiceException {
 
     	List<StagedFile> result = new ArrayList<StagedFile>();
 
@@ -400,7 +400,7 @@ public class FileStagingService {
      * @param job Must have its fileStorageId parameter set
      * @throws IOException
      */
-    public void handleFileDownload(CloudJob job, String fileName, HttpServletResponse response) throws PortalServiceException {
+    public void handleFileDownload(StagedFileOwner job, String fileName, HttpServletResponse response) throws PortalServiceException {
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
         String filePath = pathConcat(directory, fileName);
 
