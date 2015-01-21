@@ -516,6 +516,11 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     getVisibleMapBounds : function() {
         var bounds = this.map.getExtent().transform('EPSG:3857','EPSG:4326').toArray();
+        
+        if(bounds[2]>180){
+            var exceedLong=bounds[2] - 180;
+            bounds[2] = (180 - exceedLong)*-1;
+        }
 
         // Nasty Maths - work out the precision....
         eastWestDelta = Math.abs(Math.max(bounds[0], bounds[2]) - Math.min(bounds[0], bounds[2]));
