@@ -58,7 +58,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     store : cfg.store
                 },{
                     xtype : 'button',
-                    id : 'hh-filterVisible-' + cfg.title,
+                    id : 'hh-filterDisplayedLayer-' + cfg.title,
                     text : 'Filter Layer by',
                     iconCls : 'filter',
                     tooltip: 'Provide more options for filtering layer\'s view',
