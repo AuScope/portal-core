@@ -212,8 +212,17 @@
     background-image:url(../img/picture-small.png) !important;
 }
 
+.filter {
+    background-image:url(../img/filter.png) !important;
+}
+
 .data {
     background-image:url(../img/binary-small.png) !important;
+}
+
+.tick {
+    background-image:url(../img/tick.png) !important;
+    background-size: 16px 16px;
 }
 
 .edit {

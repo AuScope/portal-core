@@ -31,6 +31,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         });
        
         this.listeners = cfg.listeners;
+        
+        var menuItems = [this._getVisibleBoundFilterAction(),this._getActivelayerFilterAction(),
+                         this._getDataLayerFilterAction(),this._getImageLayerFilterAction()];
 
         Ext.apply(cfg, {
             cls : 'auscope-dark-grid',
@@ -56,10 +59,12 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 },{
                     xtype : 'button',
                     id : 'hh-filterVisible-' + cfg.title,
-                    text : 'Filter Visible',
-                    iconCls : 'visible_eye',
-                    tooltip: 'Filter the layers based on its bounding box and the map\'s visible bound',
-                    handler : Ext.bind(this._handleVisibleFilterClick, this)
+                    text : 'Filter Layer by',
+                    iconCls : 'filter',
+                    tooltip: 'Provide more options for filtering layer\'s view',
+                    arrowAlign : 'right',
+                    menu : menuItems
+                   
                 }]
             }],
             columns : [{
@@ -170,9 +175,107 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         
         return panel
     },
+    
+    _getVisibleBoundFilterAction : function(){   
+        var me = this;
+        return new Ext.Action({
+            text : 'Visible Bound',
+            iconCls : 'visible_eye',
+            tooltip: 'Filter the layers based on its bounding box and the map\'s visible bound',
+            handler : Ext.bind(me._handleVisibleFilterClick, me)
+        })
+        
+    },
+    
+    
+    _getActivelayerFilterAction : function(){
+        var me = this;
+        return new Ext.Action({
+            text : 'Active Layer',
+            iconCls : 'tick',
+            tooltip: 'Display only active layer',
+            handler : function(){
+                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+                rowExpander.closeAllContainers();          
+                
+                //function to check if layer is active on map
+                var filterFn = function(rec) {
+                    return rec.get('active');
+                };
 
+                var searchField = this.ownerCt.ownerButton.ownerCt.items.getAt(1);
+                searchField.runCustomFilter('<active layers>', Ext.bind(filterFn, this));
+            }
+        })
+    },
+    
+    _getDataLayerFilterAction : function(){
+        var me = this;
+        return new Ext.Action({
+            text : 'Data Layer',
+            iconCls : 'data',
+            tooltip: 'Display layer with data service',
+            handler : function(){
+                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+                rowExpander.closeAllContainers();          
+                
+                //function to if layer contains data service
+                var filterFn = function(rec) {
+                    var onlineResources = rec.getAllOnlineResources();
+                    var serviceType = me._getServiceType(onlineResources); 
+                    
+                    //VT:This part of the code is to keep it inline with the code in _serviceInformationRenderer
+                    //VT: for rendering the icon
+                    if (serviceType.containsDataService) {
+                        return true; //a single data service will label the entire layer as a data layer
+                    }else{
+                        return false;
+                    } 
+
+                };
+
+                var searchField = this.ownerCt.ownerButton.ownerCt.items.getAt(1);
+                searchField.runCustomFilter('<Data Layers>', Ext.bind(filterFn, this));
+            }
+        })
+        
+    },
+    
+    _getImageLayerFilterAction : function(){
+        var me = this;
+        return new Ext.Action({
+            text : 'Portrayal Layer',
+            iconCls : 'portrayal',
+            tooltip: 'Display layers with image service',
+            handler : function(){
+                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+                rowExpander.closeAllContainers();          
+                
+                //function to if layer contains image service
+                var filterFn = function(rec) {           
+                    var onlineResources = rec.getAllOnlineResources();
+                    var serviceType = me._getServiceType(onlineResources);                                                                                             
+                    
+                    //VT:This part of the code is to keep it inline with the code in _serviceInformationRenderer
+                    //VT: for rendering the picture icon
+                    if (serviceType.containsDataService) {
+                        return false; //a single data service will label the entire layer as a data layer
+                    } else if (serviceType.containsImageService) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                          
+                };
+
+                var searchField = this.ownerCt.ownerButton.ownerCt.items.getAt(1);
+                searchField.runCustomFilter('<Portrayal layers>', Ext.bind(filterFn, this));
+            }
+        })
+    },
+    
+   
  
-
     handleFilterSelectComplete : function(filteredResultPanels){
         var me = this;
         var cswSelectionWindow = new CSWSelectionWindow({
@@ -283,10 +386,30 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     _serviceInformationRenderer : function(value, metaData, record, row, col, store, gridView) {
         var onlineResources = this.getOnlineResourcesForRecord(record);
 
+        var serviceType = this._getServiceType(onlineResources);
+        
+        var containsDataService = serviceType.containsDataService;
+        var containsImageService = serviceType.containsImageService;
+
+        
+
+        var iconPath = null;
+        if (containsDataService) {
+            iconPath = 'portal-core/img/binary.png'; //a single data service will label the entire layer as a data layer
+        } else if (containsImageService) {
+            iconPath = 'portal-core/img/picture.png';
+        } else {
+            iconPath = 'portal-core/img/cross.png';
+        }
+
+        return this._generateHTMLIconMarkup(iconPath);
+    },
+    
+    _getServiceType : function(onlineResources){
         var containsDataService = false;
         var containsImageService = false;
-
-        //We classify resources as being data or image sources.
+        
+      //We classify resources as being data or image sources.
         for (var i = 0; i < onlineResources.length; i++) {
             switch(onlineResources[i].get('type')) {
             case portal.csw.OnlineResource.WFS:
@@ -306,17 +429,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 break;
             }
         }
-
-        var iconPath = null;
-        if (containsDataService) {
-            iconPath = 'portal-core/img/binary.png'; //a single data service will label the entire layer as a data layer
-        } else if (containsImageService) {
-            iconPath = 'portal-core/img/picture.png';
-        } else {
-            iconPath = 'portal-core/img/cross.png';
-        }
-
-        return this._generateHTMLIconMarkup(iconPath);
+       
+        return result = {
+            containsDataService : containsDataService,
+            containsImageService : containsImageService
+        };
+        
+         
     },
 
     /**
@@ -424,16 +543,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     /**
      * When the visible fn is clicked, ensure only the visible records pass the filter
      */
-    _handleVisibleFilterClick : function(button) {                
-       if(button.getText()=='Filter Visible'){
-           var rowExpander = this.getPlugin('maingrid_rowexpandercontainer');
-           rowExpander.closeAllContainers();
-           button.setText('Clear Filter');
-           this._visibleFilterClick(button);
-       }else{
-           button.setText('Filter Visible');
-           this._clearVisibleFilterClick(button);
-       }
+    _handleVisibleFilterClick : function(button) {                     
+        var rowExpander = this.getPlugin('maingrid_rowexpandercontainer');
+        rowExpander.closeAllContainers();          
+        this._visibleFilterClick(button);      
     },
     
     _visibleFilterClick : function(button) {
@@ -453,15 +566,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             return false;
         };
 
-        var searchField = button.ownerCt.items.getAt(1);
+        var searchField = button.ownerCt.ownerButton.ownerCt.items.getAt(1);
         searchField.runCustomFilter('<visible layers>', Ext.bind(filterFn, this));
     },
     
-    _clearVisibleFilterClick : function(button) {
-      
-        var searchField = button.ownerCt.items.getAt(1);
-        searchField.clearCustomFilter();
-    },
 
     /**
      * When called, will update the visibility of any search bars

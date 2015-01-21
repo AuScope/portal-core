@@ -102,7 +102,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         this.setValue(text);
 
         this.store.filterBy(func);
-        this.triggerCell.item(0).setDisplayed(false);
+        this.triggerCell.item(0).setDisplayed(true);
         this.triggerCell.item(1).setDisplayed(false);
 
         this._setTextFieldDisabled(true);
