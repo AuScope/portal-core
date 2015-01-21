@@ -221,7 +221,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 
                 //function to if layer contains data service
                 var filterFn = function(rec) {
-                    var onlineResources = rec.getAllOnlineResources();
+                    var onlineResources = me.getOnlineResourcesForRecord(rec)
                     var serviceType = me._getServiceType(onlineResources); 
                     
                     //VT:This part of the code is to keep it inline with the code in _serviceInformationRenderer
@@ -253,7 +253,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 
                 //function to if layer contains image service
                 var filterFn = function(rec) {           
-                    var onlineResources = rec.getAllOnlineResources();
+                    var onlineResources = me.getOnlineResourcesForRecord(rec);
                     var serviceType = me._getServiceType(onlineResources);                                                                                             
                     
                     //VT:This part of the code is to keep it inline with the code in _serviceInformationRenderer
