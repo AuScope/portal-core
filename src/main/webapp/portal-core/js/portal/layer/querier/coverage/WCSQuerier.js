@@ -67,7 +67,11 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
                         return s;
                     };
 
-                    var cmp= Ext.create('portal.layer.querier.BaseComponent',{
+                    var cmp= Ext.create('portal.layer.querier.BaseComponent',{  
+                        overrideInfoWindowSize : {
+                            width : 600,
+                            height : 400
+                        },
                         layout : 'fit',
                         items : [{
                             xtype : 'fieldset',

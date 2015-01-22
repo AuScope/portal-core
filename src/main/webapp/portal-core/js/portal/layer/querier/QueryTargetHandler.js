@@ -13,6 +13,11 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
      *  infoWindowHeight : [Optional] Number height of info window in pixels
      *  infoWindowWidth : [Optional] Number width of info window in pixels
      * }
+     * 
+     * VT: this might be legacy code however it feels a bit pointless to have this overriding window size option at the constructor level
+     * as it does not allow fine grain tunning of windows size. A more suitable place would be in the baseComponents that makes up the
+     * infowindow. Hence in _queryCallback, I have added checks on baseComponent for object overrideInfoWindowSize and if found, use that window size 
+     * instead.
      */
     constructor : function(config) {
         if (config.infoWindowHeight) {
@@ -61,9 +66,17 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
             return; //if the query failed, don't show a popup
         }
 
-        //Build our info window content (sans parent containers)
+        //Build our info window content (sans parent containers)        
         var width = this._infoWindowWidth;
         var height = this._infoWindowHeight;
+        //VT: if any overrideInfoWindowSize is found under the baseComponents, use that instead.
+        for(var i = 0; i < baseComponents.length; i++){
+            if(baseComponents[i].overrideInfoWindowSize){
+                width = baseComponents[i].overrideInfoWindowSize.width;
+                height = baseComponents[i].overrideInfoWindowSize.height;
+                break;
+            }
+        }
 
         //Show our info window - create our parent components
         var windowLocation = Ext.create('portal.map.Point', {
