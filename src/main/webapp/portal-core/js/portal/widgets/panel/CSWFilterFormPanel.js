@@ -255,8 +255,19 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                                 me.keywordStore.getProxy().extraParams = {
                                     cswServiceIds : scope.getValue().cswServiceId
                                 };
+                            },        
+                            //VT: Stop it from adding the same url twice.
+                            beforeadd : function(scope, component, index, eOpts){
+                                var addItem = true
+                                scope.items.each(function(item,index,len){
+                                    if(this.inputValue.serviceUrl && (this.inputValue.serviceUrl===component.inputValue.serviceUrl)){
+                                        Ext.MessageBox.alert('Status', 'You are attempting to add a duplicated service URL');
+                                        addItem = false;
+                                        return false;
+                                    }
+                                })
+                                return addItem;
                             }
-
                         }
 
                     }]
@@ -305,7 +316,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                             }
                         }],
                         items:[{
-                            xtype : 'textfield',
+                            xtype : 'clearabletextfield',
                             anchor:'100%',
                             name : 'DNA_serviceUrl',
                             allowBlank: true,
@@ -626,10 +637,10 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         checked : true
                     });
 
-                    Ext.each(customRegistryForm.getForm().getFields().items, function(field){
-                        field.setValue('');
-                        field.clearInvalid();
-                    });
+//                    Ext.each(customRegistryForm.getForm().getFields().items, function(field){
+//                        field.setValue('');
+//                        field.clearInvalid();
+//                    });
 
                     registry.add(checkBoxItems);
 
