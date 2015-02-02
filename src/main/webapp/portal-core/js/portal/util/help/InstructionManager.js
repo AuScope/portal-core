@@ -2,8 +2,13 @@
  * An instruction manager takes a set of portal.util.help.Instruction objects and creates a step by step
  * wizard for highlighting each instruction in sequence.
  */
-Ext.define('portal.util.help.InstructionManager',{
 
+Ext.require([  
+    'Ext.ux.Spotlight'
+]);
+
+Ext.define('portal.util.help.InstructionManager',{ 
+    
     spot : null, //Ext.ux.Spotlight,
     tip : null, //Ext.tip.ToolTip
     currentInstruction : 0,
