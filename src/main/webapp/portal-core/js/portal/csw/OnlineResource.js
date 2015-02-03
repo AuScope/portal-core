@@ -14,10 +14,6 @@
 Ext.define('portal.csw.OnlineResource', {
     extend: 'Ext.data.Model',
 
-    //For generating unique ID's for each resource for easier referencing
-    requires: ['Ext.data.SequentialIdGenerator'],
-    idgen: 'sequential',
-
     //Static value representations of the 'type' field
     statics : {
         WMS : 'WMS', //represents a Web Map Service
@@ -115,7 +111,6 @@ Ext.define('portal.csw.OnlineResource', {
     },
 
     fields: [
-        {name: 'id', type: 'string'}, //A unique auto generated ID for this OnlineResource
         {name: 'url', type: 'string'}, //A URL representing the location of the remote resource
         {name: 'name', type: 'string'}, //A name for this resource - it's use will vary depending on type (see comments at top of page)
         {name: 'description', type: 'string'}, //A human readable description of this resource
