@@ -7,9 +7,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
     store : null,
     pageSize: 20,
 
-    constructor : function(cfg) {
-
-        this.addEvents('selectioncomplete');
+    constructor : function(cfg) {      
 
         var me = this;
         //this is the store after filtering the registery.

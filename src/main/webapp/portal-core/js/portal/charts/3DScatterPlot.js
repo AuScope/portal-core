@@ -76,7 +76,7 @@ Ext.define('portal.charts.3DScatterPlot', {
 
         this.callParent(arguments);
 
-        this.addEvents(['select', 'deselect']);
+        
 
         this.on('render', this._afterRender, this);
         this.on('resize', this._onResize, this);

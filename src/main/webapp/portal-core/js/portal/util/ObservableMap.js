@@ -12,9 +12,7 @@ Ext.define('portal.util.ObservableMap', {
     parameters : null,
 
     constructor: function(config){
-        this.addEvents({
-            'change' : true
-        });
+       
 
         // Copy configured listeners into *this* object so that the base class's
         // constructor will add them.

@@ -31,9 +31,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
      * }
      */
     constructor : function(cfg) {
-        this.addEvents({
-            'deserializedlayer' : true
-        });
+       
 
         Ext.apply(this, cfg);
 

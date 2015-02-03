@@ -45,11 +45,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureDownloadManager', {
         if (cfg.timeout) {
             this.timeout = cfg.timeout;
         }
-        this.addEvents({
-            'success' : true,
-            'error' : true,
-            'cancelled' : true
-        });
+       
         this.listeners = cfg.listeners;
         this.callParent(arguments);
     },
