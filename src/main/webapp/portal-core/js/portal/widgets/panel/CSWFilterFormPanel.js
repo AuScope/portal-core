@@ -29,7 +29,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                  },
                 reader : {
                     type : 'json',
-                    root : 'data'
+                    rootProperty : 'data'
                 }
             }
 
@@ -336,7 +336,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                 url : 'getCSWServices.do',
                 reader : {
                     type : 'json',
-                    root : 'data'
+                    rootProperty : 'data'
                 }
             },
             listeners : {

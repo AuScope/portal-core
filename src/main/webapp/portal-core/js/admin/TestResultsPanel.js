@@ -37,7 +37,7 @@ Ext.define('admin.TestResultsPanel', {
                 reader : {
                     type : 'json',
                     idProperty : 'id',
-                    root : 'data'
+                    rootProperty : 'data'
                 }
             }
         });
@@ -50,7 +50,7 @@ Ext.define('admin.TestResultsPanel', {
                 url : 'getUnmappedCSWRecords.do',
                 reader : {
                     type : 'json',
-                    root : 'data'
+                    rootProperty : 'data'
                 }
             }
         });
@@ -63,7 +63,7 @@ Ext.define('admin.TestResultsPanel', {
                 url : 'getKnownLayers.do',
                 reader : {
                     type : 'json',
-                    root : 'data'
+                    rootProperty : 'data'
                 }
             }
         });

@@ -13,7 +13,7 @@ CSWThemeFilter.Keywords = Ext.extend(CSWThemeFilter.BaseComponent, {
             proxy    : new Ext.data.HttpProxy({url: 'getCSWKeywords.do'}),
             sortInfo : {field:'keyword',direction:'ASC'},
             reader : new Ext.data.JsonReader({
-                root            : 'data',
+                rootProperty    : 'data',
                 id              : 'urn',
                 successProperty : 'success',
                 messageProperty : 'msg',

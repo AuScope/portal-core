@@ -34,7 +34,7 @@ Ext.define('portal.layer.downloader.wms.WMSDownloader', {
                 },
                 reader: {
                     type : 'json',
-                    root : 'data'
+                    rootProperty : 'data'
                 }
             },
             autoLoad : true
