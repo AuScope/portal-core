@@ -27,7 +27,7 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
         this.themeStore = new Ext.data.Store({
             proxy    : new Ext.data.HttpProxy({url: 'getAllCSWThemes.do'}),
             reader : new Ext.data.JsonReader({
-                root            : 'data',
+                rootProperty    : 'data',
                 id              : 'urn',
                 successProperty : 'success',
                 messageProperty : 'msg',
@@ -44,7 +44,7 @@ CSWThemeFilterForm = Ext.extend(Ext.form.FormPanel, {
         this.cswServiceItemStore = new Ext.data.Store({
             proxy    : new Ext.data.HttpProxy({url: 'getCSWServices.do'}),
             reader : new Ext.data.JsonReader({
-                root            : 'data',
+                rootProperty    : 'data',
                 id              : 'id',
                 successProperty : 'success',
                 messageProperty : 'msg',

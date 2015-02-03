@@ -103,7 +103,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
                 url : 'getFilteredCSWRecords.do',
                 reader : {
                     type : 'json',
-                    root : 'data',
+                    rootProperty : 'data',
                     successProperty: 'success',
                     totalProperty: 'totalResults'
                 },

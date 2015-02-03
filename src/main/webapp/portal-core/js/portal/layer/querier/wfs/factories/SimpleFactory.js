@@ -56,7 +56,7 @@ Ext.define('portal.layer.querier.wfs.factories.SimpleFactory', {
                 xtype : 'treepanel',
                 autoScroll : true,
                 rootVisible : true,
-                root : rootNode
+                rootProperty : rootNode
             }],
             buttons : [{
                 xtype : 'button',

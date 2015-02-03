@@ -32,7 +32,7 @@ Ext.define('portal.layer.querier.wms.GeotransectQuerier', {
                 },
                 reader: {
                     type: 'json',
-                    root: 'data',
+                    rootProperty: 'data',
                     successProperty: 'success',
                     totalProperty: 'totalResults'
                 }

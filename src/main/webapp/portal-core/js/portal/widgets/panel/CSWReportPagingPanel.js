@@ -25,7 +25,7 @@ Ext.define('portal.widgets.panel.CSWReportPagingPanel', {
                 extraParams:cfg.cswConfig.extraParams,
                 reader: {
                     type: 'json',
-                    root: 'data',
+                    rootProperty: 'data',
                     successProperty: 'success',
                     totalProperty: 'totalResults'
                 }
