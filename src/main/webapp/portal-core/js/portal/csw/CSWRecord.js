@@ -26,7 +26,11 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'extensions', type:'auto'}, //A normally undefined object. CSWRecord can be extended by filling in this field.
         { name: 'constraints' , type:'auto'}, //An array of strings representing access constraints that will be shown to a user before this layer is used
         { name: 'date' , type:'date', convert: function(dateString) {
-            return new Date(Date.parse(dateString.replace(' UTC', '')));
+            if(dateString){
+                return new Date(Date.parse(dateString.replace(' UTC', '')));
+            }else{
+                return dateString;
+            }
         }},//The date of this CSWRecord
         { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
         { name: 'layer', type: 'auto'}, // store the layer after it has been converted.        

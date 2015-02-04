@@ -25,7 +25,7 @@ Ext.define('admin.tests.BaseTest', {
      * statuschanged : function(admin.tests.BaseTest test, admin.tests.TestStatus status) - Called when this test undergoes a status change
      */
     constructor : function(cfg) {
-        this.addEvents('statuschanged');
+      
         this.listeners  = cfg.listeners;
         this._id = Ext.id();
         this._status = admin.tests.TestStatus.Initialising;

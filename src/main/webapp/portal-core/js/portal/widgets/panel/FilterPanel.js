@@ -30,10 +30,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     constructor : function(config) {
  
         this._map = config.map;
-        this.filterForm = config.filterForm;
-        
-        this.addEvents('addlayer');
-        this.addEvents('removelayer');
+        this.filterForm = config.filterForm;             
         
         this._addLayerButton = Ext.create('Ext.button.Button', {
             xtype : 'button',

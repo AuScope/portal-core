@@ -52,13 +52,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     text : 'Search: '
                 },{
                     xtype : 'clientsearchfield',
-                    id : 'hh-searchfield-' + cfg.title,
+                    id : 'hh-searchfield-' + cfg.title.replace(' ',''),
                     width : 200,
                     fieldName: 'name',
                     store : cfg.store
                 },{
                     xtype : 'button',
-                    id : 'hh-filterDisplayedLayer-' + cfg.title,
+                    id : 'hh-filterDisplayedLayer-' + cfg.title.replace(' ',''),
                     text : 'Filter Layer by',
                     iconCls : 'filter',
                     tooltip: 'Provide more options for filtering layer\'s view',

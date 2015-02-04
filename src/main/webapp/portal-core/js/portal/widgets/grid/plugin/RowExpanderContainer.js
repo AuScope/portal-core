@@ -73,8 +73,6 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             rowCollapsedCls: this.rowCollapsedCls,
             getAdditionalData: this._getRowBodyFeatureData,
             rowBodyTpl: Ext.create('Ext.XTemplate', '<div id="{component-id}"></div>')
-        },{
-            ftype: 'rowwrap'
         }];
 
         var grid = this.getCmp();

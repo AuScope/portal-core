@@ -22,10 +22,7 @@ Ext.define('portal.map.BasePrimitiveManager', {
      * }
      */
     constructor : function(config) {
-        this.addEvents({
-            'clearprimitives' : true,
-            'addprimitives' : true
-        });
+     
         this.baseMap = config.baseMap;
         this.callParent(arguments);
     },

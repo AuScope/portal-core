@@ -14,26 +14,7 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
     alias: 'widget.clickcolumn',
 
     constructor: function() {
-        this.addEvents(
-            /**
-             * @event columnclick
-             * Fires when a row is clicked and that click lies within this column. Return false to cancel this event propagating
-             * @param {portal.widgets.grid.column.ClickColumn} this
-             * @param {Ext.data.Model} The selected data record
-             * @param {Number} rowIndex The row index clicked
-             * @param {Number} colIndex The column index clicked
-             */
-            'columnclick',
-            /**
-             * @event columndblclick
-             * Fires when a row is double clicked and that click lies within this column. Return false to cancel this event propagating
-             * @param {portal.widgets.grid.column.ClickColumn} this
-             * @param {Ext.data.Model} The selected data record
-             * @param {Number} rowIndex The row index clicked
-             * @param {Number} colIndex The column index clicked
-             */
-            'columndblclick'
-        );
+       
         this.callParent(arguments);
     },
 

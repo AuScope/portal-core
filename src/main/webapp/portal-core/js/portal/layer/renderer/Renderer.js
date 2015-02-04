@@ -31,11 +31,7 @@ Ext.define('portal.layer.renderer.Renderer', {
      */
     constructor: function(config) {
 
-        this.addEvents({
-            'renderstarted' : true,
-            'renderfinished' : true,
-            'visibilitychanged' : true
-        });
+      
 
         //Setup class variables
         this.listeners = config.listeners;

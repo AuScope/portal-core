@@ -3,8 +3,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
     extend : 'Ext.window.Window',
 
 
-    constructor : function(cfg) {
-        this.addEvents('filterselectcomplete');
+    constructor : function(cfg) {      
 
         var cswFilterFormPanel = new portal.widgets.panel.CSWFilterFormPanel({
             name : 'Filter Form'

@@ -51,7 +51,7 @@ Ext.define('portal.map.BaseMap', {
         this.container = cfg.container;
         this.layerStore = cfg.layerStore;
 
-        this.addEvents(['query', 'dataSelect']);
+        
 
         this.callParent(arguments);
 

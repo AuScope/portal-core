@@ -15,7 +15,7 @@ Ext.define('portal.widgets.panel.LayerPanel', {
 
         this.map = cfg.map;
         this.allowDebugWindow = cfg.allowDebugWindow ? true : false;
-        this.addEvents('removelayerrequest');
+      
 
         this.removeAction = new Ext.Action({
             text : 'Remove Layer',
