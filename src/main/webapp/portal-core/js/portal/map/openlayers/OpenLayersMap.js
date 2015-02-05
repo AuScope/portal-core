@@ -280,7 +280,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * @param container The container to receive the map
      */
     renderToContainer : function(container) {
-        var containerId = container.body.dom.id;
+        var containerId = container.body.dom.firstChild.firstChild.id;
         var me = this;
 
         this.map = new OpenLayers.Map(containerId, {
@@ -483,6 +483,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         container.on('resize', function() {
             this.map.updateSize();
         }, this);
+        
     },
 
     
