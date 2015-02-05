@@ -29,71 +29,212 @@
  */
 Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     extend: 'Ext.AbstractPlugin',
-
+    
     alias: 'plugin.rowexpandercontainer',
-
     generateContainer : portal.util.UnimplementedFunction,
     allowMultipleOpen : false,
 
-    recordComponentIds : null,
-    recordComponents : null,
-
-    rowBodyTrSelector: '.x-grid-rowbody-tr',
-    rowBodyHiddenCls: 'x-grid-row-body-hidden',
-    rowCollapsedCls: 'x-grid-row-collapsed',
+    /**
+     * @cfg {Boolean} expandOnEnter
+     * `true` to toggle selected row(s) between expanded/collapsed when the enter
+     * key is pressed (defaults to `true`).
+     */
+    expandOnEnter: true,
 
     /**
-     * Supported config options
-     * {
-     *  generateContainer : function(record, parentElId) - returns Ext.container.Container
-     * }
+     * @cfg {Boolean} selectRowOnExpand
+     * `true` to select a row when clicking on the expander icon
+     * (defaults to `false`).
      */
-    constructor : function(cfg) {
-        this.callParent(arguments);
+    selectRowOnExpand: false,
+    
+    /**
+     * @cfg {Boolean} [bodyBefore=false]
+     * Configure as `true` to put the row expander body *before* the data row.
+     * 
+     */
+    bodyBefore: false,
 
-        if (cfg.generateContainer) {
-            this.generateContainer= cfg.generateContainer;
-        }
-        if (cfg.allowMultipleOpen) {
-            this.allowMultipleOpen = cfg.allowMultipleOpen;
-        }
-        this.recordComponentIds = {};
-        this.recordComponents = {};
-        this.rowsExpanded = {};
+    rowBodyTrSelector: '.' + Ext.baseCSSPrefix + 'grid-rowbody-tr',
+    rowBodyHiddenCls: Ext.baseCSSPrefix + 'grid-row-body-hidden',
+    rowCollapsedCls: Ext.baseCSSPrefix + 'grid-row-collapsed',
 
-        // We enable the toolbar by bootstrapping it into the Ext.grid.Panel
-        // rowbody feature which allows us to inject arbitrary HTML. We use this
-        // to generate a DIV which we render our toolbar into.
-        var features = [{
-            ftype: 'rowbody',
-            recordComponentIds: this.recordComponentIds,
-            recordComponents: this.recordComponents,
-            rowsExpanded : this.rowsExpanded,
-            rowBodyHiddenCls: this.rowBodyHiddenCls,
-            rowCollapsedCls: this.rowCollapsedCls,
-            getAdditionalData: this._getRowBodyFeatureData,
-            rowBodyTpl: Ext.create('Ext.XTemplate', '<div id="{component-id}"></div>')
-        }];
+    addCollapsedCls: {
+        fn: function(out, values, parent) {
+            var me = this.rowExpander;
+            if (values.record.internalId in me.recordsExpanded) {
+                values.itemClasses.push(me.rowCollapsedCls);
+            }
+            this.nextTpl.applyOut(values, out, parent);
+        },
 
-        var grid = this.getCmp();
+        // We need a high priority to get in ahead of the outerRowTpl
+        // so we can setup row data
+        priority: 20000
+    },
+
+    /**
+     * @event expandbody
+     * **Fired through the grid's View**
+     * @param {HTMLElement} rowNode The &lt;tr> element which owns the expanded row.
+     * @param {Ext.data.Model} record The record providing the data.
+     * @param {HTMLElement} expandRow The &lt;tr> element containing the expanded data.
+     */
+    /**
+     * @event collapsebody
+     * **Fired through the grid's View.**
+     * @param {HTMLElement} rowNode The &lt;tr> element which owns the expanded row.
+     * @param {Ext.data.Model} record The record providing the data.
+     * @param {HTMLElement} expandRow The &lt;tr> element containing the expanded data.
+     */
+
+    setCmp: function(grid) {
+        var me = this,
+            features;
+
+        me.callParent(arguments);
+
+        me.recordsExpanded = {};
+        me.recordComponentIds = {};
+        me.recordComponents = {};
+        me.rowBodyTpl = Ext.create('Ext.XTemplate', '<div id="{component-id}"></div>');
+        features = me.getFeatureConfig(grid);
+
         if (grid.features) {
-            grid.features = features.concat(grid.features);
+            grid.features = Ext.Array.push(features, grid.features);
         } else {
             grid.features = features;
-        }               
+        }
+        // NOTE: features have to be added before init (before Table.initComponent)
+    },
 
+    /**
+     * @protected
+     * @return {Array} And array of Features or Feature config objects.
+     * Returns the array of Feature configurations needed to make the RowExpander work.
+     * May be overridden in a subclass to modify the returned array.
+     */
+    getFeatureConfig: function(grid) {
+        var me = this,
+            features = [],
+            featuresCfg = {
+                ftype: 'rowbody',
+                rowExpander: me,
+                bodyBefore: me.bodyBefore,
+                recordsExpanded: me.recordsExpanded,
+                rowBodyHiddenCls: me.rowBodyHiddenCls,
+                rowCollapsedCls: me.rowCollapsedCls,
+                setupRowData: me.getRowBodyFeatureData,
+                setup: me.setup
+            };
+
+        features.push(Ext.apply({
+            lockableScope: 'normal',
+            getRowBodyContents: me.getRowBodyContentsFn(me.rowBodyTpl)
+        }, featuresCfg));
+
+        return features;
+    },
+    
+    getRowBodyContentsFn: function(rowBodyTpl) {
+        var me = this;
+        return function (rowValues) {
+            var componentId = me.recordComponentIds[rowValues.record.internalId];
+            if (!componentId) {
+                me.recordComponentIds[rowValues.record.internalId] = componentId = Ext.id();
+            }
+            
+            rowBodyTpl.owner = me;
+            var r = rowBodyTpl.applyTemplate({'component-id' : componentId});
+            return r;
+        };
     },
 
     init: function(grid) {
+        
+        var me = this,
+            view;
+
+        me.callParent(arguments);
+        me.grid = grid;
+        view = me.view = grid.getView();
+
+        // Bind to view for key and mouse events
+        // Add row processor which adds collapsed class
+        view.addRowTpl(me.addCollapsedCls).rowExpander = me;
+        
+        grid.on('beforereconfigure', me.beforeReconfigure, me);
         grid.on('cellclick', this._onContextMenuItemClick, this);    
-        grid.on('resize', this._handleResize, this);    
-      
+        grid.on('resize', this._handleResize, this);
+    },
+
+    beforeReconfigure: function(grid, store, columns, oldStore, oldColumns) {
+        var me = this;
+
+        if (me.viewListeners) {
+            me.viewListeners.destroy();    
+        }
+    },
+
+    getRowBodyFeatureData: function(record, idx, rowValues) {
+        var me = this;
+        me.self.prototype.setupRowData.apply(me, arguments);
+        rowValues.rowBody = me.getRowBodyContents(rowValues);
+        rowValues.rowBodyCls = (record.internalId in me.recordsExpanded) ? '' : me.rowBodyHiddenCls;
+    },
+
+    setup: function(rows, rowValues){
+        var me = this;
+        me.self.prototype.setup.apply(me, arguments);
+    },
+
+    toggleRow: function(rowIdx, record) {
+        var me = this,
+            view = me.view,
+            bufferedRenderer = view.bufferedRenderer,
+            scroller = view.getScrollable(),
+            fireView = view,
+            rowNode = view.getNode(rowIdx),
+            normalRow = Ext.fly(rowNode),
+            nextBd = normalRow.down(me.rowBodyTrSelector, true),
+            wasCollapsed = normalRow.hasCls(me.rowCollapsedCls),
+            addOrRemoveCls = wasCollapsed ? 'removeCls' : 'addCls',
+
+            // The expander column should be rowSpan="2" only when the expander is expanded
+            rowSpan = wasCollapsed ? 2 : 1,
+            expanderCell;
+        
+        normalRow[addOrRemoveCls](me.rowCollapsedCls);
+        Ext.fly(nextBd)[addOrRemoveCls](me.rowBodyHiddenCls);
+        me.recordsExpanded[record.internalId] = rowIdx;
+
+        fireView.fireEvent(wasCollapsed ? 'expandbody' : 'collapsebody', rowNode, record, nextBd);
+
+        if (wasCollapsed) {
+            this.showContainer(rowIdx);
+        } else {
+            this.hideContainer(rowIdx);
+        }
+        
+        // Layout needed of we are shrinkwrapping height, or there are locked/unlocked sides to sync
+        // Will sync the expander row heights between locked and normal sides
+        if (view.getSizeModel().height.shrinkWrap) {
+            view.refreshSize(true);
+        }
+        // If we are using the touch scroller, ensure that the scroller knows about
+        // the correct scrollable range
+        if (scroller) {
+            if (bufferedRenderer) {
+                bufferedRenderer.refreshSize();
+            } else {
+                scroller.refresh(true);
+            }
+        }    
     },
     
-    
     _handleResize : function(){
-        for (idx in this.rowsExpanded) {
-            this.recordComponents[idx].doComponentLayout();
+        for (id in this.recordsExpanded) {
+            this.recordComponents[id].doComponentLayout();
         }    
     },
     
@@ -102,8 +243,8 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
      * Close any open containers
      */
     closeAllContainers : function() {
-        for (idx in this.rowsExpanded) {
-            var i = parseInt(this.rowsExpanded[idx]);            
+        for (id in this.recordsExpanded) {
+            var i = parseInt(this.recordsExpanded[id]);            
             this.hideContainer(i);            
         }                      
     },      
@@ -121,7 +262,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         row.addCls(this.rowCollapsedCls);
         nextBd.addCls(this.rowBodyHiddenCls);
-        delete this.rowsExpanded[record.internalId];
+        delete this.recordsExpanded[record.internalId];
         //this.recordComponents[rowIdx].destroy();
         view.refreshSize();
         view.fireEvent('contexthide', rowNode, record, nextBd.dom);
@@ -145,71 +286,23 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
 
         row.removeCls(this.rowCollapsedCls);
         nextBd.removeCls(this.rowBodyHiddenCls);
-        this.rowsExpanded[record.internalId] = rowIdx;
         view.refreshSize();
         view.fireEvent('contextshow', rowNode, record, nextBd.dom);
         
-        if(!this.recordComponents[record.internalId]){
+        if(!this.recordComponents[record.internalId]) {
             this.recordComponents[record.internalId] = this.generateContainer(record, this.recordComponentIds[record.internalId]);
-        }else{
+        } else {
             //VT:Check that the dom still exist as grid:refresh can wipe the panel clean.
             var parentEl = Ext.get(this.recordComponentIds[record.internalId]);
-            if(parentEl.dom.firstChild == null && parentEl){             
+            if(parentEl.dom.firstChild == null && parentEl) {             
                 this.recordComponents[record.internalId].render(parentEl.dom);               
             }
         }
-        
         this._handleResize();
     },
 
-    /**
-     * Toggle Hide/Show for a specifc row index
-     */
-    toggleContainer : function(rowIdx) {
-        var rowNode = this.getCmp().getView().getNode(rowIdx),
-            row = Ext.get(rowNode),
-            nextBd = Ext.get(row).down(this.rowBodyTrSelector);
-
-        if (row.hasCls(this.rowCollapsedCls)) {
-            this.showContainer(rowIdx);
-        } else {
-            this.hideContainer(rowIdx);
-        }
-    },
-
-    _getRowBodyFeatureData: function(data, idx, record, orig) {
-        var o = Ext.grid.feature.RowBody.prototype.getAdditionalData.apply(this, arguments),
-            id = this.columnId,
-            componentId = this.recordComponentIds[record.internalId];
-
-        if (!componentId) {
-            this.recordComponentIds[record.internalId] = componentId = Ext.id();
-        }
-
-        var rowBody = this.rowBodyTpl.applyTemplate({'component-id' : componentId});
-
-        o.rowBody = rowBody;
-        if(parseInt(this.rowsExpanded[record.internalId])>=0){
-            //VT: if the number of layers and position have changed, update the rowsExpanded list
-            if(parseInt(this.rowsExpanded[record.internalId]) != idx ){
-                this.rowsExpanded[record.internalId] = idx;
-            }
-            o.rowCls =  '' ;
-            o.rowBodyCls ='';
-        }else{
-            o.rowCls = this.rowCollapsedCls;
-            o.rowBodyCls = this.rowBodyHiddenCls
-        }
-               
-        o[id + '-tdAttr'] = ' valign="top" rowspan="2" ';
-        if (orig[id+'-tdAttr']) {
-            o[id+'-tdAttr'] += orig[id+'-tdAttr'];
-        }
-        return o;
-    },
-
     _onContextMenuItemClick : function( view, td, cellIndex, record, tr, index, e, eOpts ) {       
-        this.toggleContainer(index);        
+        this.toggleRow(index, record);    
     }
 
   
