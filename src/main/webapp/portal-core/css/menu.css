@@ -1,13 +1,13 @@
 #menu {
 	position:fixed;
 	overflow:hidden; /* wrap floats */
-	height:40px; /* trips haslayout, wrap floats IE */
+	height:55px; /* trips haslayout, wrap floats IE */
 	list-style:none;
-    top: 0px;
+    top: -15px;
     right: 0px;
 	font:bold 14px/40px sans-serif;
     float: right;
-    padding-right: 30px;
+    padding-right: 30px;    
 }
 
 #logo {
@@ -17,6 +17,7 @@
 #menu li {
 	display:inline;
 }
+
 
 #menu a {
 	float:left;

@@ -280,6 +280,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      * @param container The container to receive the map
      */
     renderToContainer : function(container) {
+        //VT: We are assuming the hierachy of the panel. If this ever change, we will need to change the code to use
+        //CSS Selector on data-ref="innerCt"
         var containerId = container.body.dom.firstChild.firstChild.id;
         var me = this;
 
