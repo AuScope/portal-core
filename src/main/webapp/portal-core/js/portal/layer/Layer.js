@@ -84,7 +84,7 @@ Ext.define('portal.layer.Layer', {
     
     _expandGridGroup : function(groupname){
         var activeTab = Ext.getCmp('auscope-tabs-panel').activeTab;
-        var feature = activeTab.features[2]
+        var feature = activeTab.features[1]
         feature.expand(groupname,true);
         
     },

@@ -18,8 +18,8 @@ Ext.define('portal.layer.filterer.Filterer', {
         spatialParam : null //this should always be an instance of portal.util.BBox
     },
 
-    constructor: function(config){
-        this.callParent(arguments);
+    constructor: function(config){     
+        this.callParent(arguments);       
     },
 
 
@@ -176,6 +176,14 @@ Ext.define('portal.layer.filterer.Filterer', {
         if (!suppressEvents) {
             this.fireEvent('change', this, [portal.layer.filterer.Filterer.BBOX_FIELD]);
         }
+    },
+    
+    /**
+     * Sets the value of the internal spatialParam and fires a change event
+     * (unless suppressEvents is specified)
+     */
+    getSpatialParam : function() {
+        return this.spatialParam;
     },
 
     /**
