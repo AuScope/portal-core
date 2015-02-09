@@ -83,10 +83,12 @@ Ext.define('portal.layer.Layer', {
     },
     
     _expandGridGroup : function(groupname){
-        var activeTab = Ext.getCmp('auscope-tabs-panel').activeTab;
-        var feature = activeTab.features[1]
-        feature.expand(groupname,true);
-        
+        var activeTab = Ext.getCmp('auscope-tabs-panel').getActiveTab();
+        for (var i = 0; i < activeTab.features.length; i++) {
+            if (activeTab.features[i] instanceof Ext.grid.feature.Grouping) {
+                activeTab.features[i].expand(groupname,true);
+            }
+        }        
     },
     
    removeDataFromMap:function(){
