@@ -91,7 +91,7 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
      * Just query everything in queryTargets
      */
     _handleWithQuery : function(queryTargets, mapWrapper) {
-        var loadMask = new Ext.LoadMask(mapWrapper.container.getEl(), {}); //For some reason LoadMask isn't designed to work with Ext.create
+        var loadMask = new Ext.LoadMask(mapWrapper.container, {}); //For some reason LoadMask isn't designed to work with Ext.create
         for (var i = 0; i < queryTargets.length; i++) {
             var queryTarget = queryTargets[i];
             var layer = queryTarget.get('layer');
