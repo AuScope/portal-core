@@ -8,7 +8,7 @@
  * VT: THIS CLASS IS TO BE DELETED WITH THE NEW INLINE UI
  */
 Ext.define('portal.widgets.panel.FilterPanel', {
-    extend: 'Ext.Panel',
+    extend: 'Ext.panel.Panel',
 
    
     _addLayerButton : null,
