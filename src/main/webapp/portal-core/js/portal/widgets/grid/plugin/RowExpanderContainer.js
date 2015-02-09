@@ -33,20 +33,6 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     alias: 'plugin.rowexpandercontainer',
     generateContainer : portal.util.UnimplementedFunction,
     allowMultipleOpen : false,
-
-    /**
-     * @cfg {Boolean} expandOnEnter
-     * `true` to toggle selected row(s) between expanded/collapsed when the enter
-     * key is pressed (defaults to `true`).
-     */
-    expandOnEnter: true,
-
-    /**
-     * @cfg {Boolean} selectRowOnExpand
-     * `true` to select a row when clicking on the expander icon
-     * (defaults to `false`).
-     */
-    selectRowOnExpand: false,
     
     /**
      * @cfg {Boolean} [bodyBefore=false]
@@ -197,16 +183,11 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             rowNode = view.getNode(rowIdx),
             normalRow = Ext.fly(rowNode),
             nextBd = normalRow.down(me.rowBodyTrSelector, true),
-            wasCollapsed = normalRow.hasCls(me.rowCollapsedCls),
-            addOrRemoveCls = wasCollapsed ? 'removeCls' : 'addCls',
-
-            // The expander column should be rowSpan="2" only when the expander is expanded
-            rowSpan = wasCollapsed ? 2 : 1,
-            expanderCell;
+            wasCollapsed = !(record.internalId in me.recordsExpanded)
+            addOrRemoveCls = wasCollapsed ? 'removeCls' : 'addCls';;
         
         normalRow[addOrRemoveCls](me.rowCollapsedCls);
         Ext.fly(nextBd)[addOrRemoveCls](me.rowBodyHiddenCls);
-        me.recordsExpanded[record.internalId] = rowIdx;
 
         fireView.fireEvent(wasCollapsed ? 'expandbody' : 'collapsebody', rowNode, record, nextBd);
 
@@ -234,7 +215,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     
     _handleResize : function(){
         for (id in this.recordsExpanded) {
-            this.recordComponents[id].doComponentLayout();
+            this.recordComponents[id].doLayout();
         }    
     },
     
@@ -278,11 +259,13 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             row = Ext.get(rowNode),
             nextBd = Ext.get(row).down(this.rowBodyTrSelector),
             record = view.getRecord(rowNode);
-
+        
         //Close any open context menus
         if (!this.allowMultipleOpen) {
             this.closeAllContainers();
         }
+        
+        this.recordsExpanded[record.internalId] = rowIdx;
 
         row.removeCls(this.rowCollapsedCls);
         nextBd.removeCls(this.rowBodyHiddenCls);
