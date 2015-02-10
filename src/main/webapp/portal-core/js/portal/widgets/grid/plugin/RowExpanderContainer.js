@@ -35,8 +35,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     generateContainer : portal.util.UnimplementedFunction,
     allowMultipleOpen : false,
     rowBodyTpl: '<div id="rowexpandercontainer-{id}"></div>', //overrides parent
-    storedHtml: null,  
-    recordIdAtRow: null, 
+    storedHtml: null,   
     recordStatus: null,  
 
     
@@ -45,7 +44,6 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         this.allowMultipleOpen = config.allowMultipleOpen ? true : false;
         this.storedHtml = {};
-        this.recordIdAtRow = {};
         this.recordStatus = {};
     },
     
@@ -65,14 +63,57 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         view.on('collapsebody', this.onCollapseBody, this);
         view.on('cellclick', this.onCellClick, this);
         view.on('groupexpand', this.onGroupExpand, this);
-        view.on('groupcollapse', this.onGroupCollapse, this);
         
-        grid.on('viewready', this.markRows, this);
-        grid.on('rowsinserted', this.markRows, this);
         view.on('beforerefresh', this.onBeforeRefresh, this);
         view.on('refresh', this.onRefresh, this);
         
         view.on('itemupdate', this.restoreRowHtml, this);
+    },
+    
+    /**
+     * Returns record if it exists or null.
+     * 
+     * @param recordId String
+     */
+    getStoreRecord: function(recordId) {
+        return this.grid.getStore().getById(recordId);
+    },
+    
+    /**
+     * Returns true if the given record is rendered, expanded AND 
+     * the internal rowbody is empty
+     */
+    restorationRequired: function(record) {
+        //Is the record expanded?
+        if (!(record.id in this.recordStatus)) {
+            return false;
+        } else if (!this.recordStatus[record.id].expanded) {
+            return false;
+        } 
+        
+        //Is the record visible?
+        var el = this.view.getRow(record);
+        if (!el) {
+            return false;
+        }
+        
+        var body = Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, el.parentNode);
+        if (body.hasChildNodes()) {
+            return false;
+        }
+        
+        return true;
+    },
+    
+    getRecordsForGroup: function(group) {
+        var ds = this.grid.getStore();
+        
+        var groupInfo = ds.getGroups()[group];
+        if (!groupInfo) {
+            return [];
+        }
+        
+        return groupInfo.children;
     },
     
     onExpandBody: function(rowNode, record, expandRow) {
@@ -83,11 +124,13 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         }
         
         if (!this.allowMultipleOpen) {
-            for (rowIndex in this.recordIdAtRow) {
-                var openId = this.recordIdAtRow[rowIndex];
-                if (openId in this.recordStatus && this.recordStatus[openId].expanded) {
-                    var idxNum = Number(rowIndex);
-                    this.toggleRow(idxNum, this.grid.getStore().getAt(idxNum));
+            for (openId in this.recordStatus) {
+                if (this.recordStatus[openId].expanded) {
+                    var openRec = this.getStoreRecord(openId);
+                    var openEl = this.view.getRow(openRec);
+                    if (openEl !== null) {
+                        this.toggleRow(openEl, openRec);
+                    }
                 }
             }
         }
@@ -112,14 +155,14 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
     
     onGroupExpand : function(view, node, group, eOpts) {
-        console.log('Expanding:', node);
+        var recs = this.grid.getStore().getRange();
+        var me = this;
+        Ext.each(recs, function(record) {
+            if (me.restorationRequired(record)) {
+                me.restoreRowHtml(record);
+            }
+        });
     },
-    
-    onGroupCollapse : function(view, node, group, eOpts) {
-        console.log('Collapsing:', node);
-    },
-    
-    /////////////////////////////////////////////
     
     onBeforeRefresh: function(view) {
         var store = this.grid.getStore(),
@@ -132,18 +175,8 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
     
     saveRowHtml: function(record) {
-        var rowIndex = null,
-            found = false; //Find the view's rowIndex for this record before the refresh action happened. 
-                           //While saving the Row Html for a Record, we have to find the previous position of the record in the view before 
-                           //the refresh action happened. 
-        for (rowIndex in this.recordIdAtRow) {
-            if (this.recordIdAtRow[rowIndex] == record.id) {
-                found = true;
-                break;
-            }
-        }
-        if (found) {
-            var row = this.view.getRow(Number(rowIndex));
+        if (this.getStoreRecord(record.id)) {
+            var row = this.view.getRow(record);
             var body = Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, row.parentNode);
             this.storedHtml[record.id] = body.innerHTML;
         }
@@ -156,49 +189,23 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             row = view.getRow(n);
             if (row) {
                 record = store.getAt(n);
-                this.restoreRowHtml(view, n, record);
+                this.restoreRowHtml(record);
             }
         }
     },
-    restoreRowHtml: function(record, index) {
+    
+    restoreRowHtml: function(record) {
         //When restoring the Row Html for a Record, the restore has to happen at the current position of the Record after 
         //the refresh action happened. 
         var storedBody = this.storedHtml[record.id];
         if (!Ext.isEmpty(storedBody)) {
-            var row = this.view.getRow(index);
+            var row = this.view.getRow(record);
             var body = Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, row.parentNode);
             while (body.hasChildNodes()) {
                 body.removeChild(body.lastChild);
             }
-            var status = this.recordStatus[record.id];
-            if (!status) { //the row has not been touched. 
-                body.innerHTML = this.tpl.html;
-                this.collapseRow(row);
-            } else {
-                body.innerHTML = storedBody;
-                /*if (!status.expanded) { 
-                    this.toggleRow(index, record);
-                }*/
-            }
-        }
-        this.markRow(this.view, index, record);
-    }, 
-    
-    markRow: function(view, index, record) {
-        var row = view.getRow(index);
-        if (row) {
-            this.recordIdAtRow[index] = record.id;
-        }
-    },
-    
-    markRows: function() {
-        var view = this.grid.getView(),
-            store = this.grid.getStore(),
-            record, n;
-        this.recordIdAtRow = {};
-        for (n = 0; n < store.data.items.length; n++) {
-            record = store.getAt(n);
-            this.markRow(view, n, record);
+            body.innerHTML = storedBody;
         }
     }
+    
 });
