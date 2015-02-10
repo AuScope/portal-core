@@ -88,7 +88,7 @@ Ext.define('portal.layer.Layer', {
             if (activeTab.features[i] instanceof Ext.grid.feature.Grouping) {
                 activeTab.features[i].expand(groupname,true);
             }
-        }
+        }        
     },
     
    removeDataFromMap:function(){

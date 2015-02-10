@@ -71,7 +71,7 @@ Ext.define('portal.map.openlayers.PrimitiveManager', {
                 vectors.push(prim.getVector())
             } else if (prim instanceof portal.map.openlayers.primitives.WMSOverlay) {
                 //VT: add wms primitive in the store order if exist
-                var layerId=prim.layer.data.id;
+                var layerId=prim.getLayer().data.id;
                 var layerStore = this.baseMap.layerStore.data.items;
                 var position = 0;
                 //layerStore provides the ordering

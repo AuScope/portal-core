@@ -322,7 +322,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         
         var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity,sld_body)
 
-        layer.wmsLayer.events.register("loadstart",this,function(){
+        layer.getWmsLayer().events.register("loadstart",this,function(){
             this.currentRequestCount++;
             var listOfStatus=this.renderStatus.getParameters();
             for(key in listOfStatus){
@@ -336,7 +336,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         });
 
         //VT: Handle the after wms load clean up event.
-        layer.wmsLayer.events.register("loadend",this,function(evt){
+        layer.getWmsLayer().events.register("loadend",this,function(evt){
             this.currentRequestCount--;
             if (this.currentRequestCount === 0) {
                 this.fireEvent('renderfinished', this);

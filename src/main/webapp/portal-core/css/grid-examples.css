@@ -60,6 +60,10 @@
     background-position: top;
 }
 
+/*
+ *     
+ * This color should be the same as the one set in BaseFilterForm.js
+ */
 .auscope-dark-grid .x-grid-row-selected  .x-grid-cell, .x-grid-row-selected  .x-grid-rowwrap-div {
     background-color: #C1C2C0 !important;
     border-color: #a3bae9;

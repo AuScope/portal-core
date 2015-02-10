@@ -52,7 +52,7 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
             var layer = this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer, wmsOpacity);
             
             
-            layer.wmsLayer.events.register("loadstart",this,function(){
+            layer.getWmsLayer().events.register("loadstart",this,function(){
                 this.currentRequestCount++;
                 var listOfStatus=this.renderStatus.getParameters();
                 this.fireEvent('renderstarted', this, wmsResources, filterer);
@@ -60,7 +60,7 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
             });
 
             //VT: Handle the after wms load clean up event.
-            layer.wmsLayer.events.register("loadend",this,function(evt){
+            layer.getWmsLayer().events.register("loadend",this,function(evt){
                 this.currentRequestCount--;
                 var listOfStatus=this.renderStatus.getParameters();
                 this.renderStatus.updateResponse(layer.wmsUrl, "WMS Loaded");
