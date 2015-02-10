@@ -39,7 +39,7 @@ Ext.define('portal.layer.filterer.BaseFilterForm', {
         
 
         this.callParent(arguments);
-        this.setBodyStyle('background','#D9D9D9');
+        this.setBodyStyle('background','#eff4f9');
         
         if (!this.delayedFormLoading) {
             this.setIsFormLoaded(true);
