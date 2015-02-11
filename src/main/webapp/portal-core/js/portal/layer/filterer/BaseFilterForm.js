@@ -36,10 +36,12 @@ Ext.define('portal.layer.filterer.BaseFilterForm', {
         this.layer = config.layer;
         this.setIsFormLoaded(false);
         this.delayedFormLoading = config.delayedFormLoading;        
+        
+        Ext.apply(config, {
+            cls : 'filter-panel-color'
+        })
 
-
-        this.callParent(arguments);
-        this.setBodyStyle('background','#D9D9D9');
+        this.callParent(arguments);        
         
         if (!this.delayedFormLoading) {
             this.setIsFormLoaded(true);
