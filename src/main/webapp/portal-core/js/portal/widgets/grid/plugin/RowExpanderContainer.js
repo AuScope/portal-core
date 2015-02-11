@@ -37,6 +37,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     rowBodyTpl: '<div id="rowexpandercontainer-{id}"></div>', //overrides parent
     storedHtml: null,   
     recordStatus: null,  
+    generationRunning: false, 
 
     
     constructor: function(config) {
@@ -64,10 +65,11 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         view.on('cellclick', this.onCellClick, this);
         view.on('groupexpand', this.onGroupExpand, this);
         
-        view.on('beforerefresh', this.onBeforeRefresh, this);
         view.on('refresh', this.onRefresh, this);
         
-        view.on('itemupdate', this.restoreRowHtml, this);
+        view.on('itemupdate', this.restoreRowContainer, this);
+        
+        view.on('resize', this.onResize, this);
     },
     
     /**
@@ -117,12 +119,6 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
     
     onExpandBody: function(rowNode, record, expandRow) {
-        var id = "rowexpandercontainer-" + record.id;
-        if (!(record.id in this.recordStatus) || this.recordStatus[record.id].rendered === false) {
-            this.generateContainer(record, id);
-            this.saveRowHtml(record);
-        }
-        
         if (!this.allowMultipleOpen) {
             for (openId in this.recordStatus) {
                 if (this.recordStatus[openId].expanded) {
@@ -135,52 +131,39 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             }
         }
         
-        var status = {
-            rendered: true,
-            expanded: true
+        this.recordStatus[record.id] = {
+            expanded : true,
+            container : null
         };
-        this.recordStatus[record.id] = status;
+        
+        this.restoreRowContainer(record);
     },
     
     onCollapseBody: function(rowNode, record, collapseRow) {
-        var status = {
-            rendered: true,
-            expanded: false
-        };
-        this.recordStatus[record.id] = status;
+        this.recordStatus[record.id].expanded = false;
     },
     
     onCellClick: function(view, td, cellIndex, record, tr, rowIndex) {
         this.toggleRow(rowIndex, record);
     },
     
+    onResize: function() {
+        for (openId in this.recordStatus) {
+            if (this.recordStatus[openId].expanded) {
+                if (this.recordStatus[openId].container) {
+                    this.recordStatus[openId].container.doLayout();
+                }
+            }
+        }
+    },
+    
     onGroupExpand : function(view, node, group, eOpts) {
         var recs = this.grid.getStore().getRange();
         var me = this;
         Ext.each(recs, function(record) {
-            if (me.restorationRequired(record)) {
-                me.restoreRowHtml(record);
-            }
+            me.restoreRowContainer(record);
         });
     },
-    
-    onBeforeRefresh: function(view) {
-        var store = this.grid.getStore(),
-            n, record;
-        this.storedHtml = {};
-        for (n = 0; n < store.data.items.length; n++) {
-            record = store.getAt(n);
-            this.saveRowHtml(view, n, record);
-        }
-    },
-    
-    saveRowHtml: function(record) {
-        if (this.getStoreRecord(record.id)) {
-            var row = this.view.getRow(record);
-            var body = Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, row.parentNode);
-            this.storedHtml[record.id] = body.innerHTML;
-        }
-    }, 
     
     onRefresh: function(view) {
         var store = this.grid.getStore(),
@@ -189,23 +172,30 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             row = view.getRow(n);
             if (row) {
                 record = store.getAt(n);
-                this.restoreRowHtml(record);
+                this.restoreRowContainer(record);
             }
         }
     },
     
-    restoreRowHtml: function(record) {
-        //When restoring the Row Html for a Record, the restore has to happen at the current position of the Record after 
-        //the refresh action happened. 
-        var storedBody = this.storedHtml[record.id];
-        if (!Ext.isEmpty(storedBody)) {
-            var row = this.view.getRow(record);
-            var body = Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, row.parentNode);
-            while (body.hasChildNodes()) {
-                body.removeChild(body.lastChild);
-            }
-            body.innerHTML = storedBody;
+    restoreRowContainer: function(record) {
+        //We don't want this function to be re-entrant
+        //Which can occur if the generateContainer callback
+        //makes any updates to record
+        if (this.generationRunning === true) {
+            return;
         }
+        
+        this.generationRunning = true;
+        if (this.restorationRequired(record)) {
+            if ((record.id in this.recordStatus) && this.recordStatus[record.id].container) {
+                //this.recordStatus[record.id].container.destroy();
+            }
+            
+            var id = "rowexpandercontainer-" + record.id;
+            var container = this.generateContainer(record, id);
+            this.recordStatus[record.id].container = container;
+        }
+        this.generationRunning = false;
     }
     
 });
