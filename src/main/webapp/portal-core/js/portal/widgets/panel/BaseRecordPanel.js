@@ -133,9 +133,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
               ptype : 'rowexpandercontainer',
               pluginId : 'maingrid_rowexpandercontainer',
               generateContainer : function(record, parentElId) {
-                  var newLayer=null;
+                  var oldLayer = record.get('layer');
                   //VT:if this is deserialized, we don't need to regenerate the layer
-                  if(record.get('layer') && record.get('layer').get('deserialized')){                        
+                  if(record.get('layer')) {                        
                       newLayer =  record.get('layer');                                           
                   }else if(record instanceof portal.csw.CSWRecord){                        
                       newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);                                                     
@@ -144,7 +144,17 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                   }           
                   record.set('layer',newLayer);            
                   var filterForm = newLayer ? newLayer.get('filterForm') : null;                                    
-                  var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);                     
+                  var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);
+                  
+                  //Update the layer panel to use
+                  if (filterForm) {
+                      var filterer = newLayer.get('filterer');
+                      if (filterer) {
+                          var existingParams = filterer.getParameters();
+                          filterForm.getForm().setValues(existingParams);
+                      }
+                  }
+                  
                   return filterPanel;
              }
          },{
