@@ -187,10 +187,6 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         this.generationRunning = true;
         if (this.restorationRequired(record)) {
-            if ((record.id in this.recordStatus) && this.recordStatus[record.id].container) {
-                //this.recordStatus[record.id].container.destroy();
-            }
-            
             var id = "rowexpandercontainer-" + record.id;
             var container = this.generateContainer(record, id);
             this.recordStatus[record.id].container = container;
