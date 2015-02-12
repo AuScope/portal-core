@@ -60,6 +60,11 @@
     background-position: top;
 }
 
+.x-form-display-field-default {
+  min-height: 18px;
+  margin-top: 0px; 
+}
+
 /*
  *     
  * This color should be the same as the one set in BaseFilterForm.js
@@ -69,6 +74,11 @@
     border-color: #a3bae9;
     border-style: dotted;
 }
+
+.filter-panel-color {
+	background : #E6E6E6;
+}
+
 
 .auscope-servicestatus-grid {
     margin:0px;padding:0px;
