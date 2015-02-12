@@ -626,6 +626,24 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var popup = new OpenLayers.Popup.FramedCloud(popupId, location, paddedSize, divHtml, null, true, null);
 
         this.map.addPopup(popup, true);
+        
+        //Workaround
+        //ExtJS needs events to bubble up to the window for them to work (it's where the event handlers live)
+        //Unfortunately OpenLayers is too aggressive in consuming events occuring in a popup, so the events never make it.
+        //So - to workaround this we capture relevant events in our parent div (sitting before the open layer popup handlers) 
+        //and manually redirect them to the ExtJS handlers
+        var node = Ext.get(divId).dom;
+        var handler = function(e) {
+            Ext.event.publisher.Dom.instance.onDelegatedEvent(e); //this is a private ExtJS function - it's likely to break on upgrade
+            return false;
+        };
+        node.addEventListener('mousedown', handler);
+        node.addEventListener('mouseup', handler);
+        node.addEventListener('mousemove', handler);
+        node.addEventListener('click', handler);
+        //End workaround
+        
+        
         this.openedInfoLayerId=layer.get('id');
         //next create an Ext.Container to house our content, render it to the HTML created above
         if (!Ext.isArray(content)) {
