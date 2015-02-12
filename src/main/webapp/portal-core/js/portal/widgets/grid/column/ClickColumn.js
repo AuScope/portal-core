@@ -14,7 +14,6 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
     alias: 'widget.clickcolumn',
 
     constructor: function() {
-       
         this.callParent(arguments);
     },
 
@@ -23,13 +22,14 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
      * Process and refire events routed from the GridView's processEvent method.
      */
     processEvent: function(type, view, cell, recordIndex, cellIndex, e) {
+        var record = view.getRecord(view.getNode(recordIndex));
+        var storeRecordIndex = view.store.indexOf(record);
+        
         if (type == 'mousedown' || (type == 'keydown' && (e.getKey() === e.ENTER || e.getKey() === e.SPACE))) {
-            var record = e.record;               
-            this.fireEvent('columnclick', this, record, recordIndex, cellIndex,e);
+            this.fireEvent('columnclick', this, record, storeRecordIndex, cellIndex,e);
             return this.callParent(arguments);
         } else if (type === 'dblclick') {
-            var record = e.record;
-            return this.fireEvent('columndblclick', this, record, recordIndex, cellIndex);
+            return this.fireEvent('columndblclick', this, record, storeRecordIndex, cellIndex);
         } else {
             return this.callParent(arguments);
         }
