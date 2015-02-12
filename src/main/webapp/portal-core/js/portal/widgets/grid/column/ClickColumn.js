@@ -22,7 +22,7 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
      * Process and refire events routed from the GridView's processEvent method.
      */
     processEvent: function(type, view, cell, recordIndex, cellIndex, e) {
-        var record = view.getRecord(view.getNode(recordIndex));
+        var record = e.record;
         var storeRecordIndex = view.store.indexOf(record);
         
         if (type == 'mousedown' || (type == 'keydown' && (e.getKey() === e.ENTER || e.getKey() === e.SPACE))) {
