@@ -219,9 +219,10 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                     id: 'cswminimapselection',
                     width : 500,
                     height : 800,
+                    html : "<div style='width:100%; height:100%' id='cswselection-mini-map'></div>",
                     listeners : {
                         afterrender : function() {
-                            cswFilterFormPanelMe._getMap(this);
+                            cswFilterFormPanelMe._getMap(this,'cswselection-mini-map');
                         }
                     }
                 }]
@@ -503,8 +504,8 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
 
 
-    _getMap : function(container){
-        var containerId = container.body.dom.id;
+    _getMap : function(container,divId){
+        var containerId = divId;
         var map = new OpenLayers.Map(containerId, {
             projection: 'EPSG:3857',
             controls : [

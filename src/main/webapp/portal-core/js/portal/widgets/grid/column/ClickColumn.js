@@ -24,11 +24,11 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
      */
     processEvent: function(type, view, cell, recordIndex, cellIndex, e) {
         if (type == 'mousedown' || (type == 'keydown' && (e.getKey() === e.ENTER || e.getKey() === e.SPACE))) {
-            var record = view.panel.store.getAt(recordIndex);                      
+            var record = e.record;               
             this.fireEvent('columnclick', this, record, recordIndex, cellIndex,e);
             return this.callParent(arguments);
         } else if (type === 'dblclick') {
-            var record = view.panel.store.getAt(recordIndex);
+            var record = e.record;
             return this.fireEvent('columndblclick', this, record, recordIndex, cellIndex);
         } else {
             return this.callParent(arguments);

@@ -554,8 +554,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      * When the visible fn is clicked, ensure only the visible records pass the filter
      */
     _handleVisibleFilterClick : function(button) {                     
-        var rowExpander = this.getPlugin('maingrid_rowexpandercontainer');
-        rowExpander.closeAllContainers();          
+//        var rowExpander = this.getPlugin('maingrid_rowexpandercontainer');
+//        rowExpander.closeAllContainers();          
         this._visibleFilterClick(button);      
     },
     
@@ -576,7 +576,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             return false;
         };
 
-        var searchField = button.ownerCt.ownerButton.ownerCt.items.getAt(1);
+        var searchField = button.findParentByType('toolbar').getComponent(1);
         searchField.runCustomFilter('<visible layers>', Ext.bind(filterFn, this));
     },
     

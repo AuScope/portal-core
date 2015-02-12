@@ -357,11 +357,13 @@ Ext.define('portal.map.BaseMap', {
      * Remove any rendered data from the map
      */
     _onLayerStoreRemove : function(store, layer) {
-        var renderer = layer.get('renderer');
+        //VT: Since Extjs 5, remove event returns a model[] rather than model
+        //VT: We only deal with single removal of layer at this stage.
+        var renderer = layer[0].get('renderer');
         if (renderer) {
             renderer.abortDisplay();
             renderer.removeData();
-            this.closeInfoWindow(layer.get('id'));
+            this.closeInfoWindow(layer[0].get('id'));
         }
     }
 });

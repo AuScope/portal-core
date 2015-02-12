@@ -839,19 +839,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             }
         }
     },
-
-    /**
-     * Remove any rendered data from the map
-     */
-    _onLayerStoreRemove : function(store, layer) {
-        var renderer = layer.get('renderer');
-        if (renderer) {
-            renderer.abortDisplay();
-            renderer.removeData();
-            this.closeInfoWindow(layer.get('id'));
-        }
-    },
-
+   
     _getDomain : function(data) {
         var a = document.createElement('a');
         a.href = data;
