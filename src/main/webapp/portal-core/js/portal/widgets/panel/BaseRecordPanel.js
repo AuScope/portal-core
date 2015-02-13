@@ -192,7 +192,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             text : 'Visible Bound',
             iconCls : 'visible_eye',
             tooltip: 'Filter the layers based on its bounding box and the map\'s visible bound',
-            handler : Ext.bind(me._handleVisibleFilterClick, me)
+            handler : Ext.bind(me._handleVisibleFilterClick, this)
         })
         
     },
@@ -205,15 +205,15 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             iconCls : 'tick',
             tooltip: 'Display only active layer',
             handler : function(){
-                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
-                rowExpander.closeAllContainers();          
+//                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+//                rowExpander.closeAllContainers();          
                 
                 //function to check if layer is active on map
                 var filterFn = function(rec) {
                     return rec.get('active');
                 };
 
-                var searchField = this.ownerCt.ownerButton.ownerCt.items.getAt(1);
+                var searchField = this.findParentByType('toolbar').getComponent(1);
                 searchField.runCustomFilter('<active layers>', Ext.bind(filterFn, this));
             }
         })
@@ -226,8 +226,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             iconCls : 'data',
             tooltip: 'Display layer with data service',
             handler : function(){
-                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
-                rowExpander.closeAllContainers();          
+//                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+//                rowExpander.closeAllContainers();          
                 
                 //function to if layer contains data service
                 var filterFn = function(rec) {
@@ -244,7 +244,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
                 };
 
-                var searchField = this.ownerCt.ownerButton.ownerCt.items.getAt(1);
+                var searchField = this.findParentByType('toolbar').getComponent(1);
                 searchField.runCustomFilter('<Data Layers>', Ext.bind(filterFn, this));
             }
         })
@@ -258,8 +258,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             iconCls : 'portrayal',
             tooltip: 'Display layers with image service',
             handler : function(){
-                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
-                rowExpander.closeAllContainers();          
+//                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+//                rowExpander.closeAllContainers();          
                 
                 //function to if layer contains image service
                 var filterFn = function(rec) {           
@@ -278,7 +278,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                           
                 };
 
-                var searchField = this.ownerCt.ownerButton.ownerCt.items.getAt(1);
+                var searchField = this.findParentByType('toolbar').getComponent(1);
                 searchField.runCustomFilter('<Portrayal layers>', Ext.bind(filterFn, this));
             }
         })

@@ -12,37 +12,38 @@ Ext.define('portal.layer.filterer.forms.WMSLayerFilterForm', {
 
         var filterer=config.layer.get('filterer');
 
-        var sliderHandler = function(caller, newValue) {
-            var newOpacity = (newValue / 100);
-            filterer.setParameter('opacity',newOpacity);
+        var sliderHandler = function(caller, newValue) {           
+            filterer.setParameter('opacity',newValue);
         };
 
         if(!filterer.getParameter('opacity')){
-            filterer.setParameter('opacity',100,true);
+            filterer.setParameter('opacity',1,true);
         }
 
         Ext.apply(config, {
 
             border      : false,
-            autoScroll  : true,
+            autoScroll  : false,
             hideMode    : 'offsets',
             width       : '100%',
             labelAlign  : 'right',
             bodyStyle   : 'padding:5px',
-            autoHeight:    true,
+            height      :    60,
             layout: 'anchor',
             items:[ {
                 xtype      :'fieldset',
                 title      : 'WMS Properties',
                 layout     : 'fit',
-                autoHeight : true,
+                height : '100%',
                 items      : [{
                         xtype       : 'slider',
                         fieldLabel  : 'Opacity',
                         name        : 'opacity',
                         minValue    : 0,
-                        maxValue    : 100,
-                        value       : (config.layer.get('filterer').getParameter('opacity') * 100),
+                        increment   : 0.01,
+                        decimalPrecision : false,
+                        maxValue    : 1,
+                        value       : config.layer.get('filterer').getParameter('opacity'),
                         listeners   : {changecomplete: sliderHandler}
                 }]
             }]

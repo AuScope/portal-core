@@ -30,7 +30,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         }
     },
 
-    onTrigger1Click : function(){
+    onClearClick : function(){
         var me = this,
             store = me.store,
             proxy = store.getProxy(),
@@ -47,11 +47,11 @@ Ext.define('portal.widgets.field.ClientSearchField', {
 
             this._setTextFieldDisabled(false);
 
-            this.doComponentLayout();
+            this.updateLayout();
         }
     },
 
-    onTrigger2Click : function(){
+    onSearchClick : function(){
         var v = this.getRawValue();
         if(v.length < 1){
             this.onTrigger1Click();
@@ -63,10 +63,10 @@ Ext.define('portal.widgets.field.ClientSearchField', {
 
         this.hasSearch = true;
         this.triggerCell.item(0).setDisplayed(true);
-        this.doComponentLayout();
+        this.updateLayout();
     },
 
-    filterByWord : function(record, id, wordsToFind) {
+    filterByWord : function(record, wordsToFind) {
         var wordList = record.get(this.fieldName).split(this.wordListSplitString);
 
         //Function for testing if a list of words contains a particular word (or prefix)
@@ -109,7 +109,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         //inputFieldEl.mask();
 
 
-        this.doComponentLayout();
+        this.updateLayout();
     },
     
     /**
@@ -130,6 +130,6 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         //inputFieldEl.mask();
 
 
-        this.doComponentLayout();
+        this.updateLayout();
     }
 });
