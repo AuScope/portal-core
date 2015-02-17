@@ -88,8 +88,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         var filterer = layer.get('filterer');
         var filterForm = layer.get('filterForm');
 
-        //Turn off any events before configuring
-        layer.suspendEvents(false);
+        //Turn off any events before configuring        
         renderer.suspendEvents(false);
         filterer.suspendEvents(false);
 
@@ -99,8 +98,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
             filterer.setParameters(filterParams);
         }
 
-        //Turn back on events before proceeding (skipping this will break the portal)
-        layer.resumeEvents();
+        //Turn back on events before proceeding (skipping this will break the portal)        
         renderer.resumeEvents();
         filterer.resumeEvents();
 

@@ -28,8 +28,8 @@ Ext.define('portal.widgets.window.PermanentLinkWindow', {
         //*HACK:* sssssshhhh dont tell anyone we don't care about escaping....
         linkedUrl = Ext.urlAppend(linkedUrl, decodeURIComponent(params));
 
-        var htmlDescription = '<p><b>Warning:</b></p>' +
-                              '<p>This link will only save your selected layers and queries. The actual data received and displayed may be subject to change</p></br>';
+        var htmlDescription = '<b>Warning:</b><br>' +
+                              'This link will only save your selected layers and queries. The actual data received and displayed may be subject to change<br><br>';
 
         //If the URL gets too long it may not work with some common browsers or web servers
         // - http://stackoverflow.com/a/417184/941763
