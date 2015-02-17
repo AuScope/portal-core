@@ -29,7 +29,7 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
                 },{
                     xtype : 'searchfield',
                     store : this.getStore(),
-                    width : 195,
+                    width : 190,
                     name : 'STTField',
                     paramName: 'service_URL',
                     emptyText : 'http://'
@@ -37,7 +37,8 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
                     xtype:'tbseparator'
                 },{
                     xtype : 'button',
-                    text:'Browse Catalogue',
+                    text:'Registry',
+                    iconCls : 'magglass',
                     itemId: 'browseCatalogue',
                     tooltip:'Browse and filter through the available catalogue',                                      
                     scope:this,
