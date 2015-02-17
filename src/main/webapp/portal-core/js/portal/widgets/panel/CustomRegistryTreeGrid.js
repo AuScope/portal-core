@@ -5,7 +5,8 @@ Ext.define('portal.widgets.panel.CustomRegistryTreeGrid', {
         'Ext.data.*',
         'Ext.grid.*',
         'Ext.tree.*',
-        'Ext.ux.CheckColumn'
+        'Ext.ux.CheckColumn',
+        'portal.widgets.model.CustomRegistryModel'
     ],
     xtype: 'tree-grid',
 
@@ -17,19 +18,16 @@ Ext.define('portal.widgets.panel.CustomRegistryTreeGrid', {
     multiSelect: true,
     singleExpand: true,
 
-    constructor: function(cfg) {
-
-        var treeStore = Ext.create('Ext.data.TreeStore', {
-            autoLoad:true,
-            model: portal.widgets.model.CustomRegistryModel,
-            proxy   : {
-                type : 'memory'
-            }
-        });
+    constructor: function(cfg) {     
 
         Ext.apply(this, {
             itemId : 'customRegistryNavTree',
-            store: treeStore,
+            store: new Ext.data.TreeStore({
+                model: portal.widgets.model.CustomRegistryModel,
+                proxy: {
+                    type: 'memory'                         
+                }                      
+            }),
             selModel : Ext.create('Ext.selection.CheckboxModel', {}),
             columns: [{
                 xtype: 'treecolumn', //this is so we know which column will show the tree
@@ -57,7 +55,7 @@ Ext.define('portal.widgets.panel.CustomRegistryTreeGrid', {
                         for(var i=0;i<record.length;i++){
                             var id = record[i].get('id');
                             this._deleteFromCookie(id);
-                            record[i].remove(true);
+                            this.getStore().remove(record[i]);
 
                             var checkBoxItems=checkboxgrp.items.items;
                             for(var j=0;j<checkBoxItems.length;j++){
@@ -73,7 +71,7 @@ Ext.define('portal.widgets.panel.CustomRegistryTreeGrid', {
             }]
         });
 
-        treeStore.setRootNode(this._getRegistryFromCookie());
+        this.setRootNode(this._getRegistryFromCookie());
         this.callParent();
     },
 
@@ -109,6 +107,7 @@ Ext.define('portal.widgets.panel.CustomRegistryTreeGrid', {
                children : children
            }]
        };
+              
 
        return data;
 

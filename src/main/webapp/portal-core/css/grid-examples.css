@@ -79,6 +79,12 @@
 	background : #E6E6E6;
 }
 
+.portal-ux-textfield-disabled .x-form-field{
+	background-color: #E6E6E6; 
+	background-image: none; 
+	opacity: 0.8;
+}
+
 
 .auscope-servicestatus-grid {
     margin:0px;padding:0px;

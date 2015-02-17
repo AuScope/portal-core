@@ -258,7 +258,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                                 };
                             },        
                             //VT: Stop it from adding the same url twice.
-                            beforeadd : function(scope, component, index, eOpts){
+                            beforeadd : function(scope, component, index, eOpts){      
                                 var addItem = true
                                 scope.items.each(function(item,index,len){
                                     if(this.inputValue.serviceUrl && (this.inputValue.serviceUrl===component.inputValue.serviceUrl)){
@@ -299,11 +299,13 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         },{
                             xtype : 'button',
                             text : 'Save Registry',
+                            disabled : true,
+                            itemId : 'cswFilterFormSaveRegistryButton',
                             tooltip : 'Add custom registry and save it to the cookies for future use.',
                             scope : this,
                             handler : function(){                                
-                                //VT:_addFormToRegistry(true) true to add to cookies
-                                this._addFormToRegistry(true);
+                                //VT:_addFormToRegistry(true,false) true to add to cookies, false to not add to checkgroup
+                                this._addFormToRegistry(true,false);
                             }
                         },{
                             xtype: 'tbfill'
@@ -313,16 +315,26 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                             tooltip : 'Add custom registry to the registry list',
                             scope : this,
                             handler : function(){
-                                this._addFormToRegistry();
+                                this._addFormToRegistry(false,true);                                                             
                             }
                         }],
                         items:[{
-                            xtype : 'clearabletextfield',
+                            xtype : 'textfield',
                             anchor:'100%',
+                            itemId : 'cswFilterFormServiceURLTextField',
                             name : 'DNA_serviceUrl',
                             allowBlank: true,
                             fieldLabel : 'Service Url',
-                            emptyText: 'CSW url in the format: http://test/gn/srv/eng/csw'
+                            emptyText: 'CSW url in the format: http://test/gn/srv/eng/csw',
+                            triggers: {
+                                foo: {
+                                    cls: 'x-form-clear-trigger',
+                                    handler: function() {
+                                        this.setRawValue('');
+                                        me._setAllowRegistryAdd();
+                                    }
+                                },                            
+                            }
                         }]
                     }]
                 }]
@@ -597,7 +609,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
     /**
      * addToCookie if set to true will also add this registry to cookie
      */
-    _addFormToRegistry : function(addToCookie){
+    _addFormToRegistry : function(addToCookie, updateCheckGroup){
 
         var customRegistryForm = this.query('form[itemId=customRegistryFormID]')[0]
 
@@ -638,16 +650,16 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                         checked : true
                     });
 
-//                    Ext.each(customRegistryForm.getForm().getFields().items, function(field){
-//                        field.setValue('');
-//                        field.clearInvalid();
-//                    });
-
-                    registry.add(checkBoxItems);
+                    if(updateCheckGroup && updateCheckGroup){
+                        registry.add(checkBoxItems);
+                        this._setAllowRegistryAdd(true);
+                    }
 
                     if(addToCookie && addToCookie==true){
                         if(!(this._saveToCookie(registryEntity))){
                             Ext.Msg.alert('WARNING', 'Only a maximum of 3 registry are allowed to be store locally due to space limitation. This record is not saved but will be added to the registries above. Click on "Manage Saved Registries" to delete');
+                        }else{
+                            Ext.Msg.alert('Status', 'Registry saved locally. Click on "Manage Saved Registries" to delete');
                         }
                     }
 
@@ -657,6 +669,22 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
             }
         });
+    },
+    
+    _setAllowRegistryAdd : function(allowAdd){
+        var textfield = this.query('[itemId="cswFilterFormServiceURLTextField"]')[0]; 
+        var button = this.query('[itemId="cswFilterFormSaveRegistryButton"]')[0] ;
+        
+        if(allowAdd){            
+            button.enable();
+            textfield.setEditable(false);
+            //textfield.setFieldStyle('background-color: #E6E6E6; background-image: none; opacity: 0.8;');
+            textfield.addCls('portal-ux-textfield-disabled');
+        }else{
+            button.disable();
+            textfield.setEditable(true);
+            textfield.removeCls('portal-ux-textfield-disabled');
+        }
     },
 
     _covertCSWtoRecordInfoUrl:function(cswUrl){

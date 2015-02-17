@@ -59,7 +59,9 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         }
 
         this.store.clearFilter(false);
-        this.store.filterBy(Ext.bind(this.filterByWord, this, [v.split(this.wordListSplitString)], true));
+        //VT: http://www.sencha.com/forum/showthread.php?297797-Ext-5.1.107-Store.filterBy-does-not-pass-record-id-down-to-filterFn
+        this.store.filterBy(Ext.bind(this.filterByWord, this, [v.split(this.wordListSplitString)], true));     
+        
 
         this.hasSearch = true;
         this.triggerCell.item(0).setDisplayed(true);
