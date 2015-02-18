@@ -28,7 +28,7 @@ Ext.define('portal.layer.filterer.forms.WMSLayerFilterForm', {
             width       : '100%',
             labelAlign  : 'right',
             bodyStyle   : 'padding:5px',
-            height      :    60,
+            height      :    65,
             layout: 'anchor',
             items:[ {
                 xtype      :'fieldset',

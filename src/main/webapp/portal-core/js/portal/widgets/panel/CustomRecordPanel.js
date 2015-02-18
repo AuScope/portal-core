@@ -27,7 +27,7 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
                     xtype : 'label',
                     text : 'WMS Url:'
                 },{
-                    xtype : 'searchfield',
+                    xtype : 'wmscustomsearchfield',
                     store : this.getStore(),
                     width : 190,
                     name : 'STTField',
