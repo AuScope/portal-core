@@ -80,11 +80,11 @@ Ext.define('portal.widgets.grid.plugin.InlineContextMenu', {
             },
             padding : '5 10 5 0',
             layout : {
-                type : 'anchor',
+                type : 'anchor'
             },
             style : {
                 'text-align' : this.align
-            },
+            }
          });
     }
 });

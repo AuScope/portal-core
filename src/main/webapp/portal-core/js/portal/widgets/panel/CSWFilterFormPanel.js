@@ -522,7 +522,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
             projection: 'EPSG:3857',
             controls : [
                 new OpenLayers.Control.Navigation(),
-                new OpenLayers.Control.PanZoomBar({zoomStopHeight:8}),
+                new OpenLayers.Control.PanZoomBar({zoomStopHeight:8})
             ],
             layers: [
                      new OpenLayers.Layer.Google(

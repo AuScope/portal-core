@@ -115,7 +115,7 @@ Ext.define('portal.csw.OnlineResource', {
         {name: 'name', type: 'string'}, //A name for this resource - it's use will vary depending on type (see comments at top of page)
         {name: 'description', type: 'string'}, //A human readable description of this resource
         {name: 'type', type: 'string'}, //An enumerated type
-        {name: 'version' , type:'string'},
+        {name: 'version' , type:'string'}
     ]
 });
 
