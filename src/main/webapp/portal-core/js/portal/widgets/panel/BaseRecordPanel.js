@@ -187,6 +187,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     },
     
     _getVisibleBoundFilterAction : function(){   
+        
         var me = this;
         return new Ext.Action({
             text : 'Visible Bound',
@@ -214,6 +215,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 };
 
                 var searchField = this.findParentByType('toolbar').getComponent(1);
+                searchField.clearCustomFilter();
                 searchField.runCustomFilter('<active layers>', Ext.bind(filterFn, this));
             }
         })
@@ -245,6 +247,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 };
 
                 var searchField = this.findParentByType('toolbar').getComponent(1);
+                searchField.clearCustomFilter();
                 searchField.runCustomFilter('<Data Layers>', Ext.bind(filterFn, this));
             }
         })
@@ -279,12 +282,36 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 };
 
                 var searchField = this.findParentByType('toolbar').getComponent(1);
+                searchField.clearCustomFilter();
                 searchField.runCustomFilter('<Portrayal layers>', Ext.bind(filterFn, this));
             }
         })
     },
     
-   
+    /**
+     * When the visible fn is clicked, ensure only the visible records pass the filter
+     */
+    _handleVisibleFilterClick : function(button) {                           
+        var currentBounds = this.map.getVisibleMapBounds();
+
+        //Function for testing intersection of a records's spatial bounds
+        //against the current visible bounds
+        var filterFn = function(rec) {
+            var spatialBounds;
+            spatialBounds = this.getSpatialBoundsForRecord(rec);
+            for (var i = 0; i < spatialBounds.length; i++) {
+                if (spatialBounds[i].intersects(currentBounds)) {
+                    return true;
+                }
+            }
+
+            return false;
+        };
+
+        var searchField = button.findParentByType('toolbar').getComponent(1);
+        searchField.clearCustomFilter();
+        searchField.runCustomFilter('<visible layers>', Ext.bind(filterFn, this));      
+    },       
  
     handleFilterSelectComplete : function(filteredResultPanels){
         var me = this;
@@ -549,36 +576,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             this.map.scrollToBounds(superBBox);
         }
     },
-
-    /**
-     * When the visible fn is clicked, ensure only the visible records pass the filter
-     */
-    _handleVisibleFilterClick : function(button) {                     
-//        var rowExpander = this.getPlugin('maingrid_rowexpandercontainer');
-//        rowExpander.closeAllContainers();          
-        this._visibleFilterClick(button);      
-    },
-    
-    _visibleFilterClick : function(button) {
-        var currentBounds = this.map.getVisibleMapBounds();
-
-        //Function for testing intersection of a records's spatial bounds
-        //against the current visible bounds
-        var filterFn = function(rec) {
-            var spatialBounds;
-            spatialBounds = this.getSpatialBoundsForRecord(rec);
-            for (var i = 0; i < spatialBounds.length; i++) {
-                if (spatialBounds[i].intersects(currentBounds)) {
-                    return true;
-                }
-            }
-
-            return false;
-        };
-
-        var searchField = button.findParentByType('toolbar').getComponent(1);
-        searchField.runCustomFilter('<visible layers>', Ext.bind(filterFn, this));
-    },
+   
     
 
     /**

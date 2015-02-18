@@ -120,7 +120,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
      */
     clearCustomFilter : function() {
         //Clear any existing filter
-        this.onTrigger1Click();
+        this.onClearClick();
 
         this.hasSearch = false;
         this.setValue("");
