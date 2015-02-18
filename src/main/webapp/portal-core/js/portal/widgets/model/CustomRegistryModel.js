@@ -6,7 +6,7 @@ Ext.define('portal.widgets.model.CustomRegistryModel', {
          {name: 'title',  type: 'string'},
          {name: 'serviceUrl',       type: 'string'},
          {name: 'recordInformationUrl',  type: 'string'},
-         {name: 'active',  type: 'boolean'},
+         {name: 'active',  type: 'boolean'}
      ]
 
  });
