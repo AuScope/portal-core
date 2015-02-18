@@ -107,6 +107,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         var getLegendAction = new Ext.Action({
             text : text,
             icon : legend.iconUrl,
+            iconCls : 'portal-ux-menu-icon-size',
             handler : function(){
                 var legendCallback = function(legend, resources, filterer, success, form, layer){
                     if (success && form) {
@@ -128,18 +129,26 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
                 //VT: this style is just for the legend therefore no filter is required.
                 var styleUrl = layer.get('renderer').parentLayer.get('source').get('proxyStyleUrl');
+                
+                //VT: if a layer has style, the style should take priority as the default GetLegend source else use default
+                if(styleUrl && styleUrl.length > 0){
 
-                Ext.Ajax.request({
-                    url: styleUrl,
-                    timeout : 180000,
-                    scope : this,
-                    success:function(response,opts){
-                        legend.getLegendComponent(onlineResources, filterer,response.responseText, Ext.bind(legendCallback, this, [layer], true));
-                    },
-                    failure: function(response, opts) {
-                        legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
-                    }
-                });
+                    Ext.Ajax.request({
+                        url: styleUrl,
+                        timeout : 180000,
+                        scope : this,
+                        success:function(response,opts){
+                            legend.getLegendComponent(onlineResources, filterer,response.responseText, Ext.bind(legendCallback, this, [layer], true));
+                        },
+                        failure: function(response, opts) {
+                            legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
+                        }                        
+                    });
+                
+                }else{
+                    legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
+                }
+                
             }
         });
         

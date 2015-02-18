@@ -144,7 +144,9 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
     
     onCellClick: function(view, td, cellIndex, record, tr, rowIndex) {
-        this.toggleRow(rowIndex, record);
+        if(cellIndex == 0 || cellIndex == 2){
+            this.toggleRow(rowIndex, record);
+        }
     },
     
     onResize: function() {
