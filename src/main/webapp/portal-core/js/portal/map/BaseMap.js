@@ -59,13 +59,7 @@ Ext.define('portal.map.BaseMap', {
             this.renderToContainer(this.container);
         }
 
-        console.warn('Artificial delay to overcome Ext JS 4.1 rc1 issues');
-        this.layerStore.on('add', this._onLayerStoreAdd, this, {
-            delay : 1   //There is an issue with grids adding responding to
-                        //data store change events before the constructed row is
-                        //ready for use (hence this artificial delay)
-        });
-
+        this.layerStore.on('add', this._onLayerStoreAdd, this);
         this.layerStore.on('remove', this._onLayerStoreRemove, this);
     },
 
