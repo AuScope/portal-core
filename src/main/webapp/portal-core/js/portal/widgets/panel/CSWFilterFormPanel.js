@@ -333,7 +333,7 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
                                         this.setRawValue('');
                                         me._setAllowRegistryAdd();
                                     }
-                                },                            
+                                }                       
                             }
                         }]
                     }]
