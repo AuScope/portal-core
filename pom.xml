@@ -188,18 +188,29 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
-                <version>1.3.0</version>
-                <configuration>
-                    <excludes>
-                        <!-- Exclude some base frameworks -->
-                        <exclude>portal-core/js/ext*/**</exclude>
-                        <exclude>portal-core/js/OpenLayers*/**</exclude>
-                    </excludes>
-                    <nosuffix>true</nosuffix>
-                </configuration>
-            </plugin>
+		        <groupId>com.samaxes.maven</groupId>
+		        <artifactId>minify-maven-plugin</artifactId>
+		        <version>1.7.4</version>
+		        <executions>
+		          <execution>
+		            <id>default-minify</id>
+		            <configuration>
+		              <charset>UTF-8</charset>
+		              <jsSourceDir>portal-core/js/portal</jsSourceDir>
+                      <jsTargetDir>../classes/portal-core/js/portal</jsTargetDir>
+		              <jsSourceIncludes>
+		                <jsSourceInclude>**/*.js</jsSourceInclude>
+		              </jsSourceIncludes>
+		              <jsFinalFile>portal-core-all.js</jsFinalFile>
+		              <jsEngine>CLOSURE</jsEngine>
+                      <closureSortDependencies>true</closureSortDependencies>
+		            </configuration>
+		            <goals>
+		              <goal>minify</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+	        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -233,7 +244,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
-            </plugin>
+            </plugin>            
         </plugins>
         <resources>
          <resource>
@@ -243,6 +254,34 @@
            <directory>src/main/webapp</directory>
          </resource>
        </resources>
+       <pluginManagement>
+          <plugins>
+            <plugin>
+             <groupId>org.eclipse.m2e</groupId>
+             <artifactId>lifecycle-mapping</artifactId>
+             <version>1.0.0</version>
+             <configuration>
+                <lifecycleMappingMetadata>
+                <pluginExecutions>
+                    <pluginExecution>
+                        <pluginExecutionFilter>
+                            <groupId>com.samaxes.maven</groupId>
+	                        <artifactId>minify-maven-plugin</artifactId>
+	                        <versionRange>[1.7,)</versionRange>
+                            <goals>
+                                <goal>minify</goal>
+                            </goals>
+                        </pluginExecutionFilter>
+                        <action>
+                            <ignore />
+                        </action>
+                    </pluginExecution>
+                </pluginExecutions>
+               </lifecycleMappingMetadata>
+             </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
     </build>
     <reporting>
         <plugins>
