@@ -3,16 +3,11 @@
 	overflow:hidden; /* wrap floats */
 	height:55px; /* trips haslayout, wrap floats IE */
 	list-style:none;
-    top: -10px;
+    top: -15px;
     right: 0px;
-	font-family: "UniversCn",Arial,Helvetica,sans-serif;
-	font-style: bold ;
-	font-size : 14px ;
-	line-height : 35px;
+	font:bold 14px/40px sans-serif;
     float: right;
-    background-color: #4B9CD7; 
-    border-top-left-radius : 25px;
-    border-bottom-left-radius : 25px;
+    padding-right: 30px;    
 }
 
 #logo {
@@ -28,10 +23,11 @@
 	float:left;
 	position:relative;
 	padding-left:15px;
-	padding-right:15px;    
+    margin-left: 1px;
+	margin-right:15px;
 	text-decoration:none;
-	color:#ffffff;
-	
+	color:#EEE;
+	background:url(../img/nav.gif) 0 0px no-repeat;
 }
 
 #menu a span {
@@ -40,19 +36,31 @@
 	left:100%;
 	width:15px;
 	height:40px;
-	
+	background:url(../img/nav.gif) -295px -0px no-repeat;
 }
 
+#menu .current a {
+	background-position:0 -40px;
+	background-color:#CCC;
+}
+
+#menu .current a span {
+	background-position:-295px -40px;
+}
 
 #menu a:active,
 #menu a:focus,
 #menu a:hover {
 
-	background-position: center;
-	background-color:#c0c0c0;
+	background-position:0px -40px;
+	background-color:#FF0;
 }
 
-
+#menu a:active span,
+#menu a:focus span,
+#menu a:hover span {
+	background-position:-295px -40px;
+}
 
 #latlng {
 	position:absolute;
