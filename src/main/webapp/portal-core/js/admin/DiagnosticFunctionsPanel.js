@@ -95,7 +95,10 @@ Ext.define('admin.DiagnosticFunctionsPanel', {
             text: text,
             scope : this,
             handler : function(btn, e) {
-                var mask = new Ext.LoadMask(this, {msg : 'Performing function. Please be patient.'});
+                var mask = new Ext.LoadMask({
+                    msg : 'Performing function. Please be patient.',
+                    target : this
+                    });
                 mask.show();
                 executeFn(function(success, msg) {
                     mask.hide();

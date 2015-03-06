@@ -81,7 +81,10 @@ Ext.define('portal.charts.BaseD3Chart', {
             this.maskClear();
         }
 
-        this._loadMask = new Ext.LoadMask(this, {msg:message});
+        this._loadMask = new Ext.LoadMask({
+            msg:message,
+            target : this
+            });
         this._loadMask.show();
     },
 
