@@ -685,7 +685,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     },
     
     _statusListErrorCount : function(listOfStatus){
-        var match =["reached","error","did not complete"];
+        var match =["reached","error","did not complete","AJAX"];
         
         var erroCount = 0;  
         
