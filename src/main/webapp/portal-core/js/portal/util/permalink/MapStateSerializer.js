@@ -84,8 +84,8 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
     addMapState : function(map) {
         this.mapState = {
             center : {
-                lat : map.getCenter().latitude,
-                lng : map.getCenter().longitude
+                lat : map.getCenter().getLatitude(),
+                lng : map.getCenter().getLongitude()
             },
             zoom : map.getZoom()
         };

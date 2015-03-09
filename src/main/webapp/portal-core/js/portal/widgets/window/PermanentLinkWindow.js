@@ -63,9 +63,11 @@ Ext.define('portal.widgets.window.PermanentLinkWindow', {
                     value : linkedUrl,
                     readOnly : true,
                     listeners : {
-                        afterrender : function(textField) {
-                            textField.focus(true, 100);
-                        }
+                        afterrender: function(field) {
+                            Ext.defer(function() {
+                                field.focus(true, 100);
+                            }, 1);
+                         }
                     }
                 }]
             }]
