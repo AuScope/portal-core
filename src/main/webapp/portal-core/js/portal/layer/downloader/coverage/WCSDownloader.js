@@ -116,6 +116,10 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                         }
                     }
                 };
+                
+                if(currentVisibleBounds.eastBoundLongitude < -150){
+                    currentVisibleBounds.eastBoundLongitude = 360 + currentVisibleBounds.eastBoundLongitude;
+                }
 
                 //Contains the fields for bbox selection
                 if (rec.spatialDomain.envelopes.length > 0) {
