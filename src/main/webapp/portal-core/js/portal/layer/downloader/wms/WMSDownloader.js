@@ -65,9 +65,9 @@ Ext.define('portal.layer.downloader.wms.WMSDownloader', {
                    var vb = me.map.getVisibleMapBounds();
                    var mapSize = me.map.getMapSizeInPixels();
                    var bboxString = Ext.util.Format.format('{0},{1},{2},{3}',
-                           (vb.westBoundLongitude < 0 ? vb.westBoundLongitude + 360.0 : vb.westBoundLongitude),
+                           (vb.westBoundLongitude < 0 ? parseInt(vb.westBoundLongitude) + 360.0 : vb.westBoundLongitude),
                            vb.southBoundLatitude,
-                           (vb.eastBoundLongitude < 0 ? vb.eastBoundLongitude + 360.0 : vb.eastBoundLongitude),
+                           (vb.eastBoundLongitude < 0 ? parseInt(vb.eastBoundLongitude) + 360.0 : vb.eastBoundLongitude),
                            vb.northBoundLatitude);
 
                    var queryString = Ext.Object.toQueryString({
@@ -81,8 +81,8 @@ Ext.define('portal.layer.downloader.wms.WMSDownloader', {
                       transparent : true,
                       srs : 'EPSG:4326',
                       bbox : bboxString,
-                      width : mapSize.width,
-                      height : mapSize.height
+                      width : mapSize.getWidth(),
+                      height : mapSize.getHeight()
                    });
 
                    //This is the WMS request URL (we will be proxying it through our local zipping proxy)
@@ -106,7 +106,7 @@ Ext.define('portal.layer.downloader.wms.WMSDownloader', {
                 anchor: '100%',
                 emptyText : 'Please select a file format.',
                 forceSelection: true,
-                queryMode: 'local',
+                queryMode: 'remote',
                 triggerAction: 'all',
                 typeAhead: true,
                 typeAheadDelay: 500,

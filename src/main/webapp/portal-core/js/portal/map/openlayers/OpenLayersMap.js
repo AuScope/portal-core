@@ -109,6 +109,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                             cswRecord : cswRecord,
                             explicit : true
                         }));
+                                              
                     }
                 }
             }
@@ -121,7 +122,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var id = primitive.getId();
         var onlineResource = primitive.getOnlineResource();
         var layer = primitive.getLayer();
-        var cswRecord = primitive.getCswRecord();
+        var cswRecord = primitive.getCswRecord();                
 
         return [Ext.create('portal.layer.querier.QueryTarget', {
             id : id,
@@ -223,6 +224,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                             layer : layer,
                             explicit : true
                         }));
+                                                
                     }
                 }
             }
@@ -661,6 +663,9 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 border : false,
                 items : content
             });
+          //VT:Tracking
+          _paq.push(['trackEvent', 'Query','layer:'+layer.get('name'),'id:' + content[0].tabTitle]);
+            
         } else {
             var tabPanelItems = [];
             for (var i = 0; i < content.length; i++) {
@@ -671,6 +676,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                         autoScroll : true,
                         html : content[i]
                     });
+                    _paq.push(['trackEvent', 'Query','layer:'+layer.get('name'),'id:Unknown']);
                 } else {
                     tabPanelItems.push({
                         title : content[i].tabTitle,
@@ -678,6 +684,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                         autoScroll : true,
                         items : [content[i]]
                     });
+                    _paq.push(['trackEvent', 'Query','layer:'+layer.get('name'),'id:' + content[i].tabTitle]);
                 }
             }
 

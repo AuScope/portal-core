@@ -77,6 +77,13 @@ Ext.define('portal.widgets.field.WMSCustomSearchField', {
         }
         proxy.extraParams[me.paramName] = value;
         store.loadPage(1);
+        store.on('load',function(store, records, successful, eOpts){
+            //VT:tracking            
+            _paq.push(['trackEvent', 'Custom WMS Query','URL:' + value,'ResultCount:'+ store.count(), store.count()]);
+        },this)
+        
+     
+        
         me.hasSearch = true;
         me.triggerCell.item(0).setDisplayed(true);
         me.updateLayout();

@@ -337,6 +337,8 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             filterParameters.serviceUrl = url;
             filterParameters.typeName = typeName;
             filterParameters.maxFeatures = 200;
+            
+            _paq.push(['trackEvent', 'KLWFSDownloader', 'Url:' + url,'parameters:' + Ext.encode(filterer.getParameters())]);
 
 
             sUrl += '&serviceUrls=' + escape(Ext.urlEncode(filterParameters, prefixUrl));

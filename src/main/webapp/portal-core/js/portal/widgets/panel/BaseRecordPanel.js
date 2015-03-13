@@ -623,8 +623,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         var layer = record.get('layer');
         if(layer && record.get('active')){            
             layer.removeDataFromMap();
-            this.activelayerstore.remove(layer);
-            layer.data.filterForm.ownerCt.updateButton(false);
+            this.activelayerstore.remove(layer);          
             this.fireEvent('cellclick',this,undefined,undefined,record,undefined,rowIdx);
         }             
     },
@@ -685,7 +684,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     },
     
     _statusListErrorCount : function(listOfStatus){
-        var match =["reached","error","did not complete","AJAX"];
+        var match =["reached","error","did not complete","AJAX","Unable"];
         
         var erroCount = 0;  
         

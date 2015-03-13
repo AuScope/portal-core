@@ -54,7 +54,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
     onSearchClick : function(){
         var v = this.getRawValue();
         if(v.length < 1){
-            this.onTrigger1Click();
+            this.onClearClick();
             return;
         }
 
@@ -62,6 +62,8 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         //VT: http://www.sencha.com/forum/showthread.php?297797-Ext-5.1.107-Store.filterBy-does-not-pass-record-id-down-to-filterFn
         this.store.filterBy(Ext.bind(this.filterByWord, this, [v.split(this.wordListSplitString)], true));     
         
+        //VT:Tracking
+        _paq.push(['trackSiteSearch',v,this.getId(),this.store.count()]);
 
         this.hasSearch = true;
         this.triggerCell.item(0).setDisplayed(true);
@@ -98,7 +100,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
      */
     runCustomFilter : function(text, func) {
         //Clear any existing filter
-        this.onTrigger1Click();
+        this.onClearClick();
 
         this.hasSearch = true;
         this.setValue(text);
@@ -110,6 +112,8 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         this._setTextFieldDisabled(true);
         //inputFieldEl.mask();
 
+        //VT:Tracking
+        _paq.push(['trackSiteSearch',text,this.getId(),this.store.count()]);
 
         this.updateLayout();
     },

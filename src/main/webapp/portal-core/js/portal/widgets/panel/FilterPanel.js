@@ -232,8 +232,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             iconCls : 'trash',
             handler : function(){
                 var layer = me.filterForm.layer; 
-                layer.removeDataFromMap();
-                me.updateButton(false);
+                layer.removeDataFromMap();               
                 me.fireEvent('removelayer', layer);
             }
         });
@@ -275,24 +274,16 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         //Before applying filter, update the spatial bounds (silently)
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
 
-        this.filterForm.writeToFilterer(filterer);
         this.fireEvent('addlayer', layer);
-        this.updateButton(true);
+        this.filterForm.writeToFilterer(filterer);        
+      
         this._showConstraintWindow(layer);
+        
+        //VT: Tracking
+        _paq.push(['trackEvent', 'Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters())]);
     },
     
-    /**
-     * Change the state of the button
-     * State 1: original text "Add layer to Map"
-     * State 2: after adding layer "Update layer on Map")
-     */
-    updateButton : function(islayerOnMap){
-        if(islayerOnMap){
-            this._addLayerButton.setText('Update layer on Map');
-        }else{
-            this._addLayerButton.setText('Add layer to Map');
-        }
-    },
+    
     
     _showConstraintWindow : function(layer){
         if(this.constraintShown){

@@ -30,11 +30,11 @@ Ext.define('portal.map.openlayers.primitives.Marker', {
         var iconHeight = undefined;
         var iconOffsetX = undefined;
         var iconOffsetY = undefined;
-        if (Ext.isNumber(icon.getWidth()) && Ext.isNumber(icon.getHeight())) {
+        if (icon && Ext.isNumber(icon.getWidth()) && Ext.isNumber(icon.getHeight())) {
             iconWidth = icon.getWidth();
             iconHeight = icon.getHeight();
         }
-        if (Ext.isNumber(icon.getAnchorOffsetX()) && Ext.isNumber(icon.getAnchorOffsetY())) {
+        if (icon && Ext.isNumber(icon.getAnchorOffsetX()) && Ext.isNumber(icon.getAnchorOffsetY())) {
             iconOffsetX = (0 - icon.getAnchorOffsetX());
             iconOffsetY = (0 - icon.getAnchorOffsetY());
         }

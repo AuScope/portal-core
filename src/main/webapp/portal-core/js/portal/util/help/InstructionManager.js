@@ -30,6 +30,11 @@ Ext.define('portal.util.help.InstructionManager',{
      * any current instruction will be hidden and nothing will be shown.
      */
     _showInstruction : function(index, instructions) {
+        
+        if(index < instructions.length && index >= 0){
+            _paq.push(['trackEvent', 'HelpHandlerClick', 'Step:' + index,'HelpTitle:' + instructions[index].get('title')]);
+        }
+        
         //Move the spotlight
         var instr = (index >= instructions.length || index < 0) ? null : instructions[index];
 
