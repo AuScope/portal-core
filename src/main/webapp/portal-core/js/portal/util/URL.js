@@ -30,5 +30,38 @@ Ext.define('portal.util.URL', {
             return '';
         }
         return match[1];
+    },
+    
+    
+    /**
+     * Given a URL in the form http://example.com:80/a/b/c
+     * 
+     * Return just the host (and port number) i.e. 'example.com' and subdirectory
+     * 
+     * 
+     * @param url The URL as a String
+     * @param OPTIONAL number of subDir to return
+     */
+    portal.util.URL.extractHostNSubDir = function(url,numberOfSubDir) {
+        var a = document.createElement('a');
+        a.href = url;
+
+        var pathArray=a.pathname.split("/");
+        
+        var hostname = a.hostname;
+        
+        if(numberOfSubDir && pathArray.length > 1){
+            
+            for(var i=1; i <= numberOfSubDir && i < pathArray.length ; i++){
+                hostname =  hostname + "/" + pathArray[i];
+            }            
+            
+            return hostname;
+        }
+        
+        
+        
+        return a.hostname;
     }
+    
 });

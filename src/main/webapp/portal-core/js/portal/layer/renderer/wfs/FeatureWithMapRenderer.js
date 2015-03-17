@@ -194,9 +194,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 timeout : 180000,
                 scope : this,
                 success: Ext.bind(this._getRenderLayer,this,[wmsResources[i], wmsUrl, wmsLayer, wmsOpacity,wfsResources, filterer],true),
-                failure: function(response, opts) {
-                     this.currentRequestCount--;
-                     if (this.currentRequestCount === 0) {
+                failure: function(response, opts) {                    
+                     if (this.currentRequestCount <= 0) {
                          this.fireEvent('renderfinished', this);
                      }
                     console.log('server-side failure with status code ' + response.status);
@@ -326,7 +325,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
             this.currentRequestCount++;
             var listOfStatus=this.renderStatus.getParameters();
             for(key in listOfStatus){
-                if(this._getDomain(key)==this._getDomain(layer.wmsUrl)){
+                if(this._getDomain(key)==this._getDomain(layer.getWmsUrl())){
                     this.renderStatus.updateResponse(key, "Loading WMS");
                     this.fireEvent('renderstarted', this, wfsResources, filterer);
                     break
@@ -342,7 +341,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                 this.fireEvent('renderfinished', this);
             }
             var listOfStatus=this.renderStatus.getParameters();
-            this._updateStatusforWFSWMS(layer.wmsUrl,"WMS Loaded");                        
+            this._updateStatusforWFSWMS(layer.getWmsUrl(),"WMS Loaded");                        
         });
         
         var primitives = [];
@@ -361,14 +360,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
     },
 
     _getDomain : function(data) {
-        var a = document.createElement('a');
-        a.href = data;
-
-        var pathArray=a.pathname.split("/");
-        if(pathArray.length > 1){
-            return a.hostname + "/" + pathArray[pathArray.length-2];
-        }
-        return a.hostname;
+        return portal.util.URL.extractHostNSubDir(data,1);
       },
 
   

@@ -65,7 +65,7 @@ Ext.define('portal.util.FileDownloader', {
         });
 
         portal.util.GoogleAnalytic.trackevent('FileDownloader','Download', url);
-        _paq.push(['trackEvent', 'FileDownloader', 'Url:' + url,'parameters:' + Ext.encode(parameters)]);
+        portal.util.PiwikAnalytic.trackevent('FileDownloader', 'Url:' + url,'parameters:' + Ext.encode(parameters));
         
         form.dom.action = url;	
         form.dom.submit();

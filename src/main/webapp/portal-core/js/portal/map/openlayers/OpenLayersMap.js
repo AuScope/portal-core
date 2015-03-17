@@ -664,7 +664,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 items : content
             });
           //VT:Tracking
-          _paq.push(['trackEvent', 'Query','layer:'+layer.get('name'),'id:' + content[0].tabTitle]);
+            portal.util.PiwikAnalytic.trackevent('Query','layer:'+layer.get('name'),'id:' + content[0].tabTitle);
             
         } else {
             var tabPanelItems = [];
@@ -676,7 +676,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                         autoScroll : true,
                         html : content[i]
                     });
-                    _paq.push(['trackEvent', 'Query','layer:'+layer.get('name'),'id:Unknown']);
+                    portal.util.PiwikAnalytic.trackevent('Query','layer:'+layer.get('name'),'id:Unknown');
                 } else {
                     tabPanelItems.push({
                         title : content[i].tabTitle,
@@ -684,7 +684,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                         autoScroll : true,
                         items : [content[i]]
                     });
-                    _paq.push(['trackEvent', 'Query','layer:'+layer.get('name'),'id:' + content[i].tabTitle]);
+                    portal.util.PiwikAnalytic.trackevent('Query','layer:'+layer.get('name'),'id:' + content[i].tabTitle);
                 }
             }
 
@@ -866,14 +866,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     },
    
     _getDomain : function(data) {
-        var a = document.createElement('a');
-        a.href = data;
-
-        var pathArray=a.pathname.split("/");
-        if(pathArray.length > 1){
-            return a.hostname + "/" + pathArray[pathArray.length-2];
-        }
-        return a.hostname;
+        return portal.util.URL.extractHostNSubDir(data,1);
     },
 
     _activateClickControl : function() {

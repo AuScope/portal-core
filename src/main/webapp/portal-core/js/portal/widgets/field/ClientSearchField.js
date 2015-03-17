@@ -63,7 +63,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         this.store.filterBy(Ext.bind(this.filterByWord, this, [v.split(this.wordListSplitString)], true));     
         
         //VT:Tracking
-        _paq.push(['trackSiteSearch',v,this.getId(),this.store.count()]);
+        portal.util.PiwikAnalytic.siteSearch(v,this.getId(),this.store.count());
 
         this.hasSearch = true;
         this.triggerCell.item(0).setDisplayed(true);
@@ -113,7 +113,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
         //inputFieldEl.mask();
 
         //VT:Tracking
-        _paq.push(['trackSiteSearch',text,this.getId(),this.store.count()]);
+        portal.util.PiwikAnalytic.siteSearch(text,this.getId(),this.store.count());
 
         this.updateLayout();
     },

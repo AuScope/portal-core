@@ -280,7 +280,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         this._showConstraintWindow(layer);
         
         //VT: Tracking
-        _paq.push(['trackEvent', 'Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters())]);
+        portal.util.PiwikAnalytic.trackevent('Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters()));
     },
     
     

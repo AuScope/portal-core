@@ -338,7 +338,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
             filterParameters.typeName = typeName;
             filterParameters.maxFeatures = 200;
             
-            _paq.push(['trackEvent', 'KLWFSDownloader', 'Url:' + url,'parameters:' + Ext.encode(filterer.getParameters())]);
+            portal.util.PiwikAnalytic.trackevent('KLWFSDownloader', 'Url:' + url,'parameters:' + Ext.encode(filterer.getParameters()));
 
 
             sUrl += '&serviceUrls=' + escape(Ext.urlEncode(filterParameters, prefixUrl));

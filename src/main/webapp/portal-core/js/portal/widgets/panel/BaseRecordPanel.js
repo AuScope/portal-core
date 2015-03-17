@@ -175,7 +175,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             renderTo    : parentElId,
             listeners : {
                 addlayer : function(layer){
-                    me.activelayerstore.insert(0,layer); //this adds the layer to our store       
+                    me.activelayerstore.suspendEvents(false);
+                    me.activelayerstore.insert(0,layer); //this adds the layer to our store
+                    me.activelayerstore.resumeEvents();
                 },
                 removelayer : function(layer){
                     me.activelayerstore.remove(layer);

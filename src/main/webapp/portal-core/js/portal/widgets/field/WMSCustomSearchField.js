@@ -79,7 +79,7 @@ Ext.define('portal.widgets.field.WMSCustomSearchField', {
         store.loadPage(1);
         store.on('load',function(store, records, successful, eOpts){
             //VT:tracking            
-            _paq.push(['trackEvent', 'Custom WMS Query','URL:' + value,'ResultCount:'+ store.count(), store.count()]);
+            portal.util.PiwikAnalytic.trackevent('Custom WMS Query','URL:' + value,'ResultCount:'+ store.count(), store.count());
         },this)
         
      
