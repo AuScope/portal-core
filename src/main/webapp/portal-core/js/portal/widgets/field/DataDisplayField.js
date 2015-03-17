@@ -14,6 +14,7 @@ Ext.define('portal.widgets.field.DataDisplayField', {
      * This is hardcoded, the label will appear in the 'display' part of the field.
      */
     hideLabel : true,
+    labelStyle: 'display:none;', //Extjs 5.1 doesn't seem to honor the above. This is the nuclear alternative
 
     fieldCls: Ext.baseCSSPrefix + 'form-value-field',
     labelCls: Ext.baseCSSPrefix + 'form-value-field-label',
@@ -40,9 +41,8 @@ Ext.define('portal.widgets.field.DataDisplayField', {
     fieldSubTpl : null,
 
     constructor : function(config) {
-
-        this.uom = config.uom;
-        this.uomStyle = config.uomStyle;
+        this.uom = config.uom ? config.uom : '';
+        this.uomStyle = config.uomStyle ? config.uomStyle : {};
         this.uomCls = config.uomCls ? config.uomCls : this.uomCls;
         this.uomTip = config.uomTip ? config.uomTip : '';
         this.fieldLabel = config.fieldLabel ? config.fieldLabel : '';
@@ -57,7 +57,8 @@ Ext.define('portal.widgets.field.DataDisplayField', {
           '</div>',
           '<div class="x-form-value-field-label">',
           '{[fieldLabel]}',
-          '</div>',{
+          '</div>',
+          {
               compiled: true,
               disableFormats: true,
               //This is where we 'inject' our own variables for use within the template

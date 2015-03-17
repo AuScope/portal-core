@@ -6,7 +6,7 @@
 Ext.define('portal.charts.3DScatterPlot', {
     extend: 'Ext.panel.Panel',
 
-    alias: 'widget.3dscatterplot',
+    alias: 'widget.threedscatterplot',
 
     data : null,
     d3 : null, //D3 elements (graphs, lines etc).
