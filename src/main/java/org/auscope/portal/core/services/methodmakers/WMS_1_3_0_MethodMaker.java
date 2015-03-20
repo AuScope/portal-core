@@ -300,8 +300,8 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
      */
     @Override
     public boolean accepts(String wmsUrl,String version) {
-        if(version != null && version.equals(this.getSupportedVersion())){
-            return true;
+        if(version != null){
+            return version.equals(this.getSupportedVersion())?true:false;
         }
         try{
             List<NameValuePair> existingParam = this.extractQueryParams(wmsUrl); //preserve any existing query params

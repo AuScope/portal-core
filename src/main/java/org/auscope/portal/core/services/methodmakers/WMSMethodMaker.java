@@ -289,8 +289,8 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
     @Override
     public boolean accepts(String wmsUrl,String version) {
         //VT: if version is already specified, just return
-        if(version != null && version.equals(this.getSupportedVersion())){
-            return true;
+        if(version != null){
+            return version.equals(this.getSupportedVersion())?true:false;
         }
 
         try{
