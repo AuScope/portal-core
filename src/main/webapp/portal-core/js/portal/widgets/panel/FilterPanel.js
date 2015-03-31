@@ -41,22 +41,26 @@ Ext.define('portal.widgets.panel.FilterPanel', {
          
         
         var menuItems = [this._getResetFormAction(),this._getDeleteAction(),this._setVisibilityAction()];
-        var legendAction=this._getLegendAction();
-        if(legendAction){
-            menuItems.push(legendAction);
-        }
+                        
+              
+        //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
+        //VT:Should have a legend action except for Insar data.
+        if(this.filterForm.layer.get('renderer').getLegend()){            
+            menuItems.push(this._getLegendAction(this.filterForm.layer));
+        }      
         
+        //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
+        //VT:Should have a download action except for Insar data.
         if(this.filterForm.layer.get('cswRecords').length > 0 &&
-           this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
-            menuItems.push(this._getDownloadAction());
+                this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
+                 menuItems.push(this._getDownloadAction());
         }
         
-        var group = this.filterForm.layer.get('source').get('group');
-        if(group && group.indexOf('Analytic') >= 0){
-            menuItems.push(this._getAnalyticLink());
+        if(config.menuFactory){
+            var mf= config.menuFactory;
+            mf.appendAdditionalActions(menuItems,this.filterForm.layer,this.filterForm.layer.get('source').get('group'),this._map);
         }
-            
-
+        
         Ext.apply(config, { 
             items : [
                 this.filterForm
@@ -95,14 +99,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         
     },
     
-    _getLegendAction : function(){                 
-        var me = this;
-        var layer = me.filterForm.layer;
+    _getLegendAction : function(layer){                       
         var legend = layer.get('renderer').getLegend();
         var text = 'Get Legend';
-        if(!legend){
-           return null;
-        }
+       
         
         var getLegendAction = new Ext.Action({
             text : text,
@@ -155,41 +155,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         return getLegendAction;
     },
     
-    _getAnalyticLink : function(){
-        var me=this;
-        var layer = this.filterForm.layer; 
-        
-        return new Ext.Action({
-            text : 'Vgl Analytics',
-            iconCls : 'link',
-            handler : function(){                
-                
-                var mss = Ext.create('portal.util.permalink.MapStateSerializer');
-                var layerStore = Ext.create('portal.layer.LayerStore', {});
-                layerStore.insert(0,layer);
-
-                mss.addMapState(me._map);
-                mss.addLayers(layerStore);
-                mss.serialize(function(state, version) {
-                    var urlParams = Ext.Object.fromQueryString(location.search.substring(1));
-                    urlParams.s = state;
-                    if (version) {
-                        urlParams.v = version;
-                    }
-                    //VT: Hardcoding this for now, don't foresee any changes anytime soon.
-                    var linkedUrl = "http://vgl.auscope.org/VGL-Portal/gmap.html";
-
-                    var params = Ext.Object.toQueryString(urlParams);
-
-                    //*HACK:* sssssshhhh dont tell anyone we don't care about escaping....
-                    linkedUrl = Ext.urlAppend(linkedUrl, decodeURIComponent(params));
-                    window.open(linkedUrl);
-                });
-                
-            }
-        });
-        
-    },
+    
 
     
     _getDownloadAction : function(){

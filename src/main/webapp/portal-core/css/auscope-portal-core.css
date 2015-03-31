@@ -23,6 +23,10 @@
     background-repeat: no-repeat;
 }
 
+.x-form-display-field-default{
+	min-height: 20px;
+}
+
 
 .auscope-servicestatus-grid {
     margin:0px;padding:0px;
@@ -185,4 +189,8 @@
 
 .edit {
     background-image: url("../img/edit.png") !important
+}
+
+.graph {
+    background-image: url("../img/graph.png") !important
 }

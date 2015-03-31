@@ -20,10 +20,12 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
     map : null,
     activelayerstore : null,
+    menuFactory : null,
 
     constructor : function(cfg) {
         var me = this;
         this.map = cfg.map;
+        this.menuFactory = cfg.menuFactory;
         this.activelayerstore = cfg.activelayerstore;
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
             groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})',
@@ -169,7 +171,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     
     _getInlineLayerPanel : function(filterForm, parentElId){                             
         var me = this;   
-        var panel =Ext.create('portal.widgets.panel.FilterPanel', {            
+        var panel =Ext.create('portal.widgets.panel.FilterPanel', {    
+            menuFactory : this.menuFactory,
             filterForm  : filterForm,                       
             map         : this.map,
             renderTo    : parentElId,
