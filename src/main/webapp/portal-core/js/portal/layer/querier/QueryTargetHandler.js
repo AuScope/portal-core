@@ -5,7 +5,7 @@
  */
 Ext.define('portal.layer.querier.QueryTargetHandler', {
 
-    _infoWindowHeight : 300,
+    _infoWindowHeight : 350,
     _infoWindowWidth : 600,
 
     /**

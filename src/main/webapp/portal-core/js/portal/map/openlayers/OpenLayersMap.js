@@ -642,7 +642,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         node.addEventListener('mousedown', handler);
         node.addEventListener('mouseup', handler);
         node.addEventListener('mousemove', handler);
-        node.addEventListener('click', handler);
+        node.addEventListener('click', handler);             
+
         //End workaround
         
         
@@ -659,6 +660,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 width : paddedSize.w,
                 height : paddedSize.h,
                 autoScroll : true,
+                layout: 'fit',
                 renderTo : divId,
                 border : false,
                 items : content
@@ -691,8 +693,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             Ext.create('Ext.tab.Panel', {
                 width : paddedSize.w,
                 height : paddedSize.h,
-                renderTo : divId,
-                plain : true,
+                renderTo : divId,                
+                //plain : true,
                 border : false,
                 activeTab: 0,
                 items : tabPanelItems
