@@ -363,21 +363,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var customNavTb=new customNavToolBar();
         customNavTb.controls[1].events.on({
             "afterZoom": function() {
-               // populate bounding box fields if presence with lon/lat bounds of current selected view area.
-               var cswServiceFilterForm = Ext.getCmp('cswServiceFilterForm');
-               if (cswServiceFilterForm) {
-                   // expand bounding box fieldset if it is not already so
-                   var bboxFieldset = Ext.getCmp('bboxFieldset');
-                   if (bboxFieldset.collapsed) {
-                       bboxFieldset.expand();
-                   }
-                   // get the extent and populate the bounding box fields
-                   bounds = this.map.getExtent().transform('EPSG:3857','EPSG:4326').toArray();
-                   Ext.getCmp("lat_max").setValue(bounds[3]); // north bound latitude
-                   Ext.getCmp("lat_min").setValue(bounds[1]); // south bound latitude
-                   Ext.getCmp("long_max").setValue(bounds[2]); // east bound longitude
-                   Ext.getCmp("long_min").setValue(bounds[0]); // west bound longitude
-               }
+                me.fireEvent('afterZoom', this);                             
 
                // reset the control to panning.
                customNavTb.defaultControl=customNavTb.controls[0];
