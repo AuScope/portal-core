@@ -50,23 +50,24 @@ Ext.define('portal.util.FileDownloader', {
             }
         }
 
+        //This will leak iframes but it shouldnt be an issue under "normal" usage
+        var frameId = Ext.id();
         var body = Ext.getBody();
         var frame = body.createChild({
             tag : 'iframe',
-            id : 'portal-iframe',
+            id : frameId,
             name : 'iframe'
         });
         var form = body.createChild({
             tag : 'form',
-            id : 'portal-form',
-            target : 'portal-iframe',
+            target : frameId,
             method : method,
             children : inputs
         });
 
         portal.util.GoogleAnalytic.trackevent('FileDownloader','Download', url);
         portal.util.PiwikAnalytic.trackevent('FileDownloader', 'Url:' + url,'parameters:' + Ext.encode(parameters));
-        
+
         form.dom.action = url;	
         form.dom.submit();
     };
