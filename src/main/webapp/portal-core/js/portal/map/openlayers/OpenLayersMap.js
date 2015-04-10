@@ -662,6 +662,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                     tabPanelItems.push({
                         title : '',
                         border : false,
+                        layout: 'fit',
                         autoScroll : true,
                         html : content[i]
                     });
@@ -670,6 +671,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                     tabPanelItems.push({
                         title : content[i].tabTitle,
                         border : false,
+                        layout: 'fit',
                         autoScroll : true,
                         items : [content[i]]
                     });
@@ -680,7 +682,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             Ext.create('Ext.tab.Panel', {
                 width : paddedSize.w,
                 height : paddedSize.h,
-                renderTo : divId,                
+                renderTo : divId, 
+                layout: 'fit',
                 //plain : true,
                 border : false,
                 activeTab: 0,
