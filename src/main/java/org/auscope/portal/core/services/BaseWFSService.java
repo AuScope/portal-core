@@ -208,8 +208,30 @@ public abstract class BaseWFSService {
 
         HttpRequestBase method = null;
         try {
-            //VT: I did not include the namespace for mineralTenement but the query worked as tested.
+
             method = generateWFSRequest(serviceUrl, type, null, filterString, maxFeatures, null, ResultType.Results);
+            return httpServiceCaller.getMethodResponseAsStream(method);
+
+        } catch (Exception ex) {
+            throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl , ex);
+        }
+    }
+
+    /**
+     * Download a CSV based on the type and filter.
+     * @param serviceUrl a Web Feature Service URL
+     * @param type
+     * @param filterString
+     * @param maxFeatures The maximum number of features to request
+     * @return
+     * @throws PortalServiceException
+     */
+    public InputStream downloadCSV(String serviceUrl,String type, String filterString, Integer maxFeatures) throws PortalServiceException {
+
+        HttpRequestBase method = null;
+        try {
+
+            method = generateWFSRequest(serviceUrl, type, null, filterString, maxFeatures, null, ResultType.Results,"csv");
             return httpServiceCaller.getMethodResponseAsStream(method);
 
         } catch (Exception ex) {
