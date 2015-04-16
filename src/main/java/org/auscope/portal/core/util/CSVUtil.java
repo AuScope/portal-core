@@ -50,10 +50,14 @@ public class CSVUtil {
 
         String line = "";
         while ((line = csvReader.readLine()) != null){
+            if(line.isEmpty())continue;
             String[] tokens = line.split(",");
-
             for(int i=0; i < columnIndex.length; i++){
-                result.get(columns[i]).add(tokens[columnIndex[i]]);
+                if(columnIndex[i]<tokens.length){
+                    result.get(columns[i]).add(tokens[columnIndex[i]]);
+                }else{
+                    result.get(columns[i]).add("");
+                }
             }
         }
 
