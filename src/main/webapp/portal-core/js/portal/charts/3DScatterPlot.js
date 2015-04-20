@@ -24,14 +24,17 @@ Ext.define('portal.charts.3DScatterPlot', {
      *   xAttr - String - Optional - The name of the attribute to plot on the x axis (default - 'x')
      *   xLabel - String - Optional - The name of the x axis to show on the plot (default - 'X')
      *   xDomain - Number[] - Optional - The fixed range of values [min, max] to plot on the x axis. Defaults to data extents
+     *   xHideValueLabel - Boolean - Optional - If set, hide the numerical min/max values displayed on the x axis (default - false)
      *
      *   yAttr - String - Optional - The name of the attribute to plot on the y axis (default - 'y')
      *   yLabel - String - Optional - The name of the y axis to show on the plot (default - 'Y')
      *   yDomain - Number[] - Optional - The fixed range of values [min, max] to plot on the y axis. Defaults to data extents
+     *   yHideValueLabel - Boolean - Optional - If set, hide the numerical min/max values displayed on the y axis (default - false)
      *
      *   zAttr - String - Optional - The name of the attribute to plot on the z axis (default - 'z')
      *   zLabel - String - Optional - The name of the z axis to show on the plot (default - 'Z')
      *   zDomain - Number[] - Optional - The fixed range of values [min, max] to plot on the z axis. Defaults to data extents
+     *   zHideValueLabel - Boolean - Optional - If set, hide the numerical min/max values displayed on the z axis (default - false)
      *
      *   valueAttr - String - Optional - The name of the attribute that controls the color value (default - 'value')
      *   valueLabel - String - Optional - The label of the attribute that controls the color value (default - 'Value')
@@ -58,12 +61,15 @@ Ext.define('portal.charts.3DScatterPlot', {
         this.xAttr = config.xAttr ? config.xAttr : 'x';
         this.xLabel = config.xLabel ? config.xLabel : 'X';
         this.xDomain = config.xDomain ? config.xDomain : null;
+        this.xHideValueLabel = config.xHideValueLabel ? true : false;
         this.yAttr = config.yAttr ? config.yAttr : 'y';
         this.yLabel = config.yLabel ? config.yLabel : 'Y';
         this.yDomain = config.yDomain ? config.yDomain : null;
+        this.yHideValueLabel = config.xHideValueLabel ? true : false;
         this.zAttr = config.zAttr ? config.zAttr : 'z';
         this.zLabel = config.zLabel ? config.zLabel : 'Z';
         this.zDomain = config.zDomain ? config.zDomain : null;
+        this.zHideValueLabel = config.xHideValueLabel ? true : false;
         this.valueAttr = config.valueAttr ? config.valueAttr : 'value';
         this.valueLabel = config.valueLabel ? config.valueLabel : 'Value';
         this.valueDomain = config.valueDomain ? config.valueDomain : null;
@@ -418,45 +424,54 @@ Ext.define('portal.charts.3DScatterPlot', {
         this.threeJs.scene.add(line);
 
         var titleX = createText2D('-' + this.xLabel);
-        titleX.position.x = xScale(vpts.xMin) - 12, titleX.position.y = 5;
-        this.threeJs.scene.add(titleX);
-
-        var valueX = createText2D(format(this.d3.xExtent[0]));
-        valueX.position.x = xScale(vpts.xMin) - 12;
-        valueX.position.y = -5;
-        this.threeJs.scene.add(valueX);
-
-        var titleX = createText2D(this.xLabel);
-        titleX.position.x = xScale(vpts.xMax) + 12;
+        titleX.position.x = xScale(vpts.xMin) - (this.xHideValueLabel ? 12 : 12);
         titleX.position.y = 5;
         this.threeJs.scene.add(titleX);
 
-        var valueX = createText2D(format(this.d3.xExtent[1]));
-        valueX.position.x = xScale(vpts.xMax) + 12;
-        valueX.position.y = -5;
-        this.threeJs.scene.add(valueX);
+        if (!this.xHideValueLabel) {
+            var valueX = createText2D(format(this.d3.xExtent[0]));
+            valueX.position.x = xScale(vpts.xMin) - 12;
+            valueX.position.y = -5;
+            this.threeJs.scene.add(valueX);
+        }
+
+        var titleX = createText2D((this.xHideValueLabel ? '+' : '') + this.xLabel);
+        titleX.position.x = xScale(vpts.xMax) + (this.xHideValueLabel ? 12 : 12);
+        titleX.position.y = 5;
+        this.threeJs.scene.add(titleX);
+
+        if (!this.xHideValueLabel) {
+            var valueX = createText2D(format(this.d3.xExtent[1]));
+            valueX.position.x = xScale(vpts.xMax) + 12;
+            valueX.position.y = -5;
+            this.threeJs.scene.add(valueX);
+        }
 
         var titleY = createText2D('-' + this.yLabel);
-        titleY.position.y = yScale(vpts.yMin) - 5;
+        titleY.position.y = yScale(vpts.yMin) - (this.yHideValueLabel ? 5 : 5);
         this.threeJs.scene.add(titleY);
 
-        var valueY = createText2D(format(this.d3.yExtent[0]));
-        valueY.position.y = yScale(vpts.yMin) - 15;
-        this.threeJs.scene.add(valueY);
+        if (!this.yHideValueLabel) {
+            var valueY = createText2D(format(this.d3.yExtent[0]));
+            valueY.position.y = yScale(vpts.yMin) - 15;
+            this.threeJs.scene.add(valueY);
+        }
 
-        var titleY = createText2D(this.yLabel);
-        titleY.position.y = yScale(vpts.yMax) + 15;
+        var titleY = createText2D((this.yHideValueLabel ? '+' : '') + this.yLabel);
+        titleY.position.y = yScale(vpts.yMax) + (this.yHideValueLabel ? 7 : 15);
         this.threeJs.scene.add(titleY);
 
-        var valueY = createText2D(format(this.d3.yExtent[1]));
-        valueY.position.y = yScale(vpts.yMax) + 5;
-        this.threeJs.scene.add(valueY);
+        if (!this.yHideValueLabel) {
+            var valueY = createText2D(format(this.d3.yExtent[1]));
+            valueY.position.y = yScale(vpts.yMax) + 5;
+            this.threeJs.scene.add(valueY);
+        }
 
-        var titleZ = createText2D('-' + this.zLabel + ' ' + format(this.d3.zExtent[0]));
+        var titleZ = createText2D('-' + this.zLabel + (this.zHideValueLabel ? '' : ' ' + format(this.d3.zExtent[0])));
         titleZ.position.z = zScale(vpts.zMin) + 2;
         this.threeJs.scene.add(titleZ);
 
-        var titleZ = createText2D(this.zLabel + ' ' + format(this.d3.zExtent[1]));
+        var titleZ = createText2D((this.zHideValueLabel ? '+' : '') + this.zLabel + ' ' + (this.zHideValueLabel ? '' : ' ' + format(this.d3.zExtent[1])));
         titleZ.position.z = zScale(vpts.zMax) + 2;
         this.threeJs.scene.add(titleZ);
 
