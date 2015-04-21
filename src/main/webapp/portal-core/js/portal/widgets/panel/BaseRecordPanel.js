@@ -134,8 +134,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
           plugins:[{                
               ptype : 'rowexpandercontainer',
               pluginId : 'maingrid_rowexpandercontainer',
-              generateContainer : function(record, parentElId) {
-                  var oldLayer = record.get('layer');
+              generateContainer : function(record, parentElId) {                  
                   //VT:if this is deserialized, we don't need to regenerate the layer
                   if(record.get('layer')) {                        
                       newLayer =  record.get('layer');                                           
@@ -145,7 +144,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                       newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);                      
                   }           
                   record.set('layer',newLayer);            
-                  var filterForm = newLayer ? newLayer.get('filterForm') : null;                                    
+                  var filterForm = newLayer ? newLayer.get('filterForm') : null;                          
+                  filterForm.setLayer(newLayer);
                   var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);
                   
                   //Update the layer panel to use
