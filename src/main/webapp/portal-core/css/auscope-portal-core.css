@@ -194,3 +194,36 @@
 .graph {
     background-image: url("../img/graph.png") !important
 }
+
+/* font awsome specific css */
+.fa-white-icon {
+    color: #fff;
+}
+
+.fa-blue-icon {
+    color: #3498db;
+}
+
+.fa-red-icon {
+    color: #e74c3c;
+}
+
+.fa-green-icon {
+    color: #2ecc71;
+}
+
+.fa-yellow-icon {
+    color: #f1c40f;
+}
+
+.fa-orange-icon {
+    color: #e67e22;
+}
+
+.fa-purple-icon {
+    color: #9b59b6;
+}
+
+.fa-gray-icon {
+    color: #3f3f3f;
+}

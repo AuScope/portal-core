@@ -359,5 +359,15 @@ Ext.define('portal.map.BaseMap', {
             renderer.removeData();
             this.closeInfoWindow(layer[0].get('id'));
         }
+    },
+    
+    getFeaturesFromKMLString : function  (kmlString) {
+        var format = new OpenLayers.Format.KML({
+            extractStyles: true,
+            extractAttributes: true,          
+            internalProjection: new OpenLayers.Projection("EPSG:3857") ,
+            externalProjection: new OpenLayers.Projection("EPSG:4326")
+        });
+        return format.read(kmlString);
     }
 });

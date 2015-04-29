@@ -6,6 +6,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
     map : null, //Instance of OpenLayers.Map
     vectorLayers : [],
+    kmlLayers : [],
     selectControl : null,
 
     constructor : function(cfg) {
@@ -829,6 +830,30 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var pixel = this.getPixelFromLatLng(point);
         menu.showAt(this.container.x + pixel.x, this.container.y + pixel.y);
     },
+    
+    /**
+     * Add KML from String to the map layer.
+     *
+     * @param KMLString KML String
+     */
+    addKMLFromString : function(title, KMLString){
+        var feature = this.getFeaturesFromKMLString(KMLString) 
+        var vectorLayer = new OpenLayers.Layer.Vector(title,{
+            projection: "EPSG:4326",
+        });                               
+        vectorLayer.addFeatures(feature);
+        this.map.addLayer(vectorLayer);  
+        this.map.zoomToExtent(vectorLayer.getDataExtent());
+        this.kmlLayers.push(vectorLayer);
+
+    },
+    
+    removeAllKMLLayer : function(){
+        for(var i=0; i < this.kmlLayers.length; i++){
+            this.map.removeLayer(this.kmlLayers[i]);
+        }
+        this.kmlLayers=[];
+    },
 
     /**
      * Figure out whether we should automatically render this layer or not
@@ -874,4 +899,5 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             controlList[i].deactivate();
         }
     }
+    
 });
