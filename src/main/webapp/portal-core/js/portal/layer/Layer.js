@@ -10,7 +10,8 @@ Ext.define('portal.layer.Layer', {
 
     statics : {
         KNOWN_LAYER : 'KnownLayer', //A value for 'sourceType'
-        CSW_RECORD : 'CSWRecord' //A value for 'sourceType'
+        CSW_RECORD : 'CSWRecord', //A value for 'sourceType'
+        KML_RECORD : 'KMLRecord'
     },
 
     visible : true,
@@ -49,7 +50,7 @@ Ext.define('portal.layer.Layer', {
     },
     
     setLayerVisibility : function(visibility){
-        this.get('renderer').primitiveManager.setVisibility(visibility);
+        this.get('renderer').setVisibility(visibility);
         this.visible = visibility;
     },                
 

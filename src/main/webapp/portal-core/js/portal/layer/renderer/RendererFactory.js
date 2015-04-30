@@ -28,5 +28,15 @@ Ext.define('portal.layer.renderer.RendererFactory', {
      *
      * returns - This function must return a portal.layer.downloader.Downloader
      */
-    buildFromCswRecord : portal.util.UnimplementedFunction
+    buildFromCswRecord : portal.util.UnimplementedFunction,
+    
+    /**
+     * An abstract function for building a portal.layer.renderer.Renderer
+     * suitable for a given CSWRecord
+     *
+     * function(portal.csw.CswRecord cswRecord)
+     *
+     * returns - This function must return a portal.layer.downloader.Downloader
+     */
+    buildFromKMLRecord : portal.util.UnimplementedFunction
 });

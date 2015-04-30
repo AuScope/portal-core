@@ -22,7 +22,7 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
         
         var me = this;
         if(this.enableBrowse){
-            var menuItems = [this._getRegistryAction(),this._getHandleKMLAction(),this._getClearAllKMLAction()];
+            var menuItems = [this._getRegistryAction(),this._getHandleKMLAction()];
             this.addDocked({
                 xtype: 'toolbar',
                 dock: 'top',
@@ -130,18 +130,7 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
         
     },
     
-    _getClearAllKMLAction : function(){
-       
-        var me = this;
-        return new Ext.Action({
-            text : 'Remove All KML ',
-            iconCls : 'fa fa-remove fa-red-icon',
-            handler : function(){
-              me.map.removeAllKMLLayer();
-            }
-        })
-        
-    },
+   
     
     _getKMLFileDialog : function(){
         var me = this;
@@ -168,8 +157,31 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
                             url: 'addKMLLayer.do',
                             waitMsg: 'Adding KML Layer...',
                             success: function(fp, o) {                              
-                               me.map.addKMLFromString(o.result.name, o.result.file);                               
+
+                               var tabpanel =  Ext.getCmp('auscope-tabs-panel');
+                               var customPanel = me.ownerCt.getComponent('org-auscope-custom-record-panel');
+                               tabpanel.setActiveTab(customPanel);
+                               
+                               
+                               var csw = Ext.create('portal.csw.CSWRecord',{
+                                   id : Ext.id(),
+                                   name : o.result.name,
+                                   resourceProvider : 'kml',
+                                   geographicElements : [Ext.create('portal.util.BBox',{
+                                       eastBoundLongitude : 180,
+                                       westBoundLongitude : -180,
+                                       northBoundLatitude : 90,
+                                       southBoundLatitude : -90
+                                   })],
+                                   constraints : [],
+                                   extensions : o.result.file,
+                                   recordInfoUrl : "",
+                                   noCache : true
+                               })
+                               csw.set('customlayer',true);
+                               customPanel.getStore().insert(0,csw);
                                this.form.owner.up('window').close();
+
                             },
                             failure : function(fp,action){
                                 Ext.Msg.alert('Status', 'Unable to parse file. Make sure the file is a valid KML file.');

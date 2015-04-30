@@ -5,8 +5,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     extend : 'portal.map.BaseMap',
 
     map : null, //Instance of OpenLayers.Map
-    vectorLayers : [],
-    kmlLayers : [],
+    vectorLayers : [],    
     selectControl : null,
 
     constructor : function(cfg) {
@@ -836,7 +835,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      *
      * @param KMLString KML String
      */
-    addKMLFromString : function(title, KMLString){
+    addKMLFromString : function(id,title, KMLString){
         var feature = this.getFeaturesFromKMLString(KMLString) 
         var vectorLayer = new OpenLayers.Layer.Vector(title,{
             projection: "EPSG:4326"
@@ -844,15 +843,17 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         vectorLayer.addFeatures(feature);
         this.map.addLayer(vectorLayer);  
         this.map.zoomToExtent(vectorLayer.getDataExtent());
-        this.kmlLayers.push(vectorLayer);
+        return vectorLayer;
 
     },
     
-    removeAllKMLLayer : function(){
-        for(var i=0; i < this.kmlLayers.length; i++){
-            this.map.removeLayer(this.kmlLayers[i]);
-        }
-        this.kmlLayers=[];
+    /**
+     * Remove KML layer from the map
+     *
+     * @param the id of the KML layer to remove
+     */
+    removeKMLLayer : function(vectorlayer){           
+        this.map.removeLayer(vectorlayer);
     },
 
     /**

@@ -426,6 +426,11 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      * http://docs.sencha.com/ext-js/4-0/#!/api/Ext.grid.column.Column-cfg-renderer
      */
     _serviceInformationRenderer : function(value, metaData, record, row, col, store, gridView) {
+        
+        if(record.get('resourceProvider')=="kml"){
+            return this._generateHTMLIconMarkup('portal-core/img/kml.png');
+        }
+        
         var onlineResources = this.getOnlineResourcesForRecord(record);
 
         var serviceType = this._getServiceType(onlineResources);
