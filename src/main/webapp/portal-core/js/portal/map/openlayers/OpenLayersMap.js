@@ -839,7 +839,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     addKMLFromString : function(title, KMLString){
         var feature = this.getFeaturesFromKMLString(KMLString) 
         var vectorLayer = new OpenLayers.Layer.Vector(title,{
-            projection: "EPSG:4326",
+            projection: "EPSG:4326"
         });                               
         vectorLayer.addFeatures(feature);
         this.map.addLayer(vectorLayer);  
