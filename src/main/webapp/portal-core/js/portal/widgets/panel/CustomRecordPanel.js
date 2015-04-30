@@ -187,7 +187,7 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
             layout: 'fit',
             items: panel
         })
-    },
+    }
     
     
 
