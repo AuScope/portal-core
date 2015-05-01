@@ -130,11 +130,35 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
         
     },
     
-   
+    addKMLtoPanel : function(name,file){
+        var csw = Ext.create('portal.csw.CSWRecord',{
+            id : Ext.id(),
+            name : name,
+            resourceProvider : 'kml',
+            geographicElements : [Ext.create('portal.util.BBox',{
+                eastBoundLongitude : 180,
+                westBoundLongitude : -180,
+                northBoundLatitude : 90,
+                southBoundLatitude : -90
+            })],
+            constraints : [],
+            extensions : file,
+            recordInfoUrl : "",
+            noCache : true
+        })
+        csw.set('customlayer',true);
+        this.getStore().insert(0,csw);
+        return csw;
+    },
     
+   
+    /**
+     * This returns a file window download box to allow users to add or point to a kml file. 
+     */
     _getKMLFileDialog : function(){
         var me = this;
-        var panel = Ext.create('Ext.form.Panel', {          
+        var panel1 = Ext.create('Ext.form.Panel', {  
+            title : 'KML File',
             bodyPadding: 15,
             frame: true,            
             items: [{
@@ -149,7 +173,7 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
             }],
 
             buttons: [{
-                text: 'Add KML',
+                text: 'Add KML',                
                 handler: function() {
                     var form = this.up('form').getForm();
                     if(form.isValid()){
@@ -162,24 +186,8 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
                                var customPanel = me.ownerCt.getComponent('org-auscope-custom-record-panel');
                                tabpanel.setActiveTab(customPanel);
                                
+                               customPanel.addKMLtoPanel(o.result.name,o.result.file);
                                
-                               var csw = Ext.create('portal.csw.CSWRecord',{
-                                   id : Ext.id(),
-                                   name : o.result.name,
-                                   resourceProvider : 'kml',
-                                   geographicElements : [Ext.create('portal.util.BBox',{
-                                       eastBoundLongitude : 180,
-                                       westBoundLongitude : -180,
-                                       northBoundLatitude : 90,
-                                       southBoundLatitude : -90
-                                   })],
-                                   constraints : [],
-                                   extensions : o.result.file,
-                                   recordInfoUrl : "",
-                                   noCache : true
-                               })
-                               csw.set('customlayer',true);
-                               customPanel.getStore().insert(0,csw);
                                this.form.owner.up('window').close();
 
                             },
@@ -192,12 +200,64 @@ Ext.define('portal.widgets.panel.CustomRecordPanel', {
             }]
         });
         
+        var panel2 = Ext.create('Ext.form.Panel', {          
+            bodyPadding: 15,
+            title : 'KML URL',
+            frame: true,            
+            items: [{
+                xtype: 'textfield',
+                value : 'https://capdf-dev.csiro.au/gs-hydrogeochem/public/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=public:hydrogeochem&maxFeatures=50&outputFormat=application/vnd.google-earth.kml+xml',
+                name: 'file',
+                fieldLabel: 'URL',
+                labelWidth: 50,
+                msgTarget: 'side',
+                allowBlank: false,
+                anchor: '100%'
+            }],
+
+            buttons: [{
+                text: 'Add KML',
+                handler: function() {
+                    var form = this.up('form').getForm();
+                    if(form.isValid()){
+                        form.submit({
+                            url: 'addKMLUrl.do',
+                            params:{
+                              url : form.getFieldValues().file  
+                            },
+                            waitMsg: 'Adding KML Layer...',
+                            success: function(fp, o) {                              
+
+                               var tabpanel =  Ext.getCmp('auscope-tabs-panel');
+                               var customPanel = me.ownerCt.getComponent('org-auscope-custom-record-panel');
+                               tabpanel.setActiveTab(customPanel);
+                               
+                               customPanel.addKMLtoPanel(o.result.data.name,o.result.data.file);
+                                                              
+                               this.form.owner.up('window').close();
+
+                            },
+                            failure : function(fp,action){
+                                Ext.Msg.alert('Status', 'Unable to parse file. Make sure the file is a valid KML file.');
+                            }
+                        });
+                    }
+                }
+            }]
+        });
+        
+        
+        var tabpanel = Ext.create('Ext.tab.Panel', {            
+            items: [panel1,panel2]
+        }); 
+        
         return Ext.create('Ext.window.Window', {
-            title: 'Select KML',
-            height: 150,
+            title: 'KML Input',
+            height: 190,
             width: 400,
+            frameHeader : false,
             layout: 'fit',
-            items: panel
+            items: tabpanel
         })
     }
     

@@ -180,7 +180,7 @@ Ext.define('portal.layer.LayerFactory', {
         //Create our filter form
         var formFactoryResponse = this.formFactory.getFilterForm(newLayer);
         newLayer.set('filterForm', formFactoryResponse.form);
-        
+        newLayer.set('renderOnAdd', true);
 
         return newLayer;
 
