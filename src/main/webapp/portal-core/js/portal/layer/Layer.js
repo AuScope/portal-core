@@ -79,7 +79,10 @@ Ext.define('portal.layer.Layer', {
             group='contactOrg';
         }
         
-        this._expandGridGroup(this.get('source').get(group));
+        //VT: Custom layer doesn't contain group
+        if(this.get('source').get(group)){
+            this._expandGridGroup(this.get('source').get(group));
+        }
                        
     },
     

@@ -25,8 +25,7 @@ Ext.define('portal.map.BaseMap', {
      * Boolean - Whether this map wrapper has been rendered to a container
      */
     rendered : false,
-    
-    layerFactory : null,
+       
 
     /**
      * Boolean - whether to allow a data selection widget to appear on the map. Defaults to false
@@ -52,15 +51,6 @@ Ext.define('portal.map.BaseMap', {
     constructor : function(cfg) {
         this.container = cfg.container;
         this.layerStore = cfg.layerStore;
-        this.layerFactory =  Ext.create('portal.layer.LayerFactory', {
-            map : this,
-            formFactory : Ext.create('auscope.layer.filterer.AuScopeFormFactory', {map : this}),
-            downloaderFactory : Ext.create('auscope.layer.AuScopeDownloaderFactory', {map: this}),
-            querierFactory : Ext.create('auscope.layer.AuScopeQuerierFactory', {map: this}),
-            rendererFactory : Ext.create('auscope.layer.AuScopeRendererFactory', {map: this})
-        });
-
-        
 
         this.callParent(arguments);
 
@@ -334,36 +324,25 @@ Ext.define('portal.map.BaseMap', {
      */
     _onLayerStoreAdd : function(store, layers) {
         for (var i = 0; i < layers.length; i++) {
-            if(layers[i] instanceof portal.layer.Layer){
-                var newLayer = layers[i];
-                //Some layer types should be rendered immediately, others will require the 'Apply Filter' button
-                //We trigger the rendering by forcing a write to the filterer object
-                if (newLayer.get('deserialized')) {
-                    //Deserialized layers (read from permalink) will have their
-                    //filterer already fully configured.
-                    var filterer = newLayer.get('filterer');
-                    filterer.setParameters({}); //Trigger an update without chang
-                } else if (newLayer.get('renderOnAdd')) {
-                    //Otherwise we will need to append the filterer with the current visible bounds
-                    var filterForm = newLayer.get('filterForm');
-                    var filterer = newLayer.get('filterer');
+           
+            var newLayer = layers[i];
+            //Some layer types should be rendered immediately, others will require the 'Apply Filter' button
+            //We trigger the rendering by forcing a write to the filterer object
+            if (newLayer.get('deserialized')) {
+                //Deserialized layers (read from permalink) will have their
+                //filterer already fully configured.
+                var filterer = newLayer.get('filterer');
+                filterer.setParameters({}); //Trigger an update without chang
+            } else if (newLayer.get('renderOnAdd')) {
+                //Otherwise we will need to append the filterer with the current visible bounds
+                var filterForm = newLayer.get('filterForm');
+                var filterer = newLayer.get('filterer');
 
-                    //Update the filter with the current map bounds
-                    filterer.setSpatialParam(this.getVisibleMapBounds(), true);
+                //Update the filter with the current map bounds
+                filterer.setSpatialParam(this.getVisibleMapBounds(), true);
 
-                    filterForm.writeToFilterer(filterer);
-                }
-            }else{
-                if(this.layerFactory){                     
-                    var newLayer = this.layerFactory.generateLayerFromCSWRecord(layers);                                                                               
-                    layers.set('layer',newLayer);            
-                    var filterForm = newLayer ? newLayer.get('filterForm') : null;                          
-                    filterForm.setLayer(newLayer);
-                }else{
-                    console.log('layerFactory not initialised, unable to renderOnAdd CSWRecord');
-                }
-            }
-            
+                filterForm.writeToFilterer(filterer);
+            }                       
         }
     },
 
