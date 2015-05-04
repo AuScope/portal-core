@@ -76,6 +76,9 @@ Ext.define('portal.csw.OnlineResource', {
          */
         getFilteredFromArray : function(array, type, name, description, url, strict) {
             var filtered = [];
+            if(!array){
+                return filtered;
+            }
             for (var i = 0; i < array.length; i++) {
                 var cmp = array[i];
 

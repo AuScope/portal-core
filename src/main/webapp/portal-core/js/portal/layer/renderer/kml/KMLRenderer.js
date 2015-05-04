@@ -13,18 +13,10 @@ Ext.define('portal.layer.renderer.csw.KMLRenderer', {
         this.callParent(arguments);
     }, 
 
-    /**
-     * A function for displaying generic data from a variety of data sources. This function will
-     * raise the renderstarted and renderfinished events as appropriate. The effect of multiple calls
-     * to this function (i.e. calling displayData again before renderfinished is raised) is undefined.
+    /**   
      *
-     * This function will re-render itself entirely and thus may call removeData() during the normal
-     * operation of this function
-     *
-     * function(portal.csw.OnlineResource[] resources,
-     *          portal.layer.filterer.Filterer filterer,
-     *          function(portal.layer.renderer.Renderer this, portal.csw.OnlineResource[] resources, portal.layer.filterer.Filterer filterer, bool success) callback
-     *
+     * A function for rendering KML layers either from KML file input or URL.
+     * 
      * returns - void
      *
      * resources - an array of data sources which should be used to render data
@@ -32,6 +24,11 @@ Ext.define('portal.layer.renderer.csw.KMLRenderer', {
      * callback - Will be called when the rendering process is completed and passed an instance of this renderer and the parameters used to call this function
      */
     displayData : function(resources, filterer, callback) {
+        
+        //VT: I have taken a short path to render this layer on the map. 
+        //If there are any actual demand to improve KML, 
+        //create a KML Primitive and add makeKML in openlayersmap.js
+        //this.PrimitiveManager.add(kml) and in primitiveManager handle if primitive type is kml.
         this.removeData();
         this.fireEvent('renderstarted', this, resources, filterer);
         this.renderStatus.initialiseResponses("KML Layer", 'Rendering...');
