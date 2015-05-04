@@ -87,8 +87,10 @@ Ext.define('portal.layer.LayerFactory', {
         //Create our filter form
         var formFactoryResponse = this.formFactory.getFilterForm(newLayer);
         newLayer.set('filterForm', formFactoryResponse.form);
-        newLayer.set('renderOnAdd', !formFactoryResponse.supportsFiltering);
-
+        //VT: Since the new rowExpander design, We do not renderOnAdd for non filtering support layer.
+        //newLayer.set('renderOnAdd', !formFactoryResponse.supportsFiltering);
+        newLayer.set('renderOnAdd', false);
+        
         return newLayer;
     },
 
@@ -121,6 +123,12 @@ Ext.define('portal.layer.LayerFactory', {
      * @param cswRecord an instance of portal.csw.CSWRecord
      */
     generateLayerFromCSWRecord : function(cswRecord) {
+        
+        //VT: a extension of CSWRecord to handle KML
+        if(cswRecord.get('resourceProvider')=='kml'){
+            return this.generateLayerFromKMLSource(cswRecord);
+        }
+        
         var id = cswRecord.get('id');
         var source = cswRecord;
         var description = cswRecord.get('description');
@@ -134,5 +142,49 @@ Ext.define('portal.layer.LayerFactory', {
         var downloader = this.downloaderFactory.buildFromCswRecord(cswRecord);
 
         return this.generateLayer(id, source, name, description, renderer, filterer, downloader, querier, cswRecords);
+    },
+    
+    generateLayerFromKMLSource : function(cswRecord){
+        var id = cswRecord.get('id');
+        var source = cswRecord;
+        var description = 'A layer generated from a EPSG:4326 KML file';
+        var name = cswRecord.get('name');
+        var cswRecords = cswRecord;
+        if (!Ext.isArray(cswRecords)) {
+            cswRecords = [cswRecords];
+        }
+        var filterer = Ext.create('portal.layer.filterer.Filterer', {})
+        
+        var renderer = this.rendererFactory.buildFromKMLRecord(cswRecord);
+        
+        //Create our instance
+        var newLayer = Ext.create('portal.layer.Layer', {
+            id : id,
+            sourceType : portal.layer.Layer.KML_RECORD,
+            source : source,
+            name : name,
+            description : description,
+            renderer : renderer,
+            filterer : filterer,           
+            cswRecords : cswRecords,
+            loading : false
+        });
+
+        //Wire up references to our layer
+        renderer.parentLayer = newLayer;
+
+        //Wire up our events so that the layer is listening for changes in its components
+        renderer.on('renderstarted', Ext.bind(newLayer.onRenderStarted, newLayer));
+        renderer.on('renderfinished', Ext.bind(newLayer.onRenderFinished, newLayer));
+        renderer.on('visibilitychanged', Ext.bind(newLayer.onVisibilityChanged, newLayer));
+        filterer.on('change', Ext.bind(newLayer.onFilterChanged, newLayer));
+
+        //Create our filter form
+        var formFactoryResponse = this.formFactory.getFilterForm(newLayer);
+        newLayer.set('filterForm', formFactoryResponse.form);
+        newLayer.set('renderOnAdd', true);
+
+        return newLayer;
+
     }
 });

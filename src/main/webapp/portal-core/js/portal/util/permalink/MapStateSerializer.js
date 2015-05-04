@@ -147,7 +147,8 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
         for (var i = 0; i < layerStore.getCount(); i++) {
             var layer = layerStore.getAt(i);
 
-            if (!layer) {
+            //VT: Unable to support KML perm link at this stage because of the source and size of the kml file.
+            if (!layer || layer.get('sourceType') === portal.layer.Layer.KML_RECORD) {
                 continue;
             }
 

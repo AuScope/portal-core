@@ -23,8 +23,7 @@ Ext.define('portal.widgets.grid.column.ClickColumn', {
      */
     processEvent: function(type, view, cell, recordIndex, cellIndex, e) {
         var record = e.record;
-        var storeRecordIndex = view.store.indexOf(record);
-        console.log(type);
+        var storeRecordIndex = view.store.indexOf(record);        
         if (type == 'click' || (type == 'keydown' && (e.getKey() === e.ENTER || e.getKey() === e.SPACE))) {
             this.fireEvent('columnclick', this, record, storeRecordIndex, cellIndex,e);
             return this.callParent(arguments);

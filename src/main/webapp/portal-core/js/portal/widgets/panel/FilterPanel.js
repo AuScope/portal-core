@@ -29,9 +29,17 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      */
     constructor : function(config) {
  
-        this._map = config.map;
-        this.filterForm = config.filterForm;             
+        this._map = config.map;        
         
+        if(Ext.isIE){
+            this.filterForm = config.filterForm.cloneConfig();        
+            this.filterForm.getForm().setValues(config.filterForm.getForm().getValues());
+            config.filterForm  = this.filterForm;                
+            config.filterForm.layer.set('filterForm',this.filterForm);
+        }else{
+            this.filterForm = config.filterForm
+        }
+                        
         this._addLayerButton = Ext.create('Ext.button.Button', {
             xtype : 'button',
             text      : 'Add layer to Map',

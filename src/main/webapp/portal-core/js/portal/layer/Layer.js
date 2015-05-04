@@ -10,7 +10,8 @@ Ext.define('portal.layer.Layer', {
 
     statics : {
         KNOWN_LAYER : 'KnownLayer', //A value for 'sourceType'
-        CSW_RECORD : 'CSWRecord' //A value for 'sourceType'
+        CSW_RECORD : 'CSWRecord', //A value for 'sourceType'
+        KML_RECORD : 'KMLRecord'
     },
 
     visible : true,
@@ -28,7 +29,7 @@ Ext.define('portal.layer.Layer', {
         { name: 'cswRecords', type: 'auto'}, //The source of all underlying data is an array of portal.csw.CSWRecord objects
         //{ name: 'loading', type: 'boolean', defaultValue: false }, //Whether this layer is currently loading data or not
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
-        { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added to the map:VT: Mark for deletion
+        { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added as a layer. Currently used by KML
         { name: 'deserialized', type: 'boolean', defaultValue: false } //If true then this layer has been deserialized from a permanent link
         
     ],
@@ -49,7 +50,7 @@ Ext.define('portal.layer.Layer', {
     },
     
     setLayerVisibility : function(visibility){
-        this.get('renderer').primitiveManager.setVisibility(visibility);
+        this.get('renderer').setVisibility(visibility);
         this.visible = visibility;
     },                
 

@@ -48,6 +48,10 @@ Ext.define('portal.layer.filterer.BaseFilterForm', {
             this.fireEvent('formloaded', this);
         }
     },
+    
+    setLayer : function(layer){
+        this.layer = layer;
+    },
 
     /**
      * Write this FilterForm's contents to the specified portal.layer.filterer.Filterer object.

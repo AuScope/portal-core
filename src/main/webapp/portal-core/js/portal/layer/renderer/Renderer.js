@@ -162,5 +162,9 @@ Ext.define('portal.layer.renderer.Renderer', {
      */
     getRendererDebuggerData : function() {
         return this.renderDebuggerData;
+    },
+    
+    setVisibility : function(visible) {
+        this.primitiveManager.setVisibility(visibility);
     }
 });

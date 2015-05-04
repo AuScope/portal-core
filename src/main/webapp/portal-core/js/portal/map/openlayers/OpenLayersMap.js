@@ -5,7 +5,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     extend : 'portal.map.BaseMap',
 
     map : null, //Instance of OpenLayers.Map
-    vectorLayers : [],
+    vectorLayers : [],    
     selectControl : null,
 
     constructor : function(cfg) {
@@ -829,31 +829,77 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var pixel = this.getPixelFromLatLng(point);
         menu.showAt(this.container.x + pixel.x, this.container.y + pixel.y);
     },
+    
+    /**
+     * Add KML from String to the map layer.
+     *
+     * @param KMLString KML String
+     */
+    addKMLFromString : function(id,title, KMLString){
+        var feature = this.getFeaturesFromKMLString(KMLString) 
+        var vectorLayer = new OpenLayers.Layer.Vector(title,{
+            projection: "EPSG:4326"
+        });                               
+        vectorLayer.addFeatures(feature);
+        this.map.addLayer(vectorLayer);  
+        this.map.zoomToExtent(vectorLayer.getDataExtent());
+        return vectorLayer;
+
+    },
+    
+    /**
+     * Remove KML layer from the map
+     *
+     * @param the id of the KML layer to remove
+     */
+    removeKMLLayer : function(vectorlayer){           
+        this.map.removeLayer(vectorlayer);
+    },
 
     /**
      * Figure out whether we should automatically render this layer or not
      */
     _onLayerStoreAdd : function(store, layers) {
         for (var i = 0; i < layers.length; i++) {
-            var newLayer = layers[i];
+            if(layers[i] instanceof portal.layer.Layer){
+                var newLayer = layers[i];
+                //Some layer types should be rendered immediately, others will require the 'Apply Filter' button
+                //We trigger the rendering by forcing a write to the filterer object
+                if (newLayer.get('deserialized')) {
+                    //Deserialized layers (read from permalink) will have their
+                    //filterer already fully configured.
+                    var filterer = newLayer.get('filterer');
+                    filterer.setParameters({}); //Trigger an update without chang
+                } else if (newLayer.get('renderOnAdd')) {
+                    //Otherwise we will need to append the filterer with the current visible bounds
+                    var filterForm = newLayer.get('filterForm');
+                    var filterer = newLayer.get('filterer');
 
-            //Some layer types should be rendered immediately, others will require the 'Apply Filter' button
-            //We trigger the rendering by forcing a write to the filterer object
-            if (newLayer.get('deserialized')) {
-                //Deserialized layers (read from permalink) will have their
-                //filterer already fully configured.
-                var filterer = newLayer.get('filterer');
-                filterer.setParameters({}); //Trigger an update without chang
-            } else if (newLayer.get('renderOnAdd')) {
-                //Otherwise we will need to append the filterer with the current visible bounds
-                var filterForm = newLayer.get('filterForm');
-                var filterer = newLayer.get('filterer');
+                    //Update the filter with the current map bounds
+                    filterer.setSpatialParam(this.getVisibleMapBounds(), true);
 
-                //Update the filter with the current map bounds
-                filterer.setSpatialParam(this.getVisibleMapBounds(), true);
-
-                filterForm.writeToFilterer(filterer);
+                    filterForm.writeToFilterer(filterer);
+                } 
+            }else{
+                if(this.layerFactory){                     
+                    var newLayer = this.layerFactory.generateLayerFromCSWRecord(layers[i]);    
+                    if(newLayer.get('renderOnAdd')){
+                        layers[i].set('layer',newLayer);            
+                        var filterForm = newLayer.get('filterForm');
+                        var filterer = newLayer.get('filterer');
+                        filterForm.setLayer(newLayer);
+                        //Update the filter with the current map bounds
+                        filterer.setSpatialParam(this.getVisibleMapBounds(), true);    
+                        filterForm.writeToFilterer(filterer);
+                    }
+                    
+                }else{
+                    console.log('layerFactory not initialised, unable to renderOnAdd CSWRecord');
+                }
             }
+            
+
+            
         }
     },
    
@@ -874,4 +920,5 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             controlList[i].deactivate();
         }
     }
+    
 });
