@@ -861,25 +861,45 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
      */
     _onLayerStoreAdd : function(store, layers) {
         for (var i = 0; i < layers.length; i++) {
-            var newLayer = layers[i];
+            if(layers[i] instanceof portal.layer.Layer){
+                var newLayer = layers[i];
+                //Some layer types should be rendered immediately, others will require the 'Apply Filter' button
+                //We trigger the rendering by forcing a write to the filterer object
+                if (newLayer.get('deserialized')) {
+                    //Deserialized layers (read from permalink) will have their
+                    //filterer already fully configured.
+                    var filterer = newLayer.get('filterer');
+                    filterer.setParameters({}); //Trigger an update without chang
+                } else if (newLayer.get('renderOnAdd')) {
+                    //Otherwise we will need to append the filterer with the current visible bounds
+                    var filterForm = newLayer.get('filterForm');
+                    var filterer = newLayer.get('filterer');
 
-            //Some layer types should be rendered immediately, others will require the 'Apply Filter' button
-            //We trigger the rendering by forcing a write to the filterer object
-            if (newLayer.get('deserialized')) {
-                //Deserialized layers (read from permalink) will have their
-                //filterer already fully configured.
-                var filterer = newLayer.get('filterer');
-                filterer.setParameters({}); //Trigger an update without chang
-            } else if (newLayer.get('renderOnAdd')) {
-                //Otherwise we will need to append the filterer with the current visible bounds
-                var filterForm = newLayer.get('filterForm');
-                var filterer = newLayer.get('filterer');
+                    //Update the filter with the current map bounds
+                    filterer.setSpatialParam(this.getVisibleMapBounds(), true);
 
-                //Update the filter with the current map bounds
-                filterer.setSpatialParam(this.getVisibleMapBounds(), true);
-
-                filterForm.writeToFilterer(filterer);
+                    filterForm.writeToFilterer(filterer);
+                } 
+            }else{
+                if(this.layerFactory){                     
+                    var newLayer = this.layerFactory.generateLayerFromCSWRecord(layers[i]);    
+                    if(newLayer.get('renderOnAdd')){
+                        layers[i].set('layer',newLayer);            
+                        var filterForm = newLayer.get('filterForm');
+                        var filterer = newLayer.get('filterer');
+                        filterForm.setLayer(newLayer);
+                        //Update the filter with the current map bounds
+                        filterer.setSpatialParam(this.getVisibleMapBounds(), true);    
+                        filterForm.writeToFilterer(filterer);
+                    }
+                    
+                }else{
+                    console.log('layerFactory not initialised, unable to renderOnAdd CSWRecord');
+                }
             }
+            
+
+            
         }
     },
    

@@ -87,8 +87,10 @@ Ext.define('portal.layer.LayerFactory', {
         //Create our filter form
         var formFactoryResponse = this.formFactory.getFilterForm(newLayer);
         newLayer.set('filterForm', formFactoryResponse.form);
-        newLayer.set('renderOnAdd', !formFactoryResponse.supportsFiltering);
-
+        //VT: Since the new rowExpander design, We do not renderOnAdd for non filtering support layer.
+        //newLayer.set('renderOnAdd', !formFactoryResponse.supportsFiltering);
+        newLayer.set('renderOnAdd', false);
+        
         return newLayer;
     },
 
