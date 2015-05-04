@@ -12,6 +12,7 @@ Ext.define('portal.charts.3DScatterPlot', {
     d3 : null, //D3 elements (graphs, lines etc).
     threeJs : null, //Three JS elements
     innerId: null, //Internal ID for rendering three js
+    useCanvasRenderer: false, 
 
 
     /**
@@ -82,7 +83,34 @@ Ext.define('portal.charts.3DScatterPlot', {
 
         this.callParent(arguments);
 
-        
+        //Lower IE version require a different renderer entirely
+        //Force the loading of these new dependencies if we need to...
+        if (Ext.isIE10m) {
+            this.useCanvasRenderer = true;
+            this.loadingDeps = false;
+            this.loadingDepsCallback = null;
+            
+            if (!THREE.CanvasRenderer) {
+                this.loadingDeps = true;
+                Ext.Loader.loadScript({
+                    url:'portal-core/js/threejs/renderers/CanvasRenderer.js',
+                    scope: this,
+                    onLoad:function() {
+                        Ext.Loader.loadScript({
+                            url:'portal-core/js/threejs/renderers/Projector.js',
+                            scope: this,
+                            onLoad:function() {
+                                this.loadingDeps = false;
+                                if (Ext.isFunction(this.loadingDepsCallback)) {
+                                    this.loadingDepsCallback();
+                                } else {
+                                }
+                            }
+                        });
+                    } 
+                });
+            }
+        }
 
         this.on('render', this._afterRender, this);
         this.on('resize', this._onResize, this);
@@ -92,6 +120,11 @@ Ext.define('portal.charts.3DScatterPlot', {
      * Initialise three JS elements.
      */
     _afterRender : function() {
+        if (this.loadingDeps) {
+            this.loadingDepsCallback = this._afterRender;
+            return;
+        }
+        
         this.threeJs = {
             camera : null,
             controls : null,
@@ -128,7 +161,12 @@ Ext.define('portal.charts.3DScatterPlot', {
         this.threeJs.controls.addEventListener('change', Ext.bind(this._renderThreeJs, this));
 
         // renderer
-        this.threeJs.renderer = new THREE.WebGLRenderer({antialias : false});
+        if (Ext.isIE10m) { 
+            //IE 10 and lower don't have WebGL support
+            this.threeJs.renderer = new THREE.CanvasRenderer({antialias : false});
+        } else {
+            this.threeJs.renderer = new THREE.WebGLRenderer({antialias : false});
+        }
         this.threeJs.renderer.setClearColor(0xffffff, 1);
         this.threeJs.renderer.setSize(this.threeJs.width, this.threeJs.height);
 
@@ -475,6 +513,15 @@ Ext.define('portal.charts.3DScatterPlot', {
         titleZ.position.z = zScale(vpts.zMax) + 2;
         this.threeJs.scene.add(titleZ);
 
+        //THREEJS currently does not support canvas renderer with PointCloud's. The vertices will not render
+        //Rather than workaround this - we just print a warning message.
+        if (this.useCanvasRenderer) {
+            var warningText = createText2D('IE 10 and below currently not supported...', '#ff0000');
+            warningText.position.z = 60;
+            warningText.position.y = 20;
+            this.threeJs.scene.add(warningText);
+        }
+        
         // Build our scatter plot points
         var mat = new THREE.PointCloudMaterial({
             vertexColors : true,
