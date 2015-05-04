@@ -4,15 +4,11 @@ import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
 public class FileDownloadService {
 
     HttpServiceCaller serviceCaller;
 
-    @Autowired
     public FileDownloadService(HttpServiceCaller serviceCaller) {
         this.serviceCaller = serviceCaller;
 
