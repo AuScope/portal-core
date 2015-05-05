@@ -22,22 +22,40 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
             maxHeight : 400,
             minHeight : 100
         });
-
-        //Set our 'always override' values
-        Ext.apply(cfg, {
-            autoScroll : true,
-            items : [{
-                xtype : 'onlineresourcepanel',
-                cswRecords : cswRecords
-            }],
-            listeners : {
-                resize : function(win, width, height) {
-                    if (win.getHeight() > win.maxHeight) {
-                        win.setSize(width, win.maxHeight);
+        
+        if(cswRecords[0].get('resourceProvider')=='kml'){
+            
+            Ext.apply(cfg, {
+                autoScroll : true,
+                html : '<p>This layer have been generated from a custom KML file</p>',
+                listeners : {
+                    resize : function(win, width, height) {
+                        if (win.getHeight() > win.maxHeight) {
+                            win.setSize(width, win.maxHeight);
+                        }
                     }
                 }
-            }
-        });
+            });
+            
+        }else{
+          //Set our 'always override' values
+            Ext.apply(cfg, {
+                autoScroll : true,
+                items : [{
+                    xtype : 'onlineresourcepanel',
+                    cswRecords : cswRecords
+                }],
+                listeners : {
+                    resize : function(win, width, height) {
+                        if (win.getHeight() > win.maxHeight) {
+                            win.setSize(width, win.maxHeight);
+                        }
+                    }
+                }
+            });
+        }
+
+        
 
         this.callParent(arguments);
     }

@@ -157,6 +157,11 @@ Ext.define('portal.layer.LayerFactory', {
         
         var renderer = this.rendererFactory.buildFromKMLRecord(cswRecord);
         
+        
+        var querier = Ext.create('portal.layer.querier.csw.CSWQuerier', {
+            map : this.map
+            });
+        
         //Create our instance
         var newLayer = Ext.create('portal.layer.Layer', {
             id : id,
@@ -165,7 +170,8 @@ Ext.define('portal.layer.LayerFactory', {
             name : name,
             description : description,
             renderer : renderer,
-            filterer : filterer,           
+            filterer : filterer, 
+            querier : querier,
             cswRecords : cswRecords,
             loading : false
         });
