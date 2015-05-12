@@ -5,7 +5,7 @@ Ext.define('portal.util.URL', {
     singleton: true
 }, function() {
     if (!window.WEB_CONTEXT) {
-        window.WEB_CONTEXT = '';
+        window.WEB_CONTEXT = '/' + window.location.pathname.substring(1).split("/")[0];
     }
 
     /**
