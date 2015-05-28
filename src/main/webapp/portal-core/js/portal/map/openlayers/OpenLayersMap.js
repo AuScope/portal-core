@@ -137,6 +137,10 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
     _makeQueryTargetsMap : function(layerStore, longitude, latitude) {
         var queryTargets = [];
+        if (!layerStore) {
+            return queryTargets;
+        }
+        
         //Iterate everything with WMS/WCS - no way around this :(
         for (var i = 0; i < layerStore.getCount(); i++) {
             var layer = layerStore.getAt(i);
