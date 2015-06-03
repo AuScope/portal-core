@@ -16,6 +16,7 @@ Ext.define('portal.layer.querier.wfs.factories.BaseFactory', {
     XMLNS_MO : 'http://xmlns.geoscience.gov.au/minoccml/1.0',
     XMLNS_RA : 'http://remanentanomalies.csiro.au',
     XMLNS_CAPDF : 'http://capdf.csiro.au/',
+    XMLNS_TIMA : 'https://ogc-jdlc.curtin.edu.au/ns/tima', 
 
     config : {
         //Reference back to portal.layer.querier.wfs.Parser that spawned this factory. Use
