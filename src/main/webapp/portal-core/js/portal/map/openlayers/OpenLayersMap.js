@@ -275,6 +275,38 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     _onPrimitivesAdded : function(primManager) {
         this.selectControl.setLayer(primManager.allLayers);
     },
+    
+    _handleDrawCtrlAddFeature : function(e) {
+        var ctrl = e.object;
+        var feature = e.feature;
+
+        //Remove box after it's added (delayed by 3 seconds so the user can see it)
+        var task = new Ext.util.DelayedTask(Ext.bind(function(feature){
+            this._drawCtrlVectorLayer.removeFeatures([feature]);
+        }, this, [feature]));
+        task.delay(3000);
+
+        //raise the data selection event
+        var originalBounds = feature.geometry.getBounds();
+        var bounds = originalBounds.transform('EPSG:3857','EPSG:4326').toArray();
+        var bbox = Ext.create('portal.util.BBox', {
+            northBoundLatitude : bounds[3],
+            southBoundLatitude : bounds[1],
+            eastBoundLongitude : bounds[2],
+            westBoundLongitude : bounds[0]
+        });
+
+        //Iterate all active layers looking for data sources (csw records) that intersect the selection
+        var intersectedRecords = this.getLayersInBBox(bbox);
+        this.fireEvent('dataSelect', this, bbox, intersectedRecords);
+
+        //Because click events are still 'caught' even if the click control is deactive, the click event
+        //still gets fired. To work around this, add a tiny delay to when we reactivate click events
+        var task = new Ext.util.DelayedTask(Ext.bind(function(ctrl){
+            ctrl.deactivate();
+        }, this, [ctrl]));
+        task.delay(50);
+    },
 
     /**
      * Renders this map to the specified Ext.container.Container.
@@ -405,9 +437,9 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 }
             });
             
-            var vectorLayer = this._getNewVectorLayer();
+            this._drawCtrlVectorLayer = this._getNewVectorLayer();
                        
-            var drawFeatureCtrl = new OpenLayers.Control.DrawFeature(vectorLayer, OpenLayers.Handler.RegularPolygon, {
+            var drawFeatureCtrl = new OpenLayers.Control.DrawFeature(this._drawCtrlVectorLayer, OpenLayers.Handler.RegularPolygon, {
                 handlerOptions: {
                     sides: 4,
                     irregular: true
@@ -436,37 +468,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             });
 
             //We need to listen for when a feature is drawn and act accordingly
-            drawFeatureCtrl.events.register('featureadded', {}, Ext.bind(function(e){
-                var ctrl = e.object;
-                var feature = e.feature;
-
-                //Remove box after it's added (delayed by 3 seconds so the user can see it)
-                var task = new Ext.util.DelayedTask(Ext.bind(function(feature){
-                    vectorLayer.removeFeatures([feature]);
-                }, this, [feature]));
-                task.delay(3000);
-
-                //raise the data selection event
-                var originalBounds = feature.geometry.getBounds();
-                var bounds = originalBounds.transform('EPSG:3857','EPSG:4326').toArray();
-                var bbox = Ext.create('portal.util.BBox', {
-                    northBoundLatitude : bounds[3],
-                    southBoundLatitude : bounds[1],
-                    eastBoundLongitude : bounds[2],
-                    westBoundLongitude : bounds[0]
-                });
-
-                //Iterate all active layers looking for data sources (csw records) that intersect the selection
-                var intersectedRecords = this.getLayersInBBox(bbox);
-                this.fireEvent('dataSelect', this, bbox, intersectedRecords);
-
-                //Because click events are still 'caught' even if the click control is deactive, the click event
-                //still gets fired. To work around this, add a tiny delay to when we reactivate click events
-                var task = new Ext.util.DelayedTask(Ext.bind(function(ctrl){
-                    ctrl.deactivate();
-                }, this, [ctrl]));
-                task.delay(50);
-            }, this));
+            drawFeatureCtrl.events.register('featureadded', {}, Ext.bind(function(e) {this._handleDrawCtrlAddFeature(e);}, this));
 
 
             this.map.addControl(panel);
