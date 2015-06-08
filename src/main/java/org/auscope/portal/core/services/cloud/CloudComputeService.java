@@ -35,6 +35,8 @@ import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
 import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
+import org.openstack4j.api.OSClient;
+import org.openstack4j.openstack.OSFactory;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -84,6 +86,12 @@ public class CloudComputeService {
     /** Name of the developers' keypair to inject into instances on
      * this provider. */
     private String keypair;
+    /** Name of accessKey for authentication */
+    private String accessKey;
+    /** Name of secretKey for authentication */
+    private String secretKey;
+    /** Cloud endpoint to connect to */
+    private String endpoint;
 
     /**
      * Creates a new instance with the specified credentials
@@ -104,6 +112,10 @@ public class CloudComputeService {
      * @param apiVersion The API version
      */
     public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String apiVersion) {
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+        this.endpoint = endpoint;
+
         Properties overrides = new Properties();
 
         String typeString = "";
@@ -388,5 +400,48 @@ public class CloudComputeService {
      */
     public void setSkippedZones(Set<String> skippedZones) {
         this.skippedZones = skippedZones;
+    }
+
+    /**
+     * Will attempt to tail and return the last 1000 lines from the given servers console.
+     * @param job the job which has been executed by this service
+     * @param numLines the number of console lines to return
+     * @return console output as string or null
+     * @return
+     */
+    public String getConsoleLog(CloudJob job) throws PortalServiceException {
+        return getConsoleLog(job, 1000);
+    }
+
+    /**
+     * Will attempt to tail and return the last {@code numLines} from the given servers console.
+     * @param job the job which has been executed by this service
+     * @param numLines the number of console lines to return
+     * @return console output as string or null
+     * @return
+     */
+    public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
+        String computeInstanceId = job.getComputeInstanceId();
+        if (computeInstanceId == null) {
+            return null;
+        }
+
+        try {
+            String[] accessParts = this.accessKey.split(":");
+            String[] idParts = computeInstanceId.split("/");
+
+            //JClouds has no support (currently) for tailing server console output. Our current workaround
+            //is to offload this to openstack4j.
+            OSClient os = OSFactory.builder()
+                    .endpoint(endpoint)
+                    .credentials(accessParts[1], secretKey)
+                    .tenantName(accessParts[0])
+                    .authenticate();
+
+            return os.compute().servers().getConsoleOutput(idParts[1], numLines);
+        } catch (Exception ex) {
+            logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
+            throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
+        }
     }
 }
