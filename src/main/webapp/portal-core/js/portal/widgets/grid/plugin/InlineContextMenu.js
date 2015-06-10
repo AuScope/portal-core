@@ -6,6 +6,7 @@
  * To use this plugin, assign the following field to the plugin constructor
  * {
  *  actions : Ext.Action[] - Actions to be shown/hidden according to row selection.
+ *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column 
  * }
  *
  * Contains two events:
@@ -56,6 +57,7 @@ Ext.define('portal.widgets.grid.plugin.InlineContextMenu', {
      * {
      *  actions : Ext.Action[] - *required* Actions to be shown/hidden according to row selection.
      *  align : [Optional] String - Choose from values: 'center' 'left' 'right'. Default is 'right' 
+     *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column
      * }
      */
     constructor : function(cfg) {

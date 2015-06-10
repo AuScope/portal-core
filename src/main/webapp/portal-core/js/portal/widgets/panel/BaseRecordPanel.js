@@ -134,6 +134,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
           plugins:[{                
               ptype : 'rowexpandercontainer',
               pluginId : 'maingrid_rowexpandercontainer',
+              toggleColIndexes: [0, 2],
               generateContainer : function(record, parentElId) {                  
                   //VT:if this is deserialized, we don't need to regenerate the layer
                   if(record.get('layer')) {                        

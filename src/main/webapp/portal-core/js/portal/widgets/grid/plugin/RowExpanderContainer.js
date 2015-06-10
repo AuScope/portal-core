@@ -7,6 +7,7 @@
  * {
  *  generateContainer : function(record, parentElId) - returns Ext.container.Container,
  *  allowMultipleOpen : Boolean - whether multiple containers can be open simultaneously.
+ *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column 
  * }
  *
  * Contains two events:
@@ -37,12 +38,14 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     rowBodyTpl: '<div id="rowexpandercontainer-{id}"></div>', //overrides parent
     storedHtml: null,   
     recordStatus: null,  
-    generationRunning: false, 
+    generationRunning: false,
+    toggleColIndexes: null,
 
     
     constructor: function(config) {
         this.callParent(arguments);
         
+        this.toggleColIndexes = Ext.isArray(config.toggleColIndexes) ? config.toggleColIndexes : null;
         this.allowMultipleOpen = config.allowMultipleOpen ? true : false;
         this.storedHtml = {};
         this.recordStatus = {};
@@ -144,7 +147,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
     
     onCellClick: function(view, td, cellIndex, record, tr, rowIndex) {
-        if(cellIndex == 0 || cellIndex == 2){
+        if (!Ext.isArray(this.toggleColIndexes) || Ext.Array.contains(this.toggleColIndexes, cellIndex)) {
             this.toggleRow(rowIndex, record);
         }
     },
