@@ -11,7 +11,7 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudFileInformation;
-import org.auscope.portal.core.cloud.CloudJob;
+import org.auscope.portal.core.cloud.CloudFileOwner;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
@@ -65,6 +65,17 @@ public class CloudStorageService {
     private String bucket = DEFAULT_BUCKET;
 
     private BlobStoreContext blobStoreContext;
+
+    /**
+     * Creates a new instance for connecting to the specified parameters
+     * @param endpoint The URL endpoint for the cloud storage service
+     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey Username credential for accessing the storage service
+     * @param secretKey Password credentials for accessing the storage service
+     */
+    public CloudStorageService(String provider, String accessKey, String secretKey) {
+        this(null, provider, accessKey, secretKey, null, false);
+    }
 
     /**
      * Creates a new instance for connecting to the specified parameters
@@ -148,11 +159,15 @@ public class CloudStorageService {
             properties.setProperty("jclouds.region", regionName);
         }
 
-        this.blobStoreContext = ContextBuilder.newBuilder(provider)
+        ContextBuilder builder = ContextBuilder.newBuilder(provider)
                 .overrides(properties)
-                .endpoint(endpoint)
-                .credentials(accessKey, secretKey)
-                .build(BlobStoreContext.class);
+                .credentials(accessKey, secretKey);
+
+        if (this.endpoint != null) {
+            builder.endpoint(this.endpoint);
+        }
+
+        this.blobStoreContext = builder.build(BlobStoreContext.class);
     }
 
     /**
@@ -307,7 +322,7 @@ public class CloudStorageService {
      * @param job
      * @return
      */
-    public String generateBaseKey(CloudJob job) {
+    public String generateBaseKey(CloudFileOwner job) {
         String baseKey = String.format("%1$s%2$s-%3$010d", jobPrefix, job.getUser(), job.getId());
         return sanitise(baseKey);
     }
@@ -318,7 +333,7 @@ public class CloudStorageService {
      * @param key The key of the file (local to job).
      * @return
      */
-    public String keyForJobFile(CloudJob job, String key) {
+    public String keyForJobFile(CloudFileOwner job, String key) {
         return String.format("%1$s/%2$s", jobToBaseKey(job), key);
     }
 
@@ -327,7 +342,7 @@ public class CloudStorageService {
      * @param job Will have its baseKey parameter set if it's null
      * @return
      */
-    protected String jobToBaseKey(CloudJob job) {
+    protected String jobToBaseKey(CloudFileOwner job) {
         if (job.getStorageBaseKey() == null) {
             job.setStorageBaseKey(generateBaseKey(job));
         }
@@ -362,7 +377,7 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public InputStream getJobFile(CloudJob job, String key) throws PortalServiceException {
+    public InputStream getJobFile(CloudFileOwner job, String key) throws PortalServiceException {
         try {
             BlobStore bs = blobStoreContext.getBlobStore();
             Blob blob = bs.getBlob(bucket, keyForJobFile(job, key));
@@ -380,7 +395,7 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public CloudFileInformation[] listJobFiles(CloudJob job) throws PortalServiceException {
+    public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
 
 
         try {
@@ -428,7 +443,7 @@ public class CloudStorageService {
      * @param files The local files to upload
      * @throws PortalServiceException
      */
-    public void uploadJobFiles(CloudJob job, File[] files) throws PortalServiceException {
+    public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
 
         try {
             BlobStore bs = blobStoreContext.getBlobStore();
@@ -460,7 +475,7 @@ public class CloudStorageService {
      * @param job The whose storage space will be deleted
      * @throws PortalServiceException
      */
-    public void deleteJobFiles(CloudJob job) throws PortalServiceException {
+    public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
         try {
             BlobStore bs = blobStoreContext.getBlobStore();
             bs.deleteDirectory(bucket, jobToBaseKey(job));

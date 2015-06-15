@@ -12,7 +12,7 @@ import java.util.Date;
  *
  * @author Josh Vote
  */
-public class CloudJob implements Serializable, StagedFileOwner {
+public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Generated 2012-06-07

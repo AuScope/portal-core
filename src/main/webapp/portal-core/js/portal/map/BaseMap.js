@@ -6,7 +6,7 @@ Ext.define('portal.map.BaseMap', {
     extend : 'Ext.util.Observable',
 
     /**
-     * Instance of portal.layer.LayerStore
+     * Instance of portal.layer.LayerStore. Can be null
      */
     layerStore : null,
 
@@ -50,7 +50,7 @@ Ext.define('portal.map.BaseMap', {
      */
     constructor : function(cfg) {
         this.container = cfg.container;
-        this.layerStore = cfg.layerStore;
+        this.layerStore = cfg.layerStore ? cfg.layerStore : null;
 
         this.callParent(arguments);
 
@@ -58,8 +58,10 @@ Ext.define('portal.map.BaseMap', {
             this.renderToContainer(this.container);
         }
 
-        this.layerStore.on('add', this._onLayerStoreAdd, this);
-        this.layerStore.on('remove', this._onLayerStoreRemove, this);
+        if (this.layerStore) {
+            this.layerStore.on('add', this._onLayerStoreAdd, this);
+            this.layerStore.on('remove', this._onLayerStoreRemove, this);
+        }
     },
 
     /////////////// Unimplemented functions
@@ -301,6 +303,10 @@ Ext.define('portal.map.BaseMap', {
      */
     getLayersInBBox : function(bbox) {
         var intersectedRecords = [];
+        if (!this.layerStore) {
+            return intersectedRecords;
+        }
+        
         for (var layerIdx = 0; layerIdx < this.layerStore.getCount(); layerIdx++) {
             var layer = this.layerStore.getAt(layerIdx);
             var cswRecs = layer.get('cswRecords');

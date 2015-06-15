@@ -3,6 +3,7 @@ package org.auscope.portal.core.services.methodmakers;
 import java.awt.Dimension;
 import java.net.URISyntaxException;
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
@@ -151,4 +152,29 @@ public class WCSMethodMaker extends AbstractMethodMaker {
         return httpMethod;
     }
 
+    /**
+     * Method for creating a GetCapabilities request for a WCS service
+     * @param serviceUrl The WCS endpoint to query
+     * @return
+     * @throws URISyntaxException
+     * @throws Exception
+     */
+    public HttpRequestBase getCapabilitiesMethod(String serviceUrl) throws URISyntaxException {
+        HttpGet httpMethod = new HttpGet();
+        URIBuilder builder = new URIBuilder(serviceUrl);
+
+        //Do some simple error checking to align with WCS standard
+        if (serviceUrl == null || serviceUrl.isEmpty())
+            throw new IllegalArgumentException("You must specify a serviceUrl");
+
+        builder.setParameter("service", "WCS");
+        builder.setParameter("version", "1.0.0");
+        builder.setParameter("request", "GetCapabilities");
+
+        httpMethod.setURI(builder.build());
+
+        logger.debug(String.format("url='%1$s' query='%2$s'", serviceUrl, httpMethod.getURI().getQuery()));
+
+        return httpMethod;
+    }
 }
