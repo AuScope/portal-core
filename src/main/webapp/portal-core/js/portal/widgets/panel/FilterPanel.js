@@ -57,16 +57,17 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             menuItems.push(this._getLegendAction(this.filterForm.layer));
         }      
         
-        //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
-        //VT:Should have a download action except for Insar data.
-        if(this.filterForm.layer.get('cswRecords').length > 0 &&
-                this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
-                 menuItems.push(this._getDownloadAction());
-        }
+        
         
         if(config.menuFactory){
             var mf= config.menuFactory;
             mf.appendAdditionalActions(menuItems,this.filterForm.layer,this.filterForm.layer.get('source').get('group'),this._map);
+        }else{
+            //VT:Default behavior if there are no menuFactory defined.
+            if(this.filterForm.layer.get('cswRecords').length > 0 &&
+                    this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
+                     menuItems.push(this._getDownloadAction());
+            }
         }
         
         Ext.apply(config, { 

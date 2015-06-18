@@ -217,6 +217,8 @@ public class FilterBoundingBox implements Serializable {
         return new FilterBoundingBox(crs,
                 new double[] {Math.min(westBoundLongitude, eastBoundLongitude), Math.min(northBoundLatitude, southBoundLatitude)},
                 new double[] {Math.max(westBoundLongitude, eastBoundLongitude), Math.max(northBoundLatitude, southBoundLatitude)});
+
+
     }
 
     /**
@@ -253,7 +255,7 @@ public class FilterBoundingBox implements Serializable {
 
             //VT:Special case only for making GeoServer request as if the east of a bounding box hits -180, Geoserver treats it as west.
             //VT:Therefore we want east to always be positive
-            if(eastBound < -150){
+            if(eastBound < -120){
                 eastBound = 180 + (180 + eastBound);
             }
 

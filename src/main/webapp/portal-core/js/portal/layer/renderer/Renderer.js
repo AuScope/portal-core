@@ -165,6 +165,6 @@ Ext.define('portal.layer.renderer.Renderer', {
     },
     
     setVisibility : function(visible) {
-        this.primitiveManager.setVisibility(visibility);
+        this.primitiveManager.setVisibility(visible);
     }
 });
