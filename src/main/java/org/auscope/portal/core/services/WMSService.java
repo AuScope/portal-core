@@ -1,12 +1,15 @@
 package org.auscope.portal.core.services;
 
 import java.util.List;
+
 import javax.naming.OperationNotSupportedException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMakerInterface;
+import org.auscope.portal.core.services.methodmakers.WMS_1_3_0_MethodMaker;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 
@@ -100,11 +103,13 @@ public class WMSService {
     public String getFeatureInfo(String wmsUrl, String format, String layer, String srs, double westBoundLongitude,
             double southBoundLatitude, double eastBoundLongitude, double northBoundLatitude, int width, int height,
             double pointLng, double pointLat, int pointX, int pointY, String styles,String sldBody, boolean postMethod,
-            String version,String feature_count) throws PortalServiceException {
+            String version,String feature_count,boolean attemptOtherVersion) throws PortalServiceException {
         // Do the request
         HttpRequestBase method = null;
+        WMSMethodMakerInterface methodMaker;
         try {
-            WMSMethodMakerInterface methodMaker = getSupportedMethodMaker(wmsUrl,version);
+            methodMaker = getSupportedMethodMaker(wmsUrl,version);
+
             if(postMethod){
                 method = methodMaker.getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,sldBody,feature_count);
             }else{
@@ -120,11 +125,31 @@ public class WMSService {
                 return response;
             }
 
+
         } catch(NullPointerException npe){
             npe.printStackTrace();
             throw new NullPointerException("Call configWMSVersion to setup the right wms method maker to use");
+
         } catch (Exception ex) {
-            throw new PortalServiceException(method, "Failure getting/parsing wms capabilities", ex);
+
+            //VT:Making this more robust, maybe the wrong version is used;
+            if(attemptOtherVersion){
+                for (WMSMethodMakerInterface maker : listOfSupportedWMSMethodMaker) {
+                    if (!maker.getSupportedVersion().equals(version)) {
+                        try{
+                            return this.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width,
+                                    height, pointLng, pointLat, pointX, pointY, styles,sldBody, postMethod,maker.getSupportedVersion() , feature_count,false);
+                        }catch(Exception e){
+                            throw new PortalServiceException(method, "Failure requesting feature info", ex);
+                        }
+                    }
+                }
+            }else{
+                throw new PortalServiceException(method, "Failure requesting feature info", ex);
+
+            }
+
         }
+        return "";
     }
 }

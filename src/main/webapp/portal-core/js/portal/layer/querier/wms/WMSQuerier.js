@@ -142,7 +142,7 @@ Ext.define('portal.layer.querier.wms.WMSQuerier', {
                 xtype : 'treepanel',
                 autoScroll : true,
                 rootVisible : true,
-                rootProperty : rootNode
+                root : rootNode
             }]
         };
 

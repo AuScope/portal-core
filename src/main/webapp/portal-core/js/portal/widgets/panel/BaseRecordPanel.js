@@ -44,7 +44,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             viewConfig : {
                 emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
                 preserveScrollOnRefresh: true    
-            },
+            },          
             dockedItems : [{
                 xtype : 'toolbar',
                 dock : 'top',
@@ -157,7 +157,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                           filterForm.getForm().setValues(existingParams);
                       }
                   }
-                  
+                  this.grid.updateLayout({
+                      defer:false,
+                      isRoot:true
+                  });                    
                   return filterPanel;
              }
          },{

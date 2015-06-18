@@ -579,7 +579,7 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                             id      :'wcsDownloadFrm',
                             xtype   :'form',
                             layout  :'form',
-                            frame   : true,
+                            frame   : false,
                             autoHeight : true,
                             autoWidth   : true,
                             axisConstraints : axisConstraints,  //This is stored here for later validation usage
