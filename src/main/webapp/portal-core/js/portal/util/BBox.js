@@ -17,6 +17,17 @@ Ext.define('portal.util.BBox', {
 
         this.callParent(arguments);
     },
+    
+    //VT: when longtitude goes over 180, geoserver process it the other way around the globe.
+    statics : {
+        datelineCorrection : function(eastBound,epsg){
+            eastBound = parseInt(eastBound);
+            if(eastBound < -120 && epsg=="EPSG:4326"){
+                eastBound = 180 + (180 + eastBound);
+            }
+            return eastBound
+        }
+    },
 
     /**
      * Returns true if the bounding box spans the entire planet

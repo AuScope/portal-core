@@ -117,9 +117,9 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                     }
                 };
                 
-                if(currentVisibleBounds.eastBoundLongitude < -150){
-                    currentVisibleBounds.eastBoundLongitude = 360 + currentVisibleBounds.eastBoundLongitude;
-                }
+               
+                currentVisibleBounds.eastBoundLongitude = portal.util.BBox.datelineCorrection(currentVisibleBounds.eastBoundLongitude,"EPSG:4326")
+                
 
                 //Contains the fields for bbox selection
                 if (rec.spatialDomain.envelopes.length > 0) {
