@@ -51,7 +51,7 @@ public class CSVUtil {
         String line = "";
         while ((line = csvReader.readLine()) != null){
             if(line.isEmpty())continue;
-            String[] tokens = line.split(",");
+            String[] tokens = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
             for(int i=0; i < columnIndex.length; i++){
                 if(columnIndex[i]<tokens.length){
                     result.get(columns[i]).add(tokens[columnIndex[i]]);
