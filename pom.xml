@@ -552,5 +552,10 @@
 		  <artifactId>openstack4j-httpclient</artifactId>
 		  <version>2.0.3</version>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.1</version>
+        </dependency>
     </dependencies>
 </project>
