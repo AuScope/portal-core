@@ -86,7 +86,7 @@ Ext.define('portal.layer.renderer.csw.CSWRenderer', {
                                 longitude : geoEl.eastBoundLongitude
                             });
 
-                            primitives.push(this.map.makeMarker(cswRecords[i].get('id'), cswRecords[i].get('name'), cswRecords[i], undefined, this.parentLayer, point, this.getIcon()));
+                            primitives.push(this.map.makeMarker(cswRecords[i].get('id'), cswRecords[i].get('name'), cswRecords[i], undefined, this.parentLayer, point, this.icon));
                         } else { //polygon
                             var polygonList = geoEl.toPolygon(this.map, (this._getPolygonColor(this.polygonColor))[0], 4, 0.75,(this._getPolygonColor(this.polygonColor))[1], 0.4, undefined,
                                     cswRecords[i].get('id'), cswRecords[i], undefined, this.parentLayer);

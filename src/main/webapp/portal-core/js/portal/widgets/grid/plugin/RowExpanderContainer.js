@@ -67,6 +67,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         view.on('collapsebody', this.onCollapseBody, this);
         view.on('cellclick', this.onCellClick, this);
         view.on('groupexpand', this.onGroupExpand, this);
+        view.on('groupcollapse', this.onGroupExpand, this);
         
         view.on('refresh', this.onRefresh, this);
         
@@ -156,7 +157,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         for (openId in this.recordStatus) {
             if (this.recordStatus[openId].expanded) {
                 if (this.recordStatus[openId].container) {
-                    this.recordStatus[openId].container.doLayout();
+                    this.recordStatus[openId].container.updateLayout({
+                        defer:false,
+                        isRoot:false
+                    });
                 }
             }
         }
@@ -195,7 +199,13 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             var id = "rowexpandercontainer-" + record.id;
             var container = this.generateContainer(record, id);
             this.recordStatus[record.id].container = container;
+            this.recordStatus[record.id].container.updateLayout({
+                defer:false,
+                isRoot:false
+            });
+            
         }
+
         this.generationRunning = false;
     }
     
