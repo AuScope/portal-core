@@ -214,6 +214,10 @@ public class FilterBoundingBox implements Serializable {
             double eastBoundLongitude,
             double westBoundLongitude) {
 
+        if(eastBoundLongitude < -120){
+            eastBoundLongitude = 180 + (180 + eastBoundLongitude);
+        }
+
         return new FilterBoundingBox(crs,
                 new double[] {Math.min(westBoundLongitude, eastBoundLongitude), Math.min(northBoundLatitude, southBoundLatitude)},
                 new double[] {Math.max(westBoundLongitude, eastBoundLongitude), Math.max(northBoundLatitude, southBoundLatitude)});
