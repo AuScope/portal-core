@@ -159,7 +159,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                   }
                   this.grid.updateLayout({
                       defer:false,
-                      isRoot:true
+                      isRoot:false
                   });                    
                   return filterPanel;
              }

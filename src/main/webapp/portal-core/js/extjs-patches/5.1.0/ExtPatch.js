@@ -5,12 +5,15 @@
 //        
 //        var owner = item.ownerCt;
 //        if (owner && owner !== this) {
-//            owner.remove(item, false);
+//            if(owner instanceof portal.widgets.panel.FilterPanel && this instanceof portal.widgets.panel.FilterPanel){
+//                owner.remove(item, false,false);
+//            }else{
+//                owner.remove(item, false);
+//            }            
 //        }
 //    },
 //    
-//    remove: function(component, autoDestroy) {
-//        console.log(component.ownerCt);
+//    remove: function(component, autoDestroy,doLayout) {
 //        var me = this,
 //            c = me.getComponent(component);
 //        if (!arguments.length) {
@@ -22,8 +25,10 @@
 //                me.fireEvent('remove', me, c);
 //            }
 //            if (!me.destroying && !c.floating) {
-//                console.log(component.ownerCt);
-//                me.updateLayout();
+//                if(doLayout != false){
+//                    me.updateLayout();
+//                }
+//                
 //            }
 //        }
 //        return c;
@@ -31,53 +36,56 @@
 // 
 //});
 //
-//Ext.define('Auscope.layout.component.Dock', {
-//    override : 'Ext.layout.component.Dock',
-//    
-//    renderItems: function(items, target) {
-//        var me = this,
-//            dockedItemCount = items.length,
-//            itemIndex = 0,
-//            correctPosition = 0,
-//            staticNodeCount = 0,
-//            targetNodes = me.getRenderTarget().dom?me.getRenderTarget().dom.childNodes:[],
-//            targetChildCount = targetNodes.length,
-//            i, j, targetChildNode, item;
-//        
-//        for (i = 0 , j = 0; i < targetChildCount; i++) {
-//            targetChildNode = targetNodes[i];
-//            if (targetChildNode.nodeType === 1 && Ext.fly(targetChildNode).hasCls(Ext.baseCSSPrefix + 'resizable-handle')) {
-//                break;
-//            }
-//            for (j = 0; j < dockedItemCount; j++) {
-//                item = items[j];
-//                if (item.rendered && item.el.dom === targetChildNode) {
-//                    break;
-//                }
-//            }
-//            
-//            
-//            if (j === dockedItemCount) {
-//                staticNodeCount++;
-//            }
-//        }
-//        
-//        for (; itemIndex < dockedItemCount; itemIndex++ , correctPosition++) {
-//            item = items[itemIndex];
-//            
-//            if (itemIndex === correctPosition && (item.dock === 'right' || item.dock === 'bottom')) {
-//                correctPosition += staticNodeCount;
-//            }
-//            
-//            if (item && !item.rendered) {
-//                me.renderItem(item, target, correctPosition);
-//            } else if (!me.isValidParent(item, target, correctPosition)) {
-//                me.moveItem(item, target, correctPosition);
-//            }
-//        }
-//    }
-// 
-//});
+Ext.define('Auscope.layout.component.Dock', {
+    override : 'Ext.layout.component.Dock',
+    
+    renderItems: function(items, target) {
+        var testme = this;
+        testme.getRenderTarget().dom.childNodes;
+        
+        var me = this,
+            dockedItemCount = items.length,
+            itemIndex = 0,
+            correctPosition = 0,
+            staticNodeCount = 0,
+            targetNodes = me.getRenderTarget().dom.childNodes,
+            targetChildCount = targetNodes.length,
+            i, j, targetChildNode, item;
+        
+        for (i = 0 , j = 0; i < targetChildCount; i++) {
+            targetChildNode = targetNodes[i];
+            if (targetChildNode.nodeType === 1 && Ext.fly(targetChildNode).hasCls(Ext.baseCSSPrefix + 'resizable-handle')) {
+                break;
+            }
+            for (j = 0; j < dockedItemCount; j++) {
+                item = items[j];
+                if (item.rendered && item.el.dom === targetChildNode) {
+                    break;
+                }
+            }
+            
+            
+            if (j === dockedItemCount) {
+                staticNodeCount++;
+            }
+        }
+        
+        for (; itemIndex < dockedItemCount; itemIndex++ , correctPosition++) {
+            item = items[itemIndex];
+            
+            if (itemIndex === correctPosition && (item.dock === 'right' || item.dock === 'bottom')) {
+                correctPosition += staticNodeCount;
+            }
+            
+            if (item && !item.rendered) {
+                me.renderItem(item, target, correctPosition);
+            } else if (!me.isValidParent(item, target, correctPosition)) {
+                me.moveItem(item, target, correctPosition);
+            }
+        }
+    }
+ 
+});
 //
 //Ext.define('Auscope.layout.Layout', {
 //    override : 'Ext.layout.Layout',
@@ -98,8 +106,7 @@
 //    
 //    getItemLayoutEl: function(item) {
 //        var dom = item.el ? item.el.dom : Ext.getDom(item);
-//        
-//        var parentNode = dom?dom.parentNode:null; 
+//        var parentNode = dom.parentNode;
 //        var className;
 //        if (parentNode) {
 //            className = parentNode.className;
