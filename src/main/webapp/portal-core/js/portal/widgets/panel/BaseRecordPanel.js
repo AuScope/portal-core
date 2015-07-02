@@ -639,6 +639,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             layer.removeDataFromMap();
             this.activelayerstore.remove(layer);          
             this.fireEvent('cellclick',this,undefined,undefined,record,undefined,rowIdx);
+            this.menuFactory.layerRemoveHandler(layer);
+           
+            
         }             
     },
     
