@@ -177,7 +177,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         var me = this;   
         var panel =Ext.create('portal.widgets.panel.FilterPanel', {    
             menuFactory : this.menuFactory,
-            filterForm  : filterForm,                       
+            filterForm  : filterForm, 
+            detachOnRemove : false,
             map         : this.map,
             renderTo    : parentElId,
             listeners : {
