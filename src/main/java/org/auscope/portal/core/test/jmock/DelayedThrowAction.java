@@ -4,8 +4,8 @@ import org.jmock.api.Invocation;
 import org.jmock.lib.action.ThrowAction;
 
 /**
- * A simple extension on ThrowAction that adds a delay
- * before throwing the exception
+ * A simple extension on ThrowAction that adds a delay before throwing the exception
+ * 
  * @author Josh Vote
  *
  */
@@ -15,8 +15,10 @@ public class DelayedThrowAction extends ThrowAction {
 
     /**
      * Creates a new instance
+     * 
      * @param throwable
-     * @param delayMs The delay in milli seconds
+     * @param delayMs
+     *            The delay in milli seconds
      */
     public DelayedThrowAction(Throwable throwable, long delayMs) {
         super(throwable);

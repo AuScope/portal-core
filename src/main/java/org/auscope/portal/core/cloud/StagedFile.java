@@ -4,21 +4,27 @@ import java.io.File;
 
 /**
  * Represents a local file (stored somewhere on the file system) that belongs to a job.
+ * 
  * @author Joshua
  *
  */
 public class StagedFile {
-    /** The job that owns this staged file*/
+    /** The job that owns this staged file */
     private StagedFileOwner owner;
-    /** The name of this staged file (unique per job)*/
+    /** The name of this staged file (unique per job) */
     private String name;
-    /** can be null - the underlying reference to the HDD where this file is staged*/
+    /** can be null - the underlying reference to the HDD where this file is staged */
     private File file;
+
     /**
      * Creates a new instance
-     * @param owner The job that owns this staged file
-     * @param name The name of this staged file (unique per job)
-     * @param file can be null - the underlying reference to the HDD where this file is staged
+     * 
+     * @param owner
+     *            The job that owns this staged file
+     * @param name
+     *            The name of this staged file (unique per job)
+     * @param file
+     *            can be null - the underlying reference to the HDD where this file is staged
      */
     public StagedFile(StagedFileOwner owner, String name, File file) {
         super();
@@ -29,6 +35,7 @@ public class StagedFile {
 
     /**
      * The job that owns this staged file
+     * 
      * @return
      */
     public StagedFileOwner getOwner() {
@@ -37,6 +44,7 @@ public class StagedFile {
 
     /**
      * The job that owns this staged file
+     * 
      * @param owner
      */
     public void setOwner(StagedFileOwner owner) {
@@ -45,6 +53,7 @@ public class StagedFile {
 
     /**
      * The name of this staged file (unique per job)
+     * 
      * @return
      */
     public String getName() {
@@ -53,6 +62,7 @@ public class StagedFile {
 
     /**
      * The name of this staged file (unique per job)
+     * 
      * @param name
      */
     public void setName(String name) {
@@ -61,6 +71,7 @@ public class StagedFile {
 
     /**
      * can be null - the underlying reference to the HDD where this file is staged
+     * 
      * @return
      */
     public File getFile() {
@@ -69,6 +80,7 @@ public class StagedFile {
 
     /**
      * can be null - the underlying reference to the HDD where this file is staged
+     * 
      * @param file
      */
     public void setFile(File file) {

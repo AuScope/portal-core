@@ -12,7 +12,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Represents any of the items that belong as children to  a <wcs:spatialDomain> element in a DescribeCoverage response.
+ * Represents any of the items that belong as children to a <wcs:spatialDomain> element in a DescribeCoverage response.
+ * 
  * @author Josh Vote
  *
  */
@@ -20,11 +21,12 @@ public class SpatialDomain implements Serializable {
     public SimpleEnvelope[] envelopes;
     public RectifiedGrid rectifiedGrid;
 
-
     /**
      *
-     * @param envelopes The envelopes (if any) associated with this spatial domain). Can be null
-     * @param rectifiedGrid Returns the RectifiedGrid (if any) associated with this spatial domain. Can be null.
+     * @param envelopes
+     *            The envelopes (if any) associated with this spatial domain). Can be null
+     * @param rectifiedGrid
+     *            Returns the RectifiedGrid (if any) associated with this spatial domain. Can be null.
      */
     public SpatialDomain(SimpleEnvelope[] envelopes, RectifiedGrid rectifiedGrid) {
         super();
@@ -34,13 +36,15 @@ public class SpatialDomain implements Serializable {
 
     /**
      * Creates a new spatial domain
+     * 
      * @param envelope
      * @param rectifiedGrid
      * @throws XPathExpressionException
      */
     public SpatialDomain(Node node, XPath xPath) throws XPathExpressionException {
         WCSNamespaceContext nc = new WCSNamespaceContext();
-        NodeList envelopeNodes = (NodeList) DOMUtil.compileXPathExpr("wcs:Envelope | gml:Envelope | wcs:EnvelopeWithTimePeriod", nc).evaluate(node, XPathConstants.NODESET);
+        NodeList envelopeNodes = (NodeList) DOMUtil.compileXPathExpr(
+                "wcs:Envelope | gml:Envelope | wcs:EnvelopeWithTimePeriod", nc).evaluate(node, XPathConstants.NODESET);
         this.envelopes = new SimpleEnvelope[envelopeNodes.getLength()];
         for (int i = 0; i < envelopeNodes.getLength(); i++) {
             this.envelopes[i] = new SimpleEnvelope(envelopeNodes.item(i), xPath);
@@ -54,6 +58,7 @@ public class SpatialDomain implements Serializable {
 
     /**
      * The envelopes (if any) associated with this spatial domain). Can be null
+     * 
      * @return
      */
     public SimpleEnvelope[] getEnvelopes() {
@@ -62,6 +67,7 @@ public class SpatialDomain implements Serializable {
 
     /**
      * Returns the RectifiedGrid (if any) associated with this spatial domain. Can be null.
+     * 
      * @return
      */
     public RectifiedGrid getRectifiedGrid() {

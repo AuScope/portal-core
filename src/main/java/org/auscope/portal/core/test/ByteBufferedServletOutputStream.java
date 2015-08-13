@@ -7,6 +7,7 @@ import javax.servlet.ServletOutputStream;
 
 /**
  * Test class extension of a ServletOutputStream that allows access to an underlying byte[] of data that was written
+ * 
  * @author vot002
  *
  */
@@ -29,7 +30,7 @@ public class ByteBufferedServletOutputStream extends ServletOutputStream {
         return stream.toByteArray();
     }
 
-    public ByteArrayOutputStream getStream(){
+    public ByteArrayOutputStream getStream() {
         return this.stream;
     }
 }

@@ -15,6 +15,7 @@ import org.auscope.portal.core.services.responses.wcs.TimeConstraint;
 
 /**
  * Class for creating HttpMethods for interacting with an OGC Web Coverage Service
+ * 
  * @author Josh Vote
  *
  */
@@ -24,23 +25,35 @@ public class WCSMethodMaker extends AbstractMethodMaker {
 
     /**
      * Method for creating a GetCoverage HttpMethodBase
-     * @param serviceUrl The WCS endpoint to query
-     * @param coverageName The coverage layername to request
-     * @param inputCrs the coordinate reference system to query
-     * @param format File format to request
-     * @param outputCrs [Optional] The Coordinate reference system of the output data
-     * @param outputSize The size of the coverage to request (cannot be used with outputResolution)
-     * @param outputResolution When requesting a georectified grid coverage, this requests a subset with a specific spatial resolution (Not compatible with outputSize)
-     * @param bbox [Optional] Spatial bounds to limit request
-     * @param timeConstraint [Optional] Temporal bounds to limit request
-     * @param customParams [Optional] a list of additional request parameters
+     * 
+     * @param serviceUrl
+     *            The WCS endpoint to query
+     * @param coverageName
+     *            The coverage layername to request
+     * @param inputCrs
+     *            the coordinate reference system to query
+     * @param format
+     *            File format to request
+     * @param outputCrs
+     *            [Optional] The Coordinate reference system of the output data
+     * @param outputSize
+     *            The size of the coverage to request (cannot be used with outputResolution)
+     * @param outputResolution
+     *            When requesting a georectified grid coverage, this requests a subset with a specific spatial resolution (Not compatible with outputSize)
+     * @param bbox
+     *            [Optional] Spatial bounds to limit request
+     * @param timeConstraint
+     *            [Optional] Temporal bounds to limit request
+     * @param customParams
+     *            [Optional] a list of additional request parameters
      * @return
      * @throws URISyntaxException
      * @throws Exception
      */
     public HttpRequestBase getCoverageMethod(String serviceURL, String coverageName,
             String format, String outputCrs, Dimension outputSize, Resolution outputResolution, String inputCrs,
-            CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParams) throws URISyntaxException {
+            CSWGeographicBoundingBox bbox, TimeConstraint timeConstraint, Map<String, String> customParams)
+            throws URISyntaxException {
         HttpGet httpMethod = new HttpGet(serviceURL);
 
         //Do some simple error checking to align with WCS standard
@@ -50,10 +63,10 @@ public class WCSMethodMaker extends AbstractMethodMaker {
         if ((outputSize == null) && (outputResolution == null)) {
             throw new IllegalArgumentException("One of outputResolution or outputSize must be used");
         }
-        if (bbox==null && (timeConstraint == null)) {
+        if (bbox == null && (timeConstraint == null)) {
             throw new IllegalArgumentException("You must specify at least one bbox or time constraint");
         }
-        if (inputCrs==null || inputCrs.isEmpty()) {
+        if (inputCrs == null || inputCrs.isEmpty()) {
             throw new IllegalArgumentException("You must specify an inputCrs");
         }
 
@@ -80,9 +93,11 @@ public class WCSMethodMaker extends AbstractMethodMaker {
             //this is so we can fetch data when our bbox is crossing the anti meridian
             //Otherwise our bbox wraps around the WRONG side of the planet
             if (adjustedWestLng <= 0 && adjustedEastLng >= 0 ||
-                adjustedWestLng >= 0 && adjustedEastLng <= 0) {
-                adjustedWestLng = (bbox.getWestBoundLongitude() < 0) ? (180 - bbox.getWestBoundLongitude()) : bbox.getWestBoundLongitude();
-                adjustedEastLng = (bbox.getEastBoundLongitude() < 0) ? (180 - bbox.getEastBoundLongitude()) : bbox.getEastBoundLongitude();
+                    adjustedWestLng >= 0 && adjustedEastLng <= 0) {
+                adjustedWestLng = (bbox.getWestBoundLongitude() < 0) ? (180 - bbox.getWestBoundLongitude()) : bbox
+                        .getWestBoundLongitude();
+                adjustedEastLng = (bbox.getEastBoundLongitude() < 0) ? (180 - bbox.getEastBoundLongitude()) : bbox
+                        .getEastBoundLongitude();
             }
 
             builder.setParameter("bbox",
@@ -113,9 +128,7 @@ public class WCSMethodMaker extends AbstractMethodMaker {
             }
         }
 
-
         httpMethod.setURI(builder.build());
-
 
         logger.debug(String.format("url='%1$s' query='%2$s'", serviceURL, httpMethod.getURI().getQuery()));
 
@@ -124,8 +137,11 @@ public class WCSMethodMaker extends AbstractMethodMaker {
 
     /**
      * Method for creating a DescribeCoverage request for a particular coverage
-     * @param serviceUrl The WCS endpoint to query
-     * @param coverageName The name of the coverage to query
+     * 
+     * @param serviceUrl
+     *            The WCS endpoint to query
+     * @param coverageName
+     *            The name of the coverage to query
      * @return
      * @throws URISyntaxException
      * @throws Exception
@@ -154,7 +170,9 @@ public class WCSMethodMaker extends AbstractMethodMaker {
 
     /**
      * Method for creating a GetCapabilities request for a WCS service
-     * @param serviceUrl The WCS endpoint to query
+     * 
+     * @param serviceUrl
+     *            The WCS endpoint to query
      * @return
      * @throws URISyntaxException
      * @throws Exception

@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.joda.time.DateTime;
+
 /**
  * A class for generating Sensor Observation Service requests.
  *
@@ -18,53 +19,57 @@ public class SOSMethodMaker extends AbstractMethodMaker {
     public static final String SOS_VERSION = "2.0.0";
     public static final String SOS_SERVICE = "SOS";
 
-
     /** Log object for this class. */
     private final Log log = LogFactory.getLog(getClass());
 
-
     /**
      * Generates a SOS method for making a GetCapabilities request
-     * @param serviceURL - required, SOS End Point
+     * 
+     * @param serviceURL
+     *            - required, SOS End Point
      * @return
-     * @throws Exception if service URL or request  not provided
+     * @throws Exception
+     *             if service URL or request not provided
      *
      * @return
      */
-//    public HttpMethodBase getCapabilitiesMethod(String serviceURL) {
-//        GetMethod method = new GetMethod(serviceURL);
-//        List<NameValuePair> options = new ArrayList<NameValuePair>();
-//
-//        options.addAll(this.extractQueryParams(serviceURL)); //preserve any existing query params
-//        options.add(new NameValuePair("service", SOS_SERVICE));
-//        options.add(new NameValuePair("request", "GetCapabilities"));
-//        options.add(new NameValuePair("acceptVersions", SOS_VERSION));
-//
-//        method.setQueryString(options.toArray(new NameValuePair[options.size()]));
-//
-//        return method;
-//    }
-
-
+    //    public HttpMethodBase getCapabilitiesMethod(String serviceURL) {
+    //        GetMethod method = new GetMethod(serviceURL);
+    //        List<NameValuePair> options = new ArrayList<NameValuePair>();
+    //
+    //        options.addAll(this.extractQueryParams(serviceURL)); //preserve any existing query params
+    //        options.add(new NameValuePair("service", SOS_SERVICE));
+    //        options.add(new NameValuePair("request", "GetCapabilities"));
+    //        options.add(new NameValuePair("acceptVersions", SOS_VERSION));
+    //
+    //        method.setQueryString(options.toArray(new NameValuePair[options.size()]));
+    //
+    //        return method;
+    //    }
 
     /**
      * Creates a PostMethod given the following parameters.
-     * @param serviceURL - required, SOS End Point
-     * @param request - required, service type identifier (e.g. GetObservation)
-     * @param featureOfInterest- optional - pointer to a feature of interest for which observations are requested
-     * @param beginPosition - optional - start time period for which observations are requested
-     *                       			the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
-     * @param endPosition - optional  -	end time period(s) for which observations are requested
-     *                             		the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
-     *                                - both beginPosition and endPosition must go in pair, if one exists, the other must exists
-     * @param bbox - optional         -	FilterBoundingBox object -> convert to 52NorthSOS BBOX format :
-     *                          		maxlat,minlon,minlat,maxlon(,srsURI)
-     *                             		srsURI format : "http://www.opengis.net/def/crs/EPSG/0/"+epsg code
+     * 
+     * @param serviceURL
+     *            - required, SOS End Point
+     * @param request
+     *            - required, service type identifier (e.g. GetObservation)
+     * @param featureOfInterest
+     *            - optional - pointer to a feature of interest for which observations are requested
+     * @param beginPosition
+     *            - optional - start time period for which observations are requested the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH.
+     * @param endPosition
+     *            - optional - end time period(s) for which observations are requested the time should conform to ISO format: YYYY-MM-DDTHH:mm:ss+HH. - both
+     *            beginPosition and endPosition must go in pair, if one exists, the other must exists
+     * @param bbox
+     *            - optional - FilterBoundingBox object -> convert to 52NorthSOS BBOX format : maxlat,minlon,minlat,maxlon(,srsURI) srsURI format :
+     *            "http://www.opengis.net/def/crs/EPSG/0/"+epsg code
      * @return httpMethod
-     * @throws Exception if service URL or request are not provided
+     * @throws Exception
+     *             if service URL or request are not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String request, String featureOfInterest, Date beginPosition, Date endPosition, FilterBoundingBox bbox) {
-
+    public HttpRequestBase makePostMethod(String serviceURL, String request, String featureOfInterest,
+            Date beginPosition, Date endPosition, FilterBoundingBox bbox) {
 
         // Make sure the required parameters are given
         if (serviceURL == null || serviceURL.equals("")) {
@@ -94,7 +99,7 @@ public class SOSMethodMaker extends AbstractMethodMaker {
         sb.append("        xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n");
         sb.append("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
         sb.append("        xsi:schemaLocation=\"http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd\">\n");
-        if ( (beginPosition != null && !beginPosition.equals("") ) && (beginPosition != null && !endPosition.equals("") ) ) {
+        if ((beginPosition != null && !beginPosition.equals("")) && (beginPosition != null && !endPosition.equals(""))) {
             DateTime bpDateTime = new DateTime(beginPosition);
             DateTime epDateTime = new DateTime(endPosition);
             sb.append("        <sos:temporalFilter>\n");
@@ -116,7 +121,8 @@ public class SOSMethodMaker extends AbstractMethodMaker {
             sb.append("            <fes:ValueReference>om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape</fes:ValueReference>\n");
             if (bbox.getBboxSrs() != null && !bbox.getBboxSrs().equals("")) {
                 String[] epsgcode = bbox.getBboxSrs().split(":");
-                sb.append("              <gml:Envelope srsName=\"http://www.opengis.net/def/crs/EPSG/0/" + epsgcode[1] +"\">\n");
+                sb.append("              <gml:Envelope srsName=\"http://www.opengis.net/def/crs/EPSG/0/" + epsgcode[1]
+                        + "\">\n");
             } else {
                 sb.append("              <gml:Envelope srsName=\"http://www.opengis.net/def/crs/EPSG/0/4326\">\n");
             }
@@ -126,8 +132,10 @@ public class SOSMethodMaker extends AbstractMethodMaker {
             //                                    upper corner point (minNothBoundLatitude,maxWestBoundLong)
             double[] lowerCornerPoints = bbox.getLowerCornerPoints();
             double[] upperCornerPoints = bbox.getUpperCornerPoints();
-            sb.append("                <gml:lowerCorner>" + upperCornerPoints[1] + " " + lowerCornerPoints[0] + "</gml:lowerCorner>\n");
-            sb.append("                <gml:upperCorner>" + lowerCornerPoints[1] + " " + upperCornerPoints[0] + "</gml:upperCorner>\n");
+            sb.append("                <gml:lowerCorner>" + upperCornerPoints[1] + " " + lowerCornerPoints[0]
+                    + "</gml:lowerCorner>\n");
+            sb.append("                <gml:upperCorner>" + lowerCornerPoints[1] + " " + upperCornerPoints[0]
+                    + "</gml:upperCorner>\n");
             sb.append("              </gml:Envelope>\n");
             sb.append("          </fes:BBOX>\n");
             sb.append("        </sos:spatialFilter>\n");
@@ -146,9 +154,7 @@ public class SOSMethodMaker extends AbstractMethodMaker {
     }
 
     public HttpRequestBase makePostMethod(String serviceURL, String request) {
-        return makePostMethod(serviceURL,request,null,null,null,null);
+        return makePostMethod(serviceURL, request, null, null, null, null);
     }
-
-
 
 }

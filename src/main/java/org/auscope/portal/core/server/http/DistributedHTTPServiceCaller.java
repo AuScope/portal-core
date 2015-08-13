@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -14,8 +13,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 /**
  * An iterator class for calling a series of HTTP Methods and returning the results in an iterable instance
  *
- * The results will be made available to the iterator as their responses become available. This means
- * that the responses will be returned with no guarantee of order.
+ * The results will be made available to the iterator as their responses become available. This means that the responses will be returned with no guarantee of
+ * order.
  *
  * Ensure that beginCallingServices is run before any of the iterator methods are called.
  *
@@ -35,8 +34,10 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
      *
      * Ensure that beginCallingServices is run before any of the iterator methods are called.
      *
-     * @param methods The HTTP methods to call
-     * @param serviceCaller The service caller that will run the specified methods
+     * @param methods
+     *            The HTTP methods to call
+     * @param serviceCaller
+     *            The service caller that will run the specified methods
      */
     public DistributedHTTPServiceCaller(List<HttpRequestBase> methods, HttpServiceCaller serviceCaller) {
         this(methods, null, serviceCaller);
@@ -45,16 +46,20 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
     /**
      * Creates a DistributedHTTPServiceCaller for calling the specified list of methods.
      *
-     * Also allows the 1-1 correspondance of an 'additional information object' that is made available
-     * during method iteration to provide information on the currently iterated response
+     * Also allows the 1-1 correspondance of an 'additional information object' that is made available during method iteration to provide information on the
+     * currently iterated response
      *
      * Ensure that beginCallingServices is run before any of the iterator methods are called.
      *
-     * @param methods The HTTP methods to call
-     * @param additionalInformation Must be the same length as methods. Made available through getAdditionalInformation function during iteration
-     * @param serviceCaller The service caller that will run the specified methods
+     * @param methods
+     *            The HTTP methods to call
+     * @param additionalInformation
+     *            Must be the same length as methods. Made available through getAdditionalInformation function during iteration
+     * @param serviceCaller
+     *            The service caller that will run the specified methods
      */
-    public DistributedHTTPServiceCaller(List<HttpRequestBase> methods, List<Object> additionalInformation, HttpServiceCaller serviceCaller) {
+    public DistributedHTTPServiceCaller(List<HttpRequestBase> methods, List<Object> additionalInformation,
+            HttpServiceCaller serviceCaller) {
         if (additionalInformation != null && additionalInformation.size() != methods.size()) {
             throw new IllegalArgumentException("additionalInformation.size() != methods.size()");
         }
@@ -70,6 +75,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
      * Call this method before using any iterator methods.
      *
      * This method will ensure that all underlying http service calls are enqueued as per the specified executor.
+     * 
      * @param executor
      */
     public synchronized void beginCallingServices(Executor executor) {
@@ -93,8 +99,8 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
     }
 
     /**
-     * Non blocking function - returns the last 'Additional Information Object' associated with
-     * the last response from 'next' or null if there is no such set of objects specified
+     * Non blocking function - returns the last 'Additional Information Object' associated with the last response from 'next' or null if there is no such set of
+     * objects specified
      *
      * Each subsequent response from next will change the result returned by this function
      *
@@ -105,8 +111,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
     }
 
     /**
-     * Blocking function - will return the next input stream that is available ONLY blocking
-     * if there is no input stream that is readily available.
+     * Blocking function - will return the next input stream that is available ONLY blocking if there is no input stream that is readily available.
      *
      * Input streams that are ready will be returned ahead of input streams that are yet to return data.
      *
@@ -115,9 +120,9 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
     @Override
     public synchronized InputStream next() throws DistributedHTTPServiceCallerException {
         //Find a service that hasn't been iterated AND has returned data
-        for (int i = 0; i <  statusList.size(); i++) {
+        for (int i = 0; i < statusList.size(); i++) {
             ServiceCallStatus status = statusList.get(i);
-            synchronized(status) {
+            synchronized (status) {
                 if (!status.isIterated() && !status.isRunning()) {
                     status.setIterated(true);
                     InputStream data = status.getResultingData();
@@ -152,7 +157,6 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
         return next();
     }
 
-
     /**
      * Throws a UnsupportedOperationException
      */
@@ -161,10 +165,8 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
         throw new UnsupportedOperationException();
     }
 
-
     /**
-     * Call this function if do not intend to use any further iterator functions. It will prevent
-     * any threads yet to start from making HTTP connections.
+     * Call this function if do not intend to use any further iterator functions. It will prevent any threads yet to start from making HTTP connections.
      *
      * Any running threads will be interrupted
      *
@@ -209,6 +211,7 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
 
         /**
          * Returns whether this thread is running
+         * 
          * @return
          */
         public synchronized boolean isRunning() {
@@ -224,24 +227,22 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
         }
 
         /**
-         * Gets the data stream that resulted from a succesful call (null if an error has occured)
-         * This function will block if this thread is running
+         * Gets the data stream that resulted from a succesful call (null if an error has occured) This function will block if this thread is running
+         * 
          * @return
          */
         public InputStream getResultingData() {
             return resultingData;
         }
 
-
         /**
-         * Gets the underlying exception that resulted from a failed call (null if the call was successful)
-         * This function will block if this thread is running
+         * Gets the underlying exception that resulted from a failed call (null if the call was successful) This function will block if this thread is running
+         * 
          * @return
          */
         public Exception getResultingError() {
             return resultingError;
         }
-
 
         @Override
         public void run() {
@@ -262,9 +263,9 @@ public class DistributedHTTPServiceCaller implements Iterator<InputStream> {
             } finally {
                 //Acquire the lock on our parent object
                 //We sync to ensure the parent isn't halfway through checking our statuses
-                synchronized(parent) {
+                synchronized (parent) {
                     //After locking the parent we can update our own status
-                    synchronized(this) {
+                    synchronized (this) {
                         this.setRunning(false);
                         this.resultingData = data;
                         this.resultingError = error;

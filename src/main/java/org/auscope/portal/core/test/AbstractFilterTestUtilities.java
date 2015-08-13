@@ -15,30 +15,30 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 /**
- * Contains a number of unit test utility methods that are useful for testing
- * ogc:Filters
+ * Contains a number of unit test utility methods that are useful for testing ogc:Filters
+ * 
  * @author vot002
  *
  */
 public abstract class AbstractFilterTestUtilities {
 
     /**
-     * Wraps a string with <test> elements (ogc namespace aware)
-     * Returns the parsed document
+     * Wraps a string with <test> elements (ogc namespace aware) Returns the parsed document
+     * 
      * @param xmlString
      * @return
      * @throws Exception
      */
     public static Document parsefilterStringXML(String xmlString) throws Exception {
         NamespaceContext nsc = new OGCNamespaceContext();
-        xmlString = String.format("<test xmlns:ogc=\"%1$s\">%2$s</test>",nsc.getNamespaceURI("ogc"), xmlString);
+        xmlString = String.format("<test xmlns:ogc=\"%1$s\">%2$s</test>", nsc.getNamespaceURI("ogc"), xmlString);
 
         return new DOMUtil().buildDomFromString(xmlString);
     }
 
-
     /**
      * Runs an xpath query (which should return a nodeset) against doc and tests the number of items in the nodeset
+     * 
      * @param doc
      * @param xPathQuery
      * @param expectedCount
@@ -49,8 +49,8 @@ public abstract class AbstractFilterTestUtilities {
     }
 
     /**
-     * Runs an xpath query (which should return a nodeset) against doc and tests that each response
-     * object is a member from validValues
+     * Runs an xpath query (which should return a nodeset) against doc and tests that each response object is a member from validValues
+     * 
      * @param doc
      * @param xPathQuery
      * @param validValues
@@ -61,13 +61,15 @@ public abstract class AbstractFilterTestUtilities {
     }
 
     /**
-     * Runs an xpath query (which should return a nodeset) against doc and tests that each response
-     * object is a member from validValues and there is a specified number of elements returned
+     * Runs an xpath query (which should return a nodeset) against doc and tests that each response object is a member from validValues and there is a specified
+     * number of elements returned
+     * 
      * @param doc
      * @param xPathQuery
      * @param validValues
      */
-    public static void runNodeSetValueCheck(Document doc, String xPathQuery, String[] validValues, int expectedCount) throws Exception {
+    public static void runNodeSetValueCheck(Document doc, String xPathQuery, String[] validValues, int expectedCount)
+            throws Exception {
         XPath xPath = XPathFactory.newInstance().newXPath();
         xPath.setNamespaceContext(new OGCNamespaceContext());
 
@@ -75,7 +77,9 @@ public abstract class AbstractFilterTestUtilities {
         Assert.assertNotNull(tempList);
 
         if (expectedCount >= 0)
-            Assert.assertTrue(String.format("Count of expression invalid. Expected %1$s Got %2$s", expectedCount, tempList.getLength()), tempList.getLength() == expectedCount);
+            Assert.assertTrue(
+                    String.format("Count of expression invalid. Expected %1$s Got %2$s", expectedCount,
+                            tempList.getLength()), tempList.getLength() == expectedCount);
 
         if (validValues != null) {
             for (int i = 0; i < tempList.getLength(); i++) {
@@ -88,7 +92,8 @@ public abstract class AbstractFilterTestUtilities {
                     foundValidValue = validValues[j].equals(text);
                 }
 
-                Assert.assertTrue(String.format("Failed to find '%1$s' in '%2$s'", text, Arrays.toString(validValues)), foundValidValue);
+                Assert.assertTrue(String.format("Failed to find '%1$s' in '%2$s'", text, Arrays.toString(validValues)),
+                        foundValidValue);
             }
         }
     }

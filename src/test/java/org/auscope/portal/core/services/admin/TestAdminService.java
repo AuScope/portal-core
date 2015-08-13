@@ -18,6 +18,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for Admin Service
+ * 
  * @author Josh Vote
  *
  */
@@ -27,22 +28,26 @@ public class TestAdminService extends PortalTestClass {
 
     /**
      * Tests that each URL is tested once
+     * 
      * @throws Exception
      */
     @Test
     public void testExternalConnectivity() throws Exception {
         final URL[] urls = new URL[] {
-            new URL("http://example.fake/path"),
-            new URL("https://example2.fake.secure/path"),
+                new URL("http://example.fake/path"),
+                new URL("https://example2.fake.secure/path"),
         };
 
         //Ensure all of our requests get called once
-        context.checking(new Expectations() {{
-            for (int i = 0; i < urls.length; i++) {
-                oneOf(mockServiceCaller).getMethodResponseAsString(with(aHttpMethodBase(HttpMethodType.GET, urls[i].toString(), null)));
-                will(returnValue(""));
+        context.checking(new Expectations() {
+            {
+                for (int i = 0; i < urls.length; i++) {
+                    oneOf(mockServiceCaller).getMethodResponseAsString(
+                            with(aHttpMethodBase(HttpMethodType.GET, urls[i].toString(), null)));
+                    will(returnValue(""));
+                }
             }
-        }});
+        });
 
         //Make our request - the service should create info about each URL queried
         AdminDiagnosticResponse response = adminService.externalConnectivity(urls);
@@ -54,23 +59,27 @@ public class TestAdminService extends PortalTestClass {
 
     /**
      * Tests that each failing URL fails in a predictable way
+     * 
      * @throws Exception
      */
     @Test
     public void testExternalConnectivityErrors() throws Exception {
         final URL[] urls = new URL[] {
-            new URL("http://example.fake/path"),
-            new URL("https://example2.fake.secure/path"),
+                new URL("http://example.fake/path"),
+                new URL("https://example2.fake.secure/path"),
         };
 
         //Ensure all of our requests get called once and fail
-        context.checking(new Expectations() {{
-            for (int i = 0; i < urls.length; i++) {
+        context.checking(new Expectations() {
+            {
+                for (int i = 0; i < urls.length; i++) {
 
-                oneOf(mockServiceCaller).getMethodResponseAsString(with(aHttpMethodBase(HttpMethodType.GET, urls[i].toString(), null)));
-                will(throwException(new ConnectException()));
+                    oneOf(mockServiceCaller).getMethodResponseAsString(
+                            with(aHttpMethodBase(HttpMethodType.GET, urls[i].toString(), null)));
+                    will(throwException(new ConnectException()));
+                }
             }
-        }});
+        });
 
         //Make our request - the service should create a warning about failing HTTPS and an error about HTTP
         AdminDiagnosticResponse response = adminService.externalConnectivity(urls);
@@ -81,35 +90,44 @@ public class TestAdminService extends PortalTestClass {
     }
 
     /**
-     * Tests CSW connectivity method for correct usage of the service caller
-     * and handling of error responses
+     * Tests CSW connectivity method for correct usage of the service caller and handling of error responses
+     * 
      * @throws Exception
      */
     @Test
     public void testCSWConnectivityErrors() throws Exception {
         final List<CSWServiceItem> items = Arrays.asList(
-            new CSWServiceItem("id-1", "http://example.fake/thisWillWork"),
-            new CSWServiceItem("id-2", "http://example2.fake/thisWillReturnInvalidCount"),
-            new CSWServiceItem("id-3", "http://example3.fake/thieWillReturnOWSError"),
-            new CSWServiceItem("id-4", "http://example4.fake/thisWillFailToConnect"));
-        final InputStream owsError = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
-        final InputStream cswBadCountResponse = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
-        final InputStream cswResponse = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleRecord.xml");
+                new CSWServiceItem("id-1", "http://example.fake/thisWillWork"),
+                new CSWServiceItem("id-2", "http://example2.fake/thisWillReturnInvalidCount"),
+                new CSWServiceItem("id-3", "http://example3.fake/thieWillReturnOWSError"),
+                new CSWServiceItem("id-4", "http://example4.fake/thisWillFailToConnect"));
+        final InputStream owsError = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
+        final InputStream cswBadCountResponse = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final InputStream cswResponse = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleRecord.xml");
 
         //We have 4 requests, 1 will fail, 1 will return error, 1 returns an invalid count and 1 succeeds
-        context.checking(new Expectations() {{
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, items.get(0).getServiceUrl(), null)));
-            will(returnValue(cswResponse));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, items.get(0).getServiceUrl(), null)));
+                will(returnValue(cswResponse));
 
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, items.get(1).getServiceUrl(), null)));
-            will(returnValue(cswBadCountResponse));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, items.get(1).getServiceUrl(), null)));
+                will(returnValue(cswBadCountResponse));
 
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, items.get(2).getServiceUrl(), null)));
-            will(returnValue(owsError));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, items.get(2).getServiceUrl(), null)));
+                will(returnValue(owsError));
 
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, items.get(3).getServiceUrl(), null)));
-            will(throwException(new ConnectException()));
-        }});
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, items.get(3).getServiceUrl(), null)));
+                will(throwException(new ConnectException()));
+            }
+        });
 
         AdminDiagnosticResponse response = adminService.cswConnectivity(items);
         Assert.assertNotNull(response);
@@ -120,34 +138,46 @@ public class TestAdminService extends PortalTestClass {
 
     /**
      * Tests that WFS connectivity correctly calls services/handles responses
+     * 
      * @throws Exception
      */
     @Test
     public void testWFSConnectivity() throws Exception {
         final List<EndpointAndSelector> endpoints = Arrays.asList(
-            new EndpointAndSelector("http://endpoint1.url/wfs", "wfs:type1"), //will fail to connect
-            new EndpointAndSelector("http://endpoint1.url/wfs", "wfs:type2"), //will be skipped for sharing same endpoint as #1
-            new EndpointAndSelector("http://endpoint2.url/wfs", "wfs:type1"), //will return OWS exception
-            new EndpointAndSelector("http://endpoint2.url/wfs", "wfs:type2")); //will return success
-        final FilterBoundingBox bbox = new FilterBoundingBox("srs", new double[] {1,2}, new double[] {3,4});
+                new EndpointAndSelector("http://endpoint1.url/wfs", "wfs:type1"), //will fail to connect
+                new EndpointAndSelector("http://endpoint1.url/wfs", "wfs:type2"), //will be skipped for sharing same endpoint as #1
+                new EndpointAndSelector("http://endpoint2.url/wfs", "wfs:type1"), //will return OWS exception
+                new EndpointAndSelector("http://endpoint2.url/wfs", "wfs:type2")); //will return success
+        final FilterBoundingBox bbox = new FilterBoundingBox("srs", new double[] {1, 2}, new double[] {3, 4});
 
-        context.checking(new Expectations() {{
-            //This will fail to connect and cause the second request AND other endpoint to be skipped
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, Pattern.compile(endpoints.get(0).getEndpoint() + ".*"), null)));
-            will(throwException(new ConnectException()));
+        context.checking(new Expectations() {
+            {
+                //This will fail to connect and cause the second request AND other endpoint to be skipped
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, Pattern.compile(endpoints.get(0).getEndpoint() + ".*"), null)));
+                will(throwException(new ConnectException()));
 
-            //Return OWS error
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, Pattern.compile(endpoints.get(2).getEndpoint() + ".*"), null)));
-            will(returnValue(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml")));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, Pattern.compile(endpoints.get(2).getEndpoint() + ".*"), null)));
-            will(returnValue(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml")));
+                //Return OWS error
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, Pattern.compile(endpoints.get(2).getEndpoint() + ".*"), null)));
+                will(returnValue(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml")));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, Pattern.compile(endpoints.get(2).getEndpoint() + ".*"), null)));
+                will(returnValue(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml")));
 
-            //Return success
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, Pattern.compile(endpoints.get(3).getEndpoint() + ".*"), null)));
-            will(returnValue(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml")));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, Pattern.compile(endpoints.get(3).getEndpoint() + ".*"), null)));
-            will(returnValue(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml")));
-        }});
+                //Return success
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, Pattern.compile(endpoints.get(3).getEndpoint() + ".*"), null)));
+                will(returnValue(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml")));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, Pattern.compile(endpoints.get(3).getEndpoint() + ".*"), null)));
+                will(returnValue(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml")));
+            }
+        });
 
         AdminDiagnosticResponse response = adminService.wfsConnectivity(endpoints, bbox);
         Assert.assertNotNull(response);

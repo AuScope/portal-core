@@ -21,6 +21,7 @@ public class SimpleBounds implements Serializable {
 
     /**
      * The minimum value of this bounds.
+     * 
      * @return the minimum value
      */
     public double getFrom() {
@@ -47,8 +48,10 @@ public class SimpleBounds implements Serializable {
     /**
      * Instantiates a new simple bounds.
      *
-     * @param from the from
-     * @param to the to
+     * @param from
+     *            the from
+     * @param to
+     *            the to
      */
     public SimpleBounds(double from, double to) {
         super();

@@ -9,22 +9,24 @@ import org.junit.Test;
 
 /**
  * Unit tests for EndpointAndSelector
+ * 
  * @author Josh Vote
  *
  */
-public class TestEndpointAndSelector  extends PortalTestClass {
+public class TestEndpointAndSelector extends PortalTestClass {
     /**
      * Tests the equality operator works as expected
+     * 
      * @throws Exception
      */
     @Test
     public void testEquals() throws Exception {
         //Our list of values to test (they should all be 'different'
         List<EndpointAndSelector> eas = Arrays.asList(
-            new EndpointAndSelector("endpoint1", "selector1"),  //our base comparison object
-            null,                                               //for null comparisons
-            new EndpointAndSelector("endpoint1", "selector2"),  //same endpoint, diff selector
-            new EndpointAndSelector("endpoint3", "selector1")); //diff endpoint, same selector
+                new EndpointAndSelector("endpoint1", "selector1"), //our base comparison object
+                null, //for null comparisons
+                new EndpointAndSelector("endpoint1", "selector2"), //same endpoint, diff selector
+                new EndpointAndSelector("endpoint3", "selector1")); //diff endpoint, same selector
 
         //Sanity test
         EndpointAndSelector notInList = new EndpointAndSelector("differentEndpoint", "differentSelector");

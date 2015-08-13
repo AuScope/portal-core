@@ -41,9 +41,12 @@ public class FilterBoundingBox implements Serializable {
     /**
      * Instantiates a new filter bounding box.
      *
-     * @param bboxSrs the bbox srs
-     * @param lowerCornerPoints the lower corner points
-     * @param upperCornerPoints the upper corner points
+     * @param bboxSrs
+     *            the bbox srs
+     * @param lowerCornerPoints
+     *            the lower corner points
+     * @param upperCornerPoints
+     *            the upper corner points
      */
     public FilterBoundingBox(String bboxSrs, double[] lowerCornerPoints,
             double[] upperCornerPoints) {
@@ -64,7 +67,8 @@ public class FilterBoundingBox implements Serializable {
     /**
      * Sets the bbox srs.
      *
-     * @param bboxSrs the new bbox srs
+     * @param bboxSrs
+     *            the new bbox srs
      */
     public void setBboxSrs(String bboxSrs) {
         this.bboxSrs = bboxSrs;
@@ -82,7 +86,8 @@ public class FilterBoundingBox implements Serializable {
     /**
      * Sets the lower corner points.
      *
-     * @param lowerCornerPoints the new lower corner points
+     * @param lowerCornerPoints
+     *            the new lower corner points
      */
     public void setLowerCornerPoints(double[] lowerCornerPoints) {
         this.lowerCornerPoints = lowerCornerPoints;
@@ -100,7 +105,8 @@ public class FilterBoundingBox implements Serializable {
     /**
      * Sets the upper corner points.
      *
-     * @param upperCornerPoints the new upper corner points
+     * @param upperCornerPoints
+     *            the new upper corner points
      */
     public void setUpperCornerPoints(double[] upperCornerPoints) {
         this.upperCornerPoints = upperCornerPoints;
@@ -117,10 +123,10 @@ public class FilterBoundingBox implements Serializable {
     }
 
     /**
-     * Compares this FilterBoundingBox with another instance. The comparison is made directly on doubles so
-     * this method may yield inaccurate results.
+     * Compares this FilterBoundingBox with another instance. The comparison is made directly on doubles so this method may yield inaccurate results.
      *
-     * @param bbox the bbox
+     * @param bbox
+     *            the bbox
      * @return true, if successful
      */
     public boolean equals(FilterBoundingBox bbox) {
@@ -145,9 +151,11 @@ public class FilterBoundingBox implements Serializable {
     /**
      * Attempts to parse a FilterBoundingbox.
      *
-     * @param obj the obj
+     * @param obj
+     *            the obj
      * @return the filter bounding box
-     * @throws Exception the exception
+     * @throws Exception
+     *             the exception
      */
     //    public static FilterBoundingBox parseFromJSON(JSONObject obj) throws Exception {
     //        //Our filter bbox can come in a couple of formats
@@ -201,6 +209,7 @@ public class FilterBoundingBox implements Serializable {
 
     /**
      * Utility method for creating a new FilterBoundingBox from lat/long coordinate pairs
+     * 
      * @param crs
      * @param northBoundLatitude
      * @param southBoundLatitude
@@ -214,23 +223,26 @@ public class FilterBoundingBox implements Serializable {
             double eastBoundLongitude,
             double westBoundLongitude) {
 
-        if(eastBoundLongitude < -120){
+        if (eastBoundLongitude < -120) {
             eastBoundLongitude = 180 + (180 + eastBoundLongitude);
         }
 
         return new FilterBoundingBox(crs,
-                new double[] {Math.min(westBoundLongitude, eastBoundLongitude), Math.min(northBoundLatitude, southBoundLatitude)},
-                new double[] {Math.max(westBoundLongitude, eastBoundLongitude), Math.max(northBoundLatitude, southBoundLatitude)});
-
+                new double[] {Math.min(westBoundLongitude, eastBoundLongitude),
+                        Math.min(northBoundLatitude, southBoundLatitude)},
+                new double[] {Math.max(westBoundLongitude, eastBoundLongitude),
+                        Math.max(northBoundLatitude, southBoundLatitude)});
 
     }
 
     /**
      * TODO: Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
      *
-     * @param obj the obj
+     * @param obj
+     *            the obj
      * @return the filter bounding box
-     * @throws Exception the exception
+     * @throws Exception
+     *             the exception
      */
     public static FilterBoundingBox parseFromJSON(JSONObject obj) throws Exception {
         //Our filter bbox can come in a couple of formats
@@ -259,10 +271,9 @@ public class FilterBoundingBox implements Serializable {
 
             //VT:Special case only for making GeoServer request as if the east of a bounding box hits -180, Geoserver treats it as west.
             //VT:Therefore we want east to always be positive
-            if(eastBound < -120){
+            if (eastBound < -120) {
                 eastBound = 180 + (180 + eastBound);
             }
-
 
             return parseFromValues(obj.getString("crs"),
                     obj.getDouble("northBoundLatitude"),
@@ -296,7 +307,8 @@ public class FilterBoundingBox implements Serializable {
     /**
      * Convenience method to parse a bbox from a JSON string. Returns null if the parsing fails
      *
-     * @param json the json
+     * @param json
+     *            the json
      * @return the filter bounding box
      */
     //    public static FilterBoundingBox attemptParseFromJSON(String json) {

@@ -29,7 +29,6 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Resource;
 
-
 /**
  * A service class for interacting with a SISSVoc version 3 deployment.
  *
@@ -37,10 +36,10 @@ import com.hp.hpl.jena.rdf.model.Resource;
  *
  */
 public class SISSVoc3Service {
-    /** The class for making HTTP requests*/
+    /** The class for making HTTP requests */
     protected HttpServiceCaller httpServiceCaller;
 
-    /** The class for generating SISSVoc requests*/
+    /** The class for generating SISSVoc requests */
     protected SISSVoc3MethodMaker sissVocMethodMaker;
 
     /**
@@ -71,6 +70,7 @@ public class SISSVoc3Service {
 
     /**
      * This service will request concepts in batches of this size. Defaults to 1000
+     * 
      * @return
      */
     public int getPageSize() {
@@ -79,6 +79,7 @@ public class SISSVoc3Service {
 
     /**
      * This service will request concepts in batches of this size. Defaults to 1000
+     * 
      * @param pageSize
      */
     public void setPageSize(int pageSize) {
@@ -89,6 +90,7 @@ public class SISSVoc3Service {
      * The service URL in the form - http://host.name/path/to/service
      *
      * The URL will be appended with repository/command names and file formats
+     * 
      * @return
      */
     public String getBaseUrl() {
@@ -96,7 +98,8 @@ public class SISSVoc3Service {
     }
 
     /**
-     *  The name of the repository to query
+     * The name of the repository to query
+     * 
      * @return
      */
     public String getRepository() {
@@ -107,10 +110,14 @@ public class SISSVoc3Service {
      * Gets all descriptions for a given page (as described by a HttpMethod), appends the parsed values to the specified JENA model.
      *
      * Returns true if there is more data (pages) to request. false otherwise. Exceptions will be rethrown as PortalServiceException objects
+     * 
      * @param repository
-     * @param pageNumber The page number to request
-     * @param pageSize The number of descriptions per request
-     * @param model receives the response Descriptions
+     * @param pageNumber
+     *            The page number to request
+     * @param pageSize
+     *            The number of descriptions per request
+     * @param model
+     *            receives the response Descriptions
      */
     protected boolean requestPageOfConcepts(HttpRequestBase method, Model model) throws PortalServiceException {
         //Make our request
@@ -129,7 +136,8 @@ public class SISSVoc3Service {
             doc = DOMUtil.buildDomFromStream(is);
 
             VocabNamespaceContext nc = new VocabNamespaceContext();
-            XPathExpression getDescriptionsExpr = DOMUtil.compileXPathExpr("rdf:RDF/descendant::api:Page/api:items/rdf:Description", nc);
+            XPathExpression getDescriptionsExpr = DOMUtil.compileXPathExpr(
+                    "rdf:RDF/descendant::api:Page/api:items/rdf:Description", nc);
             XPathExpression nextPageExpr = DOMUtil.compileXPathExpr("rdf:RDF/descendant::api:Page/xhv:next", nc);
 
             Node nextPageNode = (Node) nextPageExpr.evaluate(doc, XPathConstants.NODE);
@@ -154,8 +162,8 @@ public class SISSVoc3Service {
     }
 
     /**
-     * Gets all RDF concepts at the specified repository as a single JENA Model. The results
-     * will be requested page by page until the entire repository has been traversed.
+     * Gets all RDF concepts at the specified repository as a single JENA Model. The results will be requested page by page until the entire repository has been
+     * traversed.
      *
      * @return
      * @throws PortalServiceException
@@ -168,7 +176,8 @@ public class SISSVoc3Service {
 
         //Request each page in turn - put the results into Model
         do {
-            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, pageSize, pageNumber);
+            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, pageSize,
+                    pageNumber);
             if (requestPageOfConcepts(method, model)) {
                 pageNumber++;
             } else {
@@ -181,13 +190,15 @@ public class SISSVoc3Service {
 
     /**
      * Makes a request to the configured SISSVoc service for a concept to describe the specified URI
-     * @param resourceUri The vocabulary resource to look for
+     * 
+     * @param resourceUri
+     *            The vocabulary resource to look for
      * @return
      * @throws PortalServiceException
      */
     public Resource getResourceByUri(String resourceUri) throws PortalServiceException {
-        InputStream is=null;
-        HttpRequestBase method=null;
+        InputStream is = null;
+        HttpRequestBase method = null;
         try {
             method = sissVocMethodMaker.getResourceByUri(baseUrl, repository, resourceUri, Format.Rdf);
             is = httpServiceCaller.getMethodResponseAsStream(method);
@@ -202,6 +213,5 @@ public class SISSVoc3Service {
             method.releaseConnection();
         }
     }
-
 
 }

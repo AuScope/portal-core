@@ -16,8 +16,9 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
- * Entity class to hold response from a CSW getCapabilities record. At the moment only title is need, no point wasting resources into other
- * fields that is not needed. Add to this as required.
+ * Entity class to hold response from a CSW getCapabilities record. At the moment only title is need, no point wasting resources into other fields that is not
+ * needed. Add to this as required.
+ * 
  * @author tey006
  *
  */
@@ -26,17 +27,16 @@ public class CSWGetCapabilities {
     private final Log log = LogFactory.getLog(getClass());
 
     NamespaceContext nc;
-    public static final String TITLE_EXPRESSION="/csw:Capabilities/ows:ServiceIdentification/ows:Title";
+    public static final String TITLE_EXPRESSION = "/csw:Capabilities/ows:ServiceIdentification/ows:Title";
 
     private String title;
 
-
-    public CSWGetCapabilities(InputStream getCapXML) throws ParserConfigurationException, IOException, SAXException, XPathExpressionException{
+    public CSWGetCapabilities(InputStream getCapXML) throws ParserConfigurationException, IOException, SAXException,
+            XPathExpressionException {
         nc = new CSWGetCapabilitiesNamespace();
         try {
-            Document doc = DOMUtil.buildDomFromStream(getCapXML,true);
+            Document doc = DOMUtil.buildDomFromStream(getCapXML, true);
             this.setTitle(doc);
-
 
         } catch (SAXException e) {
             //VT: no exception should be swallowed. pass it back up to the caller.
@@ -48,28 +48,27 @@ public class CSWGetCapabilities {
         } catch (ParserConfigurationException e) {
             log.error("Parser Config Error: " + e.getMessage());
             throw e;
-        } catch (XPathExpressionException xpee){
+        } catch (XPathExpressionException xpee) {
             log.error("CSW GETCAPABILTIES xml pasing error" + xpee.getMessage());
             throw xpee;
         }
     }
 
-
-    public void setTitle(Document doc) throws XPathExpressionException{
+    public void setTitle(Document doc) throws XPathExpressionException {
         String title = "";
 
-        Node tempNode = (Node) DOMUtil.compileXPathExpr(TITLE_EXPRESSION,nc).evaluate(doc, XPathConstants.NODE);
+        Node tempNode = (Node) DOMUtil.compileXPathExpr(TITLE_EXPRESSION, nc).evaluate(doc, XPathConstants.NODE);
 
         title = tempNode != null ? tempNode.getTextContent() : "";
 
-        this.title=title;
+        this.title = title;
     }
 
-    public void setTitle(String title){
-        this.title=title;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return this.title;
     }
 

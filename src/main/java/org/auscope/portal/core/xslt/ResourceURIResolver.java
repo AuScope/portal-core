@@ -9,6 +9,7 @@ import javax.xml.transform.stream.StreamSource;
 
 /**
  * A URI resolver for picking up resources on the classpath
+ * 
  * @author Josh Vote
  *
  */
@@ -26,7 +27,9 @@ public class ResourceURIResolver implements URIResolver {
 
     /**
      * Creates a new resolver, relative to clazz
-     * @param clazz Will be used as the basis for all resource lookups
+     * 
+     * @param clazz
+     *            Will be used as the basis for all resource lookups
      */
     public ResourceURIResolver(Class clazz) {
         baseClass = clazz;

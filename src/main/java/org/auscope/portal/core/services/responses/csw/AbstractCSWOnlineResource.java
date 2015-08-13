@@ -6,6 +6,7 @@ import org.auscope.portal.core.services.csw.CSWRecordsFilterVisitor;
 
 /**
  * Represents a <gmd:CI_OnlineResource> element in a CSW response.
+ * 
  * @author vot002
  *
  */
@@ -13,6 +14,7 @@ public abstract class AbstractCSWOnlineResource {
 
     /**
      * A simplification of the protocol.
+     * 
      * @author vot002
      *
      */
@@ -62,7 +64,7 @@ public abstract class AbstractCSWOnlineResource {
          * A CSW Service. e.g. a GeoNetwork /csw endpoint. Can be used a dummy resource for when you don't want to cache all CSW records on load.
          */
         CSWService,
-        
+
         /**
          * A NetCDF Subset Service.
          */
@@ -71,39 +73,49 @@ public abstract class AbstractCSWOnlineResource {
 
     /**
      * Gets the URL location of this online resource.
+     * 
      * @return
      */
     public abstract URL getLinkage();
+
     /**
      * Gets the protocol of this online resource.
+     * 
      * @return
      */
     public abstract String getProtocol();
+
     /**
      * Gets the name of this online resource.
+     * 
      * @return
      */
     public abstract String getName();
+
     /**
      * Gets a description of this online resource.
+     * 
      * @return
      */
     public abstract String getDescription();
 
     /**
      * Gets the application profile (if available) of this online resource.
+     * 
      * @return
      */
     public abstract String getApplicationProfile();
 
     /**
      * provide the protocol version if possible. eg WMS 1.1.1 vs 1.3
+     * 
      * @return version if possible
      */
     public abstract String getVersion();
 
     /**
      * Gets a simplification of the protocol that this online resource represents.
+     * 
      * @return
      */
     public OnlineResourceType getType() {
@@ -119,7 +131,8 @@ public abstract class AbstractCSWOnlineResource {
             return OnlineResourceType.WMS;
         } else if (lowerProtocol.contains("wcs")) {
             return OnlineResourceType.WCS;
-        } else if (lowerProtocol.contains("www:link-1.0-http--link") || lowerProtocol.contains("www:download-1.0-http--download")) {
+        } else if (lowerProtocol.contains("www:link-1.0-http--link")
+                || lowerProtocol.contains("www:download-1.0-http--download")) {
             //Dap is currently hacked in
             String name = getDescription();
             if ((name != null) && name.equals("HACK-OPENDAP")) {
@@ -142,7 +155,7 @@ public abstract class AbstractCSWOnlineResource {
         return OnlineResourceType.Unsupported;
     }
 
-    public boolean accept(CSWRecordsFilterVisitor visitor){
+    public boolean accept(CSWRecordsFilterVisitor visitor) {
         return visitor.visit(this);
     }
 }

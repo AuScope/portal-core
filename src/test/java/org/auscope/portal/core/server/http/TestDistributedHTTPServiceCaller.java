@@ -10,13 +10,11 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
-
 
 public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
@@ -39,6 +37,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Asserts that value lies within an specified (inclusive) range of values
+     * 
      * @param value
      * @param lowerBound
      * @param upperBound
@@ -46,25 +45,28 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
      */
     private void assertRange(long value, long lowerBound, long upperBound) {
         if (value < lowerBound ||
-            value > upperBound) {
+                value > upperBound) {
             Assert.fail(String.format("%1$s is not in the range [%2$s, %3$s]", value, lowerBound, upperBound));
         }
     }
 
     /**
      * Tests that exceptions in the HTTP call will result in exceptions in the next
+     * 
      * @throws Exception
      */
     @Test
     public void testReturnException() throws Exception {
         final ConnectException expectedError = new ConnectException("fooBARbaz");
-        final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1), mockServiceCaller);
+        final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1),
+                mockServiceCaller);
 
-
-
-        context.checking(new Expectations() {{
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);will(throwException(expectedError));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);
+                will(throwException(expectedError));
+            }
+        });
 
         dsc.beginCallingServices(threadPool);
 
@@ -80,6 +82,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to next will block
+     * 
      * @throws Exception
      */
     @Test
@@ -87,12 +90,17 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
         final long delay2ms = 500;
         final long timeEpsilonMs = 100; //This should be an order of magnitude smaller than the above delays
         final ConnectException expectedError = new ConnectException("fooBARbaz");
-        final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1, mockMethod2), mockServiceCaller);
+        final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1,
+                mockMethod2), mockServiceCaller);
 
-        context.checking(new Expectations() {{
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);will(throwException(expectedError));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);will(delayReturnValue(delay2ms, mockInputStream2));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);
+                will(throwException(expectedError));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);
+                will(delayReturnValue(delay2ms, mockInputStream2));
+            }
+        });
 
         //ensure our available and error data return immediately but our
         dsc.beginCallingServices(threadPool);
@@ -127,6 +135,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to next will return the NEXT item to complete
+     * 
      * @throws Exception
      */
     @Test
@@ -140,11 +149,16 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
                 Arrays.asList(mockAdditionalInfo1, mockAdditionalInfo2, mockAdditionalInfo3),
                 mockServiceCaller);
 
-        context.checking(new Expectations() {{
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);will(delayReturnValue(delay1ms, mockInputStream1));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);will(delayReturnValue(delay2ms, mockInputStream2));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod3);will(delayReturnValue(delay3ms, mockInputStream3));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod1);
+                will(delayReturnValue(delay1ms, mockInputStream1));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod2);
+                will(delayReturnValue(delay2ms, mockInputStream2));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod3);
+                will(delayReturnValue(delay3ms, mockInputStream3));
+            }
+        });
 
         //Do some dodgey timings to ensure we get our data in the right order (ie as the input streams become available)
         dsc.beginCallingServices(threadPool);
@@ -171,17 +185,23 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to abort actually work...
+     * 
      * @throws Exception
      */
     @Test
     public void testAbort() throws Exception {
         //We want a list with more methods than the threadpool has threads
-        final List<HttpRequestBase> bigMethodList = Arrays.asList(mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1);
+        final List<HttpRequestBase> bigMethodList = Arrays.asList(mockMethod1, mockMethod1, mockMethod1, mockMethod1,
+                mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1, mockMethod1,
+                mockMethod1, mockMethod1);
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(bigMethodList, mockServiceCaller);
 
-        context.checking(new Expectations() {{
-            exactly(5).of(mockServiceCaller).getMethodResponseAsStream(mockMethod1);will(delayReturnValue(100, mockInputStream1));
-        }});
+        context.checking(new Expectations() {
+            {
+                exactly(5).of(mockServiceCaller).getMethodResponseAsStream(mockMethod1);
+                will(delayReturnValue(100, mockInputStream1));
+            }
+        });
 
         //start our threads executing (we need to use this class to pickup any failures)
         dsc.beginCallingServices(threadPool);

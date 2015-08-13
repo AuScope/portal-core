@@ -82,73 +82,70 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     private Type type;
 
-
-
     /**
      * Generates a new filter generator for the specified fields.
      *
-     * @param anyText [Optional] The text used to query the 'AnyText' attribute
+     * @param anyText
+     *            [Optional] The text used to query the 'AnyText' attribute
      * @param spatialBounds
      *            [Optional] The spatial bounds to filter by
      */
     public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds) {
-        this(anyText, spatialBounds, null, null, null, null,null,null,null);
+        this(anyText, spatialBounds, null, null, null, null, null, null, null);
     }
 
     /**
      * Generates a new filter generator for the specified fields.
      *
-     * @param anyText [Optional] The text used to query the 'AnyText' attribute
+     * @param anyText
+     *            [Optional] The text used to query the 'AnyText' attribute
      * @param spatialBounds
      *            [Optional] The spatial bounds to filter by
      * @param keywords
-     *            [Optional] A list of keywords which must ALL be satisfied for
-     *            a record to be included
+     *            [Optional] A list of keywords which must ALL be satisfied for a record to be included
      * @param capturePlatform
-     *            [Optional] A capture platform filter that must be specified
-     *            for a record to be included
+     *            [Optional] A capture platform filter that must be specified for a record to be included
      * @param sensor
-     *            [Optional] A sensor filter that must be specified for a record
-     *            to be included
+     *            [Optional] A sensor filter that must be specified for a record to be included
      */
     public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor) {
-        this(anyText, spatialBounds, keywords, capturePlatform, sensor, null,null,null,null);
+        this(anyText, spatialBounds, keywords, capturePlatform, sensor, null, null, null, null);
     }
 
     /**
      * Generates a new filter generator for the specified fields.
      *
-     * @param anyText [Optional] The text used to query the 'AnyText' attribute
+     * @param anyText
+     *            [Optional] The text used to query the 'AnyText' attribute
      * @param spatialBounds
      *            [Optional] The spatial bounds to filter by
      * @param keywords
-     *            [Optional] A list of keywords which must ALL be satisfied for
-     *            a record to be included
+     *            [Optional] A list of keywords which must ALL be satisfied for a record to be included
      * @param capturePlatform
-     *            [Optional] A capture platform filter that must be specified
-     *            for a record to be included
+     *            [Optional] A capture platform filter that must be specified for a record to be included
      * @param sensor
-     *            [Optional] A sensor filter that must be specified for a record
-     *            to be included
-     * @param keywordMatchType [Optional] How the list of keywords will be matched (defaults to All)
+     *            [Optional] A sensor filter that must be specified for a record to be included
+     * @param keywordMatchType
+     *            [Optional] How the list of keywords will be matched (defaults to All)
      */
     public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor,
-            KeywordMatchType keywordMatchType,String dataIdentificationAbstract,String title,Type type) {
+            KeywordMatchType keywordMatchType, String dataIdentificationAbstract, String title, Type type) {
         this.anyText = anyText;
         this.spatialBounds = spatialBounds;
         this.keywords = keywords;
         this.capturePlatform = capturePlatform;
         this.sensor = sensor;
         this.keywordMatchType = keywordMatchType;
-        this.abstract_= dataIdentificationAbstract;
-        this.title=title;
-        this.type=type;
+        this.abstract_ = dataIdentificationAbstract;
+        this.title = title;
+        this.type = type;
     }
 
     /**
      * Utility method for generating the body of a filter fragment.
+     * 
      * @return a filter fragment
      */
     private String generateFilterFragment() {
@@ -163,9 +160,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         }
 
         if (type != null && type != Type.all) {
-            if(type==Type.dataset){
+            if (type == Type.dataset) {
                 fragments.add(this.generatePropertyIsEqualToFragment("type", "dataset"));
-            }else{
+            } else {
                 fragments.add(this.generatePropertyIsLikeFragment("type", "service"));
             }
         }
@@ -175,7 +172,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         }
 
         if (spatialBounds != null) {
-            fragments.add(this.generateBboxFragment(spatialBounds, "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement"));
+            fragments.add(this.generateBboxFragment(spatialBounds,
+                    "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement"));
         }
 
         if (keywords != null && keywords.length > 0) {
@@ -188,9 +186,11 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             }
 
             if (keywordMatchType == null || keywordMatchType == KeywordMatchType.All) {
-                fragments.add(this.generateAndComparisonFragment(keywordFragments.toArray(new String[keywordFragments.size()])));
+                fragments.add(this.generateAndComparisonFragment(keywordFragments.toArray(new String[keywordFragments
+                        .size()])));
             } else {
-                fragments.add(this.generateOrComparisonFragment(keywordFragments.toArray(new String[keywordFragments.size()])));
+                fragments.add(this.generateOrComparisonFragment(keywordFragments.toArray(new String[keywordFragments
+                        .size()])));
             }
         }
 
@@ -202,22 +202,22 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             fragments.add(this.generatePropertyIsEqualToFragment("sensor", sensor));
         }
 
-        if (temporalExtentFrom != null ) {
-            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("TempExtent_begin", temporalExtentFrom.toString()));
+        if (temporalExtentFrom != null) {
+            fragments
+                    .add(this.generatePropertyIsGreaterThanOrEqualTo("TempExtent_begin", temporalExtentFrom.toString()));
         }
 
-        if (temporalExtentTo != null ) {
+        if (temporalExtentTo != null) {
             fragments.add(this.generatePropertyIsLessThanOrEqualTo("TempExtent_end", temporalExtentTo.toString()));
         }
 
-        if (metadataChangeDateFrom != null ) {
+        if (metadataChangeDateFrom != null) {
             fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("changeDate", metadataChangeDateFrom.toString()));
         }
 
-        if (metadataChangeDateTo != null ) {
+        if (metadataChangeDateTo != null) {
             fragments.add(this.generatePropertyIsLessThanOrEqualTo("changeDate", metadataChangeDateTo.toString()));
         }
-
 
         String fragment = this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
 
@@ -227,8 +227,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     }
 
     /**
-     * Returns an ogc:filter fragment that will fetch all WFS, WMS and WCS
-     * records from a CSW.
+     * Returns an ogc:filter fragment that will fetch all WFS, WMS and WCS records from a CSW.
      *
      * @return the filter string all records
      */
@@ -246,7 +245,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /**
      * Not implemented.
      *
-     * @param bbox the bbox
+     * @param bbox
+     *            the bbox
      * @return the filter string bounding box
      */
     @Override
@@ -312,7 +312,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
                 + ", metadataChangeDateTo=" + metadataChangeDateTo
                 + ", temporalExtentFrom=" + temporalExtentFrom
                 + ", temporalExtentTo=" + temporalExtentTo
-                + ", keywordMatchType=" + keywordMatchType +"]";
+                + ", keywordMatchType=" + keywordMatchType + "]";
 
     }
 

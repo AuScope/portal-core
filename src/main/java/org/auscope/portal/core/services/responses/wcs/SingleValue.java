@@ -1,10 +1,10 @@
 package org.auscope.portal.core.services.responses.wcs;
 
-
 import org.w3c.dom.Node;
 
 /**
- * Represents a <wcs:singleValue> element  from a WCS DescribeCoverage response
+ * Represents a <wcs:singleValue> element from a WCS DescribeCoverage response
+ * 
  * @author vot002
  *
  */
@@ -25,6 +25,7 @@ public class SingleValue implements ValueEnumType {
 
     /**
      * The contents of the <wcs:singleValue> element
+     * 
      * @return
      */
     public String getValue() {

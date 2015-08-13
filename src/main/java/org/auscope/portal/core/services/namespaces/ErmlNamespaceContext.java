@@ -1,8 +1,8 @@
 package org.auscope.portal.core.services.namespaces;
 
 /**
- * Extensions of the WFS namespace for the purposes of adding Earth
- * resource markup language specialisations.
+ * Extensions of the WFS namespace for the purposes of adding Earth resource markup language specialisations.
+ * 
  * @author Josh Vote
  *
  */

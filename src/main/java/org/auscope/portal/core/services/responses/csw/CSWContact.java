@@ -1,7 +1,8 @@
 package org.auscope.portal.core.services.responses.csw;
+
 /**
- * Represents a simplified view of a gmd:CI_Contact XML element which is used
- * for holding contact information about a particular individual or organisation.
+ * Represents a simplified view of a gmd:CI_Contact XML element which is used for holding contact information about a particular individual or organisation.
+ * 
  * @author Josh Vote
  *
  */
@@ -17,7 +18,6 @@ public class CSWContact {
     private String addressEmail;
 
     private AbstractCSWOnlineResource onlineResource;
-
 
     public String getTelephone() {
         return telephone;
@@ -101,6 +101,5 @@ public class CSWContact {
                 + ", addressCountry=" + addressCountry + ", addressEmail="
                 + addressEmail + ", onlineResource=" + onlineResource + "]";
     }
-
 
 }

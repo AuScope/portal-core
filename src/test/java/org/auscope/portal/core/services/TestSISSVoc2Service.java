@@ -3,7 +3,6 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc2MethodMaker;
@@ -32,6 +31,7 @@ public class TestSISSVoc2Service extends PortalTestClass {
 
     /**
      * Tests the correct calls are made and the response is correctly parsed
+     * 
      * @throws Exception
      */
     @Test
@@ -40,40 +40,52 @@ public class TestSISSVoc2Service extends PortalTestClass {
         final String repository = "repository";
         final String label = "label";
 
-        final InputStream responseStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
+        final InputStream responseStream = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
         final Concept[] expectedResult = new Concept[] {context.mock(Concept.class)};
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
-            oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));will(returnValue(expectedResult));
-            oneOf(mockMethod).releaseConnection();
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(returnValue(responseStream));
+                oneOf(mockConceptFactory).parseFromRDF(with(any(Node.class)));
+                will(returnValue(expectedResult));
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
         Assert.assertSame(expectedResult, service.getConceptByLabel(serviceUrl, repository, label));
     }
 
     /**
      * Tests the correct calls are made and response errors are correctly parsed
+     * 
      * @throws Exception
      */
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testGetConceptByLabelException() throws Exception {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String label = "label";
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
-            oneOf(mockMethod).releaseConnection();
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getConceptByLabelMethod(serviceUrl, repository, label);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(throwException(new IOException()));
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
         service.getConceptByLabel(serviceUrl, repository, label);
     }
 
     /**
      * Tests the correct calls are made and the response is correctly parsed
+     * 
      * @throws Exception
      */
     @Test
@@ -82,13 +94,18 @@ public class TestSISSVoc2Service extends PortalTestClass {
         final String repository = "repository";
         final String commodityParent = "parent";
 
-        final InputStream responseStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml");
+        final InputStream responseStream = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml");
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
-            oneOf(mockMethod).releaseConnection();
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, commodityParent);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(returnValue(responseStream));
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
         Concept[] result = service.getCommodityConcepts(serviceUrl, repository, commodityParent);
         Assert.assertNotNull(result);
@@ -104,19 +121,24 @@ public class TestSISSVoc2Service extends PortalTestClass {
 
     /**
      * Tests the correct calls are made and response errors are correctly parsed
+     * 
      * @throws Exception
      */
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testGetCommodityConceptsException() throws Exception {
         final String serviceUrl = "http://example.org/opendap";
         final String repository = "repository";
         final String parent = "paretn";
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, parent);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
-            oneOf(mockMethod).releaseConnection();
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getCommodityMethod(serviceUrl, repository, parent);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(throwException(new IOException()));
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
         service.getCommodityConcepts(serviceUrl, repository, parent);
     }

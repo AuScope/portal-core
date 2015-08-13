@@ -9,6 +9,7 @@ import org.w3c.dom.Node;
 
 /**
  * A factory class with methods for instantiating CSWResponsibleParty objects
+ * 
  * @author Josh Vote
  *
  */
@@ -21,8 +22,11 @@ public class CSWResponsiblePartyFactory {
 
     /**
      * Attempts to parse a gmd:CI_Responsible party node into a CSWResponsibleParty element.
-     * @param node Must be a gmd:CI_Responsible element
-     * @throws XPathExpressionException invalid xml.
+     * 
+     * @param node
+     *            Must be a gmd:CI_Responsible element
+     * @throws XPathExpressionException
+     *             invalid xml.
      * @return CSWResponsibleParty
      */
     public static CSWResponsibleParty generateResponsiblePartyFromNode(Node node) throws XPathExpressionException {

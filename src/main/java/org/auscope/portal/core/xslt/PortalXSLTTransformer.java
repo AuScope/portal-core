@@ -18,6 +18,7 @@ import org.auscope.portal.core.util.FileIOUtil;
 
 /**
  * Class for performing XSLT Transformations
+ * 
  * @author Josh Vote
  *
  */
@@ -28,7 +29,9 @@ public class PortalXSLTTransformer {
 
     /**
      * Creates a new instance of this class for transforming using a single XSLT
-     * @param xsltResourceName The name of the resource (relative to this class)
+     * 
+     * @param xsltResourceName
+     *            The name of the resource (relative to this class)
      */
     public PortalXSLTTransformer(String xsltResourceName) {
         this.xsltResourceName = xsltResourceName;
@@ -36,12 +39,16 @@ public class PortalXSLTTransformer {
 
     /**
      * Utility for creating an instance of the Transformer class
-     * @param xslt The style sheet contents that will form the basis of the transformer
-     * @param stylesheetParams [Optional] Any additional params to set for the Transformer
+     * 
+     * @param xslt
+     *            The style sheet contents that will form the basis of the transformer
+     * @param stylesheetParams
+     *            [Optional] Any additional params to set for the Transformer
      * @return
      * @throws TransformerConfigurationException
      */
-    private Transformer createTransformer(InputStream xslt, Properties stylesheetParams) throws TransformerConfigurationException {
+    private Transformer createTransformer(InputStream xslt, Properties stylesheetParams)
+            throws TransformerConfigurationException {
         // Use the static TransformerFactory.newInstance() method:
         // TransformerFactory tFactory = TransformerFactory.newInstance();
         // to instantiate updateCSWRecords TransformerFactory.
@@ -76,9 +83,12 @@ public class PortalXSLTTransformer {
     /**
      * Utility method to transform xml file.
      *
-     * @param xml XML String to be transformed
-     * @param xslt An input stream containing an XSLT that will be used to transform xml
-     * @param Properties A map of properties that will be enumerated to set style sheet properties
+     * @param xml
+     *            XML String to be transformed
+     * @param xslt
+     *            An input stream containing an XSLT that will be used to transform xml
+     * @param Properties
+     *            A map of properties that will be enumerated to set style sheet properties
      * @return Xml output string
      */
     public String convert(String xml, Properties stylesheetParams) {
@@ -88,9 +98,12 @@ public class PortalXSLTTransformer {
     /**
      * Utility method to transform xml file.
      *
-     * @param xml XML Stream to be transformed
-     * @param xslt An input stream containing an XSLT that will be used to transform xml
-     * @param Properties A map of properties that will be enumerated to set style sheet properties
+     * @param xml
+     *            XML Stream to be transformed
+     * @param xslt
+     *            An input stream containing an XSLT that will be used to transform xml
+     * @param Properties
+     *            A map of properties that will be enumerated to set style sheet properties
      * @return Xml output string
      */
     public String convert(InputStream xml, Properties stylesheetParams) {
@@ -100,9 +113,12 @@ public class PortalXSLTTransformer {
     /**
      * Utility method to transform xml file.
      *
-     * @param xml XML Stream to be transformed
-     * @param xslt An input stream containing an XSLT that will be used to transform xml
-     * @param Properties A map of properties that will be enumerated to set style sheet properties
+     * @param xml
+     *            XML Stream to be transformed
+     * @param xslt
+     *            An input stream containing an XSLT that will be used to transform xml
+     * @param Properties
+     *            A map of properties that will be enumerated to set style sheet properties
      * @return Xml output string
      */
     public String convert(StreamSource xml, Properties stylesheetParams) {

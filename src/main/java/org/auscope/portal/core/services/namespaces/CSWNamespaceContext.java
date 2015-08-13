@@ -1,10 +1,8 @@
 package org.auscope.portal.core.services.namespaces;
 
-
 /**
- * A simple implementation of <a
- * href="http://java.sun.com/javase/6/docs/api/javax/xml/namespace/NamespaceContext.html">
- * NamespaceContext </a>. Instances are immutable.
+ * A simple implementation of <a href="http://java.sun.com/javase/6/docs/api/javax/xml/namespace/NamespaceContext.html"> NamespaceContext </a>. Instances are
+ * immutable.
  *
  * @version $Id$
  */

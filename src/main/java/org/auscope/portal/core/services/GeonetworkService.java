@@ -3,7 +3,6 @@ package org.auscope.portal.core.services;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -21,6 +20,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * A service class that provides high level interactions with Geonetwork
+ * 
  * @author Josh Vote
  *
  */
@@ -34,12 +34,12 @@ public class GeonetworkService {
     private String password;
     private String endpoint;
 
-
     /**
      *
      * @param serviceCaller
      * @param gnMethodMaker
-     * @param cswServiceItem The CSW service (must be a geonetwork CSW service)
+     * @param cswServiceItem
+     *            The CSW service (must be a geonetwork CSW service)
      */
     public GeonetworkService(HttpServiceCaller serviceCaller,
             GeonetworkMethodMaker gnMethodMaker, CSWServiceItem cswServiceItem) {
@@ -53,8 +53,8 @@ public class GeonetworkService {
     }
 
     /**
-     * Helper method for transforming an arbitrary CSWRecord into a
-     * <gmd:MD_Metadata> representation
+     * Helper method for transforming an arbitrary CSWRecord into a <gmd:MD_Metadata> representation
+     * 
      * @param record
      * @return
      * @throws Exception
@@ -67,24 +67,26 @@ public class GeonetworkService {
 
     /**
      * Returns the record id from the response of an insert operation (or empty string if N/A)
-     * @param gnResponse A response from a CSWInsert operation
+     * 
+     * @param gnResponse
+     *            A response from a CSWInsert operation
      * @return
      */
     private String extractUuid(String gnResponse) {
         String rtnValue = "";
-        if(gnResponse != null && !gnResponse.isEmpty()){
-            try{
+        if (gnResponse != null && !gnResponse.isEmpty()) {
+            try {
                 Document doc = DOMUtil.buildDomFromString(gnResponse);
 
                 NodeList insertNode = doc.getElementsByTagName("csw:totalInserted");
                 Node n1 = insertNode.item(0).getFirstChild();
-                if(n1.getNodeValue().equals("1")){
+                if (n1.getNodeValue().equals("1")) {
                     NodeList idNode = doc.getElementsByTagName("identifier");
                     Node n2 = idNode.item(0).getFirstChild();
                     rtnValue = n2.getNodeValue();
-                    logger.debug("Insert response id: "+rtnValue);
+                    logger.debug("Insert response id: " + rtnValue);
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
                 logger.warn("Unable to parse a geonetwork response", e);
             }
         }
@@ -92,9 +94,8 @@ public class GeonetworkService {
     }
 
     /**
-     * Attempts to query geonetwork for a record with the specified UUID. If succesful the
-     * underlying "record id" (not uuid) is returned which is used by certain operations in this
-     * service
+     * Attempts to query geonetwork for a record with the specified UUID. If succesful the underlying "record id" (not uuid) is returned which is used by
+     * certain operations in this service
      *
      * @param uuid
      * @return
@@ -104,7 +105,8 @@ public class GeonetworkService {
         String responseString = serviceCaller.getMethodResponseAsString(metadataInfoMethod);
         Document responseDoc = DOMUtil.buildDomFromString(responseString);
 
-        XPathExpression getIdExpr = DOMUtil.compileXPathExpr("/gmd:MD_Metadata/geonet:info/id", new CSWNamespaceContext());
+        XPathExpression getIdExpr = DOMUtil.compileXPathExpr("/gmd:MD_Metadata/geonet:info/id",
+                new CSWNamespaceContext());
         Node idNode = (Node) getIdExpr.evaluate(responseDoc, XPathConstants.NODE);
         if (idNode == null) {
             throw new Exception("Response does not contain geonetwork info about record's internal ID");
@@ -117,10 +119,10 @@ public class GeonetworkService {
     }
 
     /**
-     * Attempts to insert the specified CSWRecord into Geonetwork. The record will be made publicly
-     * viewable.
+     * Attempts to insert the specified CSWRecord into Geonetwork. The record will be made publicly viewable.
      *
      * If successful the URL of the newly created record will be returned
+     * 
      * @param record
      * @return
      * @throws Exception
@@ -137,11 +139,12 @@ public class GeonetworkService {
         if (!gnResponseString.contains("<ok />")) {
             throw new Exception("Geonetwork login failed");
         }
-        
+
         String sessionCookie = gnResponse.getFirstHeader("Set-Cookie").getValue();
 
         //Insert our record
-        HttpRequestBase methodInsertRecord = gnMethodMaker.makeInsertRecordMethod(endpoint, mdMetadataXml, sessionCookie);
+        HttpRequestBase methodInsertRecord = gnMethodMaker.makeInsertRecordMethod(endpoint, mdMetadataXml,
+                sessionCookie);
         gnResponseString = serviceCaller.getMethodResponseAsString(methodInsertRecord);
         logger.debug(String.format("GN Insert response: %1$s", gnResponseString));
 
@@ -155,7 +158,8 @@ public class GeonetworkService {
         //Use our new record ID to FINALLY set the record to public
         HttpRequestBase methodSetPublic = gnMethodMaker.makeRecordPublicMethod(endpoint, recordId, sessionCookie);
         gnResponseString = serviceCaller.getMethodResponseAsString(methodSetPublic);
-        logger.debug(String.format("GN setting record %1$s (uuid=%2$s) public returned: %3$s", recordId, uuid , gnResponseString));
+        logger.debug(String.format("GN setting record %1$s (uuid=%2$s) public returned: %3$s", recordId, uuid,
+                gnResponseString));
 
         //Logout (just in case)
         HttpRequestBase methodLogout = gnMethodMaker.makeUserLogoutMethod(endpoint, sessionCookie);

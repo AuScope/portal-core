@@ -14,7 +14,7 @@ import java.util.TimeZone;
  */
 public class TimeConstraint {
 
-    /** The date format used by this constraint*/
+    /** The date format used by this constraint */
     private static final DateFormat OUTPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
     static {
         OUTPUT_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -42,7 +42,9 @@ public class TimeConstraint {
 
     /**
      * Parses a TimeConstraint for a set of discrete times
-     * @param timePositions A list of time positions to query for.
+     * 
+     * @param timePositions
+     *            A list of time positions to query for.
      * @return
      * @throws ParseException
      */
@@ -61,9 +63,13 @@ public class TimeConstraint {
 
     /**
      * Parses a TimeConstraint for a range of time (at an optional resolution)
-     * @param from Inclusive start time
-     * @param to Inclusive end time
-     * @param timePeriodResolution [Optional] A time range resolution (see WCS spec)
+     * 
+     * @param from
+     *            Inclusive start time
+     * @param to
+     *            Inclusive end time
+     * @param timePeriodResolution
+     *            [Optional] A time range resolution (see WCS spec)
      * @return
      */
     public static TimeConstraint parseTimeConstraint(final Date from, final Date to, final String timePeriodResolution) {
@@ -102,6 +108,5 @@ public class TimeConstraint {
     public String toString() {
         return "TimeConstraint [constraint=" + constraint + "]";
     }
-
 
 }

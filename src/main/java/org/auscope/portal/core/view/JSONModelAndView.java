@@ -8,10 +8,7 @@ import org.springframework.web.servlet.ModelAndView;
 /**
  * A spring ModelAndView for json objects
  *
- * Created by IntelliJ IDEA.
- * User: Mathew Wyatt
- * Date: Jun 4, 2009
- * Time: 12:06:14 PM
+ * Created by IntelliJ IDEA. User: Mathew Wyatt Date: Jun 4, 2009 Time: 12:06:14 PM
  */
 public class JSONModelAndView extends ModelAndView {
 
@@ -22,7 +19,5 @@ public class JSONModelAndView extends ModelAndView {
     public JSONModelAndView(JSONArray jsonArray) {
         super(new JSONView(jsonArray), new ModelMap());
     }
-
-
 
 }
