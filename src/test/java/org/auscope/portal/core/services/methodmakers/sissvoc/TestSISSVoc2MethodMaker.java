@@ -17,39 +17,46 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
 
     /**
      * Tests the getConceptByLabelMethod performs correctly
+     * 
      * @throws Exception
      */
     @Test
     public void testGetConceptByLabelMethod() throws Exception {
         HttpRequestBase method = mm.getConceptByLabelMethod("http://example.org", "repo", "label");
 
-        Assert.assertEquals("http://example.org/getConceptByLabel?repo/label", URLDecoder.decode(method.getURI().toString(),"UTF-8"));
+        Assert.assertEquals("http://example.org/getConceptByLabel?repo/label",
+                URLDecoder.decode(method.getURI().toString(), "UTF-8"));
     }
 
     /**
      * Tests the getConceptByLabelMethod performs correctly
+     * 
      * @throws Exception
      */
     @Test
     public void testGetConceptByUriMethod() throws Exception {
         HttpRequestBase method = mm.getConceptByUriMethod("http://example.org", "repo", "uri");
 
-        Assert.assertEquals("http://example.org/getConceptByURI?repo/uri", URLDecoder.decode(method.getURI().toString(),"UTF-8"));
+        Assert.assertEquals("http://example.org/getConceptByURI?repo/uri",
+                URLDecoder.decode(method.getURI().toString(), "UTF-8"));
     }
 
     /**
      * Tests the getCommodityMethod performs correctly
+     * 
      * @throws Exception
      */
     @Test
     public void testGetCommodityMethod() throws Exception {
         HttpRequestBase method = mm.getCommodityMethod("http://example.org", "repo", "label");
 
-        Assert.assertEquals("http://example.org/getCommodity?repo/label", URLDecoder.decode(method.getURI().toString(),"UTF-8"));
+        Assert.assertEquals("http://example.org/getCommodity?repo/label",
+                URLDecoder.decode(method.getURI().toString(), "UTF-8"));
     }
 
     /**
      * Tests the getRepositoryInfoMethod performs correctly
+     * 
      * @throws Exception
      */
     @Test

@@ -1,22 +1,24 @@
 package org.auscope.portal.core.services.methodmakers.filter;
 
 /**
- * Simple class for generating a filter based on a single property/value
- * pair
+ * Simple class for generating a filter based on a single property/value pair
+ * 
  * @author Josh Vote
  */
 public class SimplePropertyFilter extends AbstractFilter {
 
-    /** The XPath defining the property to filter against*/
+    /** The XPath defining the property to filter against */
     private String property;
     /** The value to be used in the filter */
     private String value;
 
-
     /**
      * Creates a new instance
-     * @param property The XPath defining the property to filter against
-     * @param value The value to be used in the filter
+     * 
+     * @param property
+     *            The XPath defining the property to filter against
+     * @param value
+     *            The value to be used in the filter
      */
     public SimplePropertyFilter(String property, String value) {
         this.property = property;
@@ -25,6 +27,7 @@ public class SimplePropertyFilter extends AbstractFilter {
 
     /**
      * Overridden method
+     * 
      * @see AbstractFilter
      */
     @Override
@@ -34,6 +37,7 @@ public class SimplePropertyFilter extends AbstractFilter {
 
     /**
      * Overridden method
+     * 
      * @see AbstractFilter
      */
     @Override

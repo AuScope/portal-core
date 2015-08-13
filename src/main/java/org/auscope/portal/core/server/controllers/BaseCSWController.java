@@ -13,15 +13,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Base class for all controllers that intend on returning CSWRecords
+ * 
  * @author Josh Vote
  *
  */
 public abstract class BaseCSWController extends BasePortalController {
 
-    /** Used for converting data to something the view can understand*/
+    /** Used for converting data to something the view can understand */
     protected ViewCSWRecordFactory viewCSWRecordFactory;
 
-    /** Used for converting data to something the view can understand*/
+    /** Used for converting data to something the view can understand */
     private ViewKnownLayerFactory viewKnownLayerFactory;
 
     protected BaseCSWController(ViewCSWRecordFactory viewCSWRecordFactory, ViewKnownLayerFactory viewKnownLayerFactory) {
@@ -30,9 +31,10 @@ public abstract class BaseCSWController extends BasePortalController {
     }
 
     /**
-     * Utility for generating a response model that represents a number of
-     * CSWRecord objects
-     * @param records The records to transform
+     * Utility for generating a response model that represents a number of CSWRecord objects
+     * 
+     * @param records
+     *            The records to transform
      * @return
      */
     protected ModelAndView generateJSONResponseMAV(CSWRecord[] records) {
@@ -40,10 +42,12 @@ public abstract class BaseCSWController extends BasePortalController {
     }
 
     /**
-     * Utility for generating a response model that represents a number of
-     * CSWRecord objects
-     * @param records The records to transform
-     * @param matchedResults The total number of records available (which may differ from records.length)
+     * Utility for generating a response model that represents a number of CSWRecord objects
+     * 
+     * @param records
+     *            The records to transform
+     * @param matchedResults
+     *            The total number of records available (which may differ from records.length)
      * @return
      */
     protected ModelAndView generateJSONResponseMAV(CSWRecord[] records, Integer matchedResults) {
@@ -57,17 +61,18 @@ public abstract class BaseCSWController extends BasePortalController {
             for (CSWRecord record : records) {
                 recordRepresentations.add(viewCSWRecordFactory.toView(record));
             }
-         } catch (Exception ex) {
-             log.error("Error converting data records", ex);
-             return generateJSONResponseMAV(false, new CSWRecord[] {}, 0, "Error converting data records");
-         }
+        } catch (Exception ex) {
+            log.error("Error converting data records", ex);
+            return generateJSONResponseMAV(false, new CSWRecord[] {}, 0, "Error converting data records");
+        }
         return generateJSONResponseMAV(true, recordRepresentations, matchedResults, "No errors");
     }
 
     /**
-     * Utility for generating a response model that represents a number
-     * of KnownLayerAndRecord objects
-     * @param knownLayers The known layers to transform
+     * Utility for generating a response model that represents a number of KnownLayerAndRecord objects
+     * 
+     * @param knownLayers
+     *            The known layers to transform
      * @return
      */
     protected ModelAndView generateKnownLayerResponse(List<KnownLayerAndRecords> knownLayers) {
@@ -98,8 +103,8 @@ public abstract class BaseCSWController extends BasePortalController {
     }
 
     /**
-     * Utility for generating a response model that represents a number of
-     * CSWRecord objects
+     * Utility for generating a response model that represents a number of CSWRecord objects
+     * 
      * @param records
      * @return
      */

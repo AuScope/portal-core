@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * A factory class for creating instances of skos:Concept and child classes
+ * 
  * @author Josh Vote
  *
  */
@@ -30,6 +31,7 @@ public class ConceptFactory {
      * Parses a owl:NamedIndividual element (ignoring any relations)
      *
      * If the specified node is missing requisite data null will be returned
+     * 
      * @param node
      * @return
      * @throws XPathExpressionException
@@ -41,9 +43,12 @@ public class ConceptFactory {
         }
 
         NamedIndividual namedIndividual = new NamedIndividual(urn);
-        namedIndividual.setLabel((String) DOMUtil.compileXPathExpr("rdfs:label", nc).evaluate(node, XPathConstants.STRING));
-        namedIndividual.setPreferredLabel((String) DOMUtil.compileXPathExpr("skos:prefLabel", nc).evaluate(node, XPathConstants.STRING));
-        namedIndividual.setDefinition((String) DOMUtil.compileXPathExpr("skos:definition", nc).evaluate(node, XPathConstants.STRING));
+        namedIndividual.setLabel((String) DOMUtil.compileXPathExpr("rdfs:label", nc).evaluate(node,
+                XPathConstants.STRING));
+        namedIndividual.setPreferredLabel((String) DOMUtil.compileXPathExpr("skos:prefLabel", nc).evaluate(node,
+                XPathConstants.STRING));
+        namedIndividual.setDefinition((String) DOMUtil.compileXPathExpr("skos:definition", nc).evaluate(node,
+                XPathConstants.STRING));
 
         return namedIndividual;
     }
@@ -53,7 +58,8 @@ public class ConceptFactory {
      *
      * If the specified node is missing requisite data null will be returned
      *
-     * @param node an owl:NamedIndividual or skos:ConceptNode node
+     * @param node
+     *            an owl:NamedIndividual or skos:ConceptNode node
      * @return
      * @throws XPathExpressionException
      */
@@ -66,13 +72,16 @@ public class ConceptFactory {
         //Build our concept/named individual
         Concept concept = new Concept(urn);
         concept.setLabel((String) DOMUtil.compileXPathExpr("rdfs:label", nc).evaluate(node, XPathConstants.STRING));
-        concept.setPreferredLabel((String) DOMUtil.compileXPathExpr("skos:prefLabel", nc).evaluate(node, XPathConstants.STRING));
-        concept.setDefinition((String) DOMUtil.compileXPathExpr("skos:definition", nc).evaluate(node, XPathConstants.STRING));
+        concept.setPreferredLabel((String) DOMUtil.compileXPathExpr("skos:prefLabel", nc).evaluate(node,
+                XPathConstants.STRING));
+        concept.setDefinition((String) DOMUtil.compileXPathExpr("skos:definition", nc).evaluate(node,
+                XPathConstants.STRING));
 
         return concept;
     }
 
-    private Concept[] relateConceptByDescription(Description[] descs, Map<String, Concept> parsedConceptMap, List<String> traversedUrns) {
+    private Concept[] relateConceptByDescription(Description[] descs, Map<String, Concept> parsedConceptMap,
+            List<String> traversedUrns) {
         List<Concept> concepts = new ArrayList<Concept>();
 
         for (int i = 0; i < descs.length; i++) {
@@ -92,13 +101,14 @@ public class ConceptFactory {
     }
 
     /**
-     * Given a concept described by desc; populate all relations in concept as defined by desc sourcing concepts
-     * from parsedConceptMap
+     * Given a concept described by desc; populate all relations in concept as defined by desc sourcing concepts from parsedConceptMap
+     * 
      * @param concept
      * @param desc
      * @param parsedConceptMap
      */
-    protected void relateConceptByDescription(Concept concept,Description desc, Map<String, Concept> parsedConceptMap, List<String> traversedUrns) {
+    protected void relateConceptByDescription(Concept concept, Description desc, Map<String, Concept> parsedConceptMap,
+            List<String> traversedUrns) {
 
         //To deal with cycles in the hierarchy
         if (traversedUrns.contains(desc.getUrn())) {
@@ -113,10 +123,11 @@ public class ConceptFactory {
     }
 
     /**
-     * Parses a list of owl:NamedIndividual and skos:Concept objects from an RDF Document and then arranges them
-     * according to the heirarchy defined by rdf:Description elements
+     * Parses a list of owl:NamedIndividual and skos:Concept objects from an RDF Document and then arranges them according to the heirarchy defined by
+     * rdf:Description elements
      *
-     * @param rdf Must be an rdf:RDF node
+     * @param rdf
+     *            Must be an rdf:RDF node
      * @return
      */
     public Concept[] parseFromRDF(Node rdf) {

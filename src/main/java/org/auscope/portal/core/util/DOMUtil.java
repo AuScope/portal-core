@@ -38,29 +38,38 @@ public class DOMUtil {
 
     /**
      * Utility for accessing a consistent DocumentBuilderFactory (irregardless of what is on the classpath)
+     * 
      * @return
      */
     private static DocumentBuilderFactory getDocumentBuilderFactory() {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance(
+                "org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
         return factory;
     }
 
     /**
      * Given a String containing XML, parse it and return a DOM object representation (that is namespace aware).
-     * @param xmlString A string containing valid XML
+     * 
+     * @param xmlString
+     *            A string containing valid XML
      * @return
      */
-    public static Document buildDomFromString(String xmlString) throws ParserConfigurationException, IOException, SAXException {
+    public static Document buildDomFromString(String xmlString) throws ParserConfigurationException, IOException,
+            SAXException {
         return buildDomFromString(xmlString, true);
     }
 
     /**
      * Given a String containing XML, parse it and return a DOM object representation
-     * @param xmlString A string containing valid XML
-     * @param isNamespaceAware Will this DOM document take into account namespaces?
+     * 
+     * @param xmlString
+     *            A string containing valid XML
+     * @param isNamespaceAware
+     *            Will this DOM document take into account namespaces?
      * @return
      */
-    public static Document buildDomFromString(String xmlString, boolean isNamespaceAware) throws ParserConfigurationException, IOException, SAXException {
+    public static Document buildDomFromString(String xmlString, boolean isNamespaceAware)
+            throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
         DocumentBuilderFactory factory = getDocumentBuilderFactory();
         factory.setNamespaceAware(isNamespaceAware); // never forget this!
@@ -72,19 +81,25 @@ public class DOMUtil {
 
     /**
      * Given a Stream containing XML, parse it and return a DOM object representation (that is namespace aware).
-     * @param xmlString A string containing valid XML
+     * 
+     * @param xmlString
+     *            A string containing valid XML
      * @return
      */
-    public static Document buildDomFromStream(InputStream stream) throws ParserConfigurationException, IOException, SAXException {
+    public static Document buildDomFromStream(InputStream stream) throws ParserConfigurationException, IOException,
+            SAXException {
         return buildDomFromStream(stream, true);
     }
 
     /**
      * Given a Stream containing XML, parse it and return a DOM object representation (that is namespace aware).
-     * @param xmlString A string containing valid XML
+     * 
+     * @param xmlString
+     *            A string containing valid XML
      * @return
      */
-    public static Document buildDomFromStream(InputStream stream, boolean isNamespaceAware) throws ParserConfigurationException, IOException, SAXException {
+    public static Document buildDomFromStream(InputStream stream, boolean isNamespaceAware)
+            throws ParserConfigurationException, IOException, SAXException {
         //build the XML dom
         DocumentBuilderFactory factory = getDocumentBuilderFactory();
         factory.setNamespaceAware(isNamespaceAware); // never forget this!
@@ -95,8 +110,11 @@ public class DOMUtil {
 
     /**
      * Given a DOM (sub)tree generate a string representation with no formatting
-     * @param node The node to generate the XML for
-     * @param omitXmlDeclaration Whether the <?xml?> header should be omitted
+     * 
+     * @param node
+     *            The node to generate the XML for
+     * @param omitXmlDeclaration
+     *            Whether the <?xml?> header should be omitted
      *
      * @return
      * @throws TransformerException
@@ -115,19 +133,23 @@ public class DOMUtil {
 
         Transformer t = tf.newTransformer();
         t.setOutputProperties(oprops);
-        t.transform(new DOMSource(node),sr);
+        t.transform(new DOMSource(node), sr);
 
         return outText.toString();
     }
 
     /**
      * Compiles the specified XPath (as a string) into an XPathExpression.
-     * @param xPathStr A string representing a valid XPath expression
-     * @param nc The namespace that the xPathStr is referencing
+     * 
+     * @param xPathStr
+     *            A string representing a valid XPath expression
+     * @param nc
+     *            The namespace that the xPathStr is referencing
      * @return
      * @throws XPathExpressionException
      */
-    public static XPathExpression compileXPathExpr(String xPathStr, NamespaceContext nc) throws XPathExpressionException {
+    public static XPathExpression compileXPathExpr(String xPathStr, NamespaceContext nc)
+            throws XPathExpressionException {
         //Force the usage of the Saxon XPath library
         XPathFactory factory = new XPathFactoryImpl();
         XPath xPath = factory.newXPath();
@@ -137,7 +159,9 @@ public class DOMUtil {
 
     /**
      * Compiles the specified XPath (as a string) into an XPathExpression.
-     * @param xPathStr A string representing a valid XPath expression
+     * 
+     * @param xPathStr
+     *            A string representing a valid XPath expression
      * @return
      * @throws XPathExpressionException
      */

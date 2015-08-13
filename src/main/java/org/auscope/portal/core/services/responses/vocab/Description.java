@@ -1,8 +1,8 @@
 package org.auscope.portal.core.services.responses.vocab;
 
-
 /**
  * Highly simplified representation of a rdf:Description element
+ * 
  * @author Josh Vote
  *
  */
@@ -16,6 +16,7 @@ public class Description {
 
     /**
      * Creates a new description which will eventually be populated
+     * 
      * @param urn
      */
     public Description(String urn) {
@@ -24,6 +25,7 @@ public class Description {
 
     /**
      * Creates a new Description which can optionally be used as placeholder for a URN
+     * 
      * @param urn
      */
     public Description(String urn, boolean isHref) {
@@ -37,62 +39,79 @@ public class Description {
 
     /**
      * Gets every description that is defined as being narrower
+     * 
      * @return
      */
     public Description[] getNarrower() {
         return narrower;
     }
+
     /**
      * Sets every description that is defined as being narrower
+     * 
      * @param narrower
      */
     public void setNarrower(Description[] narrower) {
         this.narrower = narrower;
     }
+
     /**
      * Gets every description that is defined as being broader
+     * 
      * @return
      */
     public Description[] getBroader() {
         return broader;
     }
+
     /**
      * Sets every description that is defined as being broader
+     * 
      * @param broader
      */
     public void setBroader(Description[] broader) {
         this.broader = broader;
     }
+
     /**
      * Gets every description that is defined as being related
+     * 
      * @return
      */
     public Description[] getRelated() {
         return related;
     }
+
     /**
      * Sets every description that is defined as being related
+     * 
      * @param related
      */
     public void setRelated(Description[] related) {
         this.related = related;
     }
+
     /**
      * Gets every description that is defined as being a top concept of this description
+     * 
      * @return
      */
     public Description[] getTopConcepts() {
         return topConcepts;
     }
+
     /**
      * Sets every description that is defined as being a top concept of this description
+     * 
      * @param topConcepts
      */
     public void setTopConcepts(Description[] topConcepts) {
         this.topConcepts = topConcepts;
     }
+
     /**
      * Gets the URN of this description
+     * 
      * @return
      */
     public String getUrn() {
@@ -100,8 +119,8 @@ public class Description {
     }
 
     /**
-     * If set this Description is purely a placeholder reference (by urn) to another
-     * Description element
+     * If set this Description is purely a placeholder reference (by urn) to another Description element
+     * 
      * @return
      */
     public boolean isHref() {
@@ -126,6 +145,7 @@ public class Description {
 
     /**
      * Compares 2 Description's based on their URN
+     * 
      * @return
      */
     public boolean equals(Description description) {
@@ -137,6 +157,7 @@ public class Description {
 
     /**
      * Compares a string with this individuals urn
+     * 
      * @param urn
      * @return
      */

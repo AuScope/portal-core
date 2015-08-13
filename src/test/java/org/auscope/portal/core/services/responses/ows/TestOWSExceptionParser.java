@@ -18,7 +18,7 @@ public class TestOWSExceptionParser extends PortalTestClass {
         OWSExceptionParser.checkForExceptionResponse(doc);
     }
 
-    @Test(expected=OWSException.class)
+    @Test(expected = OWSException.class)
     public void testThrowException1() throws Exception {
         check("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
     }

@@ -22,7 +22,7 @@ import org.xml.sax.SAXException;
  *
  * @version $Id$
  */
-public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
+public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord {
 
     /** The log. */
     private final Log log = LogFactory.getLog(getClass());
@@ -58,18 +58,20 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
     /** The extract layer expression. */
     private static final String EXTRACTLAYEREXPRESSION = "/WMS_Capabilities/Capability/descendant::Layer";
 
-
     /**
      * Constructor.
-     * @param inXml GetCapabilites string response
+     * 
+     * @param inXml
+     *            GetCapabilites string response
      * @throws SAXException
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    public GetCapabilitiesRecord_1_3_0(InputStream inXml) throws SAXException, IOException, ParserConfigurationException {
+    public GetCapabilitiesRecord_1_3_0(InputStream inXml) throws SAXException, IOException,
+            ParserConfigurationException {
         try {
 
-            Document doc = DOMUtil.buildDomFromStream(inXml,false);
+            Document doc = DOMUtil.buildDomFromStream(inXml, false);
 
             this.serviceType = getService(doc);
             this.organisation = getContactOrganisation(doc);
@@ -81,15 +83,13 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
             } else {
                 log.debug("Adding non WMS's are not yet implimented");
             }
-          /**
-           * VT:We should not catch the exception rather, we should rethrow it. The reason
-           * I didn't change it right now is because of this bug, GSWA is working
-           *  http://geossdi.dmp.wa.gov.au/services/schemas/wms/1.1.1/WMS_MS_Capabilities.dtd
-           *  is not accessible and when http://geossdi.dmp.wa.gov.au/services/wms?SERVICE=WMS&service=WMS&request=GetCapabilities&version=1.1.1
-           *  the parser trys to access the dtd and fails
-           *  BECAUSE this exception is swallowed, GetCapabilitiesRecord_1_3_0 and GetCapabilitiesRecord.accepts returns true but the proper
-           *  behaviour and the correct behavior is to fail.
-           */
+            /**
+             * VT:We should not catch the exception rather, we should rethrow it. The reason I didn't change it right now is because of this bug, GSWA is
+             * working http://geossdi.dmp.wa.gov.au/services/schemas/wms/1.1.1/WMS_MS_Capabilities.dtd is not accessible and when
+             * http://geossdi.dmp.wa.gov.au/services/wms?SERVICE=WMS&service=WMS&request=GetCapabilities&version=1.1.1 the parser trys to access the dtd and
+             * fails BECAUSE this exception is swallowed, GetCapabilitiesRecord_1_3_0 and GetCapabilitiesRecord.accepts returns true but the proper behaviour
+             * and the correct behavior is to fail.
+             */
 
         } catch (SAXException e) {
             log.error("Parsing error: " + e.getMessage());
@@ -102,7 +102,6 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
             throw e;
         }
     }
-
 
     // ------------------------------------------ Attribute Setters and Getters
 
@@ -170,28 +169,30 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
     }
 
     /**
-     * Returns an array of MIME strings representing the valid format
-     * for the GetMap operation
+     * Returns an array of MIME strings representing the valid format for the GetMap operation
+     * 
      * @return
      */
     public String[] getGetMapFormats() {
         return getMapFormats;
     }
 
-
     // ------------------------------------------------------ Protected Methods
 
     /**
      * Gets the service.
      *
-     * @param xPath the x path
-     * @param doc the doc
+     * @param xPath
+     *            the x path
+     * @param doc
+     *            the doc
      * @return serviceUrlString the service endpoint
      */
     private String getService(Document doc) {
         String serviceUrlString = "";
         try {
-            int elemCount = Integer.parseInt((String) DOMUtil.compileXPathExpr("count(/WMS_Capabilities)").evaluate(doc, XPathConstants.STRING));
+            int elemCount = Integer.parseInt((String) DOMUtil.compileXPathExpr("count(/WMS_Capabilities)").evaluate(
+                    doc, XPathConstants.STRING));
 
             if (elemCount != 0) {
                 serviceUrlString = "wms";
@@ -203,18 +204,20 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
         return serviceUrlString;
     }
 
-
     /**
      * Gets the contact organisation.
      *
-     * @param xPath the x path
-     * @param doc the doc
+     * @param xPath
+     *            the x path
+     * @param doc
+     *            the doc
      * @return contactOrganisation the contact organisation
      */
     private String getContactOrganisation(Document doc) {
         String contactOrganisation = "";
         try {
-            Node tempNode = (Node) DOMUtil.compileXPathExpr(EXTRACTORGANISATIONEXPRESSION).evaluate(doc, XPathConstants.NODE);
+            Node tempNode = (Node) DOMUtil.compileXPathExpr(EXTRACTORGANISATIONEXPRESSION).evaluate(doc,
+                    XPathConstants.NODE);
 
             contactOrganisation = tempNode != null ? tempNode.getTextContent() : "";
 
@@ -227,8 +230,10 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
     /**
      * Gets the gets the map url.
      *
-     * @param xPath the xpath
-     * @param doc the doc
+     * @param xPath
+     *            the xpath
+     * @param doc
+     *            the doc
      * @return mapUrl the map url String
      */
     private String getGetMapUrl(Document doc) {
@@ -247,15 +252,18 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
     /**
      * Gets the wMS layers.
      *
-     * @param xPath the x path
-     * @param doc the doc
+     * @param xPath
+     *            the x path
+     * @param doc
+     *            the doc
      * @return the wMS layers
      */
     private ArrayList<GetCapabilitiesWMSLayerRecord> getWMSLayers(Document doc) {
         ArrayList<GetCapabilitiesWMSLayerRecord> mylayerList = new ArrayList<GetCapabilitiesWMSLayerRecord>();
         try {
 
-            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYEREXPRESSION).evaluate(doc, XPathConstants.NODESET);
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYEREXPRESSION).evaluate(doc,
+                    XPathConstants.NODESET);
 
             log.debug("Number of layers retrieved from GeoCapabilities: " + nodes.getLength());
 
@@ -274,8 +282,10 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
     /**
      * Gets the wMS layer srs.
      *
-     * @param xPath the x path
-     * @param doc the doc
+     * @param xPath
+     *            the x path
+     * @param doc
+     *            the doc
      * @return the wMS layer srs
      */
     private String[] getWMSLayerSRS(Document doc) {
@@ -298,14 +308,17 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
     /**
      * Gets the WMS layer GetMap formats.
      *
-     * @param xPath the x path
-     * @param doc the doc
+     * @param xPath
+     *            the x path
+     * @param doc
+     *            the doc
      * @return the wMS layer srs
      */
     private String[] getWMSGetMapFormats(Document doc) {
         String[] formatList = null;
         try {
-            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTGETMAPFORMATEXPRESSION).evaluate(doc, XPathConstants.NODESET);
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTGETMAPFORMATEXPRESSION).evaluate(doc,
+                    XPathConstants.NODESET);
 
             formatList = new String[nodes.getLength()];
 
@@ -319,11 +332,9 @@ public class GetCapabilitiesRecord_1_3_0 implements GetCapabilitiesRecord{
         return formatList;
     }
 
-
     @Override
     public String getVersion() {
 
         return "1.3.0";
     }
 }
-

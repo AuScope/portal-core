@@ -1,28 +1,32 @@
 package org.auscope.portal.core.services.admin;
 
 /**
- * Represents a tuple between a OGC web service and some form of dataset selector
- * eg - WFS endpoint + feature type name
- *      WMS endpoint + layer name
+ * Represents a tuple between a OGC web service and some form of dataset selector eg - WFS endpoint + feature type name WMS endpoint + layer name
+ * 
  * @author Josh Vote
  */
 public class EndpointAndSelector {
     /** the endpoint (URL) */
     private String endpoint;
-    /** the selector (type name, layer name etc)*/
+    /** the selector (type name, layer name etc) */
     private String selector;
 
     /**
      * Creates a new instance
-     * @param endpoint the endpoint (URL)
-     * @param selector the selector (type name, layer name etc)
+     * 
+     * @param endpoint
+     *            the endpoint (URL)
+     * @param selector
+     *            the selector (type name, layer name etc)
      */
     public EndpointAndSelector(String endpoint, String selector) {
         this.endpoint = endpoint;
         this.selector = selector;
     }
+
     /**
      * Gets the endpoint (URL)
+     * 
      * @return
      */
     public String getEndpoint() {
@@ -31,6 +35,7 @@ public class EndpointAndSelector {
 
     /**
      * Gets the selector (type name, layer name etc)
+     * 
      * @return
      */
     public String getSelector() {
@@ -51,7 +56,9 @@ public class EndpointAndSelector {
 
     /**
      * Compares two instances of this class for equality. Only equal if endpoint AND selector match
-     * @param comparison the comparison object
+     * 
+     * @param comparison
+     *            the comparison object
      * @return
      */
     public boolean equals(EndpointAndSelector comparison) {
@@ -71,6 +78,5 @@ public class EndpointAndSelector {
         return "EndpointAndSelector [endpoint=" + endpoint + ", selector="
                 + selector + "]";
     }
-
 
 }

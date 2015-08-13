@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
@@ -39,34 +38,39 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
 
     /**
      * Generates a method that performs a CSW GetRecords request for a maximum of 1000 records
+     * 
      * @return
      * @throws Exception
      */
     public HttpRequestBase makeMethod(String serviceUrl) throws Exception {
-        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1,null);
+        return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null);
     }
 
     /**
-     * Generates a method that performs a CSW GetRecords request
-     * with the specified filter
+     * Generates a method that performs a CSW GetRecords request with the specified filter
      *
-     * @param filter [Optional] The filter to constrain our request
+     * @param filter
+     *            [Optional] The filter to constrain our request
      * @return
-     * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
+     * @throws UnsupportedEncodingException
+     *             If the PostMethod body cannot be encoded ISO-8859-1
      */
-    public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords) throws UnsupportedEncodingException {
-        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1,null);
+    public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
+            int maxRecords) throws UnsupportedEncodingException {
+        return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null);
     }
 
     /**
-     * Generates a method that performs a CSW GetRecords request
-     * with the specified filter
+     * Generates a method that performs a CSW GetRecords request with the specified filter
      *
-     * @param filter [Optional] The filter to constrain our request
+     * @param filter
+     *            [Optional] The filter to constrain our request
      * @return
-     * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
+     * @throws UnsupportedEncodingException
+     *             If the PostMethod body cannot be encoded ISO-8859-1
      */
-    public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType, int maxRecords, int startPosition, String cqlText) throws UnsupportedEncodingException {
+    public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
+            int maxRecords, int startPosition, String cqlText) throws UnsupportedEncodingException {
         HttpPost httpMethod = new HttpPost(serviceUrl);
 
         String filterString = null;
@@ -100,15 +104,15 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         sb.append("<csw:ElementSetName>full</csw:ElementSetName>");
 
         boolean hasFilter = filterString != null && filterString.length() > 0;
-        boolean hasCql = cqlText !=null && cqlText.length() > 0;
+        boolean hasCql = cqlText != null && cqlText.length() > 0;
 
         if (hasFilter || hasCql) {
             sb.append("<csw:Constraint version=\"1.1.0\">");
-            if(hasFilter){
+            if (hasFilter) {
                 sb.append(filterString);
             }
-            if(hasCql){
-                sb.append("<csw:CqlText>" + cqlText+ "</csw:CqlText>");
+            if (hasCql) {
+                sb.append("<csw:CqlText>" + cqlText + "</csw:CqlText>");
             }
             sb.append("</csw:Constraint>");
         }
@@ -118,7 +122,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         log.trace("CSW GetRecords Request: " + sb.toString());
 
         // If this does not work, try params: "text/xml; charset=ISO-8859-1"
-        httpMethod.setEntity(new StringEntity(sb.toString(), ContentType.create("text/xml","ISO-8859-1")));
+        httpMethod.setEntity(new StringEntity(sb.toString(), ContentType.create("text/xml", "ISO-8859-1")));
 
         return httpMethod;
     }
@@ -127,15 +131,15 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * Generates a HTTP Get method that performs a CSW GetRecords request
      *
      * @return
-     * @throws UnsupportedEncodingException If the PostMethod body cannot be encoded ISO-8859-1
+     * @throws UnsupportedEncodingException
+     *             If the PostMethod body cannot be encoded ISO-8859-1
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition) throws UnsupportedEncodingException, URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition)
+            throws UnsupportedEncodingException, URISyntaxException {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(serviceUrl);
-
-
 
         builder.setParameter("service", "CSW");
         builder.setParameter("constraint_language_version", "1.1.0");
@@ -167,8 +171,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         method.setURI(builder.build());
 
         String queryStr = method.getURI().getHost()
-                        + " query sent to GeoNetwork: \n\t"
-                        + serviceUrl + "?" + method.getURI().getQuery();
+                + " query sent to GeoNetwork: \n\t"
+                + serviceUrl + "?" + method.getURI().getQuery();
 
         log.debug(queryStr);
 

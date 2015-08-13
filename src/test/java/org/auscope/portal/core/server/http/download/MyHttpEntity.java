@@ -8,11 +8,12 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.message.BasicHeader;
 
-public class MyHttpEntity implements HttpEntity{
+public class MyHttpEntity implements HttpEntity {
 
     InputStream content;
-    public MyHttpEntity(InputStream is){
-        this.content=is;
+
+    public MyHttpEntity(InputStream is) {
+        this.content = is;
     }
 
     @Override
@@ -35,7 +36,7 @@ public class MyHttpEntity implements HttpEntity{
 
     @Override
     public Header getContentType() {
-        return new BasicHeader("type","application/xml");
+        return new BasicHeader("type", "application/xml");
     }
 
     @Override

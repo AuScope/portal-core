@@ -13,6 +13,7 @@ import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
+
 /**
  * A class for generating Web Feature Service requests.
  *
@@ -20,7 +21,6 @@ import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
  */
 public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
     public static final String WFS_VERSION = "1.1.0";
-
 
     /**
      * An enumeration of the values that can be used for the 'resultType' parameter
@@ -51,6 +51,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Gets the list of namespaces that are used when generating WFS requests
+     * 
      * @return
      */
     public IterableNamespace getNamespaces() {
@@ -59,6 +60,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Sets the list of namespaces that are used when generating WFS requests
+     * 
      * @param namespaces
      */
     public void setNamespaces(IterableNamespace namespaces) {
@@ -67,89 +69,142 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Creates a PostMethod given the following parameters.
-     * @param serviceURL - required, exception thrown if not provided
-     * @param featureType - required, exception thrown if not provided
-     * @param filterString - optional
-     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
+     * 
+     * @param serviceURL
+     *            - required, exception thrown if not provided
+     * @param featureType
+     *            - required, exception thrown if not provided
+     * @param filterString
+     *            - optional
+     * @param maxFeatures
+     *            - Set to non zero to specify a cap on the number of features to fetch
      * @return
-     * @throws Exception if service URL or featureType is not provided
+     * @throws Exception
+     *             if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures) throws Exception {
-        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, null, null, null,null);
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures)
+            throws Exception {
+        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, null, null, null, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
-     * @param serviceURL - required, exception thrown if not provided
-     * @param featureType - required, exception thrown if not provided
-     * @param filterString - optional
-     * @param resultType - Can be null - The type of response set you wish to request (default is Results)
+     * 
+     * @param serviceURL
+     *            - required, exception thrown if not provided
+     * @param featureType
+     *            - required, exception thrown if not provided
+     * @param filterString
+     *            - optional
+     * @param resultType
+     *            - Can be null - The type of response set you wish to request (default is Results)
      * @return
-     * @throws Exception if service URL or featureType is not provided
+     * @throws Exception
+     *             if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, ResultType resultType) throws Exception {
-        return makePostMethod(serviceURL, featureType, filterString, 0, null, resultType, null,null);
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString,
+            ResultType resultType) throws Exception {
+        return makePostMethod(serviceURL, featureType, filterString, 0, null, resultType, null, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
-     * @param serviceURL - required, exception thrown if not provided
-     * @param featureType - required, exception thrown if not provided
-     * @param filterString - optional
-     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
-     * @param srsName - Can be null or empty
+     * 
+     * @param serviceURL
+     *            - required, exception thrown if not provided
+     * @param featureType
+     *            - required, exception thrown if not provided
+     * @param filterString
+     *            - optional
+     * @param maxFeatures
+     *            - Set to non zero to specify a cap on the number of features to fetch
+     * @param srsName
+     *            - Can be null or empty
      * @return
-     * @throws Exception if service URL or featureType is not provided
+     * @throws Exception
+     *             if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName) {
-        return makePostMethod(serviceURL, featureType, filterString, 0, srsName, null, null,null);
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
+            String srsName) {
+        return makePostMethod(serviceURL, featureType, filterString, 0, srsName, null, null, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
-     * @param serviceURL - required, exception thrown if not provided
-     * @param featureType - required, exception thrown if not provided
-     * @param filterString - optional - an OGC Filter String
-     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
-     * @param srsName - Can be null or empty
-     * @param resultType - Can be null - The type of response set you wish to request (default is Results)
+     * 
+     * @param serviceURL
+     *            - required, exception thrown if not provided
+     * @param featureType
+     *            - required, exception thrown if not provided
+     * @param filterString
+     *            - optional - an OGC Filter String
+     * @param maxFeatures
+     *            - Set to non zero to specify a cap on the number of features to fetch
+     * @param srsName
+     *            - Can be null or empty
+     * @param resultType
+     *            - Can be null - The type of response set you wish to request (default is Results)
      * @return
-     * @throws Exception if service URL or featureType is not provided
+     * @throws Exception
+     *             if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType) {
-        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, null,null);
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
+            String srsName, ResultType resultType) {
+        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, null, null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
-     * @param serviceURL - required, exception thrown if not provided
-     * @param featureType - required, exception thrown if not provided
-     * @param filterString - optional - an OGC Filter String
-     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
-     * @param srsName - Can be null or empty
-     * @param resultType - Can be null - The type of response set you wish to request (default is Results)
-     * @param outputFormat - Can be null - The format you wish the response to take
+     * 
+     * @param serviceURL
+     *            - required, exception thrown if not provided
+     * @param featureType
+     *            - required, exception thrown if not provided
+     * @param filterString
+     *            - optional - an OGC Filter String
+     * @param maxFeatures
+     *            - Set to non zero to specify a cap on the number of features to fetch
+     * @param srsName
+     *            - Can be null or empty
+     * @param resultType
+     *            - Can be null - The type of response set you wish to request (default is Results)
+     * @param outputFormat
+     *            - Can be null - The format you wish the response to take
      * @return
-     * @throws Exception if service URL or featureType is not provided
+     * @throws Exception
+     *             if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat){
-        return makePostMethod(serviceURL,featureType,filterString,maxFeatures,srsName,resultType,outputFormat,null);
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
+            String srsName, ResultType resultType, String outputFormat) {
+        return makePostMethod(serviceURL, featureType, filterString, maxFeatures, srsName, resultType, outputFormat,
+                null);
     }
 
     /**
      * Creates a PostMethod given the following parameters.
-     * @param serviceURL - required, exception thrown if not provided
-     * @param featureType - required, exception thrown if not provided
-     * @param filterString - optional - an OGC Filter String
-     * @param maxFeatures - Set to non zero to specify a cap on the number of features to fetch
-     * @param srsName - Can be null or empty
-     * @param resultType - Can be null - The type of response set you wish to request (default is Results)
-     * @param outputFormat - Can be null - The format you wish the response to take
-     * @param startIndex - This is for services that supports paging.
+     * 
+     * @param serviceURL
+     *            - required, exception thrown if not provided
+     * @param featureType
+     *            - required, exception thrown if not provided
+     * @param filterString
+     *            - optional - an OGC Filter String
+     * @param maxFeatures
+     *            - Set to non zero to specify a cap on the number of features to fetch
+     * @param srsName
+     *            - Can be null or empty
+     * @param resultType
+     *            - Can be null - The type of response set you wish to request (default is Results)
+     * @param outputFormat
+     *            - Can be null - The format you wish the response to take
+     * @param startIndex
+     *            - This is for services that supports paging.
      * @return
-     * @throws Exception if service URL or featureType is not provided
+     * @throws Exception
+     *             if service URL or featureType is not provided
      */
-    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures, String srsName, ResultType resultType, String outputFormat, String startIndex) {
+    public HttpRequestBase makePostMethod(String serviceURL, String featureType, String filterString, int maxFeatures,
+            String srsName, ResultType resultType, String outputFormat, String startIndex) {
 
         // Make sure the required parameters are given
         if (featureType == null || featureType.equals("")) {
@@ -177,7 +232,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
             sb.append("                maxFeatures=\"" + Integer.toString(maxFeatures) + "\"");
         }
 
-        if (startIndex !=  null) {
+        if (startIndex != null) {
             sb.append("                startIndex=\"" + startIndex + "\"");
         }
 
@@ -222,19 +277,28 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting a specific feature for a specific typeName.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param featureId [Optional] The ID of typeName to request
-     * @param maxFeatures [Optional] The maximum number of features to request
-     * @param srs [Optional] The spatial reference system the response should conform to
-     * @param outputFormat [Optional] The format you wish the response to take
-     * @param bbox [Optional] Bounding box used to constrain request
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param featureId
+     *            [Optional] The ID of typeName to request
+     * @param maxFeatures
+     *            [Optional] The maximum number of features to request
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
+     * @param outputFormat
+     *            [Optional] The format you wish the response to take
+     * @param bbox
+     *            [Optional] Bounding box used to constrain request
      * @return
      * @throws URISyntaxException
      */
-    protected HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs, String outputFormat, FilterBoundingBox bbox) throws URISyntaxException {
+    protected HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter,
+            Integer maxFeatures, ResultType resultType, String srs, String outputFormat, FilterBoundingBox bbox)
+            throws URISyntaxException {
         HttpGet method = new HttpGet();
-
 
         URIBuilder builder = new URIBuilder(serviceUrl);
         builder.setParameter("service", "WFS"); //The access token I am getting after the Login
@@ -305,137 +369,199 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting a specific feature for a specific typeName.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param featureId [Optional] The ID of typeName to request
-     * @param srs [Optional] The spatial reference system the response should conform to
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param featureId
+     *            [Optional] The ID of typeName to request
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs) throws URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs)
+            throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, null, null);
     }
 
     /**
      * Generates a method for requesting a specific feature for a specific typeName.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param featureId [Optional] The ID of typeName to request
-     * @param srs [Optional] The spatial reference system the response should conform to
-     * @param outputFormat The output format the response to be parsed in.
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param featureId
+     *            [Optional] The ID of typeName to request
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
+     * @param outputFormat
+     *            The output format the response to be parsed in.
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs, String outputFormat) throws URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String srs,
+            String outputFormat) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, featureId, null, (Integer) null, null, srs, outputFormat, null);
     }
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param maxFeatures [Optional] The maximum number of features to request
-     * @param srs [Optional] The spatial reference system the response should conform to
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param maxFeatures
+     *            [Optional] The maximum number of features to request
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs) throws URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs)
+            throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null, null);
     }
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param maxFeatures [Optional] The maximum number of features to request
-     * @param srs [Optional] The spatial reference system the response should conform to
-     * @param bbox [Optional] Bounding box used to constrain request
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param maxFeatures
+     *            [Optional] The maximum number of features to request
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
+     * @param bbox
+     *            [Optional] Bounding box used to constrain request
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs, FilterBoundingBox bbox) throws URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs,
+            FilterBoundingBox bbox) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null, bbox);
     }
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param maxFeatures [Optional] The maximum number of features to request
-     * @param srs [Optional] The spatial reference system the response should conform to
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param maxFeatures
+     *            [Optional] The maximum number of features to request
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures,
+            ResultType resultType, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, null);
     }
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param maxFeatures [Optional] The maximum number of features to request
-     * @param srs [Optional] The spatial reference system the response should conform to
-     * @param bbox [Optional] Bounding box used to constrain request
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param maxFeatures
+     *            [Optional] The maximum number of features to request
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
+     * @param bbox
+     *            [Optional] Bounding box used to constrain request
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs, FilterBoundingBox bbox) throws URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures,
+            ResultType resultType, String srs, FilterBoundingBox bbox) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, bbox);
     }
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param maxFeatures [Optional] The maximum number of features to request
-     * @param srs [Optional] The spatial reference system the response should conform to
-     * @param bbox [Optional] Bounding box used to constrain request
-     * @param outputFormat [Optional] The output format the response should takew
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param maxFeatures
+     *            [Optional] The maximum number of features to request
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
+     * @param bbox
+     *            [Optional] Bounding box used to constrain request
+     * @param outputFormat
+     *            [Optional] The output format the response should takew
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, ResultType resultType, String srs, FilterBoundingBox bbox, String outputFormat) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, outputFormat, bbox);
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures,
+            ResultType resultType, String srs, FilterBoundingBox bbox, String outputFormat) throws URISyntaxException {
+        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, outputFormat,
+                bbox);
     }
 
     /**
      * Generates a method for requesting all instances of a specific feature type that pass a CQL filter.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param maxFeatures [Optional] The maximum number of features to request
-     * @param cqlFilter A CQL filter string (not an OGC filter).
-     * @param srs [Optional] The spatial reference system the response should conform to
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param maxFeatures
+     *            [Optional] The maximum number of features to request
+     * @param cqlFilter
+     *            A CQL filter string (not an OGC filter).
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, String srs) throws URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures,
+            String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null, srs, null, null);
     }
 
     /**
      * Generates a method for requesting all instances of a specific feature type that pass a CQL filter.
-     * @param serviceUrl The WFS endpoint
-     * @param typeName The typeName to query
-     * @param maxFeatures [Optional] The maximum number of features to request
-     * @param cqlFilter A CQL filter string (not an OGC filter).
-     * @param srs [Optional] The spatial reference system the response should conform to
+     * 
+     * @param serviceUrl
+     *            The WFS endpoint
+     * @param typeName
+     *            The typeName to query
+     * @param maxFeatures
+     *            [Optional] The maximum number of features to request
+     * @param cqlFilter
+     *            A CQL filter string (not an OGC filter).
+     * @param srs
+     *            [Optional] The spatial reference system the response should conform to
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures, ResultType resultType, String srs) throws URISyntaxException {
+    public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures,
+            ResultType resultType, String srs) throws URISyntaxException {
         return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs, null, null);
     }
 
     /**
      * Generates a method for requesting a WFS GetCapabilities response
+     * 
      * @param serviceUrl
      * @return
      * @throws URISyntaxException
      */
     public HttpRequestBase makeGetCapabilitiesMethod(String serviceUrl) throws URISyntaxException {
         HttpGet method = new HttpGet();
-
 
         URIBuilder builder = new URIBuilder(serviceUrl);
         builder.setParameter("service", "WFS");
@@ -450,11 +576,13 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting a WFS DescribeFeatureType response
+     * 
      * @param serviceUrl
      * @return
      * @throws URISyntaxException
      */
-    public HttpRequestBase makeDescribeFeatureTypeMethod(String serviceUrl, String featureType) throws URISyntaxException {
+    public HttpRequestBase makeDescribeFeatureTypeMethod(String serviceUrl, String featureType)
+            throws URISyntaxException {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(serviceUrl);

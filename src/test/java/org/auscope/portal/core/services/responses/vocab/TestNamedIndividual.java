@@ -6,6 +6,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for NamedIndividual
+ * 
  * @author Josh Vote
  *
  */
@@ -37,7 +38,7 @@ public class TestNamedIndividual extends PortalTestClass {
         final String expectedUrn = "my:urn";
         NamedIndividual ni = new NamedIndividual(expectedUrn);
 
-        Assert.assertFalse(ni.equals((String)null));
+        Assert.assertFalse(ni.equals((String) null));
         Assert.assertFalse(ni.equals((Object) null));
         Assert.assertFalse(ni.equals(new NamedIndividual(null)));
     }
@@ -51,7 +52,7 @@ public class TestNamedIndividual extends PortalTestClass {
         final String unexpectedUrn = "different";
         NamedIndividual ni = new NamedIndividual(expectedUrn);
 
-        Assert.assertTrue(ni.equals((String)null));
+        Assert.assertTrue(ni.equals((String) null));
         Assert.assertFalse(ni.equals((Object) null));
         Assert.assertTrue(ni.equals(new NamedIndividual(null)));
 

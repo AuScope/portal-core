@@ -7,6 +7,7 @@ import org.springframework.ui.ModelMap;
 
 /**
  * Utility classes for testing views and modelmaps
+ * 
  * @author vot002
  *
  */
@@ -27,10 +28,11 @@ public class AssertViewUtility {
     }
 
     /**
-    * Runs a number of assertions on the list (does a deep comparison)
-    * @param expected
-    * @param actual
-    */
+     * Runs a number of assertions on the list (does a deep comparison)
+     * 
+     * @param expected
+     * @param actual
+     */
     public static void assertListsEqual(List expected, List actual) {
         Assert.assertEquals(expected.size(), actual.size());
 
@@ -39,12 +41,12 @@ public class AssertViewUtility {
         }
     }
 
-
     /**
-    * Runs a number of assertions on the specified model maps (does a deep comparison)
-    * @param expected
-    * @param actual
-    */
+     * Runs a number of assertions on the specified model maps (does a deep comparison)
+     * 
+     * @param expected
+     * @param actual
+     */
     public static void assertModelMapsEqual(ModelMap expected, ModelMap actual) {
 
         Assert.assertEquals(expected.size(), actual.size());

@@ -10,10 +10,10 @@ import org.auscope.portal.core.cloud.CloudJob;
  */
 public interface JobStatusReader {
     /**
-     * Implementors may either just return cloudJob.getStatus() or may calculate the latest status
-     * in a manner specific to the CloudJob implementation.
+     * Implementors may either just return cloudJob.getStatus() or may calculate the latest status in a manner specific to the CloudJob implementation.
      * 
-     * @param cloudJob a CloudJob whose status will be calculated
+     * @param cloudJob
+     *            a CloudJob whose status will be calculated
      * @return
      */
     public String getJobStatus(CloudJob cloudJob);

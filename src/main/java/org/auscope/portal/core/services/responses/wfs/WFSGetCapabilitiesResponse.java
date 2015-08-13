@@ -13,15 +13,17 @@ public class WFSGetCapabilitiesResponse {
     private String[] getFeatureOutputFormats;
     /** A list of feature type names (no additional metadata included) */
     private String[] featureTypes;
-    
+
     public WFSGetCapabilitiesResponse() {
         this(null, null);
     }
-    
+
     /**
      * 
-     * @param getFeatureOutputFormats Supported output formats for GetFeature operations
-     * @param featureTypes A list of feature type names (no additional metadata included)
+     * @param getFeatureOutputFormats
+     *            Supported output formats for GetFeature operations
+     * @param featureTypes
+     *            A list of feature type names (no additional metadata included)
      */
     public WFSGetCapabilitiesResponse(String[] getFeatureOutputFormats,
             String[] featureTypes) {
@@ -29,33 +31,37 @@ public class WFSGetCapabilitiesResponse {
         this.getFeatureOutputFormats = getFeatureOutputFormats;
         this.featureTypes = featureTypes;
     }
-    
+
     /**
      * Supported output formats for GetFeature operations
+     * 
      * @return
      */
     public String[] getGetFeatureOutputFormats() {
         return getFeatureOutputFormats;
     }
-    
+
     /**
      * Supported output formats for GetFeature operations
+     * 
      * @param getFeatureOutputFormats
      */
     public void setGetFeatureOutputFormats(String[] getFeatureOutputFormats) {
         this.getFeatureOutputFormats = getFeatureOutputFormats;
     }
-    
+
     /**
      * A list of feature type names (no additional metadata included)
+     * 
      * @return
      */
     public String[] getFeatureTypes() {
         return featureTypes;
     }
-    
+
     /**
      * A list of feature type names (no additional metadata included)
+     * 
      * @param featureTypes
      */
     public void setFeatureTypes(String[] featureTypes) {

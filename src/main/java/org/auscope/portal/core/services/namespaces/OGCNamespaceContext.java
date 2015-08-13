@@ -1,8 +1,8 @@
 package org.auscope.portal.core.services.namespaces;
 
-
 /**
  * Used for testing OGC filters
+ * 
  * @author vot002
  *
  */

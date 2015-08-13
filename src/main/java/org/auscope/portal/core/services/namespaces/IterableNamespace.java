@@ -10,8 +10,7 @@ import javax.xml.namespace.NamespaceContext;
 import org.apache.commons.lang.NotImplementedException;
 
 /**
- * An abstract implementation of NamespaceContext that simplifies
- * the namespace into a HashMap.
+ * An abstract implementation of NamespaceContext that simplifies the namespace into a HashMap.
  *
  * Also exposes additional utility methods
  *
@@ -26,10 +25,10 @@ public abstract class IterableNamespace implements NamespaceContext {
     protected Map<String, String> map = new HashMap<String, String>();
 
     /**
-     * Looks up the namespace URI for a given prefix. Will return
-     * XMLConstants.NULL_NS_URI on failure
+     * Looks up the namespace URI for a given prefix. Will return XMLConstants.NULL_NS_URI on failure
      *
-     * @param prefix The prefix whose namespace will be looked up
+     * @param prefix
+     *            The prefix whose namespace will be looked up
      * @see javax.xml.namespace.NamespaceContext#getNamespaceURI(java.lang.String)
      */
     @Override
@@ -46,6 +45,7 @@ public abstract class IterableNamespace implements NamespaceContext {
 
     /**
      * Not implemented
+     * 
      * @see javax.xml.namespace.NamespaceContext#getPrefix(java.lang.String)
      */
     @Override
@@ -55,6 +55,7 @@ public abstract class IterableNamespace implements NamespaceContext {
 
     /**
      * Not implemented
+     * 
      * @see javax.xml.namespace.NamespaceContext#getPrefixes(java.lang.String)
      */
     @Override
@@ -64,6 +65,7 @@ public abstract class IterableNamespace implements NamespaceContext {
 
     /**
      * Returns an iterator to every prefix in this namespace
+     * 
      * @return
      */
     public Iterator<String> getPrefixIterator() {

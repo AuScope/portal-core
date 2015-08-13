@@ -30,41 +30,50 @@ public class CSWGetRecordResponse {
     private int recordsReturned = 0;
     private int recordsMatched = 0;
     private int nextRecord = 0;
-    
+
     /** A map object for looking up a particular CSWRecord object by its file identifier */
     private Map<String, CSWRecord> cswRecordLookupMap = new HashMap<String, CSWRecord>();
     /** A list object that stores orphan CSWRecord objects */
     private List<CSWRecord> stagingOrphanRecords = new ArrayList<CSWRecord>();
-    
+
     /**
      * Creates a new instance from the specified record response by parsing its contents
      * 
      * The contents will be parsed according to a normal CSWRecordTransformerFactory
      * 
-     * @param getRecordResponse an XML CSW GetRecords response parsed into a DOM tree
-     * @param origin Where the getRecordResponse has originated from
+     * @param getRecordResponse
+     *            an XML CSW GetRecords response parsed into a DOM tree
+     * @param origin
+     *            Where the getRecordResponse has originated from
      * @throws XPathExpressionException
      */
     public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse) throws XPathExpressionException {
         this(origin, getRecordResponse, new CSWRecordTransformerFactory());
     }
-    
+
     /**
      * Creates a new instance from the specified record response by parsing its contents
      * 
      * The contents will be parsed according to the rules set out by the CSWRecordTransformerFactory
      * 
-     * @param getRecordResponse an XML CSW GetRecords response parsed into a DOM tree
-     * @param origin Where the getRecordResponse has originated from
+     * @param getRecordResponse
+     *            an XML CSW GetRecords response parsed into a DOM tree
+     * @param origin
+     *            Where the getRecordResponse has originated from
      * @throws XPathExpressionException
      */
-    public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse, CSWRecordTransformerFactory cswRecordTransformerFactory) throws XPathExpressionException {
+    public CSWGetRecordResponse(CSWServiceItem origin, Document getRecordResponse,
+            CSWRecordTransformerFactory cswRecordTransformerFactory) throws XPathExpressionException {
         //These cannot be static pre-compiled expressions as they are NOT threadsafe
         CSWNamespaceContext nc = new CSWNamespaceContext();
-        XPathExpression exprRecordsMatched = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsMatched", nc);
-        XPathExpression exprRecordsReturned = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsReturned", nc);
-        XPathExpression exprNextRecord = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/@nextRecord", nc);
-        XPathExpression exprRecordMetadata = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata", nc);
+        XPathExpression exprRecordsMatched = DOMUtil.compileXPathExpr(
+                "/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsMatched", nc);
+        XPathExpression exprRecordsReturned = DOMUtil.compileXPathExpr(
+                "/csw:GetRecordsResponse/csw:SearchResults/@numberOfRecordsReturned", nc);
+        XPathExpression exprNextRecord = DOMUtil.compileXPathExpr(
+                "/csw:GetRecordsResponse/csw:SearchResults/@nextRecord", nc);
+        XPathExpression exprRecordMetadata = DOMUtil.compileXPathExpr(
+                "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata", nc);
 
         Node node = (Node) exprRecordsMatched.evaluate(getRecordResponse, XPathConstants.NODE);
         if (node != null) {
@@ -84,7 +93,7 @@ public class CSWGetRecordResponse {
         NodeList nodes = (NodeList) exprRecordMetadata.evaluate(getRecordResponse, XPathConstants.NODESET);
         records = new ArrayList<CSWRecord>(nodes.getLength());
 
-        for (int i=0; i<nodes.getLength(); i++ ) {
+        for (int i = 0; i < nodes.getLength(); i++) {
             Node metadataNode = nodes.item(i);
             CSWRecordTransformer transformer = cswRecordTransformerFactory.newCSWRecordTransformer(metadataNode);
             CSWRecord newRecord = transformer.transformToCSWRecord();
@@ -95,17 +104,17 @@ public class CSWGetRecordResponse {
     }
 
     /**
-     * Returns an unmodifiable list of CSWRecords that were parsed from the response
-     * that built this instance.
+     * Returns an unmodifiable list of CSWRecords that were parsed from the response that built this instance.
+     * 
      * @return
      */
     public List<CSWRecord> getRecords() {
         return Collections.unmodifiableList(records);
     }
 
-
     /**
      * Gets the number of records returned (as identified by the response).
+     * 
      * @return
      */
     public int getRecordsReturned() {
@@ -115,8 +124,8 @@ public class CSWGetRecordResponse {
     /**
      * Gets the number of records that match the original GetRecords query.
      *
-     * This can be greater than records returned indicating that only the first
-     * X records were returned and subsequent queries are required to get the rest
+     * This can be greater than records returned indicating that only the first X records were returned and subsequent queries are required to get the rest
+     * 
      * @return
      */
     public int getRecordsMatched() {
@@ -125,6 +134,7 @@ public class CSWGetRecordResponse {
 
     /**
      * Gets the index of the next record (if there are more following) or 0 otherwise
+     * 
      * @return
      */
     public int getNextRecord() {

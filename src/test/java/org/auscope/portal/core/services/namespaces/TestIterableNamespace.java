@@ -40,7 +40,7 @@ public class TestIterableNamespace extends PortalTestClass {
         boolean matchedPref2 = false;
 
         Iterator<String> i = ns.getPrefixIterator();
-        while(i.hasNext()) {
+        while (i.hasNext()) {
             String next = i.next();
             if (next.equals("pref1")) {
                 Assert.assertFalse(matchedPref1);
