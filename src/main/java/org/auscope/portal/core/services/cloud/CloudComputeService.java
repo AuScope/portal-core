@@ -93,7 +93,7 @@ public class CloudComputeService {
 
     /**
      * Creates a new instance with the specified credentials
-     * 
+     *
      * @param endpoint
      *            (URL) The location of the Compute (Nova) service
      * @param accessKey
@@ -108,7 +108,7 @@ public class CloudComputeService {
 
     /**
      * Creates a new instance with the specified credentials
-     * 
+     *
      * @param endpoint
      *            (URL) The location of the Compute (Nova) service
      * @param accessKey
@@ -169,7 +169,7 @@ public class CloudComputeService {
 
     /**
      * Unique ID for distinguishing instances of this class - can be null
-     * 
+     *
      * @return
      */
     public String getId() {
@@ -178,7 +178,7 @@ public class CloudComputeService {
 
     /**
      * Unique ID for distinguishing instances of this class - can be null
-     * 
+     *
      * @param id
      */
     public void setId(String id) {
@@ -197,7 +197,7 @@ public class CloudComputeService {
 
     /**
      * An array of images that are available through this compute service
-     * 
+     *
      * @return
      */
     public MachineImage[] getAvailableImages() {
@@ -206,7 +206,7 @@ public class CloudComputeService {
 
     /**
      * An array of images that are available through this compute service
-     * 
+     *
      * @param availableImages
      */
     public void setAvailableImages(MachineImage[] availableImages) {
@@ -215,7 +215,7 @@ public class CloudComputeService {
 
     /**
      * A short descriptive name for human identification of this service
-     * 
+     *
      * @return
      */
     public String getName() {
@@ -224,7 +224,7 @@ public class CloudComputeService {
 
     /**
      * A short descriptive name for human identification of this service
-     * 
+     *
      * @param name
      */
     public void setName(String name) {
@@ -353,7 +353,7 @@ public class CloudComputeService {
 
     /**
      * Makes a request that the VM started by job be terminated
-     * 
+     *
      * @param job
      *            The job whose execution should be terminated
      */
@@ -361,10 +361,14 @@ public class CloudComputeService {
         computeService.destroyNode(job.getComputeInstanceId());
     }
 
+    public ComputeType[] getAvailableComputeTypes() {
+        return getAvailableComputeTypes(null, null, null);
+    }
+
     /**
      * An array of compute types that are available through this compute service
      */
-    public ComputeType[] getAvailableComputeTypes() {
+    public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB) {
         Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
 
         List<ComputeType> computeTypes = new ArrayList<ComputeType>();
@@ -392,6 +396,15 @@ public class CloudComputeService {
             ct.setRootDiskGB((int) rootDiskGB);
             ct.setEphemeralDiskGB((int) ephemeralDiskGB);
 
+            //Skip anything that doesn't match our filters
+            if (minimumVCPUs != null && minimumVCPUs > ct.getVcpus()) {
+                continue;
+            } else if (minimumRamMB != null && minimumRamMB > ct.getRamMB()) {
+                continue;
+            } else if (minimumRootDiskGB != null && minimumRootDiskGB > ct.getRootDiskGB()) {
+                continue;
+            }
+
             computeTypes.add(ct);
         }
 
@@ -410,7 +423,7 @@ public class CloudComputeService {
 
     /**
      * Gets the set of zone names that should be skipped when attempting to find a zone to run a job at.
-     * 
+     *
      * @return
      */
     public Set<String> getSkippedZones() {
@@ -419,7 +432,7 @@ public class CloudComputeService {
 
     /**
      * Sets the set of zone names that should be skipped when attempting to find a zone to run a job at.
-     * 
+     *
      * @param skippedZones
      */
     public void setSkippedZones(Set<String> skippedZones) {
@@ -428,7 +441,7 @@ public class CloudComputeService {
 
     /**
      * Will attempt to tail and return the last 1000 lines from the given servers console.
-     * 
+     *
      * @param job
      *            the job which has been executed by this service
      * @param numLines
@@ -442,7 +455,7 @@ public class CloudComputeService {
 
     /**
      * Will attempt to tail and return the last {@code numLines} from the given servers console.
-     * 
+     *
      * @param job
      *            the job which has been executed by this service
      * @param numLines
