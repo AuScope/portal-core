@@ -4,16 +4,15 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.Serializable;
 
-<<<<<<< HEAD
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-=======
->>>>>>> master
 /**
- * A known layer is a grouping of CSWRecords representing some form of logical similarity that the registry couldn't provide.
+ * A known layer is a grouping of CSWRecords representing some form of logical
+ * similarity that the registry couldn't provide.
  *
- * eg - A grouping of all CSWRecords that represent Earth Resource ML deployments
+ * eg - A grouping of all CSWRecords that represent Earth Resource ML
+ * deployments
  *
  * @author Josh Vote
  *
