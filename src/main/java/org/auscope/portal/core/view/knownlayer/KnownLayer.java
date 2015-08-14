@@ -4,6 +4,8 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.Serializable;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A known layer is a grouping of CSWRecords representing some form
@@ -15,6 +17,7 @@ import java.io.Serializable;
  *
  */
 public class KnownLayer implements Serializable {
+	private final Log logger = LogFactory.getLog(getClass().getName());
 
     /** auto generated version ID */
     private static final long serialVersionUID = 236524163668910226L;
@@ -62,6 +65,9 @@ public class KnownLayer implements Serializable {
     private Dimension iconSize;
 
     private int feature_count;
+
+	/** Set an order - defaults to name */
+	private int order;
 
     /**
      * Creates a new KnownLayer
@@ -318,5 +324,12 @@ public class KnownLayer implements Serializable {
         this.feature_count = feature_count;
     }
 
+	public int getOrder() {
+		return order;
+	}
 
+	public void setOrder(int order) {
+		this.order = order;
+		logger.info(String.format("setOrder - group: %s, name: %s, order: %d", getGroup(), getName(), getOrder()));
+	}
 }
