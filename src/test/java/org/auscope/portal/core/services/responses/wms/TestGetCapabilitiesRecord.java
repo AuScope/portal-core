@@ -18,6 +18,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Unit tests for GetCapabilitiesRecord.
+ * 
  * @author Josh Vote
  *
  */
@@ -29,12 +30,15 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
 
     /**
      * Tests that all relevant information is parsed from the specified WMS GetCapabilities document.
-     * @throws Exception Test Failure
+     * 
+     * @throws Exception
+     *             Test Failure
      */
     @Test
     public void testParseWMSDocument() throws Exception {
         //Build our record
-        InputStream xmlStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wms/wmsGetCapabilities.xml");
+        InputStream xmlStream = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/wms/wmsGetCapabilities.xml");
         GetCapabilitiesRecord rec = new GetCapabilitiesRecord_1_1_1(xmlStream);
 
         //Test the overall data
@@ -43,9 +47,9 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
         Assert.assertEquals("Contact Org", rec.getOrganisation());
         Assert.assertEquals("http://my.server/getmap/wms", rec.getMapUrl());
         Assert.assertArrayEquals(new String[] {"image/bmp", "image/jpeg",
-                "image/tiff", }, rec.getGetMapFormats());
+                "image/tiff",}, rec.getGetMapFormats());
         Assert.assertArrayEquals(new String[] {"CRS:84", "EPSG:4326",
-                "EPSG:4283", }, rec.getLayerSRS());
+                "EPSG:4283",}, rec.getLayerSRS());
 
         //Test all child layers
         Assert.assertNotNull(rec.getLayers());
@@ -60,7 +64,7 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
         Assert.assertEquals("name1", wmsRec.getName());
         Assert.assertEquals("abstract1", wmsRec.getAbstract());
         Assert.assertEquals("title1", wmsRec.getTitle());
-        Assert.assertArrayEquals(new String[] {"EPSG:4326", },
+        Assert.assertArrayEquals(new String[] {"EPSG:4326",},
                 wmsRec.getChildLayerSRS());
         CSWGeographicBoundingBox bbox = wmsRec.getBoundingBox();
         Assert.assertNotNull(bbox);
@@ -74,7 +78,7 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
         Assert.assertEquals("name2", wmsRec.getName());
         Assert.assertEquals("abstract2", wmsRec.getAbstract());
         Assert.assertEquals("title2", wmsRec.getTitle());
-        Assert.assertArrayEquals(new String[] {"EPSG:4283", },
+        Assert.assertArrayEquals(new String[] {"EPSG:4283",},
                 wmsRec.getChildLayerSRS());
         bbox = wmsRec.getBoundingBox();
         Assert.assertNotNull(bbox);
@@ -101,11 +105,11 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
         Assert.assertEquals(4.0, bbox.getNorthBoundLatitude(), PRECISION);
     }
 
-
     @Test
     public void testParseWMS_1_3_0() throws Exception {
         //Build our record
-        InputStream xmlStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wms/GetCapabilitiesControllerWMSResponse_1_3_0.xml");
+        InputStream xmlStream = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/wms/GetCapabilitiesControllerWMSResponse_1_3_0.xml");
         GetCapabilitiesRecord rec = new GetCapabilitiesRecord_1_3_0(xmlStream);
 
         Assert.assertNotNull(rec);
@@ -113,19 +117,19 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
         Assert.assertEquals("Test Organization", rec.getOrganisation());
         Assert.assertEquals("http://localhost:8080/geoserver/ows?SERVICE=WMS", rec.getMapUrl());
         Assert.assertArrayEquals(new String[] {"image/png",
-                                    "application/atom+xml",
-                                    "application/pdf",
-                                    "application/vnd.google-earth.kml+xml",
-                                    "application/vnd.google-earth.kml+xml;mode=networklink",
-                                    "application/vnd.google-earth.kmz",
-                                    "image/geotiff",
-                                    "image/geotiff8",
-                                    "image/gif",
-                                    "image/jpeg",
-                                    "image/png8",
-                                    "image/svg+xml",
-                                    "image/tiff",
-                                    "image/tiff8" }, rec.getGetMapFormats());
+                "application/atom+xml",
+                "application/pdf",
+                "application/vnd.google-earth.kml+xml",
+                "application/vnd.google-earth.kml+xml;mode=networklink",
+                "application/vnd.google-earth.kmz",
+                "image/geotiff",
+                "image/geotiff8",
+                "image/gif",
+                "image/jpeg",
+                "image/png8",
+                "image/svg+xml",
+                "image/tiff",
+                "image/tiff8"}, rec.getGetMapFormats());
         Assert.assertEquals(4717, rec.getLayerSRS().length);
 
         //Test all child layers
@@ -141,7 +145,7 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
         Assert.assertEquals("gsml:MappedFeature", wmsRec.getName());
         Assert.assertEquals("abstract about MappedFeature", wmsRec.getAbstract());
         Assert.assertEquals("MappedFeature", wmsRec.getTitle());
-        Assert.assertArrayEquals(new String[] {"EPSG:4326","CRS:84" },
+        Assert.assertArrayEquals(new String[] {"EPSG:4326", "CRS:84"},
                 wmsRec.getChildLayerSRS());
         CSWGeographicBoundingBox bbox = wmsRec.getBoundingBox();
         Assert.assertNotNull(bbox);
@@ -150,11 +154,9 @@ public class TestGetCapabilitiesRecord extends PortalTestClass {
         Assert.assertEquals(-90.0, bbox.getSouthBoundLatitude(), PRECISION);
         Assert.assertEquals(90.0, bbox.getNorthBoundLatitude(), PRECISION);
 
-
         //Get layer 4 (an 'empty' layer)
         wmsRec = rec.getLayers().get(0);
         Assert.assertEquals("", wmsRec.getName());
-
 
     }
 }

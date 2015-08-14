@@ -4,6 +4,7 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
 
 /**
  * matches groups of CSWRecords based upon various parameters
+ * 
  * @author Victor Tey
  *
  */
@@ -13,7 +14,8 @@ public class CSWTitleFilterRecordSelector implements KnownLayerSelector {
     private String title;
 
     /**
-     * @param descriptiveKeyword the descriptive keyword used to identify CSW records
+     * @param descriptiveKeyword
+     *            the descriptive keyword used to identify CSW records
      */
     public CSWTitleFilterRecordSelector() {
         this.title = null;
@@ -22,6 +24,7 @@ public class CSWTitleFilterRecordSelector implements KnownLayerSelector {
 
     /**
      * Matches a CSWRecord by an exact matching record id
+     * 
      * @return
      */
     public String getRecordId() {
@@ -30,6 +33,7 @@ public class CSWTitleFilterRecordSelector implements KnownLayerSelector {
 
     /**
      * Matches a CSWRecord by an exact matching record id
+     * 
      * @return
      */
     public void setRecordId(String recordId) {
@@ -38,6 +42,7 @@ public class CSWTitleFilterRecordSelector implements KnownLayerSelector {
 
     /**
      * Gets the descriptive keyword used to identify CSW records
+     * 
      * @return the descriptiveKeyword
      */
     public String getTitle() {
@@ -46,15 +51,16 @@ public class CSWTitleFilterRecordSelector implements KnownLayerSelector {
 
     /**
      * Sets the descriptive keyword used to identify CSW records
-     * @param descriptiveKeyword the descriptiveKeyword to set
+     * 
+     * @param descriptiveKeyword
+     *            the descriptiveKeyword to set
      */
     public void setTitle(String title) {
         this.title = title;
     }
 
     /**
-     * The relationship is defined on whether the record has a particular
-     * descriptive keyword
+     * The relationship is defined on whether the record has a particular descriptive keyword
      */
     @Override
     public RelationType isRelatedRecord(CSWRecord record) {

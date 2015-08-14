@@ -19,6 +19,7 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
 
     /**
      * Tests the optional params include/exclude values as appropriate
+     * 
      * @throws Exception
      */
     @Test
@@ -30,13 +31,18 @@ public class TestViewKnownLayerFactory extends PortalTestClass {
         final double width = 32.0;
         final double height = 16.0;
 
-
-        context.checking(new Expectations() {{
-            oneOf(mockP1).getX();will(returnValue(x));
-            oneOf(mockP1).getY();will(returnValue(y));
-            oneOf(mockD1).getWidth();will(returnValue(width));
-            oneOf(mockD1).getHeight();will(returnValue(height));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockP1).getX();
+                will(returnValue(x));
+                oneOf(mockP1).getY();
+                will(returnValue(y));
+                oneOf(mockD1).getWidth();
+                will(returnValue(width));
+                oneOf(mockD1).getHeight();
+                will(returnValue(height));
+            }
+        });
 
         //Test with no optional params
         ModelMap model = factory.toView(knownLayer);

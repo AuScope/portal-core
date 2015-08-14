@@ -43,17 +43,16 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 /**
- * Service class wrapper for interacting with a remote cloud compute service using
- * CloudJob objects.
+ * Service class wrapper for interacting with a remote cloud compute service using CloudJob objects.
  *
  * @author Josh Vote
  */
 public class CloudComputeService {
 
     public enum ProviderType {
-        /** Connect to an Openstack instance via the Keystone Identity service*/
+        /** Connect to an Openstack instance via the Keystone Identity service */
         NovaKeystone,
-        /** Connect to an Openstack instance via the emulated EC2 endpoint*/
+        /** Connect to an Openstack instance via the emulated EC2 endpoint */
         NovaEc2,
     }
 
@@ -68,23 +67,22 @@ public class CloudComputeService {
 
     private String itActuallyLaunchedHere;
 
-
-    /** Unique ID for distinguishing instances of this class - can be null*/
+    /** Unique ID for distinguishing instances of this class - can be null */
     private String id;
-    /** A short descriptive name for human identification of this service*/
+    /** A short descriptive name for human identification of this service */
     private String name;
     /** What type of cloud service are we communicating with */
     private ProviderType provider;
 
-
-    /** A group name that all jobs will be assigned to*/
+    /** A group name that all jobs will be assigned to */
     private String groupName = "portal-cloud-compute-service";
 
-    /** An array of images that are available through this compute service*/
+    /** An array of images that are available through this compute service */
     private MachineImage[] availableImages = new MachineImage[0];
 
-    /** Name of the developers' keypair to inject into instances on
-     * this provider. */
+    /**
+     * Name of the developers' keypair to inject into instances on this provider.
+     */
     private String keypair;
     /** Name of accessKey for authentication */
     private String accessKey;
@@ -95,9 +93,13 @@ public class CloudComputeService {
 
     /**
      * Creates a new instance with the specified credentials
-     * @param endpoint (URL) The location of the Compute (Nova) service
-     * @param accessKey The Compute Access key (user name)
-     * @param secretKey The Compute Secret key (password)
+     *
+     * @param endpoint
+     *            (URL) The location of the Compute (Nova) service
+     * @param accessKey
+     *            The Compute Access key (user name)
+     * @param secretKey
+     *            The Compute Secret key (password)
      *
      */
     public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey) {
@@ -106,12 +108,18 @@ public class CloudComputeService {
 
     /**
      * Creates a new instance with the specified credentials
-     * @param endpoint (URL) The location of the Compute (Nova) service
-     * @param accessKey The Compute Access key (user name)
-     * @param secretKey The Compute Secret key (password)
-     * @param apiVersion The API version
+     *
+     * @param endpoint
+     *            (URL) The location of the Compute (Nova) service
+     * @param accessKey
+     *            The Compute Access key (user name)
+     * @param secretKey
+     *            The Compute Secret key (password)
+     * @param apiVersion
+     *            The API version
      */
-    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey, String apiVersion) {
+    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey,
+            String apiVersion) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpoint = endpoint;
@@ -151,7 +159,8 @@ public class CloudComputeService {
 
     }
 
-    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi lowLevelApi, Predicate<NodeMetadata> terminPredicate) {
+    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi lowLevelApi,
+            Predicate<NodeMetadata> terminPredicate) {
         this.provider = provider;
         this.computeService = computeService;
         this.lowLevelApi = lowLevelApi;
@@ -160,6 +169,7 @@ public class CloudComputeService {
 
     /**
      * Unique ID for distinguishing instances of this class - can be null
+     *
      * @return
      */
     public String getId() {
@@ -168,24 +178,26 @@ public class CloudComputeService {
 
     /**
      * Unique ID for distinguishing instances of this class - can be null
+     *
      * @param id
      */
     public void setId(String id) {
         this.id = id;
     }
 
-    /** A group name that all jobs will be assigned to*/
+    /** A group name that all jobs will be assigned to */
     public String getGroupName() {
         return groupName;
     }
 
-    /** A group name that all jobs will be assigned to*/
+    /** A group name that all jobs will be assigned to */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
 
     /**
      * An array of images that are available through this compute service
+     *
      * @return
      */
     public MachineImage[] getAvailableImages() {
@@ -194,6 +206,7 @@ public class CloudComputeService {
 
     /**
      * An array of images that are available through this compute service
+     *
      * @param availableImages
      */
     public void setAvailableImages(MachineImage[] availableImages) {
@@ -201,7 +214,8 @@ public class CloudComputeService {
     }
 
     /**
-     *  A short descriptive name for human identification of this service
+     * A short descriptive name for human identification of this service
+     *
      * @return
      */
     public String getName() {
@@ -210,6 +224,7 @@ public class CloudComputeService {
 
     /**
      * A short descriptive name for human identification of this service
+     *
      * @param name
      */
     public void setName(String name) {
@@ -219,11 +234,13 @@ public class CloudComputeService {
     /**
      * Begins execution of the specified job and returns the ID of the started instance.
      *
-     * This function will create a VM to run the job which will be responsible for decoding
-     * the userDataString and downloading any input files from the JobStorageService
+     * This function will create a VM to run the job which will be responsible for decoding the userDataString and downloading any input files from the
+     * JobStorageService
      *
-     * @param job The job to execute
-     * @param userDataString A string that is made available to the job when it starts execution (this will be Base64 encoded before being sent to the VM)
+     * @param job
+     *            The job to execute
+     * @param userDataString
+     *            A string that is made available to the job when it starts execution (this will be Base64 encoded before being sent to the VM)
      * @return null if execution fails or the instance ID of the running VM
      */
     public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
@@ -235,9 +252,8 @@ public class CloudComputeService {
 
         if (provider == ProviderType.NovaEc2) {
             options = ((EC2TemplateOptions) computeService.templateOptions())
-            .keyPair(getKeypair())
-            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
-
+                    .keyPair(getKeypair())
+                    .userData(userDataString.getBytes(Charset.forName("UTF-8")));
 
             Template template = computeService.templateBuilder()
                     .imageId(job.getComputeVmId())
@@ -249,27 +265,32 @@ public class CloudComputeService {
             try {
                 results = computeService.createNodesInGroup(groupName, 1, template);
             } catch (RunNodesException e) {
-                logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'", e.getMessage(), job));
+                logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'",
+                        e.getMessage(), job));
                 logger.debug("Exception:", e);
-                throw new PortalServiceException("An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-                        + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : " + e.getMessage(),e);
+                throw new PortalServiceException(
+                        "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                                + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
+                                + e.getMessage(), e);
             }
             if (results.isEmpty()) {
                 logger.error("JClouds returned an empty result set. Treating it as job failure.");
-                throw new PortalServiceException("Unable to start compute node due to an unknown error, no nodes returned");
+                throw new PortalServiceException(
+                        "Unable to start compute node due to an unknown error, no nodes returned");
             }
             result = results.iterator().next();
 
         }
         else {
             //Brute force anyone?
-            for (String location: lowLevelApi.getConfiguredZones()) {
+            for (String location : lowLevelApi.getConfiguredZones()) {
                 Optional<? extends AvailabilityZoneApi> serverApi = lowLevelApi.getAvailabilityZoneApi(location);
                 Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
                 for (AvailabilityZone currentZone : zones) {
                     if (skippedZones.contains(currentZone.getName())) {
-                        logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
+                        logger.info(String.format("skipping: '%1$s' - configured as a skipped zone",
+                                currentZone.getName()));
                         continue;
                     }
 
@@ -279,10 +300,10 @@ public class CloudComputeService {
                     }
 
                     logger.info(String.format("Trying '%1$s'", currentZone.getName()));
-                    options = ((NovaTemplateOptions)computeService.templateOptions())
-                    .keyPairName(getKeypair())
-                    .availabilityZone(currentZone.getName())
-                    .userData(userDataString.getBytes(Charset.forName("UTF-8")));
+                    options = ((NovaTemplateOptions) computeService.templateOptions())
+                            .keyPairName(getKeypair())
+                            .availabilityZone(currentZone.getName())
+                            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
 
                     Template template = computeService.templateBuilder()
                             .imageId(job.getComputeVmId())
@@ -302,10 +323,11 @@ public class CloudComputeService {
                             // I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
                             // JClouds is not very clever here -
                             // issue: how do you delete thing you didnt name and dont have an ID for??
-                            Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
-                            logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
-                        }
-                        catch (Exception z) {
+                            Set<? extends NodeMetadata> destroyedNodes = computeService
+                                    .destroyNodesMatching(this.terminateFilter);
+                            logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(),
+                                    destroyedNodes));
+                        } catch (Exception z) {
                             logger.warn("couldnt clean it up");
                         }
                         continue;
@@ -315,8 +337,9 @@ public class CloudComputeService {
             if (results.isEmpty()) {
                 //Now we have tried everything....
                 logger.error("run out of places to try...");
-                throw new PortalServiceException("An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-                    + "a smaller virtual machine", "Please report it to cg-admin@csiro.au ");
+                throw new PortalServiceException(
+                        "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                                + "a smaller virtual machine", "Please report it to cg-admin@csiro.au ");
             }
             else {
                 result = results.iterator().next();
@@ -325,22 +348,27 @@ public class CloudComputeService {
         }
         logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
 
-
         return result.getId();
     }
 
     /**
      * Makes a request that the VM started by job be terminated
-     * @param job The job whose execution should be terminated
+     *
+     * @param job
+     *            The job whose execution should be terminated
      */
     public void terminateJob(CloudJob job) {
         computeService.destroyNode(job.getComputeInstanceId());
     }
 
+    public ComputeType[] getAvailableComputeTypes() {
+        return getAvailableComputeTypes(null, null, null);
+    }
+
     /**
      * An array of compute types that are available through this compute service
      */
-    public ComputeType[] getAvailableComputeTypes() {
+    public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB) {
         Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
 
         List<ComputeType> computeTypes = new ArrayList<ComputeType>();
@@ -368,6 +396,15 @@ public class CloudComputeService {
             ct.setRootDiskGB((int) rootDiskGB);
             ct.setEphemeralDiskGB((int) ephemeralDiskGB);
 
+            //Skip anything that doesn't match our filters
+            if (minimumVCPUs != null && minimumVCPUs > ct.getVcpus()) {
+                continue;
+            } else if (minimumRamMB != null && minimumRamMB > ct.getRamMB()) {
+                continue;
+            } else if (minimumRootDiskGB != null && minimumRootDiskGB > ct.getRootDiskGB()) {
+                continue;
+            }
+
             computeTypes.add(ct);
         }
 
@@ -385,8 +422,8 @@ public class CloudComputeService {
     }
 
     /**
-     * Gets the set of zone names that should be skipped when attempting to find
-     * a zone to run a job at.
+     * Gets the set of zone names that should be skipped when attempting to find a zone to run a job at.
+     *
      * @return
      */
     public Set<String> getSkippedZones() {
@@ -394,8 +431,8 @@ public class CloudComputeService {
     }
 
     /**
-     * Sets the set of zone names that should be skipped when attempting to find
-     * a zone to run a job at.
+     * Sets the set of zone names that should be skipped when attempting to find a zone to run a job at.
+     *
      * @param skippedZones
      */
     public void setSkippedZones(Set<String> skippedZones) {
@@ -404,8 +441,11 @@ public class CloudComputeService {
 
     /**
      * Will attempt to tail and return the last 1000 lines from the given servers console.
-     * @param job the job which has been executed by this service
-     * @param numLines the number of console lines to return
+     *
+     * @param job
+     *            the job which has been executed by this service
+     * @param numLines
+     *            the number of console lines to return
      * @return console output as string or null
      * @return
      */
@@ -415,8 +455,11 @@ public class CloudComputeService {
 
     /**
      * Will attempt to tail and return the last {@code numLines} from the given servers console.
-     * @param job the job which has been executed by this service
-     * @param numLines the number of console lines to return
+     *
+     * @param job
+     *            the job which has been executed by this service
+     * @param numLines
+     *            the number of console lines to return
      * @return console output as string or null
      * @return
      */

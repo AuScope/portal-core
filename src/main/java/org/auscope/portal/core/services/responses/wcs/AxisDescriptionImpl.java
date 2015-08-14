@@ -7,8 +7,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * A simple (partial) implementation of the entire AxisDescription
- * (Doesn't parse attributes)
+ * A simple (partial) implementation of the entire AxisDescription (Doesn't parse attributes)
+ * 
  * @author vot002
  *
  */
@@ -19,7 +19,6 @@ public class AxisDescriptionImpl implements AxisDescription {
     private String name;
     private String label;
     private ValueEnumType[] values;
-
 
     public AxisDescriptionImpl(Node node, XPath xPath) throws Exception {
         Node tempNode;

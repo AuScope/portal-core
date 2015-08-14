@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
-public class TestCSWRecordTransformer extends PortalTestClass  {
+public class TestCSWRecordTransformer extends PortalTestClass {
     private CSWRecord[] records;
     private Document doc;
 
@@ -38,11 +38,14 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     private XPathExpression exprGetAllMetadataNodes;
     private XPathExpression exprGetFirstMetadataNode;
 
-    private void setUpForResponse(String responseResourceName) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException {
+    private void setUpForResponse(String responseResourceName) throws ParserConfigurationException, SAXException,
+            IOException, XPathExpressionException {
 
         CSWNamespaceContext nc = new CSWNamespaceContext();
-        exprGetAllMetadataNodes = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata", nc);
-        exprGetFirstMetadataNode = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]", nc);
+        exprGetAllMetadataNodes = DOMUtil.compileXPathExpr("/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata",
+                nc);
+        exprGetFirstMetadataNode = DOMUtil.compileXPathExpr(
+                "/csw:GetRecordsResponse/csw:SearchResults/gmd:MD_Metadata[1]", nc);
 
         // load CSW record response document
         doc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream(responseResourceName));
@@ -53,7 +56,7 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         NodeList nodes = (NodeList) exprGetAllMetadataNodes.evaluate(doc, XPathConstants.NODESET);
 
         records = new CSWRecord[nodes.getLength()];
-        for (int i=0; i<nodes.getLength(); i++ ) {
+        for (int i = 0; i < nodes.getLength(); i++) {
             Node metadataNode = nodes.item(i);
             CSWRecordTransformer transformer = new CSWRecordTransformer(metadataNode);
             records[i] = transformer.transformToCSWRecord();
@@ -61,7 +64,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     }
 
     @Test
-    public void testGetServiceName() throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+    public void testGetServiceName() throws XPathExpressionException, ParserConfigurationException, SAXException,
+            IOException {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         Assert.assertEquals(
@@ -95,7 +99,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
         String[] actual = this.records[0].getDescriptiveKeywords();
-        String[] expected = new String[] {"WFS", "GeologicUnit", "MappedFeature", "gsml:GeologicUnit", "gsml:MappedFeature"};
+        String[] expected = new String[] {"WFS", "GeologicUnit", "MappedFeature", "gsml:GeologicUnit",
+                "gsml:MappedFeature"};
         Assert.assertArrayEquals(expected, actual);
     }
 
@@ -126,7 +131,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         Assert.assertEquals(0, resources.length);
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS, OnlineResourceType.WMS);
         Assert.assertEquals(2, resources.length);
-        resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS, OnlineResourceType.WMS, OnlineResourceType.WFS);
+        resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.WCS, OnlineResourceType.WMS,
+                OnlineResourceType.WFS);
         Assert.assertEquals(2, resources.length);
         resources = this.records[14].getOnlineResourcesByType(OnlineResourceType.Unsupported);
         Assert.assertEquals(0, resources.length);
@@ -135,9 +141,11 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WMS));
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.FTP));
         Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WCS, OnlineResourceType.WMS));
-        Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WCS, OnlineResourceType.WMS, OnlineResourceType.WFS));
+        Assert.assertTrue(this.records[14].containsAnyOnlineResource(OnlineResourceType.WCS, OnlineResourceType.WMS,
+                OnlineResourceType.WFS));
         Assert.assertFalse(this.records[14].containsAnyOnlineResource(OnlineResourceType.WFS));
-        Assert.assertFalse(this.records[14].containsAnyOnlineResource(OnlineResourceType.WFS, OnlineResourceType.Unsupported));
+        Assert.assertFalse(this.records[14].containsAnyOnlineResource(OnlineResourceType.WFS,
+                OnlineResourceType.Unsupported));
 
         //Now test another record with a slightly different schema
         resources = this.records[3].getOnlineResources();
@@ -157,7 +165,7 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
         Assert.assertEquals(1, geoEls.length);
         Assert.assertTrue(geoEls[0] instanceof CSWGeographicBoundingBox);
 
-        CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox)geoEls[0];
+        CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox) geoEls[0];
 
         Assert.assertEquals(145.00, bbox.getEastBoundLongitude(), 0.001);
         Assert.assertEquals(143.00, bbox.getWestBoundLongitude(), 0.001);
@@ -210,6 +218,7 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
 
     /**
      * Generates an xpath-esque location for the current node for debug purposes
+     * 
      * @param node
      * @return
      */
@@ -221,7 +230,7 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
             stack.push(String.format("%1$s", current.getLocalName()));
 
             current = current.getParentNode();
-        } while(current != null);
+        } while (current != null);
 
         String result = "";
         while (!stack.isEmpty()) {
@@ -246,6 +255,7 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
 
     /**
      * Gets every attribute of node that IS NOT an xmlns:namespace="uri" attribute
+     * 
      * @param node
      * @return
      */
@@ -263,11 +273,13 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
 
     /**
      * Asserts that 2 nodes and child nodes are equal
+     * 
      * @param expected
      * @param actual
      */
     private void assertNodeTreesEqual(Node expected, Node actual) {
-        String debugLocationString = String.format("expected='%1$s'\nactual='%2$s'\n", debugLocation(expected), debugLocation(actual));
+        String debugLocationString = String.format("expected='%1$s'\nactual='%2$s'\n", debugLocation(expected),
+                debugLocation(actual));
 
         //Compare node URI + name
         String expectedUri = expected.getNamespaceURI();
@@ -305,7 +317,6 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
             Assert.assertNull(debugLocationString, actualAttr);
         }
 
-
         //Compare children (if any)
         List<Node> expectedChildren = getNonTextChildNodes(expected);
         List<Node> actualChildren = getNonTextChildNodes(actual);
@@ -331,7 +342,8 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     public void testConstraints() throws Exception {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
 
-        Assert.assertArrayEquals(new String[] {"CopyrightConstraint1", "CopyrightConstraint2"}, this.records[0].getConstraints());
+        Assert.assertArrayEquals(new String[] {"CopyrightConstraint1", "CopyrightConstraint2"},
+                this.records[0].getConstraints());
         Assert.assertArrayEquals(new String[] {}, this.records[1].getConstraints());
     }
 
@@ -361,23 +373,23 @@ public class TestCSWRecordTransformer extends PortalTestClass  {
     }
 
     @Test
-    public void testCSWGeographicBoundboxConversion(){
-        CSWGeographicBoundingBox box= new CSWGeographicBoundingBox(Double.NaN,Double.NaN,Double.NaN,Double.NaN);
+    public void testCSWGeographicBoundboxConversion() {
+        CSWGeographicBoundingBox box = new CSWGeographicBoundingBox(Double.NaN, Double.NaN, Double.NaN, Double.NaN);
 
-        Assert.assertEquals(180, box.getEastBoundLongitude(),0.1);
-        Assert.assertEquals(-180, box.getWestBoundLongitude(),0.1);
-        Assert.assertEquals(90, box.getNorthBoundLatitude(),0.1);
-        Assert.assertEquals(-90, box.getSouthBoundLatitude(),0.1);
+        Assert.assertEquals(180, box.getEastBoundLongitude(), 0.1);
+        Assert.assertEquals(-180, box.getWestBoundLongitude(), 0.1);
+        Assert.assertEquals(90, box.getNorthBoundLatitude(), 0.1);
+        Assert.assertEquals(-90, box.getSouthBoundLatitude(), 0.1);
 
-        box =  new CSWGeographicBoundingBox();
+        box = new CSWGeographicBoundingBox();
         box.setEastBoundLongitude(Double.NaN);
         box.setWestBoundLongitude(Double.NaN);
         box.setNorthBoundLatitude(Double.NaN);
         box.setSouthBoundLatitude(Double.NaN);
 
-        Assert.assertEquals(180, box.getEastBoundLongitude(),0.1);
-        Assert.assertEquals(-180, box.getWestBoundLongitude(),0.1);
-        Assert.assertEquals(90, box.getNorthBoundLatitude(),0.1);
-        Assert.assertEquals(-90, box.getSouthBoundLatitude(),0.1);
+        Assert.assertEquals(180, box.getEastBoundLongitude(), 0.1);
+        Assert.assertEquals(-180, box.getWestBoundLongitude(), 0.1);
+        Assert.assertEquals(90, box.getNorthBoundLatitude(), 0.1);
+        Assert.assertEquals(-90, box.getSouthBoundLatitude(), 0.1);
     }
 }

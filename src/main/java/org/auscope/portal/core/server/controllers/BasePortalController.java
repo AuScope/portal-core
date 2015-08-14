@@ -1,6 +1,5 @@
 package org.auscope.portal.core.server.controllers;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,8 +28,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * An abstract controller for providing portal 'standard' JSON response types
- * in the form of a ModelAndView object.
+ * An abstract controller for providing portal 'standard' JSON response types in the form of a ModelAndView object.
  *
  * Also contains a few utilities for common response types (eg: Zip Streams)
  *
@@ -51,14 +49,20 @@ public abstract class BasePortalController {
     /**
      * Utility method generating the 'standard' Portal response model.
      *
-     * @param success The result of the operation
-     * @param data [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
-     * @param message [Optional] A string indicating more information about status of information
-     * @param debugInfo [Optional] Debugging Information. Can be null, must be serialisable into a JSON object
-     * @param matchedResults [Optional] The number of results available (not necessarily the count of data)
+     * @param success
+     *            The result of the operation
+     * @param data
+     *            [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
+     * @param message
+     *            [Optional] A string indicating more information about status of information
+     * @param debugInfo
+     *            [Optional] Debugging Information. Can be null, must be serialisable into a JSON object
+     * @param matchedResults
+     *            [Optional] The number of results available (not necessarily the count of data)
      * @return
      */
-    protected ModelMap generateResponseModel(boolean success, Object data, Integer matchedResults, String message, Object debugInfo) {
+    protected ModelMap generateResponseModel(boolean success, Object data, Integer matchedResults, String message,
+            Object debugInfo) {
         ModelMap model = new ModelMap();
 
         model.put("data", data);
@@ -76,7 +80,9 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * @param success The result of the operation
+     * 
+     * @param success
+     *            The result of the operation
      * @return
      */
     protected ModelAndView generateJSONResponseMAV(boolean success) {
@@ -85,9 +91,13 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * @param success The result of the operation
-     * @param data [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
-     * @param message [Optional] A string indicating more information about status of information
+     * 
+     * @param success
+     *            The result of the operation
+     * @param data
+     *            [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
+     * @param message
+     *            [Optional] A string indicating more information about status of information
      * @return
      */
     protected ModelAndView generateJSONResponseMAV(boolean success, Object data, String message) {
@@ -96,10 +106,15 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * @param success The result of the operation
-     * @param data [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
-     * @param message [Optional] A string indicating more information about status of information
-     * @param matchedResults [Optional] The total amount of data available (not necessarily the count of data)
+     * 
+     * @param success
+     *            The result of the operation
+     * @param data
+     *            [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
+     * @param message
+     *            [Optional] A string indicating more information about status of information
+     * @param matchedResults
+     *            [Optional] The total amount of data available (not necessarily the count of data)
      * @return
      */
     protected ModelAndView generateJSONResponseMAV(boolean success, Object data, Integer matchedResults, String message) {
@@ -108,11 +123,17 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * @param success The result of the operation
-     * @param data [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
-     * @param message [Optional] A string indicating more information about status of information
-     * @param debugInfo [Optional] Debugging Information. Can be null, must be serialisable into a JSON object
-     * @param matchedResults [Optional] The total amount of data available (not necessarily the count of data)
+     * 
+     * @param success
+     *            The result of the operation
+     * @param data
+     *            [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
+     * @param message
+     *            [Optional] A string indicating more information about status of information
+     * @param debugInfo
+     *            [Optional] Debugging Information. Can be null, must be serialisable into a JSON object
+     * @param matchedResults
+     *            [Optional] The total amount of data available (not necessarily the count of data)
      * @return
      */
     protected ModelAndView generateJSONResponseMAV(boolean success, Object data, String message, Object debugInfo) {
@@ -121,10 +142,15 @@ public abstract class BasePortalController {
 
     /**
      * Generates a JSON response containing WFS response info
-     * @param success The result of the operation
-     * @param gml The raw GML response
-     * @param kml The transformed KML response
-     * @param method The method used to make the request (used for populating debug info)
+     * 
+     * @param success
+     *            The result of the operation
+     * @param gml
+     *            The raw GML response
+     * @param kml
+     *            The transformed KML response
+     * @param method
+     *            The method used to make the request (used for populating debug info)
      * @return
      */
     protected ModelAndView generateJSONResponseMAV(boolean success, String gml, String kml, HttpRequestBase method) {
@@ -147,14 +173,21 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * @param success The result of the operation
-     * @param data [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
-     * @param message [Optional] A string indicating more information about status of information
-     * @param debugInfo [Optional] Debugging Information. Can be null, must be serialisable into a JSON object
-     * @param matchedResults [Optional] The total amount of data available (not necessarily the count of data)
+     * 
+     * @param success
+     *            The result of the operation
+     * @param data
+     *            [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
+     * @param message
+     *            [Optional] A string indicating more information about status of information
+     * @param debugInfo
+     *            [Optional] Debugging Information. Can be null, must be serialisable into a JSON object
+     * @param matchedResults
+     *            [Optional] The total amount of data available (not necessarily the count of data)
      * @return
      */
-    protected ModelAndView generateJSONResponseMAV(boolean success, Object data, String message, Integer matchedResults, Object debugInfo) {
+    protected ModelAndView generateJSONResponseMAV(boolean success, Object data, String message,
+            Integer matchedResults, Object debugInfo) {
         JSONView view = new JSONView();
         ModelMap model = generateResponseModel(success, data, matchedResults, message, debugInfo);
 
@@ -162,11 +195,15 @@ public abstract class BasePortalController {
     }
 
     /**
-     * Utility method to generate a HTML MAV response. This will be identical in content to generateJSONResponseMAV but
-     * will be set to use a HTML content type. Use this for overcoming weirdness with Ext JS and file uploads.
-     * @param success The result of the operation
-     * @param data [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
-     * @param message [Optional] A string indicating more information about status of information
+     * Utility method to generate a HTML MAV response. This will be identical in content to generateJSONResponseMAV but will be set to use a HTML content type.
+     * Use this for overcoming weirdness with Ext JS and file uploads.
+     * 
+     * @param success
+     *            The result of the operation
+     * @param data
+     *            [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
+     * @param message
+     *            [Optional] A string indicating more information about status of information
      * @return
      */
     protected ModelAndView generateHTMLResponseMAV(boolean success, Object data, String message) {
@@ -174,12 +211,17 @@ public abstract class BasePortalController {
     }
 
     /**
-     * Utility method to generate a HTML MAV response. This will be identical in content to generateJSONResponseMAV but
-     * will be set to use a HTML content type. Use this for overcoming weirdness with Ext JS and file uploads.
-     * @param success The result of the operation
-     * @param data [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
-     * @param message [Optional] A string indicating more information about status of information
-     * @param debugInfo [Optional] Debugging Information. Can be null, must be serialisable into a JSON object
+     * Utility method to generate a HTML MAV response. This will be identical in content to generateJSONResponseMAV but will be set to use a HTML content type.
+     * Use this for overcoming weirdness with Ext JS and file uploads.
+     * 
+     * @param success
+     *            The result of the operation
+     * @param data
+     *            [Optional] Raw response information. Can be null, must be serialisable into a JSON object.
+     * @param message
+     *            [Optional] A string indicating more information about status of information
+     * @param debugInfo
+     *            [Optional] Debugging Information. Can be null, must be serialisable into a JSON object
      * @return
      */
     protected ModelAndView generateHTMLResponseMAV(boolean success, Object data, String message, Object debugInfo) {
@@ -191,10 +233,10 @@ public abstract class BasePortalController {
     }
 
     /**
-     * Turns a HttpRequest into a Map of
-     * url - the URI of request
-     * info - [Optional] The body of the request if relevant (for POST)
-     * @param request cannot be null
+     * Turns a HttpRequest into a Map of url - the URI of request info - [Optional] The body of the request if relevant (for POST)
+     * 
+     * @param request
+     *            cannot be null
      * @return
      */
     protected ModelMap makeDebugInfoModel(HttpRequestBase request) {
@@ -215,7 +257,7 @@ public abstract class BasePortalController {
                 try {
                     debugInfo.put("info", ((StringEntity) entity).getContent());
                 } catch (IOException e) {
-                   log.error(e.toString());
+                    log.error(e.toString());
                 }
             }
         }
@@ -223,11 +265,13 @@ public abstract class BasePortalController {
         return debugInfo;
     }
 
-
     /**
      * Exception resolver that maps exceptions to views presented to the user.
-     * @param e The exception
-     * @param serviceUrl The Url of the actual service
+     * 
+     * @param e
+     *            The exception
+     * @param serviceUrl
+     *            The Url of the actual service
      * @return ModelAndView object with error message
      */
     protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl) {
@@ -236,9 +280,13 @@ public abstract class BasePortalController {
 
     /**
      * Exception resolver that maps exceptions to views presented to the user.
-     * @param e The exception
-     * @param serviceUrl The Url of the actual service
-     * @param request [Optional] Specify the request object that was used to make the HTTP WFS request. Its contents will be included for debug purposes
+     * 
+     * @param e
+     *            The exception
+     * @param serviceUrl
+     *            The Url of the actual service
+     * @param request
+     *            [Optional] Specify the request object that was used to make the HTTP WFS request. Its contents will be included for debug purposes
      * @return ModelAndView object with error message
      */
     protected ModelAndView generateExceptionResponse(Throwable e, String serviceUrl, HttpRequestBase request) {
@@ -252,7 +300,8 @@ public abstract class BasePortalController {
 
         // Service down or host down
         if (e instanceof ConnectException || e instanceof UnknownHostException) {
-            return this.generateJSONResponseMAV(false, null, UNKNOWN_HOST_OR_FAILED_CONNECTION, makeDebugInfoModel(request));
+            return this.generateJSONResponseMAV(false, null, UNKNOWN_HOST_OR_FAILED_CONNECTION,
+                    makeDebugInfoModel(request));
         }
 
         // Timeouts

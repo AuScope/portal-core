@@ -11,17 +11,20 @@ import java.io.Serializable;
  *
  */
 public class MachineImage implements Serializable {
-    /** The unique id of the cloud image - will be used for spawning instances of this image*/
+    /** The unique id of the cloud image - will be used for spawning instances of this image */
     private String imageId;
-    /** Descriptive short name of this image*/
+    /** Descriptive short name of this image */
     private String name;
-    /** Longer description of this image*/
+    /** Longer description of this image */
     private String description;
-    /** (Possibly empty) List of descriptive keywords for this image*/
+    /** (Possibly empty) List of descriptive keywords for this image */
     private String[] keywords;
+    /** The minimum root disk size (in GB) that this image can be run on. Null if this is N/A */
+    private Integer minimumDiskGB;
 
     /**
      * Creates a new VglMachineImage object
+     *
      * @param imageId
      */
     public MachineImage(String imageId) {
@@ -33,6 +36,7 @@ public class MachineImage implements Serializable {
 
     /**
      * Descriptive short name of this image
+     *
      * @return
      */
     public String getName() {
@@ -41,6 +45,7 @@ public class MachineImage implements Serializable {
 
     /**
      * Descriptive short name of this image
+     *
      * @param name
      */
     public void setName(String name) {
@@ -49,6 +54,7 @@ public class MachineImage implements Serializable {
 
     /**
      * Longer description of this image
+     *
      * @return
      */
     public String getDescription() {
@@ -57,6 +63,7 @@ public class MachineImage implements Serializable {
 
     /**
      * Longer description of this image
+     *
      * @param description
      */
     public void setDescription(String description) {
@@ -65,6 +72,7 @@ public class MachineImage implements Serializable {
 
     /**
      * (Possibly empty) List of descriptive keywords for this image
+     *
      * @return
      */
     public String[] getKeywords() {
@@ -73,6 +81,7 @@ public class MachineImage implements Serializable {
 
     /**
      * (Possibly empty) List of descriptive keywords for this image
+     *
      * @param keywords
      */
     public void setKeywords(String[] keywords) {
@@ -81,10 +90,21 @@ public class MachineImage implements Serializable {
 
     /**
      * The unique id of the cloud image - will be used for spawning instances of this image
+     *
      * @return
      */
     public String getImageId() {
         return imageId;
+    }
+
+    /** The minimum root disk size (in GB) that this image can be run on. Null if this is N/A */
+    public Integer getMinimumDiskGB() {
+        return minimumDiskGB;
+    }
+
+    /** The minimum root disk size (in GB) that this image can be run on. Null if this is N/A */
+    public void setMinimumDiskGB(Integer minimumDiskGB) {
+        this.minimumDiskGB = minimumDiskGB;
     }
 
     @Override

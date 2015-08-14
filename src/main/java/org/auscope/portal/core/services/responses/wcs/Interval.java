@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
 
 /**
  * Represents a <wcs:interval> element from a WCS DescribeCoverage response
+ * 
  * @author vot002
  */
 public class Interval implements ValueEnumType {
@@ -44,6 +45,7 @@ public class Interval implements ValueEnumType {
 
     /**
      * Represents the minimum value on this interval (can be null)
+     * 
      * @return
      */
     public Double getMin() {
@@ -52,6 +54,7 @@ public class Interval implements ValueEnumType {
 
     /**
      * Represents the maximum value on this interval (can be null)
+     * 
      * @return
      */
     public Double getMax() {
@@ -60,6 +63,7 @@ public class Interval implements ValueEnumType {
 
     /**
      * Represents the resolution of this interval (can be null)
+     * 
      * @return
      */
     public Double getResolution() {

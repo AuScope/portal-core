@@ -45,9 +45,11 @@ public class CSWContactFactory {
     /**
      * Given a node representing a gmd:CI_Contact, generate a CSWContact instance and return it.
      *
-     * @param node Must be a gmd_CI_Contact node
+     * @param node
+     *            Must be a gmd_CI_Contact node
      * @return the cSW contact
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public static CSWContact generateContactFromCIContactNode(Node node) throws XPathExpressionException {
         CSWContact contact = new CSWContact();

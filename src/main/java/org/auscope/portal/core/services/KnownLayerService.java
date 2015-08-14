@@ -12,8 +12,7 @@ import org.auscope.portal.core.view.knownlayer.KnownLayerGrouping;
 import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
 
 /**
- * A service class performing that groups CSWRecord objects (from a CSWCacheService) according
- * to a configured list of KnownLayers
+ * A service class performing that groups CSWRecord objects (from a CSWCacheService) according to a configured list of KnownLayers
  *
  * @author Josh Vote
  *
@@ -23,10 +22,13 @@ public class KnownLayerService {
     private CSWCacheService cswCacheService;
 
     /**
-     * Creates a new instance of this class from an untyped list. All objects in knownTypes that
-     * can be cast into a KnownLayer will be included in the internal known layer list
-     * @param knownTypes A list of objects, only KnownLayer subclasses will be used
-     * @param cswCacheService An instance of CSWCacheService
+     * Creates a new instance of this class from an untyped list. All objects in knownTypes that can be cast into a KnownLayer will be included in the internal
+     * known layer list
+     * 
+     * @param knownTypes
+     *            A list of objects, only KnownLayer subclasses will be used
+     * @param cswCacheService
+     *            An instance of CSWCacheService
      */
     public KnownLayerService(@SuppressWarnings("rawtypes") ArrayList knownTypes,
             CSWCacheService cswCacheService) {
@@ -41,43 +43,30 @@ public class KnownLayerService {
     }
 
     /**
-     * Builds a KnownLayerGrouping by iterating the current CSW Cache Service
-     * record set and applying each of those records to one or more Known Layer
-     * objects.
+     * Builds a KnownLayerGrouping by iterating the current CSW Cache Service record set and applying each of those records to one or more Known Layer objects.
      *
-     * The resulting bundle of grouped/ungrouped records and known layers will
-     * then be returned.
+     * The resulting bundle of grouped/ungrouped records and known layers will then be returned.
      * 
-     * This overload does not impose a filter for the type of class that is 
-     * allowed and therefore won't exclude anything from the list.
+     * This overload does not impose a filter for the type of class that is allowed and therefore won't exclude anything from the list.
      * 
-     * @return
-     *      An instance of KnownLayerGrouping that encapsulates all the known 
-     *      layers, as well as any unmapped records and the original record 
-     *      list.
+     * @return An instance of KnownLayerGrouping that encapsulates all the known layers, as well as any unmapped records and the original record list.
      */
     public KnownLayerGrouping groupKnownLayerRecords() {
         return groupKnownLayerRecords(null);
     }
 
     /**
-     * Builds a KnownLayerGrouping by iterating the current CSW Cache Service
-     * record set and applying each of those records to one or more Known Layer
-     * objects.
+     * Builds a KnownLayerGrouping by iterating the current CSW Cache Service record set and applying each of those records to one or more Known Layer objects.
      *
-     * The resulting bundle of grouped/ungrouped records and known layers will
-     * then be returned.
+     * The resulting bundle of grouped/ungrouped records and known layers will then be returned.
      * 
      * This overload allows you explicitly state which classes should be included.
      * 
      * @param classFilters
-     *      An array of classes that should be included. You can use this to
-     *      restrict the output to only include items that are of a particular
-     *      subclass of KnownLayer.
-     * @return
-     *      An instance of KnownLayerGrouping that encapsulates the known layers
-     *      you've selected, as well as any unmapped records and the original
-     *      record list.
+     *            An array of classes that should be included. You can use this to restrict the output to only include items that are of a particular subclass
+     *            of KnownLayer.
+     * @return An instance of KnownLayerGrouping that encapsulates the known layers you've selected, as well as any unmapped records and the original record
+     *         list.
      */
     public <T extends KnownLayer> KnownLayerGrouping groupKnownLayerRecords(Class<T>... classFilters) {
         List<CSWRecord> originalRecordList = this.cswCacheService.getRecordCache();
@@ -101,7 +90,7 @@ public class KnownLayerService {
                 case Related:
                     relatedRecords.add(record);
                     mappedRecordIDs.put(record.getFileIdentifier(), null);
-                                            
+
                     break;
                 case Belongs:
                     belongingRecords.add(record);
@@ -109,11 +98,11 @@ public class KnownLayerService {
                     break;
                 }
             }
-            
+
             // The include flag will indicate whether or not this particular layer 
             // should be included in the output.
             boolean include = false;
-        
+
             // If no filters have been set then we just check that the KnownLayer is not a derived type:
             if (classFilters == null) {
                 include = knownLayer.getClass().equals(KnownLayer.class);
@@ -125,10 +114,10 @@ public class KnownLayerService {
                     if (classFilter.isAssignableFrom(knownLayer.getClass())) {
                         include = true;
                         break;
-                    }               
+                    }
                 }
             }
-            
+
             // If the include flag got set then we can add this record:
             if (include) {
                 knownLayerAndRecords.add(new KnownLayerAndRecords(knownLayer, belongingRecords, relatedRecords));
@@ -143,6 +132,6 @@ public class KnownLayerService {
             }
         }
 
-        return new KnownLayerGrouping(knownLayerAndRecords, unmappedRecords, originalRecordList);   
+        return new KnownLayerGrouping(knownLayerAndRecords, unmappedRecords, originalRecordList);
     }
 }

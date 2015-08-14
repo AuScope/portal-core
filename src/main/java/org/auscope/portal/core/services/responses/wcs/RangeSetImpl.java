@@ -27,7 +27,8 @@ public class RangeSetImpl implements RangeSet {
         tempNode = (Node) xPath.evaluate("wcs:label", node, XPathConstants.NODE);
         label = tempNode.getTextContent();
 
-        NodeList tempNodeList = (NodeList) xPath.evaluate("wcs:axisDescription/wcs:AxisDescription", node, XPathConstants.NODESET);
+        NodeList tempNodeList = (NodeList) xPath.evaluate("wcs:axisDescription/wcs:AxisDescription", node,
+                XPathConstants.NODESET);
         axisDescriptions = new AxisDescription[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             axisDescriptions[i] = new AxisDescriptionImpl(tempNodeList.item(i), xPath);

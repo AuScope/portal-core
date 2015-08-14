@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
  * @version $Id$
  *
  */
-public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRecord{
+public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRecord {
 
     /** The log. */
     private final Log log = LogFactory.getLog(getClass());
@@ -39,12 +39,13 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
     /** The child layer srs. */
     private String[] childLayerSRS;
 
-
     /**
      * Instantiates a new gets the capabilities wms layer record.
      *
-     * @param node the node
-     * @throws XPathExpressionException the xpath expression exception
+     * @param node
+     *            the node
+     * @throws XPathExpressionException
+     *             the xpath expression exception
      */
     public GetCapabilitiesWMSLayer_1_1_1(Node node) throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -92,14 +93,14 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
         }
     }
 
-
     // ------------------------------------------ Attribute Setters and Getters
 
     /**
      * Gets the name.
      *
      * @return the name
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public String getName() throws XPathExpressionException {
         return name;
@@ -109,7 +110,8 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * Gets the title.
      *
      * @return the title
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public String getTitle() throws XPathExpressionException {
         return title;
@@ -119,7 +121,8 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * Gets the abstract.
      *
      * @return the abstract
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public String getAbstract() throws XPathExpressionException {
         return description;
@@ -138,7 +141,8 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * Gets the child layer srs.
      *
      * @return the child layer srs
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public String[] getChildLayerSRS() throws XPathExpressionException {
         return childLayerSRS;

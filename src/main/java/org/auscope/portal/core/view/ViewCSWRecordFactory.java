@@ -16,6 +16,7 @@ import org.springframework.ui.ModelMap;
 
 /**
  * A factory class for generating serializable CSWRecord objects that can be used to communicate with the view.
+ * 
  * @author Josh Vote
  *
  */
@@ -23,6 +24,7 @@ public class ViewCSWRecordFactory {
 
     /**
      * Converts a CSWRecord to its simplified view equivalent
+     * 
      * @param record
      * @return
      */
@@ -48,7 +50,7 @@ public class ViewCSWRecordFactory {
         obj.put("adminArea", adminArea);
         obj.put("contactOrg", contactOrg);
 
-        List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object> >();
+        List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object>>();
         if (record.getOnlineResources() != null) {
             for (AbstractCSWOnlineResource res : record.getOnlineResources()) {
                 if (res.getLinkage() != null) {
@@ -58,15 +60,13 @@ public class ViewCSWRecordFactory {
         }
         obj.put("onlineResources", onlineResources);
 
-
-        List<Map<String, Object> > geographicElements = new ArrayList<Map<String, Object> >();
+        List<Map<String, Object>> geographicElements = new ArrayList<Map<String, Object>>();
         if (record.getCSWGeographicElements() != null) {
             for (CSWGeographicElement geo : record.getCSWGeographicElements()) {
                 geographicElements.add(this.toView(geo));
             }
         }
         obj.put("geographicElements", geographicElements);
-
 
         List<String> descriptiveKeywords = new ArrayList<String>();
         if (record.getDescriptiveKeywords() != null) {
@@ -105,6 +105,7 @@ public class ViewCSWRecordFactory {
 
     /**
      * Converts a CSWOnlineResource to its view equivalent
+     * 
      * @param res
      * @return
      */
@@ -121,8 +122,9 @@ public class ViewCSWRecordFactory {
     }
 
     /**
-     * Converts a CSWGeographicElement to its view equivalent. If el is not a supported
-     * implementation of CSWGeographicBoundingBox a IllegalArgumentException will be thrown.
+     * Converts a CSWGeographicElement to its view equivalent. If el is not a supported implementation of CSWGeographicBoundingBox a IllegalArgumentException
+     * will be thrown.
+     * 
      * @param el
      * @return
      */

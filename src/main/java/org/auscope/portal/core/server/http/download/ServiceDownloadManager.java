@@ -38,10 +38,9 @@ import org.auscope.portal.core.util.DOMResponseUtil;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.util.MimeUtil;
 
-
 /**
- * A manager class that to control number of requests to a endpoint and also multithread a request
- * to provide more efficiency
+ * A manager class that to control number of requests to a endpoint and also multithread a request to provide more efficiency
+ * 
  * @author Victor Tey
  *
  */
@@ -58,7 +57,7 @@ public class ServiceDownloadManager {
     private int callerId;
     private ExecutorService pool;
 
-    static{
+    static {
         endpointSemaphores = new ConcurrentHashMap<String, Semaphore>();
     }
 
@@ -71,14 +70,14 @@ public class ServiceDownloadManager {
 
     public ServiceDownloadManager(String[] urls,
             HttpServiceCaller serviceCaller, ExecutorService executer)
-                    throws URISyntaxException {
-        this(urls,serviceCaller,executer,null);
+            throws URISyntaxException {
+        this(urls, serviceCaller, executer, null);
 
     }
 
     public ServiceDownloadManager(String[] urls,
             HttpServiceCaller serviceCaller, ExecutorService executer, ServiceConfiguration serviceConfiguration)
-                    throws URISyntaxException {
+            throws URISyntaxException {
         this.serviceConfiguration = serviceConfiguration;
         this.urls = urls;
         this.serviceCaller = serviceCaller;
@@ -157,7 +156,7 @@ public class ServiceDownloadManager {
             this.url = url;
             this.id = id;
             this.processSem = processSem;
-            response=new DownloadResponse(getHost(url));
+            response = new DownloadResponse(getHost(url));
         }
 
         @Override
@@ -196,15 +195,15 @@ public class ServiceDownloadManager {
                         break;
                     }
                 }
-                logger.info((callerId + "->Calling service: " + id +" " + url));
-                this.download(response,url);
+                logger.info((callerId + "->Calling service: " + id + " " + url));
+                this.download(response, url);
                 this.downloadComplete = true;
                 logger.info(callerId + "->Download Complete: " + id + " " + url);
             } catch (InterruptedException e) {
                 logger.error("No reason for this thread to be interrupted", e);
-            } catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 endPointSem.release();
                 processSem.release();
                 logger.debug(callerId + "->semaphore release: " + id);
@@ -226,29 +225,30 @@ public class ServiceDownloadManager {
         }
 
         public void download(DownloadResponse response, String url) {
-            if(ServiceDownloadManager.this.serviceConfiguration != null){
-                ServiceConfigurationItem serviceConfigurationItem = ServiceDownloadManager.this.serviceConfiguration.getServiceConfigurationItem(url);
+            if (ServiceDownloadManager.this.serviceConfiguration != null) {
+                ServiceConfigurationItem serviceConfigurationItem = ServiceDownloadManager.this.serviceConfiguration
+                        .getServiceConfigurationItem(url);
 
-                if(serviceConfigurationItem != null && serviceConfigurationItem.doesPaging()){
+                if (serviceConfigurationItem != null && serviceConfigurationItem.doesPaging()) {
                     this.downloadPaging(response, url);
-                }else{
+                } else {
                     this.downloadNormal(response, url);
                 }
-            }else{
+            } else {
                 this.downloadNormal(response, url);
             }
 
         }
 
         public void downloadNormal(DownloadResponse response, String url) {
-            HttpGet  method = new HttpGet(url);
+            HttpGet method = new HttpGet(url);
             try {
                 // Our request may fail (due to timeout or otherwise)
-                HttpResponse httpResponse=serviceCaller.getMethodResponseAsHttpResponse(method);
+                HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
 
                 response.setResponseStream(httpResponse.getEntity().getContent());
-                Header header=httpResponse.getEntity().getContentType();
-                if(header != null && header.getValue().length() > 0){
+                Header header = httpResponse.getEntity().getContentType();
+                if (header != null && header.getValue().length() > 0) {
                     response.setContentType(httpResponse.getEntity().getContentType().getValue());
                 }
 
@@ -265,30 +265,31 @@ public class ServiceDownloadManager {
             //southBoundLatitude%22%3A%22-27%22%2C%22eastBoundLongitude%22%3A%22148%22%2C%22northBoundLatitude%22%3A%22-25%22%2C%22crs%22%3A%22EPSG%3A4326%22%7D&
             //serviceUrl=http%3A%2F%2Fauscope-services-test.arrc.csiro.au%3A80%2Fgsq-earthresource%2Fwfs&typeName=er%3AMiningFeatureOccurrence&maxFeatures=200
             File tempDir = null;
-            FileInputStream zipStream=null;
-            try{
+            FileInputStream zipStream = null;
+            try {
                 tempDir = Files.createTempDirectory("APT_PAGING").toFile();
                 tempDir.deleteOnExit();
 
                 int index = 0;
 
-                while(true){
-                    HttpGet  method = new HttpGet(url+"&startIndex=" + index);
-                    HttpResponse httpResponse=serviceCaller.getMethodResponseAsHttpResponse(method);
+                while (true) {
+                    HttpGet method = new HttpGet(url + "&startIndex=" + index);
+                    HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
 
-                    Header header=httpResponse.getEntity().getContentType();
-                    String fileExtension=".xml";//VT: Default to xml as we will mostly be dealing with xml files
-                    if(header != null && header.getValue().length() > 0){
-                        fileExtension = "." + MimeUtil.mimeToFileExtension(httpResponse.getEntity().getContentType().getValue());
+                    Header header = httpResponse.getEntity().getContentType();
+                    String fileExtension = ".xml";//VT: Default to xml as we will mostly be dealing with xml files
+                    if (header != null && header.getValue().length() > 0) {
+                        fileExtension = "."
+                                + MimeUtil.mimeToFileExtension(httpResponse.getEntity().getContentType().getValue());
 
                     }
-                    File f=new File(tempDir,"ResultIndexed-" + index + fileExtension);
+                    File f = new File(tempDir, "ResultIndexed-" + index + fileExtension);
                     f.deleteOnExit();
                     FileIOUtil.writeStreamToFile(httpResponse.getEntity().getContent(), f, true);
-                    int numberOfFeatures= this.getNumberOfFeature(f);
-                    if(numberOfFeatures != 0){
+                    int numberOfFeatures = this.getNumberOfFeature(f);
+                    if (numberOfFeatures != 0) {
                         index += numberOfFeatures;
-                    }else{
+                    } else {
                         //VT: Delete file since it has 0 number of features;break out of this while loop
                         f.delete();
                         break;
@@ -299,31 +300,30 @@ public class ServiceDownloadManager {
                 response.setResponseStream(zipStream);
                 response.setContentType("application/zip");
 
-
-            }catch(Exception e){
+            } catch (Exception e) {
                 logger.error(e, e);
                 response.setException(e);
-            }finally{
+            } finally {
                 //Clean up
-                if(tempDir != null){
+                if (tempDir != null) {
                     FileIOUtil.deleteFilesRecursive(tempDir);
                 }
             }
 
         }
 
-        private int getNumberOfFeature(File f) throws Exception{
-            InputStream br= new BufferedInputStream(new FileInputStream(f));
+        private int getNumberOfFeature(File f) throws Exception {
+            InputStream br = new BufferedInputStream(new FileInputStream(f));
             NamespaceContext ns = new NumberOfFeatureNamespace();
             return DOMResponseUtil.getNumberOfFeatures(br, ns);
         }
 
-        private File zipDirectory(File zipDir) throws Exception{
+        private File zipDirectory(File zipDir) throws Exception {
 
             File tempZip = File.createTempFile("APT_", ".zip");
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(tempZip));
 
-            try{
+            try {
 
                 // get a listing of the directory content
                 String[] dirList = zipDir.list();
@@ -343,9 +343,9 @@ public class ServiceDownloadManager {
                     }
                 }
                 return tempZip;
-            }catch(Exception e){
+            } catch (Exception e) {
                 throw e;
-            }finally{
+            } finally {
                 zos.close();
             }
         }

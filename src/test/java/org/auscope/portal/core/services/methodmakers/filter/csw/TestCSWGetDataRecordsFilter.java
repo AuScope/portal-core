@@ -8,14 +8,14 @@ import org.junit.Test;
 
 /**
  * Unit tests for CSWGetDataRecordsFilter
+ * 
  * @author Josh Vote
  *
  */
 public class TestCSWGetDataRecordsFilter extends PortalTestClass {
 
     /**
-     * Performs a dirt simple test that optional fields don't generate exceptions or
-     * empty strings
+     * Performs a dirt simple test that optional fields don't generate exceptions or empty strings
      */
     @Test
     public void testOptionalFields() {
@@ -38,13 +38,13 @@ public class TestCSWGetDataRecordsFilter extends PortalTestClass {
         filter = new CSWGetDataRecordsFilter(
                 "any-text",
                 new FilterBoundingBox(
-                    "epsg:4326",
-                    new double[] {1.0, 2.0},
-                    new double[] {3.0, 4.0}),
+                        "epsg:4326",
+                        new double[] {1.0, 2.0},
+                        new double[] {3.0, 4.0}),
                 new String[] {"kw1", "kw2"},
                 "capturePlatform",
                 "sensor",
-                KeywordMatchType.All,null,null,null);
+                KeywordMatchType.All, null, null, null);
         filterStr = filter.getFilterStringAllRecords();
         Assert.assertNotNull(filterStr);
         Assert.assertFalse(filterStr.isEmpty());

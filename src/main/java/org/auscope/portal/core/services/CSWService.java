@@ -16,9 +16,8 @@ import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 
 /**
- * The CSWService class provides functionality to
- * make requests to CSW service endpoints and parse their
- * responses.
+ * The CSWService class provides functionality to make requests to CSW service endpoints and parse their responses.
+ * 
  * @author Adam
  *
  */
@@ -33,6 +32,7 @@ public class CSWService {
 
     /**
      * Creates a new instance with a new CSWRecordTransformerFactory instance
+     * 
      * @param endpoint
      * @param serviceCaller
      * @param forceGetMethods
@@ -43,12 +43,14 @@ public class CSWService {
 
     /**
      * Creates a new instance with a configurable CSWRecordTransformerFactory instance
+     * 
      * @param endpoint
      * @param serviceCaller
      * @param forceGetMethods
      * @param transformerFactory
      */
-    public CSWService(CSWServiceItem endpoint, HttpServiceCaller serviceCaller, boolean forceGetMethods, CSWRecordTransformerFactory transformerFactory) {
+    public CSWService(CSWServiceItem endpoint, HttpServiceCaller serviceCaller, boolean forceGetMethods,
+            CSWRecordTransformerFactory transformerFactory) {
         this.endpoint = endpoint;
         this.serviceCaller = serviceCaller;
         this.forceGetMethods = forceGetMethods;
@@ -56,26 +58,28 @@ public class CSWService {
         this.transformerFactory = transformerFactory;
     }
 
-    public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength,int numberOfAttempts,long timeBetweenAttempts) throws Exception {
+    public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength, int numberOfAttempts,
+            long timeBetweenAttempts) throws Exception {
 
-        try{
-            while(numberOfAttempts > 0){
+        try {
+            while (numberOfAttempts > 0) {
                 return this.queryCSWEndpoint(startPosition, maxQueryLength, null);
             }
             throw new Exception("The code should have never reach here");
-        }catch(java.io.IOException e){
+        } catch (java.io.IOException e) {
             log.warn("Attempt to query CSW end point failed. Number of attempts left:" + --numberOfAttempts);
-            if(numberOfAttempts >0){
+            if (numberOfAttempts > 0) {
                 Thread.sleep(timeBetweenAttempts);
-                return queryCSWEndpoint(startPosition,maxQueryLength,numberOfAttempts,timeBetweenAttempts);
-            }else{
+                return queryCSWEndpoint(startPosition, maxQueryLength, numberOfAttempts, timeBetweenAttempts);
+            } else {
                 throw e;
             }
         }
 
     }
 
-    public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength, CSWGetDataRecordsFilter filter) throws Exception {
+    public CSWGetRecordResponse queryCSWEndpoint(int startPosition, int maxQueryLength, CSWGetDataRecordsFilter filter)
+            throws Exception {
         log.trace(String.format("%1$s - requesting startPosition %2$s", this.endpoint.getServiceUrl(), startPosition));
 
         String cswServiceUrl = this.endpoint.getServiceUrl();
@@ -87,7 +91,8 @@ public class CSWService {
         if (this.forceGetMethods && this.endpoint.getCqlText() == null && filter == null) {
             method = this.methodMaker.makeGetMethod(cswServiceUrl, ResultType.Results, maxQueryLength, startPosition);
         } else {
-            method = this.methodMaker.makeMethod(cswServiceUrl, filter, ResultType.Results, maxQueryLength, startPosition, this.endpoint.getCqlText());
+            method = this.methodMaker.makeMethod(cswServiceUrl, filter, ResultType.Results, maxQueryLength,
+                    startPosition, this.endpoint.getCqlText());
         }
 
         InputStream responseStream = this.serviceCaller.getMethodResponseAsStream(method);

@@ -7,31 +7,31 @@ import java.io.Serializable;
  * 
  * VM Images can be instantiated at a compute node using a VM type or flavor that contains these resources.
  * 
- * The values of this class (with the exception of id) are NOT authoritive and exist only
- * for descriptive purposes 
+ * The values of this class (with the exception of id) are NOT authoritive and exist only for descriptive purposes
  * 
  * @author Josh Vote
  *
  */
 public class ComputeType implements Serializable {
     private static final long serialVersionUID = 5143102635586852517L;
-    
-    /** Name of this compute type (valid only at parent compute provider)*/
+
+    /** Name of this compute type (valid only at parent compute provider) */
     private String id;
-    /** Human readable short description of this compute type*/
+    /** Human readable short description of this compute type */
     private String description;
-    /** How many virtual CPU's does this compute type offer*/
+    /** How many virtual CPU's does this compute type offer */
     private Integer vcpus;
-    /** How much RAM (roughly) in MB does this  compute type offer*/
+    /** How much RAM (roughly) in MB does this compute type offer */
     private Integer ramMB;
-    /** How much does the root disk of this compute type offer (in GB)*/
+    /** How much does the root disk of this compute type offer (in GB) */
     private Integer rootDiskGB;
-    /** How much does the Ephemeral disk of this compute type offer (in GB)*/
+    /** How much does the Ephemeral disk of this compute type offer (in GB) */
     private Integer ephemeralDiskGB;
-    
+
     /**
      * 
-     * @param id Name of this compute type (valid only at parent compute provider)
+     * @param id
+     *            Name of this compute type (valid only at parent compute provider)
      */
     public ComputeType(String id) {
         super();
@@ -40,6 +40,7 @@ public class ComputeType implements Serializable {
 
     /**
      * Human readable short description of this compute type
+     * 
      * @return
      */
     public String getDescription() {
@@ -48,6 +49,7 @@ public class ComputeType implements Serializable {
 
     /**
      * Human readable short description of this compute type
+     * 
      * @param description
      */
     public void setDescription(String description) {
@@ -56,6 +58,7 @@ public class ComputeType implements Serializable {
 
     /**
      * How many virtual CPU's does this compute type offer
+     * 
      * @return
      */
     public Integer getVcpus() {
@@ -64,6 +67,7 @@ public class ComputeType implements Serializable {
 
     /**
      * How many virtual CPU's does this compute type offer
+     * 
      * @param vcpus
      */
     public void setVcpus(Integer vcpus) {
@@ -71,7 +75,8 @@ public class ComputeType implements Serializable {
     }
 
     /**
-     * How much RAM (roughly) in MB does this  compute type offer
+     * How much RAM (roughly) in MB does this compute type offer
+     * 
      * @return
      */
     public Integer getRamMB() {
@@ -79,7 +84,8 @@ public class ComputeType implements Serializable {
     }
 
     /**
-     * How much RAM (roughly) in MB does this  compute type offer
+     * How much RAM (roughly) in MB does this compute type offer
+     * 
      * @param ramMB
      */
     public void setRamMB(Integer ramMB) {
@@ -88,6 +94,7 @@ public class ComputeType implements Serializable {
 
     /**
      * How much does the root disk of this compute type offer (in GB)
+     * 
      * @return
      */
     public Integer getRootDiskGB() {
@@ -96,6 +103,7 @@ public class ComputeType implements Serializable {
 
     /**
      * How much does the root disk of this compute type offer (in GB)
+     * 
      * @param rootDiskGB
      */
     public void setRootDiskGB(Integer rootDiskGB) {
@@ -104,6 +112,7 @@ public class ComputeType implements Serializable {
 
     /**
      * How much does the Ephemeral disk of this compute type offer (in GB)
+     * 
      * @return
      */
     public Integer getEphemeralDiskGB() {
@@ -112,6 +121,7 @@ public class ComputeType implements Serializable {
 
     /**
      * How much does the Ephemeral disk of this compute type offer (in GB)
+     * 
      * @param ephemeralDiskGB
      */
     public void setEphemeralDiskGB(Integer ephemeralDiskGB) {
@@ -120,11 +130,11 @@ public class ComputeType implements Serializable {
 
     /**
      * Name of this compute type (valid only at parent compute provider)
+     * 
      * @return
      */
     public String getId() {
         return id;
     }
-    
-    
+
 }

@@ -6,6 +6,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for Concept
+ * 
  * @author Josh Vote
  *
  */
@@ -37,7 +38,7 @@ public class TestConcept extends PortalTestClass {
         final String expectedUrn = "my:urn";
         Concept concept = new Concept(expectedUrn);
 
-        Assert.assertFalse(concept.equals((String)null));
+        Assert.assertFalse(concept.equals((String) null));
         Assert.assertFalse(concept.equals((Object) null));
         Assert.assertFalse(concept.equals(new Concept(null)));
     }
@@ -51,7 +52,7 @@ public class TestConcept extends PortalTestClass {
         final String unexpectedUrn = "different";
         Concept concept = new Concept(expectedUrn);
 
-        Assert.assertTrue(concept.equals((String)null));
+        Assert.assertTrue(concept.equals((String) null));
         Assert.assertFalse(concept.equals((Object) null));
         Assert.assertTrue(concept.equals(new Concept(null)));
 

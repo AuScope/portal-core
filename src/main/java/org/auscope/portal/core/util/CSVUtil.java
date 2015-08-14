@@ -9,72 +9,68 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-
 public class CSVUtil {
 
-    private BufferedReader  csvReader;
+    private BufferedReader csvReader;
 
     private String[] headers;
 
-    public CSVUtil(InputStream csvStream) throws IOException{
+    public CSVUtil(InputStream csvStream) throws IOException {
         this.csvReader = new BufferedReader(new InputStreamReader(csvStream, StandardCharsets.UTF_8));
         this.setHeaders();
     }
 
-
-    public String[] getHeaders(){
+    public String[] getHeaders() {
         return this.headers;
     }
 
-    private void setHeaders() throws IOException{
+    private void setHeaders() throws IOException {
         String line = "";
         line = csvReader.readLine();
-        if(line!=null){
+        if (line != null) {
             headers = line.split(",");
-        }else{
+        } else {
             throw new IOException("CSV Headers not found");
         }
 
     }
 
-    public HashMap<String,ArrayList<String>> getColumnOfInterest(String [] columns) throws IOException{
-        int [] columnIndex = getColumnIndex(columns);
-        if(columnIndex.length != columns.length){
+    public HashMap<String, ArrayList<String>> getColumnOfInterest(String[] columns) throws IOException {
+        int[] columnIndex = getColumnIndex(columns);
+        if (columnIndex.length != columns.length) {
             throw new IOException("Not all columns are found");
         }
-        HashMap<String,ArrayList<String>> result = new HashMap<String,ArrayList<String>>();
+        HashMap<String, ArrayList<String>> result = new HashMap<String, ArrayList<String>>();
 
-        for(String column:columns){
+        for (String column : columns) {
             result.put(column, new ArrayList<String>());
         }
 
         String line = "";
-        while ((line = csvReader.readLine()) != null){
-            if(line.isEmpty())continue;
+        while ((line = csvReader.readLine()) != null) {
+            if (line.isEmpty())
+                continue;
             String[] tokens = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-            for(int i=0; i < columnIndex.length; i++){
-                if(columnIndex[i]<tokens.length){
+            for (int i = 0; i < columnIndex.length; i++) {
+                if (columnIndex[i] < tokens.length) {
                     result.get(columns[i]).add(tokens[columnIndex[i]]);
-                }else{
+                } else {
                     result.get(columns[i]).add("");
                 }
             }
         }
 
-
         return result;
     }
 
+    private int[] getColumnIndex(String[] columns) {
+        int[] columnIndex = new int[columns.length];
 
-    private int[] getColumnIndex(String [] columns){
-        int [] columnIndex=new int[columns.length];
-
-        for(int i=0; i<columns.length; i++){
+        for (int i = 0; i < columns.length; i++) {
             columnIndex[i] = Arrays.asList(this.headers).indexOf(columns[i]);
         }
 
         return columnIndex;
     }
-
 
 }

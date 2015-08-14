@@ -27,7 +27,9 @@ public class CSWServiceItem {
 
     /**
      * Creates a new service item with NO role restrictions
-     * @param id Must be unique per service
+     * 
+     * @param id
+     *            Must be unique per service
      * @param serviceUrl
      */
     public CSWServiceItem(String id, String serviceUrl) {
@@ -36,7 +38,9 @@ public class CSWServiceItem {
 
     /**
      * Creates a new service item with NO role restrictions
-     * @param id Must be unique per service
+     * 
+     * @param id
+     *            Must be unique per service
      * @param serviceUrl
      * @param recordInformationUrl
      */
@@ -46,7 +50,9 @@ public class CSWServiceItem {
 
     /**
      * Creates a new service item with NO role restrictions
-     * @param id Must be unique per service
+     * 
+     * @param id
+     *            Must be unique per service
      * @param serviceUrl
      * @param recordInformationUrl
      * @param title
@@ -60,8 +66,10 @@ public class CSWServiceItem {
 
     /**
      * Creates a new service item that is restricted to users with ANY of the specified roles
+     * 
      * @param serviceUrl
-     * @param restrictedToRoles the list of roles (the toString method will be called on each element and stored)
+     * @param restrictedToRoles
+     *            the list of roles (the toString method will be called on each element and stored)
      */
     public CSWServiceItem(String serviceUrl, String recordInformationUrl, Collection restrictedRoleList) {
         this.serviceUrl = serviceUrl;
@@ -76,6 +84,7 @@ public class CSWServiceItem {
 
     /**
      * The URL that the CSW service is hosted at.
+     * 
      * @return
      */
     public String getServiceUrl() {
@@ -86,6 +95,7 @@ public class CSWServiceItem {
      * The list of roles that a user must have at least one of to be authorised to see records from the CSW Service
      *
      * Can be null or empty
+     * 
      * @return
      */
     public String[] getRestrictedRoleList() {
@@ -94,6 +104,7 @@ public class CSWServiceItem {
 
     /**
      * Gets the descriptive title of this service item
+     * 
      * @return
      */
     public String getTitle() {
@@ -102,6 +113,7 @@ public class CSWServiceItem {
 
     /**
      * Gets the unique ID of this service item
+     * 
      * @return
      */
     public String getId() {
@@ -110,6 +122,7 @@ public class CSWServiceItem {
 
     /**
      * Gets whether this service URL's record set can be read by the user making the request
+     * 
      * @return
      */
     public boolean isUserAuthorized(HttpServletRequest request) {
@@ -130,6 +143,7 @@ public class CSWServiceItem {
      * Gets a URL (can be null) representing the URL to query for extended information about this record.
      *
      * This URL may contain the string "${recordId}" which will should be replaced with the record ID to lookup
+     * 
      * @return
      */
     public String getRecordInformationUrl() {
@@ -146,6 +160,7 @@ public class CSWServiceItem {
 
     /**
      * Compares id against this item
+     * 
      * @param id
      * @return
      */
@@ -159,6 +174,7 @@ public class CSWServiceItem {
 
     /**
      * Compares these items based on id
+     * 
      * @param item
      * @return
      */
@@ -194,6 +210,7 @@ public class CSWServiceItem {
 
     /**
      * Gets the user name part of the credentials for this geonetwork (can be null)
+     * 
      * @return
      */
     public String getUserName() {
@@ -202,6 +219,7 @@ public class CSWServiceItem {
 
     /**
      * Sets the user name part of the credentials for this geonetwork (can be null)
+     * 
      * @param userName
      */
     public void setUserName(String userName) {
@@ -210,6 +228,7 @@ public class CSWServiceItem {
 
     /**
      * Gets the password part of the credentials for this geonetwork (can be null)
+     * 
      * @return
      */
     public String getPassword() {
@@ -218,6 +237,7 @@ public class CSWServiceItem {
 
     /**
      * Sets the password part of the credentials for this geonetwork (can be null)
+     * 
      * @param password
      */
     public void setPassword(String password) {
@@ -226,6 +246,7 @@ public class CSWServiceItem {
 
     /**
      * Get cqlText for querying the catalog
+     * 
      * @return String
      */
     public String getCqlText() {
@@ -234,6 +255,7 @@ public class CSWServiceItem {
 
     /**
      * Set cqlText for querying the catalog
+     * 
      * @return
      */
     public void setCqlText(String cqlText) {
@@ -242,6 +264,7 @@ public class CSWServiceItem {
 
     /**
      * Get the defaultAnyTextFilter for querying the catalog.
+     * 
      * @return String
      */
     public String getDefaultAnyTextFilter() {
@@ -250,6 +273,7 @@ public class CSWServiceItem {
 
     /**
      * Set defaultAnyTextFilter for querying the catalog.
+     * 
      * @return
      */
     public void setDefaultAnyTextFilter(String defaultAnyTextFilter) {
@@ -258,6 +282,7 @@ public class CSWServiceItem {
 
     /**
      * Gets a value indicating whether or not the caching has been disabled for this item.
+     * 
      * @return
      */
     public boolean getNoCache() {
@@ -270,6 +295,7 @@ public class CSWServiceItem {
 
     /**
      * Set noCache to prevent the caching of data from CSW's that have too many records.
+     * 
      * @param noCache
      */
     public void setNoCache(boolean noCache) {
@@ -277,8 +303,9 @@ public class CSWServiceItem {
     }
 
     /**
-     * Set an array of constraints to be applied to any dummy layers that get created from this Service item. It doesn't make sense to set this value
-     * unless noCache is being set to true.
+     * Set an array of constraints to be applied to any dummy layers that get created from this Service item. It doesn't make sense to set this value unless
+     * noCache is being set to true.
+     * 
      * @param defaultConstraints
      */
     public void setDefaultConstraints(String[] defaultConstraints) {

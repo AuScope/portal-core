@@ -8,6 +8,7 @@ import javax.xml.transform.stream.StreamSource;
 
 /**
  * A PortalXSLTTransformer for working with the wfsToKml stylesheet
+ * 
  * @author Josh Vote
  */
 public class WfsToKmlTransformer extends PortalXSLTTransformer {
@@ -21,18 +22,20 @@ public class WfsToKmlTransformer extends PortalXSLTTransformer {
 
     /**
      * Creates a new transformer using the specified resource (should accept a serviceURL parameter)
+     * 
      * @param resource
      */
     public WfsToKmlTransformer(String resource) {
         super(resource);
     }
 
-
     /**
      * Utility method to transform a WFS response into kml
      *
-     * @param wfs WFS response to be transformed
-     * @param serviceUrl The WFS URL where the response came from
+     * @param wfs
+     *            WFS response to be transformed
+     * @param serviceUrl
+     *            The WFS URL where the response came from
      * @return Kml output string
      */
     public String convert(String wfs, String serviceUrl) {
@@ -42,8 +45,10 @@ public class WfsToKmlTransformer extends PortalXSLTTransformer {
     /**
      * Utility method to transform a WFS response into kml
      *
-     * @param wfs WFS response to be transformed
-     * @param serviceUrl The WFS URL where the response came from
+     * @param wfs
+     *            WFS response to be transformed
+     * @param serviceUrl
+     *            The WFS URL where the response came from
      * @return Xml output string
      */
     public String convert(InputStream wfs, String serviceUrl) {
@@ -53,8 +58,10 @@ public class WfsToKmlTransformer extends PortalXSLTTransformer {
     /**
      * Utility method to transform a WFS response into kml
      *
-     * @param wfs WFS response to be transformed
-     * @param serviceUrl The WFS URL where the response came from
+     * @param wfs
+     *            WFS response to be transformed
+     * @param serviceUrl
+     *            The WFS URL where the response came from
      * @return Xml output string
      */
     public String convert(StreamSource wfs, String serviceUrl) {

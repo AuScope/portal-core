@@ -7,6 +7,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for FilterBoundingBox
+ * 
  * @author Josh Vote
  *
  */
@@ -30,6 +31,7 @@ public class TestFilterBoundingBox extends PortalTestClass {
 
     /**
      * Tests parsing a BBox string in a variety of accepted formats
+     * 
      * @throws Exception
      */
     @Test
@@ -47,6 +49,7 @@ public class TestFilterBoundingBox extends PortalTestClass {
 
     /**
      * Tests parsing an invalid BBox string results in an error
+     * 
      * @throws Exception
      */
     @Test
@@ -57,6 +60,7 @@ public class TestFilterBoundingBox extends PortalTestClass {
 
     /**
      * Tests parsing a BBox string that wraps around anti meridian
+     * 
      * @throws Exception
      */
     @Test

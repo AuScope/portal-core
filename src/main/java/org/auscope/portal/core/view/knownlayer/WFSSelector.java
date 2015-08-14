@@ -6,6 +6,7 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
 
 /**
  * An extension of KnownLayer that specializes into representing a collection WFS's
+ * 
  * @author Josh Vote
  *
  */
@@ -16,21 +17,21 @@ public class WFSSelector implements KnownLayerSelector {
     private boolean includeEndpoints;
     private String[] relatedFeatureTypeNames;
 
-
     /**
-     * @param featureTypeName The feature type name used to identify members of this layer
+     * @param featureTypeName
+     *            The feature type name used to identify members of this layer
      */
     public WFSSelector(String featureTypeName) {
         this.featureTypeName = featureTypeName;
     }
 
-
     /**
-     * @param featureTypeName The feature type name used to identify members of this layer
-     * @param serviceEndpoints A list of the end points that will either be included or
-     *  excluded from the WFS, depending on the value of includeEndpoints
-     * @param includeEndpoints A flag indicating whether the listed service end points
-     *  will be included or excluded from the WFS
+     * @param featureTypeName
+     *            The feature type name used to identify members of this layer
+     * @param serviceEndpoints
+     *            A list of the end points that will either be included or excluded from the WFS, depending on the value of includeEndpoints
+     * @param includeEndpoints
+     *            A flag indicating whether the listed service end points will be included or excluded from the WFS
      */
     public WFSSelector(String featureTypeName, String[] serviceEndpoints, boolean includeEndpoints) {
         this(featureTypeName);
@@ -58,7 +59,8 @@ public class WFSSelector implements KnownLayerSelector {
     }
 
     /**
-     * @param relatedFeatureTypeNames the relatedFeatureTypeNames to set
+     * @param relatedFeatureTypeNames
+     *            the relatedFeatureTypeNames to set
      */
     public void setRelatedFeatureTypeNames(String[] relatedFeatureTypeNames) {
         this.relatedFeatureTypeNames = relatedFeatureTypeNames;
@@ -89,7 +91,7 @@ public class WFSSelector implements KnownLayerSelector {
                     //'Include only this list of urls'
                     //'Exclude any of these urls'
                     if ((includeEndpoints && matched) ||
-                        (!includeEndpoints && !matched)) {
+                            (!includeEndpoints && !matched)) {
                         return RelationType.Belongs;
                     }
                 } else {
@@ -113,6 +115,5 @@ public class WFSSelector implements KnownLayerSelector {
 
         return RelationType.NotRelated;
     }
-
 
 }

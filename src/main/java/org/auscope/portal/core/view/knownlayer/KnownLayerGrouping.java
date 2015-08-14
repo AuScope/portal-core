@@ -1,6 +1,5 @@
 package org.auscope.portal.core.view.knownlayer;
 
-
 import java.util.List;
 
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
@@ -16,7 +15,6 @@ public class KnownLayerGrouping {
     private List<CSWRecord> unmappedRecords;
     private List<CSWRecord> originalRecordSet;
 
-
     /**
      * Creates a new immutable instance
      */
@@ -28,8 +26,8 @@ public class KnownLayerGrouping {
     }
 
     /**
-     * Gets the list of known layers. Will contain known layers
-     * which have drawn their CSWRecord set from originalRecordSet
+     * Gets the list of known layers. Will contain known layers which have drawn their CSWRecord set from originalRecordSet
+     * 
      * @return
      */
     public List<KnownLayerAndRecords> getKnownLayers() {
@@ -37,8 +35,8 @@ public class KnownLayerGrouping {
     }
 
     /**
-     * Gets the list of CSWRecords that didn't map or end up
-     * belonging to the list of known layers
+     * Gets the list of CSWRecords that didn't map or end up belonging to the list of known layers
+     * 
      * @return
      */
     public List<CSWRecord> getUnmappedRecords() {
@@ -46,13 +44,12 @@ public class KnownLayerGrouping {
     }
 
     /**
-     * The original set of CSWRecords that were used to populate/seed
-     * the knownlayers list
+     * The original set of CSWRecords that were used to populate/seed the knownlayers list
+     * 
      * @return
      */
     public List<CSWRecord> getOriginalRecordSet() {
         return originalRecordSet;
     }
-
 
 }

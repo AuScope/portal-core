@@ -7,7 +7,7 @@ import java.util.TimeZone;
 
 /**
  * Utility methods for date and time operations.
- *  
+ * 
  * @author Richard Goh
  */
 public class DateUtil {
@@ -18,12 +18,14 @@ public class DateUtil {
         SECOND,
         MILLISECOND;
     }
-    
+
     /**
      * Converts Date object to a date string of a given format.
      * 
-     * @param date a Date object to be converted to string
-     * @param pattern the pattern describing the date and time format 
+     * @param date
+     *            a Date object to be converted to string
+     * @param pattern
+     *            the pattern describing the date and time format
      * @return the formatted date-time string.
      */
     public static String formatDate(Date date, String pattern) {
@@ -32,28 +34,29 @@ public class DateUtil {
     }
 
     /**
-     * Calculates the absolute difference between two Date without
-     * regard for time offsets. The author of this method is Charles
-     * and it is taken from the following site:
-     * http://technojeeves.com/joomla/index.php/free/71-difference-between-two-dates-in-java
+     * Calculates the absolute difference between two Date without regard for time offsets. The author of this method is Charles and it is taken from the
+     * following site: http://technojeeves.com/joomla/index.php/free/71-difference-between-two-dates-in-java
      *
-     * @param d1 Date one
-     * @param d2 Date two
-     * @param field The field we're interested in out of day, hour, minute, second, millisecond
+     * @param d1
+     *            Date one
+     * @param d2
+     *            Date two
+     * @param field
+     *            The field we're interested in out of day, hour, minute, second, millisecond
      * @return The value of the required field.
      */
     public static long getTimeDifference(Date d1, Date d2, TimeField field) {
         return getTimeDifference(d1, d2)[field.ordinal()];
     }
-    
+
     /**
-     * Calculates the absolute difference between two Date without regard for
-     * time offsets. The author of this method is Charles
-     * and it is taken from the following site:
-     * http://technojeeves.com/joomla/index.php/free/71-difference-between-two-dates-in-java
+     * Calculates the absolute difference between two Date without regard for time offsets. The author of this method is Charles and it is taken from the
+     * following site: http://technojeeves.com/joomla/index.php/free/71-difference-between-two-dates-in-java
      * 
-     * @param d1 Date one
-     * @param d2 Date two
+     * @param d1
+     *            Date one
+     * @param d2
+     *            Date two
      * @return The fields day, hour, minute, second and millisecond.
      */
     public static long[] getTimeDifference(Date d1, Date d2) {
@@ -82,7 +85,7 @@ public class DateUtil {
 
         long s = diff / ONE_SECOND;
         long ms = diff % ONE_SECOND;
-        
+
         result[0] = d;
         result[1] = h;
         result[2] = m;

@@ -10,6 +10,7 @@ import org.junit.matchers.TypeSafeMatcher;
 
 /**
  * A JUnit matcher for matching instances of CSWGetDataRecordsFilter
+ * 
  * @author Josh Vote
  *
  */
@@ -21,14 +22,19 @@ public class CSWGetDataRecordsFilterMatcher extends TypeSafeMatcher<CSWGetDataRe
     private String capturePlatform;
     private String sensor;
 
-
     /**
      * Matches a CSWGetDataRecordsFilter based on one or more components
-     * @param spatialBounds If not null, the comparison spatial bounds
-     * @param keywords If not null, the comparison keyword list
-     * @param capturePlatform If not null, the comparison capture platform
-     * @param sensor If not null, the comparison sensor
-     * @param keywordMatchType if not null, the comparison match type
+     * 
+     * @param spatialBounds
+     *            If not null, the comparison spatial bounds
+     * @param keywords
+     *            If not null, the comparison keyword list
+     * @param capturePlatform
+     *            If not null, the comparison capture platform
+     * @param sensor
+     *            If not null, the comparison sensor
+     * @param keywordMatchType
+     *            if not null, the comparison match type
      */
     public CSWGetDataRecordsFilterMatcher(FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor,
@@ -42,7 +48,10 @@ public class CSWGetDataRecordsFilterMatcher extends TypeSafeMatcher<CSWGetDataRe
 
     @Override
     public void describeTo(Description description) {
-        description.appendText(String.format("a CSWGetDataRecordsFilter with spatialBounds='%1$s' keywords='%2$s' capturePlatform='%3$s sensor='%4$s' keywordMatchType='%5$s'", spatialBounds, Arrays.toString(keywords), capturePlatform, sensor, keywordMatchType));
+        description
+                .appendText(String
+                        .format("a CSWGetDataRecordsFilter with spatialBounds='%1$s' keywords='%2$s' capturePlatform='%3$s sensor='%4$s' keywordMatchType='%5$s'",
+                                spatialBounds, Arrays.toString(keywords), capturePlatform, sensor, keywordMatchType));
 
     }
 

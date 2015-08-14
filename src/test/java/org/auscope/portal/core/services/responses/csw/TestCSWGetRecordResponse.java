@@ -13,22 +13,25 @@ import org.w3c.dom.Document;
 
 /**
  * Unit tests for CSWGetRecordResponse
+ * 
  * @author Josh Vote
  *
  */
-public class TestCSWGetRecordResponse extends PortalTestClass  {
+public class TestCSWGetRecordResponse extends PortalTestClass {
 
     private CSWGetRecordResponse recordResponse;
     private CSWServiceItem origin;
 
     /**
      * INitialise our recordResponse from the test resource cswRecordResponse.xml
+     * 
      * @throws Exception
      */
     @Before
     public void setUp() throws Exception {
         // load CSW record response document
-        Document doc = DOMUtil.buildDomFromStream(ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml"));
+        Document doc = DOMUtil.buildDomFromStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml"));
 
         this.origin = new CSWServiceItem("id", "http://test.com", "http://test.com?uuid=%1$s", "title");
 
@@ -51,9 +54,10 @@ public class TestCSWGetRecordResponse extends PortalTestClass  {
         Assert.assertEquals(16, recordResponse.getNextRecord());
 
         for (int i = 0; i < recs.size(); i++) {
-            String expectedInfoUrl = String.format(this.origin.getRecordInformationUrl(), recs.get(i).getFileIdentifier());
+            String expectedInfoUrl = String.format(this.origin.getRecordInformationUrl(), recs.get(i)
+                    .getFileIdentifier());
             Assert.assertEquals(expectedInfoUrl, recs.get(i).getRecordInfoUrl());
-            
+
             //Assertion that tests parent child relationship in recordset returned from the parser  
             String fileId = recs.get(i).getFileIdentifier();
             if (fileId.equals(parentFileId)) {

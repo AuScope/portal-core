@@ -1,8 +1,8 @@
 package org.auscope.portal.core.services.namespaces;
 
-
 /**
  * Represents the namespace context of a generic WCS response to a DescribeCoverage request.
+ * 
  * @author Josh Vote
  *
  */
