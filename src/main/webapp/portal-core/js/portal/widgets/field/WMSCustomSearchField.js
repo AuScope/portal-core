@@ -70,11 +70,7 @@ Ext.define('portal.widgets.field.WMSCustomSearchField', {
             store = me.store,
             proxy = store.getProxy(),
             value = me.getValue();
-
-        if (value.length < 1) {
-            me.ClearClick();
-            return;
-        }
+        this._clearLayerStore(store); 
         proxy.extraParams[me.paramName] = value;
         store.loadPage(1);
         store.on('load',function(store, records, successful, eOpts){
