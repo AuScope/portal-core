@@ -12,14 +12,13 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
      */
     constructor : function(cfg) {
         var cswRecords = cfg.cswRecords;
-        var maxHeight = 400;
 
         //Set our default values (if they haven't been set)
         Ext.applyIf(cfg, {
             title: 'Service Information',
             autoDestroy : true,
             width : 800,
-            maxHeight : 400,
+            height : 400,
             minHeight : 100
         });
         
@@ -30,9 +29,7 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
                 html : '<p>This layer have been generated from a custom KML file</p>',
                 listeners : {
                     resize : function(win, width, height) {
-                        if (win.getHeight() > win.maxHeight) {
-                            win.setSize(width, win.maxHeight);
-                        }
+                        win.setSize(width, height);
                     }
                 }
             });
@@ -47,9 +44,7 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
                 }],
                 listeners : {
                     resize : function(win, width, height) {
-                        if (win.getHeight() > win.maxHeight) {
-                            win.setSize(width, win.maxHeight);
-                        }
+                        win.setSize(width, height);
                     }
                 }
             });
