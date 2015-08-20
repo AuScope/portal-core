@@ -87,7 +87,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         var rowLabelTitle = '<strong>Title:</strong>&nbsp;';
         
         // Probably could just use the type directly but I suspect it would be better to code it here
-        var rowLabelURL;
+        var rowLabelURL = '';
         switch(onlineResource.get('type')) {
     		case portal.csw.OnlineResource.WFS:
     			rowLabelURL = '<strong>WFS URL:</strong>&nbsp';
@@ -112,11 +112,11 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         }
 
         //Render our HTML
-        switch(onlineResource.get('type')) {
+        switch(onlineResource.get('type')) {        
+        
         case portal.csw.OnlineResource.WWW:
         case portal.csw.OnlineResource.FTP:
         case portal.csw.OnlineResource.IRIS:
-        case portal.csw.OnlineResource.UNSUPPORTED:
             return Ext.DomHelper.markup({
                 tag : 'div',
                 children : [{
@@ -167,8 +167,8 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 ]
             });
             
-        // WFS layers and any other not-specifically handled	
-        default:
+        // WFS layers
+        case portal.csw.OnlineResource.WFS:
             return Ext.DomHelper.markup({
                 tag : 'div',
                 children : [{ 
@@ -190,6 +190,28 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     	html : rowLabelFeatureType + name
                     }                    
                 ]
+            });
+        
+		// any other not-specifically handled resource type	
+        default:
+            return Ext.DomHelper.markup({
+                tag : 'div',
+                children : [{
+                    tag : 'b',
+                    html : name
+                },{
+                    tag : 'br'
+                },{
+                    tag : 'span',
+                    style : {
+                        color : '#555'
+                    },
+                    children : [{
+                        html : url
+                    },{
+                        html : description
+                    }]
+                }]
             });
         }
     },
