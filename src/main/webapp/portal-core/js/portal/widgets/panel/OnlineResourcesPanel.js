@@ -44,7 +44,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             menuDisabled: true,
             sortable: sortable,
             flex: 1,
-            renderer: Ext.bind(this._titleRenderer, this)
+            renderer: Ext.bind(this._detailsRenderer, this)
         },{
             dataIndex: 'onlineResource',
             width: 140,
@@ -76,13 +76,30 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         this.callParent(arguments);
     },
 
-    _titleRenderer : function(value, metaData, record, row, col, store, gridView) {
+    // renderer for the details of the resource (left hand column: name, url, etc)
+    _detailsRenderer : function(value, metaData, record, row, col, store, gridView) {
         var onlineResource = record.get('onlineResource');
         var cswRecord = record.get('cswRecord');
         var name = onlineResource.get('name');
-        var url = onlineResource.get('url');
+        var url = onlineResource.get('url');	
         var description = onlineResource.get('description');
 
+        var rowLabelTitle = '<strong>Title:</strong>&nbsp;';
+        
+        // Probably could just use the type directly but I suspect it would be better to code it here
+        var rowLabelURL;
+        switch(onlineResource.get('type')) {
+    		case portal.csw.OnlineResource.WFS:
+    			rowLabelURL = '<strong>WFS URL:</strong>&nbsp';
+    			break;
+    		case portal.csw.OnlineResource.WMS:
+    			rowLabelURL = '<strong>WMS URL:</strong>&nbsp';
+    			break;
+        }
+        
+        // WFS resources will have a feature type row
+        var rowLabelFeatureType = "<strong>Feature type:</strong>&nbsp";
+        
         //Ensure there is a title (even it is just '<Untitled>'
         if (!name || name.length === 0) {
             name = '&gt;Untitled&lt;';
@@ -120,25 +137,59 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     html : description
                 }]
             });
+
+        // Add a separate entry for WMS even though it is similar to 'default'. Maybe they will diverge.
+        case portal.csw.OnlineResource.WMS:
+            // we'll display a legend for WMS resources only if available from the getCapabilities
+            var legendURL = this.getLegendURL(url);
+        	var rowLabelLegend = '<strong>Legend:</strong>&nbsp';
+            
+            return Ext.DomHelper.markup({
+                tag : 'div',
+                children : [{ 
+                    	tag: 'span',
+                    	html : rowLabelTitle +  description
+                    },
+                    {
+                        tag : 'br'
+                    },  
+                    { 
+                    	tag: 'span',
+                    	html : rowLabelURL +  url
+                    },
+                    {
+                        tag : 'br'
+                    },
+                    { 
+                    	tag: 'span',
+                    	html : rowLabelLegend + legendURL
+                    }                    
+                ]
+            });
+            
+        // WFS layers and any other not-specifically handled	
         default:
             return Ext.DomHelper.markup({
                 tag : 'div',
-                children : [{
-                    tag : 'b',
-                    html : name
-                },{
-                    tag : 'br'
-                },{
-                    tag : 'span',
-                    style : {
-                        color : '#555'
+                children : [{ 
+                    	tag: 'span',
+                    	html : rowLabelTitle +  description 
                     },
-                    children : [{
-                        html : url
-                    },{
-                        html : description
-                    }]
-                }]
+                    {
+                        tag : 'br'
+                    },  
+                    { 
+                    	tag: 'span',
+                    	html : rowLabelURL +  url
+                    },
+                    {
+                        tag : 'br'
+                    },
+                    { 
+                    	tag: 'span',
+                    	html : rowLabelFeatureType + name
+                    }                    
+                ]
             });
         }
     },
@@ -254,8 +305,42 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         } else {
             return '?';
         }
+    },
+    
+    /**
+     * Gets the legend URL from the WCS getCapabilities endpoint
+     * TODO the code commented out below is my initial idea about how to do this.
+     * But the getCSWGetCapabilities method needs to be updated to support getting the legend 
+     * and when I started looking at that I found these other places where the function I 
+     * want may have been done. So I'd rather do that work under a new JIRA
+     */
+    getLegendURL : function(serviceURL) {
+    	
+        var legendURL = 'No Legend available according to the service getCapabilities';
+               
+//        
+//	    Ext.Ajax.request({
+//	        url: 'getCSWGetCapabilities.do',
+//	        scope : this,
+//	        params: {
+//	            cswServiceUrl: serviceURL
+//	        },
+//	        callback : function(options, success, response) {
+//	            //Check for errors
+//	            if (success) {
+//	            	legendURL = Ext.decode(response.responseText).data.legendURL;
+//	            }else{
+//	                Console.log('WARNING', 'Failure to connect to the registry. Check your URL and ensure it is in the right format e.g http://test/gn/srv/eng/csw');
+//	            }	           
+//	        }    
+//	    });
+	    
+	    return legendURL;
     }
+       
 });
+
+
 /**
  * Convenience class for representing the rows in the OnlineResourcesPanel
  */
