@@ -8,17 +8,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A known layer is a grouping of CSWRecords representing some form of logical
- * similarity that the registry couldn't provide.
+ * A known layer is a grouping of CSWRecords representing some form of logical similarity that the registry couldn't provide.
  *
- * eg - A grouping of all CSWRecords that represent Earth Resource ML
- * deployments
+ * eg - A grouping of all CSWRecords that represent Earth Resource ML deployments
  *
  * @author Josh Vote
  *
  */
 public class KnownLayer implements Serializable {
-	private final Log logger = LogFactory.getLog(getClass().getName());
+    private final Log logger = LogFactory.getLog(getClass().getName());
 
     /** auto generated version ID */
     private static final long serialVersionUID = 236524163668910226L;
@@ -67,8 +65,8 @@ public class KnownLayer implements Serializable {
 
     private int feature_count;
 
-	/** Set an order - defaults to name */
-	private int order;
+    /** Set an order - defaults to name */
+    private int order;
 
     /**
      * Creates a new KnownLayer
@@ -348,12 +346,12 @@ public class KnownLayer implements Serializable {
         this.feature_count = feature_count;
     }
 
-	public int getOrder() {
-		return order;
-	}
+    public int getOrder() {
+        return order;
+    }
 
-	public void setOrder(int order) {
-		this.order = order;
-		logger.info(String.format("setOrder - group: %s, name: %s, order: %d", getGroup(), getName(), getOrder()));
-	}
+    public void setOrder(int order) {
+        this.order = order;
+        logger.info(String.format("setOrder - group: %s, name: %s, order: %d", getGroup(), getName(), getOrder()));
+    }
 }
