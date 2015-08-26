@@ -44,6 +44,8 @@ public class ViewKnownLayerFactory {
 
         obj.put("feature_count", k.getFeature_count());
 
+        obj.put("order", k.getOrder());
+
         String group = "Others";
         if (k.getGroup() != null && !k.getGroup().isEmpty()) {
             group = k.getGroup();
