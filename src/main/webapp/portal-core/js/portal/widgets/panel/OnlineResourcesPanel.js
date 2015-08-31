@@ -371,7 +371,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     items : [{
                         xtype: 'image',
                         src: imageSource,
-                        alt : 'Legend: '+ description,
+                        alt : 'Legend: '+ description
                     }
                     ]   
                 }] 
