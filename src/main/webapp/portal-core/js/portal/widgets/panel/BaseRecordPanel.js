@@ -516,7 +516,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         }
 
         var popup = Ext.create('portal.widgets.window.CSWRecordDescriptionWindow', {
-            cswRecords : cswRecords
+            cswRecords : cswRecords,
+            parentRecord : record
         });
 
         popup.show();

@@ -7,19 +7,26 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
     extend : 'Ext.grid.Panel',
     alias : 'widget.onlineresourcepanel',
 
-    cswRecords : null, //Array of portal.csw.CSWRecord objects
-
+    //Array of portal.csw.CSWRecord objects
+    cswRecords : null, 
+    
+    // the parent record (ie the layer)
+    parentRecord : null,
+    
     /**
      * Accepts all Ext.grid.Panel options as well as
      * {
      *  cswRecords : single instance of array of portal.csw.CSWRecord objects
-     *  allow
+     *  parentRecord : the parent layer record, for accessing configuration. 
      * }
      */
     constructor : function(cfg) {
         // Ensures this.cswRecords is an array:
         this.cswRecords = [].concat(cfg.cswRecords);
 
+        // the Layer that includes the resources
+        this.parentRecord = cfg.parentRecord;
+        
         //Generate our flattened 'data items' list for rendering to the grid
         var dataItems = portal.widgets.panel.OnlineResourcePanelRow.parseCswRecords(this.cswRecords);
 
@@ -73,17 +80,21 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
               }
         });
 
+        // apply a click listener to 
+        
         this.callParent(arguments);
     },
 
     // renderer for the details of the resource (left hand column: name, url, etc)
-    _detailsRenderer : function(value, metaData, record, row, col, store, gridView) {
+    _detailsRenderer : function(value, metaData, record, parentRecord, row, col, store, gridView) {
         var onlineResource = record.get('onlineResource');
         var cswRecord = record.get('cswRecord');
+        var styleURL = this.parentRecord.get("proxyStyleUrl");
+        
         var name = onlineResource.get('name');
         var url = onlineResource.get('url');	
         var description = onlineResource.get('description');
-
+        var version = onlineResource.get('version');  
         var rowLabelTitle = '<strong>Title:</strong>&nbsp;';
         
         // Probably could just use the type directly but I suspect it would be better to code it here
@@ -140,9 +151,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
 
         // Add a separate entry for WMS even though it is similar to 'default'. Maybe they will diverge.
         case portal.csw.OnlineResource.WMS:
-            // we'll display a legend for WMS resources only if available from the getCapabilities
-            var legendURL = this.getLegendURL(url);
-        	var rowLabelLegend = '<strong>Legend:</strong>&nbsp';
+            // we'll display a legend for WMS resources only if available from the getCapabilities                        
             
             return Ext.DomHelper.markup({
                 tag : 'div',
@@ -161,13 +170,18 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                         tag : 'br'
                     },
                     { 
-                    	tag: 'span',
-                    	html : rowLabelLegend + legendURL
+                        tag: 'span',
+                    	html : 'Legend',
+                    	// pretend it to be a link. TODO get this to work in an extjs way
+                    	style : 'color:blue; text-decoration: underline',
+                    	onclick : 'portal.widgets.panel.OnlineResourcePanel.prototype._legendClickHandler(&quot;' 
+                    	    + url + '&quot;,&quot;' + name + '&quot;,&quot;' + version 
+                    	    + '&quot;,&quot;' + description + '&quot;,&quot;' + styleURL + '&quot;)'
                     }                    
                 ]
             });
             
-        // WFS layers
+        // WFS resources
         case portal.csw.OnlineResource.WFS:
             return Ext.DomHelper.markup({
                 tag : 'div',
@@ -215,7 +229,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             });
         }
     },
-
+    
     _previewRenderer : function(value, metaData, record, row, col, store, gridView) {
         var onlineRes = record.get('onlineResource');
         var cswRecord = record.get('cswRecord');
@@ -328,38 +342,54 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             return '?';
         }
     },
-    
+   
     /**
-     * Gets the legend URL from the WCS getCapabilities endpoint
-     * TODO the code commented out below is my initial idea about how to do this.
-     * But the getCSWGetCapabilities method needs to be updated to support getting the legend 
-     * and when I started looking at that I found these other places where the function I 
-     * want may have been done. So I'd rather do that work under a new JIRA
+     * Handler for clicking on the Legend element.
      */
-    getLegendURL : function(serviceURL) {
-    	
-        var legendURL = 'No Legend available according to the service getCapabilities';
-               
-//        
-//	    Ext.Ajax.request({
-//	        url: 'getCSWGetCapabilities.do',
-//	        scope : this,
-//	        params: {
-//	            cswServiceUrl: serviceURL
-//	        },
-//	        callback : function(options, success, response) {
-//	            //Check for errors
-//	            if (success) {
-//	            	legendURL = Ext.decode(response.responseText).data.legendURL;
-//	            }else{
-//	                Console.log('WARNING', 'Failure to connect to the registry. Check your URL and ensure it is in the right format e.g http://test/gn/srv/eng/csw');
-//	            }	           
-//	        }    
-//	    });
-	    
-	    return legendURL;
-    }
-       
+    _legendClickHandler : function(wmsURL, layerName, wmsVersion, description, styleURL) {
+        styleURL = styleURL || Ext.urlAppend("getDefaultStyle.do","layerName="+layerName);
+        
+        var win;
+        
+        // callback from the ajax function that gets the styleURL. Once we have that we have enough information 
+        // to display the legend.
+        var legendCallback = function(response){           
+            var imageSource = portal.layer.legend.wfs.WMSLegend.generateImageUrl(
+                    wmsURL, 
+                    layerName, 
+                    wmsVersion, 
+                    response.responseData); 
+                
+            this.win = Ext.create('Ext.window.Window', {
+                title       : 'Legend: '+ description,
+                layout      : 'fit',
+                width       : 200,
+                height      : 300,
+                items : [ {                        
+                    xtype: 'panel', 
+                    layout : 'column',
+                    items : [{
+                        xtype: 'image',
+                        src: imageSource,
+                        alt : 'Legend: '+ description,
+                    }
+                    ]   
+                }] 
+            });
+            return this.win.show();
+        };
+        
+        Ext.Ajax.request({
+            url: styleURL,
+            timeout : 180000,
+            scope : this,
+            success : legendCallback,
+            failure : function(response, opts) {
+                return;
+            }
+        });        
+      }
+  
 });
 
 

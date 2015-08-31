@@ -12,6 +12,7 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
      */
     constructor : function(cfg) {
         var cswRecords = cfg.cswRecords;
+        var parentRecord = cfg.parentRecord;
 
         //Set our default values (if they haven't been set)
         Ext.applyIf(cfg, {
@@ -40,7 +41,8 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
                 autoScroll : true,
                 items : [{
                     xtype : 'onlineresourcepanel',
-                    cswRecords : cswRecords
+                    cswRecords : cswRecords,
+                    parentRecord : parentRecord
                 }],
                 listeners : {
                     resize : function(win, width, height) {

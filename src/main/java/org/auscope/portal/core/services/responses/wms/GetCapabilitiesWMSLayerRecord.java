@@ -44,6 +44,15 @@ public interface GetCapabilitiesWMSLayerRecord {
     public String getAbstract() throws XPathExpressionException;
 
     /**
+     * Gets the legendURL.
+     *
+     * @return the legendURL
+     * @throws XPathExpressionException
+     *             the x path expression exception
+     */
+    public String getLegendURL() throws XPathExpressionException;
+    
+    /**
      * Gets the bounding box.
      *
      * @return the bounding box

@@ -48,7 +48,7 @@ Ext.define('portal.layer.legend.wfs.WMSLegend', {
 
     statics : {
 
-        generateImageUrl : function(wmsURL,wmsName,sld_body,styles) {
+        generateImageUrl : function(wmsURL,wmsName,wmsVersion,sld_body,styles) {
             var url = wmsURL;
             var last_char = url.charAt(url.length - 1);
             if ((last_char !== "?") && (last_char !== "&")) {
@@ -60,7 +60,7 @@ Ext.define('portal.layer.legend.wfs.WMSLegend', {
             }
             url += 'REQUEST=GetLegendGraphic';
             url += '&SERVICE=WMS';
-            url += '&VERSION=1.1.1';
+            url += '&VERSION='+ wmsVersion;
             url += '&FORMAT=image/png';
             url += '&BGCOLOR=0xFFFFFF';
             url += '&LAYER=' + escape(wmsName);
