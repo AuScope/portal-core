@@ -168,16 +168,18 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     },
                     {
                         tag : 'br'
-                    },
-                    { 
-                        tag: 'span',
-                    	html : 'Legend',
-                    	// pretend it to be a link. TODO get this to work in an extjs way
-                    	style : 'color:blue; text-decoration: underline',
-                    	onclick : 'portal.widgets.panel.OnlineResourcePanel.prototype._legendClickHandler(&quot;' 
-                    	    + url + '&quot;,&quot;' + name + '&quot;,&quot;' + version 
-                    	    + '&quot;,&quot;' + description + '&quot;,&quot;' + styleURL + '&quot;)'
-                    }                    
+                    }
+// TODO possibly remove this altogether once we are completely sure that the legend is not required here                    
+//                    ,
+//                    { 
+//                        tag: 'span',
+//                    	html : 'Legend',
+//                    	// pretend it to be a link. TODO get this to work in an extjs way
+//                    	style : 'color:blue; text-decoration: underline',
+//                    	onclick : 'portal.widgets.panel.OnlineResourcePanel.prototype._legendClickHandler(&quot;' 
+//                    	    + url + '&quot;,&quot;' + name + '&quot;,&quot;' + version 
+//                    	    + '&quot;,&quot;' + description + '&quot;,&quot;' + styleURL + '&quot;)'
+//                    }                    
                 ]
             });
             
