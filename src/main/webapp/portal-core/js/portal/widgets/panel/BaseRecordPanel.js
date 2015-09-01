@@ -138,14 +138,14 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
               generateContainer : function(record, parentElId) {                  
                   //VT:if this is deserialized, we don't need to regenerate the layer
                   if(record.get('layer')) {                        
-                      newLayer =  record.get('layer');                                           
+                      newLayer =  record.get('layer');                                    
                   }else if(record instanceof portal.csw.CSWRecord){                        
                       newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);                                                     
                   }else{
                       newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);                      
                   }           
-                  record.set('layer',newLayer);            
-                  var filterForm = newLayer ? newLayer.get('filterForm') : null;                          
+                  record.set('layer',newLayer);
+                  var filterForm = cfg.layerFactory.formFactory.getFilterForm(newLayer).form; //ALWAYS recreate filter form - see https://jira.csiro.au/browse/AUS-2588
                   filterForm.setLayer(newLayer);
                   var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);
                   
