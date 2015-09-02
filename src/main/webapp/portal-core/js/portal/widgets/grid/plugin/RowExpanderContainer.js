@@ -35,7 +35,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     alias: 'plugin.rowexpandercontainer',
     generateContainer : portal.util.UnimplementedFunction,
     allowMultipleOpen : false,
-    rowBodyTpl: '<div id="rowexpandercontainer-{id}"></div>', //overrides parent
+    rowBodyTpl: '<div id="{% this.owner.renderId(out, values); %}"></div>', //overrides parent
     storedHtml: null,   
     recordStatus: null,  
     generationRunning: false,
@@ -77,6 +77,24 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
     
     /**
+     * Every time we are forced to regenerate a component, ensure we get a unique DOM ID to render into. 
+     * Recycling the same nodes seems to result in some difficult to nail down ext errors.
+     * 
+     * see https://jira.csiro.au/browse/AUS-2588
+     */
+    renderId: function(out, values) {
+        var idCounter = 0;
+        if (this.recordStatus[values.id]) {
+            idCounter = this.recordStatus[values.id].idCounter - 1;
+        }
+
+        out.push('rowexpandercontainer-');
+        out.push(values.id);
+        out.push('-');
+        out.push(idCounter);
+    },
+    
+    /**
      * Returns record if it exists or null.
      * 
      * @param recordId String
@@ -103,7 +121,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             return false;
         }
         
-        var body = Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, el.parentNode);
+        var body = Ext.DomQuery.selectNode('div[id^=rowexpandercontainer-' + record.id  + '-]', el.parentNode);
         if (body.hasChildNodes()) {
             return false;
         }
@@ -137,7 +155,8 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         this.recordStatus[record.id] = {
             expanded : true,
-            container : null
+            container : this.recordStatus[record.id] ? this.recordStatus[record.id].container : null,
+            idCounter: this.recordStatus[record.id] ? this.recordStatus[record.id].idCounter : 1 
         };
         
         this.restoreRowContainer(record);
@@ -196,9 +215,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         this.generationRunning = true;
         if (this.restorationRequired(record)) {
-            var id = "rowexpandercontainer-" + record.id;
-            var container = this.generateContainer(record, id);
-            this.recordStatus[record.id].container = container;
+            var id = Ext.DomQuery.selectNode('div[id^=rowexpandercontainer-' + record.id  + '-]').id;
+            
+            this.recordStatus[record.id].container = this.generateContainer(record, id);
+            this.recordStatus[record.id].idCounter += 1
             this.recordStatus[record.id].container.updateLayout({
                 defer:false,
                 isRoot:false
