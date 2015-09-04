@@ -35,6 +35,9 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
 
     /** The legendURL. */
     private String legendURL;    
+
+    /** The metadataURL. */
+    private String metadataURL;   
     
     /** The bbox. */
     private CSWGeographicBoundingBox bbox;
@@ -68,6 +71,10 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
         String layerLegendURLExpression = "Style/LegendURL/OnlineResource";
         tempNode = (Node) xPath.evaluate(layerLegendURLExpression, node, XPathConstants.NODE);
         legendURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
+
+        String layerMetadataURLExpression = "MetadataURL";
+        tempNode = (Node) xPath.evaluate(layerMetadataURLExpression, node, XPathConstants.NODE);
+        metadataURL = tempNode != null ? tempNode.getTextContent() : "";
         
         String latLonBoundingBox = "EX_GeographicBoundingBox";
         tempNode = (Node) xPath.evaluate(latLonBoundingBox, node, XPathConstants.NODE);
@@ -144,6 +151,17 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      */
     public String getAbstract() throws XPathExpressionException {
         return description;
+    }
+    
+    /**
+     * Gets the metadataURL.
+     *
+     * @return the metadataURL
+     * @throws XPathExpressionException
+     *             the x path expression exception
+     */
+    public String getMetadataURL() throws XPathExpressionException {
+        return metadataURL;
     }
     
     /**
