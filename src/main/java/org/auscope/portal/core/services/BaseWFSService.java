@@ -231,10 +231,10 @@ public abstract class BaseWFSService {
             for (int i = 0; i < nameNodes.getLength(); i++) {
                 String typeName = nameNodes.item(i).getTextContent();
                 typeNames[i] = typeName;
-                if (abstractNodes.item(i) != null) {
+                if (abstractNodes.getLength() > i && abstractNodes.item(i) != null) {
                     featureAbstracts.put(typeName, abstractNodes.item(i).getTextContent());
                 }
-                if (metadataURLNodes.item(i) != null) {
+                if (metadataURLNodes.getLength() > i && metadataURLNodes.item(i) != null) {
                     metadataURLs.put(typeName, metadataURLNodes.item(i).getTextContent());
                 }
             }
