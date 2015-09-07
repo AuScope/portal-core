@@ -545,7 +545,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                         layerMetadataURLElement.update('No MetadataURL provided.');
                     }  else {    
                         var url = JSON.parse(response.responseText)["data"];
-                        layerMetadataURLElement.update('<a href="' + url + ' target="_blank">Full Metadata</a>');
+                        layerMetadataURLElement.update('<a href=\'' + url + '\' target=\'_blank\'>Full Metadata</a>');
                         layerMetadataURLElement.set({
                           // pretend it to be a link.
                           style : 'color:blue; text-decoration:underline; cursor:pointer'
