@@ -421,7 +421,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
           var requestURL;
           switch (type) {
               case portal.csw.OnlineResource.WFS:
-                  requestURL = 'getWFSLayerAbstract.do';
+                  requestURL = 'getWFSFeatureAbstract.do';
                   break;
               case portal.csw.OnlineResource.WMS:
                   requestURL = 'getWMSLayerAbstract.do';
