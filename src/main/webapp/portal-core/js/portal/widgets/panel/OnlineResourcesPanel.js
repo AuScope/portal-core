@@ -7,26 +7,19 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
     extend : 'Ext.grid.Panel',
     alias : 'widget.onlineresourcepanel',
 
-    //Array of portal.csw.CSWRecord objects
-    cswRecords : null, 
-    
-    // the parent record (ie the layer)
-    parentRecord : null,
-    
+    cswRecords : null, //Array of portal.csw.CSWRecord objects
+
     /**
      * Accepts all Ext.grid.Panel options as well as
      * {
      *  cswRecords : single instance of array of portal.csw.CSWRecord objects
-     *  parentRecord : the parent layer record, for accessing configuration. 
+     *  allow
      * }
      */
     constructor : function(cfg) {
         // Ensures this.cswRecords is an array:
         this.cswRecords = [].concat(cfg.cswRecords);
 
-        // the Layer that includes the resources
-        this.parentRecord = cfg.parentRecord;
-        
         //Generate our flattened 'data items' list for rendering to the grid
         var dataItems = portal.widgets.panel.OnlineResourcePanelRow.parseCswRecords(this.cswRecords);
 
@@ -50,24 +43,17 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             dataIndex: 'onlineResource',
             menuDisabled: true,
             sortable: sortable,
-            width: 480,
-            cellWrap : true,
-            renderer: Ext.bind(this._detailsRenderer, this)
-        },
-        {
+            flex: 1,
+            renderer: Ext.bind(this._titleRenderer, this)
+        },{
             dataIndex: 'onlineResource',
-            width: 170,
-            renderer: Ext.bind(this._linksRenderer, this)
-        },
-        {
-            dataIndex: 'onlineResource',
-            width: 150,
+            width: 140,
             renderer: Ext.bind(this._previewRenderer, this)
         }];
         if (cfg.columns) {
             columns = columns.concat(cfg.columns);
         }
-        
+
         //Build our configuration object
         Ext.apply(cfg, {
             selModel: cfg.selModel,
@@ -83,63 +69,20 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             hideHeaders : hideHeaders,
             columns: columns,
             viewConfig: {
-                enableTextSelection: true,
-                listeners: {
-                   
-                    // when the view is fully loaded we need to check for availability of some features and update the DOM                    
-                    viewready: function(view) {
-                        for (var i = 0; i < cfg.cswRecords.length; i++) {
-                            var onlineResources = cfg.cswRecords[i].data.onlineResources;
-                            for (var j = 0; j < onlineResources.length; j++) {
-                                var onlineResource = onlineResources[j]; 
-                                if (onlineResource.get('type') == portal.csw.OnlineResource.WFS
-                                        || onlineResource.get('type') == portal.csw.OnlineResource.WMS) {
-                                    var serviceUrl = onlineResource.get('url');
-                                    var version = onlineResource.get('version');  
-                                    var name = onlineResource.get('name');                                
-                                    var id = onlineResource.get('id');                                    
-                                    var description = onlineResource.get('description');   
-                                    portal.widgets.panel.OnlineResourcePanel.prototype.
-                                        _getLayerAbstractControlText(serviceUrl, version, name, id, description, onlineResource.get('type'));        
-                                    portal.widgets.panel.OnlineResourcePanel.prototype.
-                                        _getLayerMetadataURLControlText(serviceUrl, version, name, id, onlineResource.get('type'));    
-                                }
-                            }
-                        }
-                    }
-                }
+                enableTextSelection: true
               }
         });
 
         this.callParent(arguments);
     },
 
-    // renderer for the details of the resource (left hand column: name, url, etc)
-    _detailsRenderer : function(value, metaData, record, parentRecord, row, col, store, gridView) {
+    _titleRenderer : function(value, metaData, record, row, col, store, gridView) {
         var onlineResource = record.get('onlineResource');
         var cswRecord = record.get('cswRecord');
-        var styleURL = this.parentRecord.get("proxyStyleUrl");
-        
         var name = onlineResource.get('name');
-        var url = onlineResource.get('url');	
+        var url = onlineResource.get('url');
         var description = onlineResource.get('description');
-        var version = onlineResource.get('version');  
-        var rowLabelTitle = '<strong>Title:</strong>&nbsp;';
-        
-        // Probably could just use the type directly but I suspect it would be better to code it here
-        var rowLabelURL = '';
-        switch(onlineResource.get('type')) {
-    		case portal.csw.OnlineResource.WFS:
-    			rowLabelURL = '<strong>WFS URL:</strong>&nbsp';
-    			break;
-    		case portal.csw.OnlineResource.WMS:
-    			rowLabelURL = '<strong>WMS URL:</strong>&nbsp';
-    			break;
-        }
-        
-        // WFS resources will have a feature type row
-        var rowLabelFeatureType = "<strong>Feature type:</strong>&nbsp";
-        
+
         //Ensure there is a title (even it is just '<Untitled>'
         if (!name || name.length === 0) {
             name = '&gt;Untitled&lt;';
@@ -152,11 +95,11 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         }
 
         //Render our HTML
-        switch(onlineResource.get('type')) {        
-        
+        switch(onlineResource.get('type')) {
         case portal.csw.OnlineResource.WWW:
         case portal.csw.OnlineResource.FTP:
         case portal.csw.OnlineResource.IRIS:
+        case portal.csw.OnlineResource.UNSUPPORTED:
             return Ext.DomHelper.markup({
                 tag : 'div',
                 children : [{
@@ -177,54 +120,6 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                     html : description
                 }]
             });
-
-        // Add a separate entry for WMS even though it is similar to 'default'. Maybe they will diverge.
-        case portal.csw.OnlineResource.WMS:
-            return Ext.DomHelper.markup({
-                tag : 'div',
-                children : [{ 
-                    	tag: 'span',
-                    	html : rowLabelTitle +  description
-                    },
-                    {
-                        tag : 'br'
-                    },  
-                    { 
-                    	tag: 'span',
-                    	html : rowLabelURL +  url
-                    },
-                    {
-                        tag : 'br'
-                    }                 
-                ]
-            });
-            
-        // WFS resources
-        case portal.csw.OnlineResource.WFS:
-            return Ext.DomHelper.markup({
-                tag : 'div',
-                children : [{ 
-                    	tag: 'span',
-                    	html : rowLabelTitle +  description 
-                    },
-                    {
-                        tag : 'br'
-                    },  
-                    { 
-                    	tag: 'span',
-                    	html : rowLabelURL +  url
-                    },
-                    {
-                        tag : 'br'
-                    },
-                    { 
-                    	tag: 'span',
-                    	html : rowLabelFeatureType + name
-                    }                    
-                ]
-            });
-        
-		// any other not-specifically handled resource type	
         default:
             return Ext.DomHelper.markup({
                 tag : 'div',
@@ -247,45 +142,24 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             });
         }
     },
-    
-    _linksRenderer : function(value, metaData, record, row, col, store, gridView) {
-        var onlineResource = record.get('onlineResource');
+
+    _previewRenderer : function(value, metaData, record, row, col, store, gridView) {
+        var onlineRes = record.get('onlineResource');
         var cswRecord = record.get('cswRecord');
-        var url = onlineResource.get('url');
-        var name = onlineResource.get('name');
-        var id = onlineResource.get('id');
-        var version = onlineResource.get('version');  
-        var description = onlineResource.get('description');
-        
-        var layerAbstractSpanId = id.replace(/\W/g, '') + '_abstract';        
-        var fullMetadataSpanId = id.replace(/\W/g, '') + '_metadata';     
-        
-        switch(onlineResource.get('type')) {
+        var url = onlineRes.get('url');
+        var name = onlineRes.get('name');
+        var description = onlineRes.get('description');
+
+        //We preview types differently
+        switch(onlineRes.get('type')) {
         case portal.csw.OnlineResource.WFS:
-            var getFirst5FeaturesURL = url + this.internalURLSeperator(url) + 'SERVICE=WFS&REQUEST=GetFeature&VERSION=1.1.0&maxFeatures=5&typeName=' + name;
+            var getFeatureUrl = url + this.internalURLSeperator(url) + 'SERVICE=WFS&REQUEST=GetFeature&VERSION=1.1.0&maxFeatures=5&typeName=' + name;
             return Ext.DomHelper.markup({
-                tag : 'div',
-                children : [{
-                    tag: 'span', 
-                    id : layerAbstractSpanId,
-                    html : 'Loading Layer abstract...'
-                },
-                {tag : 'br'},
-                {
-                    tag : 'span',
-                    id : fullMetadataSpanId,
-                    html : 'Loading Full Metadata...'
-                },
-                {tag : 'br'},
-                {
-                    tag : 'a',
-                    target : '_blank',
-                    href : getFirst5FeaturesURL,
-                    html : 'First 5 features'
-                }
-                ]
+                tag : 'a',
+                target : '_blank',
+                href : getFeatureUrl,
+                html : 'First 5 features'
             });
-            
         case portal.csw.OnlineResource.WCS:
             var describeCoverageUrl = url + this.internalURLSeperator(url) + 'SERVICE=WCS&REQUEST=DescribeCoverage&VERSION=1.0.0&coverage=' + name;
             return Ext.DomHelper.markup({
@@ -308,38 +182,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
                 target : '_blank',
                 href : getObservations,
                 html : 'Observations for ' + description
-            });  
-        
-        case portal.csw.OnlineResource.WMS:
-            return Ext.DomHelper.markup({
-                tag : 'div',
-                children : [{
-                    tag: 'span',
-                    id : layerAbstractSpanId,
-                    html : 'Loading Layer abstract...'
-                },
-                {tag : 'br'},
-                {
-                    tag : 'span',
-                    id : fullMetadataSpanId,
-                    html : 'Loading Full Metadata...'
-                }
-                ]
             });
-              
-        default :
-            return '';
-        }
-    },
-
-    _previewRenderer : function(value, metaData, record, row, col, store, gridView) {
-        var onlineResource = record.get('onlineResource');
-        var cswRecord = record.get('cswRecord');
-        var url = onlineResource.get('url');
-        var name = onlineResource.get('name');
-        var description = onlineResource.get('description');
-        
-        switch(onlineResource.get('type')) {
         case portal.csw.OnlineResource.WMS:
 
             //To generate the url we will need to use the bounding box to make the request
@@ -393,7 +236,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
             return '';
         }
     },
-    
+
     /**
      * Given a URL this will determine the correct character that can be appended
      * so that a number of URL parameters can also be appended
@@ -411,166 +254,8 @@ Ext.define('portal.widgets.panel.OnlineResourcePanel', {
         } else {
             return '?';
         }
-    },
-      
-      /**
-       * Looks for a Layer abstract from the getCapabilities document. If found, returns a 'link'
-       * otherwise returns a text message stating that none was found
-       */
-      _getLayerAbstractControlText : function(serviceUrl, version, name, id, description, type) {
-          var requestURL;
-          switch (type) {
-              case portal.csw.OnlineResource.WFS:
-                  requestURL = 'getWFSFeatureAbstract.do';
-                  break;
-              case portal.csw.OnlineResource.WMS:
-                  requestURL = 'getWMSLayerAbstract.do';
-                  break; 
-              default: 
-                  // bad type passed in to this function
-                  return; 
-          }
-          // callback to set the text of the "Layer abstract" control
-          var getLayerAbstractCallback = function(options, success, response) {
-              var layerAbstractElement = Ext.get(id.replace(/\W/g, '') + '_abstract');
-              if (layerAbstractElement) {
-                  var jsonResponse;
-                  if (!success || !JSON.parse(response.responseText)["data"]) {                  
-                      layerAbstractElement.update('No abstract provided.');
-                  }  else {    
-                      layerAbstractElement.update('Layer abstract');
-                      layerAbstractElement.addListener('click', function(){
-                          portal.widgets.panel.OnlineResourcePanel.prototype._layerAbstractPopupHandler(serviceUrl, version, name, description, type);
-                      });
-                      layerAbstractElement.set({
-                        // pretend it to be a link.
-                        style : 'color:blue; text-decoration:underline; cursor:pointer'
-                    });
-                  }
-              }
-        };
-        
-        Ext.Ajax.request({
-            url : requestURL,
-            params : { 
-                serviceUrl : serviceUrl,
-                version : version,
-                name : name
-            },            
-            waitMsg: 'Fetching Layer abstract...',
-            callback : getLayerAbstractCallback 
-        });
-        
-      },
-      
-      /**
-       * Handler for clicking on the Layer Abstract element.
-       */
-      _layerAbstractPopupHandler : function(serviceUrl, version, name, description, type) {          
-          
-          var layerAbstractURL;
-          switch (type) {
-              case portal.csw.OnlineResource.WFS:
-                  layerAbstractURL = "getWFSFeatureAbstract.do";
-                  break;
-              case portal.csw.OnlineResource.WMS:
-                  layerAbstractURL = "getWMSLayerAbstract.do";
-                  break; 
-              default: 
-                  // bad type passed in to this function
-                  return; 
-          }
-                             
-          // callback from the ajax function that gets the abstract.
-          var layerAbstractPopupCallback = function(response){           
-                  
-              var data = JSON.parse(response.responseText)["data"];
-              
-              Ext.create('Ext.window.Window', {
-                  title : 'Abstract: '+ description,
-                  layout : 'fit',
-                  width : 600,
-                  height : 300,
-                  items : [ {                        
-                      xtype: 'panel', 
-                      layout : 'column',
-                      maxHeight : 300,
-                      autoScroll : true,
-                      items : [{
-                        html : data
-                      }]   
-                  }] 
-              }).show();
-          };
-          
-          Ext.Ajax.request({
-              url : layerAbstractURL,
-              params : { 
-                  serviceUrl : serviceUrl,
-                  version : version,
-                  name : name
-              }, 
-              timeout : 180000,
-              scope : this,
-              success : layerAbstractPopupCallback,
-              failure : function(response, opts) {
-                  return;
-              }
-          });        
-        },
-        
-        /**
-         * Looks for a MetadataURL element from the getCapabilities document. If found, returns a 'link'
-         * otherwise returns a text message stating that none was found
-         */
-        _getLayerMetadataURLControlText : function(serviceUrl, version, name, id, type) {
-            var requestURL;
-            switch (type) {
-                case portal.csw.OnlineResource.WFS:
-                    requestURL = 'getWFSFeatureMetadataURL.do';
-                    break;
-                case portal.csw.OnlineResource.WMS:
-                    requestURL = 'getWMSLayerMetadataURL.do';
-                    break; 
-                default: 
-                    // bad type passed in to this function
-                    return; 
-            }
-            // callback to set the text of the "Layer abstract" control
-            var getMetadataURLCallback = function(options, success, response) {
-                var layerMetadataURLElement = Ext.get(id.replace(/\W/g, '') + '_metadata');
-                if (layerMetadataURLElement) {
-                    var jsonResponse;
-                    if (!success || !JSON.parse(response.responseText)["data"]) {                  
-                        layerMetadataURLElement.update('No MetadataURL provided.');
-                    }  else {    
-                        var url = JSON.parse(response.responseText)["data"];
-                        layerMetadataURLElement.update('<a href=\'' + url + '\' target=\'_blank\'>Full Metadata</a>');
-                        layerMetadataURLElement.set({
-                          // pretend it to be a link.
-                          style : 'color:blue; text-decoration:underline; cursor:pointer'
-                      });
-                    }
-                }
-          };
-          
-          Ext.Ajax.request({
-              url : requestURL,
-              params : { 
-                  serviceUrl : serviceUrl,
-                  version : version,
-                  name : name
-              },            
-              waitMsg: 'Fetching Metadata URL...',
-              callback : getMetadataURLCallback 
-          });
-          
-        }        
-        
-  
+    }
 });
-
-
 /**
  * Convenience class for representing the rows in the OnlineResourcesPanel
  */

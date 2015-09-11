@@ -9,10 +9,13 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
      *  cfg can contain all the elements for Ext.Window along with the following additions
      *
      *  cswRecords - a CSWRecord or Array of CSWRecords - these will generate the contents of this window.
+     *  parentRecord - the parent layer
+     *  onlineResourcePanelType A specific subclass of online resource panel to use
      */
     constructor : function(cfg) {
         var cswRecords = cfg.cswRecords;
         var parentRecord = cfg.parentRecord;
+        var onlineResourcePanelType = cfg.onlineResourcePanelType || 'onlineresourcepanel';        
 
         //Set our default values (if they haven't been set)
         Ext.applyIf(cfg, {
@@ -40,7 +43,7 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
             Ext.apply(cfg, {
                 autoScroll : true,
                 items : [{
-                    xtype : 'onlineresourcepanel',
+                    xtype : onlineResourcePanelType,
                     cswRecords : cswRecords,
                     parentRecord : parentRecord
                 }],
