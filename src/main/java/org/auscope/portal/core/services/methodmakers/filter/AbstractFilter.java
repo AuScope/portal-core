@@ -49,7 +49,7 @@ public abstract class AbstractFilter implements IFilter {
     protected String generateGmlObjectIdFragment(String gmlId) {
         return String.format("<ogc:GmlObjectId gml:id=\"%1$s\"/>", gmlId);
     }
-    
+
     protected String generateFeatureIdFragment(String fid) {
     	return String.format("<ogc:FeatureId fid=\"%1$s\"/>", escapeLiteral(fid));
     }
@@ -191,7 +191,7 @@ public abstract class AbstractFilter implements IFilter {
            attributes.put("matchAction", matchActionToString(matchAction));
        }
 
-       return generatePropertyComparisonFragment("ogc:PropertyIsLike", attributes, propertyName, literal);
+       return generatePropertyComparisonFragment("ogc:PropertyIsLike", attributes, propertyName, literal,null);
    }
 
    /**
@@ -244,7 +244,7 @@ public abstract class AbstractFilter implements IFilter {
            attributes.put("matchAction", matchActionToString(matchAction));
        }
 
-       return generatePropertyComparisonFragment("ogc:PropertyIsEqualTo", attributes, propertyName, literal);
+       return generatePropertyComparisonFragment("ogc:PropertyIsEqualTo", attributes, propertyName, literal,null);
    }
 
    /**
@@ -280,7 +280,7 @@ public abstract class AbstractFilter implements IFilter {
        if (matchAction != null) {
            attributes.put("matchAction", matchActionToString(matchAction));
        }
-       return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThanOrEqualTo", attributes, propertyName, literal);
+       return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThanOrEqualTo", attributes, propertyName, literal,null);
    }
 
    /**
@@ -316,7 +316,7 @@ public abstract class AbstractFilter implements IFilter {
        if (matchAction != null) {
            attributes.put("matchAction", matchActionToString(matchAction));
        }
-       return generatePropertyComparisonFragment("ogc:PropertyIsNotEqualTo", attributes, propertyName, literal);
+       return generatePropertyComparisonFragment("ogc:PropertyIsNotEqualTo", attributes, propertyName, literal,null);
    }
 
    /**
@@ -330,8 +330,8 @@ public abstract class AbstractFilter implements IFilter {
     * @param literal The literal to compare against
     * @return
     */
-   protected String generatePropertyIsLessThan(String propertyName, String literal) {
-       return generatePropertyIsLessThan(propertyName, literal, false, null);
+   protected String generatePropertyIsLessThan(String propertyName, String literal,String function) {
+       return generatePropertyIsLessThan(propertyName, literal, false, null,function);
    }
 
    /**
@@ -343,7 +343,7 @@ public abstract class AbstractFilter implements IFilter {
     * @param literal The literal to compare against
     * @return
     */
-   protected String generatePropertyIsLessThan(String propertyName, String literal, Boolean matchCase, MatchActionType matchAction) {
+   protected String generatePropertyIsLessThan(String propertyName, String literal, Boolean matchCase, MatchActionType matchAction,String function) {
        HashMap<String, String> attributes = new HashMap<String, String>();
        if (matchCase != null) {
            attributes.put("matchCase", Boolean.toString(matchCase));
@@ -352,7 +352,7 @@ public abstract class AbstractFilter implements IFilter {
        if (matchAction != null) {
            attributes.put("matchAction", matchActionToString(matchAction));
        }
-       return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", attributes, propertyName, literal);
+       return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", attributes, propertyName, literal,function);
    }
 
    /**
@@ -366,8 +366,8 @@ public abstract class AbstractFilter implements IFilter {
     * @param literal The literal to compare against
     * @return
     */
-   protected String generatePropertyIsGreaterThan(String propertyName, String literal) {
-       return generatePropertyIsGreaterThan(propertyName, literal, false , null);
+   protected String generatePropertyIsGreaterThan(String propertyName, String literal,String function) {
+       return generatePropertyIsGreaterThan(propertyName, literal, false , null,function);
    }
 
    /**
@@ -379,7 +379,7 @@ public abstract class AbstractFilter implements IFilter {
     * @param literal The literal to compare against
     * @return
     */
-   protected String generatePropertyIsGreaterThan(String propertyName, String literal, Boolean matchCase, MatchActionType matchAction) {
+   protected String generatePropertyIsGreaterThan(String propertyName, String literal, Boolean matchCase, MatchActionType matchAction,String function) {
        HashMap<String, String> attributes = new HashMap<String, String>();
        if (matchCase != null) {
            attributes.put("matchCase", Boolean.toString(matchCase));
@@ -388,7 +388,7 @@ public abstract class AbstractFilter implements IFilter {
        if (matchAction != null) {
            attributes.put("matchAction", matchActionToString(matchAction));
        }
-       return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, literal);
+       return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, literal,function);
    }
 
    /**
@@ -424,7 +424,7 @@ public abstract class AbstractFilter implements IFilter {
        if (matchAction != null) {
            attributes.put("matchAction", matchActionToString(matchAction));
        }
-       return generatePropertyComparisonFragment("ogc:PropertyIsLessThanOrEqualTo", attributes, propertyName, literal);
+       return generatePropertyComparisonFragment("ogc:PropertyIsLessThanOrEqualTo", attributes, propertyName, literal,null);
    }
 
    /**
@@ -436,7 +436,7 @@ public abstract class AbstractFilter implements IFilter {
     * @return
     */
    protected String generatePropertyIsNull(String propertyName) {
-       return generatePropertyUnaryComparisonFragment("ogc:PropertyIsNull", propertyName);
+       return generatePropertyUnaryComparisonFragment("ogc:PropertyIsNull", propertyName,null);
    }
 
    /**
@@ -486,7 +486,18 @@ public abstract class AbstractFilter implements IFilter {
 
        return generateLogicalFragment("ogc:Filter", 1, attributes, filterContents);
    }
+   /**
+    *
+    * @param inputDate a string of date with format "yyyy-MM-dd HH:mm:ss"
+    * @return ogc:function name = "dateParse" ...
+    */
+   protected String generateFunctionDateParse(String inputDate) {
 
+       return String.format("<ogc:Function name=\"dateParse\"> "
+                           + "<ogc:Literal>yyyy-MM-dd HH:mm:ss</ogc:Literal>"
+                           + "<ogc:Literal>  %s </ogc:Literal> "
+                          + "</ogc:Function>", inputDate);
+   }
    /**
     *
     * @param filterContents A single filter fragment or an And/Or/Not element
@@ -525,18 +536,18 @@ public abstract class AbstractFilter implements IFilter {
 
        if (nonEmptyFragmentCount >= minParams)
            sb.append(String.format("</%1$s>", logicalComparison));
-       
-       String filter = sb.toString(); 
+
+       String filter = sb.toString();
        log.trace(filter);
-       
+
        return filter;
    }
 
-   private String generatePropertyUnaryComparisonFragment(String comparison, String propertyName) {
-       return generatePropertyComparisonFragment(comparison, null, propertyName, null);
+   private String generatePropertyUnaryComparisonFragment(String comparison, String propertyName,String function) {
+       return generatePropertyComparisonFragment(comparison, null, propertyName, null,function);
    }
 
-   private String generatePropertyComparisonFragment(String comparison, Map<String, String> attributes, String propertyName, String literal) {
+   private String generatePropertyComparisonFragment(String comparison, Map<String, String> attributes, String propertyName, String literal,String function) {
        StringBuilder sb = new StringBuilder();
 
        if (attributes == null) {
@@ -549,6 +560,9 @@ public abstract class AbstractFilter implements IFilter {
            sb.append(">");
        }
        sb.append(String.format("<ogc:PropertyName>%1$s</ogc:PropertyName>", propertyName));
+       if (function != null) {
+           sb.append(function);
+       }
        if (literal != null) {
            sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", escapeLiteral(literal)));
        }
