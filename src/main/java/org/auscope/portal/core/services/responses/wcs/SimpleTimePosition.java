@@ -9,11 +9,11 @@ import org.w3c.dom.Node;
 
 /**
  * Represents a simplified instance of the <gml:timePosition> element from a WCS DescribeCoverage response
+ * 
  * @author vot002
  *
  */
 public class SimpleTimePosition implements TemporalDomain {
-
 
     private static final long serialVersionUID = 1L;
     private Date timePosition;

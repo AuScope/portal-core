@@ -15,8 +15,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * Represents a single <CoverageOffering> element from a WCS DescribeCoverage response.
- * (This is only a limited subset of the actual DescribeCoverage response).
+ * Represents a single <CoverageOffering> element from a WCS DescribeCoverage response. (This is only a limited subset of the actual DescribeCoverage response).
  *
  * @author vot002
  * @version $Id$
@@ -64,8 +63,6 @@ public class DescribeCoverageRecord implements Serializable {
 
     private static final String XPATHALLCHILDREN = "./*";
 
-
-
     public DescribeCoverageRecord(String description, String name,
             String label, String[] supportedRequestCRSs,
             String[] supportedResponseCRSs, String[] supportedFormats,
@@ -89,7 +86,8 @@ public class DescribeCoverageRecord implements Serializable {
     /**
      * Gets the text content or empty string.
      *
-     * @param node the node
+     * @param node
+     *            the node
      * @return the text content or empty string
      */
     private String getTextContentOrEmptyString(Node node) {
@@ -103,9 +101,12 @@ public class DescribeCoverageRecord implements Serializable {
     /**
      * Generates a record from a given XML <CoverageOffering> Node.
      *
-     * @param node the node
-     * @param xPath Should be configured with the WCSNamespaceContext
-     * @throws Exception the exception
+     * @param node
+     *            the node
+     * @param xPath
+     *            Should be configured with the WCSNamespaceContext
+     * @throws Exception
+     *             the exception
      */
     private DescribeCoverageRecord(Node node, XPath xPath) throws Exception {
         Node tempNode = null;
@@ -123,7 +124,8 @@ public class DescribeCoverageRecord implements Serializable {
         //We will get a list of <requestResponseCRSs> OR a list
         //of <requestCRSs> and <responseCRSs>
         //Lets parse one or the other
-        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedCRSs/wcs:requestResponseCRSs", node, XPathConstants.NODESET);
+        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedCRSs/wcs:requestResponseCRSs", node,
+                XPathConstants.NODESET);
         if (tempNodeList.getLength() > 0) {
             supportedRequestCRSs = new String[tempNodeList.getLength()];
             supportedResponseCRSs = new String[tempNodeList.getLength()];
@@ -138,20 +140,22 @@ public class DescribeCoverageRecord implements Serializable {
                 supportedRequestCRSs[i] = getTextContentOrEmptyString(tempNodeList.item(i));
             }
 
-            tempNodeList = (NodeList) xPath.evaluate("wcs:supportedCRSs/wcs:responseCRSs", node, XPathConstants.NODESET);
+            tempNodeList = (NodeList) xPath
+                    .evaluate("wcs:supportedCRSs/wcs:responseCRSs", node, XPathConstants.NODESET);
             supportedResponseCRSs = new String[tempNodeList.getLength()];
             for (int i = 0; i < tempNodeList.getLength(); i++) {
                 supportedResponseCRSs[i] = getTextContentOrEmptyString(tempNodeList.item(i));
             }
         }
 
-        tempNodeList = (NodeList)xPath.evaluate("wcs:supportedFormats/wcs:formats", node, XPathConstants.NODESET);
+        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedFormats/wcs:formats", node, XPathConstants.NODESET);
         supportedFormats = new String[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             supportedFormats[i] = getTextContentOrEmptyString(tempNodeList.item(i));
         }
 
-        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedInterpolations/wcs:interpolationMethod", node, XPathConstants.NODESET);
+        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedInterpolations/wcs:interpolationMethod", node,
+                XPathConstants.NODESET);
         supportedInterpolations = new String[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             supportedInterpolations[i] = getTextContentOrEmptyString(tempNodeList.item(i));
@@ -163,7 +167,6 @@ public class DescribeCoverageRecord implements Serializable {
             nativeCRSs[i] = getTextContentOrEmptyString(tempNodeList.item(i));
         }
 
-
         //Parse our spatial domain (only grab gml:Envelopes and wcs:EnvelopeWithTimePeriod
         tempNode = (Node) xPath.evaluate("wcs:domainSet/wcs:spatialDomain", node, XPathConstants.NODE);
         if (tempNode != null) {
@@ -173,7 +176,7 @@ public class DescribeCoverageRecord implements Serializable {
         //Get the temporal range (which is optional)
         tempNode = (Node) xPath.evaluate("wcs:domainSet/wcs:temporalDomain", node, XPathConstants.NODE);
         if (tempNode != null) {
-            tempNodeList = (NodeList)xPath.evaluate(XPATHALLCHILDREN, tempNode, XPathConstants.NODESET);
+            tempNodeList = (NodeList) xPath.evaluate(XPATHALLCHILDREN, tempNode, XPathConstants.NODESET);
             temporalDomain = new TemporalDomain[tempNodeList.getLength()];
             for (int i = 0; i < tempNodeList.getLength(); i++) {
                 temporalDomain[i] = TemporalDomainFactory.parseFromNode(tempNodeList.item(i));
@@ -239,8 +242,8 @@ public class DescribeCoverageRecord implements Serializable {
     }
 
     /**
-     * Gets the Unordered list of identifiers of the CRSs in which the server stores this data,
-     * that is, the CRS(s) in which data can be obtained without any distortion or degradation.
+     * Gets the Unordered list of identifiers of the CRSs in which the server stores this data, that is, the CRS(s) in which data can be obtained without any
+     * distortion or degradation.
      *
      * Can be empty
      *
@@ -255,17 +258,11 @@ public class DescribeCoverageRecord implements Serializable {
      *
      * Can be empty in which case assume it is "nearest neighbour"
      *
-     * Possible values...
-     * + nearest neighbor (default)
+     * Possible values... + nearest neighbor (default)
      *
-     * These are defined in ISO 19123 (Schema for Coverage Geometry and Functions), Annex B.
-     * + bilinear
-     * + bicubic
-     * + lost area
-     * + barycentric
+     * These are defined in ISO 19123 (Schema for Coverage Geometry and Functions), Annex B. + bilinear + bicubic + lost area + barycentric
      *
-     * No interpolation is available; requests must be for locations that are among the original domain locations.
-     * +none
+     * No interpolation is available; requests must be for locations that are among the original domain locations. +none
      *
      * @return the supported interpolations
      */
@@ -307,9 +304,11 @@ public class DescribeCoverageRecord implements Serializable {
     /**
      * Parses the XML response from a DescribeCoverage request into a list of DescribeCoverageRecords.
      *
-     * @param doc the input xml
+     * @param doc
+     *            the input xml
      * @return the describe coverage record[]
-     * @throws Exception the exception
+     * @throws Exception
+     *             the exception
      */
     public static DescribeCoverageRecord[] parseRecords(Document doc) throws Exception {
         //This is to make sure we actually receive a valid response
@@ -323,7 +322,7 @@ public class DescribeCoverageRecord implements Serializable {
         NodeList nodes = (NodeList) xPath.evaluate(serviceTitleExpression, doc, XPathConstants.NODESET);
 
         DescribeCoverageRecord[] records = new DescribeCoverageRecord[nodes.getLength()];
-        for (int i = 0; i < nodes.getLength(); i++ ) {
+        for (int i = 0; i < nodes.getLength(); i++) {
             records[i] = new DescribeCoverageRecord(nodes.item(i), xPath);
         }
 

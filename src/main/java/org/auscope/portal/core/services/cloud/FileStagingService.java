@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
  * A service class for handling file uploads and storing them in a local staging directory
+ * 
  * @author Josh Vote
  *
  */
@@ -36,13 +37,15 @@ public class FileStagingService {
 
     /**
      * Utility for returning a File handle to the actual file on HDD for a given job + fileName
+     * 
      * @param job
      * @param fileName
      * @return
      */
     private File getFile(StagedFileOwner job, String fileName) {
         if (fileName.contains(File.pathSeparator) || fileName.contains(File.separator)) {
-            throw new IllegalArgumentException("fileName cannot include " + File.pathSeparator + " or " + File.separator);
+            throw new IllegalArgumentException("fileName cannot include " + File.pathSeparator + " or "
+                    + File.separator);
         }
 
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
@@ -52,8 +55,8 @@ public class FileStagingService {
     /**
      * Given 2 path components this function will concatenate them together.
      *
-     * The result will ensure that you will not end up with 2 consecutive File.pathSeperator
-     * characters at the place of the concatenation.
+     * The result will ensure that you will not end up with 2 consecutive File.pathSeperator characters at the place of the concatenation.
+     * 
      * @param p1
      * @param p2
      * @return
@@ -62,7 +65,7 @@ public class FileStagingService {
         if (p1.endsWith(File.separator) && p2.startsWith(File.separator)) {
             return p1 + p2.substring(1);
         } else if ((!p1.endsWith(File.separator) && p2.startsWith(File.separator)) ||
-                    (p1.endsWith(File.separator) && !p2.startsWith(File.separator))) {
+                (p1.endsWith(File.separator) && !p2.startsWith(File.separator))) {
             return p1 + p2;
         } else {
             return p1 + File.separator + p2;
@@ -71,6 +74,7 @@ public class FileStagingService {
 
     /**
      * Generates a base folder name based on job ID. Basic attempt is made to sanitise input, No guarantees are made for security.
+     * 
      * @param job
      * @return
      */
@@ -79,9 +83,10 @@ public class FileStagingService {
     }
 
     /**
-     * Deletes the entire job stage in directory, returns true on success.
-     * It silently fails and log the failure message to error log if the operation failed.
-     * @param job Must have its fileStorageId parameter set
+     * Deletes the entire job stage in directory, returns true on success. It silently fails and log the failure message to error log if the operation failed.
+     * 
+     * @param job
+     *            Must have its fileStorageId parameter set
      */
     public boolean deleteStageInDirectory(StagedFileOwner job) {
         boolean status = false;
@@ -100,7 +105,9 @@ public class FileStagingService {
 
     /**
      * Deletes a specific file from the job stage in directory.
-     * @param job Must have its fileStorageId parameter set
+     * 
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @param fileName
      * @return
      */
@@ -115,13 +122,15 @@ public class FileStagingService {
     }
 
     /**
-     * Renames a specific file in the job stage in directory. If currentFileName DNE, this will return false.
-     * If newFileName exists, it will be deleted first. if currentFileName equals newFileName this will return
-     * true and perform no operations.
+     * Renames a specific file in the job stage in directory. If currentFileName DNE, this will return false. If newFileName exists, it will be deleted first.
+     * if currentFileName equals newFileName this will return true and perform no operations.
      *
-     * @param job Must have its fileStorageId parameter set
-     * @param currentFileName The file to be renamed
-     * @param newFileName The new file name (if it exists, it will be overwritten)
+     * @param job
+     *            Must have its fileStorageId parameter set
+     * @param currentFileName
+     *            The file to be renamed
+     * @param newFileName
+     *            The new file name (if it exists, it will be overwritten)
      * @return
      */
     public boolean renameStageInFile(StagedFileOwner job, String currentFileName, String newFileName) {
@@ -148,8 +157,10 @@ public class FileStagingService {
     /**
      * Returns true if the specified file in the job staging area exists. False otherwise.
      *
-     * @param job Must have its fileStorageId parameter set
-     * @param currentFileName The file to be checked
+     * @param job
+     *            Must have its fileStorageId parameter set
+     * @param currentFileName
+     *            The file to be checked
      * @return
      */
     public boolean stageInFileExists(StagedFileOwner job, String fileName) {
@@ -159,9 +170,11 @@ public class FileStagingService {
     /**
      * Given a job see if a folder for the internal staging area has been created.
      *
-     * @param job Must have its fileStorageId parameter set
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @return
-     * @throws IOException If the directory creation fails
+     * @throws IOException
+     *             If the directory creation fails
      */
     public boolean stageInDirectoryExists(StagedFileOwner job) throws PortalServiceException {
         String jobInputDir = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
@@ -171,9 +184,11 @@ public class FileStagingService {
     /**
      * Given a job create a folder that is unique to that job in the internal staging area.
      *
-     * @param job Must have its fileStorageId parameter set
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @return
-     * @throws IOException If the directory creation fails
+     * @throws IOException
+     *             If the directory creation fails
      */
     public void generateStageInDirectory(StagedFileOwner job) throws PortalServiceException {
         String jobInputDir = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
@@ -188,7 +203,9 @@ public class FileStagingService {
 
     /**
      * Lists every file in the specified job's stage in directory
-     * @param job Must have its fileStorageId parameter set
+     * 
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @return
      * @throws IOException
      */
@@ -212,11 +229,11 @@ public class FileStagingService {
         return stagedFiles;
     }
 
-
     /**
      * Opens the specified staging file for reading
      *
      * The returned stream must be closed when finished with
+     * 
      * @param stagedFile
      * @return
      * @throws PortalServiceException
@@ -225,12 +242,13 @@ public class FileStagingService {
         return this.readFile(stagedFile.getOwner(), stagedFile.getName());
     }
 
-
     /**
      * Opens the specified staging file for reading
      *
      * The returned stream must be closed when finished with
-     * @param job Must have its fileStorageId parameter set
+     * 
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @param fileName
      * @return the staging file input stream if the file exists otherwise null
      */
@@ -251,6 +269,7 @@ public class FileStagingService {
      * Opens the specified staging file for writing. If it DNE, it will be created
      *
      * The returned stream must be closed when finished with
+     * 
      * @param stagedFile
      * @return
      * @throws PortalServiceException
@@ -263,11 +282,12 @@ public class FileStagingService {
      * Opens the specified staging file for writing, If it DNE, it will be created
      *
      * The returned stream must be closed when finished with
+     * 
      * @param job
      * @param fileName
      * @return
      */
-    public OutputStream writeFile(StagedFileOwner job, String fileName) throws PortalServiceException{
+    public OutputStream writeFile(StagedFileOwner job, String fileName) throws PortalServiceException {
         return writeFile(job, fileName, false);
     }
 
@@ -276,9 +296,11 @@ public class FileStagingService {
      *
      * The returned stream must be closed when finished with
      *
-     * @param job Must have its fileStorageId parameter set
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @param fileName
-     * @param append Should the file be overwritten or appended to. true to append, false to overwrite
+     * @param append
+     *            Should the file be overwritten or appended to. true to append, false to overwrite
      * @return
      */
     public OutputStream writeFile(StagedFileOwner job, String fileName, boolean append) throws PortalServiceException {
@@ -290,19 +312,17 @@ public class FileStagingService {
         }
     }
 
-
-	/**
-	 * Upload files to the staging directory of the specified job.
-	 * Helper function for code deduplication
-	 *
-	 * @param job
-	 * @param f
-	 * @return
-	 * @throws PortalServiceException
-	 */
-	private StagedFile fileUploadHelper(StagedFileOwner job, MultipartFile f)
-			throws PortalServiceException {
-		String originalFileName = f.getOriginalFilename();
+    /**
+     * Upload files to the staging directory of the specified job. Helper function for code deduplication
+     *
+     * @param job
+     * @param f
+     * @return
+     * @throws PortalServiceException
+     */
+    private StagedFile fileUploadHelper(StagedFileOwner job, MultipartFile f)
+            throws PortalServiceException {
+        String originalFileName = f.getOriginalFilename();
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
         String destinationPath = pathConcat(directory, originalFileName);
         logger.debug("Saving uploaded file to " + destinationPath);
@@ -321,20 +341,20 @@ public class FileStagingService {
         }
 
         return new StagedFile(job, originalFileName, destination);
-	}
-
+    }
 
     /**
-     * Given a MultipartHttpServletRequest with an internal file parameter, write that
-     * file to the staging directory of the specified job
+     * Given a MultipartHttpServletRequest with an internal file parameter, write that file to the staging directory of the specified job
      *
      * returns a FileInfo object describing the file on the file system
      *
-     * @param job Must have its fileStorageId parameter set
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @param request
      * @throws PortalServiceException
      */
-    public StagedFile handleFileUpload(StagedFileOwner job, MultipartHttpServletRequest request) throws PortalServiceException {
+    public StagedFile handleFileUpload(StagedFileOwner job, MultipartHttpServletRequest request)
+            throws PortalServiceException {
         MultipartFile f = request.getFile("file");
         if (f == null) {
             throw new PortalServiceException("No file parameter provided.");
@@ -343,47 +363,44 @@ public class FileStagingService {
         return fileUploadHelper(job, f);
     }
 
-
     /**
-     * Given a MultipartHttpServletRequest with an internal file parameter for several files, write that
-     * files to the staging directory of the specified job
+     * Given a MultipartHttpServletRequest with an internal file parameter for several files, write that files to the staging directory of the specified job
      *
      * returns a List of FileInfo objects describing the file on the file system
      *
-     * @param job Must have its fileStorageId parameter set
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @param request
      * @throws IOException
      */
-    public List<StagedFile> handleMultiFileUpload(StagedFileOwner job, MultipartHttpServletRequest request) throws PortalServiceException {
+    public List<StagedFile> handleMultiFileUpload(StagedFileOwner job, MultipartHttpServletRequest request)
+            throws PortalServiceException {
 
-    	List<StagedFile> result = new ArrayList<StagedFile>();
+        List<StagedFile> result = new ArrayList<StagedFile>();
 
         List<MultipartFile> files = request.getFiles("file");
         if (files == null) {
             throw new PortalServiceException("No file parameter provided.");
         }
 
-        if(null != files && files.size() > 0) {
+        if (null != files && files.size() > 0) {
             for (MultipartFile multipartFile : files) {
                 result.add(fileUploadHelper(job, multipartFile));
             }
         } else {
-             throw new PortalServiceException("No file parameter provided.");
+            throw new PortalServiceException("No file parameter provided.");
         }
 
         return result;
     }
 
-
-
     /**
-     * This function will attempt to download fileName from job's staging directory by writing
-     * directly to the output stream of response.
+     * This function will attempt to download fileName from job's staging directory by writing directly to the output stream of response.
      *
-     * response will have its internal outputStream directly accessed and written to (if the internal
-     * file request is successful).
+     * response will have its internal outputStream directly accessed and written to (if the internal file request is successful).
      *
-     * @param stagedFile Must have owner and name set
+     * @param stagedFile
+     *            Must have owner and name set
      * @throws IOException
      */
     public void handleFileDownload(StagedFile stagedFile, HttpServletResponse response) throws PortalServiceException {
@@ -391,16 +408,16 @@ public class FileStagingService {
     }
 
     /**
-     * This function will attempt to download fileName from job's staging directory by writing
-     * directly to the output stream of response.
+     * This function will attempt to download fileName from job's staging directory by writing directly to the output stream of response.
      *
-     * response will have its internal outputStream directly accessed and written to (if the internal
-     * file request is successful).
+     * response will have its internal outputStream directly accessed and written to (if the internal file request is successful).
      *
-     * @param job Must have its fileStorageId parameter set
+     * @param job
+     *            Must have its fileStorageId parameter set
      * @throws IOException
      */
-    public void handleFileDownload(StagedFileOwner job, String fileName, HttpServletResponse response) throws PortalServiceException {
+    public void handleFileDownload(StagedFileOwner job, String fileName, HttpServletResponse response)
+            throws PortalServiceException {
         String directory = pathConcat(stagingInformation.getStageInDirectory(), getBaseFolderForJob(job));
         String filePath = pathConcat(directory, fileName);
 
@@ -409,13 +426,13 @@ public class FileStagingService {
         //Simple sanity check
         File f = new File(filePath);
         if (!f.canRead()) {
-            throw new PortalServiceException("File "+f.getPath()+" not readable!");
+            throw new PortalServiceException("File " + f.getPath() + " not readable!");
         }
 
         //Start configuring our response for a download stream
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition",
-                "attachment; filename=\""+fileName+"\"");
+                "attachment; filename=\"" + fileName + "\"");
 
         //Then push all data down
         byte[] buffer = new byte[4096];

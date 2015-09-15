@@ -25,7 +25,6 @@ import org.auscope.portal.core.services.responses.csw.CSWRecordTransformerFactor
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 
-
 /**
  * Provides methods for accessing filtered data from multiple CSW services
  *
@@ -41,12 +40,14 @@ public class CSWFilterService {
     private CSWRecordTransformerFactory transformerFactory;
 
     /**
-     * Creates a new instance of a CSWFilterService. This constructor is normally autowired
-     * by the spring framework.
+     * Creates a new instance of a CSWFilterService. This constructor is normally autowired by the spring framework.
      *
-     * @param executor A thread executor that will be used to manage multiple simultaneous CSW requests
-     * @param serviceCaller Will be involved in actually making a HTTP request
-     * @param cswServiceList Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
+     * @param executor
+     *            A thread executor that will be used to manage multiple simultaneous CSW requests
+     * @param serviceCaller
+     *            Will be involved in actually making a HTTP request
+     * @param cswServiceList
+     *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
      * @throws Exception
      */
     public CSWFilterService(Executor executor,
@@ -56,12 +57,14 @@ public class CSWFilterService {
     }
 
     /**
-     * Creates a new instance of a CSWFilterService. This constructor is normally autowired
-     * by the spring framework.
+     * Creates a new instance of a CSWFilterService. This constructor is normally autowired by the spring framework.
      *
-     * @param executor A thread executor that will be used to manage multiple simultaneous CSW requests
-     * @param serviceCaller Will be involved in actually making a HTTP request
-     * @param cswServiceList Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
+     * @param executor
+     *            A thread executor that will be used to manage multiple simultaneous CSW requests
+     * @param serviceCaller
+     *            Will be involved in actually making a HTTP request
+     * @param cswServiceList
+     *            Must be an untyped array of CSWServiceItem objects (for bean autowiring) representing CSW URL endpoints
      * @throws Exception
      */
     public CSWFilterService(Executor executor,
@@ -79,21 +82,30 @@ public class CSWFilterService {
 
     /**
      * Makes a CSW request to the specified service
-     * @param serviceItem The CSW service to call
-     * @param filter An optional filter to apply to each of the subset requests
-     * @param maxRecords The max records PER SERVICE that will be requested
-     * @param resultType The type of response that is required from the CSW
-     * @param startIndex The first record index to start filtering from (for pagination). Set to 1 for the first record
+     * 
+     * @param serviceItem
+     *            The CSW service to call
+     * @param filter
+     *            An optional filter to apply to each of the subset requests
+     * @param maxRecords
+     *            The max records PER SERVICE that will be requested
+     * @param resultType
+     *            The type of response that is required from the CSW
+     * @param startIndex
+     *            The first record index to start filtering from (for pagination). Set to 1 for the first record
      * @return
      * @throws Exception
      */
-    private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws PortalServiceException {
-        log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
+    private CSWGetRecordResponse callSingleService(CSWServiceItem serviceItem, CSWGetDataRecordsFilter filter,
+            int maxRecords, int startIndex, ResultType resultType) throws PortalServiceException {
+        log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem,
+                maxRecords, resultType, filter));
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
         HttpRequestBase method = null;
 
         try {
-            method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,null);
+            method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,
+                    null);
             InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
 
@@ -104,34 +116,41 @@ public class CSWFilterService {
     }
 
     /**
-     * Generates a DistributedHTTPServiceCaller initialised to each and every
-     * serviceUrl in the cswServiceList and begins making CSW requests to each of them.
+     * Generates a DistributedHTTPServiceCaller initialised to each and every serviceUrl in the cswServiceList and begins making CSW requests to each of them.
      *
      * The DistributedHTTPServiceCaller will be given 'Additional Information' in the form of CSWServiceItem objects
      *
-     * @param filter An optional filter to apply to each of the subset requests
-     * @param maxRecords The max records PER SERVICE that will be requested
-     * @param resultType The type of response that is required from the CSW
-     * @param startIndex The first record index to start filtering from (for pagination). Set to 1 for the first record
+     * @param filter
+     *            An optional filter to apply to each of the subset requests
+     * @param maxRecords
+     *            The max records PER SERVICE that will be requested
+     * @param resultType
+     *            The type of response that is required from the CSW
+     * @param startIndex
+     *            The first record index to start filtering from (for pagination). Set to 1 for the first record
      * @return
      */
-    private DistributedHTTPServiceCaller callAllServices(CSWGetDataRecordsFilter filter, int maxRecords, int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
+    private DistributedHTTPServiceCaller callAllServices(CSWGetDataRecordsFilter filter, int maxRecords,
+            int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
         List<HttpRequestBase> requestMethods = new ArrayList<HttpRequestBase>();
         List<Object> additionalInfo = new ArrayList<Object>();
 
         //Create various HTTP Methods for making each and every CSW request
         for (CSWServiceItem serviceItem : cswServiceList) {
             try {
-                log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem, maxRecords, resultType, filter));
+                log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'",
+                        serviceItem, maxRecords, resultType, filter));
                 CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-                requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,null));
+                requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords,
+                        startIndex, null));
                 additionalInfo.add(serviceItem);
             } catch (UnsupportedEncodingException ex) {
-                log.warn(String.format("Error generating HTTP method for serviceItem '%1$s'",serviceItem), ex);
+                log.warn(String.format("Error generating HTTP method for serviceItem '%1$s'", serviceItem), ex);
             }
         }
 
-        DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(requestMethods, additionalInfo, serviceCaller);
+        DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(requestMethods, additionalInfo,
+                serviceCaller);
         dsc.beginCallingServices(executor);
 
         return dsc;
@@ -139,6 +158,7 @@ public class CSWFilterService {
 
     /**
      * Returns the list of internal CSWServiceItems that powers this service
+     * 
      * @return
      */
     public CSWServiceItem[] getCSWServiceItems() {
@@ -146,19 +166,22 @@ public class CSWFilterService {
     }
 
     /**
-     * Makes a request to each and every CSW service (on seperate threads) before parsing the responses
-     * and collating them into a response array.
+     * Makes a request to each and every CSW service (on seperate threads) before parsing the responses and collating them into a response array.
      *
      * Any exceptions thrown by the service calls (on seperate threads) will be rethrown as DistributedHTTPServiceCallerException
      *
      * Any exceptions generated during the parsing of a CSWResponse will be thrown as per normal
      *
-     * @param filter An optional filter to apply to each of the subset requests
-     * @param maxRecords The max records PER SERVICE that will be requested
-     * @throws DistributedHTTPServiceCallerException If an underlying service call returns an exception
+     * @param filter
+     *            An optional filter to apply to each of the subset requests
+     * @param maxRecords
+     *            The max records PER SERVICE that will be requested
+     * @throws DistributedHTTPServiceCallerException
+     *             If an underlying service call returns an exception
      * @return
      */
-    public CSWGetRecordResponse[] getFilteredRecords(CSWGetDataRecordsFilter filter, int maxRecords) throws PortalServiceException {
+    public CSWGetRecordResponse[] getFilteredRecords(CSWGetDataRecordsFilter filter, int maxRecords)
+            throws PortalServiceException {
         List<CSWGetRecordResponse> responses = new ArrayList<CSWGetRecordResponse>();
 
         //Call our services and start iterating the responses
@@ -183,12 +206,16 @@ public class CSWFilterService {
      *
      * If serviceId does not match an existing CSWService an exception will be thrown
      *
-     * @param filter An optional filter to apply to each of the subset requests
-     * @param maxRecords The max records PER SERVICE that will be requested
-     * @param startPosition 1 based index to begin searching from
+     * @param filter
+     *            An optional filter to apply to each of the subset requests
+     * @param maxRecords
+     *            The max records PER SERVICE that will be requested
+     * @param startPosition
+     *            1 based index to begin searching from
      * @return
      */
-    public CSWGetRecordResponse getFilteredRecords(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords, int startPosition) throws Exception {
+    public CSWGetRecordResponse getFilteredRecords(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords,
+            int startPosition) throws Exception {
         //Lookup the service to call
         CSWServiceItem cswServiceItem = null;
         for (CSWServiceItem serviceItem : cswServiceList) {
@@ -208,32 +235,40 @@ public class CSWFilterService {
      *
      * If serviceId does not match an existing CSWService an exception will be thrown
      *
-     * @param filter An optional filter to apply to each of the subset requests
-     * @param maxRecords The max records PER SERVICE that will be requested
-     * @param startPosition 1 based index to begin searching from
+     * @param filter
+     *            An optional filter to apply to each of the subset requests
+     * @param maxRecords
+     *            The max records PER SERVICE that will be requested
+     * @param startPosition
+     *            1 based index to begin searching from
      * @return
      */
-    public CSWGetRecordResponse getFilteredRecords(CustomRegistryInt registry, CSWGetDataRecordsFilter filter, int maxRecords, int startPosition) throws Exception {
+    public CSWGetRecordResponse getFilteredRecords(CustomRegistryInt registry, CSWGetDataRecordsFilter filter,
+            int maxRecords, int startPosition) throws Exception {
         if (registry == null) {
             throw new IllegalArgumentException(String.format("CustomRegistry required"));
         }
         //Lookup the service to call
-        CSWServiceItem cswServiceItem = new CSWServiceItem(registry.getId(),registry.getServiceUrl(),registry.getRecordInformationUrl(),registry.getTitle());
+        CSWServiceItem cswServiceItem = new CSWServiceItem(registry.getId(), registry.getServiceUrl(),
+                registry.getRecordInformationUrl(), registry.getTitle());
 
         return callSingleService(cswServiceItem, filter, maxRecords, startPosition, ResultType.Results);
     }
 
     /**
-     * Makes a request to each and every CSW service (on seperate threads) before parsing the responses
-     * and returning the total count of records that will match the specified filter.
+     * Makes a request to each and every CSW service (on seperate threads) before parsing the responses and returning the total count of records that will match
+     * the specified filter.
      *
      * Any exceptions thrown by the service calls (on seperate threads) will be rethrown as DistributedHTTPServiceCallerException
      *
      * Any exceptions generated during the parsing of a CSWResponse will be thrown as per normal
      *
-     * @param filter An optional filter to apply to each of the subset requests
-     * @param maxRecords The max records PER SERVICE that will be requested
-     * @throws DistributedHTTPServiceCallerException If an underlying service call returns an exception
+     * @param filter
+     *            An optional filter to apply to each of the subset requests
+     * @param maxRecords
+     *            The max records PER SERVICE that will be requested
+     * @throws DistributedHTTPServiceCallerException
+     *             If an underlying service call returns an exception
      * @return
      */
     public int getFilteredRecordsCount(CSWGetDataRecordsFilter filter, int maxRecords) throws Exception {
@@ -258,11 +293,14 @@ public class CSWFilterService {
      *
      * If serviceId does not match an existing CSWService an exception will be thrown
      *
-     * @param filter An optional filter to apply to each of the subset requests
-     * @param maxRecords The max records PER SERVICE that will be requested
+     * @param filter
+     *            An optional filter to apply to each of the subset requests
+     * @param maxRecords
+     *            The max records PER SERVICE that will be requested
      * @return
      */
-    public int getFilteredRecordsCount(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords) throws Exception {
+    public int getFilteredRecordsCount(String serviceId, CSWGetDataRecordsFilter filter, int maxRecords)
+            throws Exception {
         //Lookup the service to call
         CSWServiceItem cswServiceItem = null;
         for (CSWServiceItem serviceItem : cswServiceList) {
@@ -278,11 +316,11 @@ public class CSWFilterService {
         return response.getRecordsMatched();
     }
 
-    public CSWGetCapabilities getCapabilities(String cswServiceUrl) throws Exception{
+    public CSWGetCapabilities getCapabilities(String cswServiceUrl) throws Exception {
         CSWGetCapabilities getCap = null;
-        try{
+        try {
             HttpGet method = new HttpGet(cswServiceUrl);
-            URIBuilder builder= new URIBuilder(cswServiceUrl);
+            URIBuilder builder = new URIBuilder(cswServiceUrl);
             // test request=GetCapabilities&service=CSW&acceptVersions=2.0.2&acceptFormats=application%2Fxml
             builder.addParameter("request", "GetCapabilities");
             builder.addParameter("service", "CSW");
@@ -292,7 +330,7 @@ public class CSWFilterService {
             getCap = new CSWGetCapabilities(this.serviceCaller.getMethodResponseAsStream(method));
             return getCap;
 
-        }catch(Exception e){
+        } catch (Exception e) {
             throw e;
         }
 

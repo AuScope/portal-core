@@ -137,7 +137,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         this.recordStatus[record.id] = {
             expanded : true,
-            container : null
+            container : null 
         };
         
         this.restoreRowContainer(record);
@@ -198,6 +198,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         if (this.restorationRequired(record)) {
             var id = "rowexpandercontainer-" + record.id;
             var container = this.generateContainer(record, id);
+            
             this.recordStatus[record.id].container = container;
             this.recordStatus[record.id].container.updateLayout({
                 defer:false,

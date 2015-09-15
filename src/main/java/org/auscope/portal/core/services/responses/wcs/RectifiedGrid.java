@@ -51,16 +51,23 @@ public class RectifiedGrid implements Serializable {
      */
     private String[] axisNames;
 
-
     /**
      *
-     * @param srsName The spatial reference system for the origin/offsetVectors
-     * @param dimension The number of dimensions in this rectified grid
-     * @param envelopeLowValues The low index values for this rectified grid (normally 0's)
-     * @param envelopeHighValues The high index values for this rectified grid
-     * @param origin The n dimensional ordinates for the origin of this grid (in srsName coordinate space)
-     * @param offsetVectors double[] x will reference a n dimensional vector offset (in srsName space) that allows you to correspond an integer grid index to a point in real space
-     * @param axisNames The names of each axes
+     * @param srsName
+     *            The spatial reference system for the origin/offsetVectors
+     * @param dimension
+     *            The number of dimensions in this rectified grid
+     * @param envelopeLowValues
+     *            The low index values for this rectified grid (normally 0's)
+     * @param envelopeHighValues
+     *            The high index values for this rectified grid
+     * @param origin
+     *            The n dimensional ordinates for the origin of this grid (in srsName coordinate space)
+     * @param offsetVectors
+     *            double[] x will reference a n dimensional vector offset (in srsName space) that allows you to correspond an integer grid index to a point in
+     *            real space
+     * @param axisNames
+     *            The names of each axes
      */
     public RectifiedGrid(String srsName, int dimension,
             int[] envelopeLowValues, int[] envelopeHighValues, double[] origin,
@@ -77,6 +84,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * Creates a rectifiedGrid from a DOM node representing a gml:RectifiedGrid element
+     * 
      * @param node
      * @throws XPathExpressionException
      */
@@ -90,18 +98,22 @@ public class RectifiedGrid implements Serializable {
         try {
             this.setDimension(Integer.parseInt(dimension));
         } catch (NumberFormatException ex) {
-            log.debug(String.format("Unable to parse dimension '%1$s' to int: %2$s", dimension, ex ));
+            log.debug(String.format("Unable to parse dimension '%1$s' to int: %2$s", dimension, ex));
         }
 
-        String envelopeLowValues = (String) DOMUtil.compileXPathExpr("gml:limits/gml:GridEnvelope/gml:low", nc).evaluate(node, XPathConstants.STRING);
-        String envelopeHighValues = (String) DOMUtil.compileXPathExpr("gml:limits/gml:GridEnvelope/gml:high", nc).evaluate(node, XPathConstants.STRING);
+        String envelopeLowValues = (String) DOMUtil.compileXPathExpr("gml:limits/gml:GridEnvelope/gml:low", nc)
+                .evaluate(node, XPathConstants.STRING);
+        String envelopeHighValues = (String) DOMUtil.compileXPathExpr("gml:limits/gml:GridEnvelope/gml:high", nc)
+                .evaluate(node, XPathConstants.STRING);
         this.setEnvelopeLowValues(stringToIntVector(envelopeLowValues));
         this.setEnvelopeHighValues(stringToIntVector(envelopeHighValues));
 
-        String originValues = (String) DOMUtil.compileXPathExpr("gml:origin/gml:pos", nc).evaluate(node, XPathConstants.STRING);
+        String originValues = (String) DOMUtil.compileXPathExpr("gml:origin/gml:pos", nc).evaluate(node,
+                XPathConstants.STRING);
         this.setOrigin(stringToDoubleVector(originValues));
 
-        NodeList offsetVectorNodes = (NodeList) DOMUtil.compileXPathExpr("gml:offsetVector", nc).evaluate(node, XPathConstants.NODESET);
+        NodeList offsetVectorNodes = (NodeList) DOMUtil.compileXPathExpr("gml:offsetVector", nc).evaluate(node,
+                XPathConstants.NODESET);
         double[][] offsetVectors = new double[offsetVectorNodes.getLength()][];
         for (int i = 0; i < offsetVectorNodes.getLength(); i++) {
             Node offsetVectorNode = offsetVectorNodes.item(i);
@@ -110,7 +122,8 @@ public class RectifiedGrid implements Serializable {
         }
         this.setOffsetVectors(offsetVectors);
 
-        NodeList axisNameNodes = (NodeList) DOMUtil.compileXPathExpr("gml:axisName", nc).evaluate(node, XPathConstants.NODESET);
+        NodeList axisNameNodes = (NodeList) DOMUtil.compileXPathExpr("gml:axisName", nc).evaluate(node,
+                XPathConstants.NODESET);
         String[] axisNames = new String[axisNameNodes.getLength()];
         for (int i = 0; i < axisNameNodes.getLength(); i++) {
             Node axisNameNode = axisNameNodes.item(i);
@@ -128,7 +141,7 @@ public class RectifiedGrid implements Serializable {
                 result[i] = Double.parseDouble(vals[i]);
             } catch (NumberFormatException ex) {
                 result[i] = 0.0;
-                log.debug(String.format("Unable to parse value '%1$s' to double. Defaulting to 0: %2$s", vals[i], ex ));
+                log.debug(String.format("Unable to parse value '%1$s' to double. Defaulting to 0: %2$s", vals[i], ex));
             }
         }
 
@@ -144,7 +157,7 @@ public class RectifiedGrid implements Serializable {
                 result[i] = Integer.parseInt(vals[i]);
             } catch (NumberFormatException ex) {
                 result[i] = 0;
-                log.debug(String.format("Unable to parse value '%1$s' to int. Defaulting to 0: %2$s", vals[i], ex ));
+                log.debug(String.format("Unable to parse value '%1$s' to int. Defaulting to 0: %2$s", vals[i], ex));
             }
         }
 
@@ -153,6 +166,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The number of dimensions in this rectified grid
+     * 
      * @return
      */
     public int getDimension() {
@@ -161,6 +175,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The number of dimensions in this rectified grid
+     * 
      * @param dimension
      */
     public void setDimension(int dimension) {
@@ -183,6 +198,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The low index values for this rectified grid (normally 0's)
+     * 
      * @return
      */
     public int[] getEnvelopeLowValues() {
@@ -191,6 +207,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The low index values for this rectified grid (normally 0's)
+     * 
      * @param envelopeLowValues
      */
     public void setEnvelopeLowValues(int[] envelopeLowValues) {
@@ -199,6 +216,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The high index values for this rectified grid
+     * 
      * @return
      */
     public int[] getEnvelopeHighValues() {
@@ -207,6 +225,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The high index values for this rectified grid
+     * 
      * @param envelopeHighValues
      */
     public void setEnvelopeHighValues(int[] envelopeHighValues) {
@@ -215,6 +234,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The n dimensional ordinates for the origin of this grid (in srsName coordinate space)
+     * 
      * @return
      */
     public double[] getOrigin() {
@@ -223,6 +243,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The n dimensional ordinates for the origin of this grid (in srsName coordinate space)
+     * 
      * @param origin
      */
     public void setOrigin(double[] origin) {
@@ -231,6 +252,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * double[] x will reference a n dimensional vector offset (in srsName space) that allows you to correspond an integer grid index to a point in real space
+     * 
      * @return
      */
     public double[][] getOffsetVectors() {
@@ -239,6 +261,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * double[] x will reference a n dimensional vector offset (in srsName space) that allows you to correspond an integer grid index to a point in real space
+     * 
      * @param offsetVectors
      */
     public void setOffsetVectors(double[][] offsetVectors) {
@@ -247,6 +270,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The names of each axes
+     * 
      * @return
      */
     public String[] getAxisNames() {
@@ -255,6 +279,7 @@ public class RectifiedGrid implements Serializable {
 
     /**
      * The names of each axes
+     * 
      * @param axisNames
      */
     public void setAxisNames(String[] axisNames) {

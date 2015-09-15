@@ -26,7 +26,7 @@ public class TestResourceURIResolver extends PortalTestClass {
         Assert.assertNotNull(resolver.resolve("/org/auscope/portal/core/xslt/test-resource.txt", null));
     }
 
-    @Test(expected=TransformerException.class)
+    @Test(expected = TransformerException.class)
     public void testGetFileDne() throws Exception {
         resolver.resolve("file-that-dne", null);
     }

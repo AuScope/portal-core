@@ -11,10 +11,11 @@ import org.junit.Test;
 
 /**
  * Unit tests for CSWRecord
+ * 
  * @author Josh Vote
  *
  */
-public class TestCSWRecord extends PortalTestClass  {
+public class TestCSWRecord extends PortalTestClass {
 
     /**
      * Tests that containsKeyword returns valid results
@@ -49,21 +50,24 @@ public class TestCSWRecord extends PortalTestClass  {
         Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WCS));
         Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WFS));
         Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS));
-        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS,
+                AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
 
         record.setOnlineResources(nullOnlineResources);
         Assert.assertFalse(record.containsAnyOnlineResource());
         Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WCS));
         Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WFS));
         Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS));
-        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS,
+                AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
 
         record.setOnlineResources(fullOnlineResources);
         Assert.assertFalse(record.containsAnyOnlineResource());
         Assert.assertFalse(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WCS));
         Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WFS));
         Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS));
-        Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS, AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
+        Assert.assertTrue(record.containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType.WMS,
+                AbstractCSWOnlineResource.OnlineResourceType.WFS, AbstractCSWOnlineResource.OnlineResourceType.WCS));
     }
 
     @Test
@@ -79,16 +83,19 @@ public class TestCSWRecord extends PortalTestClass  {
         CSWRecord record = new CSWRecord("serviceName", "fileId", "http://record.info", "Abstract", null, null);
         record.setOnlineResources(fullOnlineResources);
 
-        AbstractCSWOnlineResource[]result=record.getOnlineResourcesByType(OnlineResourceType.WFS);
+        AbstractCSWOnlineResource[] result = record.getOnlineResourcesByType(OnlineResourceType.WFS);
         Assert.assertEquals(2, result.length);
 
-        result=record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example.com"),OnlineResourceType.WFS);
+        result = record
+                .getOnlineResourcesByType(new CSWRecordsHostFilter("http://example.com"), OnlineResourceType.WFS);
         Assert.assertEquals(1, result.length);
 
-        result=record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example2.com"),OnlineResourceType.WMS);
+        result = record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example2.com"),
+                OnlineResourceType.WMS);
         Assert.assertEquals(2, result.length);
 
-        result=record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example2.com"),OnlineResourceType.WFS);
+        result = record.getOnlineResourcesByType(new CSWRecordsHostFilter("http://example2.com"),
+                OnlineResourceType.WFS);
         Assert.assertEquals(1, result.length);
     }
 

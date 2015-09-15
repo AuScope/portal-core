@@ -4,15 +4,16 @@ import java.util.HashMap;
 
 /**
  * Utilities for MIME types
+ * 
  * @author Josh Vote
  */
 public class MimeUtil {
 
-    private static HashMap<String,String> table;
+    private static HashMap<String, String> table;
 
-    static{
+    static {
 
-        table= new HashMap<String,String>();
+        table = new HashMap<String, String>();
         table.put("image/png", "png");
         table.put("image/png8", "png");
         table.put("image/jpeg", "jpeg");
@@ -31,22 +32,23 @@ public class MimeUtil {
         table.put("kmz", "kmz");
 
     }
+
     /**
-     * Converts a mime type to a 'well known' file extension. If the
-     * mime type is unknown then an empty string will be returned
+     * Converts a mime type to a 'well known' file extension. If the mime type is unknown then an empty string will be returned
      *
      * Returns only the file extension (ie "xml" not ".xml")
      *
-     * @param mime The mime to examine
+     * @param mime
+     *            The mime to examine
      */
     public static String mimeToFileExtension(String mime) {
 
-        if (mime == null || mime.length()==0) {
+        if (mime == null || mime.length() == 0) {
             return "";
         }
 
-        String ext=table.get(mime);
-        if(ext != null && ext.length()>0){
+        String ext = table.get(mime);
+        if (ext != null && ext.length() > 0) {
             return ext;
         }
         //below are fall back if there are no mime to file extension map

@@ -12,7 +12,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-
 import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -25,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * Unit tests for BasePortalController
+ * 
  * @author Josh Vote
  *
  */
@@ -38,6 +38,7 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Asserts that a model and view matches the consistent pattern used throughout the portal
+     * 
      * @param mav1
      * @param mav2
      */
@@ -79,6 +80,7 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests that BasePortalController has consistent return types for the various options
+     * 
      * @throws Exception
      */
     @Test
@@ -91,13 +93,16 @@ public class TestBasePortalController extends PortalTestClass {
         gmlKmlData.put("gml", "gmlString");
         gmlKmlData.put("kml", "kmlString");
 
-        assertModelAndViewConsistency(basePortalController.generateExceptionResponse(new ConnectException(), serviceUrl));
-        assertModelAndViewConsistency(basePortalController.generateExceptionResponse(new ConnectException(), serviceUrl, getMethod));
+        assertModelAndViewConsistency(basePortalController
+                .generateExceptionResponse(new ConnectException(), serviceUrl));
+        assertModelAndViewConsistency(basePortalController.generateExceptionResponse(new ConnectException(),
+                serviceUrl, getMethod));
         assertModelAndViewConsistency(basePortalController.generateHTMLResponseMAV(true, gmlKmlData, null));
         assertModelAndViewConsistency(basePortalController.generateHTMLResponseMAV(false, null, null));
         assertModelAndViewConsistency(basePortalController.generateHTMLResponseMAV(true, null, message));
         assertModelAndViewConsistency(basePortalController.generateHTMLResponseMAV(false, gmlKmlData, message));
-        assertModelAndViewConsistency(basePortalController.generateHTMLResponseMAV(false, gmlKmlData, message, debugInfo));
+        assertModelAndViewConsistency(basePortalController.generateHTMLResponseMAV(false, gmlKmlData, message,
+                debugInfo));
         assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(true));
 
         assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(false, null, null));
@@ -110,14 +115,18 @@ public class TestBasePortalController extends PortalTestClass {
         assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(false, null, null));
 
         assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(true, null, 45, message));
-        assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(false, gmlKmlData, message, debugInfo));
-        assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(true, "gmlString", "kmlString", getMethod));
+        assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(false, gmlKmlData, message,
+                debugInfo));
+        assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(true, "gmlString", "kmlString",
+                getMethod));
 
-        assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(true, gmlKmlData, message, 43, debugInfo));
+        assertModelAndViewConsistency(basePortalController.generateJSONResponseMAV(true, gmlKmlData, message, 43,
+                debugInfo));
     }
 
     /**
      * Tests the responses are correctly written to a zip output stream
+     * 
      * @throws Exception
      */
     @Test
@@ -156,6 +165,7 @@ public class TestBasePortalController extends PortalTestClass {
 
     /**
      * Tests piping input->output works as expected
+     * 
      * @throws Exception
      */
     @Test
@@ -164,25 +174,28 @@ public class TestBasePortalController extends PortalTestClass {
         final int bufferSize = 134;
         final OutputStream outputStream = context.mock(OutputStream.class);
 
-        context.checking(new Expectations() {{
-            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-            will(returnValue(bufferSize));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                will(returnValue(bufferSize));
 
-            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-            will(returnValue(12));
+                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                will(returnValue(12));
 
-            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-            will(returnValue(-1));
+                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                will(returnValue(-1));
 
-            oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-            oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
-        }});
+                oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
+            }
+        });
 
         FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
     }
 
     /**
      * Tests piping input->output correctly closes input streams (where appropriate)
+     * 
      * @throws Exception
      */
     @Test
@@ -193,18 +206,21 @@ public class TestBasePortalController extends PortalTestClass {
         final int bufferSize = 134;
         final OutputStream outputStream = context.mock(OutputStream.class);
 
-        context.checking(new Expectations() {{
-            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-            will(throwException(new IOException()));
-            oneOf(outputStream).write(with(any(byte[].class)));
-            oneOf(mockInput).close();
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                will(throwException(new IOException()));
+                oneOf(outputStream).write(with(any(byte[].class)));
+                oneOf(mockInput).close();
+            }
+        });
 
         FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, true);
     }
 
     /**
      * Tests piping input->output correctly closes input streams (where appropriate)
+     * 
      * @throws Exception
      */
     @Test
@@ -214,11 +230,13 @@ public class TestBasePortalController extends PortalTestClass {
         final OutputStream outputStream = context.mock(OutputStream.class);
         //VT: I removed the IOException expectation because if given an array of inputstream and 1 fail,
         //we should return the rest and encapsulate the exception in the file to inform users.
-        context.checking(new Expectations() {{
-            oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
-            will(throwException(new IOException()));
-            oneOf(outputStream).write(with(any(byte[].class)));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
+                will(throwException(new IOException()));
+                oneOf(outputStream).write(with(any(byte[].class)));
+            }
+        });
 
         FileIOUtil.writeInputToOutputStream(mockInput, outputStream, bufferSize, false);
     }

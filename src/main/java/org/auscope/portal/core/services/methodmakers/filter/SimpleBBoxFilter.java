@@ -1,9 +1,7 @@
 package org.auscope.portal.core.services.methodmakers.filter;
 
-
 /**
- * Represents a simple OGC:Filter that can only make queries based upon bounding box
- * on the 'default' geometry field.
+ * Represents a simple OGC:Filter that can only make queries based upon bounding box on the 'default' geometry field.
  */
 public class SimpleBBoxFilter extends AbstractFilter {
     @Override

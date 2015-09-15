@@ -15,8 +15,8 @@ import org.w3c.dom.NodeList;
 
 // TODO: Auto-generated Javadoc
 /**
- * A utility class that provides convenience methods for detecting an ows:Exception response in an
- * arbitrary ows response.
+ * A utility class that provides convenience methods for detecting an ows:Exception response in an arbitrary ows response.
+ * 
  * @author vot002
  *
  */
@@ -60,8 +60,10 @@ public class OWSExceptionParser {
      *
      * Will throw an OWSException if document does contain an <ows:ExceptionReport>, otherwise it will do nothing
      *
-     * @param doc a string containing valid XML, this will be parsed into a W3C DOM document
-     * @throws OWSException the oWS exception
+     * @param doc
+     *            a string containing valid XML, this will be parsed into a W3C DOM document
+     * @throws OWSException
+     *             the oWS exception
      */
     public static void checkForExceptionResponse(String xmlString) throws OWSException {
         Document doc = null;
@@ -81,21 +83,27 @@ public class OWSExceptionParser {
      *
      * Will throw an OWSException if document does contain an <ows:ExceptionReport>, otherwise it will do nothing
      *
-     * @param doc the doc
-     * @throws OWSException the oWS exception
+     * @param doc
+     *            the doc
+     * @throws OWSException
+     *             the oWS exception
      */
     public static void checkForExceptionResponse(Document doc) throws OWSException {
         NamespaceContext nc = createNamespaceContext();
 
         try {
             //Check for an exception response
-            NodeList exceptionNodes = (NodeList) DOMUtil.compileXPathExpr("/ows:ExceptionReport/ows:Exception", nc).evaluate(doc, XPathConstants.NODESET);
+            NodeList exceptionNodes = (NodeList) DOMUtil.compileXPathExpr("/ows:ExceptionReport/ows:Exception", nc)
+                    .evaluate(doc, XPathConstants.NODESET);
             if (exceptionNodes.getLength() > 0) {
                 Node exceptionNode = exceptionNodes.item(0);
 
-                Node exceptionTextNode = (Node) DOMUtil.compileXPathExpr("ows:ExceptionText", nc).evaluate(exceptionNode, XPathConstants.NODE);
-                String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]" : exceptionTextNode.getTextContent();
-                String exceptionCode = (String) DOMUtil.compileXPathExpr("@exceptionCode", nc).evaluate(exceptionNode, XPathConstants.STRING);
+                Node exceptionTextNode = (Node) DOMUtil.compileXPathExpr("ows:ExceptionText", nc).evaluate(
+                        exceptionNode, XPathConstants.NODE);
+                String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]"
+                        : exceptionTextNode.getTextContent();
+                String exceptionCode = (String) DOMUtil.compileXPathExpr("@exceptionCode", nc).evaluate(exceptionNode,
+                        XPathConstants.STRING);
 
                 throw new OWSException(String.format("Code='%1$s' Message='%2$s'", exceptionCode, exceptionText));
             }

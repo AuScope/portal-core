@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 import junit.framework.Assert;
 
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
@@ -36,6 +35,7 @@ public class TestOpendapService extends PortalTestClass {
      */
     private class TestableOpendapService extends OpendapService {
         NetcdfDataset dataset;
+
         public TestableOpendapService(HttpServiceCaller serviceCaller,
                 OPeNDAPGetDataMethodMaker getDataMethodMaker,
                 NetcdfDataset dataset) {
@@ -76,23 +76,36 @@ public class TestOpendapService extends PortalTestClass {
 
         final DataType dataType1 = DataType.DOUBLE; //belongs to mockVariable1
 
-        context.checking(new Expectations() {{
-            oneOf(mockDataset).getVariables();will(returnValue(Arrays.asList(mockVariable1, mockVariable2)));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockDataset).getVariables();
+                will(returnValue(Arrays.asList(mockVariable1, mockVariable2)));
 
-            allowing(mockVariable1).getName();will(returnValue(variableName));
-            oneOf(mockVariable1).getDimensions();will(returnValue(Arrays.asList(mockDimension1)));
-            oneOf(mockVariable1).getDataType();will(returnValue(dataType1));
-            oneOf(mockVariable1).getUnitsString();will(returnValue(variableUnits));
-            oneOf(mockVariable1).read(new int[] {0}, new int[] {1});will(returnValue(mockArray1));
-            oneOf(mockVariable1).read(new int[] {mockDimension1Data.length - 1}, new int[] {1});will(returnValue(mockArray2));
+                allowing(mockVariable1).getName();
+                will(returnValue(variableName));
+                oneOf(mockVariable1).getDimensions();
+                will(returnValue(Arrays.asList(mockDimension1)));
+                oneOf(mockVariable1).getDataType();
+                will(returnValue(dataType1));
+                oneOf(mockVariable1).getUnitsString();
+                will(returnValue(variableUnits));
+                oneOf(mockVariable1).read(new int[] {0}, new int[] {1});
+                will(returnValue(mockArray1));
+                oneOf(mockVariable1).read(new int[] {mockDimension1Data.length - 1}, new int[] {1});
+                will(returnValue(mockArray2));
 
-            allowing(mockDimension1).getLength();will(returnValue(mockDimension1Data.length));
+                allowing(mockDimension1).getLength();
+                will(returnValue(mockDimension1Data.length));
 
-            oneOf(mockArray1).getDouble(0);will(returnValue(mockDimension1Data[0]));
-            oneOf(mockArray2).getDouble(0);will(returnValue(mockDimension1Data[mockDimension1Data.length - 1]));
+                oneOf(mockArray1).getDouble(0);
+                will(returnValue(mockDimension1Data[0]));
+                oneOf(mockArray2).getDouble(0);
+                will(returnValue(mockDimension1Data[mockDimension1Data.length - 1]));
 
-            allowing(mockVariable2).getName();will(returnValue("different" + variableName));
-        }});
+                allowing(mockVariable2).getName();
+                will(returnValue("different" + variableName));
+            }
+        });
 
         AbstractViewVariable[] variables = service.getVariables(serviceUrl, variableName);
         Assert.assertNotNull(variables);
@@ -113,34 +126,43 @@ public class TestOpendapService extends PortalTestClass {
     @Test
     public void testGetData() throws Exception {
         final String serviceUrl = "http://example.org/opendap";
-        final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s", null, new SimpleBounds(1.1, 1.3))};
+        final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s",
+                null, new SimpleBounds(1.1, 1.3))};
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
 
         final HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
         final InputStream mockResponse = context.mock(InputStream.class);
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(mockResponse));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(returnValue(mockResponse));
+            }
+        });
 
         InputStream response = service.getData(serviceUrl, format, constraints);
         Assert.assertSame(mockResponse, response);
     }
 
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testGetDataErrorRequest() throws Exception {
         final String serviceUrl = "http://example.org/opendap";
-        final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s", null, new SimpleBounds(1.1, 1.3))};
+        final AbstractViewVariable[] constraints = new AbstractViewVariable[] {new SimpleAxis("foo", "DOUBLE", "ms/s",
+                null, new SimpleBounds(1.1, 1.3))};
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
-
 
         final HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(throwException(new IOException()));
+            }
+        });
 
         service.getData(serviceUrl, format, constraints);
     }

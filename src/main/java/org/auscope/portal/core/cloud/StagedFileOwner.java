@@ -13,6 +13,7 @@ public interface StagedFileOwner {
 
     /**
      * Return unique identifier
+     * 
      * @return unique identifier
      */
     Integer getId();

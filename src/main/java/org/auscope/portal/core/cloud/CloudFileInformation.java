@@ -25,8 +25,7 @@ public class CloudFileInformation implements Serializable {
     /** cloud storage key */
     private String cloudKey = "";
     /**
-     * URL where the file can be accessed by anyone (only valid if file is
-     * publicly readable)
+     * URL where the file can be accessed by anyone (only valid if file is publicly readable)
      */
     private String publicUrl = "";
 
@@ -77,8 +76,7 @@ public class CloudFileInformation implements Serializable {
     }
 
     /**
-     * Gets the public URL where this file can be accessed (assuming the file
-     * has its ACL set to public read)
+     * Gets the public URL where this file can be accessed (assuming the file has its ACL set to public read)
      *
      * @return
      */
@@ -87,8 +85,7 @@ public class CloudFileInformation implements Serializable {
     }
 
     /**
-     * Sets the public URL where this file can be accessed (assuming the file
-     * has its ACL set to public read)
+     * Sets the public URL where this file can be accessed (assuming the file has its ACL set to public read)
      *
      * @param publicUrl
      */

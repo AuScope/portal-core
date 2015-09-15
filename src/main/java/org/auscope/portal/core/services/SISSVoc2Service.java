@@ -7,7 +7,6 @@ import java.util.List;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc2MethodMaker;
@@ -22,6 +21,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Service class for interacting with a SISSVoc endpoint
+ * 
  * @author Josh Vote
  */
 public class SISSVoc2Service {
@@ -29,7 +29,8 @@ public class SISSVoc2Service {
     private ConceptFactory conceptFactory;
     private SISSVoc2MethodMaker sissVocMethodMaker;
 
-    public SISSVoc2Service(HttpServiceCaller httpServiceCaller, ConceptFactory conceptFactory, SISSVoc2MethodMaker sissVocMethodMaker) {
+    public SISSVoc2Service(HttpServiceCaller httpServiceCaller, ConceptFactory conceptFactory,
+            SISSVoc2MethodMaker sissVocMethodMaker) {
         this.httpServiceCaller = httpServiceCaller;
         this.conceptFactory = conceptFactory;
         this.sissVocMethodMaker = sissVocMethodMaker;
@@ -37,13 +38,18 @@ public class SISSVoc2Service {
 
     /**
      * Gets the Concept objects associated with the specified label
-     * @param serviceUrl The SISSVoc endpoint to query
-     * @param repository The SISSVoc repository to query
-     * @param label The label query for
+     * 
+     * @param serviceUrl
+     *            The SISSVoc endpoint to query
+     * @param repository
+     *            The SISSVoc repository to query
+     * @param label
+     *            The label query for
      * @return
      * @throws PortalServiceException
      */
-    public Concept[] getConceptByLabel(String serviceUrl, String repository, String label) throws PortalServiceException {
+    public Concept[] getConceptByLabel(String serviceUrl, String repository, String label)
+            throws PortalServiceException {
         HttpRequestBase method = null;
         try {
             //Do the request
@@ -66,13 +72,18 @@ public class SISSVoc2Service {
 
     /**
      * Gets the Concept objects associated with a getCommodity request
-     * @param serviceUrl The SISSVoc endpoint to query
-     * @param repository The SISSVoc repository to query
-     * @param commodityParent The commodity paretn
+     * 
+     * @param serviceUrl
+     *            The SISSVoc endpoint to query
+     * @param repository
+     *            The SISSVoc repository to query
+     * @param commodityParent
+     *            The commodity paretn
      * @return
      * @throws PortalServiceException
      */
-    public Concept[] getCommodityConcepts(String serviceUrl, String repository, String commodityParent) throws PortalServiceException {
+    public Concept[] getCommodityConcepts(String serviceUrl, String repository, String commodityParent)
+            throws PortalServiceException {
         HttpRequestBase method = null;
         try {
             //Do the request
@@ -81,13 +92,13 @@ public class SISSVoc2Service {
 
             //Parse the response
             Document doc = DOMUtil.buildDomFromStream(responseStream);
-            XPathExpression expression = DOMUtil.compileXPathExpr("/sparql:sparql/sparql:results/sparql:result", new VocabNamespaceContext());
-            NodeList exprResult = (NodeList)expression.evaluate(doc, XPathConstants.NODESET);
-
+            XPathExpression expression = DOMUtil.compileXPathExpr("/sparql:sparql/sparql:results/sparql:result",
+                    new VocabNamespaceContext());
+            NodeList exprResult = (NodeList) expression.evaluate(doc, XPathConstants.NODESET);
 
             List<Concept> concepts = new ArrayList<Concept>();
             for (int i = 0; i < exprResult.getLength(); i++) {
-                Element node = (Element)exprResult.item(i);
+                Element node = (Element) exprResult.item(i);
                 String uri = node.getElementsByTagName("uri").item(0).getTextContent();
                 String literal = node.getElementsByTagName("literal").item(0).getTextContent();
 

@@ -20,6 +20,7 @@ import org.xml.sax.InputSource;
 
 /**
  * Unit tests for PortalXSLTTransformer
+ * 
  * @author Josh Vote
  *
  */
@@ -34,11 +35,13 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
 
     /**
      * Unit test for testing the basic features of the transformer with the kml.xsl XSLT
+     * 
      * @throws Exception
      */
     @Test
     public void testGenericFeatureParser() throws Exception {
-        final String testXml = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wfs/GetUndefinedFeatureSet.xml");
+        final String testXml = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/wfs/GetUndefinedFeatureSet.xml");
         final Properties properties = new Properties();
 
         properties.setProperty("serviceURL", "fake-service-url");
@@ -51,22 +54,23 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
 
         //Pull the converted data back as XML (It is now technically KML)
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(false); // never forget this!
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            InputSource inputSource = new InputSource(new StringReader(convertedText));
-            Document document = builder.parse(inputSource);
-            Element root = document.getDocumentElement();
+        factory.setNamespaceAware(false); // never forget this!
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource inputSource = new InputSource(new StringReader(convertedText));
+        Document document = builder.parse(inputSource);
+        Element root = document.getDocumentElement();
 
         //Lets query the transformed data to make sure its correct
         XPath xPath = XPathFactory.newInstance().newXPath();
 
         Double counter = (Double) xPath.evaluate("count(Document)", root, XPathConstants.NUMBER);
-        Assert.assertEquals(1.0, counter.doubleValue(),0);
+        Assert.assertEquals(1.0, counter.doubleValue(), 0);
 
         counter = (Double) xPath.evaluate("count(Document/Placemark)", root, XPathConstants.NUMBER);
-        Assert.assertEquals(8.0, counter.doubleValue(),0);
+        Assert.assertEquals(8.0, counter.doubleValue(), 0);
 
-        counter = (Double) xPath.evaluate("count(Document/Placemark/MultiGeometry/Point/Style/IconStyle/Icon/href)", root, XPathConstants.NUMBER);
-        Assert.assertEquals(8.0, counter.doubleValue(),0);
+        counter = (Double) xPath.evaluate("count(Document/Placemark/MultiGeometry/Point/Style/IconStyle/Icon/href)",
+                root, XPathConstants.NUMBER);
+        Assert.assertEquals(8.0, counter.doubleValue(), 0);
     }
 }

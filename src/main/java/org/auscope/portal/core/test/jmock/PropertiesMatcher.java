@@ -8,6 +8,7 @@ import org.junit.matchers.TypeSafeMatcher;
 
 /**
  * A matcher for comparing the contents of 2 java.util.Properties objects
+ * 
  * @author Josh Vote
  *
  */
@@ -18,7 +19,9 @@ public class PropertiesMatcher extends TypeSafeMatcher<Properties> {
 
     /**
      * Create a new matcher
-     * @param properties Match will succeed if the comparison properties has exactly the same set of properties
+     * 
+     * @param properties
+     *            Match will succeed if the comparison properties has exactly the same set of properties
      */
     public PropertiesMatcher(Properties properties) {
         this(properties, true);
@@ -26,8 +29,11 @@ public class PropertiesMatcher extends TypeSafeMatcher<Properties> {
 
     /**
      * Create a new matcher
-     * @param properties Match will succeed if the comparison properties matches according to matchAll
-     * @param matchAll if true, the comparison properties must be EXACTLY the same, otherwise it need only contain all of values in properties
+     * 
+     * @param properties
+     *            Match will succeed if the comparison properties matches according to matchAll
+     * @param matchAll
+     *            if true, the comparison properties must be EXACTLY the same, otherwise it need only contain all of values in properties
      */
     public PropertiesMatcher(Properties properties, boolean matchAll) {
         this.comparison = properties;
@@ -47,7 +53,7 @@ public class PropertiesMatcher extends TypeSafeMatcher<Properties> {
     @Override
     public boolean matchesSafely(Properties toMatch) {
         if (toMatch == null && comparison != null ||
-            toMatch != null && comparison == null) {
+                toMatch != null && comparison == null) {
             return false;
         }
 

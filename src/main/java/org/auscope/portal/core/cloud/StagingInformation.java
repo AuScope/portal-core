@@ -1,18 +1,19 @@
 package org.auscope.portal.core.cloud;
 
 /**
- * A simple POJO for storing all information about where a portal can stage in
- * job files
+ * A simple POJO for storing all information about where a portal can stage in job files
+ * 
  * @author Josh Vote
  *
  */
 public class StagingInformation {
     private String stageInDirectory;
 
-
     /**
      * Creates a new instance
-     * @param stageInDirectory Gets where the portal can add/remove directories with impunity for the purpose of staging in new job directories
+     * 
+     * @param stageInDirectory
+     *            Gets where the portal can add/remove directories with impunity for the purpose of staging in new job directories
      */
     public StagingInformation(String stageInDirectory) {
         super();
@@ -20,8 +21,8 @@ public class StagingInformation {
     }
 
     /**
-     * Gets where the portal can add/remove directories with impunity for the purpose
-     * of staging in new job directories
+     * Gets where the portal can add/remove directories with impunity for the purpose of staging in new job directories
+     * 
      * @return
      */
     public String getStageInDirectory() {
@@ -29,8 +30,8 @@ public class StagingInformation {
     }
 
     /**
-     * Sets where the portal can add/remove directories with impunity for the purpose
-     * of staging in new job directories
+     * Sets where the portal can add/remove directories with impunity for the purpose of staging in new job directories
+     * 
      * @param stageInDirectory
      */
     public void setStageInDirectory(String stageInDirectory) {

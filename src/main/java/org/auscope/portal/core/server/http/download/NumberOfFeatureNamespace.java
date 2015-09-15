@@ -4,7 +4,6 @@ import org.auscope.portal.core.services.namespaces.IterableNamespace;
 
 public class NumberOfFeatureNamespace extends IterableNamespace {
 
-
     public NumberOfFeatureNamespace() {
         map.put("gmd", "http://www.isotc211.org/2005/gmd");
         map.put("srv", "http://www.isotc211.org/2005/srv");

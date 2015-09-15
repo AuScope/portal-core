@@ -17,6 +17,7 @@ import org.w3c.dom.Node;
 
 /**
  * Unit tests for DescriptionFactory
+ * 
  * @author Josh Vote
  *
  */
@@ -84,9 +85,11 @@ public class TestDescriptionFactory extends PortalTestClass {
         Description[] expectation = new Description[] {concept1, concept4};
 
         //Build our actual list
-        String responseXml = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
+        String responseXml = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
         Document responseDoc = DOMUtil.buildDomFromString(responseXml);
-        Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc, XPathConstants.NODE);
+        Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc,
+                XPathConstants.NODE);
         DescriptionFactory df = new DescriptionFactory();
         Description[] actualDescriptions = df.parseFromRDF(rdfNode);
 

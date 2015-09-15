@@ -21,18 +21,20 @@ public class WMSSelector implements KnownLayerSelector {
     private boolean includeEndpoints;
 
     /**
-     * @param layerName The layerName that identifies which WMS this KnownLayer is identifying
+     * @param layerName
+     *            The layerName that identifies which WMS this KnownLayer is identifying
      */
     public WMSSelector(String layerName) {
         this.layerName = layerName;
     }
 
     /**
-     * @param layerName The layerName that identifies which WMS this KnownLayer is identifying
-     * @param serviceEndpoints A list of the end points that will either be included or
-     *  excluded from the WMS, depending on the value of includeEndpoints
-     * @param includeEndpoints A flag indicating whether the listed service end points
-     *  will be included or excluded from the WMS
+     * @param layerName
+     *            The layerName that identifies which WMS this KnownLayer is identifying
+     * @param serviceEndpoints
+     *            A list of the end points that will either be included or excluded from the WMS, depending on the value of includeEndpoints
+     * @param includeEndpoints
+     *            A flag indicating whether the listed service end points will be included or excluded from the WMS
      */
     public WMSSelector(String layerName, String[] serviceEndpoints, boolean includeEndpoints) {
         this.layerName = layerName;
@@ -52,7 +54,8 @@ public class WMSSelector implements KnownLayerSelector {
     /**
      * Sets the layerName that identifies which WMS this KnownLayer is identifying.
      *
-     * @param layerName the layerName to set
+     * @param layerName
+     *            the layerName to set
      */
     public void setLayerName(String layerName) {
         this.layerName = layerName;
@@ -70,7 +73,8 @@ public class WMSSelector implements KnownLayerSelector {
     /**
      * Sets all related layer names (layers that are related to this WMS but should not be used for display).
      *
-     * @param relatedLayerNames the new related layer names
+     * @param relatedLayerNames
+     *            the new related layer names
      */
     public void setRelatedLayerNames(String[] relatedLayerNames) {
         this.relatedLayerNames = relatedLayerNames;

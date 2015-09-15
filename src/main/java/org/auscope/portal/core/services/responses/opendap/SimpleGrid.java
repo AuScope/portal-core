@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 /**
  * Represents a simplified grid variable
+ * 
  * @author vot002
  *
  */
@@ -17,6 +18,7 @@ public class SimpleGrid extends AbstractViewVariable {
 
     /**
      * Gets the list of axes that make up this gridded variable
+     * 
      * @return
      */
     public AbstractViewVariable[] getAxes() {
@@ -25,6 +27,7 @@ public class SimpleGrid extends AbstractViewVariable {
 
     /**
      * Sets the list of axes that make up this gridded variable
+     * 
      * @param axes
      */
     public void setAxes(AbstractViewVariable[] axes) {

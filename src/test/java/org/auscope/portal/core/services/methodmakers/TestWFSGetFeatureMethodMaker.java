@@ -19,23 +19,27 @@ import org.xml.sax.SAXException;
 
 /**
  * Unit tests for WFSGetFeatureMethodMaker
+ * 
  * @author Josh Vote
  *
  */
 public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
     /**
-     * Tests that the given HttpMethodBase (representing a WFS request) contains
-     * a parameter of a specific value
+     * Tests that the given HttpMethodBase (representing a WFS request) contains a parameter of a specific value
      *
      * Throws an exception if this function cannot decipher the type of HTTP method
-     * @param paramName the parameter to check for
-     * @param paramValue [Optional] if specified, the value of paramName (if not specified the existence of paramName will be tested)
+     * 
+     * @param paramName
+     *            the parameter to check for
+     * @param paramValue
+     *            [Optional] if specified, the value of paramName (if not specified the existence of paramName will be tested)
      * @throws SAXException
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    private boolean testWFSParam(HttpRequestBase wfsRequest, String paramName, String paramValue) throws ParserConfigurationException, IOException, SAXException {
+    private boolean testWFSParam(HttpRequestBase wfsRequest, String paramName, String paramValue)
+            throws ParserConfigurationException, IOException, SAXException {
         //Get methods involve finding the request parameter "version=X"
         if (wfsRequest instanceof HttpGet) {
             String uriString = wfsRequest.getURI().toString();
@@ -43,7 +47,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
             if (paramValue == null) {
                 return uriString.contains(paramName);
             } else {
-                return uriString.contains(String.format("%1$s=%2$s",paramName, paramValue));
+                return uriString.contains(String.format("%1$s=%2$s", paramName, paramValue));
             }
 
         } else if (wfsRequest instanceof HttpPost) {
@@ -68,6 +72,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
     /**
      * Ensure we are always using WFS 1.1.0
+     * 
      * @throws Exception
      */
     @Test
@@ -82,14 +87,19 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
-        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, featureId, srsName),"version", expectedVersion));
-        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, filterString, maxFeatures, srsName),"version", expectedVersion));
-        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits),"version", expectedVersion));
-        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl),"version", expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, featureId, srsName), "version",
+                expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, filterString, maxFeatures, srsName),
+                "version", expectedVersion));
+        Assert.assertTrue(testWFSParam(
+                mm.makePostMethod(serviceUrl, typeName, filterString, maxFeatures, srsName, ResultType.Hits),
+                "version", expectedVersion));
+        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl), "version", expectedVersion));
     }
 
     /**
      * Ensure we are always specifying service=WFS
+     * 
      * @throws Exception
      */
     @Test
@@ -100,7 +110,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
-        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, featureId, ""),"service", "WFS"));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, featureId, ""), "service", "WFS"));
     }
 
     @Test
@@ -109,36 +119,51 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         final String typeName = "test:typeName";
         final String srsName = "srs-name";
         final String outputFormat = "o-f";
-        final FilterBoundingBox bbox = new FilterBoundingBox("bbox-srs", new double[] {1 , 2},  new double[] {3 , 4});
+        final FilterBoundingBox bbox = new FilterBoundingBox("bbox-srs", new double[] {1, 2}, new double[] {3, 4});
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
-        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (Integer)null, null),"maxFeatures", null));
-        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, 99, null),"maxFeatures", "99"));
+        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (Integer) null, null), "maxFeatures",
+                null));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, 99, null), "maxFeatures", "99"));
 
-        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, null),"featureId", null));
-        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, "id-value", null),"featureId", "id-value"));
+        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String) null, null), "featureId", null));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, "id-value", null), "featureId",
+                "id-value"));
 
-        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, null),"srsName", null));
-        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, srsName),"srsName", srsName));
+        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String) null, null), "srsName", null));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String) null, srsName), "srsName",
+                srsName));
 
-        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, (Integer) null, null),"srsName", null));
-        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String)null, (Integer) null, outputFormat),"srsName", outputFormat));
+        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (String) null, (Integer) null, null),
+                "srsName", null));
+        Assert.assertTrue(testWFSParam(
+                mm.makeGetMethod(serviceUrl, typeName, (String) null, (Integer) null, outputFormat), "srsName",
+                outputFormat));
 
-        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null),"resultType", null));
-        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, ResultType.Hits),"resultType", "hits"));
-        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, ResultType.Results),"resultType", "results"));
+        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null), "resultType",
+                null));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, ResultType.Hits),
+                "resultType", "hits"));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, ResultType.Results),
+                "resultType", "results"));
 
-        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, ""),"outputFormat", null));
-        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, null),"outputFormat", null));
-        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, outputFormat),"outputFormat", outputFormat));
-        
-        Assert.assertFalse(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, (Integer)null, null, (FilterBoundingBox)null),"bbox", null));
-        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, 99, null, bbox),"bbox", "1.0%2C2.0%2C3.0%2C4.0%2Cbbox-srs"));
+        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, ""),
+                "outputFormat", null));
+        Assert.assertFalse(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, null),
+                "outputFormat", null));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod(serviceUrl, typeName, null, 0, null, null, outputFormat),
+                "outputFormat", outputFormat));
+
+        Assert.assertFalse(testWFSParam(
+                mm.makeGetMethod(serviceUrl, typeName, (Integer) null, null, (FilterBoundingBox) null), "bbox", null));
+        Assert.assertTrue(testWFSParam(mm.makeGetMethod(serviceUrl, typeName, 99, null, bbox), "bbox",
+                "1.0%2C2.0%2C3.0%2C4.0%2Cbbox-srs"));
     }
-    
+
     /**
      * Ensure the GetCapabilities statement is well formed as per OGC specifications
+     * 
      * @throws Exception
      */
     @Test
@@ -147,11 +172,11 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
 
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
 
-        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl),"service", "WFS"));
-        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl),"version", WFSGetFeatureMethodMaker.WFS_VERSION));
-        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl),"request", "GetCapabilities"));
+        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl), "service", "WFS"));
+        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl), "version",
+                WFSGetFeatureMethodMaker.WFS_VERSION));
+        Assert.assertTrue(testWFSParam(mm.makeGetCapabilitiesMethod(serviceUrl), "request", "GetCapabilities"));
     }
-    
 
     private class MyNamespace extends WFSNamespaceContext {
         public MyNamespace() {
@@ -165,7 +190,9 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
         WFSGetFeatureMethodMaker mm = new WFSGetFeatureMethodMaker();
         mm.setNamespaces(new MyNamespace());
 
-        Assert.assertTrue(testWFSParam(mm.makePostMethod("http://example.org", "type:Name", null, 0, null, null, null),"xmlns:p1", "v1"));
-        Assert.assertTrue(testWFSParam(mm.makePostMethod("http://example.org", "type:Name", null, 0, null, null, null),"xmlns:p2", "v2"));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod("http://example.org", "type:Name", null, 0, null, null, null),
+                "xmlns:p1", "v1"));
+        Assert.assertTrue(testWFSParam(mm.makePostMethod("http://example.org", "type:Name", null, 0, null, null, null),
+                "xmlns:p2", "v2"));
     }
 }

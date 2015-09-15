@@ -1,7 +1,5 @@
 package org.auscope.portal.core.services.methodmakers;
 
-
-
 import java.net.URI;
 import java.net.URLEncoder;
 
@@ -21,8 +19,9 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 /**
- * An class for generating HttpMethods that will query an OPeNDAP Service for data in a given format
- * which is constrained by a list of constraints (which are a simplification of variables in ds).
+ * An class for generating HttpMethods that will query an OPeNDAP Service for data in a given format which is constrained by a list of constraints (which are a
+ * simplification of variables in ds).
+ * 
  * @author JoshVote
  *
  */
@@ -35,8 +34,9 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
     private final Log logger = LogFactory.getLog(getClass());
 
     /**
-     * Given a ViewVariable, this function will populate the appropriate "SimpleBounds" field representing
-     * an index bounds IFF the value bounds is specified AND the index bounds are unspecified
+     * Given a ViewVariable, this function will populate the appropriate "SimpleBounds" field representing an index bounds IFF the value bounds is specified AND
+     * the index bounds are unspecified
+     * 
      * @param ds
      * @param var
      * @throws Exception
@@ -47,7 +47,8 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         } else if (var instanceof SimpleGrid) {
             calculateIndexBounds(ds, (SimpleGrid) var);
         } else {
-            throw new IllegalArgumentException(String.format("Unable to calculate index bounds for class '%1$s'",var.getClass()));
+            throw new IllegalArgumentException(String.format("Unable to calculate index bounds for class '%1$s'",
+                    var.getClass()));
         }
     }
 
@@ -70,7 +71,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
             if (entireBounds.getSize() > Integer.MAX_VALUE)
                 throw new IllegalArgumentException("Bounds contains too many indexes");
 
-            int indexFrom = 0, indexTo = (int)entireBounds.getSize() - 1;
+            int indexFrom = 0, indexTo = (int) entireBounds.getSize() - 1;
 
             //Calculate minimum
             for (indexFrom = 0; indexFrom < entireBounds.getSize(); indexFrom++) {
@@ -81,7 +82,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
             }
 
             //Calculate maximum
-            for (indexTo = (int)entireBounds.getSize() - 1; indexTo >= 0; indexTo--) {
+            for (indexTo = (int) entireBounds.getSize() - 1; indexTo >= 0; indexTo--) {
                 //Find the first index that contains a value inside our value bounds
                 if (entireBounds.getDouble(indexTo) <= axis.getValueBounds().getTo()) {
                     break;
@@ -99,13 +100,15 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
     }
 
     private String simpleBoundsToQuery(SimpleBounds bounds) {
-        return String.format("[%1$d:%2$d]", (int)bounds.getFrom(), (int)bounds.getTo());
+        return String.format("[%1$d:%2$d]", (int) bounds.getFrom(), (int) bounds.getTo());
     }
 
     /**
-     * Given a variable, this function generates an OPeNDAP query string that will query according
-     * to the specified constraints (Each ViewVariable must have their appropriate dimension bounds specified).
-     * @param vars The list of constraints
+     * Given a variable, this function generates an OPeNDAP query string that will query according to the specified constraints (Each ViewVariable must have
+     * their appropriate dimension bounds specified).
+     * 
+     * @param vars
+     *            The list of constraints
      * @return
      */
     private String generateQueryForConstraints(AbstractViewVariable[] vars) {
@@ -128,7 +131,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
                 StringBuilder sb = new StringBuilder();
                 for (AbstractViewVariable child : grid.getAxes()) {
                     if (child instanceof SimpleAxis) {
-                        sb.append(simpleBoundsToQuery(((SimpleAxis)child).getDimensionBounds()));
+                        sb.append(simpleBoundsToQuery(((SimpleAxis) child).getDimensionBounds()));
                     } else {
                         throw new IllegalArgumentException("Unsupported child of SimpleGrid " + child.getClass());
                     }
@@ -136,14 +139,15 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
 
                 result.append(sb.toString());
             } else {
-                throw new IllegalArgumentException(String.format("Unable to calculate index bounds for class '%1$s'",var.getClass()));
+                throw new IllegalArgumentException(String.format("Unable to calculate index bounds for class '%1$s'",
+                        var.getClass()));
             }
         }
 
         return result.toString();
     }
 
-    public HttpRequestBase getMethod(String opendapUrl,OPeNDAPFormat format, NetcdfDataset ds,
+    public HttpRequestBase getMethod(String opendapUrl, OPeNDAPFormat format, NetcdfDataset ds,
             AbstractViewVariable[] constraints) throws Exception {
 
         //Generate our base URL (which depends on the format)
@@ -167,7 +171,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
             }
 
             URIBuilder builder = new URIBuilder(method.getURI());
-            builder.setQuery(URLEncoder.encode((generateQueryForConstraints(constraints)),"UTF-8"));
+            builder.setQuery(URLEncoder.encode((generateQueryForConstraints(constraints)), "UTF-8"));
             method.setURI(builder.build());
         }
 

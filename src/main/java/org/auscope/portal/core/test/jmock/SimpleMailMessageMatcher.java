@@ -17,20 +17,24 @@ public class SimpleMailMessageMatcher extends TypeSafeMatcher<SimpleMailMessage>
 
     /**
      * Matches a SimpleMailMessage based on one or more its properties.
-     *  
-     * @param from If not null, the comparison email sender.
-     * @param to If not null, the comparison email recipient.
-     * @param subject If not null, the comparison email subject.
-     * @param text If not null, the comparison email text.
+     * 
+     * @param from
+     *            If not null, the comparison email sender.
+     * @param to
+     *            If not null, the comparison email recipient.
+     * @param subject
+     *            If not null, the comparison email subject.
+     * @param text
+     *            If not null, the comparison email text.
      */
-    public SimpleMailMessageMatcher(String from, String to, 
+    public SimpleMailMessageMatcher(String from, String to,
             String subject, String text) {
         this.from = from;
         this.to = to;
         this.subject = subject;
         this.text = text;
     }
-    
+
     @Override
     public void describeTo(Description description) {
         description.appendText(String.format(

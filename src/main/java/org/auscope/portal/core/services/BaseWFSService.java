@@ -23,8 +23,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * An abstract base class containing common functionality for all Service classes
- * that intend to interact with a one or more Web Feature Services.
+ * An abstract base class containing common functionality for all Service classes that intend to interact with a one or more Web Feature Services.
  *
  * @author Josh Vote
  */
@@ -39,10 +38,15 @@ public abstract class BaseWFSService {
 
     /**
      * Creates a new instance of this class with the specified dependencies
-     * @param httpServiceCaller Will be used for making requests
-     * @param wfsMethodMaker Will be used for generating WFS methods
-     * @param gmlToKml Will be used for transforming GML (WFS responses) into KML
-     * @param gmlToHtml Will be used for transforming GML (WFS responses) into HTML
+     * 
+     * @param httpServiceCaller
+     *            Will be used for making requests
+     * @param wfsMethodMaker
+     *            Will be used for generating WFS methods
+     * @param gmlToKml
+     *            Will be used for transforming GML (WFS responses) into KML
+     * @param gmlToHtml
+     *            Will be used for transforming GML (WFS responses) into HTML
      */
     public BaseWFSService(HttpServiceCaller httpServiceCaller,
             WFSGetFeatureMethodMaker wfsMethodMaker) {
@@ -52,40 +56,64 @@ public abstract class BaseWFSService {
 
     /**
      * Utility method for choosing the correct WFS method to generate based on specified parameters
-     * @param wfsUrl [required] - the web feature service url
-     * @param featureType [required] - the type name
-     * @param featureId [optional] - A unique ID of a single feature type to query
-     * @param filterString [optional] - A OGC filter string to constrain the request
-     * @param maxFeatures [optional] - A maximum number of features to request
-     * @param srs [optional] - The spatial reference system the response should be encoded to. If unspecified BaseWFSService.DEFAULT_SRS will be used
-     * @param resultType [optional] - Whether to request all features (default) or just the count
+     * 
+     * @param wfsUrl
+     *            [required] - the web feature service url
+     * @param featureType
+     *            [required] - the type name
+     * @param featureId
+     *            [optional] - A unique ID of a single feature type to query
+     * @param filterString
+     *            [optional] - A OGC filter string to constrain the request
+     * @param maxFeatures
+     *            [optional] - A maximum number of features to request
+     * @param srs
+     *            [optional] - The spatial reference system the response should be encoded to. If unspecified BaseWFSService.DEFAULT_SRS will be used
+     * @param resultType
+     *            [optional] - Whether to request all features (default) or just the count
      * @return
      * @throws URISyntaxException
      * @throws Exception
      */
-    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType) throws URISyntaxException {
-        return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, null,null);
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
+            String filterString, Integer maxFeatures, String srs, ResultType resultType) throws URISyntaxException {
+        return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, null,
+                null);
     }
 
-    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat) throws URISyntaxException {
-        return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, outputFormat,null);
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
+            String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat)
+            throws URISyntaxException {
+        return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType,
+                outputFormat, null);
     }
 
     /**
      * Utility method for choosing the correct WFS method to generate based on specified parameters
-     * @param wfsUrl [required] - the web feature service url
-     * @param featureType [required] - the type name
-     * @param featureId [optional] - A unique ID of a single feature type to query
-     * @param filterString [optional] - A OGC filter string to constrain the request
-     * @param maxFeatures [optional] - A maximum number of features to request
-     * @param srs [optional] - The spatial reference system the response should be encoded to. If unspecified BaseWFSService.DEFAULT_SRS will be used
-     * @param resultType [optional] - Whether to request all features (default) or just the count
-     * @param outputFormat [optional] - The format the response should take
+     * 
+     * @param wfsUrl
+     *            [required] - the web feature service url
+     * @param featureType
+     *            [required] - the type name
+     * @param featureId
+     *            [optional] - A unique ID of a single feature type to query
+     * @param filterString
+     *            [optional] - A OGC filter string to constrain the request
+     * @param maxFeatures
+     *            [optional] - A maximum number of features to request
+     * @param srs
+     *            [optional] - The spatial reference system the response should be encoded to. If unspecified BaseWFSService.DEFAULT_SRS will be used
+     * @param resultType
+     *            [optional] - Whether to request all features (default) or just the count
+     * @param outputFormat
+     *            [optional] - The format the response should take
      * @return
      * @throws URISyntaxException
      * @throws Exception
      */
-    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId, String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat, String startIndex) throws URISyntaxException {
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
+            String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat,
+            String startIndex) throws URISyntaxException {
         int max = maxFeatures == null ? 0 : maxFeatures.intValue();
 
         //apply default value for srs
@@ -94,15 +122,15 @@ public abstract class BaseWFSService {
         }
 
         if (featureId == null) {
-            return wfsMethodMaker.makePostMethod(wfsUrl, featureType, filterString, max, srs, resultType, outputFormat,startIndex);
+            return wfsMethodMaker.makePostMethod(wfsUrl, featureType, filterString, max, srs, resultType, outputFormat,
+                    startIndex);
         } else {
             return wfsMethodMaker.makeGetMethod(wfsUrl, featureType, featureId, srs, outputFormat);
         }
     }
 
     /**
-     * Makes a WFS GetFeature request represented by method, only the count
-     * of features will be returned
+     * Makes a WFS GetFeature request represented by method, only the count of features will be returned
      *
      * @param method
      * @return
@@ -115,7 +143,8 @@ public abstract class BaseWFSService {
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
-            XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures", new WFSNamespaceContext());
+            XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures",
+                    new WFSNamespaceContext());
             Node numNode = (Node) xPath.evaluate(responseDoc, XPathConstants.NODE);
             int numNodeValue = Integer.parseInt(numNode.getTextContent());
 
@@ -130,15 +159,20 @@ public abstract class BaseWFSService {
     }
 
     /**
-     * Executes a method that returns GML wrapped in a WFS response, converts that
-     * response using transformer and returns the lot bundled in a WFSTransformedResponse
-     * @param method a WFS GetFeature request
-     * @param transformer A transformer to work with the resulting WFS response
-     * @param styleSheetParams Properties to apply to the transformer
+     * Executes a method that returns GML wrapped in a WFS response, converts that response using transformer and returns the lot bundled in a
+     * WFSTransformedResponse
+     * 
+     * @param method
+     *            a WFS GetFeature request
+     * @param transformer
+     *            A transformer to work with the resulting WFS response
+     * @param styleSheetParams
+     *            Properties to apply to the transformer
      * @return
      * @throws PortalServiceException
      */
-    protected WFSTransformedResponse getTransformedWFSResponse(HttpRequestBase method, PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
+    protected WFSTransformedResponse getTransformedWFSResponse(HttpRequestBase method,
+            PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
         try {
             //Make the request and parse the response
             String responseString = httpServiceCaller.getMethodResponseAsString(method);
@@ -167,7 +201,10 @@ public abstract class BaseWFSService {
             WFSGetCapabilitiesResponse parsedGetCap = new WFSGetCapabilitiesResponse();
 
             //Get the output formats
-            XPathExpression xPathGetOf = DOMUtil.compileXPathExpr("wfs:WFS_Capabilities/ows:OperationsMetadata/ows:Operation[@name=\"GetFeature\"]/ows:Parameter[@name=\"outputFormat\"]/ows:Value", new WFSNamespaceContext());
+            XPathExpression xPathGetOf = DOMUtil
+                    .compileXPathExpr(
+                            "wfs:WFS_Capabilities/ows:OperationsMetadata/ows:Operation[@name=\"GetFeature\"]/ows:Parameter[@name=\"outputFormat\"]/ows:Value",
+                            new WFSNamespaceContext());
             NodeList formatNodes = (NodeList) xPathGetOf.evaluate(responseDoc, XPathConstants.NODESET);
             String[] outputFormats = new String[formatNodes.getLength()];
             for (int i = 0; i < formatNodes.getLength(); i++) {
@@ -176,7 +213,8 @@ public abstract class BaseWFSService {
             parsedGetCap.setGetFeatureOutputFormats(outputFormats);
 
             //Get feature type names
-            XPathExpression xPathGetTn = DOMUtil.compileXPathExpr("wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Name", new WFSNamespaceContext());
+            XPathExpression xPathGetTn = DOMUtil.compileXPathExpr(
+                    "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Name", new WFSNamespaceContext());
             NodeList nameNodes = (NodeList) xPathGetTn.evaluate(responseDoc, XPathConstants.NODESET);
             String[] typeNames = new String[nameNodes.getLength()];
             for (int i = 0; i < nameNodes.getLength(); i++) {
@@ -197,14 +235,18 @@ public abstract class BaseWFSService {
 
     /**
      * Download a wfs based on the type and filter.
-     * @param serviceUrl a Web Feature Service URL
+     * 
+     * @param serviceUrl
+     *            a Web Feature Service URL
      * @param type
      * @param filterString
-     * @param maxFeatures The maximum number of features to request
+     * @param maxFeatures
+     *            The maximum number of features to request
      * @return
      * @throws PortalServiceException
      */
-    public InputStream downloadWFS(String serviceUrl,String type, String filterString, Integer maxFeatures) throws PortalServiceException {
+    public InputStream downloadWFS(String serviceUrl, String type, String filterString, Integer maxFeatures)
+            throws PortalServiceException {
 
         HttpRequestBase method = null;
         try {
@@ -213,29 +255,34 @@ public abstract class BaseWFSService {
             return httpServiceCaller.getMethodResponseAsStream(method);
 
         } catch (Exception ex) {
-            throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl , ex);
+            throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
         }
     }
 
     /**
      * Download a CSV based on the type and filter.
-     * @param serviceUrl a Web Feature Service URL
+     * 
+     * @param serviceUrl
+     *            a Web Feature Service URL
      * @param type
      * @param filterString
-     * @param maxFeatures The maximum number of features to request
+     * @param maxFeatures
+     *            The maximum number of features to request
      * @return
      * @throws PortalServiceException
      */
-    public InputStream downloadCSV(String serviceUrl,String type, String filterString, Integer maxFeatures) throws PortalServiceException {
+    public InputStream downloadCSV(String serviceUrl, String type, String filterString, Integer maxFeatures)
+            throws PortalServiceException {
 
         HttpRequestBase method = null;
         try {
 
-            method = generateWFSRequest(serviceUrl, type, null, filterString, maxFeatures, null, ResultType.Results,"csv");
+            method = generateWFSRequest(serviceUrl, type, null, filterString, maxFeatures, null, ResultType.Results,
+                    "csv");
             return httpServiceCaller.getMethodResponseAsStream(method);
 
         } catch (Exception ex) {
-            throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl , ex);
+            throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
         }
     }
 }

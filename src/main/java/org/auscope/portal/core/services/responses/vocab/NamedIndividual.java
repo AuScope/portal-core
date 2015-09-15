@@ -10,7 +10,9 @@ public class NamedIndividual extends Concept {
 
     /**
      * Creates a new NamedIndividual, empty for all but it's URN
-     * @param urn The unique ID for this named individual
+     * 
+     * @param urn
+     *            The unique ID for this named individual
      */
     public NamedIndividual(String urn) {
         super(urn);
@@ -27,6 +29,7 @@ public class NamedIndividual extends Concept {
 
     /**
      * Compares 2 named individuals based on their URN
+     * 
      * @param ni
      * @return
      */

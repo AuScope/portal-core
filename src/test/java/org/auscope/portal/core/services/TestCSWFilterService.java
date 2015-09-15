@@ -17,6 +17,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for the CSWFilterService
+ * 
  * @author Josh Vote
  *
  */
@@ -39,6 +40,7 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Initialises each of our unit tests with a new CSWFilterService
+     * 
      * @throws Exception
      */
     @Before
@@ -49,7 +51,8 @@ public class TestCSWFilterService extends PortalTestClass {
         //Create our service list
         serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
         for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
-            serviceUrlList.add(new CSWServiceItem(String.format(IDFORMATSTRING, i), String.format(SERVICEURLFORMATSTRING, i)));
+            serviceUrlList.add(new CSWServiceItem(String.format(IDFORMATSTRING, i), String.format(
+                    SERVICEURLFORMATSTRING, i)));
         }
 
         this.cswFilterService = new CSWFilterService(threadExecutor, httpServiceCaller, serviceUrlList);
@@ -57,28 +60,35 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Test that the function is able to actually load CSW records from multiple services
+     * 
      * @throws Exception
      */
     @Test
     public void testGetCSWRecordsMultiService() throws Exception {
-        final String docString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final String docString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is2 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is3 = new ByteArrayInputStream(docString.getBytes());
 
-        context.checking(new Expectations() {{
+        context.checking(new Expectations() {
+            {
 
-            allowing(mockFilter).getFilterStringAllRecords();
+                allowing(mockFilter).getFilterStringAllRecords();
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 0), null)));
-            will(returnValue(is1));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 0), null)));
+                will(returnValue(is1));
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 1), null)));
-            will(returnValue(is2));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 1), null)));
+                will(returnValue(is2));
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 2), null)));
-            will(returnValue(is3));
-        }});
+                oneOf(httpServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 2), null)));
+                will(returnValue(is3));
+            }
+        });
 
         //We call this twice to test that an update wont commence whilst
         //an update for a service is already running (if it does it will trigger too many calls to getHttpClient
@@ -86,8 +96,7 @@ public class TestCSWFilterService extends PortalTestClass {
         try {
             threadExecutor.getExecutorService().shutdown();
             threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             threadExecutor.getExecutorService().shutdownNow();
             Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
         }
@@ -104,22 +113,32 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Test that the function is able to actually load CSW records
+     * 
      * @throws Exception
      */
     @Test
     public void testGetCountMultiService() throws Exception {
-        final String docString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final String docString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is2 = new ByteArrayInputStream(docString.getBytes());
         final ByteArrayInputStream is3 = new ByteArrayInputStream(docString.getBytes());
 
-        context.checking(new Expectations() {{
-            allowing(mockFilter).getFilterStringAllRecords();
+        context.checking(new Expectations() {
+            {
+                allowing(mockFilter).getFilterStringAllRecords();
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 0), null)));will(returnValue(is1));
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 1), null)));will(returnValue(is2));
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 2), null)));will(returnValue(is3));
-        }});
+                oneOf(httpServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 0), null)));
+                will(returnValue(is1));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 1), null)));
+                will(returnValue(is2));
+                oneOf(httpServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, String.format(SERVICEURLFORMATSTRING, 2), null)));
+                will(returnValue(is3));
+            }
+        });
 
         //We call this twice to test that an update wont commence whilst
         //an update for a service is already running (if it does it will trigger too many calls to getHttpClient
@@ -127,8 +146,7 @@ public class TestCSWFilterService extends PortalTestClass {
         try {
             threadExecutor.getExecutorService().shutdown();
             threadExecutor.getExecutorService().awaitTermination(180, TimeUnit.SECONDS);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             threadExecutor.getExecutorService().shutdownNow();
             Assert.fail("Exception whilst waiting for update to finish " + ex.getMessage());
         }
@@ -138,22 +156,28 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Test that the function is able to actually load CSW records from multiple services
+     * 
      * @throws Exception
      */
     @Test
     public void testGetCSWRecordsSingleService() throws Exception {
-        final String docString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final String docString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
 
         final int serviceToTest = CONCURRENT_THREADS_TO_RUN / 2;
         final String serviceIdToUse = String.format(IDFORMATSTRING, serviceToTest);
         final String expectedServiceUrl = String.format(SERVICEURLFORMATSTRING, serviceToTest);
 
-        context.checking(new Expectations() {{
-            allowing(mockFilter).getFilterStringAllRecords();
+        context.checking(new Expectations() {
+            {
+                allowing(mockFilter).getFilterStringAllRecords();
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, expectedServiceUrl, null)));will(returnValue(is1));
-        }});
+                oneOf(httpServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, expectedServiceUrl, null)));
+                will(returnValue(is1));
+            }
+        });
 
         //We call this twice to test that an update wont commence whilst
         //an update for a service is already running (if it does it will trigger too many calls to getHttpClient
@@ -164,22 +188,28 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Test that the function is able to actually load CSW records from multiple services
+     * 
      * @throws Exception
      */
     @Test
     public void testGetCountSingleService() throws Exception {
-        final String docString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        final String docString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
         final ByteArrayInputStream is1 = new ByteArrayInputStream(docString.getBytes());
 
         final int serviceToTest = CONCURRENT_THREADS_TO_RUN / 2;
         final String serviceIdToUse = String.format(IDFORMATSTRING, serviceToTest);
         final String expectedServiceUrl = String.format(SERVICEURLFORMATSTRING, serviceToTest);
 
-        context.checking(new Expectations() {{
-            allowing(mockFilter).getFilterStringAllRecords();
+        context.checking(new Expectations() {
+            {
+                allowing(mockFilter).getFilterStringAllRecords();
 
-            oneOf(httpServiceCaller).getMethodResponseAsStream(with(aHttpMethodBase(null, expectedServiceUrl, null)));will(returnValue(is1));
-        }});
+                oneOf(httpServiceCaller).getMethodResponseAsStream(
+                        with(aHttpMethodBase(null, expectedServiceUrl, null)));
+                will(returnValue(is1));
+            }
+        });
 
         //We call this twice to test that an update wont commence whilst
         //an update for a service is already running (if it does it will trigger too many calls to getHttpClient
@@ -189,6 +219,7 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Simple test to ensure that we can fetch the list of CSWServiceItems
+     * 
      * @throws Exception
      */
     @Test

@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Factory class for instantiating Description
+ * 
  * @author Josh Vote
  *
  */
@@ -32,12 +33,15 @@ public class DescriptionFactory {
      *
      * The parsing will proceed recusively through any Descriptions that are defined 'inline'
      *
-     * @param descriptionNode An rdf:Description node
-     * @param relationXPath The type of relation to parse
+     * @param descriptionNode
+     *            An rdf:Description node
+     * @param relationXPath
+     *            The type of relation to parse
      * @return
      * @throws XPathExpressionException
      */
-    protected Description[] attemptParseRelations(Node descriptionNode, String relationXPath) throws XPathExpressionException {
+    protected Description[] attemptParseRelations(Node descriptionNode, String relationXPath)
+            throws XPathExpressionException {
         XPathExpression getRelationsExpr = DOMUtil.compileXPathExpr(relationXPath, nc);
         XPathExpression getInlineDescExpr = DOMUtil.compileXPathExpr("rdf:Description", nc);
 
@@ -71,9 +75,9 @@ public class DescriptionFactory {
     }
 
     /**
-     * Given a rdf:Description node, parse it into a Description object. Unless the node defines all related
-     * Descriptions inline the resulting Description node will be populated with related Descriptions that have the
-     * 'href' flag set.
+     * Given a rdf:Description node, parse it into a Description object. Unless the node defines all related Descriptions inline the resulting Description node
+     * will be populated with related Descriptions that have the 'href' flag set.
+     * 
      * @throws XPathExpressionException
      */
     protected Description attemptParseDescription(Node node) throws XPathExpressionException {
@@ -92,10 +96,10 @@ public class DescriptionFactory {
     }
 
     /**
-     * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with
-     * an object from descriptions.
+     * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with an object from descriptions.
      *
      * The replacements will occur directly into descs
+     * 
      * @param descs
      * @param descriptionsMap
      */
@@ -111,10 +115,10 @@ public class DescriptionFactory {
     }
 
     /**
-     * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with
-     * an object from descriptions.
+     * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with an object from descriptions.
      *
      * This function will NOT traverse any relations
+     * 
      * @param desc
      * @param descriptionsMap
      */
@@ -138,8 +142,7 @@ public class DescriptionFactory {
     }
 
     /**
-     * Merge the entirety of 2 sets of descriptions into a single array. Any duplicates will be removed
-     * with precedence being given to the non href duplicate.
+     * Merge the entirety of 2 sets of descriptions into a single array. Any duplicates will be removed with precedence being given to the non href duplicate.
      */
     private Description[] mergeDescriptionArrays(Description[] array1, Description[] array2) {
         List<Description> source = new ArrayList<Description>(Arrays.asList(array2));
@@ -216,12 +219,12 @@ public class DescriptionFactory {
     /**
      * Parses every rdf:Description element that is a child of the specified node
      *
-     * If skos:hasTopConcept relations are defined only the top level descriptions
-     * will be returned (the remaining will be linked via the top level concepts)
+     * If skos:hasTopConcept relations are defined only the top level descriptions will be returned (the remaining will be linked via the top level concepts)
      *
      * If no skos:hasTopConcept every description element will be returned
      *
-     * @param rdfNode The node to search for rdf:Description elements from
+     * @param rdfNode
+     *            The node to search for rdf:Description elements from
      * @return
      */
     public Description[] parseFromRDF(Node rdfNode) {

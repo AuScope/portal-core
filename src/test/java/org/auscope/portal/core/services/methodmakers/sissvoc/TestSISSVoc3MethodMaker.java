@@ -2,7 +2,6 @@ package org.auscope.portal.core.services.methodmakers.sissvoc;
 
 import junit.framework.Assert;
 
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
 import org.auscope.portal.core.test.PortalTestClass;
@@ -19,6 +18,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Tests that the optional params for various methods don't generate exceptions
+     * 
      * @throws Exception
      */
     @Test
@@ -35,6 +35,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getAllConcepts encodes the method correctly
+     * 
      * @throws Exception
      */
     @Test
@@ -56,6 +57,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getAllConcepts encodes the method correctly
+     * 
      * @throws Exception
      */
     @Test
@@ -79,6 +81,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getResourceByUri encodes the method correctly
+     * 
      * @throws Exception
      */
     @Test
@@ -98,6 +101,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures getBroaderConcepts encodes the method correctly
+     * 
      * @throws Exception
      */
     @Test
@@ -121,6 +125,7 @@ public class TestSISSVoc3MethodMaker extends PortalTestClass {
 
     /**
      * Ensures testGetNarrowerConcepts encodes the method correctly
+     * 
      * @throws Exception
      */
     @Test
