@@ -360,8 +360,26 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsLessThan(String propertyName, String literal,String function) {
-        return generatePropertyIsLessThan(propertyName, literal, false, null, function);
+    protected String generatePropertyIsLessThan(String propertyName, String literal) {
+        return generatePropertyIsLessThan(propertyName, literal, false, null);
+    }
+    /**
+     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     *
+     * Will default to a 'case insensitive' match and no attributes
+     *
+     * Will compare a property to see if it is less than a function
+     *
+     * @param propertyName
+     *            The XPath to the property to compare
+     * @param function
+     *            The compare function.
+     * @return
+     */
+    protected String generatePropertyIsLessThan(String propertyName, String function,Boolean useFunction) {
+        if (useFunction == false)
+            return null;
+        return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", null, propertyName, null, function);
     }
 
     /**
@@ -376,7 +394,7 @@ public abstract class AbstractFilter implements IFilter {
      * @return
      */
     protected String generatePropertyIsLessThan(String propertyName, String literal, Boolean matchCase,
-            MatchActionType matchAction, String function) {
+            MatchActionType matchAction ) {
         HashMap<String, String> attributes = new HashMap<String, String>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
@@ -385,7 +403,7 @@ public abstract class AbstractFilter implements IFilter {
         if (matchAction != null) {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
-        return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", attributes, propertyName, literal, function);
+        return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", attributes, propertyName, literal, null);
     }
 
     /**
@@ -401,10 +419,27 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsGreaterThan(String propertyName, String literal, String function) {
-        return generatePropertyIsGreaterThan(propertyName, literal, false, null, function);
+    protected String generatePropertyIsGreaterThan(String propertyName, String literal ) {
+        return generatePropertyIsGreaterThan(propertyName, literal, false, null);
     }
-
+    /**
+     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     *
+     * Will default to a 'case insensitive' match and no attributes
+     *
+     * Will compare a property to see if it is greater than a literal
+     *
+     * @param propertyName
+     *            The XPath to the property to compare
+     * @param function
+     *            The function to compare against
+     * @return
+     */
+    protected String generatePropertyIsGreaterThan(String propertyName,String function,Boolean useFunction) {
+        if (useFunction == false)
+            return null;
+        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", null, propertyName, null, function);
+    }
     /**
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
@@ -417,7 +452,7 @@ public abstract class AbstractFilter implements IFilter {
      * @return
      */
     protected String generatePropertyIsGreaterThan(String propertyName, String literal, Boolean matchCase,
-            MatchActionType matchAction, String function) {
+            MatchActionType matchAction ) {
         HashMap<String, String> attributes = new HashMap<String, String>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
@@ -426,7 +461,7 @@ public abstract class AbstractFilter implements IFilter {
         if (matchAction != null) {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
-        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, literal, function);
+        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, literal, null);
     }
 
     /**
@@ -480,7 +515,7 @@ public abstract class AbstractFilter implements IFilter {
      * @return
      */
     protected String generatePropertyIsNull(String propertyName) {
-        return generatePropertyUnaryComparisonFragment("ogc:PropertyIsNull", propertyName, null);
+        return generatePropertyUnaryComparisonFragment("ogc:PropertyIsNull", propertyName);
     }
 
     /**
@@ -584,8 +619,8 @@ public abstract class AbstractFilter implements IFilter {
         return filter;
     }
 
-    private String generatePropertyUnaryComparisonFragment(String comparison, String propertyName,String function) {
-        return generatePropertyComparisonFragment(comparison, null, propertyName, null, function);
+    private String generatePropertyUnaryComparisonFragment(String comparison, String propertyName) {
+        return generatePropertyComparisonFragment(comparison, null, propertyName, null, null);
     }
 
     private String generatePropertyComparisonFragment(String comparison, Map<String, String> attributes,
@@ -602,8 +637,12 @@ public abstract class AbstractFilter implements IFilter {
             sb.append(">");
         }
         sb.append(String.format("<ogc:PropertyName>%1$s</ogc:PropertyName>", propertyName));
-        if (literal != null) {
-            sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", escapeLiteral(literal)));
+        if (function != null) {
+            sb.append(function);
+        } else {
+            if (literal != null) {
+                sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", escapeLiteral(literal)));
+            }
         }
         sb.append(String.format("</%1$s>", comparison));
 
