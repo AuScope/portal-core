@@ -33,6 +33,12 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
     /** The description. */
     private String description;
 
+    /** The legendURL. */
+    private String legendURL;    
+    
+    /** The metadataURL. */
+    private String metadataURL;   
+    
     /** The bbox. */
     private CSWGeographicBoundingBox bbox;
 
@@ -62,6 +68,14 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
         tempNode = (Node) xPath.evaluate(layerAbstractExpression, node, XPathConstants.NODE);
         description = tempNode != null ? tempNode.getTextContent() : "";
 
+        String layerLegendURLExpression = "Style/LegendURL/OnlineResource";
+        tempNode = (Node) xPath.evaluate(layerLegendURLExpression, node, XPathConstants.NODE);
+        legendURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
+        
+        String layerMetadataURLExpression = "MetadataURL";
+        tempNode = (Node) xPath.evaluate(layerMetadataURLExpression, node, XPathConstants.NODE);
+        metadataURL = tempNode != null ? tempNode.getTextContent() : "";
+        
         String latLonBoundingBox = "LatLonBoundingBox";
         tempNode = (Node) xPath.evaluate(latLonBoundingBox, node, XPathConstants.NODE);
         if (tempNode != null) {
@@ -128,6 +142,29 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
         return description;
     }
 
+    /**
+     * Gets the legendURL.
+     *
+     * @return the legendURL
+     * @throws XPathExpressionException
+     *             the x path expression exception
+     */
+    public String getLegendURL() throws XPathExpressionException {
+        return legendURL;
+    }
+    
+    
+    /**
+     * Gets the metadataURL.
+     *
+     * @return the metadataURL
+     * @throws XPathExpressionException
+     *             the x path expression exception
+     */
+    public String getMetadataURL() throws XPathExpressionException {
+        return metadataURL;
+    }
+    
     /**
      * Gets the bounding box.
      *
