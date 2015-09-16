@@ -376,9 +376,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The compare function.
      * @return
      */
-    protected String generatePropertyIsLessThan(String propertyName, String function,Boolean useFunction) {
-        if (useFunction == false)
-            return null;
+    protected String generateDatePropertyIsLessThan(String propertyName, String function) {
         return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", null, propertyName, null, function);
     }
 
@@ -435,9 +433,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The function to compare against
      * @return
      */
-    protected String generatePropertyIsGreaterThan(String propertyName,String function,Boolean useFunction) {
-        if (useFunction == false)
-            return null;
+    protected String generateDatePropertyIsGreaterThan(String propertyName,String function) {
         return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", null, propertyName, null, function);
     }
     /**
@@ -639,10 +635,8 @@ public abstract class AbstractFilter implements IFilter {
         sb.append(String.format("<ogc:PropertyName>%1$s</ogc:PropertyName>", propertyName));
         if (function != null) {
             sb.append(function);
-        } else {
-            if (literal != null) {
-                sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", escapeLiteral(literal)));
-            }
+        } else if (literal != null) {
+            sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", escapeLiteral(literal)));
         }
         sb.append(String.format("</%1$s>", comparison));
 
