@@ -27,7 +27,7 @@ public abstract class AbstractFilter implements IFilter {
 
     /**
      * Utility method for converting a MatchActionType into a string that is defined by the filter specification
-     * 
+     *
      * @param type
      * @return
      */
@@ -56,7 +56,7 @@ public abstract class AbstractFilter implements IFilter {
      * returns a ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * The filter will return true if the specified propertyName geometry lies within the specified bounding box bounds
-     * 
+     *
      * @param bboxSrs
      * @param lowerCornerPoints
      * @param upperCornerPoints
@@ -117,7 +117,7 @@ public abstract class AbstractFilter implements IFilter {
 
     /**
      * XML escapes the specified literal string, returns the escaped string
-     * 
+     *
      * @param literal
      *            the literal to escape
      * @return
@@ -198,7 +198,7 @@ public abstract class AbstractFilter implements IFilter {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
 
-        return generatePropertyComparisonFragment("ogc:PropertyIsLike", attributes, propertyName, literal);
+        return generatePropertyComparisonFragment("ogc:PropertyIsLike", attributes, propertyName, literal, null);
     }
 
     /**
@@ -207,7 +207,7 @@ public abstract class AbstractFilter implements IFilter {
      * The comparison will default to case insensitive matching
      *
      * Will compare whether a property equals literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -222,7 +222,7 @@ public abstract class AbstractFilter implements IFilter {
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare whether a property equals literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -239,7 +239,7 @@ public abstract class AbstractFilter implements IFilter {
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare whether a property equals literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -261,7 +261,7 @@ public abstract class AbstractFilter implements IFilter {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
 
-        return generatePropertyComparisonFragment("ogc:PropertyIsEqualTo", attributes, propertyName, literal);
+        return generatePropertyComparisonFragment("ogc:PropertyIsEqualTo", attributes, propertyName, literal, null);
     }
 
     /**
@@ -270,7 +270,7 @@ public abstract class AbstractFilter implements IFilter {
      * Will default to a 'case insensitive' match
      *
      * Will test if a property is greater than or equal to the literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -285,7 +285,7 @@ public abstract class AbstractFilter implements IFilter {
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will test if a property is greater than or equal to the literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -303,7 +303,7 @@ public abstract class AbstractFilter implements IFilter {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
         return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThanOrEqualTo", attributes, propertyName,
-                literal);
+                literal, null);
     }
 
     /**
@@ -312,7 +312,7 @@ public abstract class AbstractFilter implements IFilter {
      * Will default to a 'case insensitive' match
      *
      * Will compare a property against a literal to see if they mismatch
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -327,7 +327,7 @@ public abstract class AbstractFilter implements IFilter {
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare a property against a literal to see if they mismatch
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -344,7 +344,7 @@ public abstract class AbstractFilter implements IFilter {
         if (matchAction != null) {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
-        return generatePropertyComparisonFragment("ogc:PropertyIsNotEqualTo", attributes, propertyName, literal);
+        return generatePropertyComparisonFragment("ogc:PropertyIsNotEqualTo", attributes, propertyName, literal, null);
     }
 
     /**
@@ -353,7 +353,7 @@ public abstract class AbstractFilter implements IFilter {
      * Will default to a 'case insensitive' match
      *
      * Will compare a property to see if it is less than a literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -363,12 +363,28 @@ public abstract class AbstractFilter implements IFilter {
     protected String generatePropertyIsLessThan(String propertyName, String literal) {
         return generatePropertyIsLessThan(propertyName, literal, false, null);
     }
+    /**
+     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     *
+     * Will default to a 'case insensitive' match and no attributes
+     *
+     * Will compare a property to see if it is less than a function
+     *
+     * @param propertyName
+     *            The XPath to the property to compare
+     * @param function
+     *            The compare function.
+     * @return
+     */
+    protected String generateDatePropertyIsLessThan(String propertyName, String function) {
+        return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", null, propertyName, null, function);
+    }
 
     /**
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare a property to see if it is less than a literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -376,7 +392,7 @@ public abstract class AbstractFilter implements IFilter {
      * @return
      */
     protected String generatePropertyIsLessThan(String propertyName, String literal, Boolean matchCase,
-            MatchActionType matchAction) {
+            MatchActionType matchAction ) {
         HashMap<String, String> attributes = new HashMap<String, String>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
@@ -385,7 +401,7 @@ public abstract class AbstractFilter implements IFilter {
         if (matchAction != null) {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
-        return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", attributes, propertyName, literal);
+        return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", attributes, propertyName, literal, null);
     }
 
     /**
@@ -394,22 +410,37 @@ public abstract class AbstractFilter implements IFilter {
      * Will default to a 'case insensitive' match
      *
      * Will compare a property to see if it is greater than a literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsGreaterThan(String propertyName, String literal) {
+    protected String generatePropertyIsGreaterThan(String propertyName, String literal ) {
         return generatePropertyIsGreaterThan(propertyName, literal, false, null);
     }
-
+    /**
+     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     *
+     * Will default to a 'case insensitive' match and no attributes
+     *
+     * Will compare a property to see if it is greater than a literal
+     *
+     * @param propertyName
+     *            The XPath to the property to compare
+     * @param function
+     *            The function to compare against
+     * @return
+     */
+    protected String generateDatePropertyIsGreaterThan(String propertyName,String function) {
+        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", null, propertyName, null, function);
+    }
     /**
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare a property to see if it is greater than a literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -417,7 +448,7 @@ public abstract class AbstractFilter implements IFilter {
      * @return
      */
     protected String generatePropertyIsGreaterThan(String propertyName, String literal, Boolean matchCase,
-            MatchActionType matchAction) {
+            MatchActionType matchAction ) {
         HashMap<String, String> attributes = new HashMap<String, String>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
@@ -426,7 +457,7 @@ public abstract class AbstractFilter implements IFilter {
         if (matchAction != null) {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
-        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, literal);
+        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, literal, null);
     }
 
     /**
@@ -435,7 +466,7 @@ public abstract class AbstractFilter implements IFilter {
      * Will default to a 'case insensitive' match
      *
      * Will compare a property to see if it is greater than or equal to a literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -450,7 +481,7 @@ public abstract class AbstractFilter implements IFilter {
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare a property to see if it is greater than or equal to a literal
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @param literal
@@ -467,14 +498,14 @@ public abstract class AbstractFilter implements IFilter {
         if (matchAction != null) {
             attributes.put("matchAction", matchActionToString(matchAction));
         }
-        return generatePropertyComparisonFragment("ogc:PropertyIsLessThanOrEqualTo", attributes, propertyName, literal);
+        return generatePropertyComparisonFragment("ogc:PropertyIsLessThanOrEqualTo", attributes, propertyName, literal, null);
     }
 
     /**
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare a property to see if it is null
-     * 
+     *
      * @param propertyName
      *            The XPath to the property to compare
      * @return
@@ -487,7 +518,7 @@ public abstract class AbstractFilter implements IFilter {
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare a variable number of filters using a logical AND comparison
-     * 
+     *
      * @param fragment1
      *            a filter fragment
      * @param fragment2
@@ -502,7 +533,7 @@ public abstract class AbstractFilter implements IFilter {
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will compare a variable number of filters using a logical OR comparison
-     * 
+     *
      * @param fragment1
      *            a filter fragment
      * @param fragment2
@@ -517,7 +548,7 @@ public abstract class AbstractFilter implements IFilter {
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
      * Will logical NOT the fragments result
-     * 
+     *
      * @param fragment
      *            a filter fragment
      * @return
@@ -585,11 +616,11 @@ public abstract class AbstractFilter implements IFilter {
     }
 
     private String generatePropertyUnaryComparisonFragment(String comparison, String propertyName) {
-        return generatePropertyComparisonFragment(comparison, null, propertyName, null);
+        return generatePropertyComparisonFragment(comparison, null, propertyName, null, null);
     }
 
     private String generatePropertyComparisonFragment(String comparison, Map<String, String> attributes,
-            String propertyName, String literal) {
+            String propertyName, String literal,String function) {
         StringBuilder sb = new StringBuilder();
 
         if (attributes == null) {
@@ -602,11 +633,27 @@ public abstract class AbstractFilter implements IFilter {
             sb.append(">");
         }
         sb.append(String.format("<ogc:PropertyName>%1$s</ogc:PropertyName>", propertyName));
-        if (literal != null) {
+        if (function != null) {
+            sb.append(function);
+        } else if (literal != null) {
             sb.append(String.format("<ogc:Literal>%1$s</ogc:Literal>", escapeLiteral(literal)));
         }
         sb.append(String.format("</%1$s>", comparison));
 
         return sb.toString();
     }
+
+    /**
+    *
+    * @param inputDate a string of date with format "yyyy-MM-dd HH:mm:ss"
+    * @return ogc:function name = "dateParse" ...
+    */
+   protected String generateFunctionDateParse(String inputDate) {
+
+       return String.format("<ogc:Function name=\"dateParse\"> "
+                           + "<ogc:Literal>yyyy-MM-dd HH:mm:ss</ogc:Literal>"
+                           + "<ogc:Literal>  %s </ogc:Literal> "
+                          + "</ogc:Function>", inputDate);
+   }
+
 }
