@@ -376,8 +376,12 @@ public abstract class AbstractFilter implements IFilter {
      *            The compare function.
      * @return
      */
-    protected String generateDatePropertyIsLessThan(String propertyName, String function) {
-        return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", null, propertyName, null, function);
+    protected String generateDatePropertyIsLessThan(String propertyName, Boolean matchCase, String function) {
+        HashMap<String, String> attributes = new HashMap<String, String>();
+        if (matchCase != null) {
+            attributes.put("matchCase", Boolean.toString(matchCase));
+        }
+        return generatePropertyComparisonFragment("ogc:PropertyIsLessThan", attributes, propertyName, null, function);
     }
 
     /**
@@ -433,8 +437,12 @@ public abstract class AbstractFilter implements IFilter {
      *            The function to compare against
      * @return
      */
-    protected String generateDatePropertyIsGreaterThan(String propertyName,String function) {
-        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", null, propertyName, null, function);
+    protected String generateDatePropertyIsGreaterThan(String propertyName, Boolean matchCase, String function) {
+        HashMap<String, String> attributes = new HashMap<String, String>();
+        if (matchCase != null) {
+            attributes.put("matchCase", Boolean.toString(matchCase));
+        }
+        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, null, function);
     }
     /**
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
