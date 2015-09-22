@@ -138,7 +138,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
               ptype : 'rowexpandercontainer',
               pluginId : 'maingrid_rowexpandercontainer',
               toggleColIndexes: [0, 2],
-              generateContainer : function(record, parentElId) {                  
+              generateContainer : function(record, parentElId, grid) {                  
                   //VT:if this is deserialized, we don't need to regenerate the layer
                   if(record.get('layer')) {                        
                       newLayer =  record.get('layer');                                    
@@ -150,7 +150,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                   record.set('layer',newLayer);
                   var filterForm = cfg.layerFactory.formFactory.getFilterForm(newLayer).form; //ALWAYS recreate filter form - see https://jira.csiro.au/browse/AUS-2588
                   filterForm.setLayer(newLayer);
-                  var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, me);
+                  var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);
                   
                   //Update the layer panel to use
                   if (filterForm) {
@@ -160,7 +160,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                           filterForm.getForm().setValues(existingParams);
                       }
                   }
-                  me.grid.updateLayout({
+                  grid.updateLayout({
                       defer:false,
                       isRoot:false
                   });                    

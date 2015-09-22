@@ -186,21 +186,23 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         }
     },
     
-    restoreRowContainer: function(record) {
+    restoreRowContainer: function(record) {        
+        var me = this;
+        
         //We don't want this function to be re-entrant
         //Which can occur if the generateContainer callback
         //makes any updates to record
-        if (this.generationRunning === true) {
+        if (me.generationRunning === true) {
             return;
         }
         
-        this.generationRunning = true;
-        if (this.restorationRequired(record)) {
+        me.generationRunning = true;
+        if (me.restorationRequired(record)) {
             var id = "rowexpandercontainer-" + record.id;
-            var container = this.generateContainer(record, id);
+            var container = me.generateContainer(record, id, me.grid);
             
-            this.recordStatus[record.id].container = container;
-            this.recordStatus[record.id].container.updateLayout({
+            me.recordStatus[record.id].container = container;
+            me.recordStatus[record.id].container.updateLayout({
                 defer:false,
                 isRoot:false
             });
