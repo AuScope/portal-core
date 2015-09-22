@@ -5,7 +5,7 @@
  *
  * To use this plugin, assign the following field to the plugin constructor
  * {
- *  generateContainer : function(record, parentElId) - returns Ext.container.Container,
+ *  generateContainer : function(record, parentElId, grid) - returns Ext.container.Container,
  *  allowMultipleOpen : Boolean - whether multiple containers can be open simultaneously.
  *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column 
  * }
@@ -21,7 +21,7 @@
  *                renderTo: 'foo',
  *                plugins : [{
  *                  ptype : 'rowexpandercontainer',
- *                  generateContainer : function(record, parentElId) {
+ *                  generateContainer : function(record, parentElId, grid) {
  *                     return Ext.create('Ext.panel.Panel', {});
  *                  }
  *                }]
