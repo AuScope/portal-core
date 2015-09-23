@@ -94,6 +94,7 @@ public class TestWMSService extends PortalTestClass {
         GetCapabilitiesWMSLayerRecord layer = layers.get(1);
         CSWGeographicBoundingBox bbox = layer.getBoundingBox();
         Assert.assertEquals("An Abstract", layer.getAbstract());
+        Assert.assertEquals("http://www.metadataURL.com", layer.getMetadataURL());
         Assert.assertEquals(3, bbox.getEastBoundLongitude(), 0.01);
         Assert.assertEquals(-2, bbox.getSouthBoundLatitude(), 0.01);
         Assert.assertEquals(-1, bbox.getWestBoundLongitude(), 0.01);

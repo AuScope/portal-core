@@ -51,14 +51,14 @@ Ext.define('portal.csw.OnlineResource', {
                 return 'OPeNDAP Service';
             case portal.csw.OnlineResource.SOS:
                 return 'Sensor Observation Service 2.0.0';
-            case portal.csw.OnlineResource.UNSUPPORTED:
-                return 'Others';
             case portal.csw.OnlineResource.IRIS:
                 return 'IRIS Web Service';
             case portal.csw.OnlineResource.CSWService:
                 return 'CSW Service';
             case portal.csw.OnlineResource.NCSS:
                 return 'NetCDF Subset Service';
+            // don't display a group for "Unsupported" resources, even though there might be information in there        
+            case portal.csw.OnlineResource.UNSUPPORTED:
             default:
                 return null;
             }

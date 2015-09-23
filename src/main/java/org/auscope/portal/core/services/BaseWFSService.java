@@ -2,6 +2,8 @@ package org.auscope.portal.core.services;
 
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.xpath.XPathConstants;
@@ -212,16 +214,34 @@ public abstract class BaseWFSService {
             }
             parsedGetCap.setGetFeatureOutputFormats(outputFormats);
 
-            //Get feature type names
+            //Get feature type names and abstracts
             XPathExpression xPathGetTn = DOMUtil.compileXPathExpr(
                     "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Name", new WFSNamespaceContext());
             NodeList nameNodes = (NodeList) xPathGetTn.evaluate(responseDoc, XPathConstants.NODESET);
             String[] typeNames = new String[nameNodes.getLength()];
+            XPathExpression xPathGetAbstract = DOMUtil.compileXPathExpr(
+                    "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Abstract", new WFSNamespaceContext());
+            NodeList abstractNodes = (NodeList) xPathGetAbstract.evaluate(responseDoc, XPathConstants.NODESET);
+            Map<String, String> featureAbstracts = new HashMap<String, String>();
+            XPathExpression xPathGetMetadataURL = DOMUtil.compileXPathExpr(
+                    "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:MetadataURL", new WFSNamespaceContext());
+            NodeList metadataURLNodes = (NodeList) xPathGetMetadataURL.evaluate(responseDoc, XPathConstants.NODESET);
+            Map<String, String> metadataURLs = new HashMap<String, String>();
+                        
             for (int i = 0; i < nameNodes.getLength(); i++) {
-                typeNames[i] = nameNodes.item(i).getTextContent();
+                String typeName = nameNodes.item(i).getTextContent();
+                typeNames[i] = typeName;
+                if (abstractNodes.getLength() > i && abstractNodes.item(i) != null) {
+                    featureAbstracts.put(typeName, abstractNodes.item(i).getTextContent());
+                }
+                if (metadataURLNodes.getLength() > i && metadataURLNodes.item(i) != null) {
+                    metadataURLs.put(typeName, metadataURLNodes.item(i).getTextContent());
+                }
             }
             parsedGetCap.setFeatureTypes(typeNames);
-
+            parsedGetCap.setFeatureAbstracts(featureAbstracts);
+            parsedGetCap.setMetadataURLs(metadataURLs);
+            
             return parsedGetCap;
         } catch (Exception e) {
             throw new PortalServiceException(method, e);

@@ -165,6 +165,7 @@
             <Name>ga:aemsurveys</Name>
             <Title>aemsurveys</Title>
             <Abstract/>
+            <MetadataURL>http://www.metadataURL.com</MetadataURL>
             <ows:Keywords>
                 <ows:Keyword>aemsurveys</ows:Keyword>
                 <ows:Keyword>features</ows:Keyword>
