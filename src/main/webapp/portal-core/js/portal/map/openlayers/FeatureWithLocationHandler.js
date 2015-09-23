@@ -14,7 +14,7 @@ portal.map.openlayers.FeatureWithLocationHandler = OpenLayers.Class(OpenLayers.H
      * of the event handler
      */
     lastHandledEvent : null,
-    mouseEventFlag: false,
+    mouseDragFlag: true,
     downX: 0,
     downY: 0,
     handle : function(event) {
@@ -27,22 +27,19 @@ portal.map.openlayers.FeatureWithLocationHandler = OpenLayers.Class(OpenLayers.H
         //   by calculating the distance between mousedown and mouseup position.
         if (!handled) {
             var type = event.type;
-            if (type === 'click') {
-            	if (this.mouseEventFlag)
-            	{
-            		handled = true;            	
-                    this.callback('click', [null, event]);
-                }
+            if (type === 'click' && !this.mouseDragFlag) {
+                handled = true;            	
+                this.callback('click', [null, event]);                
             } else if (type === 'mousedown') {
-                this.mouseEventFlag = false;
-                this.downX = event.x;
-                this.downY = event.y;                
+                this.downX = event.xy.x;
+                this.downY = event.xy.y;     
+                this.mouseDragFlag = true;                
             } else if (type === 'mouseup') {    
             	if (this.lastHandledEvent != null && this.lastHandledEvent.type == 'mousedown') {
-                var xx = Math.abs(event.x - this.downX);
-                var yy = Math.abs(event.y - this.downY);
-                if ( xx < 5 && yy < 5)
-                    this.mouseEventFlag = true;
+                    var xx = Math.abs(event.xy.x - this.downX);
+                    var yy = Math.abs(event.xy.y - this.downY);
+                    if ( xx < 5 && yy < 5)
+                        this.mouseDragFlag = false;
             	}                    
             }            
         }
