@@ -29,6 +29,16 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
             buttonAlign : 'right',
             buttons : [{
                 xtype : 'button',
+                text : 'Back to Search',
+                iconCls : 'magglass',
+                scope : this,
+                handler : function(button, e) {
+                    var cswFilterWindow = Ext.getCmp('cswFilterWindow');
+                    this.close();
+                    cswFilterWindow.show();
+                 }
+            }, {
+                xtype : 'button',
                 text : 'Add Selected Records',
                 iconCls : 'add',
                 scope : this,

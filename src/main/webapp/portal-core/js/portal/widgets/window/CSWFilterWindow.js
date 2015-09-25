@@ -2,14 +2,14 @@
 Ext.define('portal.widgets.window.CSWFilterWindow', {
     extend : 'Ext.window.Window',
 
-
+    cswFilterFormPanel : null,
+    
     constructor : function(cfg) {      
 
-        var cswFilterFormPanel = new portal.widgets.panel.CSWFilterFormPanel({
+        // use the search panel defined in the config if present, otherwise use the Auscope Core default
+        this.cswFilterFormPanel = cfg.cswFilterFormPanel || new portal.widgets.panel.CSWFilterFormPanel({
             name : 'Filter Form'
         });
-
-
 
         Ext.apply(cfg, {
             title : 'Enter Parameters',
@@ -18,7 +18,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
             //autoScroll :true,
             width : 500,
             height : 520,
-            items : [cswFilterFormPanel],
+            items : [this.cswFilterFormPanel],
             buttons:[{
                 xtype: 'button',
                 text: 'Search',
@@ -42,15 +42,14 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
                                 }
                             }
                         }
-
+                        
                         parent.fireEvent('filterselectcomplete',filteredResultPanels);
-                        parent.close();
-
+                        parent.hide();
                     }
                 }
             }]
+            
         });
-
 
 
         this.callParent(arguments);
@@ -109,6 +108,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
                 extraParams: {
                     key : keys,
                     value : values,
+                    portalName : this.cswFilterFormPanel.portalName,
                     customregistries : {
                         id: cswServiceId.id,
                         title: cswServiceId.title,
