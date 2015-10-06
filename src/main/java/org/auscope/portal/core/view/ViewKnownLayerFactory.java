@@ -4,6 +4,9 @@ import java.awt.Dimension;
 import java.awt.Point;
 
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
+import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
+import org.auscope.portal.core.view.knownlayer.SelectorsMode;
+import org.auscope.portal.core.view.knownlayer.WMSSelectors;
 import org.springframework.ui.ModelMap;
 
 /**
@@ -51,6 +54,19 @@ public class ViewKnownLayerFactory {
             group = k.getGroup();
         }
         obj.put("group", group);
+        
+        // LayersMode is from GA GPT-41 where Layers can have Layers and they can be 'OR'd or 'AND'd.
+        if (k.getKnownLayerSelector() != null) {
+            KnownLayerSelector knownLayerSelector = k.getKnownLayerSelector();
+            if (knownLayerSelector instanceof WMSSelectors) {
+                WMSSelectors wmsSelectors = (WMSSelectors) knownLayerSelector;
+                obj.put("layerMode", wmsSelectors.getLayersMode());
+            } else {
+                obj.put("layerMode", SelectorsMode.NA);
+            }
+        } else {
+            obj.put("layerMode", SelectorsMode.NA);
+        }
 
         return obj;
     }

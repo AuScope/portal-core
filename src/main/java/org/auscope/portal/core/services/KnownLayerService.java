@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerAndRecords;
@@ -18,6 +20,8 @@ import org.auscope.portal.core.view.knownlayer.KnownLayerSelector;
  *
  */
 public class KnownLayerService {
+    private final Log logger = LogFactory.getLog(getClass().getName());
+
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
 
@@ -75,6 +79,7 @@ public class KnownLayerService {
 
         //Figure out what records belong to which known layers (could be multiple)
         for (KnownLayer knownLayer : knownLayers) {
+            logger.debug("groupKnownLayerRecords - knownLayer: " + knownLayer);
             // We have to do this part regardless of the classFilters because
             // if not, the results for unmappedRecords will be incorrect.
             // (I.e.: they'll include related features from things that have
@@ -96,6 +101,11 @@ public class KnownLayerService {
                     belongingRecords.add(record);
                     mappedRecordIDs.put(record.getFileIdentifier(), null);
                     break;
+                case NotRelated:
+                    break;
+                default:
+                    throw new RuntimeException(
+                            "This must be a new isRelatedRecord: " + selector.isRelatedRecord(record));
                 }
             }
 
@@ -131,7 +141,7 @@ public class KnownLayerService {
                 unmappedRecords.add(record);
             }
         }
-
-        return new KnownLayerGrouping(knownLayerAndRecords, unmappedRecords, originalRecordList);
+        KnownLayerGrouping knownLayerGrouping = new KnownLayerGrouping(knownLayerAndRecords, unmappedRecords, originalRecordList);
+        return knownLayerGrouping;
     }
 }
