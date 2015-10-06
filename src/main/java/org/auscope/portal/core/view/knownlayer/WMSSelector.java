@@ -1,5 +1,7 @@
 package org.auscope.portal.core.view.knownlayer;
 
+import java.util.Arrays;
+
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
@@ -136,5 +138,15 @@ public class WMSSelector implements KnownLayerSelector {
 
     public boolean includeEndpoints() {
         return includeEndpoints;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "WMSSelector [layerName=" + layerName + ", relatedLayerNames=" + Arrays.toString(relatedLayerNames)
+                + ", serviceEndpoints=" + Arrays.toString(serviceEndpoints) + ", includeEndpoints=" + includeEndpoints
+                + "]";
     }
 }

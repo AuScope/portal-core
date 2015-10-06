@@ -52,4 +52,12 @@ public class KnownLayerGrouping {
         return originalRecordSet;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "KnownLayerGrouping [knownLayers=" + knownLayers + ", unmappedRecords=" + unmappedRecords
+                + ", originalRecordSet=" + originalRecordSet + "]";
+    }
 }
