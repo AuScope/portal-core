@@ -22,6 +22,11 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     activelayerstore : null,
     menuFactory : null,
 
+    listenersHere : {
+            removelayer : function(layerArray){
+                this._removeLayer(layerArray);
+            }
+    },
     constructor : function(cfg) {
         var me = this;
         this.map = cfg.map;
@@ -32,7 +37,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             startCollapsed : true
         });
        
-        this.listeners = cfg.listeners;
+        this.listeners = Object.extend(this.listenersHere, cfg.listeners);
         
         var menuItems = [this._getVisibleBoundFilterAction(),this._getActivelayerFilterAction(),
                          this._getDataLayerFilterAction(),this._getImageLayerFilterAction()];
@@ -170,12 +175,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         });
 
         this.callParent(arguments);
+        AppEvents.addListener(this);
     },
     
     
     _getInlineLayerPanel : function(filterForm, parentElId){                             
         var me = this;   
-        var panel =Ext.create('portal.widgets.panel.FilterPanel', {    
+        var panel = Ext.create('portal.widgets.panel.FilterPanel', {    
             menuFactory : this.menuFactory,
             filterForm  : filterForm, 
             detachOnRemove : false,
@@ -183,9 +189,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             renderTo    : parentElId,
             listeners : {
                 addlayer : function(layer){
-                    me.activelayerstore.suspendEvents(false);
+                    me.activelayerstore.suspendEvents(true);
                     me.activelayerstore.insert(0,layer); //this adds the layer to our store
                     me.activelayerstore.resumeEvents();
+                    console.log("Added layer: ", layer);
                 },
                 removelayer : function(layer){
                     me.activelayerstore.remove(layer);
@@ -637,13 +644,30 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     _deleteClickHandler :  function(value, record, rowIdx, tip) {
         var layer = record.get('layer');
         if(layer && record.get('active')){            
+//            layer.removeDataFromMap();
+//            this.activelayerstore.remove(layer);          
+//            this.fireEvent('cellclick',this,undefined,undefined,record,undefined,rowIdx);
+            this.menuFactory.layerRemoveHandler(layer);
+            AppEvents.broadcast('removelayer', {layer:layer, rowIdx:rowIdx});
+        }             
+    },
+    
+    /** 
+     * This wil be called indirectly via AppEvents.broadcast('removelayer', layer);
+     * Look for the .listener() elsewhere
+     */
+    _removeLayer : function(layerArray) {
+        var layer = layerArray.layer;
+        var rowIdx = layerArray.rowIdx;
+        if (this.activelayerstore.find('id', layer.id) >= 0) {
             layer.removeDataFromMap();
             this.activelayerstore.remove(layer);          
-            this.fireEvent('cellclick',this,undefined,undefined,record,undefined,rowIdx);
+            this.fireEvent('cellclick',this,undefined,undefined,layer,undefined,rowIdx);
             this.menuFactory.layerRemoveHandler(layer);
-           
-            
-        }             
+            AppEvents.broadcast('removelayer', layer);
+        } else {
+            console.log('_removeLayer : no activeLayer with id:',layer.id," in this.activelayerstore: ", this.activelayerstore.getData());
+        }
     },
     
     /**
