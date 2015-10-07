@@ -21,6 +21,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     map : null,
     activelayerstore : null,
     menuFactory : null,
+    onlineResourcePanelType : null,
 
     listenersHere : {
             removelayer : function(layerArray){
@@ -29,18 +30,20 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     },
     constructor : function(cfg) {
         var me = this;
-        this.map = cfg.map;
-        this.menuFactory = cfg.menuFactory;
-        this.activelayerstore = cfg.activelayerstore;
+        me.map = cfg.map;
+        me.menuFactory = cfg.menuFactory;
+        me.activelayerstore = cfg.activelayerstore;
+        me.onlineResourcePanelType = cfg.onlineResourcePanelType;
+
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
             groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})',
             startCollapsed : true
         });
        
-        this.listeners = Object.extend(this.listenersHere, cfg.listeners);
+        me.listeners = Object.extend(me.listenersHere, cfg.listeners);
         
-        var menuItems = [this._getVisibleBoundFilterAction(),this._getActivelayerFilterAction(),
-                         this._getDataLayerFilterAction(),this._getImageLayerFilterAction()];
+        var menuItems = [me._getVisibleBoundFilterAction(),me._getActivelayerFilterAction(),
+                         me._getDataLayerFilterAction(),me._getImageLayerFilterAction()];
 
         Ext.apply(cfg, {
             cls : 'auscope-dark-grid',
@@ -78,7 +81,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 //Loading icon column
                 xtype : 'clickcolumn',
                 dataIndex : 'active',
-                renderer : this._deleteRenderer,
+                renderer : me._deleteRenderer,
                 hasTip : true,
                 tipRenderer : function(value, layer, column, tip) {
                     if(layer.get('active')){
@@ -89,58 +92,58 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 },
                 width: 32,
                 listeners : {
-                    columnclick : Ext.bind(this._deleteClickHandler, this)
+                    columnclick : Ext.bind(me._deleteClickHandler, me)
                 }
             },{
                 //Loading icon column
                 xtype : 'clickcolumn',
                 dataIndex : 'loading',
-                renderer : this._loadingRenderer,
+                renderer : me._loadingRenderer,
                 hasTip : true,
-                tipRenderer : Ext.bind(this._loadingTipRenderer, this),
+                tipRenderer : Ext.bind(me._loadingTipRenderer, me),
                 width: 32,
                 listeners : {
-                    columnclick : Ext.bind(this._loadingClickHandler, this)
+                    columnclick : Ext.bind(me._loadingClickHandler, me)
                 }
             },{
                 //Title column
                 text : 'Title',
                 dataIndex : 'name',
                 flex: 1,
-                renderer : this._titleRenderer
+                renderer : me._titleRenderer
             },{
                 //Service information column
                 xtype : 'clickcolumn',
                 dataIndex : 'serviceInformation',
                 width: 32,
-                renderer : this._serviceInformationRenderer,
+                renderer : me._serviceInformationRenderer,
                 hasTip : true,
                 tipRenderer : function(value, layer, column, tip) {
                     return 'Click for detailed information about the web services this layer utilises.';
                 },
                 listeners : {
-                    columnclick : Ext.bind(this._serviceInformationClickHandler, this)
+                    columnclick : Ext.bind(me._serviceInformationClickHandler, me)
                 }
             },{
                 //Spatial bounds column
                 xtype : 'clickcolumn',
                 dataIndex : 'spatialBoundsRenderer',
                 width: 32,
-                renderer : this._spatialBoundsRenderer,
+                renderer : me._spatialBoundsRenderer,
                 hasTip : true,
                 tipRenderer : function(value, layer, column, tip) {
                     return 'Click to see the bounds of this layer, double click to pan the map to those bounds.';
                 },
                 listeners : {
-                    columnclick : Ext.bind(this._spatialBoundsClickHandler, this),
-                    columndblclick : Ext.bind(this._spatialBoundsDoubleClickHandler, this)
+                    columnclick : Ext.bind(me._spatialBoundsClickHandler, me),
+                    columndblclick : Ext.bind(me._spatialBoundsDoubleClickHandler, me)
                 }
             }],
           plugins:[{                
               ptype : 'rowexpandercontainer',
               pluginId : 'maingrid_rowexpandercontainer',
               toggleColIndexes: [0, 2],
-              generateContainer : function(record, parentElId) {                  
+              generateContainer : function(record, parentElId, grid) {                  
                   //VT:if this is deserialized, we don't need to regenerate the layer
                   if(record.get('layer')) {                        
                       newLayer =  record.get('layer');                                    
@@ -162,7 +165,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                           filterForm.getForm().setValues(existingParams);
                       }
                   }
-                  this.grid.updateLayout({
+                  grid.updateLayout({
                       defer:false,
                       isRoot:false
                   });                    
@@ -174,8 +177,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                   
         });
 
-        this.callParent(arguments);
-        AppEvents.addListener(this);
+        me.callParent(arguments);
+        AppEvents.addListener(me);
     },
     
     
@@ -523,7 +526,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         }
 
         var popup = Ext.create('portal.widgets.window.CSWRecordDescriptionWindow', {
-            cswRecords : cswRecords
+            cswRecords : cswRecords,
+            parentRecord : record,
+            onlineResourcePanelType : this.onlineResourcePanelType
         });
 
         popup.show();

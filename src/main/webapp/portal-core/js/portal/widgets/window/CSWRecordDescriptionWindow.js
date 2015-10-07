@@ -9,17 +9,20 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
      *  cfg can contain all the elements for Ext.Window along with the following additions
      *
      *  cswRecords - a CSWRecord or Array of CSWRecords - these will generate the contents of this window.
+     *  parentRecord - the parent layer
+     *  onlineResourcePanelType A specific subclass of online resource panel to use
      */
     constructor : function(cfg) {
         var cswRecords = cfg.cswRecords;
-        var maxHeight = 400;
+        var parentRecord = cfg.parentRecord;
+        var onlineResourcePanelType = cfg.onlineResourcePanelType || 'onlineresourcepanel';        
 
         //Set our default values (if they haven't been set)
         Ext.applyIf(cfg, {
             title: 'Service Information',
             autoDestroy : true,
-            width : 800,
-            maxHeight : 400,
+            width : 830,
+            height : 400,
             minHeight : 100
         });
         
@@ -30,9 +33,7 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
                 html : '<p>This layer have been generated from a custom KML file</p>',
                 listeners : {
                     resize : function(win, width, height) {
-                        if (win.getHeight() > win.maxHeight) {
-                            win.setSize(width, win.maxHeight);
-                        }
+                        win.setSize(width, height);
                     }
                 }
             });
@@ -42,14 +43,13 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
             Ext.apply(cfg, {
                 autoScroll : true,
                 items : [{
-                    xtype : 'onlineresourcepanel',
-                    cswRecords : cswRecords
+                    xtype : onlineResourcePanelType,
+                    cswRecords : cswRecords,
+                    parentRecord : parentRecord
                 }],
                 listeners : {
                     resize : function(win, width, height) {
-                        if (win.getHeight() > win.maxHeight) {
-                            win.setSize(width, win.maxHeight);
-                        }
+                        win.setSize(width, height);
                     }
                 }
             });
