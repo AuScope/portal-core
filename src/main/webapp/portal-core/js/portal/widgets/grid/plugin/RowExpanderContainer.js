@@ -8,6 +8,8 @@
  *  generateContainer : function(record, parentElId) - returns Ext.container.Container,
  *  allowMultipleOpen : Boolean - whether multiple containers can be open simultaneously.
  *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column 
+ *  baseId : String - Optional (default='rowexpandercontainer') - To be used as the base in the containing element Id so can 
+ *      reuse this control in multiple locations (all baseIds must be unique) 
  * }
  *
  * Contains two events:
@@ -35,11 +37,12 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     alias: 'plugin.rowexpandercontainer',
     generateContainer : portal.util.UnimplementedFunction,
     allowMultipleOpen : false,
-    rowBodyTpl: '<div id="rowexpandercontainer-{id}"></div>', //overrides parent
+    rowBodyTpl: null, //<div id="rowexpandercontainer-{id}"></div>', //overrides parent
     storedHtml: null,   
     recordStatus: null,  
     generationRunning: false,
     toggleColIndexes: null,
+    baseId: "RowExpanderContainer",
 
     
     constructor: function(config) {
@@ -49,6 +52,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         this.allowMultipleOpen = config.allowMultipleOpen ? true : false;
         this.storedHtml = {};
         this.recordStatus = {};
+        if (config.baseId) {
+            this.baseId = config.baseId;
+        }
+        this.rowBodyTpl = '<div id="'+this.baseId+'-{id}"></div>'
     },
     
     //override to do nothing. We don't want an expander column
@@ -103,7 +110,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             return false;
         }
         
-        var body = Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, el.parentNode);
+        var body = Ext.DomQuery.selectNode('#'+this.baseId + '-' + record.id, el.parentNode); // rowexpandercontainer-'
         if (body.hasChildNodes()) {
             return false;
         }
@@ -196,7 +203,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         this.generationRunning = true;
         if (this.restorationRequired(record)) {
-            var id = "rowexpandercontainer-" + record.id;
+            var id = this.baseId + '-' + record.id;   // "rowexpandercontainer-"
             var container = this.generateContainer(record, id);
             
             this.recordStatus[record.id].container = container;
