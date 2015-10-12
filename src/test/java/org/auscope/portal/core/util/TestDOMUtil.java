@@ -30,17 +30,20 @@ import org.xml.sax.SAXException;
 
 /**
  * Unit tests for DOMUtil
+ * 
  * @author Josh Vote
  *
  */
 public class TestDOMUtil extends PortalTestClass {
     /**
      * Simple test to ensure that the 2 DOM util methods are reversible
+     * 
      * @throws Exception
      */
     @Test
-    public void testReversibleTransformation() throws Exception{
-        String originalXmlString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
+    public void testReversibleTransformation() throws Exception {
+        String originalXmlString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
 
         Document doc = DOMUtil.buildDomFromString(originalXmlString);
         String newXmlString = DOMUtil.buildStringFromDom(doc, false);
@@ -50,6 +53,7 @@ public class TestDOMUtil extends PortalTestClass {
 
     /**
      * Namespace for use with src/test/resources/TestXML_NoPrettyPrint.xml
+     * 
      * @author vot002
      *
      */
@@ -65,6 +69,7 @@ public class TestDOMUtil extends PortalTestClass {
 
         /**
          * This method returns the uri for all prefixes needed.
+         * 
          * @param prefix
          * @return uri
          */
@@ -92,12 +97,14 @@ public class TestDOMUtil extends PortalTestClass {
 
     /**
      * Simple test to ensure that the DOM object is namespace aware
+     * 
      * @throws Exception
      */
     @Test
-    public void testDOMObjectNamespace() throws Exception{
+    public void testDOMObjectNamespace() throws Exception {
         //Build our DOM
-        String originalXmlString = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
+        String originalXmlString = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/xml/TestXML_NoPrettyPrint.xml");
         Document doc = DOMUtil.buildDomFromString(originalXmlString);
 
         //Build our queries (namespace aware)

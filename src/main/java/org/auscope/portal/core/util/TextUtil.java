@@ -12,16 +12,17 @@ import org.apache.commons.io.IOUtils;
  */
 public class TextUtil {
     /**
-     * Get the last N lines of multi-line text. Each line will be separated by
-     * platform dependant line separator.
+     * Get the last N lines of multi-line text. Each line will be separated by platform dependant line separator.
      * 
-     * @param text The multi-line text.
-     * @param maxLines The last N lines.
+     * @param text
+     *            The multi-line text.
+     * @param maxLines
+     *            The last N lines.
      * @return a string which contains the last N lines of a given multi-line text.
      */
     public static String tail(String text, int maxLines) {
         StringBuffer sb = new StringBuffer(maxLines);
-        
+
         try {
             List<String> lines = IOUtils.readLines(new StringReader(text));
             int fromIndex = lines.size() - maxLines;
@@ -32,7 +33,7 @@ public class TextUtil {
         } catch (Exception ex) {
             // if failed, return empty string.
         }
-        
+
         return sb.toString();
     }
 }

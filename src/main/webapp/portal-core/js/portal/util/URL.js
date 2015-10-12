@@ -45,8 +45,8 @@ Ext.define('portal.util.URL', {
     portal.util.URL.extractHostNSubDir = function(url,numberOfSubDir) {
         var a = document.createElement('a');
         a.href = url;
-
-        var pathArray=a.pathname.split("/");
+        var pathname = (a.pathname.charAt(0) == "/") ? a.pathname : "/" + a.pathname;
+        var pathArray=pathname.split("/");
         
         var hostname = a.hostname;
         

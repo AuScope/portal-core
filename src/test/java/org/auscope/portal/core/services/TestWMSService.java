@@ -23,6 +23,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for GetCapabilitiesService
+ * 
  * @author Josh Vote
  *
  */
@@ -45,29 +46,34 @@ public class TestWMSService extends PortalTestClass {
 
     /**
      * Tests parsing of a standard WMS GetCapabilities response
+     * 
      * @throws Exception
      */
     @Test
     public void testParsingWMS111() throws Exception {
         final String serviceUrl = "http://service/wms";
-        final InputStream is = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wms/GetCapabilitiesControllerWMSResponse_1_1_1.xml");
+        final InputStream is = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/wms/GetCapabilitiesControllerWMSResponse_1_1_1.xml");
 
         final GetCapabilitiesRecord getCapRecord = new GetCapabilitiesRecord_1_1_1(is);
 
-        context.checking(new Expectations() {{
+        context.checking(new Expectations() {
+            {
 
-            oneOf(mockMethodMaker).accepts(with(any(String.class)),with((String)null));will(returnValue(true));
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with((String) null));
+                will(returnValue(true));
 
-            oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);will(returnValue(mockMethod));
+                oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);
+                will(returnValue(mockMethod));
 
-            oneOf(mockMethodMaker).getGetCapabilitiesRecord(mockMethod);will(returnValue(getCapRecord));
+                oneOf(mockMethodMaker).getGetCapabilitiesRecord(mockMethod);
+                will(returnValue(getCapRecord));
 
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
-            oneOf(mockMethod).releaseConnection();
-        }});
-
-
-        GetCapabilitiesRecord record = service.getWmsCapabilities(serviceUrl,null);
+        GetCapabilitiesRecord record = service.getWmsCapabilities(serviceUrl, null);
         Assert.assertNotNull(record);
         Assert.assertEquals("wms", record.getServiceType());
         Assert.assertEquals("Test organization", record.getOrganisation());
@@ -78,8 +84,7 @@ public class TestWMSService extends PortalTestClass {
                 "epsg:4326",
                 "AUTO:42003",
                 "AUTO:42004",
-        "EPSG:WGS84(DD)"}, record.getLayerSRS());
-
+                "EPSG:WGS84(DD)"}, record.getLayerSRS());
 
         List<GetCapabilitiesWMSLayerRecord> layers = record.getLayers();
         Assert.assertNotNull(layers);
@@ -89,6 +94,7 @@ public class TestWMSService extends PortalTestClass {
         GetCapabilitiesWMSLayerRecord layer = layers.get(1);
         CSWGeographicBoundingBox bbox = layer.getBoundingBox();
         Assert.assertEquals("An Abstract", layer.getAbstract());
+        Assert.assertEquals("http://www.metadataURL.com", layer.getMetadataURL());
         Assert.assertEquals(3, bbox.getEastBoundLongitude(), 0.01);
         Assert.assertEquals(-2, bbox.getSouthBoundLatitude(), 0.01);
         Assert.assertEquals(-1, bbox.getWestBoundLongitude(), 0.01);
@@ -113,22 +119,26 @@ public class TestWMSService extends PortalTestClass {
     /**
      * Tests that failure is passed up the chain as expected
      */
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testRequestFailure() throws Exception {
         final String serviceUrl = "http://service/wms";
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).accepts(with(any(String.class)),with(any(String.class)));will(returnValue(true));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                will(returnValue(true));
 
-            oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);will(returnValue(mockMethod));
+                oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);
+                will(returnValue(mockMethod));
 
-            oneOf(mockMethodMaker).getGetCapabilitiesRecord(mockMethod);will(returnValue(throwException(new ConnectException())));
+                oneOf(mockMethodMaker).getGetCapabilitiesRecord(mockMethod);
+                will(returnValue(throwException(new ConnectException())));
 
-            oneOf(mockMethod).releaseConnection();
-        }});
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
-
-        service.getWmsCapabilities(serviceUrl,null);
+        service.getWmsCapabilities(serviceUrl, null);
     }
 
     @Test
@@ -149,20 +159,27 @@ public class TestWMSService extends PortalTestClass {
         final int pointY = 10;
         final String styles = "styles";
 
-        final String response = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
+        final String response = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).accepts(with(any(String.class)),with(any(String.class)));will(returnValue(true));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                will(returnValue(true));
 
-            oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,"0");
-            will(returnValue(mockMethod));
+                oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
+                        southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
+                        pointX, pointY, styles, null, "0");
+                will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
-            will(returnValue(response));
-        }});
+                oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
+                will(returnValue(response));
+            }
+        });
 
-
-        Assert.assertEquals(response, service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,false,null,"0",false));
+        Assert.assertEquals(response, service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
+                southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX,
+                pointY, styles, null, false, null, "0", false));
     }
 
     @Test
@@ -183,23 +200,30 @@ public class TestWMSService extends PortalTestClass {
         final int pointY = 10;
         final String styles = "styles";
 
-        final String response = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
+        final String response = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/wfs/EmptyWFSResponse.xml");
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).accepts(with(any(String.class)),with(any(String.class)));will(returnValue(true));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                will(returnValue(true));
 
-            oneOf(mockMethodMaker).getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,"0");
-            will(returnValue(mockMethod));
+                oneOf(mockMethodMaker).getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude,
+                        southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
+                        pointX, pointY, styles, null, "0");
+                will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
-            will(returnValue(response));
-        }});
+                oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
+                will(returnValue(response));
+            }
+        });
 
-
-        Assert.assertEquals(response, service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,true,null,"0",false));
+        Assert.assertEquals(response, service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
+                southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX,
+                pointY, styles, null, true, null, "0", false));
     }
 
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testGetFeatureInfoError() throws Exception {
         final String wmsUrl = "http://example.org/wms";
         final String format = "format";
@@ -217,21 +241,27 @@ public class TestWMSService extends PortalTestClass {
         final int pointY = 10;
         final String styles = "styles";
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).accepts(with(any(String.class)),with(any(String.class)));will(returnValue(true));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                will(returnValue(true));
 
-            oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,"0");
-            will(returnValue(mockMethod));
+                oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
+                        southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
+                        pointX, pointY, styles, null, "0");
+                will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
-            will(throwException(new IOException()));
-        }});
+                oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
+                will(throwException(new IOException()));
+            }
+        });
 
-
-        service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,false,null,"0",false);
+        service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude,
+                northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles, null, false, null, "0",
+                false);
     }
 
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testGetFeatureInfoOwsError() throws Exception {
         final String wmsUrl = "http://example.org/wms";
         final String format = "format";
@@ -249,19 +279,26 @@ public class TestWMSService extends PortalTestClass {
         final int pointY = 10;
         final String styles = "styles";
 
-        final String response = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
+        final String response = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).accepts(with(any(String.class)),with(any(String.class)));will(returnValue(true));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                will(returnValue(true));
 
-            oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,"0");
-            will(returnValue(mockMethod));
+                oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
+                        southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat,
+                        pointX, pointY, styles, null, "0");
+                will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
-            will(returnValue(response));
-        }});
+                oneOf(mockServiceCaller).getMethodResponseAsString(mockMethod);
+                will(returnValue(response));
+            }
+        });
 
-
-        service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude, northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles,null,false,null,"0",false);
+        service.getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude, southBoundLatitude, eastBoundLongitude,
+                northBoundLatitude, width, height, pointLng, pointLat, pointX, pointY, styles, null, false, null, "0",
+                false);
     }
 }

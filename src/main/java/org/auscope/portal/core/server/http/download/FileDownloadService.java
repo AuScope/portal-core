@@ -14,14 +14,13 @@ public class FileDownloadService {
 
     }
 
-    public DownloadResponse singleFileDownloadFromURL(String url) throws Exception{
+    public DownloadResponse singleFileDownloadFromURL(String url) throws Exception {
 
         HttpGet method = new HttpGet(url);
         HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
 
         DownloadResponse response = new DownloadResponse(url);
         response.setResponseStream(httpResponse.getEntity().getContent());
-
 
         Header contentType = httpResponse.getEntity().getContentType();
 
@@ -32,7 +31,6 @@ public class FileDownloadService {
         }
 
         return response;
-
 
     }
 }

@@ -11,24 +11,25 @@ public class DownloadResponse {
     private String requestURL;
     private String contentType;
 
-    public DownloadResponse(String url){
+    public DownloadResponse(String url) {
         requestURL = url;
         exception = null;
         responseStream = null;
         contentType = "";
     }
 
-    public String getResponseAsString() throws IOException{
+    public String getResponseAsString() throws IOException {
         return FileIOUtil.convertStreamtoString(responseStream);
     }
 
-    public String getExceptionAsString(){
+    public String getExceptionAsString() {
         return FileIOUtil.convertExceptionToString(exception, getRequestURL());
     }
 
     public void setException(Exception exception) {
         this.exception = exception;
     }
+
     public Exception getException() {
         return exception;
     }
@@ -41,7 +42,7 @@ public class DownloadResponse {
         return responseStream;
     }
 
-    public boolean hasException(){
+    public boolean hasException() {
         return exception != null;
     }
 
@@ -49,7 +50,7 @@ public class DownloadResponse {
         return requestURL;
     }
 
-    public String toString(){
+    public String toString() {
         try {
             return this.getResponseAsString() + this.getExceptionAsString();
         } catch (IOException e) {

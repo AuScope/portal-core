@@ -61,7 +61,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         
         if(config.menuFactory){
             var mf= config.menuFactory;
-            mf.appendAdditionalActions(menuItems,this.filterForm.layer,this.filterForm.layer.get('source').get('group'),this._map);
+            mf.appendAdditionalActions(menuItems,this.filterForm.layer,this.filterForm.layer.get('source').get('group'),this._map);            
         }else{
             //VT:Default behavior if there are no menuFactory defined.
             if(this.filterForm.layer.get('cswRecords').length > 0 &&
@@ -90,7 +90,9 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         this.callParent(arguments);
 
- 
+        this.on('removelayer',function(layer){
+            config.menuFactory.layerRemoveHandler(layer);
+        })
 
 
     },

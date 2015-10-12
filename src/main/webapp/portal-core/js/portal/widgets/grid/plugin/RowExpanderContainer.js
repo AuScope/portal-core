@@ -5,7 +5,7 @@
  *
  * To use this plugin, assign the following field to the plugin constructor
  * {
- *  generateContainer : function(record, parentElId) - returns Ext.container.Container,
+ *  generateContainer : function(record, parentElId, grid) - returns Ext.container.Container,
  *  allowMultipleOpen : Boolean - whether multiple containers can be open simultaneously.
  *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column 
  * }
@@ -21,7 +21,7 @@
  *                renderTo: 'foo',
  *                plugins : [{
  *                  ptype : 'rowexpandercontainer',
- *                  generateContainer : function(record, parentElId) {
+ *                  generateContainer : function(record, parentElId, grid) {
  *                     return Ext.create('Ext.panel.Panel', {});
  *                  }
  *                }]
@@ -137,7 +137,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         this.recordStatus[record.id] = {
             expanded : true,
-            container : null
+            container : null 
         };
         
         this.restoreRowContainer(record);
@@ -186,20 +186,23 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         }
     },
     
-    restoreRowContainer: function(record) {
+    restoreRowContainer: function(record) {        
+        var me = this;
+        
         //We don't want this function to be re-entrant
         //Which can occur if the generateContainer callback
         //makes any updates to record
-        if (this.generationRunning === true) {
+        if (me.generationRunning === true) {
             return;
         }
         
-        this.generationRunning = true;
-        if (this.restorationRequired(record)) {
+        me.generationRunning = true;
+        if (me.restorationRequired(record)) {
             var id = "rowexpandercontainer-" + record.id;
-            var container = this.generateContainer(record, id);
-            this.recordStatus[record.id].container = container;
-            this.recordStatus[record.id].container.updateLayout({
+            var container = me.generateContainer(record, id, me.grid);
+            
+            me.recordStatus[record.id].container = container;
+            me.recordStatus[record.id].container.updateLayout({
                 defer:false,
                 isRoot:false
             });

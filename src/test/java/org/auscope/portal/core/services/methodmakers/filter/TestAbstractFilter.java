@@ -22,36 +22,69 @@ public class TestAbstractFilter extends AbstractFilter {
      */
     @Test
     public void testMatchCaseDefault() {
-        Assert.assertTrue(this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsNotEqualTo("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsLessThan("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsGreaterThan("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsLessThanOrEqualTo("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
-        Assert.assertTrue(this.generatePropertyIsLikeFragment("myPropertyName", "myLiteral").contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral").contains(
+                "matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsNotEqualTo("myPropertyName", "myLiteral").contains(
+                "matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsLessThan("myPropertyName", "myLiteral")
+                .contains("matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsGreaterThan("myPropertyName", "myLiteral").contains(
+                "matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsLessThanOrEqualTo("myPropertyName", "myLiteral").contains(
+                "matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName", "myLiteral").contains(
+                "matchCase=\"false\""));
+        Assert.assertTrue(this.generatePropertyIsLikeFragment("myPropertyName", "myLiteral").contains(
+                "matchCase=\"false\""));
+        Assert.assertTrue(this.generateDatePropertyIsLessThan("myPropertyName",false,
+                this.generateFunctionDateParse("1997-05-12")).contains(
+                "matchCase=\"false\""));
+        Assert.assertTrue(this.generateDatePropertyIsGreaterThan("myPropertyName",false,
+                this.generateFunctionDateParse("1997-05-12")).contains(
+                "matchCase=\"false\""));
     }
 
     /**
      * Tries to parse the XML that the filters generate - exceptions will be thrown if not well formed
+     *
      * @throws Exception
      */
     @Test
     public void testWellFormedXML() throws Exception {
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("myPropertyName", "myLiteral"));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThan("myPropertyName", "myLiteral"));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThan("myPropertyName", "myLiteral"));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThanOrEqualTo("myPropertyName", "myLiteral"));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName", "myLiteral"));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLikeFragment("myPropertyName", "myLiteral"));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("myPropertyName",
+                "myLiteral"));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("myPropertyName",
+                "myLiteral"));
+        AbstractFilterTestUtilities
+                .parsefilterStringXML(this.generatePropertyIsLessThan("myPropertyName", "myLiteral"));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThan("myPropertyName",
+                "myLiteral"));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThanOrEqualTo("myPropertyName",
+                "myLiteral"));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName",
+                "myLiteral"));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLikeFragment("myPropertyName",
+                "myLiteral"));
 
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral", true, MatchActionType.Any));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("myPropertyName", "myLiteral", true, MatchActionType.All));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThan("myPropertyName", "myLiteral", true, MatchActionType.One));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThan("myPropertyName", "myLiteral", true, MatchActionType.Any));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThanOrEqualTo("myPropertyName", "myLiteral", false, MatchActionType.All));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName", "myLiteral", false, MatchActionType.One));
-        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLikeFragment("myPropertyName", "myLiteral",'a','b','c', true, MatchActionType.Any));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsEqualToFragment("myPropertyName",
+                "myLiteral", true, MatchActionType.Any));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsNotEqualTo("myPropertyName",
+                "myLiteral", true, MatchActionType.All));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThan("myPropertyName", "myLiteral",
+                true, MatchActionType.One));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThan("myPropertyName",
+                "myLiteral", true, MatchActionType.Any));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLessThanOrEqualTo("myPropertyName",
+                "myLiteral", false, MatchActionType.All));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsGreaterThanOrEqualTo("myPropertyName",
+                "myLiteral", false, MatchActionType.One));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generatePropertyIsLikeFragment("myPropertyName",
+                "myLiteral", 'a', 'b', 'c', true, MatchActionType.Any));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generateDatePropertyIsGreaterThan("myPropertyName",false,
+                this.generateFunctionDateParse("1997-05-12")));
+        AbstractFilterTestUtilities.parsefilterStringXML(this.generateDatePropertyIsLessThan("myPropertyName",false,
+                this.generateFunctionDateParse("1997-05-12")));
+
 
         AbstractFilterTestUtilities.parsefilterStringXML(this.generateAndComparisonFragment(
                 this.generatePropertyIsEqualToFragment("myPropertyName", "myLiteral"),
@@ -90,6 +123,16 @@ public class TestAbstractFilter extends AbstractFilter {
         Assert.assertTrue(fragment.contains(escapedLiteral));
 
         fragment = this.generatePropertyIsNotEqualTo(propertyName, literal);
+        Assert.assertFalse(fragment.contains(literal));
+        Assert.assertTrue(fragment.contains(escapedLiteral));
+
+        fragment = this.generateDatePropertyIsGreaterThan(propertyName, false,
+                this.generateFunctionDateParse(escapedLiteral));
+        Assert.assertFalse(fragment.contains(literal));
+        Assert.assertTrue(fragment.contains(escapedLiteral));
+
+        fragment = this.generateDatePropertyIsLessThan(propertyName, false,
+                this.generateFunctionDateParse(escapedLiteral));
         Assert.assertFalse(fragment.contains(literal));
         Assert.assertTrue(fragment.contains(escapedLiteral));
     }

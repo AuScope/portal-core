@@ -1,8 +1,8 @@
 package org.auscope.portal.core.services.namespaces;
 
-
 /**
  * A namespace context for vocabularies
+ * 
  * @author Josh Vote
  *
  */

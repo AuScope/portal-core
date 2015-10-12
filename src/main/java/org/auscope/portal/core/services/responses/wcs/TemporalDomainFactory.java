@@ -9,8 +9,10 @@ import org.w3c.dom.Node;
 public class TemporalDomainFactory {
 
     /**
-     * Generates a SimpleTimePosition or SimpleTimePeriod instance from a child of a  <wcs:temporalDomain> element
-     * @param node must be referencing a child from a <wcs:temporalDomain> node.
+     * Generates a SimpleTimePosition or SimpleTimePeriod instance from a child of a <wcs:temporalDomain> element
+     * 
+     * @param node
+     *            must be referencing a child from a <wcs:temporalDomain> node.
      * @return
      */
     public static TemporalDomain parseFromNode(Node node) throws Exception {

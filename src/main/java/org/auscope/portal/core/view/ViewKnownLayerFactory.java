@@ -8,6 +8,7 @@ import org.springframework.ui.ModelMap;
 
 /**
  * A factory class containing methods for generating view representations of the KnownLayer
+ * 
  * @author Josh Vote
  *
  */
@@ -18,7 +19,7 @@ public class ViewKnownLayerFactory {
 
         obj.put("name", k.getName());
         obj.put("hidden", k.isHidden());
-        obj.put("description",k.getDescription());
+        obj.put("description", k.getDescription());
         obj.put("id", k.getId());
         obj.put("proxyUrl", k.getProxyUrl());
         obj.put("proxyCountUrl", k.getProxyCountUrl());
@@ -29,7 +30,7 @@ public class ViewKnownLayerFactory {
             obj.put("iconUrl", k.getIconUrl());
         }
 
-        if(k.getPolygonColor() != null && k.getPolygonColor().length() > 0) {
+        if (k.getPolygonColor() != null && k.getPolygonColor().length() > 0) {
             obj.put("polygonColor", k.getPolygonColor());
         }
 
@@ -42,6 +43,8 @@ public class ViewKnownLayerFactory {
         }
 
         obj.put("feature_count", k.getFeature_count());
+
+        obj.put("order", k.getOrder());
 
         String group = "Others";
         if (k.getGroup() != null && !k.getGroup().isEmpty()) {

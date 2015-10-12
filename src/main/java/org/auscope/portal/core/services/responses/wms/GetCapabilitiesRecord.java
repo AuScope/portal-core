@@ -9,9 +9,6 @@ import java.util.ArrayList;
  */
 public interface GetCapabilitiesRecord {
 
-
-
-
     // ------------------------------------------ Attribute Setters and Getters
 
     /**
@@ -21,13 +18,12 @@ public interface GetCapabilitiesRecord {
      */
     public boolean isWFS();
 
-
     /**
      * Checks if is wMS.
      *
      * @return true, if is wMS
      */
-    public boolean isWMS() ;
+    public boolean isWMS();
 
     /**
      * Gets the service type.
@@ -48,33 +44,31 @@ public interface GetCapabilitiesRecord {
      *
      * @return the map url
      */
-    public String getMapUrl() ;
+    public String getMapUrl();
 
     /**
      * Gets the layers.
      *
      * @return the layers
      */
-    public ArrayList<GetCapabilitiesWMSLayerRecord> getLayers() ;
+    public ArrayList<GetCapabilitiesWMSLayerRecord> getLayers();
 
     /**
      * Gets the layer srs.
      *
      * @return the layer srs
      */
-    public String[] getLayerSRS() ;
+    public String[] getLayerSRS();
 
     /**
-     * Returns an array of MIME strings representing the valid format
-     * for the GetMap operation
+     * Returns an array of MIME strings representing the valid format for the GetMap operation
+     * 
      * @return
      */
-    public String[] getGetMapFormats() ;
+    public String[] getGetMapFormats();
 
     public String getVersion();
 
     // ------------------------------------------------------ Protected Methods
 
-
 }
-

@@ -12,17 +12,18 @@ import org.apache.http.StatusLine;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
 
-public class MyHttpResponse implements HttpResponse{
+public class MyHttpResponse implements HttpResponse {
     InputStream content;
     int statusCode;
-    public MyHttpResponse(InputStream is){
-        this.content=is;
-        this.statusCode=200;
+
+    public MyHttpResponse(InputStream is) {
+        this.content = is;
+        this.statusCode = 200;
     }
 
-    public MyHttpResponse(InputStream is,int statusCode){
-        this.content=is;
-        this.statusCode=statusCode;
+    public MyHttpResponse(InputStream is, int statusCode) {
+        this.content = is;
+        this.statusCode = statusCode;
     }
 
     @Override
@@ -129,7 +130,7 @@ public class MyHttpResponse implements HttpResponse{
 
     @Override
     public StatusLine getStatusLine() {
-        return new BasicStatusLine(new ProtocolVersion("HTTP",1,1),this.statusCode,"reason");
+        return new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), this.statusCode, "reason");
     }
 
     @Override
@@ -164,7 +165,7 @@ public class MyHttpResponse implements HttpResponse{
 
     @Override
     public HttpEntity getEntity() {
-        MyHttpEntity entity=new MyHttpEntity(this.content);
+        MyHttpEntity entity = new MyHttpEntity(this.content);
         return entity;
     }
 

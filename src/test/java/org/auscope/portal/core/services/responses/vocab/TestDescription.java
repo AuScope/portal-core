@@ -6,6 +6,7 @@ import org.junit.Test;
 
 /**
  * Unit tests for Description
+ * 
  * @author Josh Vote
  *
  */
@@ -37,7 +38,7 @@ public class TestDescription extends PortalTestClass {
         final String expectedUrn = "my:urn";
         Description desc = new Description(expectedUrn);
 
-        Assert.assertFalse(desc.equals((String)null));
+        Assert.assertFalse(desc.equals((String) null));
         Assert.assertFalse(desc.equals((Object) null));
         Assert.assertFalse(desc.equals(new Description(null)));
     }
@@ -51,7 +52,7 @@ public class TestDescription extends PortalTestClass {
         final String unexpectedUrn = "different";
         Description desc = new Description(expectedUrn);
 
-        Assert.assertTrue(desc.equals((String)null));
+        Assert.assertTrue(desc.equals((String) null));
         Assert.assertFalse(desc.equals((Object) null));
         Assert.assertTrue(desc.equals(new Description(null)));
 

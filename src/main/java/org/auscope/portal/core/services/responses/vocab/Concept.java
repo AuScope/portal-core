@@ -34,7 +34,8 @@ public class Concept {
     /**
      * Creates a new Concept, empty for all but it's URN.
      *
-     * @param urn the urn
+     * @param urn
+     *            the urn
      */
     public Concept(String urn) {
         this(urn, false);
@@ -43,8 +44,10 @@ public class Concept {
     /**
      * Creates a new Concept, empty for all but it's URN.
      *
-     * @param urn The unique ID for this concept
-     * @param href if set this Concept is only a 'pointer' to concept
+     * @param urn
+     *            The unique ID for this concept
+     * @param href
+     *            if set this Concept is only a 'pointer' to concept
      */
     public Concept(String urn, boolean href) {
         this.urn = urn;
@@ -69,7 +72,8 @@ public class Concept {
     /**
      * Sets the rdf:label attached to this concept (if any).
      *
-     * @param label the new label
+     * @param label
+     *            the new label
      */
     public void setLabel(String label) {
         this.label = label;
@@ -87,7 +91,8 @@ public class Concept {
     /**
      * Sets the skos:prefLabel attached to this concept (if any).
      *
-     * @param preferredLabel the new preferred label
+     * @param preferredLabel
+     *            the new preferred label
      */
     public void setPreferredLabel(String preferredLabel) {
         this.preferredLabel = preferredLabel;
@@ -105,7 +110,8 @@ public class Concept {
     /**
      * Sets every concept which is "broader" than this concept.
      *
-     * @param broader the new broader
+     * @param broader
+     *            the new broader
      */
     public void setBroader(Concept[] broader) {
         this.broader = broader;
@@ -123,7 +129,8 @@ public class Concept {
     /**
      * Sets every concept which is "broader" than this concept.
      *
-     * @param narrower the new narrower
+     * @param narrower
+     *            the new narrower
      */
     public void setNarrower(Concept[] narrower) {
         this.narrower = narrower;
@@ -138,7 +145,6 @@ public class Concept {
         return urn;
     }
 
-
     /**
      * Gets every concept which is "related" to this concept.
      *
@@ -151,7 +157,8 @@ public class Concept {
     /**
      * Sets every concept which is "related" to this concept.
      *
-     * @param related the new related
+     * @param related
+     *            the new related
      */
     public void setRelated(Concept[] related) {
         this.related = related;
@@ -178,7 +185,8 @@ public class Concept {
     /**
      * Sets the definition of this concept.
      *
-     * @param definition the new definition
+     * @param definition
+     *            the new definition
      */
     public void setDefinition(String definition) {
         this.definition = definition;
@@ -198,7 +206,8 @@ public class Concept {
     /**
      * Compares 2 named individuals based on their URN.
      *
-     * @param concept the concept
+     * @param concept
+     *            the concept
      * @return true, if successful
      */
     public boolean equals(Concept concept) {
@@ -211,7 +220,8 @@ public class Concept {
     /**
      * Compares a string with this individuals urn.
      *
-     * @param urn the urn
+     * @param urn
+     *            the urn
      * @return true, if successful
      */
     public boolean equals(String urn) {

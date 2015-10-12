@@ -47,9 +47,7 @@ public class TestCloudComputeService extends PortalTestClass {
 
     private CloudComputeService service;
 
-
     private Optional<? extends AvailabilityZoneApi> mockOptAZA = context.mock(Optional.class);
-
 
     private CloudJob job;
 
@@ -72,35 +70,55 @@ public class TestCloudComputeService extends PortalTestClass {
         final String userDataString = "user-data-string";
         final String expectedInstanceId = "instance-id";
 
-        context.checking(new Expectations() {{
-            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockNovaApi).getConfiguredZones();
+                will(returnValue(Sets.newHashSet("here")));
 
-            oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
-            oneOf(mockOptAZA).get();will(returnValue(mockAZA));
-            oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
-            oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone).iterator()));
+                oneOf(mockNovaApi).getAvailabilityZoneApi("here");
+                will(returnValue(mockOptAZA));
+                oneOf(mockOptAZA).get();
+                will(returnValue(mockAZA));
+                oneOf(mockAZA).list();
+                will(returnValue(mockAvailZoneList));
+                oneOf(mockAvailZoneList).iterator();
+                will(returnValue(Arrays.asList(mockAvailZone).iterator()));
 
-            allowing(mockAvailZone).getName();will(returnValue("my-zone"));
-            allowing(mockAvailZone).getState();will(returnValue(mockZoneState));
-            allowing(mockZoneState).available();will(returnValue(true));
+                allowing(mockAvailZone).getName();
+                will(returnValue("my-zone"));
+                allowing(mockAvailZone).getState();
+                will(returnValue(mockZoneState));
+                allowing(mockZoneState).available();
+                will(returnValue(true));
 
-            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
-            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+                oneOf(mockComputeService).templateOptions();
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockComputeService).templateBuilder();
+                will(returnValue(mockTemplateBuilder));
 
-            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).availabilityZone("my-zone");will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).keyPairName("vgl-developers");
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).availabilityZone("my-zone");
+                will(returnValue(mockTemplateOptions));
 
-            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+                oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).options(mockTemplateOptions);
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).build();
+                will(returnValue(mockTemplate));
 
-            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
-            will(returnValue(ImmutableSet.<NodeMetadata>of(mockMetadata)));
+                oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+                will(returnValue(ImmutableSet.<NodeMetadata> of(mockMetadata)));
 
-            oneOf(mockMetadata).getId();will(returnValue(expectedInstanceId));
-        }});
+                oneOf(mockMetadata).getId();
+                will(returnValue(expectedInstanceId));
+            }
+        });
 
         String actualInstanceId = service.executeJob(job, userDataString);
 
@@ -108,87 +126,124 @@ public class TestCloudComputeService extends PortalTestClass {
     }
 
     /**
-     * Tests that job execution correctly calls and parses a response from AmazonEC2
-     * when EC2 reports failure by returning 0 running instances.
+     * Tests that job execution correctly calls and parses a response from AmazonEC2 when EC2 reports failure by returning 0 running instances.
      */
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testExecuteJobFailure() throws Exception {
         final String userDataString = "user-data-string";
 
-        context.checking(new Expectations() {{
-            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockNovaApi).getConfiguredZones();
+                will(returnValue(Sets.newHashSet("here")));
 
-            oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
-            oneOf(mockOptAZA).get();will(returnValue(mockAZA));
-            oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
-            oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone).iterator()));
+                oneOf(mockNovaApi).getAvailabilityZoneApi("here");
+                will(returnValue(mockOptAZA));
+                oneOf(mockOptAZA).get();
+                will(returnValue(mockAZA));
+                oneOf(mockAZA).list();
+                will(returnValue(mockAvailZoneList));
+                oneOf(mockAvailZoneList).iterator();
+                will(returnValue(Arrays.asList(mockAvailZone).iterator()));
 
-            allowing(mockAvailZone).getName();will(returnValue("my-zone"));
-            allowing(mockAvailZone).getState();will(returnValue(mockZoneState));
-            allowing(mockZoneState).available();will(returnValue(true));
+                allowing(mockAvailZone).getName();
+                will(returnValue("my-zone"));
+                allowing(mockAvailZone).getState();
+                will(returnValue(mockZoneState));
+                allowing(mockZoneState).available();
+                will(returnValue(true));
 
-            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
-            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+                oneOf(mockComputeService).templateOptions();
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockComputeService).templateBuilder();
+                will(returnValue(mockTemplateBuilder));
 
-            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).availabilityZone("my-zone");will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).keyPairName("vgl-developers");
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).availabilityZone("my-zone");
+                will(returnValue(mockTemplateOptions));
 
+                oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).options(mockTemplateOptions);
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).build();
+                will(returnValue(mockTemplate));
 
-            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+                oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+                will(throwException(mockException));
 
-            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
-            will(throwException(mockException));
+                allowing(mockComputeService).destroyNodesMatching(mockFilter);
 
-            allowing(mockComputeService).destroyNodesMatching(mockFilter);
-
-            allowing(mockException).fillInStackTrace();will(returnValue(mockException));
-            allowing(mockException).getMessage();will(returnValue("mock-message"));
-        }});
+                allowing(mockException).fillInStackTrace();
+                will(returnValue(mockException));
+                allowing(mockException).getMessage();
+                will(returnValue("mock-message"));
+            }
+        });
 
         service.executeJob(job, userDataString);
     }
 
     /**
-     * Tests that job execution correctly calls and parses a response from AmazonEC2
-     * when EC2 reports failure by returning 0 running instances.
+     * Tests that job execution correctly calls and parses a response from AmazonEC2 when EC2 reports failure by returning 0 running instances.
      */
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testExecuteJobFailure_EmptyResults() throws Exception {
         final String userDataString = "user-data-string";
 
-        context.checking(new Expectations() {{
+        context.checking(new Expectations() {
+            {
 
-            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
+                oneOf(mockNovaApi).getConfiguredZones();
+                will(returnValue(Sets.newHashSet("here")));
 
-            oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
-            oneOf(mockOptAZA).get();will(returnValue(mockAZA));
-            oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
-            oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone).iterator()));
+                oneOf(mockNovaApi).getAvailabilityZoneApi("here");
+                will(returnValue(mockOptAZA));
+                oneOf(mockOptAZA).get();
+                will(returnValue(mockAZA));
+                oneOf(mockAZA).list();
+                will(returnValue(mockAvailZoneList));
+                oneOf(mockAvailZoneList).iterator();
+                will(returnValue(Arrays.asList(mockAvailZone).iterator()));
 
-            allowing(mockAvailZone).getName();will(returnValue("my-zone"));
-            allowing(mockAvailZone).getState();will(returnValue(mockZoneState));
-            allowing(mockZoneState).available();will(returnValue(true));
+                allowing(mockAvailZone).getName();
+                will(returnValue("my-zone"));
+                allowing(mockAvailZone).getState();
+                will(returnValue(mockZoneState));
+                allowing(mockZoneState).available();
+                will(returnValue(true));
 
-            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
-            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+                oneOf(mockComputeService).templateOptions();
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockComputeService).templateBuilder();
+                will(returnValue(mockTemplateBuilder));
 
-            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).availabilityZone("my-zone");will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).keyPairName("vgl-developers");
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).availabilityZone("my-zone");
+                will(returnValue(mockTemplateOptions));
 
-            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+                oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).options(mockTemplateOptions);
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).build();
+                will(returnValue(mockTemplate));
 
-            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
-            will(returnValue(ImmutableSet.<NodeMetadata>of()));
+                oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+                will(returnValue(ImmutableSet.<NodeMetadata> of()));
 
-        }});
+            }
+        });
 
         service.executeJob(job, userDataString);
     }
@@ -201,9 +256,11 @@ public class TestCloudComputeService extends PortalTestClass {
 
         job.setComputeInstanceId("running-id");
 
-        context.checking(new Expectations() {{
-            oneOf(mockComputeService).destroyNode(job.getComputeInstanceId());
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockComputeService).destroyNode(job.getComputeInstanceId());
+            }
+        });
 
         service.terminateJob(job);
     }
@@ -218,38 +275,59 @@ public class TestCloudComputeService extends PortalTestClass {
 
         service.setSkippedZones(Sets.newHashSet("my-skip-zone"));
 
-        context.checking(new Expectations() {{
-            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockNovaApi).getConfiguredZones();
+                will(returnValue(Sets.newHashSet("here")));
 
-            oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
-            oneOf(mockOptAZA).get();will(returnValue(mockAZA));
-            oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
-            oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone, mockAvailZone2).iterator()));
+                oneOf(mockNovaApi).getAvailabilityZoneApi("here");
+                will(returnValue(mockOptAZA));
+                oneOf(mockOptAZA).get();
+                will(returnValue(mockAZA));
+                oneOf(mockAZA).list();
+                will(returnValue(mockAvailZoneList));
+                oneOf(mockAvailZoneList).iterator();
+                will(returnValue(Arrays.asList(mockAvailZone, mockAvailZone2).iterator()));
 
-            allowing(mockAvailZone).getName();will(returnValue("my-skip-zone"));
+                allowing(mockAvailZone).getName();
+                will(returnValue("my-skip-zone"));
 
-            allowing(mockAvailZone2).getName();will(returnValue("my-notskip-zone"));
-            allowing(mockAvailZone2).getState();will(returnValue(mockZoneState));
+                allowing(mockAvailZone2).getName();
+                will(returnValue("my-notskip-zone"));
+                allowing(mockAvailZone2).getState();
+                will(returnValue(mockZoneState));
 
-            allowing(mockZoneState).available();will(returnValue(true));
+                allowing(mockZoneState).available();
+                will(returnValue(true));
 
-            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
-            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+                oneOf(mockComputeService).templateOptions();
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockComputeService).templateBuilder();
+                will(returnValue(mockTemplateBuilder));
 
-            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).availabilityZone("my-notskip-zone");will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).keyPairName("vgl-developers");
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).availabilityZone("my-notskip-zone");
+                will(returnValue(mockTemplateOptions));
 
-            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+                oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).options(mockTemplateOptions);
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).build();
+                will(returnValue(mockTemplate));
 
-            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
-            will(returnValue(ImmutableSet.<NodeMetadata>of(mockMetadata)));
+                oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+                will(returnValue(ImmutableSet.<NodeMetadata> of(mockMetadata)));
 
-            oneOf(mockMetadata).getId();will(returnValue(expectedInstanceId));
-        }});
+                oneOf(mockMetadata).getId();
+                will(returnValue(expectedInstanceId));
+            }
+        });
 
         String actualInstanceId = service.executeJob(job, userDataString);
 
@@ -264,59 +342,90 @@ public class TestCloudComputeService extends PortalTestClass {
         final String userDataString = "user-data-string";
         final String expectedInstanceId = "instance-id";
 
-        context.checking(new Expectations() {{
-            oneOf(mockNovaApi).getConfiguredZones();will(returnValue(Sets.newHashSet("here")));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockNovaApi).getConfiguredZones();
+                will(returnValue(Sets.newHashSet("here")));
 
-            oneOf(mockNovaApi).getAvailabilityZoneApi("here");will(returnValue(mockOptAZA));
-            oneOf(mockOptAZA).get();will(returnValue(mockAZA));
-            oneOf(mockAZA).list();will(returnValue(mockAvailZoneList));
-            oneOf(mockAvailZoneList).iterator();will(returnValue(Arrays.asList(mockAvailZone, mockAvailZone2).iterator()));
+                oneOf(mockNovaApi).getAvailabilityZoneApi("here");
+                will(returnValue(mockOptAZA));
+                oneOf(mockOptAZA).get();
+                will(returnValue(mockAZA));
+                oneOf(mockAZA).list();
+                will(returnValue(mockAvailZoneList));
+                oneOf(mockAvailZoneList).iterator();
+                will(returnValue(Arrays.asList(mockAvailZone, mockAvailZone2).iterator()));
 
-            allowing(mockAvailZone).getName();will(returnValue("my-zone"));
-            allowing(mockAvailZone).getState();will(returnValue(mockZoneState));
-            allowing(mockAvailZone2).getName();will(returnValue("my-zone-2"));
-            allowing(mockAvailZone2).getState();will(returnValue(mockZoneState));
-            allowing(mockZoneState).available();will(returnValue(true));
+                allowing(mockAvailZone).getName();
+                will(returnValue("my-zone"));
+                allowing(mockAvailZone).getState();
+                will(returnValue(mockZoneState));
+                allowing(mockAvailZone2).getName();
+                will(returnValue("my-zone-2"));
+                allowing(mockAvailZone2).getState();
+                will(returnValue(mockZoneState));
+                allowing(mockZoneState).available();
+                will(returnValue(true));
 
-            //Our first run through will throw an exception
-            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
-            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+                //Our first run through will throw an exception
+                oneOf(mockComputeService).templateOptions();
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockComputeService).templateBuilder();
+                will(returnValue(mockTemplateBuilder));
 
-            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).availabilityZone("my-zone");will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).keyPairName("vgl-developers");
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).availabilityZone("my-zone");
+                will(returnValue(mockTemplateOptions));
 
-            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+                oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).options(mockTemplateOptions);
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).build();
+                will(returnValue(mockTemplate));
 
+                allowing(mockException).fillInStackTrace();
+                allowing(mockException).getMessage();
+                oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+                will(throwException(mockException));
 
-            allowing(mockException).fillInStackTrace();
-            allowing(mockException).getMessage();
-            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
-            will(throwException(mockException));
+                oneOf(mockComputeService).destroyNodesMatching(mockFilter);
+                will(returnValue(Sets.newHashSet()));
 
-            oneOf(mockComputeService).destroyNodesMatching(mockFilter);will(returnValue(Sets.newHashSet()));
+                //The second will succeed
+                oneOf(mockComputeService).templateOptions();
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockComputeService).templateBuilder();
+                will(returnValue(mockTemplateBuilder));
 
-            //The second will succeed
-            oneOf(mockComputeService).templateOptions();will(returnValue(mockTemplateOptions));
-            oneOf(mockComputeService).templateBuilder();will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateOptions).keyPairName("vgl-developers");
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));
+                will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateOptions).availabilityZone("my-zone-2");
+                will(returnValue(mockTemplateOptions));
 
-            oneOf(mockTemplateOptions).keyPairName("vgl-developers");will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).userData(userDataString.getBytes(Charset.forName("UTF-8")));will(returnValue(mockTemplateOptions));
-            oneOf(mockTemplateOptions).availabilityZone("my-zone-2");will(returnValue(mockTemplateOptions));
+                oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).options(mockTemplateOptions);
+                will(returnValue(mockTemplateBuilder));
+                oneOf(mockTemplateBuilder).build();
+                will(returnValue(mockTemplate));
 
-            oneOf(mockTemplateBuilder).imageId(job.getComputeVmId());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).hardwareId(job.getComputeInstanceType());will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).options(mockTemplateOptions);will(returnValue(mockTemplateBuilder));
-            oneOf(mockTemplateBuilder).build();will(returnValue(mockTemplate));
+                oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
+                will(returnValue(ImmutableSet.<NodeMetadata> of(mockMetadata)));
 
-            oneOf(mockComputeService).createNodesInGroup("group-name", 1, mockTemplate);
-            will(returnValue(ImmutableSet.<NodeMetadata>of(mockMetadata)));
-
-            oneOf(mockMetadata).getId();will(returnValue(expectedInstanceId));
-        }});
+                oneOf(mockMetadata).getId();
+                will(returnValue(expectedInstanceId));
+            }
+        });
 
         String actualInstanceId = service.executeJob(job, userDataString);
 

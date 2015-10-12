@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.responses.opendap;
 
 /**
  * Represents a simplified 1 dimensional NUMERICAL axis
+ * 
  * @author vot002
  *
  */
@@ -27,6 +28,7 @@ public class SimpleAxis extends AbstractViewVariable {
 
     /**
      * Gets the bounds of this dimension in datapoints
+     * 
      * @return
      */
     public SimpleBounds getDimensionBounds() {
@@ -35,6 +37,7 @@ public class SimpleAxis extends AbstractViewVariable {
 
     /**
      * Sets the bounds of this dimension in datapoints
+     * 
      * @param dimensionLength
      */
     public void setDimensionBounds(SimpleBounds dimensionBounds) {
@@ -43,6 +46,7 @@ public class SimpleAxis extends AbstractViewVariable {
 
     /**
      * Gets the upper and lower bounds of the VALUES contained in this axis
+     * 
      * @return
      */
     public SimpleBounds getValueBounds() {
@@ -51,11 +55,11 @@ public class SimpleAxis extends AbstractViewVariable {
 
     /**
      * Sets the upper and lower bounds of the VALUES contained in this axis
+     * 
      * @return
      */
     public void setValueBounds(SimpleBounds valueBounds) {
         this.valueBounds = valueBounds;
     }
-
 
 }

@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services.namespaces;
 
-
 /**
  * A namespace context implementation for WFS 1.1.0
  *

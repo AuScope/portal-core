@@ -3,7 +3,6 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.io.InputStream;
 
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -17,6 +16,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Service class for interacting with an OPeNDAP endpoint
+ * 
  * @author Josh Vote
  *
  */
@@ -36,7 +36,9 @@ public class OpendapService {
 
     /**
      * Fetches the object representing the dataset at serviceUrl
-     * @param serviceUrl The OPeNDAP endpoint
+     * 
+     * @param serviceUrl
+     *            The OPeNDAP endpoint
      * @return
      * @throws PortalServiceException
      */
@@ -52,8 +54,11 @@ public class OpendapService {
 
     /**
      * Gets the exposed variables from an OPeNDAP endpoint.
-     * @param serviceUrl OPeNDAP endpoint to query
-     * @param variableFilter if not null, all ViewVariables in the response will have the name variableFilter
+     * 
+     * @param serviceUrl
+     *            OPeNDAP endpoint to query
+     * @param variableFilter
+     *            if not null, all ViewVariables in the response will have the name variableFilter
      * @return
      * @throws PortalServiceException
      */
@@ -71,13 +76,18 @@ public class OpendapService {
 
     /**
      * Makes a request for the data at an OPeNDAP endpoint
-     * @param serviceUrl OPeNDAP endpoint to query
-     * @param downloadFormat What format should the data be downloaded in
-     * @param constraints [Optional] Any constraints to apply to the download
+     * 
+     * @param serviceUrl
+     *            OPeNDAP endpoint to query
+     * @param downloadFormat
+     *            What format should the data be downloaded in
+     * @param constraints
+     *            [Optional] Any constraints to apply to the download
      * @return
      * @throws PortalServiceException
      */
-    public InputStream getData(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
+    public InputStream getData(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints)
+            throws PortalServiceException {
         NetcdfDataset ds = fetchDataset(serviceUrl);
         HttpRequestBase method = null;
 
@@ -92,19 +102,24 @@ public class OpendapService {
 
     /**
      * Provide a string representation of the url request
-     * @param serviceUrl OPeNDAP endpoint to query
-     * @param downloadFormat What format should the data be downloaded in
-     * @param constraints [Optional] Any constraints to apply to the download
+     * 
+     * @param serviceUrl
+     *            OPeNDAP endpoint to query
+     * @param downloadFormat
+     *            What format should the data be downloaded in
+     * @param constraints
+     *            [Optional] Any constraints to apply to the download
      * @return
      * @throws PortalServiceException
      */
-    public String getQueryDetails(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints) throws PortalServiceException {
+    public String getQueryDetails(String serviceUrl, OPeNDAPFormat downloadFormat, AbstractViewVariable[] constraints)
+            throws PortalServiceException {
         NetcdfDataset ds = fetchDataset(serviceUrl);
         HttpRequestBase method = null;
 
         try {
             method = getDataMethodMaker.getMethod(serviceUrl, downloadFormat, ds, constraints);
-            String details="ServiceUrl: " + method.getURI().toString();
+            String details = "ServiceUrl: " + method.getURI().toString();
             details += "\n" + "DownloadFormat: " + downloadFormat;
             details += "\n" + "DataSet: " + ds;
 

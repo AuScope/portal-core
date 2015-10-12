@@ -27,6 +27,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Unit tests for ViewVariableFactory (and various ViewVariable implementations)
+ * 
  * @author vot002
  *
  */
@@ -115,17 +116,21 @@ public class TestViewVariableFactory extends PortalTestClass {
     private void testJSONEquality(AbstractViewVariable... vars) throws Exception {
         //This is required as its the only way to get the spring framework to correctly "render" our objects into JSON
         final StringWriter actualJSONResponse = new StringWriter();
-        context.checking(new Expectations() {{
-            allowing(mockHttpResponse).getWriter(); will(returnValue(new PrintWriter(actualJSONResponse)));
-            allowing(mockHttpResponse).setContentType(with(any(String.class)));
-        }});
+        context.checking(new Expectations() {
+            {
+                allowing(mockHttpResponse).getWriter();
+                will(returnValue(new PrintWriter(actualJSONResponse)));
+                allowing(mockHttpResponse).setContentType(with(any(String.class)));
+            }
+        });
 
         JSONModelAndView mav = new JSONModelAndView(JSONArray.fromObject(vars));
         ((AbstractView) mav.getView()).setExposePathVariables(false);
         mav.getView().render(mav.getModel(), null, mockHttpResponse);
 
         String jsonText = String.format("{\"vars\":%1$s}", actualJSONResponse.toString());
-        AbstractViewVariable[] result = ViewVariableFactory.fromJSONArray(JSONObject.fromObject(jsonText).getJSONArray("vars"));
+        AbstractViewVariable[] result = ViewVariableFactory.fromJSONArray(JSONObject.fromObject(jsonText).getJSONArray(
+                "vars"));
         assertViewVariableEquals(result, vars);
     }
 
@@ -135,7 +140,7 @@ public class TestViewVariableFactory extends PortalTestClass {
      * Assumption - The net.sf JSON libraries can parse/write JSON text
      */
     @Test
-    public void testParseJSONFull() throws Exception{
+    public void testParseJSONFull() throws Exception {
         SimpleAxis a1 = new SimpleAxis("a1", "FLOAT", "a1Units", new SimpleBounds(1, 100), new SimpleBounds(11, 1100));
         SimpleAxis a2 = new SimpleAxis("a2", "FLOAT", "a2Units", new SimpleBounds(2, 200), new SimpleBounds(22, 2200));
         SimpleAxis a3 = new SimpleAxis("a3", "FLOAT", "a3Units", new SimpleBounds(3, 300), new SimpleBounds(33, 3300));
@@ -155,6 +160,7 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * Tests parsing from a JSON String where only SOME fields are specified
+     * 
      * @throws Exception
      */
     @Test
@@ -164,7 +170,7 @@ public class TestViewVariableFactory extends PortalTestClass {
         SimpleAxis a3 = new SimpleAxis("y", null, null, null, new SimpleBounds(-5.5, 22.33));
         SimpleAxis a4 = new SimpleAxis("x", null, null, null, new SimpleBounds(-40, 50));
 
-        SimpleGrid g1 = new SimpleGrid("Geopotential_height", null, null, new AbstractViewVariable[] {a1, a2,a3,a4});
+        SimpleGrid g1 = new SimpleGrid("Geopotential_height", null, null, new AbstractViewVariable[] {a1, a2, a3, a4});
 
         String jsonString1 = "{\"constraints\":[{\"type\":\"grid\",\"name\":\"Geopotential_height\",\"axes\":[{\"type\":\"axis\",\"name\":\"time\",\"valueBounds\":{\"from\":0,\"to\":3}},{\"type\":\"axis\",\"name\":\"isobaric\",\"valueBounds\":{\"from\":5,\"to\":100}},{\"type\":\"axis\",\"name\":\"y\",\"valueBounds\":{\"from\":-5.5,\"to\":22.33}},{\"type\":\"axis\",\"name\":\"x\",\"valueBounds\":{\"from\":-40,\"to\":50}}]}]}";
         JSONArray jsonArr1 = JSONObject.fromObject(jsonString1).getJSONArray("constraints");
@@ -175,11 +181,12 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * Tests parsing from a JSON String where only SOME fields are specified
+     * 
      * @throws Exception
      */
     @Test
     public void testParseJSONPartial2() throws Exception {
-        SimpleAxis a1 = new SimpleAxis("lat", null, null, new SimpleBounds(-2, 3),null);
+        SimpleAxis a1 = new SimpleAxis("lat", null, null, new SimpleBounds(-2, 3), null);
 
         String jsonString2 = "{\"constraints\":[{\"type\":\"axis\",\"name\":\"lat\",\"dimensionBounds\":{\"from\":-2,\"to\":3}}]}";
         JSONArray jsonArr2 = JSONObject.fromObject(jsonString2).getJSONArray("constraints");
@@ -190,38 +197,53 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a non gridded variable with a single axis
+     * 
      * @throws Exception
      */
     @Test
     public void testParseNetCDFNonGridded() throws Exception {
 
         final DataType dataType = DataType.FLOAT;
-        final SimpleAxis expectation = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 237566), new SimpleBounds(-3995.345, 21531.3));
+        final SimpleAxis expectation = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 237566),
+                new SimpleBounds(-3995.345, 21531.3));
 
         final List<Variable> variableList = Arrays.asList(mockVariable1);
         final List<Dimension> dimensionList = Arrays.asList(mockDimension1);
 
         //Build up our "mock" dataset
-        context.checking(new Expectations() {{
-            //Our mock array (will be referenced twice as the variable should make 2 requests for a single variable each)
-            //(Instead of fetching the entire variable range and getting the first/last values
-            oneOf(mockArray1).getDouble(0);will(returnValue(expectation.getValueBounds().getFrom()));
-            oneOf(mockArray2).getDouble(0);will(returnValue(expectation.getValueBounds().getTo()));
+        context.checking(new Expectations() {
+            {
+                //Our mock array (will be referenced twice as the variable should make 2 requests for a single variable each)
+                //(Instead of fetching the entire variable range and getting the first/last values
+                oneOf(mockArray1).getDouble(0);
+                will(returnValue(expectation.getValueBounds().getFrom()));
+                oneOf(mockArray2).getDouble(0);
+                will(returnValue(expectation.getValueBounds().getTo()));
 
-            //Our dimension is configured here
-            allowing(mockDimension1).getLength();will(returnValue((int) expectation.getDimensionBounds().getTo()));
+                //Our dimension is configured here
+                allowing(mockDimension1).getLength();
+                will(returnValue((int) expectation.getDimensionBounds().getTo()));
 
-            //Our variable is configured here
-            allowing(mockVariable1).getDimensions();will(returnValue(dimensionList));
-            allowing(mockVariable1).getName();will(returnValue(expectation.getName()));
-            allowing(mockVariable1).getDataType();will(returnValue(dataType));
-            allowing(mockVariable1).getUnitsString();will(returnValue(expectation.getUnits()));
-            oneOf(mockVariable1).read(new int[] {0}, new int[] {1});will(returnValue(mockArray1));
-            oneOf(mockVariable1).read(new int[] {(int) expectation.getDimensionBounds().getTo() - 1}, new int[] {1});will(returnValue(mockArray2));
+                //Our variable is configured here
+                allowing(mockVariable1).getDimensions();
+                will(returnValue(dimensionList));
+                allowing(mockVariable1).getName();
+                will(returnValue(expectation.getName()));
+                allowing(mockVariable1).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable1).getUnitsString();
+                will(returnValue(expectation.getUnits()));
+                oneOf(mockVariable1).read(new int[] {0}, new int[] {1});
+                will(returnValue(mockArray1));
+                oneOf(mockVariable1)
+                        .read(new int[] {(int) expectation.getDimensionBounds().getTo() - 1}, new int[] {1});
+                will(returnValue(mockArray2));
 
-            //Configure the mock dataset
-            allowing(mockNetCdfDataset).getVariables();will(returnValue(variableList));
-        }});
+                //Configure the mock dataset
+                allowing(mockNetCdfDataset).getVariables();
+                will(returnValue(variableList));
+            }
+        });
 
         AbstractViewVariable[] result = ViewVariableFactory.fromNetCDFDataset(mockNetCdfDataset);
 
@@ -230,14 +252,18 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a gridded variable with a two axes
+     * 
      * @throws Exception
      */
     @Test
     public void testParseNetCDFGridded() throws Exception {
         final DataType dataType = DataType.FLOAT;
-        final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566), new SimpleBounds(-3435.345, 25235.3));
-        final SimpleAxis axis2 = new SimpleAxis("axis2", dataType.name(), "units2", new SimpleBounds(0, 3215), new SimpleBounds(-835.225, 278.123));
-        final SimpleGrid expectation = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {axis1, axis2});
+        final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566),
+                new SimpleBounds(-3435.345, 25235.3));
+        final SimpleAxis axis2 = new SimpleAxis("axis2", dataType.name(), "units2", new SimpleBounds(0, 3215),
+                new SimpleBounds(-835.225, 278.123));
+        final SimpleGrid expectation = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {
+                axis1, axis2});
 
         final List<Variable> variableList = Arrays.asList(mockVariable1, mockVariable2, mockVariable3);
         final List<Dimension> dimensionList1 = Arrays.asList(mockDimension1, mockDimension2);
@@ -245,50 +271,83 @@ public class TestViewVariableFactory extends PortalTestClass {
         final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
 
         //Build up our "mock" dataset
-        context.checking(new Expectations() {{
-            //Our mock array will be fetched twice for each axis
-            //(Instead of fetching the entire variable range and getting the first/last values
-            allowing(mockArray1).getDouble(0);will(returnValue(axis1.getValueBounds().getFrom()));
-            allowing(mockArray2).getDouble(0);will(returnValue(axis1.getValueBounds().getTo()));
-            allowing(mockArray3).getDouble(0);will(returnValue(axis2.getValueBounds().getFrom()));
-            allowing(mockArray4).getDouble(0);will(returnValue(axis2.getValueBounds().getTo()));
+        context.checking(new Expectations() {
+            {
+                //Our mock array will be fetched twice for each axis
+                //(Instead of fetching the entire variable range and getting the first/last values
+                allowing(mockArray1).getDouble(0);
+                will(returnValue(axis1.getValueBounds().getFrom()));
+                allowing(mockArray2).getDouble(0);
+                will(returnValue(axis1.getValueBounds().getTo()));
+                allowing(mockArray3).getDouble(0);
+                will(returnValue(axis2.getValueBounds().getFrom()));
+                allowing(mockArray4).getDouble(0);
+                will(returnValue(axis2.getValueBounds().getTo()));
 
-            //Our group
-            allowing(mockGroup).findVariable(axis1.getName());will(returnValue(mockVariable2));
-            allowing(mockGroup).findVariable(axis2.getName());will(returnValue(mockVariable3));
+                //Our group
+                allowing(mockGroup).findVariable(axis1.getName());
+                will(returnValue(mockVariable2));
+                allowing(mockGroup).findVariable(axis2.getName());
+                will(returnValue(mockVariable3));
 
-            //Our dimensions are configured here
-            allowing(mockDimension1).getLength();will(returnValue((int)axis1.getDimensionBounds().getTo()));
-            allowing(mockDimension2).getLength();will(returnValue((int)axis2.getDimensionBounds().getTo()));
-            allowing(mockDimension1).getGroup();will(returnValue(mockGroup));
-            allowing(mockDimension2).getGroup();will(returnValue(mockGroup));
-            allowing(mockDimension1).getName();will(returnValue(axis1.getName()));
-            allowing(mockDimension2).getName();will(returnValue(axis2.getName()));
+                //Our dimensions are configured here
+                allowing(mockDimension1).getLength();
+                will(returnValue((int) axis1.getDimensionBounds().getTo()));
+                allowing(mockDimension2).getLength();
+                will(returnValue((int) axis2.getDimensionBounds().getTo()));
+                allowing(mockDimension1).getGroup();
+                will(returnValue(mockGroup));
+                allowing(mockDimension2).getGroup();
+                will(returnValue(mockGroup));
+                allowing(mockDimension1).getName();
+                will(returnValue(axis1.getName()));
+                allowing(mockDimension2).getName();
+                will(returnValue(axis2.getName()));
 
-            //Our variables are configured here
-            allowing(mockVariable1).getDimensions();will(returnValue(dimensionList1));
-            allowing(mockVariable2).getDimensions();will(returnValue(dimensionList2));
-            allowing(mockVariable3).getDimensions();will(returnValue(dimensionList3));
-            allowing(mockVariable1).getName();will(returnValue(expectation.getName()));
-            allowing(mockVariable2).getName();will(returnValue(axis1.getName()));
-            allowing(mockVariable3).getName();will(returnValue(axis2.getName()));
-            allowing(mockVariable1).getDataType();will(returnValue(dataType));
-            allowing(mockVariable2).getDataType();will(returnValue(dataType));
-            allowing(mockVariable3).getDataType();will(returnValue(dataType));
-            allowing(mockVariable1).getUnitsString();will(returnValue(expectation.getUnits()));
-            allowing(mockVariable2).getUnitsString();will(returnValue(axis1.getUnits()));
-            allowing(mockVariable3).getUnitsString();will(returnValue(axis2.getUnits()));
+                //Our variables are configured here
+                allowing(mockVariable1).getDimensions();
+                will(returnValue(dimensionList1));
+                allowing(mockVariable2).getDimensions();
+                will(returnValue(dimensionList2));
+                allowing(mockVariable3).getDimensions();
+                will(returnValue(dimensionList3));
+                allowing(mockVariable1).getName();
+                will(returnValue(expectation.getName()));
+                allowing(mockVariable2).getName();
+                will(returnValue(axis1.getName()));
+                allowing(mockVariable3).getName();
+                will(returnValue(axis2.getName()));
+                allowing(mockVariable1).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable2).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable3).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable1).getUnitsString();
+                will(returnValue(expectation.getUnits()));
+                allowing(mockVariable2).getUnitsString();
+                will(returnValue(axis1.getUnits()));
+                allowing(mockVariable3).getUnitsString();
+                will(returnValue(axis2.getUnits()));
 
-            //We want to ensure we only download the minimum/maximum of a range ONCE
-            //(Once for the gridded variable and once for the plain axis)
-            exactly(2).of(mockVariable2).read(new int[] {0}, new int[] {1});will(returnValue(mockArray1));
-            exactly(2).of(mockVariable2).read(new int[] {(int)axis1.getDimensionBounds().getTo() - 1}, new int[] {1});will(returnValue(mockArray2));
-            exactly(2).of(mockVariable3).read(new int[] {0}, new int[] {1});will(returnValue(mockArray3));
-            exactly(2).of(mockVariable3).read(new int[] {(int)axis2.getDimensionBounds().getTo() - 1}, new int[] {1});will(returnValue(mockArray4));
+                //We want to ensure we only download the minimum/maximum of a range ONCE
+                //(Once for the gridded variable and once for the plain axis)
+                exactly(2).of(mockVariable2).read(new int[] {0}, new int[] {1});
+                will(returnValue(mockArray1));
+                exactly(2).of(mockVariable2).read(new int[] {(int) axis1.getDimensionBounds().getTo() - 1},
+                        new int[] {1});
+                will(returnValue(mockArray2));
+                exactly(2).of(mockVariable3).read(new int[] {0}, new int[] {1});
+                will(returnValue(mockArray3));
+                exactly(2).of(mockVariable3).read(new int[] {(int) axis2.getDimensionBounds().getTo() - 1},
+                        new int[] {1});
+                will(returnValue(mockArray4));
 
-            //Configure the mock dataset
-            allowing(mockNetCdfDataset).getVariables();will(returnValue(variableList));
-        }});
+                //Configure the mock dataset
+                allowing(mockNetCdfDataset).getVariables();
+                will(returnValue(variableList));
+            }
+        });
 
         AbstractViewVariable[] result = ViewVariableFactory.fromNetCDFDataset(mockNetCdfDataset);
 
@@ -297,49 +356,64 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset that fails when requesting the variable range
+     * 
      * @throws Exception
      */
-    @Test(expected=IOException.class)
+    @Test(expected = IOException.class)
     public void testParseNetCDFGriddedWithError() throws Exception {
         final DataType dataType = DataType.FLOAT;
-        final SimpleAxis expectation = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 237566), new SimpleBounds(-3995.345, 21531.3));
+        final SimpleAxis expectation = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 237566),
+                new SimpleBounds(-3995.345, 21531.3));
 
         final List<Variable> variableList = Arrays.asList(mockVariable1);
         final List<Dimension> dimensionList = Arrays.asList(mockDimension1);
 
         //Build up our "mock" dataset
-        context.checking(new Expectations() {{
+        context.checking(new Expectations() {
+            {
 
-            //Our dimension is configured here
-            allowing(mockDimension1).getLength();will(returnValue((int) expectation.getDimensionBounds().getTo()));
+                //Our dimension is configured here
+                allowing(mockDimension1).getLength();
+                will(returnValue((int) expectation.getDimensionBounds().getTo()));
 
-            //Our variable is configured here
-            allowing(mockVariable1).getDimensions();will(returnValue(dimensionList));
-            allowing(mockVariable1).getName();will(returnValue(expectation.getName()));
-            allowing(mockVariable1).getDataType();will(returnValue(dataType));
-            allowing(mockVariable1).getUnitsString();will(returnValue(expectation.getUnits()));
-            oneOf(mockVariable1).read(new int[] {0}, new int[] {1});will(returnValue(mockArray1));
-            oneOf(mockVariable1).read(new int[] {(int) expectation.getDimensionBounds().getTo() - 1}, new int[] {1});will(throwException(new IOException()));
+                //Our variable is configured here
+                allowing(mockVariable1).getDimensions();
+                will(returnValue(dimensionList));
+                allowing(mockVariable1).getName();
+                will(returnValue(expectation.getName()));
+                allowing(mockVariable1).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable1).getUnitsString();
+                will(returnValue(expectation.getUnits()));
+                oneOf(mockVariable1).read(new int[] {0}, new int[] {1});
+                will(returnValue(mockArray1));
+                oneOf(mockVariable1)
+                        .read(new int[] {(int) expectation.getDimensionBounds().getTo() - 1}, new int[] {1});
+                will(throwException(new IOException()));
 
-            //Configure the mock dataset
-            allowing(mockNetCdfDataset).getVariables();will(returnValue(variableList));
-        }});
+                //Configure the mock dataset
+                allowing(mockNetCdfDataset).getVariables();
+                will(returnValue(variableList));
+            }
+        });
 
         //This should throw an IOException
         ViewVariableFactory.fromNetCDFDataset(mockNetCdfDataset);
     }
 
     /**
-     * A test of reading a mock NetCDF dataset - reading a gridded variable with a single axis
-     * One of the dimensions parsed will NOT map to an existing variable
+     * A test of reading a mock NetCDF dataset - reading a gridded variable with a single axis One of the dimensions parsed will NOT map to an existing variable
+     * 
      * @throws Exception
      */
     @Test
     public void testParseNetCDFGridded_UnmappedDimension() throws Exception {
         final DataType dataType = DataType.FLOAT;
-        final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566), new SimpleBounds(-3435.345, 25235.3));
+        final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566),
+                new SimpleBounds(-3435.345, 25235.3));
         final SimpleAxis axis2 = new SimpleAxis("axis2", dataType.name(), "????", new SimpleBounds(0, 9), null);
-        final SimpleGrid expectation = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {axis1, axis2});
+        final SimpleGrid expectation = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {
+                axis1, axis2});
 
         final List<Variable> variableList = Arrays.asList(mockVariable1, mockVariable2);
         final List<Dimension> dimensionList1 = Arrays.asList(mockDimension1, mockDimension2);
@@ -347,42 +421,66 @@ public class TestViewVariableFactory extends PortalTestClass {
         final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
 
         //Build up our "mock" dataset
-        context.checking(new Expectations() {{
-            //Our mock array will be fetched twice for each axis
-            //(Instead of fetching the entire variable range and getting the first/last values
-            allowing(mockArray1).getDouble(0);will(returnValue(axis1.getValueBounds().getFrom()));
-            allowing(mockArray2).getDouble(0);will(returnValue(axis1.getValueBounds().getTo()));
+        context.checking(new Expectations() {
+            {
+                //Our mock array will be fetched twice for each axis
+                //(Instead of fetching the entire variable range and getting the first/last values
+                allowing(mockArray1).getDouble(0);
+                will(returnValue(axis1.getValueBounds().getFrom()));
+                allowing(mockArray2).getDouble(0);
+                will(returnValue(axis1.getValueBounds().getTo()));
 
-            //Our group
-            allowing(mockGroup).findVariable(axis1.getName());will(returnValue(mockVariable2));
-            allowing(mockGroup).findVariable(axis2.getName());will(returnValue(null));
+                //Our group
+                allowing(mockGroup).findVariable(axis1.getName());
+                will(returnValue(mockVariable2));
+                allowing(mockGroup).findVariable(axis2.getName());
+                will(returnValue(null));
 
-            //Our dimensions are configured here
-            allowing(mockDimension1).getLength();will(returnValue((int)axis1.getDimensionBounds().getTo()));
-            allowing(mockDimension2).getLength();will(returnValue(10));
-            allowing(mockDimension1).getGroup();will(returnValue(mockGroup));
-            allowing(mockDimension2).getGroup();will(returnValue(mockGroup));
-            allowing(mockDimension1).getName();will(returnValue(axis1.getName()));
-            allowing(mockDimension2).getName();will(returnValue(axis2.getName()));
+                //Our dimensions are configured here
+                allowing(mockDimension1).getLength();
+                will(returnValue((int) axis1.getDimensionBounds().getTo()));
+                allowing(mockDimension2).getLength();
+                will(returnValue(10));
+                allowing(mockDimension1).getGroup();
+                will(returnValue(mockGroup));
+                allowing(mockDimension2).getGroup();
+                will(returnValue(mockGroup));
+                allowing(mockDimension1).getName();
+                will(returnValue(axis1.getName()));
+                allowing(mockDimension2).getName();
+                will(returnValue(axis2.getName()));
 
-            //Our variables are configured here
-            allowing(mockVariable1).getDimensions();will(returnValue(dimensionList1));
-            allowing(mockVariable2).getDimensions();will(returnValue(dimensionList2));
-            allowing(mockVariable1).getName();will(returnValue(expectation.getName()));
-            allowing(mockVariable2).getName();will(returnValue(axis1.getName()));
-            allowing(mockVariable1).getDataType();will(returnValue(dataType));
-            allowing(mockVariable2).getDataType();will(returnValue(dataType));
-            allowing(mockVariable1).getUnitsString();will(returnValue(expectation.getUnits()));
-            allowing(mockVariable2).getUnitsString();will(returnValue(axis1.getUnits()));
+                //Our variables are configured here
+                allowing(mockVariable1).getDimensions();
+                will(returnValue(dimensionList1));
+                allowing(mockVariable2).getDimensions();
+                will(returnValue(dimensionList2));
+                allowing(mockVariable1).getName();
+                will(returnValue(expectation.getName()));
+                allowing(mockVariable2).getName();
+                will(returnValue(axis1.getName()));
+                allowing(mockVariable1).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable2).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable1).getUnitsString();
+                will(returnValue(expectation.getUnits()));
+                allowing(mockVariable2).getUnitsString();
+                will(returnValue(axis1.getUnits()));
 
-            //We want to ensure we only download the minimum/maximum of a range ONCE
-            //(Once for the gridded variable and once for the plain axis)
-            exactly(2).of(mockVariable2).read(new int[] {0}, new int[] {1});will(returnValue(mockArray1));
-            exactly(2).of(mockVariable2).read(new int[] {(int)axis1.getDimensionBounds().getTo() - 1}, new int[] {1});will(returnValue(mockArray2));
+                //We want to ensure we only download the minimum/maximum of a range ONCE
+                //(Once for the gridded variable and once for the plain axis)
+                exactly(2).of(mockVariable2).read(new int[] {0}, new int[] {1});
+                will(returnValue(mockArray1));
+                exactly(2).of(mockVariable2).read(new int[] {(int) axis1.getDimensionBounds().getTo() - 1},
+                        new int[] {1});
+                will(returnValue(mockArray2));
 
-            //Configure the mock dataset
-            allowing(mockNetCdfDataset).getVariables();will(returnValue(variableList));
-        }});
+                //Configure the mock dataset
+                allowing(mockNetCdfDataset).getVariables();
+                will(returnValue(variableList));
+            }
+        });
 
         AbstractViewVariable[] result = ViewVariableFactory.fromNetCDFDataset(mockNetCdfDataset);
 
@@ -391,14 +489,18 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * A test of reading a mock NetCDF dataset - reading a non gridded variable with a single axis
+     * 
      * @throws Exception
      */
     @Test
     public void testParseVariableFilter() throws Exception {
         final DataType dataType = DataType.FLOAT;
-        final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566), new SimpleBounds(-3435.345, 25235.3));
-        final SimpleAxis axis2 = new SimpleAxis("axis2", dataType.name(), "units2", new SimpleBounds(0, 3215), new SimpleBounds(-835.225, 278.123));
-        final SimpleGrid grid1 = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {axis1, axis2});
+        final SimpleAxis axis1 = new SimpleAxis("axis1", dataType.name(), "units1", new SimpleBounds(0, 23566),
+                new SimpleBounds(-3435.345, 25235.3));
+        final SimpleAxis axis2 = new SimpleAxis("axis2", dataType.name(), "units2", new SimpleBounds(0, 3215),
+                new SimpleBounds(-835.225, 278.123));
+        final SimpleGrid grid1 = new SimpleGrid("grid1", dataType.name(), "myunits", new AbstractViewVariable[] {axis1,
+                axis2});
 
         final List<Variable> variableList = Arrays.asList(mockVariable1, mockVariable2, mockVariable3);
         final List<Dimension> dimensionList1 = Arrays.asList(mockDimension1, mockDimension2);
@@ -406,48 +508,77 @@ public class TestViewVariableFactory extends PortalTestClass {
         final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
 
         //Build up our "mock" dataset
-        context.checking(new Expectations() {{
-            //Our mock array will be fetched twice for each axis
-            //(Instead of fetching the entire variable range and getting the first/last values
-            allowing(mockArray1).getDouble(0);will(returnValue(axis1.getValueBounds().getFrom()));
-            allowing(mockArray2).getDouble(0);will(returnValue(axis1.getValueBounds().getTo()));
-            allowing(mockArray3).getDouble(0);will(returnValue(axis2.getValueBounds().getFrom()));
-            allowing(mockArray4).getDouble(0);will(returnValue(axis2.getValueBounds().getTo()));
+        context.checking(new Expectations() {
+            {
+                //Our mock array will be fetched twice for each axis
+                //(Instead of fetching the entire variable range and getting the first/last values
+                allowing(mockArray1).getDouble(0);
+                will(returnValue(axis1.getValueBounds().getFrom()));
+                allowing(mockArray2).getDouble(0);
+                will(returnValue(axis1.getValueBounds().getTo()));
+                allowing(mockArray3).getDouble(0);
+                will(returnValue(axis2.getValueBounds().getFrom()));
+                allowing(mockArray4).getDouble(0);
+                will(returnValue(axis2.getValueBounds().getTo()));
 
-            //Our group
-            allowing(mockGroup).findVariable(axis1.getName());will(returnValue(mockVariable2));
-            allowing(mockGroup).findVariable(axis2.getName());will(returnValue(mockVariable3));
+                //Our group
+                allowing(mockGroup).findVariable(axis1.getName());
+                will(returnValue(mockVariable2));
+                allowing(mockGroup).findVariable(axis2.getName());
+                will(returnValue(mockVariable3));
 
-            //Our dimensions are configured here
-            allowing(mockDimension1).getLength();will(returnValue((int)axis1.getDimensionBounds().getTo()));
-            allowing(mockDimension2).getLength();will(returnValue((int)axis2.getDimensionBounds().getTo()));
-            allowing(mockDimension1).getGroup();will(returnValue(mockGroup));
-            allowing(mockDimension2).getGroup();will(returnValue(mockGroup));
-            allowing(mockDimension1).getName();will(returnValue(axis1.getName()));
-            allowing(mockDimension2).getName();will(returnValue(axis2.getName()));
+                //Our dimensions are configured here
+                allowing(mockDimension1).getLength();
+                will(returnValue((int) axis1.getDimensionBounds().getTo()));
+                allowing(mockDimension2).getLength();
+                will(returnValue((int) axis2.getDimensionBounds().getTo()));
+                allowing(mockDimension1).getGroup();
+                will(returnValue(mockGroup));
+                allowing(mockDimension2).getGroup();
+                will(returnValue(mockGroup));
+                allowing(mockDimension1).getName();
+                will(returnValue(axis1.getName()));
+                allowing(mockDimension2).getName();
+                will(returnValue(axis2.getName()));
 
-            //Our variables are configured here
-            allowing(mockVariable1).getDimensions();will(returnValue(dimensionList1));
-            allowing(mockVariable2).getDimensions();will(returnValue(dimensionList2));
-            allowing(mockVariable3).getDimensions();will(returnValue(dimensionList3));
-            allowing(mockVariable1).getName();will(returnValue(grid1.getName()));
-            allowing(mockVariable2).getName();will(returnValue(axis1.getName()));
-            allowing(mockVariable3).getName();will(returnValue(axis2.getName()));
-            allowing(mockVariable1).getDataType();will(returnValue(dataType));
-            allowing(mockVariable2).getDataType();will(returnValue(dataType));
-            allowing(mockVariable3).getDataType();will(returnValue(dataType));
-            allowing(mockVariable1).getUnitsString();will(returnValue(grid1.getUnits()));
-            allowing(mockVariable2).getUnitsString();will(returnValue(axis1.getUnits()));
-            allowing(mockVariable3).getUnitsString();will(returnValue(axis2.getUnits()));
+                //Our variables are configured here
+                allowing(mockVariable1).getDimensions();
+                will(returnValue(dimensionList1));
+                allowing(mockVariable2).getDimensions();
+                will(returnValue(dimensionList2));
+                allowing(mockVariable3).getDimensions();
+                will(returnValue(dimensionList3));
+                allowing(mockVariable1).getName();
+                will(returnValue(grid1.getName()));
+                allowing(mockVariable2).getName();
+                will(returnValue(axis1.getName()));
+                allowing(mockVariable3).getName();
+                will(returnValue(axis2.getName()));
+                allowing(mockVariable1).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable2).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable3).getDataType();
+                will(returnValue(dataType));
+                allowing(mockVariable1).getUnitsString();
+                will(returnValue(grid1.getUnits()));
+                allowing(mockVariable2).getUnitsString();
+                will(returnValue(axis1.getUnits()));
+                allowing(mockVariable3).getUnitsString();
+                will(returnValue(axis2.getUnits()));
 
-            //We want to ensure we only download the minimum/maximum of a range ONCE
-            //(Once for the gridded variable and once for the plain axis)
-            oneOf(mockVariable3).read(new int[] {0}, new int[] {1});will(returnValue(mockArray3));
-            oneOf(mockVariable3).read(new int[] {(int)axis2.getDimensionBounds().getTo() - 1}, new int[] {1});will(returnValue(mockArray4));
+                //We want to ensure we only download the minimum/maximum of a range ONCE
+                //(Once for the gridded variable and once for the plain axis)
+                oneOf(mockVariable3).read(new int[] {0}, new int[] {1});
+                will(returnValue(mockArray3));
+                oneOf(mockVariable3).read(new int[] {(int) axis2.getDimensionBounds().getTo() - 1}, new int[] {1});
+                will(returnValue(mockArray4));
 
-            //Configure the mock dataset
-            allowing(mockNetCdfDataset).getVariables();will(returnValue(variableList));
-        }});
+                //Configure the mock dataset
+                allowing(mockNetCdfDataset).getVariables();
+                will(returnValue(variableList));
+            }
+        });
 
         AbstractViewVariable[] result = ViewVariableFactory.fromNetCDFDataset(mockNetCdfDataset, axis2.getName());
 

@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.responses.ows;
 
 /**
  * Represents an exception response returned from an OGC OWS
+ * 
  * @author vot002
  *
  */

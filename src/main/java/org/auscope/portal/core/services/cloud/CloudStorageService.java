@@ -34,29 +34,32 @@ import org.jclouds.rest.AuthorizationException;
  */
 public class CloudStorageService {
 
-    /** The bucket name used when no bucket is specified*/
+    /** The bucket name used when no bucket is specified */
     public static final String DEFAULT_BUCKET = "portal-core-storage-service";
 
     private final Log log = LogFactory.getLog(getClass());
 
-    /** Prefix to apply to any job files stored (will be appended with job id) - defaults to hostname*/
+    /** Prefix to apply to any job files stored (will be appended with job id) - defaults to hostname */
     protected String jobPrefix;
 
-    /** The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty*/
+    /** The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty */
     private String id;
-    /** A short descriptive name for human identification of this service*/
+    /** A short descriptive name for human identification of this service */
     private String name;
-    /** The authentication version to use when connecting to this object store - can be null or empty*/
+    /** The authentication version to use when connecting to this object store - can be null or empty */
     private String authVersion;
-    /** The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes due to limitations in JClouds.*/
+    /**
+     * The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes
+     * due to limitations in JClouds.
+     */
     private String regionName;
-    /** Username credential for accessing the storage service*/
+    /** Username credential for accessing the storage service */
     private String accessKey;
-    /** Password credentials for accessing the storage service*/
+    /** Password credentials for accessing the storage service */
     private String secretKey;
-    /** A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'*/
+    /** A unique identifier identifying the type of storage API used to store this job's files - eg 'swift' */
     private String provider;
-    /** The URL endpoint for the cloud storage service*/
+    /** The URL endpoint for the cloud storage service */
     private String endpoint;
 
     /**
@@ -68,10 +71,15 @@ public class CloudStorageService {
 
     /**
      * Creates a new instance for connecting to the specified parameters
-     * @param endpoint The URL endpoint for the cloud storage service
-     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
-     * @param accessKey Username credential for accessing the storage service
-     * @param secretKey Password credentials for accessing the storage service
+     * 
+     * @param endpoint
+     *            The URL endpoint for the cloud storage service
+     * @param provider
+     *            A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey
+     *            Username credential for accessing the storage service
+     * @param secretKey
+     *            Password credentials for accessing the storage service
      */
     public CloudStorageService(String provider, String accessKey, String secretKey) {
         this(null, provider, accessKey, secretKey, null, false);
@@ -79,10 +87,15 @@ public class CloudStorageService {
 
     /**
      * Creates a new instance for connecting to the specified parameters
-     * @param endpoint The URL endpoint for the cloud storage service
-     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
-     * @param accessKey Username credential for accessing the storage service
-     * @param secretKey Password credentials for accessing the storage service
+     * 
+     * @param endpoint
+     *            The URL endpoint for the cloud storage service
+     * @param provider
+     *            A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey
+     *            Username credential for accessing the storage service
+     * @param secretKey
+     *            Password credentials for accessing the storage service
      */
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey) {
         this(endpoint, provider, accessKey, secretKey, null, false);
@@ -90,23 +103,36 @@ public class CloudStorageService {
 
     /**
      * Creates a new instance for connecting to the specified parameters
-     * @param endpoint The URL endpoint for the cloud storage service
-     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
-     * @param accessKey Username credential for accessing the storage service
-     * @param secretKey Password credentials for accessing the storage service
-     * @param relaxHostName Whether security certs are required to strictly match the host
+     * 
+     * @param endpoint
+     *            The URL endpoint for the cloud storage service
+     * @param provider
+     *            A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey
+     *            Username credential for accessing the storage service
+     * @param secretKey
+     *            Password credentials for accessing the storage service
+     * @param relaxHostName
+     *            Whether security certs are required to strictly match the host
      */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, boolean relaxHostName) {
+    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey,
+            boolean relaxHostName) {
         this(endpoint, provider, accessKey, secretKey, null, relaxHostName);
     }
 
     /**
      * Creates a new instance for connecting to the specified parameters
-     * @param endpoint The URL endpoint for the cloud storage service
-     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
-     * @param accessKey Username credential for accessing the storage service
-     * @param secretKey Password credentials for accessing the storage service
-     * @param regionName The region identifier string for this service (if any). Can be null/empty.
+     * 
+     * @param endpoint
+     *            The URL endpoint for the cloud storage service
+     * @param provider
+     *            A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey
+     *            Username credential for accessing the storage service
+     * @param secretKey
+     *            Password credentials for accessing the storage service
+     * @param regionName
+     *            The region identifier string for this service (if any). Can be null/empty.
      */
     public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName) {
         this(endpoint, provider, accessKey, secretKey, regionName, false);
@@ -114,28 +140,45 @@ public class CloudStorageService {
 
     /**
      * Creates a new instance for connecting to the specified parameters
-     * @param endpoint The URL endpoint for the cloud storage service
-     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
-     * @param accessKey Username credential for accessing the storage service
-     * @param secretKey Password credentials for accessing the storage service
-     * @param regionName The region identifier string for this service (if any). Can be null/empty.
-     * @param relaxHostName Whether security certs are required to strictly match the host
+     * 
+     * @param endpoint
+     *            The URL endpoint for the cloud storage service
+     * @param provider
+     *            A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey
+     *            Username credential for accessing the storage service
+     * @param secretKey
+     *            Password credentials for accessing the storage service
+     * @param regionName
+     *            The region identifier string for this service (if any). Can be null/empty.
+     * @param relaxHostName
+     *            Whether security certs are required to strictly match the host
      */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName, boolean relaxHostName) {
+    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName,
+            boolean relaxHostName) {
         this(endpoint, provider, accessKey, secretKey, regionName, relaxHostName, false);
     }
 
     /**
      * Creates a new instance for connecting to the specified parameters
-     * @param endpoint The URL endpoint for the cloud storage service
-     * @param provider A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
-     * @param accessKey Username credential for accessing the storage service
-     * @param secretKey Password credentials for accessing the storage service
-     * @param regionName The region identifier string for this service (if any). Can be null/empty.
-     * @param relaxHostName Whether security certs are required to strictly match the host
-     * @param stripExpectHeader Whether to remove HTTP Expect header from requests; set to true for blobstores that do not support 100-Continue
+     * 
+     * @param endpoint
+     *            The URL endpoint for the cloud storage service
+     * @param provider
+     *            A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * @param accessKey
+     *            Username credential for accessing the storage service
+     * @param secretKey
+     *            Password credentials for accessing the storage service
+     * @param regionName
+     *            The region identifier string for this service (if any). Can be null/empty.
+     * @param relaxHostName
+     *            Whether security certs are required to strictly match the host
+     * @param stripExpectHeader
+     *            Whether to remove HTTP Expect header from requests; set to true for blobstores that do not support 100-Continue
      */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName, boolean relaxHostName, boolean stripExpectHeader) {
+    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName,
+            boolean relaxHostName, boolean stripExpectHeader) {
         super();
 
         this.endpoint = endpoint;
@@ -171,9 +214,9 @@ public class CloudStorageService {
     }
 
     /**
-     * Creates a new instance for connecting to the specified blob store. Please note that the
-     * connection credentials will NOT be available via this instances get methods if this constructor
-     * is used.
+     * Creates a new instance for connecting to the specified blob store. Please note that the connection credentials will NOT be available via this instances
+     * get methods if this constructor is used.
+     * 
      * @param blobStoreContext
      */
     public CloudStorageService(BlobStoreContext blobStoreContext) {
@@ -182,6 +225,7 @@ public class CloudStorageService {
 
     /**
      * Username credential for accessing the storage service
+     * 
      * @return
      */
     public String getAccessKey() {
@@ -190,6 +234,7 @@ public class CloudStorageService {
 
     /**
      * Password credential for accessing the storage service
+     * 
      * @return
      */
     public String getSecretKey() {
@@ -198,6 +243,7 @@ public class CloudStorageService {
 
     /**
      * A unique identifier identifying the type of storage API used to store this job's files - eg 'swift'
+     * 
      * @return
      */
     public String getProvider() {
@@ -206,6 +252,7 @@ public class CloudStorageService {
 
     /**
      * The URL endpoint for the cloud storage service
+     * 
      * @return
      */
     public String getEndpoint() {
@@ -214,6 +261,7 @@ public class CloudStorageService {
 
     /**
      * Prefix to apply to any job files stored (will be appended with job id)
+     * 
      * @return
      */
     public String getJobPrefix() {
@@ -222,6 +270,7 @@ public class CloudStorageService {
 
     /**
      * Prefix to apply to any job files stored (will be appended with job id)
+     * 
      * @param jobPrefix
      */
     public void setJobPrefix(String jobPrefix) {
@@ -230,6 +279,7 @@ public class CloudStorageService {
 
     /**
      * The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty
+     * 
      * @return
      */
     public String getId() {
@@ -238,6 +288,7 @@ public class CloudStorageService {
 
     /**
      * The unique ID for this service - use it for distinguishing this service from other instances of this class - can be null or empty
+     * 
      * @param id
      */
     public void setId(String id) {
@@ -246,6 +297,7 @@ public class CloudStorageService {
 
     /**
      * The bucket where the data will be stored
+     * 
      * @return
      */
     public String getBucket() {
@@ -254,6 +306,7 @@ public class CloudStorageService {
 
     /**
      * The bucket where the data will be stored
+     * 
      * @param bucket
      */
     public void setBucket(String bucket) {
@@ -262,6 +315,7 @@ public class CloudStorageService {
 
     /**
      * The authentication version to use when connecting to this object store - can be null or empty
+     * 
      * @return
      */
     public String getAuthVersion() {
@@ -270,6 +324,7 @@ public class CloudStorageService {
 
     /**
      * The authentication version to use when connecting to this object store - can be null or empty
+     * 
      * @param authVersion
      */
     public void setAuthVersion(String authVersion) {
@@ -278,6 +333,7 @@ public class CloudStorageService {
 
     /**
      * A short descriptive name for human identification of this service
+     * 
      * @return
      */
     public String getName() {
@@ -286,6 +342,7 @@ public class CloudStorageService {
 
     /**
      * A short descriptive name for human identification of this service
+     * 
      * @param name
      */
     public void setName(String name) {
@@ -293,7 +350,9 @@ public class CloudStorageService {
     }
 
     /**
-     * The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes due to limitations in JClouds.
+     * The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes
+     * due to limitations in JClouds.
+     * 
      * @return
      */
     public String getRegionName() {
@@ -301,7 +360,9 @@ public class CloudStorageService {
     }
 
     /**
-     * The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes due to limitations in JClouds.
+     * The region identifier string for this service (if any). Can be null/empty. Currently this field is NON functional, it is only for descriptive purposes
+     * due to limitations in JClouds.
+     * 
      * @param regionName
      */
     public void setRegionName(String regionName) {
@@ -310,6 +371,7 @@ public class CloudStorageService {
 
     /**
      * Utility for allowing only whitelisted characters
+     * 
      * @param s
      * @return
      */
@@ -319,6 +381,7 @@ public class CloudStorageService {
 
     /**
      * Utility for calculating an appropriate base cloud key for storing this jobs files
+     * 
      * @param job
      * @return
      */
@@ -329,8 +392,11 @@ public class CloudStorageService {
 
     /**
      * Utility for generating the full path for a specific job file
-     * @param job The job whose storage space will be queried for
-     * @param key The key of the file (local to job).
+     * 
+     * @param job
+     *            The job whose storage space will be queried for
+     * @param key
+     *            The key of the file (local to job).
      * @return
      */
     public String keyForJobFile(CloudFileOwner job, String key) {
@@ -339,7 +405,9 @@ public class CloudStorageService {
 
     /**
      * Gets the preconfigured base key for a job. If the job doesn't have a base key, one will be generated.
-     * @param job Will have its baseKey parameter set if it's null
+     * 
+     * @param job
+     *            Will have its baseKey parameter set if it's null
      * @return
      */
     protected String jobToBaseKey(CloudFileOwner job) {
@@ -352,6 +420,7 @@ public class CloudStorageService {
 
     /**
      * Utility to extract file size from a StorageMetadata interface
+     * 
      * @param smd
      * @return
      */
@@ -372,8 +441,10 @@ public class CloudStorageService {
      *
      * Ensure the resulting InputStream is closed
      *
-     * @param job The job whose storage space will be queried
-     * @param key The file name (no prefixes)
+     * @param job
+     *            The job whose storage space will be queried
+     * @param key
+     *            The file name (no prefixes)
      * @return
      * @throws PortalServiceException
      */
@@ -391,19 +462,21 @@ public class CloudStorageService {
 
     /**
      * Gets information about every file in the job's cloud storage space
-     * @param job The job whose storage space will be queried
+     * 
+     * @param job
+     *            The job whose storage space will be queried
      * @return
      * @throws PortalServiceException
      */
     public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
-
 
         try {
             BlobStore bs = blobStoreContext.getBlobStore();
             String baseKey = generateBaseKey(job);
 
             //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
-            PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucket, ListContainerOptions.Builder.inDirectory(baseKey));
+            PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucket,
+                    ListContainerOptions.Builder.inDirectory(baseKey));
             String nextMarker = null;
             List<CloudFileInformation> jobFiles = new ArrayList<CloudFileInformation>();
             do {
@@ -427,7 +500,7 @@ public class CloudStorageService {
                 }
 
                 nextMarker = currentMetadataPage.getNextMarker();
-            } while(nextMarker != null);
+            } while (nextMarker != null);
 
             return jobFiles.toArray(new CloudFileInformation[jobFiles.size()]);
         } catch (Exception ex) {
@@ -439,8 +512,11 @@ public class CloudStorageService {
 
     /**
      * Uploads an array of local files into the specified job's storage space
-     * @param job The job whose storage space will be used
-     * @param files The local files to upload
+     * 
+     * @param job
+     *            The job whose storage space will be used
+     * @param files
+     *            The local files to upload
      * @throws PortalServiceException
      */
     public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
@@ -460,19 +536,24 @@ public class CloudStorageService {
             }
         } catch (AuthorizationException ex) {
             log.error("Storage credentials are not valid for job: " + job, ex);
-            throw new PortalServiceException("Storage credentials are not valid.", "Please provide valid storage credentials.");
+            throw new PortalServiceException("Storage credentials are not valid.",
+                    "Please provide valid storage credentials.");
         } catch (KeyNotFoundException ex) {
             log.error("Storage container does not exist for job: " + job, ex);
-            throw new PortalServiceException("Storage container does not exist.", "Please provide a valid storage container.");
+            throw new PortalServiceException("Storage container does not exist.",
+                    "Please provide a valid storage container.");
         } catch (Exception ex) {
             log.error("Unable to upload files for job: " + job, ex);
-            throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to storage.", "Please report it to cg-admin@csiro.au.");
+            throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to storage.",
+                    "Please report it to cg-admin@csiro.au.");
         }
     }
 
     /**
      * Deletes all files including the container or directory for the specified job
-     * @param job The whose storage space will be deleted
+     * 
+     * @param job
+     *            The whose storage space will be deleted
      * @throws PortalServiceException
      */
     public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
@@ -481,7 +562,8 @@ public class CloudStorageService {
             bs.deleteDirectory(bucket, jobToBaseKey(job));
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
-            throw new PortalServiceException("An unexpected error has occurred while removing job files from S3 storage", ex);
+            throw new PortalServiceException(
+                    "An unexpected error has occurred while removing job files from S3 storage", ex);
         }
     }
 }

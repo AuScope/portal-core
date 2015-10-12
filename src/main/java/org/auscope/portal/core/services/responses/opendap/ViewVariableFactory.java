@@ -20,6 +20,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 
 /**
  * Contains factory methods for generating ViewVariables
+ * 
  * @author vot002
  *
  */
@@ -36,10 +37,11 @@ public class ViewVariableFactory {
 
     /**
      * Parses a variable recursively into appropriate ViewVariable implementations
+     * 
      * @throws IOException
      * @throws
      */
-    private static AbstractViewVariable parseVariableRecursive(Variable var) throws IOException  {
+    private static AbstractViewVariable parseVariableRecursive(Variable var) throws IOException {
         List<Dimension> dimensions = var.getDimensions();
 
         //A single dimension means we can parse a SimpleAxis
@@ -61,7 +63,7 @@ public class ViewVariableFactory {
             axis.setValueBounds(new SimpleBounds(first.getDouble(0), last.getDouble(0)));
 
             return axis;
-        //Otherwise we have a multi dimensional variable that we can parse as a grid
+            //Otherwise we have a multi dimensional variable that we can parse as a grid
         } else if (dimensions.size() > 0) {
             SimpleGrid grid = new SimpleGrid(var.getName(), var.getDataType().name(), var.getUnitsString(), null);
             List<AbstractViewVariable> childAxes = new ArrayList<AbstractViewVariable>();
@@ -72,7 +74,8 @@ public class ViewVariableFactory {
                 if (mappedVariable == null) {
                     //If the dimension doesn't map to a variable, we can't pull much information out of it
                     //So instead we'll have to introduce an axis that only includes dimension bounds
-                    log.warn(String.format("Dimension '%1$s' has no matching variable in parent group '%2$s'", d, d.getGroup()));
+                    log.warn(String.format("Dimension '%1$s' has no matching variable in parent group '%2$s'", d,
+                            d.getGroup()));
 
                     SimpleAxis axis = new SimpleAxis(d.getName(), DataType.FLOAT.name(), "????", null, null);
                     axis.setDimensionBounds(new SimpleBounds(0, d.getLength() - 1));
@@ -100,6 +103,7 @@ public class ViewVariableFactory {
 
     /**
      * Parses a JSONObject into its appropriate ViewVariable implementation
+     * 
      * @param obj
      * @return
      */
@@ -114,13 +118,15 @@ public class ViewVariableFactory {
 
         //Parse a SimpleAxis
         if (type.equals(SimpleAxis.TYPE_STRING)) {
-            SimpleAxis axis = new SimpleAxis(attemptGetString(obj,"name"), attemptGetString(obj, "dataType"), attemptGetString(obj, "units"), null, null);
+            SimpleAxis axis = new SimpleAxis(attemptGetString(obj, "name"), attemptGetString(obj, "dataType"),
+                    attemptGetString(obj, "units"), null, null);
 
             JSONObject dimensionBounds = obj.getJSONObject("dimensionBounds");
             JSONObject valueBounds = obj.getJSONObject("valueBounds");
 
             if (dimensionBounds != null && !dimensionBounds.isNullObject()) {
-                axis.setDimensionBounds(new SimpleBounds(dimensionBounds.getDouble("from"), dimensionBounds.getDouble("to")));
+                axis.setDimensionBounds(new SimpleBounds(dimensionBounds.getDouble("from"), dimensionBounds
+                        .getDouble("to")));
             }
 
             if (valueBounds != null && !valueBounds.isNullObject()) {
@@ -129,10 +135,11 @@ public class ViewVariableFactory {
 
             return axis;
 
-        //Parse a SimpleGrid
+            //Parse a SimpleGrid
         } else if (type.equals(SimpleGrid.TYPE_STRING)) {
             JSONArray axes = obj.getJSONArray("axes");
-            SimpleGrid grid = new SimpleGrid(attemptGetString(obj, "name"), attemptGetString(obj, "dataType"), attemptGetString(obj, "units"), null);
+            SimpleGrid grid = new SimpleGrid(attemptGetString(obj, "name"), attemptGetString(obj, "dataType"),
+                    attemptGetString(obj, "units"), null);
             List<AbstractViewVariable> childAxes = new ArrayList<AbstractViewVariable>();
 
             for (int i = 0; i < axes.size(); i++) {
@@ -155,6 +162,7 @@ public class ViewVariableFactory {
 
     /**
      * Generate a list of ViewVariables direct from a dataset.
+     * 
      * @param ds
      * @return
      * @throws IOException
@@ -164,14 +172,16 @@ public class ViewVariableFactory {
     }
 
     /**
-     * Generate a list of ViewVariables direct from a dataset. The list will be filtered to only include variables
-     * with the specified name
+     * Generate a list of ViewVariables direct from a dataset. The list will be filtered to only include variables with the specified name
+     * 
      * @param ds
-     * @param variableNameFilter if not null, all ViewVariables in the response will have the name variableNameFilter
+     * @param variableNameFilter
+     *            if not null, all ViewVariables in the response will have the name variableNameFilter
      * @return
      * @throws IOException
      */
-    public static AbstractViewVariable[] fromNetCDFDataset(NetcdfDataset ds, String variableNameFilter) throws IOException {
+    public static AbstractViewVariable[] fromNetCDFDataset(NetcdfDataset ds, String variableNameFilter)
+            throws IOException {
         List<AbstractViewVariable> result = new ArrayList<AbstractViewVariable>();
 
         for (Variable var : ds.getVariables()) {
@@ -190,10 +200,9 @@ public class ViewVariableFactory {
         return result.toArray(new AbstractViewVariable[result.size()]);
     }
 
-
-
     /**
      * Generates a list of ViewVariables from an already encoded JSONArray
+     * 
      * @param arr
      * @return
      */

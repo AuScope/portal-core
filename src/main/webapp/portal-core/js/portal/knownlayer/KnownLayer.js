@@ -30,7 +30,8 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
         { name: 'layer', type: 'auto'}, // store the layer after it has been converted.        
         { name: 'active', type: 'boolean', defaultValue: false },//Whether this layer is current active on the map.
-        { name: 'feature_count', type: 'string'} //GetFeatureInfo feature_count attribute, 0 would be to default to whatever is set on the server.
+        { name: 'feature_count', type: 'string'}, //GetFeatureInfo feature_count attribute, 0 would be to default to whatever is set on the server.
+        { name: 'order', type: 'int'}	// Order of the layers within a group
     ],
 
     /**

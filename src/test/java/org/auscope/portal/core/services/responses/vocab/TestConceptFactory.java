@@ -17,6 +17,7 @@ import org.w3c.dom.Node;
 
 /**
  * Unit tests for ConceptFactory
+ * 
  * @author Josh Vote
  *
  */
@@ -102,9 +103,11 @@ public class TestConceptFactory extends PortalTestClass {
         Concept[] expectation = new Concept[] {concept1, concept4};
 
         //Build our actual list
-        String responseXml = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
+        String responseXml = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml");
         Document responseDoc = DOMUtil.buildDomFromString(responseXml);
-        Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc, XPathConstants.NODE);
+        Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc,
+                XPathConstants.NODE);
         ConceptFactory cf = new ConceptFactory();
         Concept[] actualConcepts = cf.parseFromRDF(rdfNode);
 
@@ -119,9 +122,11 @@ public class TestConceptFactory extends PortalTestClass {
      */
     @Test
     public void testGetConcepts() throws Exception {
-        String responseXml = ResourceUtil.loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/vocabularyServiceResponse.xml");
+        String responseXml = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/test/responses/sissvoc/vocabularyServiceResponse.xml");
         Document responseDoc = DOMUtil.buildDomFromString(responseXml);
-        Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc, XPathConstants.NODE);
+        Node rdfNode = (Node) DOMUtil.compileXPathExpr("rdf:RDF", new VocabNamespaceContext()).evaluate(responseDoc,
+                XPathConstants.NODE);
 
         ConceptFactory cf = new ConceptFactory();
         Concept[] actualConcepts = cf.parseFromRDF(rdfNode);

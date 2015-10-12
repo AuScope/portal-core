@@ -37,7 +37,7 @@ public class TestWCSService extends PortalTestClass {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
         final String downloadFormat = "geotiff";
-        final Dimension outputSize = new Dimension(50,40);
+        final Dimension outputSize = new Dimension(50, 40);
         final Resolution outputResolution = null;
         final String outputCrs = "outputcrs";
         final String inputCrs = "inputcrs";
@@ -47,22 +47,27 @@ public class TestWCSService extends PortalTestClass {
 
         final InputStream mockStream = context.mock(InputStream.class);
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
-            will(returnValue(mockMethod));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs,
+                        outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
+                will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(mockStream));
-        }});
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(returnValue(mockStream));
+            }
+        });
 
-        Assert.assertSame(mockStream, service.getCoverage(serviceUrl, coverageName, downloadFormat, outputSize, outputResolution, outputCrs, inputCrs, bbox, timeConstraint, customParameters));
+        Assert.assertSame(mockStream, service.getCoverage(serviceUrl, coverageName, downloadFormat, outputSize,
+                outputResolution, outputCrs, inputCrs, bbox, timeConstraint, customParameters));
     }
 
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testGetCoverageException() throws Exception {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
         final String downloadFormat = "geotiff";
-        final Dimension outputSize = new Dimension(50,40);
+        final Dimension outputSize = new Dimension(50, 40);
         final Resolution outputResolution = null;
         final String outputCrs = "outputcrs";
         final String inputCrs = "inputcrs";
@@ -70,14 +75,19 @@ public class TestWCSService extends PortalTestClass {
         final TimeConstraint timeConstraint = new TimeConstraint("constraint");
         final Map<String, String> customParameters = new HashMap<String, String>();
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs, outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
-            will(returnValue(mockMethod));
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).getCoverageMethod(serviceUrl, coverageName, downloadFormat, outputCrs,
+                        outputSize, outputResolution, inputCrs, bbox, timeConstraint, customParameters);
+                will(returnValue(mockMethod));
 
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
-        }});
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(throwException(new IOException()));
+            }
+        });
 
-        service.getCoverage(serviceUrl, coverageName, downloadFormat, outputSize, outputResolution, outputCrs, inputCrs, bbox, timeConstraint, customParameters);
+        service.getCoverage(serviceUrl, coverageName, downloadFormat, outputSize, outputResolution, outputCrs,
+                inputCrs, bbox, timeConstraint, customParameters);
     }
 
     @Test
@@ -85,13 +95,18 @@ public class TestWCSService extends PortalTestClass {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
 
-        final InputStream responseStream = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml");
+        final InputStream responseStream = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml");
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
-            oneOf(mockMethod).releaseConnection();
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(returnValue(responseStream));
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
         //Just going to do a quick test on the response - tests for parsing the actual data are handled
         //by the DescribeCoverageRecord class
@@ -100,32 +115,40 @@ public class TestWCSService extends PortalTestClass {
         Assert.assertEquals(1, recs.length);
     }
 
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testDescribeCoverageOwsError() throws Exception {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
 
         final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml");
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(returnValue(responseStream));
-            oneOf(mockMethod).releaseConnection();
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(returnValue(responseStream));
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
         service.describeCoverage(serviceUrl, coverageName);
     }
 
-    @Test(expected=PortalServiceException.class)
+    @Test(expected = PortalServiceException.class)
     public void testDescribeCoverageConnectionError() throws Exception {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
 
-        context.checking(new Expectations() {{
-            oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);will(returnValue(mockMethod));
-            oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);will(throwException(new IOException()));
-            oneOf(mockMethod).releaseConnection();
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(mockMethodMaker).describeCoverageMethod(serviceUrl, coverageName);
+                will(returnValue(mockMethod));
+                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                will(throwException(new IOException()));
+                oneOf(mockMethod).releaseConnection();
+            }
+        });
 
         service.describeCoverage(serviceUrl, coverageName);
     }

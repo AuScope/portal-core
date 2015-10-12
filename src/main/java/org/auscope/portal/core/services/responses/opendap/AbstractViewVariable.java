@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Represents a simplification of the ucar.nc2.Variable that can be passed between view and controller.
+ * 
  * @author vot002
  *
  */
@@ -37,6 +38,7 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * Gets the name of the parent group (or empty string representing the root group) that encapsulates this variable
+     * 
      * @return
      */
     public String getParentGroupName() {
@@ -45,6 +47,7 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * Sets the name of the parent group (or empty string representing the root group) that encapsulates this variable
+     * 
      * @param parentGroupName
      */
     public void setParentGroupName(String parentGroupName) {
@@ -53,6 +56,7 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * Returns a string identifier of the type of variable this instance represents
+     * 
      * @return
      */
     public String getType() {
@@ -61,6 +65,7 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * The unique (within parent group) name of this variable
+     * 
      * @return the name
      */
     public String getName() {
@@ -69,7 +74,9 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * The unique (within parent group) name of this variable
-     * @param name the name to set
+     * 
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;
@@ -77,6 +84,7 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * The string based representation of the type of this view variable
+     * 
      * @return the dataType
      */
     public String getDataType() {
@@ -85,7 +93,9 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * The string based representation of the type of this view variable
-     * @param dataType the dataType to set
+     * 
+     * @param dataType
+     *            the dataType to set
      */
     public void setDataType(String dataType) {
         this.dataType = dataType;
@@ -93,6 +103,7 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * The units that this variable is expressed in (purely descriptive)
+     * 
      * @return the units
      */
     public String getUnits() {
@@ -101,7 +112,9 @@ public abstract class AbstractViewVariable implements Serializable {
 
     /**
      * The units that this variable is expressed in (purely descriptive)
-     * @param units the units to set
+     * 
+     * @param units
+     *            the units to set
      */
     public void setUnits(String units) {
         this.units = units;

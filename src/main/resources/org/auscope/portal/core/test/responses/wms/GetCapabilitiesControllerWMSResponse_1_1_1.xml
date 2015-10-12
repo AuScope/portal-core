@@ -186,6 +186,7 @@
                 <Name>nurc:Arc_Sample</Name>
                 <Title>A sample ArcGrid file</Title>
                 <Abstract>An Abstract</Abstract>
+                <MetadataURL>http://www.metadataURL.com</MetadataURL>
                 <KeywordList>
                     <Keyword>WCS</Keyword>
                     <Keyword>arcGridSample</Keyword>

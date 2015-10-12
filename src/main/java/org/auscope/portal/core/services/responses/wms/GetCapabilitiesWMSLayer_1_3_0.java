@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
  * @version
  *
  */
-public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRecord{
+public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRecord {
 
     /** The log. */
     private final Log log = LogFactory.getLog(getClass());
@@ -33,18 +33,25 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
     /** The description. */
     private String description;
 
+    /** The legendURL. */
+    private String legendURL;    
+
+    /** The metadataURL. */
+    private String metadataURL;   
+    
     /** The bbox. */
     private CSWGeographicBoundingBox bbox;
 
     /** The child layer srs. */
     private String[] childLayerSRS;
 
-
     /**
      * Instantiates a new gets the capabilities wms layer record.
      *
-     * @param node the node
-     * @throws XPathExpressionException the xpath expression exception
+     * @param node
+     *            the node
+     * @throws XPathExpressionException
+     *             the xpath expression exception
      */
     public GetCapabilitiesWMSLayer_1_3_0(Node node) throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
@@ -61,6 +68,14 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
         tempNode = (Node) xPath.evaluate(layerAbstractExpression, node, XPathConstants.NODE);
         description = tempNode != null ? tempNode.getTextContent() : "";
 
+        String layerLegendURLExpression = "Style/LegendURL/OnlineResource";
+        tempNode = (Node) xPath.evaluate(layerLegendURLExpression, node, XPathConstants.NODE);
+        legendURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
+
+        String layerMetadataURLExpression = "MetadataURL";
+        tempNode = (Node) xPath.evaluate(layerMetadataURLExpression, node, XPathConstants.NODE);
+        metadataURL = tempNode != null ? tempNode.getTextContent() : "";
+        
         String latLonBoundingBox = "EX_GeographicBoundingBox";
         tempNode = (Node) xPath.evaluate(latLonBoundingBox, node, XPathConstants.NODE);
         if (tempNode != null) {
@@ -92,14 +107,14 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
         }
     }
 
-
     // ------------------------------------------ Attribute Setters and Getters
 
     /**
      * Gets the name.
      *
      * @return the name
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public String getName() throws XPathExpressionException {
         return name;
@@ -109,22 +124,46 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the title.
      *
      * @return the title
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public String getTitle() throws XPathExpressionException {
         return title;
     }
 
     /**
+     * Gets the legendURL.
+     *
+     * @return the legendURL
+     * @throws XPathExpressionException
+     *             the x path expression exception
+     */
+    public String getLegendURL() throws XPathExpressionException {
+        return legendURL;
+    }
+
+    /**
      * Gets the abstract.
      *
      * @return the abstract
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public String getAbstract() throws XPathExpressionException {
         return description;
     }
-
+    
+    /**
+     * Gets the metadataURL.
+     *
+     * @return the metadataURL
+     * @throws XPathExpressionException
+     *             the x path expression exception
+     */
+    public String getMetadataURL() throws XPathExpressionException {
+        return metadataURL;
+    }
+    
     /**
      * Gets the bounding box.
      *
@@ -138,7 +177,8 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      * Gets the child layer srs.
      *
      * @return the child layer srs
-     * @throws XPathExpressionException the x path expression exception
+     * @throws XPathExpressionException
+     *             the x path expression exception
      */
     public String[] getChildLayerSRS() throws XPathExpressionException {
         return childLayerSRS;

@@ -119,6 +119,7 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
                     bounds.toValue = (currentVisibleBounds.northBoundLatitude < bounds.to)?currentVisibleBounds.northBoundLatitude:bounds.to;
                 }else if(variable.name==='lon'){
                     var currentVisibleBounds = this.map.getVisibleMapBounds();
+                    currentVisibleBounds.eastBoundLongitude = portal.util.BBox.datelineCorrection(currentVisibleBounds.eastBoundLongitude,"EPSG:4326")
                     bounds.fromValue = (currentVisibleBounds.westBoundLongitude > bounds.from)?currentVisibleBounds.westBoundLongitude:bounds.from ;
                     bounds.toValue = (currentVisibleBounds.eastBoundLongitude < bounds.to)?currentVisibleBounds.eastBoundLongitude:bounds.to;
                 }

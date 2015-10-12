@@ -32,6 +32,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
  * Unit tests for JobFileService
+ * 
  * @author Josh Vote
  *
  */
@@ -43,13 +44,14 @@ public class TestFileStagingService extends PortalTestClass {
     private FileStagingService service;
     private CloudJob job;
 
-    private Mockery context = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    private Mockery context = new Mockery() {
+        {
+            setImposteriser(ClassImposteriser.INSTANCE);
+        }
+    };
 
     /**
-     * This sets up a temporary directory in the target directory for the JobFileService
-     * to utilise as a staging area
+     * This sets up a temporary directory in the target directory for the JobFileService to utilise as a staging area
      */
     @BeforeClass
     public static void setup() {
@@ -84,8 +86,7 @@ public class TestFileStagingService extends PortalTestClass {
     }
 
     /**
-     * Asserts that the shared staging directory (not the job staging directory) still exists after
-     * a unit test is run
+     * Asserts that the shared staging directory (not the job staging directory) still exists after a unit test is run
      */
     @After
     public void ensureStagingDirectoryPreserved() {
@@ -102,16 +103,19 @@ public class TestFileStagingService extends PortalTestClass {
         Assert.assertEquals("p1" + File.separator + "p2", FileStagingService.pathConcat("p1", "p2"));
         Assert.assertEquals("p1" + File.separator + "p2", FileStagingService.pathConcat("p1" + File.separator, "p2"));
         Assert.assertEquals("p1" + File.separator + "p2", FileStagingService.pathConcat("p1", File.separator + "p2"));
-        Assert.assertEquals("p1" + File.separator + "p2", FileStagingService.pathConcat("p1" + File.separator, File.separator + "p2"));
+        Assert.assertEquals("p1" + File.separator + "p2",
+                FileStagingService.pathConcat("p1" + File.separator, File.separator + "p2"));
     }
 
     /**
      * Tests the existence/nonexistence of job's stage in directory
+     * 
      * @param job
      * @param exists
      */
     private void assertStagedDirectory(CloudJob job, boolean exists) {
-        File stageInDir = new File(FileStagingService.pathConcat(testStagingInfo.getStageInDirectory(), FileStagingService.getBaseFolderForJob(job)));
+        File stageInDir = new File(FileStagingService.pathConcat(testStagingInfo.getStageInDirectory(),
+                FileStagingService.getBaseFolderForJob(job)));
         Assert.assertEquals(exists, stageInDir.exists());
         if (exists) {
             Assert.assertEquals(true, stageInDir.isDirectory());
@@ -120,6 +124,7 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests the existence/nonexistence of job's stage in file
+     * 
      * @param job
      * @param fileName
      * @param exists
@@ -130,12 +135,15 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests the existence/nonexistence of job's stage in file as well as its contents
+     * 
      * @param job
      * @param exists
-     * @param expectedData if not null and file exists, file data will be tested against this value
+     * @param expectedData
+     *            if not null and file exists, file data will be tested against this value
      */
-    private void assertStagedFile(CloudJob job, String fileName, boolean exists, byte[] expectedData) throws Exception{
-        String stageInDir = FileStagingService.pathConcat(testStagingInfo.getStageInDirectory(), FileStagingService.getBaseFolderForJob(job));
+    private void assertStagedFile(CloudJob job, String fileName, boolean exists, byte[] expectedData) throws Exception {
+        String stageInDir = FileStagingService.pathConcat(testStagingInfo.getStageInDirectory(),
+                FileStagingService.getBaseFolderForJob(job));
         File stageInFile = new File(FileStagingService.pathConcat(stageInDir, fileName));
 
         Assert.assertEquals(exists, stageInFile.exists());
@@ -173,14 +181,15 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that creating and listing files in a job staging area works
+     * 
      * @throws IOException
      */
     @Test
     public void testFileCreationAndListing() throws Exception {
         service.generateStageInDirectory(job);
 
-        final byte[] file1Data = new byte[] {1,2,3};
-        final byte[] file2Data = new byte[] {4,3,1};
+        final byte[] file1Data = new byte[] {1, 2, 3};
+        final byte[] file2Data = new byte[] {4, 3, 1};
 
         OutputStream file1 = service.writeFile(job, "testFile1");
         OutputStream file2 = service.writeFile(job, "testFile2");
@@ -195,7 +204,8 @@ public class TestFileStagingService extends PortalTestClass {
         assertStagedFile(job, "testFile2", true, file2Data);
 
         //Ensure that listing returns all the files (in no particular order)
-        StagedFile[] expectedFiles = new StagedFile[] {new StagedFile(job, "testFile1", null), new StagedFile(job, "testFile2", null)};
+        StagedFile[] expectedFiles = new StagedFile[] {new StagedFile(job, "testFile1", null),
+                new StagedFile(job, "testFile2", null)};
         StagedFile[] listedFiles = service.listStageInDirectoryFiles(job);
         Assert.assertNotNull(listedFiles);
         Assert.assertEquals(expectedFiles.length, listedFiles.length);
@@ -221,6 +231,7 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that using relative paths in a filename will generate exceptions
+     * 
      * @throws IOException
      */
     @Test
@@ -231,19 +242,23 @@ public class TestFileStagingService extends PortalTestClass {
         try {
             OutputStream file = service.writeFile(job, FileStagingService.pathConcat("..", "testFile1"));
             Assert.assertNull(file);
-        } catch (Exception ex) { }
+        } catch (Exception ex) {
+        }
         try {
             OutputStream file = service.writeFile(job, "testFile1" + File.pathSeparator + "testFile2");
             Assert.assertNull(file);
-        } catch (Exception ex) { }
+        } catch (Exception ex) {
+        }
         try {
             InputStream file = service.readFile(job, FileStagingService.pathConcat("..", "testFile1"));
             Assert.assertNull(file);
-        } catch (Exception ex) { }
+        } catch (Exception ex) {
+        }
         try {
             InputStream file = service.readFile(job, "testFile1" + File.pathSeparator + "testFile2");
             Assert.assertNull(file);
-        } catch (Exception ex) { }
+        } catch (Exception ex) {
+        }
 
         service.deleteStageInDirectory(job);
         assertStagedDirectory(job, false);
@@ -251,6 +266,7 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that file uploads can be handled
+     * 
      * @throws Exception
      */
     @Test
@@ -259,11 +275,15 @@ public class TestFileStagingService extends PortalTestClass {
         final MultipartFile file = context.mock(MultipartFile.class);
         final String fileName = "myFileName";
 
-        context.checking(new Expectations() {{
-            oneOf(request).getFile("file");will(returnValue(file));
-            oneOf(file).getOriginalFilename();will(returnValue(fileName));
-            oneOf(file).transferTo(with(aFileWithName(fileName)));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(request).getFile("file");
+                will(returnValue(file));
+                oneOf(file).getOriginalFilename();
+                will(returnValue(fileName));
+                oneOf(file).transferTo(with(aFileWithName(fileName)));
+            }
+        });
 
         service.generateStageInDirectory(job);
 
@@ -280,6 +300,7 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that multi-file uploads can be handled
+     * 
      * @throws Exception
      */
     @Test
@@ -291,11 +312,15 @@ public class TestFileStagingService extends PortalTestClass {
         files.add(file);
         files.add(file);
 
-        context.checking(new Expectations() {{
-            oneOf(request).getFiles("file");will(returnValue(files));
-            exactly(2).of(file).getOriginalFilename();will(returnValue(fileName));
-            exactly(2).of(file).transferTo(with(aFileWithName(fileName)));
-        }});
+        context.checking(new Expectations() {
+            {
+                oneOf(request).getFiles("file");
+                will(returnValue(files));
+                exactly(2).of(file).getOriginalFilename();
+                will(returnValue(fileName));
+                exactly(2).of(file).transferTo(with(aFileWithName(fileName)));
+            }
+        });
 
         service.generateStageInDirectory(job);
 
@@ -309,15 +334,15 @@ public class TestFileStagingService extends PortalTestClass {
         assertStagedDirectory(job, false);
     }
 
-
     /**
      * Tests that file downloads are handled correctly
+     * 
      * @throws Exception
      */
     @Test
     public void testFileDownload() throws Exception {
         final ReadableServletOutputStream outStream = new ReadableServletOutputStream();
-        final byte[] data = new byte[] {1,2,3,4,5,6,7,8,8,5,8,9,9,9,91,1,1};
+        final byte[] data = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 8, 5, 8, 9, 9, 9, 91, 1, 1};
         final HttpServletResponse mockResponse = context.mock(HttpServletResponse.class);
         final String fileName = "myFileName";
 
@@ -327,12 +352,15 @@ public class TestFileStagingService extends PortalTestClass {
         fos.write(data);
         fos.close();
 
-        context.checking(new Expectations() {{
-            //This is so we can inject our own fake output stream so we can inspect the result
-            oneOf(mockResponse).getOutputStream();will(returnValue(outStream));
-            oneOf(mockResponse).setContentType("application/octet-stream");
-            allowing(mockResponse).setHeader("Content-Disposition", "attachment; filename=\""+fileName+"\"");
-         }});
+        context.checking(new Expectations() {
+            {
+                //This is so we can inject our own fake output stream so we can inspect the result
+                oneOf(mockResponse).getOutputStream();
+                will(returnValue(outStream));
+                oneOf(mockResponse).setContentType("application/octet-stream");
+                allowing(mockResponse).setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            }
+        });
 
         //'Download' the file
         service.handleFileDownload(job, fileName, mockResponse);
@@ -346,13 +374,14 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that creating and renaming files in a job staging area works
+     * 
      * @throws IOException
      */
     @Test
     public void testFileRenaming() throws Exception {
         service.generateStageInDirectory(job);
 
-        final byte[] file1Data = new byte[] {1,2,3};
+        final byte[] file1Data = new byte[] {1, 2, 3};
 
         OutputStream file1 = service.writeFile(job, "testFile1");
         file1.write(file1Data);
@@ -391,14 +420,15 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that creating and renaming files in a job staging area works when the target file already exists
+     * 
      * @throws IOException
      */
     @Test
     public void testFileRenamingOverwrite() throws Exception {
         service.generateStageInDirectory(job);
 
-        final byte[] file1Data = new byte[] {1,2,3};
-        final byte[] file2Data = new byte[] {4,3,1};
+        final byte[] file1Data = new byte[] {1, 2, 3};
+        final byte[] file2Data = new byte[] {4, 3, 1};
 
         OutputStream file1 = service.writeFile(job, "testFile1");
         OutputStream file2 = service.writeFile(job, "testFile2");
@@ -430,13 +460,14 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that renaming file to itself does nothing
+     * 
      * @throws IOException
      */
     @Test
     public void testFileRenamingSameFile() throws Exception {
         service.generateStageInDirectory(job);
 
-        final byte[] file1Data = new byte[] {1,2,3};
+        final byte[] file1Data = new byte[] {1, 2, 3};
 
         OutputStream file1 = service.writeFile(job, "testFile1");
 
@@ -457,14 +488,15 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that creating and renaming files in a job staging area works when the target file already exists
+     * 
      * @throws IOException
      */
     @Test
     public void testFileExists() throws Exception {
         service.generateStageInDirectory(job);
 
-        final byte[] file1Data = new byte[] {1,2,3};
-        final byte[] file2Data = new byte[] {4,3,1};
+        final byte[] file1Data = new byte[] {1, 2, 3};
+        final byte[] file2Data = new byte[] {4, 3, 1};
 
         OutputStream file1 = service.writeFile(job, "testFile1");
         OutputStream file2 = service.writeFile(job, "testFile2");
@@ -494,12 +526,12 @@ public class TestFileStagingService extends PortalTestClass {
 
     /**
      * Tests that creating a job staging works and that it can be detected
+     * 
      * @throws IOException
      */
     @Test
     public void testStagingDirectoryExists() throws Exception {
         service.generateStageInDirectory(job);
-
 
         assertStagedDirectory(job, true);
         Assert.assertTrue(service.stageInDirectoryExists(job));
@@ -510,5 +542,3 @@ public class TestFileStagingService extends PortalTestClass {
     }
 
 }
-
-

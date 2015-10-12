@@ -8,12 +8,14 @@ import org.junit.Test;
 
 /**
  * Unit tests for StagedFile
+ * 
  * @author Joshua
  *
  */
 public class TestStagedFile extends PortalTestClass {
     /**
      * Tests equals and hashcode align
+     * 
      * @throws Exception
      */
     @Test

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Represents a <wcs:TemporalDomain> element from a WCS DescribeCoverage response
+ * 
  * @author vot002
  *
  */

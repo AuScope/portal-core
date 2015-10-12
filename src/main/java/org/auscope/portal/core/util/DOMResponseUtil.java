@@ -15,8 +15,7 @@ import org.w3c.dom.Node;
 
 public class DOMResponseUtil {
 
-
-    public static int getNumberOfFeatures(InputStream gsmlResponse,NamespaceContext namespace) throws Exception {
+    public static int getNumberOfFeatures(InputStream gsmlResponse, NamespaceContext namespace) throws Exception {
 
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         domFactory.setNamespaceAware(true); // never forget this!
@@ -31,12 +30,12 @@ public class DOMResponseUtil {
 
         try {
             XPathExpression expr = xPath.compile("/wfs:FeatureCollection");
-            Node result = (Node)expr.evaluate(doc, XPathConstants.NODE);
+            Node result = (Node) expr.evaluate(doc, XPathConstants.NODE);
             return Integer.parseInt(result.getAttributes().getNamedItem("numberOfFeatures").getTextContent());
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
-        }finally{
+        } finally {
             gsmlResponse.close();
         }
 

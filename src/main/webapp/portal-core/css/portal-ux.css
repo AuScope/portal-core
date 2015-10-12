@@ -23,6 +23,15 @@
   text-align: center;
 }
 
+.x-form-display-field-default{
+    min-height: 20px;
+}
+
+/* VT:http://stackoverflow.com/questions/30483224/extjs-5-textfield-bug-chrome*/
+.x-form-text { 
+    display: inline; 
+}
+
 .refresh {
     background-image:url(../img/refresh.png) !important;
 }

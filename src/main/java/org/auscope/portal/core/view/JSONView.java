@@ -13,12 +13,9 @@ import net.sf.json.util.CycleDetectionStrategy;
 import org.springframework.web.servlet.view.AbstractView;
 
 /**
- * User: Mathew Wyatt
- * Date: 23/03/2009
- * Time: 12:26:29 PM
+ * User: Mathew Wyatt Date: 23/03/2009 Time: 12:26:29 PM
  *
- * This class is a JSON spring MVC View class which takes a JSONArray and sends the actual json structure down the
- * wire on the httpResponse
+ * This class is a JSON spring MVC View class which takes a JSONArray and sends the actual json structure down the wire on the httpResponse
  *
  */
 public class JSONView extends AbstractView {
@@ -41,7 +38,8 @@ public class JSONView extends AbstractView {
         cfg.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
     }
 
-    protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
         response.setContentType(getContentType());
 
         if (jsonArray != null) { //convert just the array
