@@ -11,7 +11,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     layerSwitcher : null,           // Keep as a global so can check if has been created
 
     constructor : function(cfg) {
-        var me = this;
         this.callParent(arguments);
         
 
