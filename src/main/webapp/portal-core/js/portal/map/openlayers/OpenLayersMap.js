@@ -11,6 +11,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     layerSwitcher : null,           // Keep as a global so can check if has been created
 
     constructor : function(cfg) {
+        var me = this;
         this.callParent(arguments);
         
 
@@ -985,6 +986,14 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         for(var i = 0; i < controlList.length; i++){
             controlList[i].deactivate();
         }
-    }
+    },
     
+    /**
+     * The layerStore has been updated and want to force a re-indexing of the LayerIndex (z-order of the layers).
+     */
+    updateLayerIndex : function() {
+        for(position=0;position < this.layerStore.length; position++){
+            this.map.setLayerIndex(layer,position);
+        }
+    }
 });
