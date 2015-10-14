@@ -21,24 +21,21 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     map : null,
     activelayerstore : null,
     menuFactory : null,
-    onlineResourcePanelType : null,
 
     constructor : function(cfg) {
         var me = this;
-        me.map = cfg.map;
-        me.menuFactory = cfg.menuFactory;
-        me.activelayerstore = cfg.activelayerstore;
-        me.onlineResourcePanelType = cfg.onlineResourcePanelType;
-
+        this.map = cfg.map;
+        this.menuFactory = cfg.menuFactory;
+        this.activelayerstore = cfg.activelayerstore;
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
             groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})',
             startCollapsed : true
         });
-       
-        me.listeners = cfg.listeners;
+
+        this.listeners = cfg.listeners;
         
-        var menuItems = [me._getVisibleBoundFilterAction(),me._getActivelayerFilterAction(),
-                         me._getDataLayerFilterAction(),me._getImageLayerFilterAction()];
+        var menuItems = [this._getVisibleBoundFilterAction(),this._getActivelayerFilterAction(),
+                         this._getDataLayerFilterAction(),this._getImageLayerFilterAction()];
 
         Ext.apply(cfg, {
             cls : 'auscope-dark-grid',
@@ -76,7 +73,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 //Loading icon column
                 xtype : 'clickcolumn',
                 dataIndex : 'active',
-                renderer : me._deleteRenderer,
+                renderer : this._deleteRenderer,
                 hasTip : true,
                 tipRenderer : function(value, layer, column, tip) {
                     if(layer.get('active')){
@@ -87,58 +84,58 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 },
                 width: 32,
                 listeners : {
-                    columnclick : Ext.bind(me._deleteClickHandler, me)
+                    columnclick : Ext.bind(this._deleteClickHandler, this)
                 }
             },{
                 //Loading icon column
                 xtype : 'clickcolumn',
                 dataIndex : 'loading',
-                renderer : me._loadingRenderer,
+                renderer : this._loadingRenderer,
                 hasTip : true,
-                tipRenderer : Ext.bind(me._loadingTipRenderer, me),
+                tipRenderer : Ext.bind(this._loadingTipRenderer, this),
                 width: 32,
                 listeners : {
-                    columnclick : Ext.bind(me._loadingClickHandler, me)
+                    columnclick : Ext.bind(this._loadingClickHandler, this)
                 }
             },{
                 //Title column
                 text : 'Title',
                 dataIndex : 'name',
                 flex: 1,
-                renderer : me._titleRenderer
+                renderer : this._titleRenderer
             },{
                 //Service information column
                 xtype : 'clickcolumn',
                 dataIndex : 'serviceInformation',
                 width: 32,
-                renderer : me._serviceInformationRenderer,
+                renderer : this._serviceInformationRenderer,
                 hasTip : true,
                 tipRenderer : function(value, layer, column, tip) {
                     return 'Click for detailed information about the web services this layer utilises.';
                 },
                 listeners : {
-                    columnclick : Ext.bind(me._serviceInformationClickHandler, me)
+                    columnclick : Ext.bind(this._serviceInformationClickHandler, this)
                 }
             },{
                 //Spatial bounds column
                 xtype : 'clickcolumn',
                 dataIndex : 'spatialBoundsRenderer',
                 width: 32,
-                renderer : me._spatialBoundsRenderer,
+                renderer : this._spatialBoundsRenderer,
                 hasTip : true,
                 tipRenderer : function(value, layer, column, tip) {
                     return 'Click to see the bounds of this layer, double click to pan the map to those bounds.';
                 },
                 listeners : {
-                    columnclick : Ext.bind(me._spatialBoundsClickHandler, me),
-                    columndblclick : Ext.bind(me._spatialBoundsDoubleClickHandler, me)
+                    columnclick : Ext.bind(this._spatialBoundsClickHandler, this),
+                    columndblclick : Ext.bind(this._spatialBoundsDoubleClickHandler, this)
                 }
             }],
           plugins:[{                
               ptype : 'rowexpandercontainer',
               pluginId : 'maingrid_rowexpandercontainer',
               toggleColIndexes: [0, 2],
-              generateContainer : function(record, parentElId, grid) {                  
+              generateContainer : function(record, parentElId) {                  
                   //VT:if this is deserialized, we don't need to regenerate the layer
                   if(record.get('layer')) {                        
                       newLayer =  record.get('layer');                                    
@@ -160,7 +157,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                           filterForm.getForm().setValues(existingParams);
                       }
                   }
-                  grid.updateLayout({
+                  this.grid.updateLayout({
                       defer:false,
                       isRoot:false
                   });                    
@@ -172,7 +169,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                   
         });
 
-        me.callParent(arguments);
+        this.callParent(arguments);
     },
     
     
@@ -519,9 +516,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         }
 
         var popup = Ext.create('portal.widgets.window.CSWRecordDescriptionWindow', {
-            cswRecords : cswRecords,
-            parentRecord : record,
-            onlineResourcePanelType : this.onlineResourcePanelType
+            cswRecords : cswRecords
         });
 
         popup.show();
