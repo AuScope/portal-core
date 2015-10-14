@@ -15,13 +15,13 @@
  *
  */
 Ext.define('portal.widgets.panel.BaseRecordPanel', {
-    extend : 'Ext.grid.Panel',
+    extend : 'portal.widgets.panel.CommonBaseRecordPanel',
     alias: 'widget.baserecordpanel',
-    browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
-    map : null,
-    activelayerstore : null,
-    menuFactory : null,
-    onlineResourcePanelType : null,
+//    browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
+//    map : null,
+//    activelayerstore : null,
+//    menuFactory : null,
+//    onlineResourcePanelType : null,
 
     listenersHere : {
             removelayer : function(layerArray){
@@ -30,10 +30,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     },
     constructor : function(cfg) {
         var me = this;
-        me.map = cfg.map;
-        me.menuFactory = cfg.menuFactory;
-        me.activelayerstore = cfg.activelayerstore;
-        me.onlineResourcePanelType = cfg.onlineResourcePanelType;
+//        me.map = cfg.map;
+//        me.menuFactory = cfg.menuFactory;
+//        me.activelayerstore = cfg.activelayerstore;
+//        me.onlineResourcePanelType = cfg.onlineResourcePanelType;
 
         var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
             groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})',
@@ -181,7 +181,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         AppEvents.addListener(me);
     },
     
-    
+    // COL FN
+	// Common method - unique defn
     _getInlineLayerPanel : function(filterForm, parentElId){                             
         var me = this;   
         var panel = Ext.create('portal.widgets.panel.FilterPanel', {    
@@ -206,6 +207,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         return panel
     },
     
+	// CONSTRUCTOR FN
+	// SAME
     _getVisibleBoundFilterAction : function(){   
         
         var me = this;
@@ -218,7 +221,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         
     },
     
-    
+    // CONSTRUCTOR FN
+	// SAME but use other defn
     _getActivelayerFilterAction : function(){
         var me = this;
         return new Ext.Action({
@@ -226,8 +230,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             iconCls : 'tick',
             tooltip: 'Display only active layer',
             handler : function(){
-//                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
-//                rowExpander.closeAllContainers();          
+//              // TODO: Do I need this but using the new id for rowexpandercontainer?
+//              // var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+//              //                rowExpander.closeAllContainers();          
                 
                 //function to check if layer is active on map
                 var filterFn = function(rec) {
@@ -241,6 +246,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         })
     },
     
+	// CONSTRUCTOR FN
+	// SAME but use other defn
     _getDataLayerFilterAction : function(){
         var me = this;
         return new Ext.Action({
@@ -248,8 +255,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             iconCls : 'data',
             tooltip: 'Display layer with data service',
             handler : function(){
-//                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
-//                rowExpander.closeAllContainers();          
+//              // TODO: Do I need this but using the new id for rowexpandercontainer?
+//              // var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+//              //                rowExpander.closeAllContainers();          
                 
                 //function to if layer contains data service
                 var filterFn = function(rec) {
@@ -274,6 +282,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         
     },
     
+	// CONSTRUCTOR FN
+	// SAME but use other defn
     _getImageLayerFilterAction : function(){
         var me = this;
         return new Ext.Action({
@@ -281,8 +291,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             iconCls : 'portrayal',
             tooltip: 'Display layers with image service',
             handler : function(){
-//                var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
-//                rowExpander.closeAllContainers();          
+//              // TODO: Do I need this but using the new id for rowexpandercontainer?
+//              // var rowExpander = me.getPlugin('maingrid_rowexpandercontainer');
+//              //                rowExpander.closeAllContainers();          
                 
                 //function to if layer contains image service
                 var filterFn = function(rec) {           
@@ -311,6 +322,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     /**
      * When the visible fn is clicked, ensure only the visible records pass the filter
      */
+	// CONSTRUCTOR FN
+	// SAME
     _handleVisibleFilterClick : function(button) {                           
         var currentBounds = this.map.getVisibleMapBounds();
 
@@ -333,6 +346,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         searchField.runCustomFilter('<visible layers>', Ext.bind(filterFn, this));      
     },       
  
+    // Used in sub-classes
     handleFilterSelectComplete : function(filteredResultPanels){
         var me = this;
         var cswSelectionWindow = new CSWSelectionWindow({
@@ -355,9 +369,6 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             }
         });
         cswSelectionWindow.show();
-
-
-        //
     },
 
     //-------- Abstract methods requiring implementation ---------
@@ -370,7 +381,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      *
      * record - The record whose title should be extracted
      */
-    getTitleForRecord : portal.util.UnimplementedFunction,
+//    getTitleForRecord : portal.util.UnimplementedFunction,
 
     /**
      * Abstract function - Should return an Array of portal.csw.OnlineResource
@@ -381,7 +392,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      *
      * record - The record whose underlying online resources should be extracted.
      */
-    getOnlineResourcesForRecord : portal.util.UnimplementedFunction,
+//    getOnlineResourcesForRecord : portal.util.UnimplementedFunction,
 
     /**
      * Abstract function - Should return an Array of portal.util.BBox
@@ -392,7 +403,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      *
      * record - The record whose spatial bounds should be extracted.
      */
-    getSpatialBoundsForRecord : portal.util.UnimplementedFunction,
+//    getSpatialBoundsForRecord : portal.util.UnimplementedFunction,
 
     /**
      * Abstract function - Should return an Array of portal.csw.CSWRecord
@@ -402,7 +413,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      *
      * record - The record whose underlying CSWRecords should be extracted.
      */
-    getCSWRecordsForRecord : portal.util.UnimplementedFunction,
+//    getCSWRecordsForRecord : portal.util.UnimplementedFunction,
 
     //--------- Class Methods ---------
 
@@ -410,19 +421,20 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      * Generates an Ext.DomHelper.markup for the specified imageUrl
      * for usage as an image icon within this grid.
      */
-    _generateHTMLIconMarkup : function(imageUrl) {
-        return Ext.DomHelper.markup({
-            tag : 'div',
-            style : 'text-align:center;',
-            children : [{
-                tag : 'img',
-                width : 16,
-                height : 16,
-                align: 'CENTER',
-                src: imageUrl
-            }]
-        });
-    },
+	 // COL FN
+//    _generateHTMLIconMarkup : function(imageUrl) {
+//        return Ext.DomHelper.markup({
+//            tag : 'div',
+//            style : 'text-align:center;',
+//            children : [{
+//                tag : 'img',
+//                width : 16,
+//                height : 16,
+//                align: 'CENTER',
+//                src: imageUrl
+//            }]
+//        });
+//    },
 
     /**
      * Internal method, acts as an ExtJS 4 column renderer function for rendering
@@ -430,9 +442,10 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      *
      * http://docs.sencha.com/ext-js/4-0/#!/api/Ext.grid.column.Column-cfg-renderer
      */
-    _titleRenderer : function(value, metaData, record, row, col, store, gridView) {
-        return this.getTitleForRecord(record);
-    },
+	 // COL FN
+//    _titleRenderer : function(value, metaData, record, row, col, store, gridView) {
+//        return this.getTitleForRecord(record);
+//    },
 
     /**
      * Internal method, acts as an ExtJS 4 column renderer function for rendering
@@ -440,65 +453,69 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      *
      * http://docs.sencha.com/ext-js/4-0/#!/api/Ext.grid.column.Column-cfg-renderer
      */
-    _serviceInformationRenderer : function(value, metaData, record, row, col, store, gridView) {
-        
-        if(record.get('resourceProvider')=="kml"){
-            return this._generateHTMLIconMarkup('portal-core/img/kml.png');
-        }
-        
-        var onlineResources = this.getOnlineResourcesForRecord(record);
-
-        var serviceType = this._getServiceType(onlineResources);
-        
-        var containsDataService = serviceType.containsDataService;
-        var containsImageService = serviceType.containsImageService;
-
-        
-
-        var iconPath = null;
-        if (containsDataService) {
-            iconPath = 'portal-core/img/binary.png'; //a single data service will label the entire layer as a data layer
-        } else if (containsImageService) {
-            iconPath = 'portal-core/img/picture.png';
-        } else {
-            iconPath = 'portal-core/img/cross.png';
-        }
-
-        return this._generateHTMLIconMarkup(iconPath);
-    },
+	 // COL FN
+	 // UNIQUE
+//    _serviceInformationRenderer : function(value, metaData, record, row, col, store, gridView) {
+//        
+//        if(record.get('resourceProvider')=="kml"){
+//            return this._generateHTMLIconMarkup('portal-core/img/kml.png');
+//        }
+//        
+//        var onlineResources = this.getOnlineResourcesForRecord(record);
+//
+//        var serviceType = this._getServiceType(onlineResources);
+//        
+//        var containsDataService = serviceType.containsDataService;
+//        var containsImageService = serviceType.containsImageService;
+//
+//        
+//
+//        var iconPath = null;
+//        if (containsDataService) {
+//            iconPath = 'portal-core/img/binary.png'; //a single data service will label the entire layer as a data layer
+//        } else if (containsImageService) {
+//            iconPath = 'portal-core/img/picture.png';
+//        } else {
+//            iconPath = 'portal-core/img/cross.png';
+//        }
+//
+//        return this._generateHTMLIconMarkup(iconPath);
+//    },
     
-    _getServiceType : function(onlineResources){
-        var containsDataService = false;
-        var containsImageService = false;
-        
-      //We classify resources as being data or image sources.
-        for (var i = 0; i < onlineResources.length; i++) {
-            switch(onlineResources[i].get('type')) {
-            case portal.csw.OnlineResource.WFS:
-            case portal.csw.OnlineResource.WCS:
-            case portal.csw.OnlineResource.SOS:
-            case portal.csw.OnlineResource.OPeNDAP:
-            case portal.csw.OnlineResource.CSWService:
-            case portal.csw.OnlineResource.IRIS:
-                containsDataService = true;
-                break;
-            case portal.csw.OnlineResource.WMS:
-            case portal.csw.OnlineResource.WWW:
-            case portal.csw.OnlineResource.FTP:
-            case portal.csw.OnlineResource.CSW:
-            case portal.csw.OnlineResource.UNSUPPORTED:
-                containsImageService = true;
-                break;
-            }
-        }
-       
-        return result = {
-            containsDataService : containsDataService,
-            containsImageService : containsImageService
-        };
-        
-         
-    },
+	// CONSTRUCTOR FN
+	// SAME
+//    _getServiceType : function(onlineResources){
+//        var containsDataService = false;
+//        var containsImageService = false;
+//        
+//      //We classify resources as being data or image sources.
+//        for (var i = 0; i < onlineResources.length; i++) {
+//            switch(onlineResources[i].get('type')) {
+//            case portal.csw.OnlineResource.WFS:
+//            case portal.csw.OnlineResource.WCS:
+//            case portal.csw.OnlineResource.SOS:
+//            case portal.csw.OnlineResource.OPeNDAP:
+//            case portal.csw.OnlineResource.CSWService:
+//            case portal.csw.OnlineResource.IRIS:
+//                containsDataService = true;
+//                break;
+//            case portal.csw.OnlineResource.WMS:
+//            case portal.csw.OnlineResource.WWW:
+//            case portal.csw.OnlineResource.FTP:
+//            case portal.csw.OnlineResource.CSW:
+//            case portal.csw.OnlineResource.UNSUPPORTED:
+//                containsImageService = true;
+//                break;
+//            }
+//        }
+//       
+//        return result = {
+//            containsDataService : containsDataService,
+//            containsImageService : containsImageService
+//        };
+//        
+//         
+//    },
 
     /**
      * Internal method, acts as an ExtJS 4 column renderer function for rendering
@@ -506,128 +523,116 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      *
      * http://docs.sencha.com/ext-js/4-0/#!/api/Ext.grid.column.Column-cfg-renderer
      */
-    _spatialBoundsRenderer : function(value, metaData, record, row, col, store, gridView) {
-        var spatialBounds = this.getSpatialBoundsForRecord(record);
-        if (spatialBounds.length > 0 || record.internalId == 'portal-InSar-reports') {
-            // create one for insar
-            return this._generateHTMLIconMarkup('portal-core/img/magglass.gif');
-        }
-
-        return '';
-    },
+	 // COL FN
+	 // UNIQUE
+//    _spatialBoundsRenderer : function(value, metaData, record, row, col, store, gridView) {
+//        var spatialBounds = this.getSpatialBoundsForRecord(record);
+//        if (spatialBounds.length > 0 || record.internalId == 'portal-InSar-reports') {
+//            // create one for insar
+//            return this._generateHTMLIconMarkup('portal-core/img/magglass.gif');
+//        }
+//
+//        return '';
+//    },
 
     /**
      * Show a popup containing info about the services that 'power' this layer
      */
-    _serviceInformationClickHandler : function(column, record, rowIndex, colIndex) {
-        var cswRecords = this.getCSWRecordsForRecord(record);
-        if (!cswRecords || cswRecords.length === 0) {
-            return;
-        }
-
-        var popup = Ext.create('portal.widgets.window.CSWRecordDescriptionWindow', {
-            cswRecords : cswRecords,
-            parentRecord : record,
-            onlineResourcePanelType : this.onlineResourcePanelType
-        });
-
-        popup.show();
-    },
+	 // COL FN
+	 // SAME
+//    _serviceInformationClickHandler : function(column, record, rowIndex, colIndex) {
+//        var cswRecords = this.getCSWRecordsForRecord(record);
+//        if (!cswRecords || cswRecords.length === 0) {
+//            return;
+//        }
+//
+//        var popup = Ext.create('portal.widgets.window.CSWRecordDescriptionWindow', {
+//            cswRecords : cswRecords,
+//            parentRecord : record,
+//            onlineResourcePanelType : this.onlineResourcePanelType
+//        });
+//
+//        popup.show();
+//    },
 
 
     /**
      * On single click, show a highlight of all BBoxes
      */
-    _spatialBoundsClickHandler : function(column, record, rowIndex, colIndex) {
-        var spatialBoundsArray;
-        if (record.internalId == 'portal-InSar-reports') {
-            spatialBoundsArray = this.getWholeGlobeBounds();
-        } else {
-            spatialBoundsArray = this.getSpatialBoundsForRecord(record);
-        }
-        var nonPointBounds = [];
-
-        //No point showing a highlight for bboxes that are points
-        for (var i = 0; i < spatialBoundsArray.length; i++) {
-            var bbox = spatialBoundsArray[i];
-            if (bbox.southBoundLatitude !== bbox.northBoundLatitude ||
-                bbox.eastBoundLongitude !== bbox.westBoundLongitude) {
-
-                //VT: Google map uses EPSG:3857 and its maximum latitude is only 85 degrees
-                // anything more will stretch the transformation
-                if(bbox.northBoundLatitude>85){
-                    bbox.northBoundLatitude=85;
-                }
-                if(bbox.southBoundLatitude<-85){
-                    bbox.southBoundLatitude=-85;
-                }
-                nonPointBounds.push(bbox);
-            }
-        }
-
-        this.map.highlightBounds(nonPointBounds);
-    },
+	 // COL FN
+	 // UNIQUE
+//    _spatialBoundsClickHandler : function(column, record, rowIndex, colIndex) {
+//        var spatialBoundsArray;
+//        if (record.internalId == 'portal-InSar-reports') {
+//            spatialBoundsArray = this.getWholeGlobeBounds();
+//        } else {
+//            spatialBoundsArray = this.getSpatialBoundsForRecord(record);
+//        }
+//        var nonPointBounds = [];
+//
+//        //No point showing a highlight for bboxes that are points
+//        for (var i = 0; i < spatialBoundsArray.length; i++) {
+//            var bbox = spatialBoundsArray[i];
+//            if (bbox.southBoundLatitude !== bbox.northBoundLatitude ||
+//                bbox.eastBoundLongitude !== bbox.westBoundLongitude) {
+//
+//                //VT: Google map uses EPSG:3857 and its maximum latitude is only 85 degrees
+//                // anything more will stretch the transformation
+//                if(bbox.northBoundLatitude>85){
+//                    bbox.northBoundLatitude=85;
+//                }
+//                if(bbox.southBoundLatitude<-85){
+//                    bbox.southBoundLatitude=-85;
+//                }
+//                nonPointBounds.push(bbox);
+//            }
+//        }
+//
+//        this.map.highlightBounds(nonPointBounds);
+//    },
 
     /**
      * Return the max bbox for insar layer as it is a dummy CSW.
      */
-    getWholeGlobeBounds : function() {
-        var bbox = new Array();
-        bbox[0] = Ext.create('portal.util.BBox', {
-            northBoundLatitude : 85,
-            southBoundLatitude : -85,
-            eastBoundLongitude : 180,
-            westBoundLongitude : -180
-        });
-        return bbox;
-    },
+	 // COL FN
+ 	// UNIQUE but could be common
+//    getWholeGlobeBounds : function() {
+//        var bbox = new Array();
+//        bbox[0] = Ext.create('portal.util.BBox', {
+//            northBoundLatitude : 85,
+//            southBoundLatitude : -85,
+//            eastBoundLongitude : 180,
+//            westBoundLongitude : -180
+//        });
+//        return bbox;
+//    },
 
     /**
      * On double click, move the map so that specified bounds are visible
      */
-    _spatialBoundsDoubleClickHandler : function(column, record, rowIndex, colIndex) {
-        var spatialBoundsArray;
-        if (record.internalId == 'portal-InSar-reports') {
-            spatialBoundsArray = this.getWholeGlobeBounds();
-        } else {
-            spatialBoundsArray = this.getSpatialBoundsForRecord(record);
-        }
-
-        if (spatialBoundsArray.length > 0) {
-            var superBBox = spatialBoundsArray[0];
-
-            for (var i = 1; i < spatialBoundsArray.length; i++) {
-                superBBox = superBBox.combine(spatialBoundsArray[i]);
-            }
-
-            this.map.scrollToBounds(superBBox);
-        }
-    },
+	 // COL FN
+	 // UNIQUE
+//    _spatialBoundsDoubleClickHandler : function(column, record, rowIndex, colIndex) {
+//        var spatialBoundsArray;
+//        if (record.internalId == 'portal-InSar-reports') {
+//            spatialBoundsArray = this.getWholeGlobeBounds();
+//        } else {
+//            spatialBoundsArray = this.getSpatialBoundsForRecord(record);
+//        }
+//
+//        if (spatialBoundsArray.length > 0) {
+//            var superBBox = spatialBoundsArray[0];
+//
+//            for (var i = 1; i < spatialBoundsArray.length; i++) {
+//                superBBox = superBBox.combine(spatialBoundsArray[i]);
+//            }
+//
+//            this.map.scrollToBounds(superBBox);
+//        }
+//    },
    
-    
-
-    /**
-     * When called, will update the visibility of any search bars
-     */
-    _updateSearchBar : function(visible) {
-        var dockedItems = this.getDockedItems();
-        var searchBar = null;
-        for (var i = 0; i < dockedItems.length; i++) {
-            if (dockedItems[i].initialConfig.portalName === 'search-bar') {
-                searchBar = dockedItems[i];
-            }
-        }
-        if (!searchBar) {
-            return;
-        }
-
-        if (visible) {
-            searchBar.show();
-        } else {
-            searchBar.hide();
-        }
-    },
-        
+	// COL FN
+	// UNIQUE but could be common
     _deleteRenderer : function(value, metaData, record, row, col, store, gridView) {
         if (value) {
             return Ext.DomHelper.markup({
@@ -668,6 +673,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     /**
      * Renderer for the loading column
      */
+	// COL FN
+	// UNIQUE
     _loadingRenderer : function(value, metaData, record, row, col, store, gridView) {
         if (value) {
             return Ext.DomHelper.markup({
@@ -720,6 +727,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         }
     },
     
+	// COL FN
+	// UNIQUE but could be common
     _statusListErrorCount : function(listOfStatus){
         var match =["reached","error","did not complete","AJAX","Unable"];
         
@@ -741,6 +750,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      * A renderer for generating the contents of the tooltip that shows when the
      * layer is loading
      */
+	 // COL FN
+	 // UNIQUE
     _loadingTipRenderer : function(value, record, column, tip) {
         var layer = record.get('layer');
         if(!layer){//VT:The layer has yet to be created.
@@ -760,6 +771,8 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         return renderer.renderStatus.renderHtml();
     },
     
+	// COL FN
+	// UNIQUE
     _loadingClickHandler : function(value, record, rowIdx, tip) {
         
         var layer = record.get('layer');
