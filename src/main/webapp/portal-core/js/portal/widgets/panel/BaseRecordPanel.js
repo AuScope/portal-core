@@ -645,22 +645,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             });
         }
     },
-    
     _deleteClickHandler :  function(value, record, rowIdx, tip) {
         var layer = record.get('layer');
         if(layer && record.get('active')){            
-//            layer.removeDataFromMap();
-//            this.activelayerstore.remove(layer);          
-//            this.fireEvent('cellclick',this,undefined,undefined,record,undefined,rowIdx);
-            this.menuFactory.layerRemoveHandler(layer);
-            AppEvents.broadcast('removelayer', {layer:layer, rowIdx:rowIdx});
-        }             
-    },
-    
-    /** 
-     * This wil be called indirectly via AppEvents.broadcast('removelayer', layer);
-     * Look for the .listener() elsewhere
-     */
+        	AppEvents.broadcast('removelayer', {layer:layer, rowIdx:rowIdx});
+        } 
+    },    
+
     _removeLayer : function(layerArray) {
         var layer = layerArray.layer;
         var rowIdx = layerArray.rowIdx;
@@ -669,7 +660,6 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             this.activelayerstore.remove(layer);          
             this.fireEvent('cellclick',this,undefined,undefined,layer,undefined,rowIdx);
             this.menuFactory.layerRemoveHandler(layer);
-            AppEvents.broadcast('removelayer', layer);
         } else {
             console.log('_removeLayer : no activeLayer with id:',layer.id," in this.activelayerstore: ", this.activelayerstore.getData());
         }
