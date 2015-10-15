@@ -37,7 +37,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     alias: 'plugin.rowexpandercontainer',
     generateContainer : portal.util.UnimplementedFunction,
     allowMultipleOpen : false,
-    rowBodyTpl: null, //<div id="rowexpandercontainer-{id}"></div>', //overrides parent
+    rowBodyTpl: null, 
     storedHtml: null,   
     recordStatus: null,  
     generationRunning: false,
@@ -82,7 +82,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         view.on('resize', this.onResize, this);
     },
-    
+           
     /**
      * Returns record if it exists or null.
      * 
