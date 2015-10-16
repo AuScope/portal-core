@@ -58,6 +58,12 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
     /** The Author's surname */
     private String authorSurname = null;
+
+    /** The publication date's lower bound. */
+    private DateTime publicationDateFrom = null;
+
+    /** The publication date's upper bound. */
+    private DateTime publicationDateTo = null;
     
     /** The metadata change date's lower bound. */
     private DateTime metadataChangeDateFrom = null;
@@ -183,6 +189,15 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             fragments.add(generateAndComparisonFragment(
                     this.generatePropertyIsLikeFragment("metadataIndividualPointOfContact", "*" + authorSurname + "*")));
         }
+        
+        if (publicationDateFrom != null) {
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("publicationDate", publicationDateFrom.toString()));
+        }
+
+        if (publicationDateTo != null) {
+            fragments.add(this.generatePropertyIsLessThanOrEqualTo("publicationDate", publicationDateTo.toString()));
+        }
+
         
         if (type != null && type != Type.all) {
             if (type == Type.dataset) {
@@ -339,7 +354,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
                 + ", temporalExtentTo=" + temporalExtentTo
                 + ", keywordMatchType=" + keywordMatchType
                 + ", titleOrAbstract=" + titleOrAbstract
-                + ", authorSurname=" + authorSurname + "]";
+                + ", authorSurname=" + authorSurname
+                + ", publicationDateFrom=" + publicationDateFrom
+                + ", publicationDateTo=" + publicationDateTo + "]";
 
     }
 
@@ -409,6 +426,34 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      */
     public void setAuthorSurname(String authorSurname) {
         this.authorSurname = authorSurname;
+    }
+   
+    /**
+     * @return the publicationDateFrom
+     */
+    public DateTime getPublicationDateFrom() {
+        return publicationDateFrom;
+    }
+
+    /**
+     * @param publicationDateFrom the publicationDateFrom to set
+     */
+    public void setPublicationDateFrom(DateTime publicationDateFrom) {
+        this.publicationDateFrom = publicationDateFrom;
+    }
+
+    /**
+     * @return the publicationDateTo
+     */
+    public DateTime getPublicationDateTo() {
+        return publicationDateTo;
+    }
+
+    /**
+     * @param publicationDateTo the publicationDateTo to set
+     */
+    public void setPublicationDateTo(DateTime publicationDateTo) {
+        this.publicationDateTo = publicationDateTo;
     }
 
     /** Sets metadataChangeDateFrom. */

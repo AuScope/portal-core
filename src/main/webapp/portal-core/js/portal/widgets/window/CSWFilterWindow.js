@@ -14,10 +14,8 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
         Ext.apply(cfg, {
             title : 'Enter Parameters',
             layout : 'fit',
-            modal : true,
-            //autoScroll :true,
+            modal : false,
             width : 500,
-            height : 520,
             items : [this.cswFilterFormPanel],
             buttons:[{
                 xtype: 'button',
@@ -28,7 +26,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
                     var parent = button.findParentByType('window');
                     var panel = parent.getComponent(0);
 
-                    if (panel.getForm().isValid()) {
+                    if (panel.getForm().isValid()) {                 
                         var additionalParams = panel.getForm().getValues(false, false, false, false);
                         var filteredResultPanels=[];
                         for(additionalParamKey in additionalParams){
@@ -42,9 +40,11 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
                                 }
                             }
                         }
-                        
                         parent.fireEvent('filterselectcomplete',filteredResultPanels);
-                        parent.hide();
+                        parent.hide();  
+                        
+                    } else {
+                        Ext.Msg.alert('Invalid Data', 'Please correct form errors.')
                     }
                 }
             }]
@@ -54,9 +54,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
 
         this.callParent(arguments);
     },
-
-
-
+    
     /**
      * Return configuration for the tabpanels
      *
@@ -75,9 +73,12 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
         var denormaliseKvp = function(keyList, valueList, kvpObj) {
             if (kvpObj) {
                 for (key in kvpObj) {
-                    if(kvpObj[key] && kvpObj[key].length>0 && key != 'cswServiceId' && !(key.slice(0, 4) == 'DNA_')){
-                        keyList.push(key);
-                        valueList.push(kvpObj[key]);
+                    if (kvpObj[key]) {
+                        var value = kvpObj[key].toString();
+                        if(value.length>0 && key != 'cswServiceId' && !(key.slice(0, 4) == 'DNA_')){
+                            keyList.push(key);
+                            valueList.push(value);
+                        }
                     }
                 }
             }
