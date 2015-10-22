@@ -43,6 +43,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     generationRunning: false,
     toggleColIndexes: null,
     baseId: "RowExpanderContainer",
+    expandOnEnter : false,
 
     
     constructor: function(config) {
@@ -132,12 +133,14 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     onExpandBody: function(rowNode, record, expandRow) {
         if (!this.allowMultipleOpen) {
             for (openId in this.recordStatus) {
-                if (this.recordStatus[openId].expanded) {
-                    var openRec = this.getStoreRecord(openId);
-                    var openEl = this.view.getRow(openRec);
-                    if (openEl !== null) {
-                        this.toggleRow(openEl, openRec);
-                    }
+            	if (record.id !== openId) {
+	                if (this.recordStatus[openId].expanded) {
+	                    var openRec = this.getStoreRecord(openId);
+	                    var openEl = this.view.getRow(openRec);
+	                    if (openEl !== null) {
+	                        this.toggleRow(openEl, openRec);
+	                    }
+	                }
                 }
             }
         }
