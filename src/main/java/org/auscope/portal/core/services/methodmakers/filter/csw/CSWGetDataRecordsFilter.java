@@ -43,6 +43,45 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
         all
     }
+    
+    /**
+     * The different ways of sorting the returned CSW records
+     */
+    public enum SortType {
+        /**
+         * Use the service's default ordering
+         */
+        serviceDefault,
+        
+        /** 
+         * Sort by title, ascending alphabetically
+         */
+        title, 
+        
+        /** 
+         * Sort by publication date, descending (newest first)
+         */
+        publicationDate;     
+    	
+    	/**
+    	 * gets a SortType enum based upon the string that is passed in. If the string is not valid then return a default.
+    	 * @param value the value to test
+    	 * @return a SortType enum if the value was okay
+    	 */
+    	public static SortType getByStringValue(String value) {
+    		SortType sortType = serviceDefault;
+    		
+    		if (value != null) {
+	    		if ("title".equals(value)) {
+	    			sortType = title;
+	    		}
+	    		else if ("publicationDate".equals(value)) {
+	    			sortType = publicationDate;
+	    		}
+    		}
+    		return sortType;
+    	}
+    }
 
     /** The any text. */
     private String anyText;
@@ -93,6 +132,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     private KeywordMatchType keywordMatchType;
 
     private Type type;
+    
+    private SortType sortType;
 
     /**
      * Default constructor for creating a filter in a factory method manner.
@@ -187,15 +228,19 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         
         if (authorSurname != null && !authorSurname.isEmpty()) {
             fragments.add(generateAndComparisonFragment(
-                    this.generatePropertyIsLikeFragment("metadataIndividualPointOfContact", "*" + authorSurname + "*")));
+                    this.generatePropertyIsLikeFragment("authorSurname", "*" + authorSurname + "*")));
         }
         
         if (publicationDateFrom != null) {
-            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("publicationDate", publicationDateFrom.toString()));
+            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo(
+            		"publicationDate", 
+            		publicationDateFrom.toString()));
         }
 
         if (publicationDateTo != null) {
-            fragments.add(this.generatePropertyIsLessThanOrEqualTo("publicationDate", publicationDateTo.toString()));
+            fragments.add(this.generatePropertyIsLessThanOrEqualTo(
+            		"publicationDate",
+            		publicationDateTo.toString()));
         }
 
         
@@ -221,7 +266,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             for (String keyword : keywords) {
                 if (keyword != null && !keyword.isEmpty()) {
                     //keywordFragments.add(this.generatePropertyIsEqualToFragment("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString", keyword));
-                    keywordFragments.add(this.generatePropertyIsEqualToFragment("keyword", keyword));
+                    keywordFragments.add(this.generatePropertyIsLikeFragment("keyword", "*" + keyword + "*"));
                 }
             }
 
@@ -531,7 +576,12 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     public void setType(Type type) {
         this.type = type;
     }
-    
-    
 
+	public SortType getSortType() {
+		return sortType;
+	}
+
+	public void setSortType(SortType sortType) {
+		this.sortType = sortType;
+	}
 }

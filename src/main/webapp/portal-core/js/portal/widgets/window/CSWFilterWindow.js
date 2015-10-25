@@ -2,23 +2,22 @@
 Ext.define('portal.widgets.window.CSWFilterWindow', {
     extend : 'Ext.window.Window',
 
-    cswFilterFormPanel : null,
-    
-    controlButtons: [],
+    cswFilterFormPanel : null,   
     
     constructor : function(cfg) {      
-
+        
     	var me = this;
+    	
+    	var controlButtons = [];
     	
         // use the search panel defined in the config if present, otherwise use the Auscope Core default
     	me.cswFilterFormPanel = cfg.cswFilterFormPanel || new portal.widgets.panel.CSWFilterFormPanel({
             name : 'Filter Form'
         });
         
-        // Only add a reset button if it is GA Portal 
-        // Auscope may want this too but would need to implement the resetForm function in CSWFilterFormPanel.js
+        // Only add a reset button if the search panel implements resetForm()
         if (me.cswFilterFormPanel.resetForm) {
-        	me.controlButtons.push({
+        	controlButtons.push({
                 xtype: 'button',
                 text:'Reset Form',
                 handler:function(button){
@@ -27,7 +26,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
         	});
         };
         	
-        me.controlButtons.push({            
+        controlButtons.push({            
             xtype: 'button',
             text: 'Search',
             scope : me,
@@ -65,7 +64,7 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
             modal : false,
             width : 500,
             items : [me.cswFilterFormPanel],
-            buttons: me.controlButtons            
+            buttons: controlButtons            
         });
 
 
@@ -126,7 +125,6 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
                 extraParams: {
                     key : keys,
                     value : values,
-                    portalName : this.cswFilterFormPanel.portalName,
                     customregistries : {
                         id: cswServiceId.id,
                         title: cswServiceId.title,
@@ -159,7 +157,5 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
         return result;
 
     }
-
-
 });
 

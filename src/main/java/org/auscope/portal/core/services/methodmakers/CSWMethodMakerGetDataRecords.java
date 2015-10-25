@@ -12,6 +12,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
+import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter.SortType;
 
 /**
  * Class for generating methods for interacting with a Coverage Service for the Web (CS/W)
@@ -93,7 +94,8 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
                 log.error("Request type invalid - sending unconstrained request");
                 break;
             }
-        }
+        }       
+        
         if (startPosition >= 0) {
             sb.append(" startPosition=\"" + startPosition + "\"");
         }
@@ -114,6 +116,27 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
             }
             sb.append("</csw:Constraint>");
         }
+        
+        if (filter != null) {
+	        SortType sortType = filter.getSortType();
+	        if (sortType != null && sortType != SortType.serviceDefault) {        	
+	            sb.append("<ogc:SortBy><ogc:SortProperty>"); 
+	            switch (sortType) {
+	                case title:
+	                	sb.append("<ogc:PropertyName>title</ogc:PropertyName>");
+	                	sb.append("<ogc:SortOrder>ASC</ogc:SortOrder>");	
+	                	break;
+	                case publicationDate:
+	                	sb.append("<ogc:PropertyName>publicationDate</ogc:PropertyName>");
+	                	sb.append("<ogc:SortOrder>DESC</ogc:SortOrder>");	
+	                	break;                	
+	                default: 
+	                	break;
+	            }            
+	            sb.append("</ogc:SortProperty> </ogc:SortBy>");
+	        }
+        }
+        
         sb.append("</csw:Query>");
         sb.append("</csw:GetRecords>");
 
