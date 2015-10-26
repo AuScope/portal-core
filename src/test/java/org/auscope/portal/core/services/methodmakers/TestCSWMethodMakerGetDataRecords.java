@@ -45,6 +45,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+                allowing(mockFilter).getSortType();
                 oneOf(mockFilter).getFilterStringAllRecords();
                 will(returnValue(filterStr));
             }
@@ -100,6 +101,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+                allowing(mockFilter).getSortType();
                 allowing(mockFilter).getFilterStringAllRecords();
                 will(returnValue(filterStr));
             }

@@ -74,6 +74,7 @@ public class TestCSWFilterService extends PortalTestClass {
         context.checking(new Expectations() {
             {
 
+            	allowing(mockFilter).getSortType();
                 allowing(mockFilter).getFilterStringAllRecords();
 
                 oneOf(httpServiceCaller).getMethodResponseAsStream(
@@ -126,6 +127,7 @@ public class TestCSWFilterService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+            	allowing(mockFilter).getSortType();
                 allowing(mockFilter).getFilterStringAllRecords();
 
                 oneOf(httpServiceCaller).getMethodResponseAsStream(
@@ -171,6 +173,7 @@ public class TestCSWFilterService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+            	allowing(mockFilter).getSortType();
                 allowing(mockFilter).getFilterStringAllRecords();
 
                 oneOf(httpServiceCaller).getMethodResponseAsStream(
@@ -203,6 +206,7 @@ public class TestCSWFilterService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
+            	allowing(mockFilter).getSortType();
                 allowing(mockFilter).getFilterStringAllRecords();
 
                 oneOf(httpServiceCaller).getMethodResponseAsStream(

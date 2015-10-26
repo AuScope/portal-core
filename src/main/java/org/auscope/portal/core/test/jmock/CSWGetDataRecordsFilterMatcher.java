@@ -21,6 +21,10 @@ public class CSWGetDataRecordsFilterMatcher extends TypeSafeMatcher<CSWGetDataRe
     private String[] keywords;
     private String capturePlatform;
     private String sensor;
+    private String titleOrAbstract;
+    private String authorSurname;
+    private String publicationDateFrom;
+    private String publicationDateTo;        
 
     /**
      * Matches a CSWGetDataRecordsFilter based on one or more components
@@ -38,20 +42,26 @@ public class CSWGetDataRecordsFilterMatcher extends TypeSafeMatcher<CSWGetDataRe
      */
     public CSWGetDataRecordsFilterMatcher(FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor,
-            KeywordMatchType keywordMatchType) {
+            KeywordMatchType keywordMatchType, String titleOrAbstract, String authorSurname,
+            String publicationDateFrom, String publicationDateTo) {
         this.spatialBounds = spatialBounds;
         this.keywords = keywords;
         this.capturePlatform = capturePlatform;
         this.sensor = sensor;
         this.keywordMatchType = keywordMatchType;
+        this.titleOrAbstract = titleOrAbstract;
+        this.authorSurname = authorSurname;
+        this.publicationDateFrom = publicationDateFrom;
+        this.publicationDateTo = publicationDateTo;
+        
     }
 
     @Override
     public void describeTo(Description description) {
         description
                 .appendText(String
-                        .format("a CSWGetDataRecordsFilter with spatialBounds='%1$s' keywords='%2$s' capturePlatform='%3$s sensor='%4$s' keywordMatchType='%5$s'",
-                                spatialBounds, Arrays.toString(keywords), capturePlatform, sensor, keywordMatchType));
+                        .format("a CSWGetDataRecordsFilter with spatialBounds='%1$s' keywords='%2$s' capturePlatform='%3$s' sensor='%4$s' keywordMatchType='%5$s', titleOrAbstract='%6$s'",
+                                spatialBounds, Arrays.toString(keywords), capturePlatform, sensor, keywordMatchType, titleOrAbstract, authorSurname, publicationDateFrom, publicationDateTo));
 
     }
 
@@ -78,7 +88,22 @@ public class CSWGetDataRecordsFilterMatcher extends TypeSafeMatcher<CSWGetDataRe
         if (keywordMatchType != null) {
             matches &= keywordMatchType == filter.getKeywordMatchType();
         }
+        
+        if (titleOrAbstract != null) {
+            matches &= titleOrAbstract.equals(filter.getTitleOrAbstract());
+        }
 
+        if (authorSurname != null) {
+            matches &= authorSurname.equals(filter.getAuthorSurname());
+        }
+        
+        if (publicationDateFrom != null) {
+            matches &= publicationDateFrom.equals(filter.getPublicationDateFrom());
+        }
+        
+        if (publicationDateTo != null) {
+            matches &= publicationDateTo.equals(filter.getPublicationDateTo());
+        }
         return matches;
     }
 
