@@ -350,6 +350,28 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         cswSelectionWindow.show();
     },
 
+    /**
+     * When called, will update the visibility of any search bars
+     */
+    _updateSearchBar : function(visible) {
+        var dockedItems = this.getDockedItems();
+        var searchBar = null;
+        for (var i = 0; i < dockedItems.length; i++) {
+            if (dockedItems[i].initialConfig.portalName === 'search-bar') {
+                searchBar = dockedItems[i];
+            }
+        }
+        if (!searchBar) {
+            return;
+        }
+
+        if (visible) {
+            searchBar.show();
+        } else {
+            searchBar.hide();
+        }
+    },
+
     _deleteRenderer : function(value, metaData, record, row, col, store, gridView) {
         if (value) {
             return Ext.DomHelper.markup({

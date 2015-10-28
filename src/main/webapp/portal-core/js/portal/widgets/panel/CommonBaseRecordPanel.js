@@ -30,14 +30,14 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
      */
     listenersHere : {
     },
-    constructor : function(childConfig) {
+    constructor : function(cfg) {
         var me = this;
-        me.map = childConfig.map;
-        me.menuFactory = childConfig.menuFactory;
-        me.activelayerstore = childConfig.activelayerstore;
-        me.onlineResourcePanelType = childConfig.onlineResourcePanelType;
+        me.map = cfg.map;
+        me.menuFactory = cfg.menuFactory;
+        me.activelayerstore = cfg.activelayerstore;
+        me.onlineResourcePanelType = cfg.onlineResourcePanelType;
 
-        me.listeners = Object.extend(me.listenersHere, childConfig.listeners);
+        me.listeners = Object.extend(me.listenersHere, cfg.listeners);
 
         // Sub classes should define their Columns in their constructors
         
