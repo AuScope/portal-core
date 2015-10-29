@@ -253,13 +253,9 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
         }
 
         sb.append(">\n");
-        sb.append("  <wfs:Query typeName=\"" + featureType + "\"");
-        if (srsName != null && !srsName.isEmpty()) {
-            sb.append(" srsName=\"" + srsName + "\"");
-        } else if (featureType.equals("gsml:Borehole")) {
-            sb.append(" srsName=\"" + "EPSG:4326" + "\"");
-        }
-        sb.append(">\n");
+        sb.append("  <wfs:Query typeName=\"" + featureType + "\">");
+        // GPT-74 - The srsName is no longer desired since it causes the Geoserver geoserver to return output coordinates as LONG LAT. Where-as at all times the
+        // ArcGis geoserver outputs LAT LONG. We want both to be LAT LONG.
         if (filterString != null) {
             sb.append(filterString);
         }
