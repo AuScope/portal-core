@@ -118,7 +118,7 @@
             <!-- This is so we can pickup where the node should be drawn -->
             <MultiGeometry>
                <xsl:apply-templates select="./descendant::gml:Polygon"/>
-               <xsl:apply-templates select="./descendant::gml:Multicurve"/>
+               <xsl:apply-templates select="./descendant::gml:MultiCurve"/>
                <xsl:apply-templates select="./descendant::gml:Point"/>
                <xsl:apply-templates select="./descendant::gml:MultiLineString"/>
             </MultiGeometry>

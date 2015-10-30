@@ -73,4 +73,46 @@ public class TestPortalXSLTTransformer extends PortalTestClass {
                 root, XPathConstants.NUMBER);
         Assert.assertEquals(8.0, counter.doubleValue(), 0);
     }
+    
+    /**
+     * GPT-74 - Unit test a specific wfs for the Oil Pipeline thsat is failing the current XSLT transformation.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testOilPipelineFeatureParser() throws Exception {
+        final String testXml = ResourceUtil
+                .loadResourceAsString("org/auscope/portal/core/xslt/oilPipeline.xml");
+        final Properties properties = new Properties();
+
+        properties.setProperty("serviceURL", "fake-service-url");
+
+        String convertedText = transformer.convert(testXml, properties);
+        System.out.println("testOilPipelineFeatureParser - transformed XML:\n"+convertedText+"\n");
+
+        //Check we have data
+        Assert.assertNotNull(convertedText);
+        Assert.assertTrue(convertedText.length() > 0);
+
+        //Pull the converted data back as XML (It is now technically KML)
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(false); // never forget this!
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource inputSource = new InputSource(new StringReader(convertedText));
+        Document document = builder.parse(inputSource);
+        Element root = document.getDocumentElement();
+
+        //Lets query the transformed data to make sure its correct
+        XPath xPath = XPathFactory.newInstance().newXPath();
+
+        Double counter = (Double) xPath.evaluate("count(Document)", root, XPathConstants.NUMBER);
+        Assert.assertEquals(1.0, counter.doubleValue(), 0);
+
+        counter = (Double) xPath.evaluate("count(Document/Placemark)", root, XPathConstants.NUMBER);
+        Assert.assertEquals(1.0, counter.doubleValue(), 0);
+
+        counter = (Double) xPath.evaluate("count(tokenize(Document/Placemark/MultiGeometry/LineString/coordinates/text(),','))",
+                root, XPathConstants.NUMBER);
+        Assert.assertEquals(8.0, counter.doubleValue(), 0);
+    }
 }
