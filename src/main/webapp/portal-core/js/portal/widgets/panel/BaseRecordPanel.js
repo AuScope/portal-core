@@ -153,7 +153,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                       newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);                      
                   }           
                   record.set('layer',newLayer);
-                  var filterForm = cfg.layerFactory.formFactory.getFilterForm(newLayer).form; //ALWAYS recreate filter form - see https://jira.csiro.au/browse/AUS-2588
+               	  var filterForm = cfg.layerFactory.formFactory.getFilterForm(newLayer).form; //ALWAYS recreate filter form - see https://jira.csiro.au/browse/AUS-2588
                   filterForm.setLayer(newLayer);
                   var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);
                   
