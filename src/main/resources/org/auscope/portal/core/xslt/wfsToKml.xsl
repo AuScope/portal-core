@@ -60,10 +60,14 @@
    <xsl:variable name="mineServiceString"><![CDATA[service=WFS&version=1.1.0&request=GetFeature&typename=er:Mine&featureid=]]></xsl:variable>
    <xsl:variable name="minOccServiceString"><![CDATA[service=WFS&version=1.1.0&request=GetFeature&typename=er:MineralOccurrence&featureid=]]></xsl:variable>
    <xsl:variable name="gsmlGeoUnitString"><![CDATA[?service=WFS&version=1.1.0&request=GetFeature&typename=gsml:GeologicUnit&featureId=]]></xsl:variable>
+
    <!-- MATCH ROOT FEATURECOLLECTION -->
    <!-- ================================================================= -->
    <xsl:template match="wfs:FeatureCollection">
-
+		<xsl:message>Version of xsl:</xsl:message>
+		<xsl:message select="system-property('xsl:version')" />
+		<xsl:message>The date is shown if XPath 2 is implemented:</xsl:message>
+		<xsl:message select="current-date()"/>
       <!--<kml xmlns="http://www.opengis.net/kml/2.2">-->
       <kml>
          <Document>
