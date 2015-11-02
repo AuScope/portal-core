@@ -30,16 +30,6 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
             buttonAlign : 'right',
             buttons : [{
                 xtype : 'button',
-                text : 'Back to Search',
-                iconCls : 'magglass',
-                scope : this,
-                handler : function(button, e) {
-                    var cswFilterWindow = Ext.getCmp('cswFilterWindow');
-                    this.destroy();
-                    cswFilterWindow.show();
-                 }
-            }, {
-                xtype : 'button',
                 text : 'Add Selected Records',
                 iconCls : 'add',
                 scope : this,
@@ -47,8 +37,6 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                     var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
                     var csw = cswPagingPanel.getSelectionModel().getSelection();
                     this.fireEvent('selectioncomplete',csw);
-
-
                  }
             },{
                 xtype : 'button',
