@@ -66,7 +66,7 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                 items : cfg.resultpanels //VT: CSWRecordPagingPanel
             }],
 
-            buttonAlign : 'right',
+            buttonAlign : 'right'
 
         });
 
