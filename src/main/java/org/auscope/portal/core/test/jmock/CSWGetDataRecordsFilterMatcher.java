@@ -42,6 +42,38 @@ public class CSWGetDataRecordsFilterMatcher extends TypeSafeMatcher<CSWGetDataRe
      */
     public CSWGetDataRecordsFilterMatcher(FilterBoundingBox spatialBounds,
             String[] keywords, String capturePlatform, String sensor,
+            KeywordMatchType keywordMatchType) {
+        this.spatialBounds = spatialBounds;
+        this.keywords = keywords;
+        this.capturePlatform = capturePlatform;
+        this.sensor = sensor;
+        this.keywordMatchType = keywordMatchType;
+    }
+    
+    /**
+     * Matches a CSWGetDataRecordsFilter based on one or more components
+     * 
+     * @param spatialBounds
+     *            If not null, the comparison spatial bounds
+     * @param keywords
+     *            If not null, the comparison keyword list
+     * @param capturePlatform
+     *            If not null, the comparison capture platform
+     * @param sensor
+     *            If not null, the comparison sensor
+     * @param keywordMatchType
+     *            if not null, the comparison match type
+     * @param titleOrAbstract
+     *            if not null, the titleOrAbstract to search on
+     * @param authorSurname
+     *            if not null, the authorSurname to search on
+     * @param publicationDateFrom
+     *            if not null, the publicationDateFrom to search on
+     * @param publicationDateTo
+     *            if not null, the publicationDateTo to search on                                            
+     */
+    public CSWGetDataRecordsFilterMatcher(FilterBoundingBox spatialBounds,
+            String[] keywords, String capturePlatform, String sensor,
             KeywordMatchType keywordMatchType, String titleOrAbstract, String authorSurname,
             String publicationDateFrom, String publicationDateTo) {
         this.spatialBounds = spatialBounds;
