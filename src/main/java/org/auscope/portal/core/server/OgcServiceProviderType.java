@@ -9,13 +9,13 @@ package org.auscope.portal.core.server;
  * @author Brooke Smith
  *
  */
-public enum GeoServerType {
+public enum OgcServiceProviderType {
     GeoServer, ArcGis;
     
-    public static GeoServerType parseUrl(String serviceUrl) {
+    public static OgcServiceProviderType parseUrl(String serviceUrl) {
         if (serviceUrl.toUpperCase().contains("WFSSERVER")) {
-            return GeoServerType.ArcGis;
+            return OgcServiceProviderType.ArcGis;
         }
-        return GeoServerType.GeoServer;
+        return OgcServiceProviderType.GeoServer;
     }
 }

@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.auscope.portal.core.server.GeoServerType;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -159,15 +159,15 @@ public class FilterBoundingBox implements Serializable {
      * @param southBoundLatitude
      * @param eastBoundLongitude
      * @param westBoundLongitude
-     * @param geoServerType
-     *            - GPT-74 - Need to change output depending on server {@link #parseFromValues(String, double, double, double, double, GeoServerType)}
+     * @param OgcServiceProviderType
+     *            - GPT-74 - Need to change output depending on server {@link #parseFromValues(String, double, double, double, double, OgcServiceProviderType)}
      * @return
      */
     public static FilterBoundingBox parseFromValues(String crs,
             double northBoundLatitude,
             double southBoundLatitude,
             double eastBoundLongitude,
-            double westBoundLongitude, GeoServerType geoServerType) {
+            double westBoundLongitude, OgcServiceProviderType OgcServiceProviderType) {
 
         if (eastBoundLongitude < -120) {
             eastBoundLongitude = 180 + (180 + eastBoundLongitude);
@@ -178,7 +178,7 @@ public class FilterBoundingBox implements Serializable {
         Double northSouthMin = Math.min(northBoundLatitude, southBoundLatitude);
         Double northSouthMax = Math.max(northBoundLatitude, southBoundLatitude);
 
-        if (geoServerType == GeoServerType.ArcGis) {
+        if (OgcServiceProviderType == OgcServiceProviderType.ArcGis) {
             return new FilterBoundingBox(crs,
                     new double[] {northSouthMin, eastWestMin},
                     new double[] {northSouthMax, eastWestMax});
@@ -196,13 +196,13 @@ public class FilterBoundingBox implements Serializable {
      *
      * @param obj
      *            the obj
-     * @param geoServerType
-     *            - GPT-74 - Need to change output depending on server {@link #parseFromValues(String, double, double, double, double, GeoServerType)}
+     * @param OgcServiceProviderType
+     *            - GPT-74 - Need to change output depending on server {@link #parseFromValues(String, double, double, double, double, OgcServiceProviderType)}
      * @return the filter bounding box
      * @throws Exception
      *             the exception
      */
-    public static FilterBoundingBox parseFromJSON(JSONObject obj, GeoServerType geoServerType) throws Exception {
+    public static FilterBoundingBox parseFromJSON(JSONObject obj, OgcServiceProviderType OgcServiceProviderType) throws Exception {
         // Our filter bbox can come in a couple of formats
         if (obj.containsKey("lowerCornerPoints") && obj.containsKey("upperCornerPoints")) {
             FilterBoundingBox result = new FilterBoundingBox(obj.getString("bboxSrs"), null, null);
@@ -237,7 +237,7 @@ public class FilterBoundingBox implements Serializable {
                     obj.getDouble("northBoundLatitude"),
                     obj.getDouble("southBoundLatitude"),
                     eastBound,
-                    obj.getDouble("westBoundLongitude"), geoServerType);
+                    obj.getDouble("westBoundLongitude"), OgcServiceProviderType);
         }
 
         throw new IllegalArgumentException("obj cannot be decoded");
@@ -248,16 +248,16 @@ public class FilterBoundingBox implements Serializable {
     /**
      * 
      * @param json
-     * @param geoServerType
-     *            - GPT-74 - Need to change output depending on server {@link #parseFromValues(String, double, double, double, double, GeoServerType)}
+     * @param OgcServiceProviderType
+     *            - GPT-74 - Need to change output depending on server {@link #parseFromValues(String, double, double, double, double, OgcServiceProviderType)}
      * @return
      */
-    public static FilterBoundingBox attemptParseFromJSON(String json, GeoServerType geoServerType) {
+    public static FilterBoundingBox attemptParseFromJSON(String json, OgcServiceProviderType OgcServiceProviderType) {
         FilterBoundingBox bbox = null;
         try {
             if (json != null && !json.isEmpty()) {
                 JSONObject obj = JSONObject.fromObject(json);
-                bbox = FilterBoundingBox.parseFromJSON(obj, geoServerType);
+                bbox = FilterBoundingBox.parseFromJSON(obj, OgcServiceProviderType);
                 log.debug("bbox=" + bbox.toString());
             } else {
                 log.debug("No bbox string, null will be returned");
@@ -274,13 +274,13 @@ public class FilterBoundingBox implements Serializable {
      * 
      * @return
      */
-    public String toJsonNewsFormat(GeoServerType geoServerType) {
+    public String toJsonNewsFormat(OgcServiceProviderType OgcServiceProviderType) {
         StringBuffer json = new StringBuffer("{");
 
         json.append("'crs':'" + getBboxSrs() + "'");
         json.append(",");
 
-        if (GeoServerType.ArcGis.equals(geoServerType)) {
+        if (OgcServiceProviderType.ArcGis.equals(OgcServiceProviderType)) {
             json.append("'northBoundLatitude':'").append(getUpperCornerPoints()[0]);
             json.append(",");
             json.append("'eastBoundLatitude':'").append(getUpperCornerPoints()[1]);

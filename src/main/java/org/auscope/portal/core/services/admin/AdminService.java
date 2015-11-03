@@ -9,7 +9,7 @@ import java.util.List;
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.auscope.portal.core.server.GeoServerType;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
@@ -235,8 +235,8 @@ public class AdminService {
             methodsToTest.add(methodMaker.makeGetMethod(serviceUrl, typeName, 1, null));
             endpointsToTest.add(endpoint);
 
-            GeoServerType geoServerType = GeoServerType.parseUrl(serviceUrl);
-            FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson, geoServerType);
+            OgcServiceProviderType ogcServiceProviderType = OgcServiceProviderType.parseUrl(serviceUrl);
+            FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson, ogcServiceProviderType);
 
             // Next make a slightly more complex BBOX filter (to ensure we have a spatial field set at the WFS)
             IFilter filter = new SimpleBBoxFilter();
@@ -299,8 +299,8 @@ public class AdminService {
 
             WMSMethodMaker methodMaker = new WMSMethodMaker(serviceCaller);
             String serviceUrl = endpoint.getEndpoint();
-            GeoServerType geoServerType = GeoServerType.parseUrl(serviceUrl);
-            FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson, geoServerType);
+            OgcServiceProviderType ogcServiceProviderType = OgcServiceProviderType.parseUrl(serviceUrl);
+            FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson, ogcServiceProviderType);
             final double north = bbox.getUpperCornerPoints()[1];
             final double south = bbox.getLowerCornerPoints()[1];
             final double east = bbox.getUpperCornerPoints()[0];

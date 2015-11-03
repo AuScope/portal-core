@@ -3,7 +3,7 @@ package org.auscope.portal.core.services;
 import java.util.Date;
 
 import org.apache.http.client.methods.HttpRequestBase;
-import org.auscope.portal.core.server.GeoServerType;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.SOSMethodMaker;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
@@ -65,8 +65,8 @@ public class TestSOSService extends PortalTestClass {
         final String sosUrl = "http://example.org/sos";
         final String request = "GetObservation";
         final String bboxFilter = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":154.1,\"westBoundLongitude\":112.8,\"southBoundLatitude\":-44.0,\"northBoundLatitude\":-8.9}";
-        final GeoServerType dummyGeoServerType = GeoServerType.ArcGis;
-        final FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter, dummyGeoServerType);
+        final OgcServiceProviderType dummyOgcServiceProviderType = OgcServiceProviderType.ArcGis;
+        final FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter, dummyOgcServiceProviderType);
 
         context.checking(new Expectations() {
             {
