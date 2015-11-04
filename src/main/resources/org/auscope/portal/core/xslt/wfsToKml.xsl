@@ -64,10 +64,6 @@
    <!-- MATCH ROOT FEATURECOLLECTION -->
    <!-- ================================================================= -->
    <xsl:template match="wfs:FeatureCollection">
-		<xsl:message>Version of xsl:</xsl:message>
-		<xsl:message select="system-property('xsl:version')" />
-		<xsl:message>The date is shown if XPath 2 is implemented:</xsl:message>
-		<xsl:message select="current-date()"/>
       <!--<kml xmlns="http://www.opengis.net/kml/2.2">-->
       <kml>
          <Document>
@@ -196,7 +192,7 @@
                   </xsl:call-template>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:call-template name="parseLongLatCoord">
+                  <xsl:call-template name="parseLatLongCoord">
                      <xsl:with-param name="coordinates" select="$coordinates"/>
                   </xsl:call-template>
                </xsl:otherwise>

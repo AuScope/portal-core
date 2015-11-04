@@ -60,7 +60,7 @@ public class PortalXSLTTransformer {
         TransformerFactory tFactory = new net.sf.saxon.TransformerFactoryImpl();
         log.debug("XSLT implementation in use: " + tFactory.getClass());
 
-        //Ensure we resolve resources locally
+        // Ensure we resolve resources locally
         tFactory.setURIResolver(new ResourceURIResolver(getClass()));
 
         // Use the TransformerFactory to instantiate updateCSWRecords
@@ -134,6 +134,7 @@ public class PortalXSLTTransformer {
         } finally {
             FileIOUtil.closeQuietly(xslt);
         }
-        return sw.toString();
+        String kml = sw.toString();
+        return kml;
     }
 }
