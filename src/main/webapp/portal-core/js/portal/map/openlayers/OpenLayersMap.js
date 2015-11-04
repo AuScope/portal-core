@@ -709,7 +709,9 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var node = Ext.get(divId).dom;
         var handler = function(e) {
             Ext.event.publisher.Dom.instance.onDelegatedEvent(e); //this is a private ExtJS function - it's likely to break on upgrade
-            Ext.event.publisher.Gesture.instance.onDelegatedEvent(e);
+            if (e.type !== 'click') {
+                Ext.event.publisher.Gesture.instance.onDelegatedEvent(e);
+            }
             return false;
         };
         node.addEventListener('mousedown', handler);
