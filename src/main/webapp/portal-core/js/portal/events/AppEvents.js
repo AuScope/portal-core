@@ -62,20 +62,19 @@ Ext.define('portal.events.AppEvents', {
       var id = listener.uniqueId; // Defined in js/admin/global.js
       var entry = {listener:listener,args:args};
       this.listeners[id]=entry;
-      console.log("AppEvents - addListner - id: "+id+", args: ", args, ", listener: ", listener)
+
   },
   removeListener : function (listener) {
       var id = listener.uniqueId; // Defined in js/admin/global.js
       if (this.listeners[id]) {
           delete this.listeners[id];
-          console.log("AppEvents - removeListener - id: ", id)
+          //console.log("AppEvents - removeListener - id: ", id)
       } else {
-          console.log("AppEvents - NOT removeListener as doesnt exist - id: ", id)
+          //console.log("AppEvents - NOT removeListener as doesnt exist - id: ", id)
       }
   },
   broadcast : function (event, args) {
       var me = this;
-      console.log("AppEvents - broadcast - event: ", event, ", args: ", args);
       //for (var listener in this.listeners) {
       Object.keys(this.listeners).forEach(function(id, index) {
           var listener=me.listeners[id].listener;
@@ -84,8 +83,7 @@ Ext.define('portal.events.AppEvents', {
           
 //          var theseArgs = (Array.isArray(args) || ! args) ? args : [args];
 //          var allArgs = listenerArgs ? (theseArgs ? listenerArgs.concat(theseArgs) : listenerArgs) : theseArgs ? theseArgs : [];
-          console.log("   AppEvents - broadcast - listener: ", listener);
-          console.log("            args: ",theArgs);
+
           listener.fireEvent(event, theArgs);
       },this.listeners);
   },
