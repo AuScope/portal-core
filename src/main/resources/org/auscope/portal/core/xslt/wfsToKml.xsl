@@ -60,10 +60,10 @@
    <xsl:variable name="mineServiceString"><![CDATA[service=WFS&version=1.1.0&request=GetFeature&typename=er:Mine&featureid=]]></xsl:variable>
    <xsl:variable name="minOccServiceString"><![CDATA[service=WFS&version=1.1.0&request=GetFeature&typename=er:MineralOccurrence&featureid=]]></xsl:variable>
    <xsl:variable name="gsmlGeoUnitString"><![CDATA[?service=WFS&version=1.1.0&request=GetFeature&typename=gsml:GeologicUnit&featureId=]]></xsl:variable>
+
    <!-- MATCH ROOT FEATURECOLLECTION -->
    <!-- ================================================================= -->
    <xsl:template match="wfs:FeatureCollection">
-
       <!--<kml xmlns="http://www.opengis.net/kml/2.2">-->
       <kml>
          <Document>
@@ -118,7 +118,7 @@
             <!-- This is so we can pickup where the node should be drawn -->
             <MultiGeometry>
                <xsl:apply-templates select="./descendant::gml:Polygon"/>
-               <xsl:apply-templates select="./descendant::gml:Multicurve"/>
+               <xsl:apply-templates select="./descendant::gml:MultiCurve"/>
                <xsl:apply-templates select="./descendant::gml:Point"/>
                <xsl:apply-templates select="./descendant::gml:MultiLineString"/>
             </MultiGeometry>
@@ -192,7 +192,7 @@
                   </xsl:call-template>
                </xsl:when>
                <xsl:otherwise>
-                  <xsl:call-template name="parseLongLatCoord">
+                  <xsl:call-template name="parseLatLongCoord">
                      <xsl:with-param name="coordinates" select="$coordinates"/>
                   </xsl:call-template>
                </xsl:otherwise>
