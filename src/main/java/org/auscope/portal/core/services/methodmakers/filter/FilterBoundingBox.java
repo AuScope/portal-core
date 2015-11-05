@@ -192,6 +192,27 @@ public class FilterBoundingBox implements Serializable {
     }
 
     /**
+     * Utility method for creating a new FilterBoundingBox from lat/long coordinate pairs. Take into account the geoserver providing the service.
+     * This one exists for backwards compatibility.
+     * 
+     * @param crs
+     * @param northBoundLatitude
+     * @param southBoundLatitude
+     * @param eastBoundLongitude
+     * @param westBoundLongitude
+     * @param OgcServiceProviderType
+     *            - GPT-74 - Need to change output depending on server {@link #parseFromValues(String, double, double, double, double, OgcServiceProviderType)}
+     * @return
+     */
+    public static FilterBoundingBox parseFromValues(String crs,
+            double northBoundLatitude,
+            double southBoundLatitude,
+            double eastBoundLongitude,
+            double westBoundLongitude) {
+        return parseFromValues(crs, northBoundLatitude, southBoundLatitude, eastBoundLongitude, westBoundLongitude, OgcServiceProviderType.GeoServer);
+    }
+
+    /**
      * TODO: Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
      *
      * @param obj
@@ -244,6 +265,21 @@ public class FilterBoundingBox implements Serializable {
 
     }
 
+    /**
+     * TODO: Temporary workaround for AUS-2309. Should replace parseFromJSON above in v2.11.1.
+     * 
+     * This version is for backwards compatibility.
+     *
+     * @param obj
+     *            the obj
+     * @return the filter bounding box
+     * @throws Exception
+     *             the exception
+     */
+    public static FilterBoundingBox parseFromJSON(JSONObject json) throws Exception {
+        return parseFromJSON(json, OgcServiceProviderType.GeoServer);
+    }
+    
     // TODO: remove after AUS:2309 is fixed
     /**
      * 
@@ -267,6 +303,16 @@ public class FilterBoundingBox implements Serializable {
         }
 
         return bbox;
+    }
+    
+    /**
+     * Method for backwards compatibility.
+     * 
+     * @param json
+     * @return
+     */
+    public static FilterBoundingBox attemptParseFromJSON(String json) {
+       return  attemptParseFromJSON(json, OgcServiceProviderType.GeoServer);
     }
 
     /**
