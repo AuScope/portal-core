@@ -250,7 +250,12 @@ Ext.define('portal.map.BaseMap', {
      *
      */
     closeInfoWindow : Ext.util.UnimplementedFunction,
-
+    
+    /**
+     * The layerStore has been updated and want to force a re-indexing of the LayerIndex (z-order of the layers).
+     */
+    updateLayerIndex : Ext.util.UnimplementedFunction,
+    
     ////////////////// Base functionality
 
     /**

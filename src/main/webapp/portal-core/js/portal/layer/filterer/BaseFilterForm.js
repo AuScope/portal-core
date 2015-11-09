@@ -41,6 +41,8 @@ Ext.define('portal.layer.filterer.BaseFilterForm', {
             cls : 'filter-panel-color'
         })
 
+        AppEvents.addListener(this);
+
         this.callParent(arguments);        
         
         if (!this.delayedFormLoading) {
@@ -84,5 +86,12 @@ Ext.define('portal.layer.filterer.BaseFilterForm', {
     readFromFilterer : function(filterer) {
         var parameters = filterer.getParameters();
         this.getForm().setValues(parameters);
+    },
+    
+    listeners : {
+        layerindexchanged : function() {
+            this.layer.reRenderLayerDisplay();
+        }
     }
+
 });

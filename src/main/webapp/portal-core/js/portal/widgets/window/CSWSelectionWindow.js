@@ -6,13 +6,14 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
     //this is the store of the personal panal.
     store : null,
     pageSize: 20,
-
+    
     constructor : function(cfg) {      
 
         var me = this;
+        
         //this is the store after filtering the registery.
-        var recordStore = cfg.filterStore
-
+        var recordStore = cfg.filterStore;
+        
         Ext.apply(cfg, {
             title: cfg.title,
             height: 500,
@@ -28,6 +29,16 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
 
             buttonAlign : 'right',
             buttons : [{
+                xtype : 'button',
+                text : 'Back to Search',
+                iconCls : 'magglass',
+                scope : this,
+                handler : function(button, e) {
+                    var cswFilterWindow = Ext.getCmp('cswFilterWindow');
+                    this.destroy();
+                    cswFilterWindow.show();
+                 }
+            }, {
                 xtype : 'button',
                 text : 'Add Selected Records',
                 iconCls : 'add',
@@ -58,6 +69,12 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
         //Call parent constructor
         CSWSelectionWindow.superclass.constructor.call(this, cfg);
 
+    },
+    
+    // overridden close method to obtain a reference to the search window and close it as well
+    close: function() {      
+        Ext.getCmp('cswFilterWindow').close();
+        this.destroy();
     }
 
 });

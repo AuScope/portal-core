@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.joda.time.DateTime;
+
 /**
  * Utility methods for date and time operations.
  * 
@@ -12,11 +14,7 @@ import java.util.TimeZone;
  */
 public class DateUtil {
     public static enum TimeField {
-        DAY,
-        HOUR,
-        MINUTE,
-        SECOND,
-        MILLISECOND;
+        DAY, HOUR, MINUTE, SECOND, MILLISECOND;
     }
 
     /**
@@ -94,4 +92,46 @@ public class DateUtil {
 
         return result;
     }
+
+    /**
+     * Gets a DateTime object using a formatted String.
+     * 
+     * @param dateString
+     *            in format: 28/02/2013
+     * @param endOfDay
+     *            false means the time will be 00:00:00:000 true means the time will be 23:59:59:999
+     * @return
+     */
+    public static DateTime stringToDateTime(String dateString, boolean endOfDay) {
+        String[] date = dateString.split("/");
+        return new DateTime(
+                Integer.parseInt(date[2]), // year
+                Integer.parseInt(date[1]), // monthOfYear
+                Integer.parseInt(date[0]), // dayOfMonth
+                endOfDay ? 23 : 0, // hourOfDay
+                endOfDay ? 59 : 0, // minuteOfHour
+                endOfDay ? 59 : 0, // secondOfMinute
+                endOfDay ? 999 : 0); // millisOfSecond
+    }
+
+    /**
+     * Gets a DateTime object using a year only. All other fields calculated based on whether it is the start or end of the year.
+     * 
+     * @param yearString
+     *            A String containing a year in format: 2013
+     * @param endOfYear
+     *            false means the date will be Jan 1st and the time will be 00:00:00:000 true means the date will be Dec 31st and the time will be 23:59:59:999
+     * @return
+     */
+    public static DateTime stringYearToDate(String yearString, boolean endOfYear) {
+        return new DateTime(
+                Integer.parseInt(yearString), // year
+                endOfYear ? 12 : 1, // monthOfYear
+                endOfYear ? 31 : 1, // dayOfMonth
+                endOfYear ? 23 : 0, // hourOfDay
+                endOfYear ? 59 : 0, // minuteOfHour
+                endOfYear ? 59 : 0, // secondOfMinute
+                endOfYear ? 999 : 0); // millisOfSecond
+    }
+
 }
