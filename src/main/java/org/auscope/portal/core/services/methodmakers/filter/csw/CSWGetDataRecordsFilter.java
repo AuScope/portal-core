@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.methodmakers.filter.AbstractFilter;
@@ -134,7 +135,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     private Type type;
     
     private SortType sortType;
-
+    
+    private String basicSearchTerm;
+    
     /**
      * Default constructor for creating a filter in a factory method manner.
      * Create an empty filter and set the fields manually. 
@@ -211,97 +214,111 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     private String generateFilterFragment() {
         List<String> fragments = new ArrayList<String>();
 
-        if (anyText != null && !anyText.isEmpty()) {
-            fragments.add(this.generatePropertyIsLikeFragment("anytext", this.anyText));
-        }
-
-        if (title != null && !title.isEmpty()) {
-            fragments.add(this.generatePropertyIsLikeFragment("title", this.title));
-        }
-
-        if (titleOrAbstract != null && !titleOrAbstract.isEmpty()) {
-            fragments.add(
-                generateOrComparisonFragment(
-                    this.generatePropertyIsLikeFragment("title", "*" + this.titleOrAbstract + "*"),
-                    this.generatePropertyIsLikeFragment("abstract", "*" + this.titleOrAbstract + "*")));
+        // if it is a basic search we'll use the basicSearchTerm field on some specific fields
+        if (basicSearchTerm != null && !basicSearchTerm.isEmpty()) {
+            fragments.add(generateOrComparisonFragment(
+                    this.generatePropertyIsLikeFragment("title", "*" + this.basicSearchTerm + "*"),
+                    this.generatePropertyIsLikeFragment("abstract", "*" + this.basicSearchTerm + "*"),
+                    this.generatePropertyIsLikeFragment("keywords", "*" + this.basicSearchTerm + "*"),
+                    this.generatePropertyIsLikeFragment("orgName", "*" + this.basicSearchTerm + "*"))
+            );
         }
         
-        if (authorSurname != null && !authorSurname.isEmpty()) {
-            fragments.add(generateAndComparisonFragment(
-                    this.generatePropertyIsLikeFragment("authorSurname", "*" + authorSurname + "*")));
-        }
+        // advanced search
+        else {
         
-        if (publicationDateFrom != null) {
-            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo(
-            		"publicationDate", 
-            		publicationDateFrom.toString()));
-        }
-
-        if (publicationDateTo != null) {
-            fragments.add(this.generatePropertyIsLessThanOrEqualTo(
-            		"publicationDate",
-            		publicationDateTo.toString()));
-        }
-
-        
-        if (type != null && type != Type.all) {
-            if (type == Type.dataset) {
-                fragments.add(this.generatePropertyIsEqualToFragment("type", "dataset"));
-            } else {
-                fragments.add(this.generatePropertyIsLikeFragment("type", "service"));
-            }
-        }
-
-        if (abstract_ != null && !abstract_.isEmpty()) {
-            fragments.add(this.generatePropertyIsLikeFragment("abstract", this.abstract_));
-        }
-
-        if (spatialBounds != null) {
-            fragments.add(this.generateBboxFragment(spatialBounds,
-                    "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement"));
-        }
-
-        if (keywords != null && keywords.length > 0) {
-            List<String> keywordFragments = new ArrayList<String>();
-            for (String keyword : keywords) {
-                if (keyword != null && !keyword.isEmpty()) {
-                    //keywordFragments.add(this.generatePropertyIsEqualToFragment("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString", keyword));
-                    keywordFragments.add(this.generatePropertyIsLikeFragment("keyword", "*" + keyword + "*"));
-                }
-            }
-
-            if (keywordMatchType == null || keywordMatchType == KeywordMatchType.All) {
-                fragments.add(this.generateAndComparisonFragment(keywordFragments.toArray(new String[keywordFragments
-                        .size()])));
-            } else {
-                fragments.add(this.generateOrComparisonFragment(keywordFragments.toArray(new String[keywordFragments
-                        .size()])));
-            }
-        }
-
-        if (capturePlatform != null && !capturePlatform.isEmpty()) {
-            fragments.add(this.generatePropertyIsEqualToFragment("capturePlatform", capturePlatform));
-        }
-
-        if (sensor != null && !sensor.isEmpty()) {
-            fragments.add(this.generatePropertyIsEqualToFragment("sensor", sensor));
-        }
-
-        if (temporalExtentFrom != null) {
-            fragments
-                    .add(this.generatePropertyIsGreaterThanOrEqualTo("TempExtent_begin", temporalExtentFrom.toString()));
-        }
-
-        if (temporalExtentTo != null) {
-            fragments.add(this.generatePropertyIsLessThanOrEqualTo("TempExtent_end", temporalExtentTo.toString()));
-        }
-
-        if (metadataChangeDateFrom != null) {
-            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("changeDate", metadataChangeDateFrom.toString()));
-        }
-
-        if (metadataChangeDateTo != null) {
-            fragments.add(this.generatePropertyIsLessThanOrEqualTo("changeDate", metadataChangeDateTo.toString()));
+	        if (anyText != null && !anyText.isEmpty()) {
+	            fragments.add(this.generatePropertyIsLikeFragment("anytext", this.anyText));
+	        }
+	
+	        if (title != null && !title.isEmpty()) {
+	            fragments.add(this.generatePropertyIsLikeFragment("title", this.title));
+	        }
+	
+	        if (titleOrAbstract != null && !titleOrAbstract.isEmpty()) {
+	            fragments.add(
+	                generateOrComparisonFragment(
+	                    this.generatePropertyIsLikeFragment("title", "*" + this.titleOrAbstract + "*"),
+	                    this.generatePropertyIsLikeFragment("abstract", "*" + this.titleOrAbstract + "*")));
+	        }
+	        
+	        if (authorSurname != null && !authorSurname.isEmpty()) {
+	            fragments.add(generateAndComparisonFragment(
+	                    this.generatePropertyIsLikeFragment("authorSurname", "*" + authorSurname + "*")));
+	        }
+	        
+	        if (publicationDateFrom != null) {
+	            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo(
+	            		"publicationDate", 
+	            		publicationDateFrom.toString()));
+	        }
+	
+	        if (publicationDateTo != null) {
+	            fragments.add(this.generatePropertyIsLessThanOrEqualTo(
+	            		"publicationDate",
+	            		publicationDateTo.toString()));
+	        }
+	
+	        
+	        if (type != null && type != Type.all) {
+	            if (type == Type.dataset) {
+	                fragments.add(this.generatePropertyIsEqualToFragment("type", "dataset"));
+	            } else {
+	                fragments.add(this.generatePropertyIsLikeFragment("type", "service"));
+	            }
+	        }
+	
+	        if (abstract_ != null && !abstract_.isEmpty()) {
+	            fragments.add(this.generatePropertyIsLikeFragment("abstract", this.abstract_));
+	        }
+	
+	        if (spatialBounds != null) {
+	            fragments.add(this.generateBboxFragment(spatialBounds,
+	                    "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement"));
+	        }
+	
+	        if (keywords != null && keywords.length > 0) {
+	            List<String> keywordFragments = new ArrayList<String>();
+	            for (String keyword : keywords) {
+	                if (keyword != null && !keyword.isEmpty()) {
+	                    //keywordFragments.add(this.generatePropertyIsEqualToFragment("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString", keyword));
+	                    keywordFragments.add(this.generatePropertyIsLikeFragment("keyword", "*" + keyword + "*"));
+	                }
+	            }
+	
+	            if (keywordMatchType == null || keywordMatchType == KeywordMatchType.All) {
+	                fragments.add(this.generateAndComparisonFragment(keywordFragments.toArray(new String[keywordFragments
+	                        .size()])));
+	            } else {
+	                fragments.add(this.generateOrComparisonFragment(keywordFragments.toArray(new String[keywordFragments
+	                        .size()])));
+	            }
+	        }
+	
+	        if (capturePlatform != null && !capturePlatform.isEmpty()) {
+	            fragments.add(this.generatePropertyIsEqualToFragment("capturePlatform", capturePlatform));
+	        }
+	
+	        if (sensor != null && !sensor.isEmpty()) {
+	            fragments.add(this.generatePropertyIsEqualToFragment("sensor", sensor));
+	        }
+	
+	        if (temporalExtentFrom != null) {
+	            fragments
+	                    .add(this.generatePropertyIsGreaterThanOrEqualTo("TempExtent_begin", temporalExtentFrom.toString()));
+	        }
+	
+	        if (temporalExtentTo != null) {
+	            fragments.add(this.generatePropertyIsLessThanOrEqualTo("TempExtent_end", temporalExtentTo.toString()));
+	        }
+	
+	        if (metadataChangeDateFrom != null) {
+	            fragments.add(this.generatePropertyIsGreaterThanOrEqualTo("changeDate", metadataChangeDateFrom.toString()));
+	        }
+	
+	        if (metadataChangeDateTo != null) {
+	            fragments.add(this.generatePropertyIsLessThanOrEqualTo("changeDate", metadataChangeDateTo.toString()));
+	        }
         }
 
         String fragment = this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
@@ -583,5 +600,13 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
 
 	public void setSortType(SortType sortType) {
 		this.sortType = sortType;
+	}
+
+	public String getBasicSearchTerm() {
+		return basicSearchTerm;
+	}
+
+	public void setBasicSearchTerm(String basicSearchTerm) {
+		this.basicSearchTerm = basicSearchTerm;
 	}
 }
