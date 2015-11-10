@@ -215,8 +215,8 @@ public class AdminService {
      * 
      * @param wfsEndpoints
      *            A list of wfs endpoint/wfs type name combinations
-     * @param bbox
-     *            A bounding box to constrain some requests
+     * @param bboxJson
+     *            A bounding box to constrain some requests.  In raw JSON format.
      * @return
      * @throws URISyntaxException
      */
@@ -272,14 +272,33 @@ public class AdminService {
 
         return diagnosticResponse;
     }
+    
+    /**
+     * Iterates through wfsEndpoints making 2 GetFeature requests to both. The first will be requesting the first feature, the second will do the same but
+     * constrained to bbox.  
+     * 
+     * This version is for backwards compatibility.
+     * 
+     * @param wfsEndpoints
+     *            A list of wfs endpoint/wfs type name combinations
+     * @param bboxJson
+     *            A bounding box to constrain some requests.
+     * @return
+     * @throws URISyntaxException
+     */
+    public AdminDiagnosticResponse wfsConnectivity(List<EndpointAndSelector> wfsEndpoints, FilterBoundingBox bbox)
+            throws URISyntaxException {
+        String json = bbox.toJsonNewsFormat(OgcServiceProviderType.GeoServer);
+        return wfsConnectivity(wfsEndpoints, json);
+    }
 
     /**
      * Iterates through wmsEndpoints making a simple GetMap and GetFeatureInfo request based on the specified bbox
      * 
      * @param wmsEndpoints
      *            The WMS endpoints to test
-     * @param bbox
-     *            The bounding box to test the map query
+     * @param bboxJson
+     *            The bounding box to test the map query, in raw JSON format.
      * @return
      * @throws URISyntaxException
      */
@@ -370,5 +389,20 @@ public class AdminService {
                 "Requesting map/feature info from %1$s different endpoint/layer combinations", wmsEndpoints.size()));
 
         return diagnosticResponse;
+    }
+    
+    /**
+     * Iterates through wmsEndpoints making a simple GetMap and GetFeatureInfo request based on the specified bbox
+     * 
+     * @param wmsEndpoints
+     *            The WMS endpoints to test
+     * @param bbox
+     *            The bounding box to test the map query.
+     * @return
+     * @throws URISyntaxException
+     */
+    public AdminDiagnosticResponse wmsConnectivity(List<EndpointAndSelector> wmsEndpoints, FilterBoundingBox bbox)
+            throws URISyntaxException {
+        return wmsConnectivity(wmsEndpoints, bbox.toJsonNewsFormat(OgcServiceProviderType.GeoServer));
     }
 }
