@@ -7,11 +7,34 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
     store : null,
     pageSize: 20,
 
+	buttons : [{
+	    xtype : 'button',
+	    text : 'Add Selected Records',
+	    iconCls : 'add',
+	    scope : this,
+	    handler : function(button, e) {
+	        var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
+	        var csw = cswPagingPanel.getSelectionModel().getSelection();
+	        this.fireEvent('selectioncomplete',csw);
+	     }
+	},{
+	    xtype : 'button',
+	    text : 'Add All Current Page Records',
+	    iconCls : 'addall',
+	    scope : this,
+	    handler : function(button, e) {
+	        var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
+	        var allStore = cswPagingPanel.getStore();
+	        var csw = allStore.getRange();
+	        this.fireEvent('selectioncomplete',csw);
+	     }
+	}],
+
     constructor : function(cfg) {      
 
         var me = this;
         
-        //this is the store after filtering the registry.
+        //this is the store after filtering the registery.
         var recordStore = cfg.filterStore;
                         
         Ext.apply(cfg, {
@@ -26,46 +49,24 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
                 items : cfg.resultpanels //VT: CSWRecordPagingPanel
             }],
 
-            buttonAlign : 'right',
-            buttons : [{
-                xtype : 'button',
-                text : 'Add Selected Records',
-                iconCls : 'add',
-                scope : this,
-                handler : function(button, e) {
-                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
-                    var csw = cswPagingPanel.getSelectionModel().getSelection();
-                    this.fireEvent('selectioncomplete',csw);
-                 }
-            },{
-                xtype : 'button',
-                text : 'Add All Current Page Records',
-                iconCls : 'addall',
-                scope : this,
-                handler : function(button, e) {
-                    var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
-                    var allStore = cswPagingPanel.getStore();
-                    var csw = allStore.getRange();
-                    this.fireEvent('selectioncomplete',csw);
+            buttonAlign : 'right'
 
-                 }
-
-            }]
         });
         
         //Call parent constructor
         CSWSelectionWindow.superclass.constructor.call(this, cfg);
+
     },
     
     // overridden close method to obtain a reference to the search window and close it as well
     close: function() {      
     	var cswFilterWindow = Ext.getCmp('cswFilterWindow');
     	if (cswFilterWindow) {
-    	    cswFilterWindow.close();
+    		cswFilterWindow.close();
     	}
-    	var cswSelectionWindow = Ext.getCmp('cswSelectionWindow');
-    	if (cswSelectionWindow) {
-    	    cswSelectionWindow.destroy();
+    	var searchResultsWindow = Ext.getCmp('cswSelectionWindow');
+    	if (searchResultsWindow) {
+    		searchResultsWindow.destroy();
     	}
     }
 
