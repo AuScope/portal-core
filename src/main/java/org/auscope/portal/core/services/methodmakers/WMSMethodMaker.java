@@ -406,6 +406,17 @@ public class WMSMethodMaker extends AbstractMethodMaker implements WMSMethodMake
             return false;
         }
     }
+    
+    /**
+     * 
+     * Same as accepts() above, but included for backward compatibility
+     */
+    @Override
+    public boolean accepts(String wmsUrl, String version) {
+        StringBuilder errStr = new StringBuilder();
+        return accepts(wmsUrl,version,errStr);
+    }
+    
 
     @Override
     public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method)

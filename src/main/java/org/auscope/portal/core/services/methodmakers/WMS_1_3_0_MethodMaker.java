@@ -357,6 +357,8 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
 
         return method;
     }
+    
+
 
     /**
      * Test whether wms 1.3.0 is accepted. Not sure if there is a better way of testing though.
@@ -421,6 +423,17 @@ public class WMS_1_3_0_MethodMaker extends AbstractMethodMaker implements WMSMet
             return false;
         }
     }
+    
+    /**
+     * 
+     * Same as accepts() above, but included for backward compatibility
+     */
+    @Override
+    public boolean accepts(String wmsUrl, String version) {
+        StringBuilder errStr = new StringBuilder();
+        return accepts(wmsUrl,version,errStr);
+    }
+    
 
     @Override
     public GetCapabilitiesRecord getGetCapabilitiesRecord(HttpRequestBase method) throws Exception {
