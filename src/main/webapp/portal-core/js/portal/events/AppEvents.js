@@ -62,15 +62,15 @@ Ext.define('portal.events.AppEvents', {
       var id = listener.uniqueId; // Defined in js/admin/global.js
       var entry = {listener:listener,args:args};
       this.listeners[id]=entry;
-      console.log("AppEvents - addListner - id: "+id+", args: ", args, ", listener: ", listener, " # listeners: ", Object.getOwnPropertyNames(this.listeners).length);
+//      console.log("AppEvents - addListner - id: "+id+", args: ", args, ", listener: ", listener, " # listeners: ", Object.getOwnPropertyNames(this.listeners).length);
   },
   removeListener : function (listener) {
       var id = listener.uniqueId; // Defined in js/admin/global.js
       if (this.listeners[id]) {
           delete this.listeners[id];
-          console.log("AppEvents - removeListener - id: ", id, " # listeners: ", Object.getOwnPropertyNames(this.listeners).length);
+//          console.log("AppEvents - removeListener - id: ", id, " # listeners: ", Object.getOwnPropertyNames(this.listeners).length);
       } else {
-          console.log("AppEvents - NOT removeListener as doesnt exist - id: ", id)
+//          console.log("AppEvents - NOT removeListener as doesnt exist - id: ", id)
       }
   },
   broadcast : function (event, args) {
@@ -86,7 +86,7 @@ Ext.define('portal.events.AppEvents', {
               listener.fireEvent(event, theArgs);
           } else {
               // Seems to be a timing thing - even though a removed listener it hangs around for a bit 
-              console.log("  WARNING - trying to broadcast to object without listener - id: ", id);
+//              console.log("  WARNING - trying to broadcast to object without listener - id: ", id);
           }
       },this.listeners);
   },
