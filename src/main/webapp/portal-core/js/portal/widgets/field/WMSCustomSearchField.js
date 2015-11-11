@@ -24,7 +24,7 @@ Ext.define('portal.widgets.field.WMSCustomSearchField', {
             search: {
                 cls: Ext.baseCSSPrefix + 'form-search-trigger',
                 handler: function() {
-                    this.searchClick();
+                    this.searchClick(false);
                 }
             }            
         });
@@ -32,7 +32,7 @@ Ext.define('portal.widgets.field.WMSCustomSearchField', {
         this.callParent(arguments);
         this.on('specialkey', function(f, e){
             if(e.getKey() == e.ENTER){
-                this.searchClick();
+                this.searchClick(false);
             }
         }, this);
     },
@@ -65,13 +65,17 @@ Ext.define('portal.widgets.field.WMSCustomSearchField', {
         store.removeAll();
     },
 
-    searchClick : function(){
+    searchClick : function(weakCheck){
         var me = this,
             store = me.store,
             proxy = store.getProxy(),
             value = me.getValue();
         this._clearLayerStore(store); 
         proxy.extraParams[me.paramName] = value;
+        // Forces website to avoid extra checking
+        if (weakCheck==true) {
+          proxy.extraParams['weakCheck'] = 'Y';
+        }
         store.loadPage(1);
         store.on('load',function(store, records, successful, eOpts){
             //VT:tracking            
