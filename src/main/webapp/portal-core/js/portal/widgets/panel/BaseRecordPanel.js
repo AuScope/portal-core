@@ -172,6 +172,11 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         AppEvents.addListener(me);
     },
     
+    onDestroy : function() {
+        AppEvents.removeListener(me);
+        me.callParent();
+    },
+
     _getInlineLayerPanel : function(filterForm, parentElId){                             
         var me = this;   
         var panel = Ext.create('portal.widgets.panel.FilterPanel', {    
