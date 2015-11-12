@@ -49,7 +49,6 @@
     <!-- Project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jetty.version>6.1.25</jetty.version>
         <jclouds.version>1.8.1</jclouds.version>
     </properties>
     <build>
@@ -163,23 +162,6 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <version>${jetty.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                        <version>${log4j.version}</version>
-                    </dependency>
-                </dependencies>
-                <configuration>
-                    <webApp>${project.build.directory}/${project.build.finalName}</webApp>
-                    <scanIntervalSeconds>9999</scanIntervalSeconds>
-                    <contextPath>/</contextPath>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
