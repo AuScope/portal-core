@@ -71,7 +71,6 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
             SAXException {
         try {
             Document doc = DOMUtil.buildDomFromStream(inXml);
-
             this.serviceType = getService(doc);
             this.organisation = getContactOrganisation(doc);
             this.getMapUrl = getGetMapUrl(doc);
@@ -80,7 +79,7 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
             if (isWMS()) {
                 this.layers = getWMSLayers(doc);
             } else {
-                log.debug("Adding non WMS's are not yet implimented");
+                log.debug("Adding non WMS's are not yet implemented");
             }
 
         } catch (SAXException e) {
@@ -92,6 +91,11 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
         } catch (ParserConfigurationException e) {
             log.error("Parser Config Error: " + e.getMessage());
             throw e;
+        } catch (NullPointerException e) {
+            // When parsing fails, it throws NullPointerException because 'doc' is null
+            // Throw a SAXException in its place
+            log.error("NullPointerException");
+            throw new SAXException("Cannot parse XML");
         }
     }
 
