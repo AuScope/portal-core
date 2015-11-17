@@ -51,6 +51,11 @@ Ext.define('portal.layer.filterer.BaseFilterForm', {
         }
     },
     
+    onDestroy : function() {
+        AppEvents.removeListener(this);
+        this.callParent();
+    },
+    
     setLayer : function(layer){
         this.layer = layer;
     },

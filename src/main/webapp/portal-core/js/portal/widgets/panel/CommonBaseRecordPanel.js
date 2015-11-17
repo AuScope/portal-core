@@ -45,6 +45,11 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         AppEvents.addListener(me);
     },
     
+    onDestroy : function() {
+        AppEvents.removeListener(me);
+        me.callParent();
+    },
+    
     //-------- Abstract methods requiring implementation ---------
 
     /**
