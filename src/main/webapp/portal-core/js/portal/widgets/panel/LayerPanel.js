@@ -309,8 +309,9 @@ Ext.define('portal.widgets.panel.LayerPanel', {
                 var win = Ext.create('Ext.window.Window', {
                     title       : 'Legend: '+ layer.get('name'),
                     layout      : 'fit',
-                    width       : 200,
-                    height      : 300,
+                    // this will be resized dynamically as legend content is added
+                    //                    width       : 200,
+                    //                    height      : 300,
                     items: form
                 });
                 return win.show();

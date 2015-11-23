@@ -17,6 +17,8 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
         var wmsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(config.resources, portal.csw.OnlineResource.WMS);
         var urlsFound=wmsOnlineResources.length;
         var urls={};
+        var dimensions = {maxWidth:0,height:0}; // Of all graphics so can resize window - accumulative height, max width
+        var me = this;
 
         for (var j = 0; j < wmsOnlineResources.length; j++) {
             portal.layer.legend.wms.WMSLegend.generateLegendUrl(
@@ -41,6 +43,8 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
                                 html += '<br/>\n';
                             });
                             config.form.setData(html);
+                            me._setFormHeight(config.form, url, dimensions);
+//                            config.form.setHeight(40);
                         }
                     });
             if(config.sld_body && config.sld_body.length > 0 && config.sld_body.length < 2000){
@@ -50,6 +54,21 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
             }
         }
 
+    },
+    
+    _setFormHeight : function(form, url, dimensions) {
+        var image = new Image(); 
+        image.onload = function(){
+            dimensions.height += image.height;
+            // Add extra to allow for spacing
+            dimensions.height += (dimensions.height * 0.02);
+            dimensions.maxWidth = Math.max(dimensions.maxWidth,image.width);
+            console.log("Image height x width: ", image.height, image.width, ", acc height x max Width: ", dimensions.height, dimensions.maxWidth);
+            form.setHeight(dimensions.height);
+            form.setWidth(dimensions.maxWidth);
+        };
+        image.src=url;
+//        "https://shijitht.files.wordpress.com/2010/08/github.png"
     }
 
 });
