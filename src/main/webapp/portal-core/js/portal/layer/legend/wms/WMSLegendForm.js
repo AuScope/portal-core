@@ -17,7 +17,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
         var wmsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(config.resources, portal.csw.OnlineResource.WMS);
         var urlsFound=wmsOnlineResources.length;
         var urls={};
-        var dimensions = {maxWidth:0,height:0}; // Of all graphics so can resize window - accumulative height, max width
+        var dimensions = {maxWidth:300,height:0}; // Of all graphics so can resize window - accumulative height, max width (allow for title)
         var me = this;
 
         for (var j = 0; j < wmsOnlineResources.length; j++) {
