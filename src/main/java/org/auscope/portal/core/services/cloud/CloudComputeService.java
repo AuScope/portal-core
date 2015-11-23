@@ -20,6 +20,8 @@ import org.auscope.portal.core.cloud.ComputeType;
 import org.auscope.portal.core.cloud.MachineImage;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.jclouds.ContextBuilder;
+import org.jclouds.aws.AWSResponseException;
+import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
@@ -29,8 +31,8 @@ import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.ec2.compute.options.EC2TemplateOptions;
-import org.jclouds.ec2.reference.EC2Constants;
+import org.jclouds.ec2.EC2Api;
+import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
@@ -52,15 +54,16 @@ public class CloudComputeService {
     public enum ProviderType {
         /** Connect to an Openstack instance via the Keystone Identity service */
         NovaKeystone,
-        /** Connect to an Openstack instance via the emulated EC2 endpoint */
-        NovaEc2,
+        /** Connect to an Amazon Web Services instance via EC2 */
+        AWSEc2,
     }
 
     private final Log logger = LogFactory.getLog(getClass());
 
     private ComputeService computeService;
     private ComputeServiceContext context;
-    private NovaApi lowLevelApi;
+    private NovaApi novaApi; //will be null for non nova API's
+    private EC2Api ec2Api; //will be null for non ec2 API's
     private Set<String> skippedZones = new HashSet<String>();
 
     private Predicate<NodeMetadata> terminateFilter;
@@ -90,6 +93,19 @@ public class CloudComputeService {
     private String secretKey;
     /** Cloud endpoint to connect to */
     private String endpoint;
+
+    /**
+     * Creates a new instance with the specified credentials (no endpoint specified - ensure provider type has a fixed endpoint)
+     *
+     * @param accessKey
+     *            The Compute Access key (user name)
+     * @param secretKey
+     *            The Compute Secret key (password)
+     *
+     */
+    public CloudComputeService(ProviderType provider, String accessKey, String secretKey) {
+        this(provider, null, accessKey, secretKey, null);
+    }
 
     /**
      * Creates a new instance with the specified credentials
@@ -128,12 +144,11 @@ public class CloudComputeService {
 
         String typeString = "";
         switch (provider) {
-        case NovaEc2:
-            typeString = "openstack-nova-ec2";
-            overrides.put(EC2Constants.PROPERTY_EC2_AUTO_ALLOCATE_ELASTIC_IPS, "false");
-            break;
         case NovaKeystone:
             typeString = "openstack-nova";
+            break;
+        case AWSEc2:
+            typeString = "aws-ec2";
             break;
         default:
             throw new IllegalArgumentException("Unsupported provider: " + provider.name());
@@ -141,7 +156,6 @@ public class CloudComputeService {
         this.provider = provider;
 
         ContextBuilder b = ContextBuilder.newBuilder(typeString)
-                .endpoint(endpoint)
                 .overrides(overrides)
                 .credentials(accessKey, secretKey);
 
@@ -149,8 +163,19 @@ public class CloudComputeService {
             b.apiVersion(apiVersion);
         }
 
-        //Terry -just in case...
-        this.lowLevelApi = b.buildApi(NovaApi.class);
+        if (endpoint != null) {
+            b.endpoint(endpoint);
+        }
+
+        //Setup our low level API's
+        switch (provider) {
+        case NovaKeystone:
+            this.novaApi = b.buildApi(NovaApi.class);
+            break;
+        case AWSEc2:
+            this.ec2Api = b.buildApi(EC2Api.class);
+            break;
+        }
 
         this.context = b.buildView(ComputeServiceContext.class);
         this.computeService = this.context.getComputeService();
@@ -159,11 +184,11 @@ public class CloudComputeService {
 
     }
 
-    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi lowLevelApi,
+    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi novaApi,
             Predicate<NodeMetadata> terminPredicate) {
         this.provider = provider;
         this.computeService = computeService;
-        this.lowLevelApi = lowLevelApi;
+        this.novaApi = novaApi;
         this.terminateFilter = terminPredicate;
     }
 
@@ -250,8 +275,8 @@ public class CloudComputeService {
         Set<? extends NodeMetadata> results = Collections.emptySet();
         NodeMetadata result;
 
-        if (provider == ProviderType.NovaEc2) {
-            options = ((EC2TemplateOptions) computeService.templateOptions())
+        if (provider == ProviderType.AWSEc2) {
+            options = ((AWSEC2TemplateOptions) computeService.templateOptions())
                     .keyPair(getKeypair())
                     .userData(userDataString.getBytes(Charset.forName("UTF-8")));
 
@@ -272,6 +297,14 @@ public class CloudComputeService {
                         "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
                                 + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
                                 + e.getMessage(), e);
+            } catch (AWSResponseException e) {
+                logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'",
+                        e.getMessage(), job));
+                logger.debug("Exception:", e);
+                throw new PortalServiceException(
+                        "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                                + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
+                                + e.getMessage(), e);
             }
             if (results.isEmpty()) {
                 logger.error("JClouds returned an empty result set. Treating it as job failure.");
@@ -280,11 +313,12 @@ public class CloudComputeService {
             }
             result = results.iterator().next();
 
-        }
-        else {
+            //Configure the instance to terminate on shutdown:
+            ec2Api.getInstanceApi().get().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null, result.getId(), InstanceInitiatedShutdownBehavior.TERMINATE);
+        } else {
             //Brute force anyone?
-            for (String location : lowLevelApi.getConfiguredZones()) {
-                Optional<? extends AvailabilityZoneApi> serverApi = lowLevelApi.getAvailabilityZoneApi(location);
+            for (String location : novaApi.getConfiguredZones()) {
+                Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
                 Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
                 for (AvailabilityZone currentZone : zones) {
@@ -346,6 +380,7 @@ public class CloudComputeService {
             }
 
         }
+
         logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
 
         return result.getId();
