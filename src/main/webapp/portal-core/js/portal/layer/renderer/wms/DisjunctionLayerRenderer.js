@@ -7,7 +7,7 @@ Ext.define('portal.layer.renderer.wms.DisjunctionLayerRenderer', {
     extend : 'portal.layer.renderer.Renderer',
 
     constructor : function(config) {
-        this.legend = Ext.create('portal.layer.legend.wfs.WMSLegend', {
+        this.legend = Ext.create('portal.layer.legend.wms.WMSLegend', {
             iconUrl : config.iconCfg ? config.iconCfg.url : 'portal-core/img/key.png'
         });
         this.callParent(arguments);
