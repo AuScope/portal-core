@@ -44,7 +44,6 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
                             });
                             config.form.setData(html);
                             me._setFormHeight(config.form, url, dimensions);
-//                            config.form.setHeight(40);
                         }
                     });
             if(config.sld_body && config.sld_body.length > 0 && config.sld_body.length < 2000){
