@@ -63,12 +63,10 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
             // Add extra to allow for spacing
             dimensions.height += (dimensions.height * 0.02);
             dimensions.maxWidth = Math.max(dimensions.maxWidth,image.width);
-            console.log("Image height x width: ", image.height, image.width, ", acc height x max Width: ", dimensions.height, dimensions.maxWidth);
             form.setHeight(dimensions.height);
             form.setWidth(dimensions.maxWidth);
         };
         image.src=url;
-//        "https://shijitht.files.wordpress.com/2010/08/github.png"
     }
 
 });
