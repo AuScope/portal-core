@@ -75,14 +75,14 @@ Ext.define('portal.events.AppEvents', {
   },
   broadcast : function (event, args) {
       var me = this;
-      console.log("AppEvents - broadcast - event: ", event, ", args: ", args);
+//      console.log("AppEvents - broadcast - event: ", event, ", args: ", args);
       Object.keys(this.listeners).forEach(function(id, index) {
           if (me.listeners[id]) {
               var listener=me.listeners[id].listener;
               var listenerArgs=me.listeners[id].args;
               var theArgs = me._combineArgs(args, listenerArgs);
-              console.log("   AppEvents - broadcast - listener: ", listener);
-              console.log("            args: ",theArgs);
+//              console.log("   AppEvents - broadcast - listener: ", listener);
+//              console.log("            args: ",theArgs);
               listener.fireEvent(event, theArgs);
           } else {
               // Seems to be a timing thing - even though a removed listener it hangs around for a bit 
