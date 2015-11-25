@@ -269,7 +269,7 @@ div.olControlSaveFeaturesItemInactive {
 
 .olFramedCloudPopupContent {
     padding: 5px;
-    overflow: auto;
+    overflow: hidden;
 }
 
 .olControlNoSelect {
@@ -277,12 +277,15 @@ div.olControlSaveFeaturesItemInactive {
  -khtml-user-select: none;
 }
 
-.olImageLoadError {
+/* .olImageLoadError {
     background-color: pink;
     opacity: 0.5;
-    filter: alpha(opacity=50); /* IE */
-}
+    filter: alpha(opacity=50); IE
+} */
 
+.olImageLoadError {
+   display: none !important;
+}
 /**
  * Cursor styles
  */
