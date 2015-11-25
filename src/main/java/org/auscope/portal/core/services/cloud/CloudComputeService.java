@@ -29,10 +29,9 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.ec2.EC2Api;
-import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
 import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
 import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
@@ -40,6 +39,15 @@ import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.openstack.OSFactory;
 
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.GetConsoleOutputRequest;
+import com.amazonaws.services.ec2.model.GetConsoleOutputResult;
+import com.amazonaws.services.ec2.model.InstanceAttributeName;
+import com.amazonaws.services.ec2.model.ModifyInstanceAttributeRequest;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -63,8 +71,9 @@ public class CloudComputeService {
     private ComputeService computeService;
     private ComputeServiceContext context;
     private NovaApi novaApi; //will be null for non nova API's
-    private EC2Api ec2Api; //will be null for non ec2 API's
+    private AmazonEC2Client ec2Api; //will be null for non ec2 API's
     private Set<String> skippedZones = new HashSet<String>();
+    private String zone; //can be null
 
     private Predicate<NodeMetadata> terminateFilter;
 
@@ -173,7 +182,7 @@ public class CloudComputeService {
             this.novaApi = b.buildApi(NovaApi.class);
             break;
         case AWSEc2:
-            this.ec2Api = b.buildApi(EC2Api.class);
+            this.ec2Api = new AmazonEC2Client(new BasicAWSCredentials(accessKey, secretKey));
             break;
         }
 
@@ -218,6 +227,30 @@ public class CloudComputeService {
     /** A group name that all jobs will be assigned to */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    /**
+     * Gets the region (if any) where this compute service will be restricted to run in
+     *
+     * Will be ignored if skipped zones is specified
+     * @return
+     */
+    public String getZone() {
+        return zone;
+    }
+
+    /**
+     * Sets the region (if any) where this compute service will be restricted to run in
+     *
+     * Will be ignored if skipped zones is specified
+     *
+     * @param zone
+     */
+    public void setZone(String zone) {
+        this.zone = zone;
+        if (this.ec2Api != null) {
+            this.ec2Api.setRegion(Region.getRegion(Regions.fromName(zone)));
+        }
     }
 
     /**
@@ -280,11 +313,16 @@ public class CloudComputeService {
                     .keyPair(getKeypair())
                     .userData(userDataString.getBytes(Charset.forName("UTF-8")));
 
-            Template template = computeService.templateBuilder()
+            TemplateBuilder tb = computeService.templateBuilder()
                     .imageId(job.getComputeVmId())
                     .hardwareId(job.getComputeInstanceType())
-                    .options(options)
-                    .build();
+                    .options(options);
+
+            if (this.zone != null) {
+                tb.locationId(zone);
+            }
+
+            Template template = tb.build();
 
             //Start up the job, we should have exactly 1 node start
             try {
@@ -314,9 +352,22 @@ public class CloudComputeService {
             result = results.iterator().next();
 
             //Configure the instance to terminate on shutdown:
-            ec2Api.getInstanceApi().get().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null, result.getId(), InstanceInitiatedShutdownBehavior.TERMINATE);
+            try {
+                ModifyInstanceAttributeRequest miar = new ModifyInstanceAttributeRequest(result.getId(), InstanceAttributeName.InstanceInitiatedShutdownBehavior);
+                miar.setValue("terminate");
+                ec2Api.modifyInstanceAttribute(miar);
+            } catch (AmazonClientException ex) {
+                //if we fail here - kill the instance, we don't want a floating VM sitting around
+                logger.error(String.format("Instance ID '%1$s' could NOT be set to terminate on shutdown: %2$s", result.getId(), ex.getMessage()));
+                logger.debug("Exception:", ex);
+                computeService.destroyNode(result.getId());
+                throw new PortalServiceException(
+                        "An unexpected error has occured while executing your job. There were problems when setting up the job in AWS. Please try again at a later date."
+                                ,"Please report it to cg-admin@csiro.au : "
+                                + ex.getMessage(), ex);
+            }
         } else {
-            //Brute force anyone?
+            //Iterate all regions
             for (String location : novaApi.getConfiguredZones()) {
                 Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
                 Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
@@ -489,21 +540,14 @@ public class CloudComputeService {
     }
 
     /**
-     * Will attempt to tail and return the last {@code numLines} from the given servers console.
-     *
+     * Gets console logs specifically for an OpenStack instance
+     * @param computeInstanceId
      * @param job
-     *            the job which has been executed by this service
      * @param numLines
-     *            the number of console lines to return
-     * @return console output as string or null
      * @return
+     * @throws PortalServiceException
      */
-    public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
-        String computeInstanceId = job.getComputeInstanceId();
-        if (computeInstanceId == null) {
-            return null;
-        }
-
+    private String getConsoleLogOpenStack(String computeInstanceId, CloudJob job, int numLines) throws PortalServiceException {
         try {
             String[] accessParts = this.accessKey.split(":");
             String[] idParts = computeInstanceId.split("/");
@@ -521,5 +565,51 @@ public class CloudComputeService {
             logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
             throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
         }
+    }
+
+    /**
+     * Gets console logs specifically for an AWS instance
+     * @param computeInstanceId
+     * @param job
+     * @param numLines
+     * @return
+     * @throws PortalServiceException
+     */
+    private String getConsoleLogAws(String computeInstanceId, CloudJob job, int numLines) throws PortalServiceException {
+        GetConsoleOutputRequest getConsoleOutputRequest = new GetConsoleOutputRequest(computeInstanceId);
+
+        try {
+            GetConsoleOutputResult result = ec2Api.getConsoleOutput(getConsoleOutputRequest);
+            return result.getDecodedOutput();
+        } catch (AmazonClientException ex) {
+            logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
+            throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
+        }
+    }
+
+    /**
+     * Will attempt to tail and return the last {@code numLines} from the given servers console.
+     *
+     * @param job
+     *            the job which has been executed by this service
+     * @param numLines
+     *            the number of console lines to return
+     * @return console output as string or null
+     * @return
+     */
+    public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
+        String computeInstanceId = job.getComputeInstanceId();
+        if (computeInstanceId == null) {
+            return null;
+        }
+
+        switch (provider) {
+        case NovaKeystone:
+            return getConsoleLogOpenStack(computeInstanceId, job, numLines);
+        case AWSEc2:
+            return getConsoleLogAws(computeInstanceId, job, numLines);
+        }
+
+        throw new PortalServiceException("Cannot get logs for provider type: " + provider);
     }
 }
