@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.cloud;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,9 +19,12 @@ import java.util.TimeZone;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.io.Charsets;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +32,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.namespaces.AWSEC2NamespaceContext;
+import org.auscope.portal.core.util.DOMUtil;
+import org.w3c.dom.Document;
 
 /**
  * This class was created due to our inability to use the AWS Java SDK due to a number of dependency clashes.
@@ -262,13 +269,23 @@ public class SimpleEC2Client {
     }
 
     /**
+     * Ensures that instanceId is not preceded by an optional AWS region string
+     * @param instanceId
+     * @return
+     */
+    private String extractInstanceId(String instanceId) {
+        String[] parts = instanceId.split("/");
+        return parts[parts.length - 1];
+    }
+
+    /**
      * Sets the instanceInitiatedShutdownBehavior attribute for a given running instance
      * @param instanceId
      * @param behaviour
      */
     public void setInstanceInitiatedShutdownBehaviour(String instanceId, InstanceInitiatedShutdownBehaviour behaviour) throws PortalServiceException {
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("InstanceId", instanceId);
+        params.put("InstanceId", extractInstanceId(instanceId));
         switch(behaviour) {
         case Stop:
             params.put("InstanceInitiatedShutdownBehavior.Value", "stop");
@@ -280,8 +297,12 @@ public class SimpleEC2Client {
 
         try {
             HttpGet request = makeRequest("ModifyInstanceAttribute", new Date(), params);
-            String response = httpService.getMethodResponseAsString(request);
-            if (!response.contains("<return>true</return>")) { //This could be so much more robust...
+            InputStream response = httpService.getMethodResponseAsStream(request);
+            Document responseDoc = DOMUtil.buildDomFromStream(response);
+            AWSEC2NamespaceContext nc = new AWSEC2NamespaceContext();
+            XPathExpression expr = DOMUtil.compileXPathExpr("/aws:ModifyInstanceAttributeResponse/aws:return", nc);
+            String returnedValue = (String) expr.evaluate(responseDoc, XPathConstants.STRING);
+            if (!returnedValue.toLowerCase().equals("true")) { //This could be so much more robust...
                 logger.debug("Error response from AWS: " + response);
                 throw new IOException("AWS has returned an error");
             }
@@ -299,7 +320,24 @@ public class SimpleEC2Client {
      * @throws PortalServiceException
      */
     public String getConsoleOutput(String instanceId) throws PortalServiceException {
-        throw new NotImplementedException();
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("InstanceId", extractInstanceId(instanceId));
+
+        try {
+            HttpGet request = makeRequest("GetConsoleOutput", new Date(), params);
+            InputStream response = httpService.getMethodResponseAsStream(request);
+            Document responseDoc = DOMUtil.buildDomFromStream(response);
+            AWSEC2NamespaceContext nc = new AWSEC2NamespaceContext();
+            XPathExpression expr = DOMUtil.compileXPathExpr("/aws:GetConsoleOutputResponse/aws:output", nc);
+
+            String content = (String) expr.evaluate(responseDoc, XPathConstants.STRING);
+            byte[] consoleBytes = Base64.decodeBase64(content);
+            return new String(consoleBytes, Charsets.UTF_8);
+        } catch (Exception ex) {
+            logger.error("Error setting instanceInitiatedShutdownBehavior for " + instanceId);
+            logger.debug("Exception: ", ex);
+            throw new PortalServiceException("Error setting instanceInitiatedShutdownBehavior for " + instanceId, ex);
+        }
     }
 
     public enum InstanceInitiatedShutdownBehaviour {

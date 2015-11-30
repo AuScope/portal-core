@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.cloud;
 
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,9 +8,14 @@ import java.util.TimeZone;
 
 import junit.framework.Assert;
 
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
+import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.cloud.SimpleEC2Client.InstanceInitiatedShutdownBehaviour;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.auscope.portal.core.test.ResourceUtil;
+import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -100,5 +106,50 @@ public class TestSimpleEC2Client extends PortalTestClass {
         String signature = client.generateAuthorizationHeader("5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7", date);
         String expectedSignature = "AWS4-HMAC-SHA256 Credential=AKIDEXAMPLE/20150830/us-east-1/iam/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=5d672d79c15b13162d9279b0855cfba6789a8edb4c82c400e06b5924a6f2b5d7";
         Assert.assertEquals(expectedSignature, signature);
+    }
+
+    @Test
+    public void testSetInstanceInitiatedShutdown() throws Exception {
+        final InputStream response = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/aws/modifyinstanceattribute-response-success.xml");
+
+        context.checking(new Expectations() {{
+            oneOf(httpService).getMethodResponseAsStream(with(any(HttpRequestBase.class)));will(returnValue(response));
+        }});
+
+        client.setInstanceInitiatedShutdownBehaviour("region/foo", InstanceInitiatedShutdownBehaviour.Terminate);
+    }
+
+    @Test(expected=PortalServiceException.class)
+    public void testSetInstanceInitiatedShutdownFailure() throws Exception {
+        final InputStream response = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/aws/modifyinstanceattribute-response-failure.xml");
+
+        context.checking(new Expectations() {{
+            oneOf(httpService).getMethodResponseAsStream(with(any(HttpRequestBase.class)));will(returnValue(response));
+        }});
+
+        client.setInstanceInitiatedShutdownBehaviour("region/foo", InstanceInitiatedShutdownBehaviour.Terminate);
+    }
+
+    @Test
+    public void testGetConsoleOutput() throws Exception {
+        final InputStream response = ResourceUtil.loadResourceAsStream("org/auscope/portal/core/aws/getconsoleoutput-response-success.xml");
+
+        context.checking(new Expectations() {{
+            oneOf(httpService).getMethodResponseAsStream(with(any(HttpRequestBase.class)));will(returnValue(response));
+        }});
+
+        String console = client.getConsoleOutput("region/foo");
+        String expected = "Linux version 2.6.16-xenU (builder@patchbat.amazonsa) (gcc version 4.0.1 20050727 (Red Hat 4.0.1-5)) #1 SMP Thu Oct 26 08:41:26 SAST 2006\n" +
+                            "BIOS-provided physical RAM map:\n" +
+                            "Xen: 0000000000000000 - 000000006a400000 (usable)\n" +
+                            "980MB HIGHMEM available.\n" +
+                            "727MB LOWMEM available.\n" +
+                            "NX (Execute Disable) protection: active\n" +
+                            "IRQ lockup detection disabled\n" +
+                            "Built 1 zonelists\n" +
+                            "Kernel command line: root=/dev/sda1 ro 4\n" +
+                            "Enabling fast FPU save and restore... done.\n";
+
+        Assert.assertEquals(expected, console);
     }
 }

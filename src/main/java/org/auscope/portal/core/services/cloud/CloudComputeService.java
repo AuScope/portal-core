@@ -374,7 +374,7 @@ public class CloudComputeService {
 
             //Configure the instance to terminate on shutdown:
             try {
-                ec2Api.setInstanceInitiatedShutdownBehaviour(result.getId().split("/")[1], InstanceInitiatedShutdownBehaviour.Terminate);
+                ec2Api.setInstanceInitiatedShutdownBehaviour(result.getId(), InstanceInitiatedShutdownBehaviour.Terminate);
             } catch (Exception ex) {
                 //if we fail here - kill the instance, we don't want a floating VM sitting around
                 logger.error(String.format("Instance ID '%1$s' could NOT be set to terminate on shutdown: %2$s", result.getId(), ex.getMessage()));
