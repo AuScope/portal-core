@@ -254,14 +254,13 @@ public class SimpleEC2Client {
      */
     public void setInstanceInitiatedShutdownBehaviour(String instanceId, InstanceInitiatedShutdownBehaviour behaviour) throws PortalServiceException {
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("Attribute", "instanceInitiatedShutdownBehavior");
         params.put("InstanceId", instanceId);
         switch(behaviour) {
         case Stop:
-            params.put("Value", "stop");
+            params.put("InstanceInitiatedShutdownBehavior.Value", "stop");
             break;
         case Terminate:
-            params.put("Value", "terminate");
+            params.put("InstanceInitiatedShutdownBehavior.Value", "terminate");
             break;
         }
 
