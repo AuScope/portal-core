@@ -319,6 +319,11 @@
     <!-- Dependencies -->
     <dependencies>
         <!-- Servlets 2.3 - JSTL 1.1 -->
+		<dependency>
+			<groupId>com.amazonaws</groupId>
+			<artifactId>aws-java-sdk-ec2</artifactId>
+			<version>1.10.37</version>
+		</dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
