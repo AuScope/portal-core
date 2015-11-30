@@ -75,18 +75,20 @@ public class CSWRecord {
     private boolean noCache;
 
     private boolean service;
-    
+
+    private String layerName = "";
+
     /**
      * Instantiates a new empty CSWRecord
      * 
      * @param fileIdentifier
      */
     public CSWRecord(String fileIdentifier) {
-        this(null, fileIdentifier, null, null, null, null);
-    }
+        this(null, fileIdentifier, null, null, null, null, "");
+    }   
 
     /**
-     * Instantiates a new cSW record.
+     * Instantiates a new CSW record.
      *
      * @param serviceName
      *            the service name
@@ -104,6 +106,28 @@ public class CSWRecord {
     public CSWRecord(String serviceName, String fileIdentifier,
             String recordInfoUrl, String dataIdentificationAbstract,
             AbstractCSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements) {
+    	this(serviceName, fileIdentifier, recordInfoUrl, dataIdentificationAbstract, onlineResources, cswGeographicsElements, "");
+    }
+    
+    /**
+     * Instantiates a new CSW record.
+     *
+     * @param serviceName
+     *            the service name
+     * @param fileIdentifier
+     *            the file identifier
+     * @param recordInfoUrl
+     *            the record info url
+     * @param dataIdentificationAbstract
+     *            the data identification abstract
+     * @param onlineResources
+     *            the online resources
+     * @param cswGeographicsElements
+     *            the csw geographics elements
+     */
+    public CSWRecord(String serviceName, String fileIdentifier,
+            String recordInfoUrl, String dataIdentificationAbstract,
+            AbstractCSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements, String layerName) {
         this.serviceName = serviceName;
         this.fileIdentifier = fileIdentifier;
         this.recordInfoUrl = recordInfoUrl;
@@ -115,7 +139,7 @@ public class CSWRecord {
         this.dataSetURIs = new String[0];
         this.constraints = new String[0];
         this.noCache = false;
-
+        this.layerName = layerName;
         logger.trace(this.toString());
     }
 
@@ -467,6 +491,20 @@ public class CSWRecord {
         return childRecords.size() > 0;
     }
 
+    /**
+     * @return the layerName
+     */
+    public String getLayerName() {
+        return layerName;
+    }
+
+    /**
+     * @param layerName the layerName to set
+     */
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -487,7 +525,7 @@ public class CSWRecord {
                 + ", language=" + language + ", constraints="
                 + Arrays.toString(constraints) + ", contact=" + contact
                 + ", date=" + date + ", childRecords="
-                + childRecords + "]";
+                + childRecords + ", layerName=" + layerName + "]";
     }
 
     /**
