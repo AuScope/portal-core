@@ -71,6 +71,8 @@ public class CSWRecord {
 
     private boolean noCache;
 
+    private String layerName;
+    
     /**
      * Instantiates a new empty CSWRecord
      * 
@@ -444,6 +446,20 @@ public class CSWRecord {
         return childRecords.size() > 0;
     }
 
+    /**
+     * @return the layerName
+     */
+    public String getLayerName() {
+        return layerName;
+    }
+
+    /**
+     * @param layerName the layerName to set
+     */
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
