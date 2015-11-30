@@ -55,6 +55,24 @@ public class TestSimpleEC2Client extends PortalTestClass {
     }
 
     @Test
+    public void testCanonicalRequestOrderedParams() throws Exception {
+        URIBuilder builder = new URIBuilder("http://iam.amazonaws.com/?Version=2010-05-08&Action=ListUsers&Foo=bar%2Fbaz");
+        String actualCanonicalRequest = client.generateCanonicalRequest(builder.build(), date, "");
+        String expectedCanoncialRequest =
+                "GET\n" +
+                "/\n" +
+                "Action=ListUsers&Foo=bar%2Fbaz&Version=2010-05-08\n" +
+                "content-type:application/x-www-form-urlencoded; charset=utf-8\n" +
+                "host:iam.amazonaws.com\n" +
+                "x-amz-date:20150830T123600Z\n" +
+                "\n" +
+                "content-type;host;x-amz-date\n" +
+                "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855";
+
+        Assert.assertEquals(expectedCanoncialRequest, actualCanonicalRequest);
+    }
+
+    @Test
     public void testStringToSign() throws Exception {
         String stringToSign = client.generateStringToSign(date, "f536975d06c0309214f805bb90ccff089219ecd68b2577efef23edd43b7e1a59");
         String expectedString =

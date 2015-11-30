@@ -9,6 +9,8 @@ import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
@@ -117,9 +120,9 @@ public class SimpleEC2Client {
 
     private String generateEndpoint() {
         if (region == null) {
-            return  "http://" + service + ".amazonaws.com/";
+            return  "https://" + service + ".amazonaws.com/";
         } else {
-            return "http://" + service + "." + region + ".amazonaws.com/";
+            return "https://" + service + "." + region + ".amazonaws.com/";
         }
     }
 
@@ -131,10 +134,21 @@ public class SimpleEC2Client {
      * @return
      */
     protected String generateCanonicalRequest(URI uri, Date date, String payload) {
+        //We sort our parameters into ascending order as per AWS requirements
+        String[] rawQueryParts = uri.getRawQuery().split("&");
+        Arrays.sort(rawQueryParts, new Comparator<String>() {
+            @Override
+            public int compare(String arg0, String arg1) {
+                String p0 = arg0.split("=")[0];
+                String p1 = arg1.split("=")[0];
+                return p0.compareTo(p1);
+            }
+        });
+
         StringBuilder canonicalRequest = new StringBuilder();
         canonicalRequest.append("GET\n"); //HTTPRequestMethod
         canonicalRequest.append("/\n"); //CanonicalURI
-        canonicalRequest.append(uri.getQuery()); //CanonicalQueryString
+        canonicalRequest.append(StringUtils.join(rawQueryParts, '&')); //CanonicalQueryString
         canonicalRequest.append("\n");
         canonicalRequest.append("content-type:");
         canonicalRequest.append(CONTENT_TYPE);
@@ -221,8 +235,8 @@ public class SimpleEC2Client {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(generateEndpoint());
-        builder.setParameter("action", action); //The access token I am getting after the Login
-        builder.setParameter("version", "2010-05-08");
+        builder.setParameter("Action", action); //The access token I am getting after the Login
+        builder.setParameter("Version", "2015-10-01");
         for (String key : params.keySet()) {
             builder.setParameter(key, params.get(key));
         }
@@ -242,7 +256,7 @@ public class SimpleEC2Client {
         method.setHeader("Host", host);
         method.setHeader("Content-Type", contentType);
         method.setHeader("X-Amz-Date", getISO8601DateString(date));
-        method.setHeader("Authorization", authorization.toString());
+        method.setHeader("Authorization", authorization);
         method.setURI(uri);
         return method;
     }
