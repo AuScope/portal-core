@@ -10,6 +10,7 @@ Ext.define('portal.widgets.field.ClientSearchField', {
 
     initComponent : function() {
         this.callParent(arguments);
+        this.store.setRemoteFilter(false);        
     },
 
     /**
