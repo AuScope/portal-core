@@ -21,8 +21,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import net.sf.saxon.xpath.XPathFactoryImpl;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -38,7 +36,7 @@ public class DOMUtil {
 
     /**
      * Utility for accessing a consistent DocumentBuilderFactory (irregardless of what is on the classpath)
-     * 
+     *
      * @return
      */
     private static DocumentBuilderFactory getDocumentBuilderFactory() {
@@ -48,8 +46,17 @@ public class DOMUtil {
     }
 
     /**
+     * Utility for accessing a consistent XPathFactory (irregardless of what is on the classpath)
+     *
+     * @return
+     */
+    private static XPathFactory getXPathFactory() {
+        return new net.sf.saxon.xpath.XPathFactoryImpl();
+    }
+
+    /**
      * Given a String containing XML, parse it and return a DOM object representation (that is namespace aware).
-     * 
+     *
      * @param xmlString
      *            A string containing valid XML
      * @return
@@ -61,7 +68,7 @@ public class DOMUtil {
 
     /**
      * Given a String containing XML, parse it and return a DOM object representation
-     * 
+     *
      * @param xmlString
      *            A string containing valid XML
      * @param isNamespaceAware
@@ -81,7 +88,7 @@ public class DOMUtil {
 
     /**
      * Given a Stream containing XML, parse it and return a DOM object representation (that is namespace aware).
-     * 
+     *
      * @param xmlString
      *            A string containing valid XML
      * @return
@@ -93,7 +100,7 @@ public class DOMUtil {
 
     /**
      * Given a Stream containing XML, parse it and return a DOM object representation (that is namespace aware).
-     * 
+     *
      * @param xmlString
      *            A string containing valid XML
      * @return
@@ -110,7 +117,7 @@ public class DOMUtil {
 
     /**
      * Given a DOM (sub)tree generate a string representation with no formatting
-     * 
+     *
      * @param node
      *            The node to generate the XML for
      * @param omitXmlDeclaration
@@ -140,7 +147,7 @@ public class DOMUtil {
 
     /**
      * Compiles the specified XPath (as a string) into an XPathExpression.
-     * 
+     *
      * @param xPathStr
      *            A string representing a valid XPath expression
      * @param nc
@@ -150,8 +157,7 @@ public class DOMUtil {
      */
     public static XPathExpression compileXPathExpr(String xPathStr, NamespaceContext nc)
             throws XPathExpressionException {
-        //Force the usage of the Saxon XPath library
-        XPathFactory factory = new XPathFactoryImpl();
+        XPathFactory factory = getXPathFactory();
         XPath xPath = factory.newXPath();
         xPath.setNamespaceContext(nc);
         return xPath.compile(xPathStr);
@@ -159,15 +165,14 @@ public class DOMUtil {
 
     /**
      * Compiles the specified XPath (as a string) into an XPathExpression.
-     * 
+     *
      * @param xPathStr
      *            A string representing a valid XPath expression
      * @return
      * @throws XPathExpressionException
      */
     public static XPathExpression compileXPathExpr(String xPathStr) throws XPathExpressionException {
-        //Force the usage of the Saxon XPath library
-        XPathFactory factory = XPathFactory.newInstance();
+        XPathFactory factory = getXPathFactory();
         XPath xPath = factory.newXPath();
         return xPath.compile(xPathStr);
     }
