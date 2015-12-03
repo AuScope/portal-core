@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.view.knownlayer.KnownLayer;
 import org.auscope.portal.core.view.knownlayer.KnownLayerAndRecords;
@@ -22,7 +23,7 @@ import org.auscope.portal.core.view.knownlayer.WMSSelectors;
  *
  */
 public class KnownLayerService {
-    Logger logger = Logger.getLogger(KnownLayerService.class);
+    private final Log logger = LogFactory.getLog(getClass().getName());
     private List<KnownLayer> knownLayers;
     private CSWCacheService cswCacheService;
 
