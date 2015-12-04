@@ -112,6 +112,7 @@ public class CSWRecord {
         this.constraints = new String[0];
         this.noCache = false;
         this.layerName = "";    // Prevents an NPE that must be occurring if this is not set and remains null.
+        // TODO - remove previous comment when GPT-103 NPE problem is worked out
 
         logger.trace(this.toString());
     }
