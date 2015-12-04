@@ -7,7 +7,11 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
     constructor: function(config){
         this.callParent(arguments);
     },
-
+    _generateErrorComponent : function(message) {
+        return Ext.create('portal.layer.querier.BaseComponent', {
+            html: Ext.util.Format.format('<p class="centeredlabel">{0}</p>', message)
+        });
+    },
     statics : {
         _parseArrayToString : function(arr, contentFunc){
 
@@ -50,6 +54,10 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
             callback : function(options, success, response) {
                 if(success){
                     var responseObj = Ext.JSON.decode(response.responseText);
+                    if (!responseObj.data) { //LJ: AUS-2598 ASTER mask hanging when server is down.
+                        callback(this, [this._generateErrorComponent('There was a problem when looking up the point')], queryTarget);
+                        return;
+                    }
                     var record = responseObj.data[0];
                     var spatialFunc=function(item) {
                         var s = '';
