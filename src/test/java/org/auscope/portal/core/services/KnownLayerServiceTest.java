@@ -291,15 +291,23 @@ public class KnownLayerServiceTest {
 //    }
 
     /**
-     * @param cswRecordList
-     * @return
+     * We have a bug related to GPT-103 Fix order of Anded Layers.  I'm investigating possible reasons (the stack trace isn't really helping and I can't reproduce it on my macine - it only happens on the server).
+     * 
+     * I'm investing what happens if CSWRecord.layer is null.  A use is:
+     * 
+     *             int indexInWMSSelectorsList = layerNames.indexOf(record.getLayerName());
+     *    
+     * Look at what various values do.
      */
-    private Iterable<String> getServiceNames(List<CSWRecord> cswRecordList) {
-        List<String> serviceNames = new ArrayList<>();
+    @Test
+    public void testIndexOfVariousValues() {
+        String nullString = null;
+        String emptyString = "";
+        String data = "blah blah blah";
         
-        for (CSWRecord cswRecord : cswRecordList) {
-            serviceNames.add(cswRecord.getServiceName());
-        }
-        return serviceNames;
+        // no problem
+        data.indexOf(emptyString);
+        // Gives an NPE - i think this is our problem.
+        data.indexOf(nullString);
     }
 }

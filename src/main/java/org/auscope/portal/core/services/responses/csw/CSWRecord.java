@@ -111,6 +111,7 @@ public class CSWRecord {
         this.descriptiveKeywords = new String[0];
         this.constraints = new String[0];
         this.noCache = false;
+        this.layerName = "";    // Prevents an NPE that must be occurring if this is not set and remains null.
 
         logger.trace(this.toString());
     }
