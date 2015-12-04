@@ -49,6 +49,13 @@ public class WMSSelectors implements KnownLayerSelector {
     }
 
     /**
+     * @return the wmsSelectors
+     */
+    public List<WMSSelector> getWmsSelectors() {
+        return wmsSelectors;
+    }
+
+    /**
      * @param layersMode
      *            the layersMode to set
      */

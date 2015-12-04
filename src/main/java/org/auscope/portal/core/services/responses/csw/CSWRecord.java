@@ -71,6 +71,8 @@ public class CSWRecord {
 
     private boolean noCache;
 
+    private String layerName;
+    
     /**
      * Instantiates a new empty CSWRecord
      * 
@@ -109,6 +111,8 @@ public class CSWRecord {
         this.descriptiveKeywords = new String[0];
         this.constraints = new String[0];
         this.noCache = false;
+        this.layerName = "";    // Prevents an NPE that must be occurring if this is not set and remains null.
+        // TODO - remove previous comment when GPT-103 NPE problem is worked out
 
         logger.trace(this.toString());
     }
@@ -444,6 +448,20 @@ public class CSWRecord {
         return childRecords.size() > 0;
     }
 
+    /**
+     * @return the layerName
+     */
+    public String getLayerName() {
+        return layerName;
+    }
+
+    /**
+     * @param layerName the layerName to set
+     */
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
+    }
+    
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
