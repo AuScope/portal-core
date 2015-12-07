@@ -123,7 +123,7 @@ Ext.define('portal.layer.Layer', {
         var results = [];
         var cswRecords=this.get('cswRecords');
         for(var i=0; i < cswRecords.length;i++){
-            if(cswRecords[i].containsOnlineResourceUrl(resourceURL)){
+            if(!cswRecords[i].containsOnlineResourceUrl || cswRecords[i].containsOnlineResourceUrl(resourceURL)){
                 results.push(cswRecords[i]);
             }            
         }

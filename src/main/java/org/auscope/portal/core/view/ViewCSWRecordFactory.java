@@ -37,7 +37,8 @@ public class ViewCSWRecordFactory {
         obj.put("recordInfoUrl", record.getRecordInfoUrl());
         obj.put("description", record.getDataIdentificationAbstract());
         obj.put("noCache", record.getNoCache());
-
+        obj.put("service", record.isService());
+        
         CSWResponsibleParty rp = record.getContact();
         String adminArea = null;
         String contactOrg = "Unknown";
