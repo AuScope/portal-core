@@ -34,11 +34,20 @@ public class CSWRecordTransformer {
     protected Node mdMetadataNode;
 
     protected static final String DATEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
-
+    
+    protected enum Scope {
+    	service, dataset
+    };
+    
     protected static final CSWNamespaceContext nc = new CSWNamespaceContext();
+    private static final String SERVICEIDENTIFICATIONPATH = "gmd:identificationInfo/srv:SV_ServiceIdentification";
+    private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/gmd:MD_DataIdentification";
+    private static final String TITLEEXPRESSION = "/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
+    
     private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
-    private static final String SERVICETITLEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
-    private static final String DATAIDENTIFICATIONABSTRACTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString";
+    private static final String SCOPEEXPRESSION = "gmd:hierarchyLevel/gmd:MD_ScopeCode/@codeListValue";    
+    private static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
+
     private static final String CONTACTEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty";
     private static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     private static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
@@ -531,8 +540,21 @@ public class CSWRecordTransformer {
         NodeList tempNodeList = null;
 
         //Parse our simple strings
-        record.setServiceName(evalXPathString(this.mdMetadataNode, SERVICETITLEEXPRESSION));
-        record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, DATAIDENTIFICATIONABSTRACTEXPRESSION));
+        Node scopeNode = evalXPathNode(this.mdMetadataNode, SCOPEEXPRESSION);
+        String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
+        
+        String identificationPath = null;
+        if (Scope.service.toString().equals(recordType)) {
+        	identificationPath = SERVICEIDENTIFICATIONPATH; 
+        	record.setService(true);
+        }
+        else {
+        	identificationPath = DATAIDENTIFICATIONPATH;
+        }
+      
+        record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));  	
+        record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
+
         record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION));
         record.setParentIdentifier(evalXPathString(this.mdMetadataNode, PARENTIDENTIFIEREXPRESSION));
         record.setSupplementalInformation(evalXPathString(this.mdMetadataNode, SUPPLEMENTALINFOEXPRESSION));
