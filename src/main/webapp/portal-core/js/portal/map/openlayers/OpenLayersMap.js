@@ -367,10 +367,15 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 })
             ],
             layers: [
+                     new OpenLayers.Layer.WMS (
+                         "World Political Boundaries",
+                         "http://www.ga.gov.au/gis/services/topography/World_Political_Boundaries_WM/MapServer/WMSServer",
+                         {layers: 'Countries'}
+                     ),
                      new OpenLayers.Layer.Google(
                              "Google Hybrid",
                              {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
-                         ),
+                     ),
                      new OpenLayers.Layer.Google(
                          "Google Physical",
                          {type: google.maps.MapTypeId.TERRAIN}
@@ -526,13 +531,13 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     // Draw the OpenLayers layers (eg. "Google Street View"/"Google Satellite") Controls (GPT-40 Active Layers)
     renderBaseMap : function(divId) {
         var me = this;
-        console.log("renderBaseMap - LAYERS")
+//        console.log("renderBaseMap - LAYERS")
         // Setup if map is defined else let map know to send this an event once created
         if (this.map) {
-            console.log("renderBaseMap - LAYERS - map NOT null: " + this.map + " - create LayerSwitcher (div: "+divId+")");
+//            console.log("renderBaseMap - LAYERS - map NOT null: " + this.map + " - create LayerSwitcher (div: "+divId+")");
             this._drawOpenLayerSwitcher(divId);
         } else {
-            console.log("renderBaseMap - LAYERS - map IS undefined - setup callback (div: "+divId+")");
+//            console.log("renderBaseMap - LAYERS - map IS undefined - setup callback (div: "+divId+")");
             // This object has a listener for 'mapcreated' events that are fired
             portal.events.AppEvents.addListener(me, {callback:this.renderBaseMap, divId:divId});
         }
@@ -545,7 +550,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             var theId = args.divId;
             var me = this;
             
-           console.log("OpenLayersMap - listener - mapCreated - theId: " +theId+", function: ", theFunction);
+//           console.log("OpenLayersMap - listener - mapCreated - theId: " +theId+", function: ", theFunction);
            theFunction.apply(me, [theId]);
         }
     },
