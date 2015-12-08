@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
@@ -179,7 +180,7 @@ public class TestAdminService extends PortalTestClass {
             }
         });
 
-        AdminDiagnosticResponse response = adminService.wfsConnectivity(endpoints, bbox);
+        AdminDiagnosticResponse response = adminService.wfsConnectivity(endpoints, bbox.toJsonCornersFormat());
         Assert.assertNotNull(response);
         Assert.assertEquals(1, response.getDetails().size()); //always 1 info block
         Assert.assertEquals(0, response.getWarnings().size());

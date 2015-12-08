@@ -9,6 +9,7 @@ import java.util.List;
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.CSWMethodMakerGetDataRecords;
@@ -67,10 +68,10 @@ public class AdminService {
 
             try {
                 HttpGet method = new HttpGet(urlString);
-                serviceCaller.getMethodResponseAsString(method); //we dont care about the response
+                serviceCaller.getMethodResponseAsString(method); // we dont care about the response
                 response.addDetail(String.format("Succesfully connected to %1$s via '%2$s'.", urlString, protocol));
             } catch (Exception ex) {
-                //We treat HTTP errors as critical, non http as warnings (such as https)
+                // We treat HTTP errors as critical, non http as warnings (such as https)
                 if (protocol.equals("http")) {
                     response.addError(String.format("Unable to connect to %1$s via http. The error was %2$s",
                             urlString, ex));
@@ -95,7 +96,7 @@ public class AdminService {
         AdminDiagnosticResponse response = new AdminDiagnosticResponse();
         final int numRecordsToRequest = 1;
 
-        //Iterate our configured registries performing a simple CSW request to ensure they are 'available'
+        // Iterate our configured registries performing a simple CSW request to ensure they are 'available'
         for (CSWServiceItem item : serviceItems) {
             InputStream responseStream = null;
             try {
@@ -106,10 +107,10 @@ public class AdminService {
             } catch (Exception ex) {
                 response.addError(String.format("Unable to request a CSW record from '%1$s': %2$s",
                         item.getServiceUrl(), ex));
-                continue; //dont parse the response if we don't have one
+                continue; // dont parse the response if we don't have one
             }
 
-            //Then test the response
+            // Then test the response
             try {
                 Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
                 OWSExceptionParser.checkForExceptionResponse(responseDoc);
@@ -180,7 +181,7 @@ public class AdminService {
             HttpRequestBase method = methods.get(i);
             EndpointAndSelector endpoint = endpoints.get(i);
 
-            //Check for blacklist
+            // Check for blacklist
             if (blacklistedUrls.contains(endpoint.getEndpoint())) {
                 diagnosticResponse
                         .addError(String
@@ -189,8 +190,8 @@ public class AdminService {
                 continue;
             }
 
-            //Make our request - offload testing to the validator and if there is a
-            //HTTP error, skip that endpoint for the rest of this test
+            // Make our request - offload testing to the validator and if there is a
+            // HTTP error, skip that endpoint for the rest of this test
             InputStream response = null;
             try {
                 response = serviceCaller.getMethodResponseAsStream(method);
@@ -214,27 +215,30 @@ public class AdminService {
      * 
      * @param wfsEndpoints
      *            A list of wfs endpoint/wfs type name combinations
-     * @param bbox
-     *            A bounding box to constrain some requests
+     * @param bboxJson
+     *            A bounding box to constrain some requests.  In raw JSON format.
      * @return
      * @throws URISyntaxException
      */
-    public AdminDiagnosticResponse wfsConnectivity(List<EndpointAndSelector> wfsEndpoints, FilterBoundingBox bbox)
+    public AdminDiagnosticResponse wfsConnectivity(List<EndpointAndSelector> wfsEndpoints, String bboxJson)
             throws URISyntaxException {
         List<HttpRequestBase> methodsToTest = new ArrayList<HttpRequestBase>();
         List<EndpointAndSelector> endpointsToTest = new ArrayList<EndpointAndSelector>();
 
-        //Iterate our service urls, making a basic WFS GetFeature and more complicated BBOX request to each
+        // Iterate our service urls, making a basic WFS GetFeature and more complicated BBOX request to each
         WFSGetFeatureMethodMaker methodMaker = new WFSGetFeatureMethodMaker();
         for (EndpointAndSelector endpoint : wfsEndpoints) {
             String serviceUrl = endpoint.getEndpoint();
             String typeName = endpoint.getSelector();
 
-            //Make a request for a single feature, no filter
+            // Make a request for a single feature, no filter
             methodsToTest.add(methodMaker.makeGetMethod(serviceUrl, typeName, 1, null));
             endpointsToTest.add(endpoint);
 
-            //Next make a slightly more complex BBOX filter (to ensure we have a spatial field set at the WFS)
+            OgcServiceProviderType ogcServiceProviderType = OgcServiceProviderType.parseUrl(serviceUrl);
+            FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson, ogcServiceProviderType);
+
+            // Next make a slightly more complex BBOX filter (to ensure we have a spatial field set at the WFS)
             IFilter filter = new SimpleBBoxFilter();
             String filterString = filter.getFilterStringBoundingBox(bbox);
             methodsToTest.add(methodMaker.makePostMethod(serviceUrl, typeName, filterString, 1, bbox.getBboxSrs(),
@@ -262,11 +266,30 @@ public class AdminService {
                     }
                 });
 
-        //Some nice statistical info
+        // Some nice statistical info
         diagnosticResponse.addDetail(String.format("Testing %1$s different endpoint/type name combinations",
                 wfsEndpoints.size()));
 
         return diagnosticResponse;
+    }
+    
+    /**
+     * Iterates through wfsEndpoints making 2 GetFeature requests to both. The first will be requesting the first feature, the second will do the same but
+     * constrained to bbox.  
+     * 
+     * This version is for backwards compatibility.
+     * 
+     * @param wfsEndpoints
+     *            A list of wfs endpoint/wfs type name combinations
+     * @param bboxJson
+     *            A bounding box to constrain some requests.
+     * @return
+     * @throws URISyntaxException
+     */
+    public AdminDiagnosticResponse wfsConnectivity(List<EndpointAndSelector> wfsEndpoints, FilterBoundingBox bbox)
+            throws URISyntaxException {
+        String json = bbox.toJsonNewsFormat(OgcServiceProviderType.GeoServer);
+        return wfsConnectivity(wfsEndpoints, json);
     }
 
     /**
@@ -274,49 +297,52 @@ public class AdminService {
      * 
      * @param wmsEndpoints
      *            The WMS endpoints to test
-     * @param bbox
-     *            The bounding box to test the map query
+     * @param bboxJson
+     *            The bounding box to test the map query, in raw JSON format.
      * @return
      * @throws URISyntaxException
      */
-    public AdminDiagnosticResponse wmsConnectivity(List<EndpointAndSelector> wmsEndpoints, FilterBoundingBox bbox)
+    public AdminDiagnosticResponse wmsConnectivity(List<EndpointAndSelector> wmsEndpoints, String bboxJson)
             throws URISyntaxException {
         List<HttpRequestBase> methodsToTest = new ArrayList<HttpRequestBase>();
         List<EndpointAndSelector> endpointsToTest = new ArrayList<EndpointAndSelector>();
 
-        //Set our constants
+        // Set our constants
         final String imageMimeType = "image/png";
         final String infoMimeType = "text/html";
         final int width = 128;
         final int height = width;
-        final double north = bbox.getUpperCornerPoints()[1];
-        final double south = bbox.getLowerCornerPoints()[1];
-        final double east = bbox.getUpperCornerPoints()[0];
-        final double west = bbox.getLowerCornerPoints()[0];
 
-        //Build our request methods
+        // Build our request methods
         for (EndpointAndSelector endpoint : wmsEndpoints) {
 
             WMSMethodMaker methodMaker = new WMSMethodMaker(serviceCaller);
+            String serviceUrl = endpoint.getEndpoint();
+            OgcServiceProviderType ogcServiceProviderType = OgcServiceProviderType.parseUrl(serviceUrl);
+            FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxJson, ogcServiceProviderType);
+            final double north = bbox.getUpperCornerPoints()[1];
+            final double south = bbox.getLowerCornerPoints()[1];
+            final double east = bbox.getUpperCornerPoints()[0];
+            final double west = bbox.getLowerCornerPoints()[0];
 
-            //Make a GetMap request
+            // Make a GetMap request
             methodsToTest.add(methodMaker.getMapMethod(endpoint.getEndpoint(), endpoint.getSelector(), imageMimeType,
                     bbox.getBboxSrs(), west, south, east, north, width, height, null, null));
             endpointsToTest.add(endpoint);
 
-            //Make a GetFeatureInfo request
+            // Make a GetFeatureInfo request
             methodsToTest.add(methodMaker.getFeatureInfo(endpoint.getEndpoint(), infoMimeType, endpoint.getSelector(),
                     bbox.getBboxSrs(), west, south, east, north, width, height, west, north, 0, 0, null, null, "0"));
             endpointsToTest.add(endpoint);
         }
 
-        //Validate the methods by comparing the response Content-Type header
+        // Validate the methods by comparing the response Content-Type header
         AdminDiagnosticResponse diagnosticResponse = httpMethodValidator(methodsToTest, endpointsToTest,
                 new ResponseValidator() {
                     @Override
                     public void validateResponse(InputStream response, HttpRequestBase callingMethod,
                             EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
-                        //We need the URL
+                        // We need the URL
                         String uriString = "";
                         try {
                             uriString = callingMethod.getURI().toString();
@@ -327,7 +353,7 @@ public class AdminService {
                             return;
                         }
 
-                        //What sort of request is this?
+                        // What sort of request is this?
                         String requestType = "unknown";
                         String expectedContentType = "";
                         if (uriString.contains("request=GetMap")) {
@@ -338,7 +364,7 @@ public class AdminService {
                             expectedContentType = infoMimeType;
                         }
 
-                        //Validate content type
+                        // Validate content type
                         try {
                             Header contentType = callingMethod.getFirstHeader("Content-Type");
                             if (contentType == null) {
@@ -363,5 +389,20 @@ public class AdminService {
                 "Requesting map/feature info from %1$s different endpoint/layer combinations", wmsEndpoints.size()));
 
         return diagnosticResponse;
+    }
+    
+    /**
+     * Iterates through wmsEndpoints making a simple GetMap and GetFeatureInfo request based on the specified bbox
+     * 
+     * @param wmsEndpoints
+     *            The WMS endpoints to test
+     * @param bbox
+     *            The bounding box to test the map query.
+     * @return
+     * @throws URISyntaxException
+     */
+    public AdminDiagnosticResponse wmsConnectivity(List<EndpointAndSelector> wmsEndpoints, FilterBoundingBox bbox)
+            throws URISyntaxException {
+        return wmsConnectivity(wmsEndpoints, bbox.toJsonNewsFormat(OgcServiceProviderType.GeoServer));
     }
 }

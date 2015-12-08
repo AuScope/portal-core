@@ -24,7 +24,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
         // give it a wms legend.
 
         if(config.icon.getIsDefault()===true){
-            this.legend = Ext.create('portal.layer.legend.wfs.WMSLegend', {
+            this.legend = Ext.create('portal.layer.legend.wms.WMSLegend', {
                 iconUrl : config.iconCfg ? config.iconCfg.url : 'portal-core/img/key.png'
             });
         }else{
@@ -308,7 +308,6 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
                  if (this.currentRequestCount === 0) {                     
                      this.fireEvent('renderfinished', this);
                  }
-                           
             }
         });
         

@@ -12,7 +12,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+//import org.apache.http.HttpStatus;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.config.RequestConfig;
@@ -20,7 +21,8 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.client.config.RequestConfig;
+import org.apache.commons.httpclient.HttpException;
+
 
 /**
  * Utility class used to call web service end points.
@@ -94,7 +96,6 @@ public class HttpServiceCaller {
     public InputStream getMethodResponseAsStream(HttpRequestBase method, HttpClient client) throws Exception {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
-
         return httpResponse.getEntity().getContent();
     }
 
@@ -122,7 +123,7 @@ public class HttpServiceCaller {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
 
-        //get the reponse before we close the connection
+        //get the response before we close the connection
         byte[] response = IOUtils.toByteArray(httpResponse.getEntity().getContent());
 
         //release the connection
@@ -168,13 +169,14 @@ public class HttpServiceCaller {
 
         // make the call
         HttpResponse response = httpClient.execute(method);
-
+            
         int statusCode = response.getStatusLine().getStatusCode();
+        String statusCodeText = HttpStatus.getStatusText(statusCode);
+        log.trace("Status code text: '"+statusCodeText+"'");
 
         if (statusCode != HttpStatus.SC_OK &&
                 statusCode != HttpStatus.SC_CREATED &&
                 statusCode != HttpStatus.SC_ACCEPTED) {
-            log.error(response.getStatusLine());
 
             // if it's unavailable then throw connection exception
             if (statusCode == HttpStatus.SC_SERVICE_UNAVAILABLE) {
@@ -184,8 +186,10 @@ public class HttpServiceCaller {
             String responseBody = responseToString(response.getEntity().getContent());
 
             // if the response is not OK then throw an error
-            throw new Exception("Returned status line: " + response.getStatusLine() +
+            
+            log.error("Returned status line: " + response.getStatusLine() +
                     System.getProperty("line.separator") + "Returned response body: " + responseBody);
+            throw new HttpException(statusCodeText);
         } else {
             return response;
         }

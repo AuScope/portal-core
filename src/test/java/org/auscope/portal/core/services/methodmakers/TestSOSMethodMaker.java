@@ -11,6 +11,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.util.DOMUtil;
@@ -133,7 +134,7 @@ public class TestSOSMethodMaker extends PortalTestClass {
         final Date today = new Date(System.currentTimeMillis());
         final Date yesterday = new Date(System.currentTimeMillis() - oneDay);
         final String bboxFilter = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":154.1,\"westBoundLongitude\":112.8,\"southBoundLatitude\":-44.0,\"northBoundLatitude\":-8.9}";
-        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter);
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter, OgcServiceProviderType.GeoServer);
 
         SOSMethodMaker sosMM = new SOSMethodMaker();
 
@@ -151,7 +152,7 @@ public class TestSOSMethodMaker extends PortalTestClass {
         final Date today = new Date(System.currentTimeMillis());
         final Date yesterday = new Date(System.currentTimeMillis() - oneDay);
         final String bboxFilter = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":154.1,\"westBoundLongitude\":112.8,\"southBoundLatitude\":-44.0,\"northBoundLatitude\":-8.9}";
-        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter);
+        FilterBoundingBox bbox = FilterBoundingBox.attemptParseFromJSON(bboxFilter, OgcServiceProviderType.GeoServer);
 
         SOSMethodMaker sosMM = new SOSMethodMaker();
 

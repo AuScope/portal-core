@@ -1,18 +1,10 @@
 package org.auscope.portal.core.server.controllers;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpEntity;
@@ -20,9 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.entity.StringEntity;
-import org.auscope.portal.core.server.http.download.DownloadResponse;
 import org.auscope.portal.core.services.PortalServiceException;
-import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.view.JSONView;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
@@ -157,7 +147,7 @@ public abstract class BasePortalController {
 
         if (kml == null || kml.isEmpty()) {
             log.error("Transform failed");
-            log.trace(gml);
+            log.error("Input GML: "+gml);
             return generateJSONResponseMAV(false, null, OPERATION_FAILED);
         }
 

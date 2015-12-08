@@ -1,9 +1,11 @@
 package org.auscope.portal.core.services.methodmakers.filter;
 
-import junit.framework.Assert;
-
+import org.auscope.portal.core.server.OgcServiceProviderType;
 import org.auscope.portal.core.test.PortalTestClass;
+import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * Unit tests for FilterBoundingBox
@@ -40,8 +42,8 @@ public class TestFilterBoundingBox extends PortalTestClass {
         String bbox1Json = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":160,\"westBoundLongitude\":110,\"southBoundLatitude\":-47,\"northBoundLatitude\":-3}";
         String bbox2Json = "{\"bboxSrs\":\"EPSG:4326\",\"lowerCornerPoints\":[110,-47],\"upperCornerPoints\":[160,-3]}";
 
-        FilterBoundingBox bbox1 = FilterBoundingBox.attemptParseFromJSON(bbox1Json);
-        FilterBoundingBox bbox2 = FilterBoundingBox.attemptParseFromJSON(bbox2Json);
+        FilterBoundingBox bbox1 = FilterBoundingBox.attemptParseFromJSON(bbox1Json, OgcServiceProviderType.GeoServer);
+        FilterBoundingBox bbox2 = FilterBoundingBox.attemptParseFromJSON(bbox2Json, OgcServiceProviderType.GeoServer);
 
         assertBBoxEquals(expected, bbox1, 0.001);
         assertBBoxEquals(expected, bbox2, 0.001);
@@ -55,7 +57,7 @@ public class TestFilterBoundingBox extends PortalTestClass {
     @Test
     public void testParseBBoxError() throws Exception {
         String errorJson = "{\"crs\":\"EPSG:4326\",\"dne\":160,\"westBoundLongitude\":110,\"southBoundLatitude\":-47,\"northBoundLatitude\":-3}";
-        Assert.assertNull(FilterBoundingBox.attemptParseFromJSON(errorJson));
+        Assert.assertNull(FilterBoundingBox.attemptParseFromJSON(errorJson, OgcServiceProviderType.GeoServer));
     }
 
     /**
@@ -68,8 +70,43 @@ public class TestFilterBoundingBox extends PortalTestClass {
         FilterBoundingBox expected = new FilterBoundingBox("EPSG:4326", new double[] {160, -47}, new double[] {190, -3});
         String bbox1Json = "{\"crs\":\"EPSG:4326\",\"eastBoundLongitude\":-170,\"westBoundLongitude\":160,\"southBoundLatitude\":-47,\"northBoundLatitude\":-3}";
 
-        FilterBoundingBox bbox1 = FilterBoundingBox.attemptParseFromJSON(bbox1Json);
+        FilterBoundingBox bbox1 = FilterBoundingBox.attemptParseFromJSON(bbox1Json, OgcServiceProviderType.GeoServer);
 
         assertBBoxEquals(expected, bbox1, 0.001);
     }
+    
+    private StringBuffer json = new StringBuffer();
+    private double north = 20.0;
+    private double south = -20.0;
+    private double east = 40.0;
+    private double west = 2.0;
+    
+    @Before
+    public void init() {
+        json.append("{");
+        json.append("'crs':'EPSG:4326',");
+        json.append("'northBoundLatitude':'"+north+"',");
+        json.append("'southBoundLatitude':'"+south+"',");
+        json.append("'eastBoundLongitude':'"+east+"',");
+        json.append("'westBoundLongitude':'"+west+"'");
+        json.append("}");
+    }
+    
+    @Test
+    public void testAttemptParseFromJSONArcGis() {
+        FilterBoundingBox fbb =  FilterBoundingBox.attemptParseFromJSON(json.toString(), OgcServiceProviderType.ArcGis);
+        Assert.assertEquals(fbb.getLowerCornerPoints()[0], south);
+        Assert.assertEquals(fbb.getLowerCornerPoints()[1], west);
+        Assert.assertEquals(fbb.getUpperCornerPoints()[0],north);
+        Assert.assertEquals(fbb.getUpperCornerPoints()[1],east);
+    }
+    @Test
+    public void testAttemptParseFromJSONGeoserver() {
+        FilterBoundingBox fbb =  FilterBoundingBox.attemptParseFromJSON(json.toString(), OgcServiceProviderType.GeoServer);
+        Assert.assertEquals(fbb.getLowerCornerPoints()[0], west);
+        Assert.assertEquals(fbb.getLowerCornerPoints()[1], south);
+        Assert.assertEquals(fbb.getUpperCornerPoints()[0], east);
+        Assert.assertEquals(fbb.getUpperCornerPoints()[1], north);
+    }
+
 }

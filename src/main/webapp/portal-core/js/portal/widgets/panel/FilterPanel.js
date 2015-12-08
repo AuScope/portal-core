@@ -7,6 +7,7 @@
  *
  * VT: THIS CLASS IS TO BE DELETED WITH THE NEW INLINE UI
  */
+
 Ext.define('portal.widgets.panel.FilterPanel', {
     extend: 'Ext.panel.Panel',
 
@@ -17,10 +18,14 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     
     constraintShown : false,
     
+    optionsButtonIsHidden : false,
+    
     /**
      * Accepts all parameters for a normal Ext.Panel instance with the following additions
      * {
      *  layerPanel : [Required] an instance of a portal.widgets.panel.LayerPanel - selection events will be listend for
+     *  wantAddLayerButton : boolean [Optional - defaults to True]
+     *  wantOptionsButton : boolean [Optional - defaults to True]
      * }
      * 
      * Adds the following event:
@@ -39,14 +44,21 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         }else{
             this.filterForm = config.filterForm
         }
-                        
-        this._addLayerButton = Ext.create('Ext.button.Button', {
-            xtype : 'button',
-            text      : 'Add layer to Map',
-            iconCls    :   'add',
-            handler : Ext.bind(this._onAddLayer, this)
-        });
+                    
+        if (typeof config.wantAddLayerButton === 'undefined' || config.wantAddLayerButton ) {
+            this._addLayerButton = Ext.create('Ext.button.Button', {
+                xtype : 'button',
+                text      : 'Add layer to Map',
+                iconCls    :   'add',
+                handler : Ext.bind(this._onAddLayer, this)
+            });
+        }
          
+        if (typeof config.wantOptionsButton === 'undefined' || config.wantOptionsButton ) {
+            this.optionsButtonIsHidden = false;
+        } else {
+            this.optionsButtonIsHidden = true;
+        }
         
         var menuItems = [this._getResetFormAction(),this._getDeleteAction(),this._setVisibilityAction()];
                         
@@ -83,7 +95,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 text      : 'Options',
                 iconCls    :   'setting',
                 arrowAlign: 'right',
-                menu      : menuItems           
+                menu      : menuItems,
+                hidden : this.optionsButtonIsHidden
             }]
         
         });
@@ -114,11 +127,13 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         var legend = layer.get('renderer').getLegend();
         var text = 'Get Legend';
        
-        
         var getLegendAction = new Ext.Action({
             text : text,
             icon : legend.iconUrl,
+            //icon : null,
             iconCls : 'portal-ux-menu-icon-size',
+            itemId : 'LegendAction',
+            
             handler : function(){
                 var legendCallback = function(legend, resources, filterer, success, form, layer){
                     if (success && form) {
@@ -166,9 +181,6 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         return getLegendAction;
     },
     
-    
-
-    
     _getDownloadAction : function(){
         var me = this;
         var downloadLayerAction = new Ext.Action({
@@ -211,6 +223,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 var layer = me.filterForm.layer; 
                 layer.removeDataFromMap();               
                 me.fireEvent('removelayer', layer);
+                portal.events.AppEvents.broadcast('removelayer', {layer:layer});
             }
         });
         
@@ -252,6 +265,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
 
         this.fireEvent('addlayer', layer);
+        // Fire the event for external clients
+        console.log("_onAddLayer - layer name: ", layer.get('name'));
+        AppEvents.broadcast('addlayer', layer);
+
         this.filterForm.writeToFilterer(filterer);        
       
         this._showConstraintWindow(layer);

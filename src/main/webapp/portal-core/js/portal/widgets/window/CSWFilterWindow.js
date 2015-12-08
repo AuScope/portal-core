@@ -2,62 +2,75 @@
 Ext.define('portal.widgets.window.CSWFilterWindow', {
     extend : 'Ext.window.Window',
 
-
+    cswFilterFormPanel : null,   
+    
     constructor : function(cfg) {      
-
-        var cswFilterFormPanel = new portal.widgets.panel.CSWFilterFormPanel({
+        
+    	var me = this;
+    	
+    	var controlButtons = [];
+    	
+        // use the search panel defined in the config if present, otherwise use the Auscope Core default
+    	me.cswFilterFormPanel = cfg.cswFilterFormPanel || new portal.widgets.panel.CSWFilterFormPanel({
             name : 'Filter Form'
         });
+        
+        // Only add a reset button if the search panel implements resetForm()
+        if (me.cswFilterFormPanel.resetForm) {
+        	controlButtons.push({
+                xtype: 'button',
+                text:'Reset Form',
+                handler:function(button){
+                    me.cswFilterFormPanel.resetForm();                        
+                }
+        	});
+        };
+        	
+        controlButtons.push({            
+            xtype: 'button',
+            text: 'Search',
+            scope : me,
+            iconCls : 'add',
+            handler: function(button) {
+                var parent = button.findParentByType('window');
+                var panel = parent.getComponent(0);
 
-
-
+                if (panel.getForm().isValid()) {                 
+                    var additionalParams = panel.getForm().getValues(false, false, false, false);
+                    var filteredResultPanels=[];
+                    for(additionalParamKey in additionalParams){
+                        if(additionalParamKey == 'cswServiceId'){
+                            if(!(additionalParams[additionalParamKey] instanceof Array)){
+                                additionalParams[additionalParamKey]=[additionalParams[additionalParamKey]]
+                            }
+                            for(var j=0; j < additionalParams[additionalParamKey].length;j++){
+                                //VT:
+                                filteredResultPanels.push(this._getTabPanels(additionalParams,additionalParams[additionalParamKey][j]));
+                            }
+                        }
+                    }
+                    parent.fireEvent('filterselectcomplete',filteredResultPanels);
+                    parent.hide();  
+                    
+                } else {
+                    Ext.Msg.alert('Invalid Data', 'Please correct form errors.')
+                }
+            }
+        });	
+        
         Ext.apply(cfg, {
             title : 'Enter Parameters',
             layout : 'fit',
-            modal : true,
-            //autoScroll :true,
+            modal : false,
             width : 500,
-            height : 520,
-            items : [cswFilterFormPanel],
-            buttons:[{
-                xtype: 'button',
-                text: 'Search',
-                scope : this,
-                iconCls : 'add',
-                handler: function(button) {
-                    var parent = button.findParentByType('window');
-                    var panel = parent.getComponent(0);
-
-                    if (panel.getForm().isValid()) {
-                        var additionalParams = panel.getForm().getValues(false, false, false, false);
-                        var filteredResultPanels=[];
-                        for(additionalParamKey in additionalParams){
-                            if(additionalParamKey == 'cswServiceId'){
-                                if(!(additionalParams[additionalParamKey] instanceof Array)){
-                                    additionalParams[additionalParamKey]=[additionalParams[additionalParamKey]]
-                                }
-                                for(var j=0; j < additionalParams[additionalParamKey].length;j++){
-                                    //VT:
-                                    filteredResultPanels.push(this._getTabPanels(additionalParams,additionalParams[additionalParamKey][j]));
-                                }
-                            }
-                        }
-
-                        parent.fireEvent('filterselectcomplete',filteredResultPanels);
-                        parent.close();
-
-                    }
-                }
-            }]
+            items : [me.cswFilterFormPanel],
+            buttons: controlButtons            
         });
-
 
 
         this.callParent(arguments);
     },
-
-
-
+    
     /**
      * Return configuration for the tabpanels
      *
@@ -76,9 +89,12 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
         var denormaliseKvp = function(keyList, valueList, kvpObj) {
             if (kvpObj) {
                 for (key in kvpObj) {
-                    if(kvpObj[key] && kvpObj[key].length>0 && key != 'cswServiceId' && !(key.slice(0, 4) == 'DNA_')){
-                        keyList.push(key);
-                        valueList.push(kvpObj[key]);
+                    if (kvpObj[key]) {
+                        var value = kvpObj[key].toString();
+                        if(value.length>0 && key != 'cswServiceId' && !(key.slice(0, 4) == 'DNA_')){
+                            keyList.push(key);
+                            valueList.push(value);
+                        }
                     }
                 }
             }
@@ -140,8 +156,11 @@ Ext.define('portal.widgets.window.CSWFilterWindow', {
 
         return result;
 
+    },
+    
+    // overridden close method to obtain a reference to the search window and close it as well
+    close: function() {      
+        this.hide();
     }
-
-
 });
 

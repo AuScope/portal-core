@@ -22,7 +22,7 @@ Ext.define('portal.widgets.window.CSWRecordDescriptionWindow', {
             title: 'Service Information',
             autoDestroy : true,
             width : 830,
-            height : 400,
+            maxHeight : 400,
             minHeight : 100
         });
         

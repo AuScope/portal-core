@@ -18,8 +18,6 @@ import org.jmock.Expectations;
 import org.junit.Test;
 import org.springframework.ui.ModelMap;
 
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 public class TestViewCSWRecordFactory extends PortalTestClass {
     private CSWRecord mockCSWRecord = context.mock(CSWRecord.class);
     private CSWRecord mockCSWChildRecord1 = context.mock(CSWRecord.class, "childRecord1");
@@ -348,7 +346,7 @@ public class TestViewCSWRecordFactory extends PortalTestClass {
 
     /**
      * Tests that the view correctly handles a null responsible party contact.
-     * 
+     *
      * @throws Exception
      */
     @Test

@@ -1,8 +1,8 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
@@ -254,12 +254,15 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
         sb.append(">\n");
         sb.append("  <wfs:Query typeName=\"" + featureType + "\"");
-        if (srsName != null && !srsName.isEmpty()) {
-            sb.append(" srsName=\"" + srsName + "\"");
-        } else if (featureType.equals("gsml:Borehole")) {
-            sb.append(" srsName=\"" + "EPSG:4326" + "\"");
+        // GPT-74 - The srsName needs to be the URN version (and not the short one) since the short one causes the Geoserver OGCServiceProvider to return output
+        // coordinates as LONG LAT. Where-as at all times the ArcGis geoserver outputs LAT LONG. We want both to be LAT LONG.
+        if (srsName != null && ! srsName.isEmpty()) {
+            if (! srsName.contains("urn:")) {
+                srsName = "urn:x-ogc:def:crs:"+srsName;
+            }
+            sb.append(" srsName=\""+srsName+"\"");
         }
-        sb.append(">\n");
+        sb.append(">");
         if (filterString != null) {
             sb.append(filterString);
         }
@@ -297,7 +300,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      */
     protected HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String featureId, String cqlFilter,
             Integer maxFeatures, ResultType resultType, String srs, String outputFormat, FilterBoundingBox bbox)
-            throws URISyntaxException {
+                    throws URISyntaxException {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(serviceUrl);
@@ -423,7 +426,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs)
             throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null, null);
+        return makeGetMethod(serviceUrl, typeName, null, null, maxFeatures, null, srs, null, null);
     }
 
     /**
@@ -444,7 +447,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures, String srs,
             FilterBoundingBox bbox) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, null, srs, null, bbox);
+        return makeGetMethod(serviceUrl, typeName, null, null, maxFeatures, null, srs, null, bbox);
     }
 
     /**
@@ -463,7 +466,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures,
             ResultType resultType, String srs) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, null);
+        return makeGetMethod(serviceUrl, typeName, null, null, maxFeatures, resultType, srs, null, null);
     }
 
     /**
@@ -484,7 +487,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures,
             ResultType resultType, String srs, FilterBoundingBox bbox) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, null, bbox);
+        return makeGetMethod(serviceUrl, typeName, null, null, maxFeatures, resultType, srs, null, bbox);
     }
 
     /**
@@ -507,7 +510,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, Integer maxFeatures,
             ResultType resultType, String srs, FilterBoundingBox bbox, String outputFormat) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, null, (Integer) maxFeatures, resultType, srs, outputFormat,
+        return makeGetMethod(serviceUrl, typeName, null, null, maxFeatures, resultType, srs, outputFormat,
                 bbox);
     }
 
@@ -529,7 +532,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures,
             String srs) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, null, srs, null, null);
+        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, maxFeatures, null, srs, null, null);
     }
 
     /**
@@ -550,7 +553,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, String typeName, String cqlFilter, Integer maxFeatures,
             ResultType resultType, String srs) throws URISyntaxException {
-        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, (Integer) maxFeatures, resultType, srs, null, null);
+        return makeGetMethod(serviceUrl, typeName, null, cqlFilter, maxFeatures, resultType, srs, null, null);
     }
 
     /**

@@ -5,9 +5,11 @@
  *
  * To use this plugin, assign the following field to the plugin constructor
  * {
- *  generateContainer : function(record, parentElId) - returns Ext.container.Container,
+ *  generateContainer : function(record, parentElId, grid) - returns Ext.container.Container,
  *  allowMultipleOpen : Boolean - whether multiple containers can be open simultaneously.
  *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column 
+ *  baseId : String - Optional (default='rowexpandercontainer') - To be used as the base in the containing element Id so can 
+ *      reuse this control in multiple locations (all baseIds must be unique) 
  * }
  *
  * Contains two events:
@@ -21,7 +23,7 @@
  *                renderTo: 'foo',
  *                plugins : [{
  *                  ptype : 'rowexpandercontainer',
- *                  generateContainer : function(record, parentElId) {
+ *                  generateContainer : function(record, parentElId, grid) {
  *                     return Ext.create('Ext.panel.Panel', {});
  *                  }
  *                }]
@@ -35,11 +37,12 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     alias: 'plugin.rowexpandercontainer',
     generateContainer : portal.util.UnimplementedFunction,
     allowMultipleOpen : false,
-    rowBodyTpl: '<div id="rowexpandercontainer-{id}"></div>', //overrides parent
+    rowBodyTpl: null, 
     storedHtml: null,   
     recordStatus: null,  
     generationRunning: false,
     toggleColIndexes: null,
+    baseId: "RowExpanderContainer",
 
     
     constructor: function(config) {
@@ -49,6 +52,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         this.allowMultipleOpen = config.allowMultipleOpen ? true : false;
         this.storedHtml = {};
         this.recordStatus = {};
+        if (config.baseId) {
+            this.baseId = config.baseId;
+        }
+        this.rowBodyTpl = '<div id="'+this.baseId+'-{id}"></div>'
     },
     
     //override to do nothing. We don't want an expander column
@@ -75,7 +82,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         view.on('resize', this.onResize, this);
     },
-    
+           
     /**
      * Returns record if it exists or null.
      * 
@@ -103,7 +110,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             return false;
         }
         
-        var body = Ext.DomQuery.selectNode('#rowexpandercontainer-' + record.id, el.parentNode);
+        var body = Ext.DomQuery.selectNode('#'+this.baseId + '-' + record.id, el.parentNode); // rowexpandercontainer-'
         if (body.hasChildNodes()) {
             return false;
         }
@@ -186,25 +193,31 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         }
     },
     
-    restoreRowContainer: function(record) {
+    restoreRowContainer: function(record) {        
+        var me = this;
+        
         //We don't want this function to be re-entrant
         //Which can occur if the generateContainer callback
         //makes any updates to record
-        if (this.generationRunning === true) {
+        if (me.generationRunning === true) {
             return;
         }
         
-        this.generationRunning = true;
-        if (this.restorationRequired(record)) {
-            var id = "rowexpandercontainer-" + record.id;
-            var container = this.generateContainer(record, id);
+        me.generationRunning = true;
+        if (me.restorationRequired(record)) {
+            var id = me.baseId + '-' + record.id;   // "rowexpandercontainer-"
+            var container = me.generateContainer(record, id, me.grid);
             
-            this.recordStatus[record.id].container = container;
-            this.recordStatus[record.id].container.updateLayout({
+            // GPT-73 - If a container already existed it needs to be destroyed.  Since Singleton AppEvents holds a ref to it
+            // it is never removed from memory (and worse, AppEvents keeps trying to broadcast to it).
+            if (me.recordStatus[record.id].container) {
+                me.recordStatus[record.id].container.destroy();
+            }
+            me.recordStatus[record.id].container = container;
+            me.recordStatus[record.id].container.updateLayout({
                 defer:false,
                 isRoot:false
             });
-            
         }
 
         this.generationRunning = false;

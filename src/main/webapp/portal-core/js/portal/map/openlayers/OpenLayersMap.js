@@ -7,9 +7,28 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     map : null, //Instance of OpenLayers.Map
     vectorLayers : [],    
     selectControl : null,
+//    mapCreatedEventListeners : [],  // Listeners (functions) to call once the map has been created
+    layerSwitcher : null,           // Keep as a global so can check if has been created
 
     constructor : function(cfg) {
         this.callParent(arguments);
+        
+
+
+        // If the portal (eg. Geoscience Portal but NOT it as GP already handles this) doesn't call 
+        // renderBaseMap() then the OpenLayers LayerSwitcher won't appear so we set a timeout to 
+        // create it if it hasn't
+        Ext.defer(this._callDrawOpenLayerSwitcher, 2000, this);
+    },
+    
+    _callDrawOpenLayerSwitcher : function() {
+        var meMethod=this._callDrawOpenLayerSwitcher;
+        if (this.map) {
+            this._drawOpenLayerSwitcher();
+        } else {
+            // Wait until it is ready
+            Ext.defer(meMethod, 250, this);
+        }
     },
 
     /////////////// Unimplemented functions
@@ -331,9 +350,9 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 new OpenLayers.Control.MousePosition({
                     "numDigits": 2,
                     displayProjection: new OpenLayers.Projection("EPSG:4326"),
-                    prefix: 'Coordinates <a target="_blank" href="http://spatialreference.org/ref/epsg/4326/">EPSG:4326</a>:<br>' ,
+                    prefix: '<a target="_blank" href="http://spatialreference.org/ref/epsg/4326/">Map coordinates (WGS84 decimal degrees)</a>: ' ,
                     suffix : ' / lat lng',
-                    emptyString : 'Coordinates <a target="_blank" href="http://spatialreference.org/ref/epsg/4326/">EPSG:4326</a>:<br> Out of bound',
+                    emptyString : '<a target="_blank" href="http://spatialreference.org/ref/epsg/4326/">Map coordinates (WGS84 decimal degrees): </a> Out of bound',
                     element : Ext.get('latlng').dom,
                     formatOutput: function(lonLat) {
                         var digits = parseInt(this.numDigits);
@@ -348,10 +367,15 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                 })
             ],
             layers: [
+                     new OpenLayers.Layer.WMS (
+                         "World Political Boundaries",
+                         "http://www.ga.gov.au/gis/services/topography/World_Political_Boundaries_WM/MapServer/WMSServer",
+                         {layers: 'Countries'}
+                     ),
                      new OpenLayers.Layer.Google(
                              "Google Hybrid",
                              {type: google.maps.MapTypeId.HYBRID, numZoomLevels: 20}
-                         ),
+                     ),
                      new OpenLayers.Layer.Google(
                          "Google Physical",
                          {type: google.maps.MapTypeId.TERRAIN}
@@ -372,12 +396,7 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                  zoom: 4
         });
 
-        var ls = new OpenLayers.Control.LayerSwitcher({'ascending':false});
-
-        this.map.addControl(ls);
-        ls.maximizeControl();
-
-      
+        // Creation and rendering of LayerSwitcher moved to renderBaseMap()
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
         this.container = container;
@@ -473,6 +492,9 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
             this.map.addControl(panel);
         }
+        
+        // There was an option to call _addMapCreatedEventListener(fn, args) to callback once the map is created.  Call them.
+        this._callMapCreatedEventListeners();
 
         //Finally listen for resize events on the parent container so we can pass the details
         //on to Openlayers.
@@ -488,6 +510,69 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         
     },
 
+    // Save functions as listeners to call back once the map is created
+//    _addMapCreatedEventListener : function(fnCallback, args) {
+//        console.log("_addMapCreatedEventListener - fnCallback: " + fnCallback.$name+", args:"+ args);
+//        this.mapCreatedEventListeners.push({functionCallback: fnCallback, args : args});
+//        console.log("  array now: ",this.mapCreatedEventListeners);
+//        return true;
+//    },
+
+    // Call the 'after map created' listeners
+    _callMapCreatedEventListeners : function() {
+        var me = this;
+        if (this.map) {
+            portal.events.AppEvents.broadcast('mapcreated');
+        } else {
+            console.log("_callMapCreatedEventListeners - this.map is null ");
+        }
+    },
+
+    // Draw the OpenLayers layers (eg. "Google Street View"/"Google Satellite") Controls (GPT-40 Active Layers)
+    renderBaseMap : function(divId) {
+        var me = this;
+//        console.log("renderBaseMap - LAYERS")
+        // Setup if map is defined else let map know to send this an event once created
+        if (this.map) {
+//            console.log("renderBaseMap - LAYERS - map NOT null: " + this.map + " - create LayerSwitcher (div: "+divId+")");
+            this._drawOpenLayerSwitcher(divId);
+        } else {
+//            console.log("renderBaseMap - LAYERS - map IS undefined - setup callback (div: "+divId+")");
+            // This object has a listener for 'mapcreated' events that are fired
+            portal.events.AppEvents.addListener(me, {callback:this.renderBaseMap, divId:divId});
+        }
+    },
+    
+    listeners : {
+        mapcreated : function (args) {
+            // Expect - arg1: functionToCall, arg2: divId
+            var theFunction = args.callback;
+            var theId = args.divId;
+            var me = this;
+            
+//           console.log("OpenLayersMap - listener - mapCreated - theId: " +theId+", function: ", theFunction);
+           theFunction.apply(me, [theId]);
+        }
+    },
+    
+    _drawOpenLayerSwitcher : function(divId) {
+        if (! this.layerSwitcher) {
+            if (divId) {
+                this.layerSwitcher = new OpenLayers.Control.LayerSwitcher({
+                    'div': OpenLayers.Util.getElement(divId),
+                    'ascending':false
+                });
+            } else {
+                // No div so it will appear on the map if the portal code doesn't call this
+                this.layerSwitcher = new OpenLayers.Control.LayerSwitcher({
+                    'ascending':false
+                });
+            }
+            
+            this.map.addControl(this.layerSwitcher);
+            this.layerSwitcher.maximizeControl();
+        }
+    },
     
     _getNewVectorLayer : function(){
         var vectorLayer = new OpenLayers.Layer.Vector("Vectors", {
@@ -905,6 +990,14 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         for(var i = 0; i < controlList.length; i++){
             controlList[i].deactivate();
         }
-    }
+    },
     
+    /**
+     * The layerStore has been updated and want to force a re-indexing of the LayerIndex (z-order of the layers).
+     */
+    updateLayerIndex : function() {
+        for(position=0;position < this.layerStore.length; position++){
+            this.map.setLayerIndex(layer,position);
+        }
+    }
 });

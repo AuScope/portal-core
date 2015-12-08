@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WMSMethodMakerInterface;
-import org.auscope.portal.core.services.methodmakers.WMS_1_3_0_MethodMaker;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wms.GetCapabilitiesRecord;
 
@@ -37,13 +36,17 @@ public class WMSService {
 
     private WMSMethodMakerInterface getSupportedMethodMaker(String wmsUrl, String version)
             throws OperationNotSupportedException {
+        log.trace("WMSService::getsupportedMethodMaker() START");
+        StringBuilder errStr = new StringBuilder();
         for (WMSMethodMakerInterface maker : listOfSupportedWMSMethodMaker) {
-            if (maker.accepts(wmsUrl, version)) {
+            if (maker.accepts(wmsUrl, version, errStr)) {
+                log.trace("WMSService::getsupportedMethodMaker() END");
                 return maker;
             }
         }
-        throw new OperationNotSupportedException(
-                "Can't find a suitable wms version");
+        log.debug("WMSService::getsupportedMethodMaker() throwing exception: "+errStr.toString());
+        log.trace("WMSService::getsupportedMethodMaker() END");
+        throw new OperationNotSupportedException(errStr.toString());
     }
 
     /**
@@ -67,7 +70,7 @@ public class WMSService {
             npe.printStackTrace();
             throw new NullPointerException("Call configWMSVersion to setup the right wms method maker to use");
         } catch (Exception ex) {
-            throw new PortalServiceException(method, "Failure getting/parsing wms capabilities", ex);
+            throw new PortalServiceException(method, ex.getMessage(), ex);
         } finally {
             if (method != null) {
                 method.releaseConnection();

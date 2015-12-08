@@ -59,8 +59,7 @@ public class TestWMSService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
-
-                oneOf(mockMethodMaker).accepts(with(any(String.class)), with((String) null));
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with((String) null), with(any(StringBuilder.class)));
                 will(returnValue(true));
 
                 oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);
@@ -122,10 +121,9 @@ public class TestWMSService extends PortalTestClass {
     @Test(expected = PortalServiceException.class)
     public void testRequestFailure() throws Exception {
         final String serviceUrl = "http://service/wms";
-
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)), with(any(StringBuilder.class)));
                 will(returnValue(true));
 
                 oneOf(mockMethodMaker).getCapabilitiesMethod(serviceUrl);
@@ -164,7 +162,7 @@ public class TestWMSService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)), with(any(StringBuilder.class)));
                 will(returnValue(true));
 
                 oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
@@ -205,7 +203,7 @@ public class TestWMSService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)), with(any(StringBuilder.class)));
                 will(returnValue(true));
 
                 oneOf(mockMethodMaker).getFeatureInfoPost(wmsUrl, format, layer, srs, westBoundLongitude,
@@ -243,7 +241,7 @@ public class TestWMSService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)), with(any(StringBuilder.class)));
                 will(returnValue(true));
 
                 oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
@@ -284,7 +282,7 @@ public class TestWMSService extends PortalTestClass {
 
         context.checking(new Expectations() {
             {
-                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)));
+                oneOf(mockMethodMaker).accepts(with(any(String.class)), with(any(String.class)), with(any(StringBuilder.class)));
                 will(returnValue(true));
 
                 oneOf(mockMethodMaker).getFeatureInfo(wmsUrl, format, layer, srs, westBoundLongitude,
