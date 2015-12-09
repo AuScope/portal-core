@@ -46,6 +46,7 @@ public class CSWRecordTransformer {
     private static final String ONLINETRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
     private static final String BBOXEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
     private static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
+    private static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
     private static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
     private static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
     private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString";
@@ -381,6 +382,14 @@ public class CSWRecordTransformer {
         dataIdMDKeywordsTypeCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_KeywordTypeCode");
 
+        //MD_Metadata -> dataSetURI
+        String[] datasetURIs = record.getDataSetURIs();
+        if (datasetURIs != null) {
+            for (String datasetURI : datasetURIs) {
+            	appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "dataSetURI", datasetURI);
+            }
+        }
+        
         //DataIdentification -> language
         appendChildCharacterString(mdDataIdentification, nc.getNamespaceURI("gmd"), "language", record.getLanguage());
 
@@ -600,6 +609,18 @@ public class CSWRecordTransformer {
             record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()]));
         }
 
+        //Parse the dataset URIs
+        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, DATASETURIEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+            List<String> datasetURIs = new ArrayList<String>();
+            Node datasetURI;
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+            	datasetURI = tempNodeList.item(j);
+            	datasetURIs.add(datasetURI.getTextContent());
+            }
+            record.setDataSetURIs(datasetURIs.toArray(new String[datasetURIs.size()]));
+        }
+        
         Node tempNode = evalXPathNode(this.mdMetadataNode, CONTACTEXPRESSION);
         if (tempNode != null) {
             try {
