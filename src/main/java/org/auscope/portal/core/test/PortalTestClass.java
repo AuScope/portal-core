@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import junit.framework.Assert;
 
 import org.auscope.portal.core.test.jmock.DelayedReturnValueAction;
@@ -21,6 +23,9 @@ import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher;
 import org.auscope.portal.core.test.jmock.HttpMethodBaseMatcher.HttpMethodType;
 import org.auscope.portal.core.test.jmock.MapMatcher;
 import org.auscope.portal.core.test.jmock.PropertiesMatcher;
+import org.auscope.portal.core.util.DOMUtil;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.jmock.Mockery;
 import org.jmock.api.Action;
 import org.jmock.api.ExpectationError;
@@ -29,6 +34,8 @@ import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Base class for all unit test classes to inherit from
@@ -89,7 +96,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * A JMock action similar to returnValue but that only returns AFTER a specified delay
      *
      * It can provide a neat workaround for testing multiple competing threads
-     * 
+     *
      * @param msDelay
      *            The delay in milli seconds to wait
      * @param returnValue
@@ -119,7 +126,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
 
     /**
      * A JMock Matcher for testing for a HttpMethodBase matching a few simplified terms
-     * 
+     *
      * @param type
      *            If not null, the type of method to match for
      * @param url
@@ -134,7 +141,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
 
     /**
      * A JMock Matcher for testing for a HttpMethodBase matching a few simplified terms
-     * 
+     *
      * @param type
      *            If not null, the type of method to match for
      * @param urlPattern
@@ -149,7 +156,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
 
     /**
      * A JMock Matcher for testing for a java.util.Properties object with a single matching property
-     * 
+     *
      * @param property
      *            The property name
      * @param value
@@ -162,7 +169,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
 
     /**
      * A JMock Matcher for testing for a java.util.Properties object with a matching property
-     * 
+     *
      * @param property
      *            The property name
      * @param value
@@ -179,7 +186,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
 
     /**
      * A JMock Matcher for testing a Map has every specified value
-     * 
+     *
      * @param map
      *            The values to test for
      * @return
@@ -190,7 +197,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
 
     /**
      * A JMock Matcher for testing a Map has every specified value
-     * 
+     *
      * @param keys
      *            The Keys to match for (must correspond 1:1 with values
      * @param values
@@ -218,7 +225,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
 
     /**
      * Gets the elapsed time since startTimer() was called (in milli seconds).
-     * 
+     *
      * @return
      */
     protected long endTimer() {
@@ -232,7 +239,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * Utility function for opening a system resource and parsing it into a string.
      *
      * Returns null if the resource cannot be opened
-     * 
+     *
      * @param resource
      */
     protected String getSystemResourceAsString(String resource) {
@@ -284,12 +291,29 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
 
     /**
      * A JMock matcher for matching a File with a specific name
-     * 
+     *
      * @param fileName
      *            The name of the file to match
      * @return
      */
     protected FileWithNameMatcher aFileWithName(String fileName) {
         return new FileWithNameMatcher(fileName);
+    }
+
+    /**
+     * Compares two strings by parsing them into XML and ensuring all elements/attributes match.
+     * @param xml1
+     * @param xml2
+     * @return
+     * @throws SAXException
+     * @throws IOException
+     * @throws ParserConfigurationException
+     */
+    protected boolean xmlStringEquals(String xml1, String xml2, boolean namespaceAware) throws ParserConfigurationException, IOException, SAXException {
+        Document d1 = DOMUtil.buildDomFromString(xml1, namespaceAware);
+        Document d2 = DOMUtil.buildDomFromString(xml2, namespaceAware);
+
+        Diff diff = XMLUnit.compareXML(d1, d2);
+        return diff.identical();
     }
 }

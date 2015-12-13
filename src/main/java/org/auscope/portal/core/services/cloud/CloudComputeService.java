@@ -18,7 +18,9 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.cloud.ComputeType;
 import org.auscope.portal.core.cloud.MachineImage;
+import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.cloud.SimpleEC2Client.InstanceInitiatedShutdownBehaviour;
 import org.jclouds.ContextBuilder;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
@@ -39,15 +41,6 @@ import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.openstack.OSFactory;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.ec2.AmazonEC2Client;
-import com.amazonaws.services.ec2.model.GetConsoleOutputRequest;
-import com.amazonaws.services.ec2.model.GetConsoleOutputResult;
-import com.amazonaws.services.ec2.model.InstanceAttributeName;
-import com.amazonaws.services.ec2.model.ModifyInstanceAttributeRequest;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -71,7 +64,7 @@ public class CloudComputeService {
     private ComputeService computeService;
     private ComputeServiceContext context;
     private NovaApi novaApi; //will be null for non nova API's
-    private AmazonEC2Client ec2Api; //will be null for non ec2 API's
+    private SimpleEC2Client ec2Api; //will be null for non ec2 API's
     private Set<String> skippedZones = new HashSet<String>();
     private String zone; //can be null
 
@@ -142,16 +135,34 @@ public class CloudComputeService {
      *            The Compute Secret key (password)
      * @param apiVersion
      *            The API version
+     * @param httpServiceCaller - required for EC2, can be null for Nova
      */
     public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey,
             String apiVersion) {
+        this(provider, endpoint, accessKey, secretKey, apiVersion, null);
+    }
+
+    /**
+     * Creates a new instance with the specified credentials
+     *
+     * @param endpoint
+     *            (URL) The location of the Compute (Nova) service
+     * @param accessKey
+     *            The Compute Access key (user name)
+     * @param secretKey
+     *            The Compute Secret key (password)
+     * @param apiVersion
+     *            The API version
+     * @param httpServiceCaller - required for EC2, can be null for Nova
+     */
+    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey,
+            String apiVersion, HttpServiceCaller httpServiceCaller) {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.endpoint = endpoint;
 
         Properties overrides = new Properties();
 
-//        provider = ProviderType.AWSEc2;
         String typeString = "";
         switch (provider) {
         case NovaKeystone:
@@ -183,7 +194,7 @@ public class CloudComputeService {
             this.novaApi = b.buildApi(NovaApi.class);
             break;
         case AWSEc2:
-            this.ec2Api = new AmazonEC2Client(new BasicAWSCredentials(accessKey, secretKey));
+            this.ec2Api = new SimpleEC2Client(httpServiceCaller, accessKey, secretKey, zone);
             break;
         }
 
@@ -192,6 +203,15 @@ public class CloudComputeService {
 
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(groupName));
 
+    }
+
+
+    /**
+     * This is overridable for test mocking
+     * @param ec2Api
+     */
+    protected void setEc2Api(SimpleEC2Client ec2Api) {
+        this.ec2Api = ec2Api;
     }
 
     public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi novaApi,
@@ -250,7 +270,7 @@ public class CloudComputeService {
     public void setZone(String zone) {
         this.zone = zone;
         if (this.ec2Api != null) {
-            this.ec2Api.setRegion(Region.getRegion(Regions.fromName(zone)));
+            this.ec2Api.setRegion(zone);
         }
     }
 
@@ -354,10 +374,8 @@ public class CloudComputeService {
 
             //Configure the instance to terminate on shutdown:
             try {
-                ModifyInstanceAttributeRequest miar = new ModifyInstanceAttributeRequest(result.getId().split("/")[1], InstanceAttributeName.InstanceInitiatedShutdownBehavior);
-                miar.setValue("terminate");
-                ec2Api.modifyInstanceAttribute(miar);
-            } catch (AmazonClientException ex) {
+                ec2Api.setInstanceInitiatedShutdownBehaviour(result.getId(), InstanceInitiatedShutdownBehaviour.Terminate);
+            } catch (Exception ex) {
                 //if we fail here - kill the instance, we don't want a floating VM sitting around
                 logger.error(String.format("Instance ID '%1$s' could NOT be set to terminate on shutdown: %2$s", result.getId(), ex.getMessage()));
                 logger.debug("Exception:", ex);
@@ -577,12 +595,9 @@ public class CloudComputeService {
      * @throws PortalServiceException
      */
     private String getConsoleLogAws(String computeInstanceId, CloudJob job, int numLines) throws PortalServiceException {
-        GetConsoleOutputRequest getConsoleOutputRequest = new GetConsoleOutputRequest(computeInstanceId);
-
         try {
-            GetConsoleOutputResult result = ec2Api.getConsoleOutput(getConsoleOutputRequest);
-            return result.getDecodedOutput();
-        } catch (AmazonClientException ex) {
+            return ec2Api.getConsoleOutput(computeInstanceId);
+        } catch (Exception ex) {
             logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
             throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
         }
