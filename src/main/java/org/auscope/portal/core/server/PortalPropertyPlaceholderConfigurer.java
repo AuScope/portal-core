@@ -80,7 +80,15 @@ public class PortalPropertyPlaceholderConfigurer extends PropertyPlaceholderConf
                 log.debug("Translated property: " + property);
 
                 String prop = props.getProperty(property);
+                
+                if(prop==null) { // Can't find hostname entry. Let's try for default
+                	log.info("Can't find hostname specific property, trying to find default for: "+property);
+                    property = placeholder.replaceFirst("HOST", "DEFAULT");
 
+                    log.debug("Default property: " + property);
+
+                    prop = props.getProperty(property);                	
+                }
                 if (prop == null)
                     log.warn("Please define property: " + property);
 
