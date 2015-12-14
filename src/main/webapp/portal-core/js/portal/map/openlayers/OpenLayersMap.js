@@ -502,12 +502,11 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
             this.map.updateSize();
         }, this);
         
-      //Finally listen for resize events on the parent container so we can pass the details
+        //Finally listen for boxready events on the parent container so we can pass the details
         //on to Openlayers.
         container.on('boxready', function() {
             this.map.updateSize();
-        }, this);
-        
+        }, this);        
     },
 
     // Save functions as listeners to call back once the map is created

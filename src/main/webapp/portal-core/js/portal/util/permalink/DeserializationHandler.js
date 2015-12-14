@@ -36,7 +36,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         Ext.apply(this, cfg);
 
         this.callParent(arguments);
-
+ 
         //Ensure our deserialisation occurs now (if appropriate) or when our datastores finish loading
         if (this.knownLayerStore) {
             this.knownLayerStore.on('load', this._deserializeIfReady, this, {single : true});
@@ -205,8 +205,15 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                     var customPanel = tabpanel.getComponent('org-auscope-custom-record-panel');
                     tabpanel.setActiveTab(customPanel);                                       
                     customPanel.getStore().insert(0,cswRecord);                    
-                }
+                }                
+            } else if (serializedLayer.source === 'search') {
+                //Configure it
+                this._configureLayer(serializedLayer, serializedLayer.filter, serializedLayer.visible);
+
+                //Add this layer to the internal store
+                this.layerStore.add(serializedLayer);
                 
+                this.map.addLayer(serializedLayer);
             }
         }
 
