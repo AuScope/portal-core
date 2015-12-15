@@ -66,7 +66,7 @@ public class KnownLayer implements Serializable {
     private int feature_count;
 
     /** Set an order - defaults to name */
-    private int order;
+    private String order;
 
     /**
      * Creates a new KnownLayer
@@ -346,12 +346,12 @@ public class KnownLayer implements Serializable {
         this.feature_count = feature_count;
     }
 
-    public int getOrder() {
+    public String getOrder() {
         return order;
     }
 
-    public void setOrder(int order) {
-        this.order = order;
-        logger.info(String.format("setOrder - group: %s, name: %s, order: %d", getGroup(), getName(), getOrder()));
+    public void setOrder(String order) {
+    	this.order = (order == null) ? "" : order;
+        logger.info(String.format("setOrder - group: %s, name: %s, order: %s", getGroup(), getName(), getOrder()));
     }
 }
