@@ -34,11 +34,20 @@ public class CSWRecordTransformer {
     protected Node mdMetadataNode;
 
     protected static final String DATEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
-
+    
+    protected enum Scope {
+    	service, dataset
+    };
+    
     protected static final CSWNamespaceContext nc = new CSWNamespaceContext();
+    private static final String SERVICEIDENTIFICATIONPATH = "gmd:identificationInfo/srv:SV_ServiceIdentification";
+    private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/gmd:MD_DataIdentification";
+    private static final String TITLEEXPRESSION = "/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
+    
     private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
-    private static final String SERVICETITLEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
-    private static final String DATAIDENTIFICATIONABSTRACTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:abstract/gco:CharacterString";
+    private static final String SCOPEEXPRESSION = "gmd:hierarchyLevel/gmd:MD_ScopeCode/@codeListValue";    
+    private static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
+
     private static final String CONTACTEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty";
     private static final String RESOURCEPROVIDEREXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:pointOfContact/gmd:CI_ResponsibleParty[./gmd:role[./gmd:CI_RoleCode[@codeListValue = 'resourceProvider']]]/gmd:organisationName/gco:CharacterString";
     private static final String FILEIDENTIFIEREXPRESSION = "gmd:fileIdentifier/gco:CharacterString";
@@ -46,6 +55,7 @@ public class CSWRecordTransformer {
     private static final String ONLINETRANSFERSEXPRESSION = "gmd:distributionInfo/gmd:MD_Distribution/descendant::gmd:onLine";
     private static final String BBOXEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:extent/gmd:EX_Extent/gmd:geographicElement/gmd:EX_GeographicBoundingBox";
     private static final String KEYWORDLISTEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString";
+    private static final String DATASETURIEXPRESSION = "gmd:dataSetURI/gco:CharacterString";
     private static final String SUPPLEMENTALINFOEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:supplementalInformation/gco:CharacterString";
     private static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
     private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString";
@@ -381,6 +391,14 @@ public class CSWRecordTransformer {
         dataIdMDKeywordsTypeCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_KeywordTypeCode");
 
+        //MD_Metadata -> dataSetURI
+        String[] datasetURIs = record.getDataSetURIs();
+        if (datasetURIs != null) {
+            for (String datasetURI : datasetURIs) {
+            	appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "dataSetURI", datasetURI);
+            }
+        }
+        
         //DataIdentification -> language
         appendChildCharacterString(mdDataIdentification, nc.getNamespaceURI("gmd"), "language", record.getLanguage());
 
@@ -531,8 +549,21 @@ public class CSWRecordTransformer {
         NodeList tempNodeList = null;
 
         //Parse our simple strings
-        record.setServiceName(evalXPathString(this.mdMetadataNode, SERVICETITLEEXPRESSION));
-        record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, DATAIDENTIFICATIONABSTRACTEXPRESSION));
+        Node scopeNode = evalXPathNode(this.mdMetadataNode, SCOPEEXPRESSION);
+        String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
+        
+        String identificationPath = null;
+        if (Scope.service.toString().equals(recordType)) {
+        	identificationPath = SERVICEIDENTIFICATIONPATH; 
+        	record.setService(true);
+        }
+        else {
+        	identificationPath = DATAIDENTIFICATIONPATH;
+        }
+      
+        record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));  	
+        record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
+
         record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION));
         record.setParentIdentifier(evalXPathString(this.mdMetadataNode, PARENTIDENTIFIEREXPRESSION));
         record.setSupplementalInformation(evalXPathString(this.mdMetadataNode, SUPPLEMENTALINFOEXPRESSION));
@@ -600,6 +631,18 @@ public class CSWRecordTransformer {
             record.setDescriptiveKeywords(keywords.toArray(new String[keywords.size()]));
         }
 
+        //Parse the dataset URIs
+        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, DATASETURIEXPRESSION);
+        if (tempNodeList != null && tempNodeList.getLength() > 0) {
+            List<String> datasetURIs = new ArrayList<String>();
+            Node datasetURI;
+            for (int j = 0; j < tempNodeList.getLength(); j++) {
+            	datasetURI = tempNodeList.item(j);
+            	datasetURIs.add(datasetURI.getTextContent());
+            }
+            record.setDataSetURIs(datasetURIs.toArray(new String[datasetURIs.size()]));
+        }
+        
         Node tempNode = evalXPathNode(this.mdMetadataNode, CONTACTEXPRESSION);
         if (tempNode != null) {
             try {

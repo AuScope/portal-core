@@ -17,6 +17,7 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'adminArea', type: 'string' }, //The adminstrative area this record identifies itself as being a part of (organisation name that owns this record)
         { name: 'contactOrg', type: 'string' }, //Who is providing this resource (organisation name)
         { name: 'descriptiveKeywords', type: 'auto' }, //an array of strings representing descriptive keywords for this record
+        { name: 'dataSetURIs', type: 'auto' }, //an array of strings representing URIs where file downloads may be obtained
         { name: 'geographicElements', convert: portal.util.BBoxType.convert}, //an array of portal.util.BBox objects representing the total spatial bounds of this record
         { name: 'onlineResources', convert: portal.csw.OnlineResourceType.convert}, //A set of portal.csw.OnlineResource objects
         { name: 'childRecords', convert: portal.csw.CSWRecordType.convert}, //an array of child portal.csw.CSWRecord objects
@@ -35,7 +36,8 @@ Ext.define('portal.csw.CSWRecord', {
         { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
         { name: 'layer', type: 'auto'}, // store the layer after it has been converted.        
         { name: 'active', type: 'boolean', defaultValue: false },//Whether this layer is current active on the map.
-        { name: 'customlayer', type: 'boolean', defaultValue: false } //If true, this layer is added from browse catalogue
+        { name: 'customlayer', type: 'boolean', defaultValue: false }, //If true, this layer is added from browse catalogue
+        { name: 'service', type: 'boolean', defaultValue: false } //If true, this layer is a service layer that may contain layers in the getCapabilities
     ],
 
     /**

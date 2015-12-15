@@ -37,7 +37,8 @@ public class ViewCSWRecordFactory {
         obj.put("recordInfoUrl", record.getRecordInfoUrl());
         obj.put("description", record.getDataIdentificationAbstract());
         obj.put("noCache", record.getNoCache());
-
+        obj.put("service", record.isService());
+        
         CSWResponsibleParty rp = record.getContact();
         String adminArea = null;
         String contactOrg = "Unknown";
@@ -76,6 +77,14 @@ public class ViewCSWRecordFactory {
         }
         obj.put("descriptiveKeywords", descriptiveKeywords);
 
+        List<String> datasetURIs = new ArrayList<String>();
+        if (record.getDataSetURIs() != null) {
+            for (String s : record.getDataSetURIs()) {
+            	datasetURIs.add(s);
+            }
+        }
+        obj.put("datasetURIs", datasetURIs);
+        
         List<String> constraints = new ArrayList<String>();
         if (record.getConstraints() != null) {
             for (String s : record.getConstraints()) {
