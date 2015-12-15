@@ -389,6 +389,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
      */
     removeData : function() {
         this.primitiveManager.clearPrimitives();
+        this.fireEvent('renderfinished', this);
     },
 
     /**
