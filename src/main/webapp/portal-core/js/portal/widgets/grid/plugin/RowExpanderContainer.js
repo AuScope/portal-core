@@ -130,20 +130,20 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         return groupInfo.children;
     },
 
-					    
 
-	onExpandBody : function(rowNode, record, expandRow) {
-		if (!this.allowMultipleOpen) {
-			for (openId in this.recordStatus) {
-				if (this.recordStatus[openId].expanded) {
-					var openRec = this.getStoreRecord(openId);
-					var openEl = this.view.getRow(openRec);
-					if (openEl !== null) {
-						this.toggleRow(openEl, openRec);
-					}
-				}
-			}
-		}
+
+    onExpandBody : function(rowNode, record, expandRow) {
+        if (!this.allowMultipleOpen) {
+            for (openId in this.recordStatus) {
+                if (this.recordStatus[openId].expanded) {
+                    var openRec = this.getStoreRecord(openId);
+                    var openEl = this.view.getRow(openRec);
+                    if (openEl !== null) {
+                        this.toggleRow(openEl, openRec);
+                    }
+                }
+            }
+        }
         
         this.recordStatus[record.id] = {
             expanded : true,
