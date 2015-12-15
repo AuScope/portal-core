@@ -45,6 +45,9 @@ public class CSWRecord {
     /** The descriptive keywords. */
     private String[] descriptiveKeywords;
 
+    /** The URIs from which file downloads will be available in some records. */
+    private String[] dataSetURIs;
+    
     /** The data identification abstract. */
     private String dataIdentificationAbstract;
 
@@ -109,6 +112,7 @@ public class CSWRecord {
         this.cswGeographicElements = cswGeographicsElements;
         this.supplementalInformation = "";
         this.descriptiveKeywords = new String[0];
+        this.dataSetURIs = new String[0];
         this.constraints = new String[0];
         this.noCache = false;
 
@@ -235,6 +239,15 @@ public class CSWRecord {
     }
 
     /**
+     * Returns the dataset URIs for this record.
+     *
+     * @return array of URIs
+     */
+    public String[] getDataSetURIs() {
+		return dataSetURIs;
+	}
+
+	/**
      * Gets the constraints.
      *
      * @return the constraints
@@ -312,8 +325,16 @@ public class CSWRecord {
     public void setDescriptiveKeywords(String[] descriptiveKeywords) {
         this.descriptiveKeywords = descriptiveKeywords;
     }
-
+        
     /**
+     * Sets the dataset URIs
+	 * @param dataSetURIs the dataSetURIs to set
+	 */
+	public void setDataSetURIs(String[] dataSetURIs) {
+		this.dataSetURIs = dataSetURIs;
+	}
+
+	/**
      * Sets the data identification abstract.
      *
      * @param dataIdentificationAbstract
@@ -459,6 +480,8 @@ public class CSWRecord {
                 + Arrays.toString(cswGeographicElements)
                 + ", descriptiveKeywords="
                 + Arrays.toString(descriptiveKeywords)
+                + ", datasetURIs="
+                + Arrays.toString(dataSetURIs)
                 + ", dataIdentificationAbstract=" + dataIdentificationAbstract
                 + ", supplementalInformation=" + supplementalInformation
                 + ", language=" + language + ", constraints="

@@ -77,6 +77,14 @@ public class ViewCSWRecordFactory {
         }
         obj.put("descriptiveKeywords", descriptiveKeywords);
 
+        List<String> datasetURIs = new ArrayList<String>();
+        if (record.getDataSetURIs() != null) {
+            for (String s : record.getDataSetURIs()) {
+            	datasetURIs.add(s);
+            }
+        }
+        obj.put("datasetURIs", datasetURIs);
+        
         List<String> constraints = new ArrayList<String>();
         if (record.getConstraints() != null) {
             for (String s : record.getConstraints()) {
