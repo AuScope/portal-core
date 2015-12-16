@@ -47,6 +47,13 @@ public interface GetCapabilitiesRecord {
     public String getMapUrl();
 
     /**
+     * Gets the Metadata URL in the base layer of this record.
+     *
+     * @return the MetadataURL element
+     */
+    public String getMetadataUrl();
+    
+    /**
      * Gets the layers.
      *
      * @return the layers
@@ -68,7 +75,7 @@ public interface GetCapabilitiesRecord {
     public String[] getGetMapFormats();
 
     public String getVersion();
-
+    
     // ------------------------------------------------------ Protected Methods
 
 }
