@@ -15,8 +15,16 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
     },
 
     currentTooltip : null,
+    featureCountUrl : null,
 
+    /**
+     * Adds the following config options
+     * 
+     * featureCountUrl : String - URL where feature counts will be looked up. Must accept serviceUrl, featureType and boundingBox parameters. 
+     *                            if unspecified, feature counts will be disabled
+     */
     constructor : function(cfg) {
+        this.featureCountUrl = cfg.featureCountUrl ? cfg.featureCountUrl : null;
         this.callParent(arguments);
     },
 
@@ -28,6 +36,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
      * renderedFilterer - custom filter that was applied when rendering the specified data sources
      * currentFilterer - The value of the custom filter, this may differ from renderedFilterer if the
      *                   user has updated the form/map without causing a new render to occur
+     * 
      */
     downloadData : function(layer, resources, renderedFilterer, currentFilterer) {
         var me = this;
@@ -61,6 +70,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                 items : [{
                     xtype : 'label',
                     style : 'font-size: 12px;',
+                    itemId: 'klwfs-htmllabel',
                     html : this._parseNotifcationString(resources)
                 }]
             },{
@@ -75,8 +85,9 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                     //see: http://www.sencha.com/forum/showthread.php?187933-Ext-4.1-beta-3-Incorrect-layout-on-Radiogroup-with-columns
                     //columns : [0.99, 18],
                     columns : [500, 18],
+                    itemId: 'klwfs-radio',
                     listeners : {
-                        change : Ext.bind(this._handleRadioChange, this, [currentlyVisibleBBox, originallyVisibleBBox], true)
+                        change : Ext.bind(this._handleRadioChange, this, [currentlyVisibleBBox, originallyVisibleBBox, resources], true)
                     },
                     items : [{
                         boxLabel : 'Filter my download using the current visible map bounds.',
@@ -185,8 +196,7 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                         } else {
                             var bboxJson = '';
                             var popup = button.ownerCt.ownerCt;
-                            var fieldSet = popup.items.getAt(1); //our second item is the fieldset
-                            var radioGroup = fieldSet.items.getAt(0);
+                            var radioGroup = popup.down('#klwfs-radio');
                             var checkedRadio = radioGroup.getChecked()[0]; //there should always be a checked radio
 
                             switch(checkedRadio.inputValue) {
@@ -206,7 +216,26 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
                     }//end of handler function
 
                 }]
-            }]
+            }],
+            listeners: {
+                //After rendering - start the feature count loading
+                afterrender: function(popup) {
+                    if (me.featureCountUrl) {
+                        var selection = popup.down('#klwfs-radio').getChecked()[0].inputValue;
+                        switch(selection) {
+                        case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE:
+                            me._updateFeatureCounts(popup, resources, currentlyVisibleBBox);
+                            break;
+                        case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE:
+                            me._updateFeatureCounts(popup, resources, originallyVisibleBBox);
+                            break;
+                        default:
+                            me._updateFeatureCounts(popup, resources, null);
+                            break;
+                        }
+                    }
+                }
+            }
         }).show();
     },
 
@@ -223,13 +252,20 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         c.getEl().on('dblclick', Ext.bind(fireScroll, this, [bbox], false), c);
     },
 
-    _handleRadioChange : function(radioGroup, newValue, oldValue, eOpts, currentBounds, originalBounds) {
+    _handleRadioChange : function(radioGroup, newValue, oldValue, eOpts, currentBounds, originalBounds, resources) {
+        var popup = radioGroup.up('window');
+        
         switch(newValue['wfs-download-radio']) {
         case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_CURRENTLY_VISIBLE:
             this.map.scrollToBounds(currentBounds);
+            this._updateFeatureCounts(popup, resources, currentBounds);
             break;
         case portal.layer.downloader.wfs.WFSDownloader.DOWNLOAD_ORIGINALLY_VISIBLE:
             this.map.scrollToBounds(originalBounds);
+            this._updateFeatureCounts(popup, resources, originalBounds);
+            break;
+        default:
+            this._updateFeatureCounts(popup, resources, null);
             break;
         }
     },
@@ -262,21 +298,68 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         winDwld.show();
 
     },
+    
+    _updateFeatureCount : function(url, typeName, el, bbox) {
+        el.setHtml('<img src="portal-core/img/dotdotdot.gif" width="16" height="16">'); //our loading placeholder
+        Ext.Ajax.request({
+            url: this.featureCountUrl,
+            params: {
+                serviceUrl: url,
+                typeName: typeName,
+                bbox: bbox ? Ext.JSON.encode(bbox) : ''
+            },
+            timeout: 5 * 60 * 1000, //5 minutes  
+            callback: function(options, success, response) {
+                if (!success) {
+                    el.setHtml('Error');
+                } else {
+                    var responseObj = Ext.JSON.decode(response.responseText);
+                    if (!responseObj.success) {
+                        el.setHtml('Error');
+                    } else {
+                        el.setHtml(responseObj.data);
+                    }
+                }
+            }
+        });
+    },
+    
+    _updateFeatureCounts : function(popup, resources, bbox) {
+        var els = popup.down('#klwfs-htmllabel').getEl().query('.klwfs-featurecount', false);
+        var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
+        
+        for (var i = 0; i < els.length; i++) {
+            var url = wfsResources[i].get('url');
+            var el = els[i];
+            
+            this._updateFeatureCount(url, wfsResources[i].get('name'), el, bbox);
+        }
+    },
 
     _parseNotifcationString : function(resources){
 
         var text = '<p>The portal will make a download request on your behalf and return the results in a ZIP archive.';
             text += 'Please check back with us later using your email as access token and click on Check Status</p>';
-            text += '<br><p>We limit the results to 200 features per access point.';
-            text += 'You can either modify the download filter or alternatively, you can download directly from the WFS service points below</p><br>';
-            text += "<p>Note:The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'> here</a> for more information </p><br>";
+            text += '<p>We limit the results to 200 features per access point.';
+            text += 'You can either modify the download filter or alternatively, you can download directly from the WFS service points below</p>';
+            text += "<p>Note:The links below are WFS service endpoints. Read <a href='http://docs.geoserver.org/latest/en/user/services/wfs/reference.html'> here</a> for more information </p>";
 
         var wfsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
 
-
-        for (var i = 0; i < wfsResources.length; i++) {
-            text += '<a href="' + wfsResources[i].get('url') +'">' + wfsResources[i].get('url') + '</a><br>';
+        text += '<div style="display:block;">';
+        if (this.featureCountUrl) {
+            text += '<div style="text-align:right;text-decoration:underline;">Total Features</div>';
         }
+        
+        for (var i = 0; i < wfsResources.length; i++) {
+            text += '<div style="display:block;">';
+            text += '<div style="display:inline-block;width:85%;"><a href="' + wfsResources[i].get('url') +'">' + wfsResources[i].get('url') + '</a></div>';
+            if (this.featureCountUrl) {
+                text += '<div class="klwfs-featurecount" style="display:inline-block;text-align:center;width:80px;"></div>';
+            }
+            text += '</div>';
+        }
+        text += '</div>';
 
         text += '<br>How would you like the portal to filter your download?';
 
