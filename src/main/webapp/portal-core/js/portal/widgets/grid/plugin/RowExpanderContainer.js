@@ -210,7 +210,18 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         if (me.restorationRequired(record)) {
             var id = me.baseId + '-' + record.id;   // "rowexpandercontainer-"
             var container = me.generateContainer(record, id, me.grid);
-            
+
+            // GPT-73 - If a container already existed it needs to be destroyed.  Since Singleton AppEvents holds a ref to it
+            // it is never removed from memory (and worse, AppEvents keeps trying to broadcast to it).
+            if (me.recordStatus[record.id].container) {
+                //AUS-2608 - Wrapped this in a try-catch due to some tooltips getting orphaned and throwing a JS error when
+                //           trying to reference their dead parent.
+                try {
+                    me.recordStatus[record.id].container.destroy();
+                } catch(err) {
+                    console.log("Error destroying parent container:", err);
+                }
+            }
             me.recordStatus[record.id].container = container;
             me.recordStatus[record.id].container.updateLayout({
                 defer:false,
