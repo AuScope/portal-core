@@ -33,23 +33,8 @@ public interface WMSMethodMakerInterface {
      *             If supplied will return 'true' iff this version is supported 
      * @param errStr
      *             Contains an error message iff returns false
-     * @return
-     *             Returns true iff WMS URL and its response can be accepted
      */
     public boolean accepts(String wmsUrl, String version, StringBuilder errStr );
-    
-    /** 
-     * Same as accepts() above, but included for backward compatibility.
-     * Does not return an error message, only true/false.
-     *
-     * @param wmsUrl
-     *             The WMS endpoint
-     * @param version
-     *             If supplied will return 'true' iff this version is supported
-     * @return
-     *             Returns true iff WMS URL and its response can be accepted
-     */
-    public boolean accepts(String wmsUrl, String version);
 
     /**
      * Generates a WMS request for downloading part of a map layer as an image
