@@ -217,6 +217,42 @@ public class TestCSWRecordTransformer extends PortalTestClass {
     }
 
     /**
+     * Tests that the record is correctly parsed with empty dataSetURI.
+     * field should not be null. but should be empty
+     */
+    @Test
+    public void testNoDatasetURI() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
+        Assert.assertNotNull(this.records[0].getDataSetURIs());   
+        Assert.assertTrue(this.records[0].getDataSetURIs().length == 0);
+        
+    }
+
+    /**
+     * Tests that the record is correctly parsed with a single dataSetURI.
+     */
+    @Test
+    public void testSingleDatasetURI() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleDatasetURI.xml");
+        Assert.assertNotNull(this.records[0].getDataSetURIs());   
+        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150", 
+        		this.records[0].getDataSetURIs()[0]);
+    }
+    
+    /**
+     * Tests that the record is correctly parsed with a single dataSetURI.
+     */
+    @Test
+    public void testMultipleDatasetURIs() throws Exception {
+        setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MultipleDatasetURIs.xml");
+        Assert.assertNotNull(this.records[0].getDataSetURIs());   
+        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150", 
+        		this.records[0].getDataSetURIs()[0]);
+        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26151", 
+        		this.records[0].getDataSetURIs()[1]);
+    }
+    
+    /**
      * Generates an xpath-esque location for the current node for debug purposes
      * 
      * @param node

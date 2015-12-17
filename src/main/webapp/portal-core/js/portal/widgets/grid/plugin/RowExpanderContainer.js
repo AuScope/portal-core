@@ -129,18 +129,18 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         return groupInfo.children;
     },
-    
-    onExpandBody: function(rowNode, record, expandRow) {
+
+
+
+    onExpandBody : function(rowNode, record, expandRow) {
         if (!this.allowMultipleOpen) {
             for (openId in this.recordStatus) {
-            	if (record.id !== openId) {
-	                if (this.recordStatus[openId].expanded) {
-	                    var openRec = this.getStoreRecord(openId);
-	                    var openEl = this.view.getRow(openRec);
-	                    if (openEl !== null) {
-	                        this.toggleRow(openEl, openRec);
-	                    }
-	                }
+                if (this.recordStatus[openId].expanded) {
+                    var openRec = this.getStoreRecord(openId);
+                    var openEl = this.view.getRow(openRec);
+                    if (openEl !== null) {
+                        this.toggleRow(openEl, openRec);
+                    }
                 }
             }
         }
@@ -214,7 +214,13 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             // GPT-73 - If a container already existed it needs to be destroyed.  Since Singleton AppEvents holds a ref to it
             // it is never removed from memory (and worse, AppEvents keeps trying to broadcast to it).
             if (me.recordStatus[record.id].container) {
-                me.recordStatus[record.id].container.destroy();
+                //AUS-2608 - Wrapped this in a try-catch due to some tooltips getting orphaned and throwing a JS error when
+                //           trying to reference their dead parent.
+                try {
+                    me.recordStatus[record.id].container.destroy();
+                } catch(err) {
+                    console.log("Error destroying parent container:", err);
+                }
             }
             me.recordStatus[record.id].container = container;
             me.recordStatus[record.id].container.updateLayout({
