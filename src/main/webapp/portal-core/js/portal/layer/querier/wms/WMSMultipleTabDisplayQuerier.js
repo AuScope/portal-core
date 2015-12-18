@@ -57,7 +57,7 @@ Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
     _getPopulatedStore : function(fields) {
         // Stores are best way to display data in the Extjs UI
         var store = Ext.create('Ext.data.Store', {
-            model : 'records',
+            model : 'records'
         });
         
         var order = fields.order;
