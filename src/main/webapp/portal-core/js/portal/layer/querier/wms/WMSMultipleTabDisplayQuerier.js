@@ -1,6 +1,8 @@
 /**
  * Class for making and then parsing a WMS request/response for WMSGetFeatureRequests that may return more than on Feature Field and render each field
  * in a tab in the panel / window.
+ * 
+ * This should be subclassed with implementations of a number of unimplemented methods defined here. 
  */
 Ext.define('records', {
     extend : 'Ext.data.Model', 
@@ -9,19 +11,6 @@ Ext.define('records', {
              {name: 'value', type: 'string'},
      ]
 });
-
-// Include the mapping from the data key to the field name to display.
-// For this to be generic I'd move this to a sub-class.  
-// Currently specific to GA GPT-88 - Geological Maps / Scanned 250K Geological Map Index  
-var fieldNameMappingMap = {
-        QMAPID: "1:250K Map ID",
-        QMAPNAME: "1:250K Tile Name",
-        EDITION: "Edition",
-        PUBYEAR: "Publication Year",
-        LOCN125: "View / Download Map image 125dpi",
-        LOCN250: "View / Download Map image 250dpi",
-        LABEL: "Map Title"
-};
 
 Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
     extend: 'portal.layer.querier.wms.WMSQuerier',
@@ -55,9 +44,9 @@ Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
                     var domDoc = portal.util.xml.SimpleDOM.parseStringToDOM(xmlResponse);
                     var wmsGetFeatureInfo = new OpenLayers.Format.WMSGetFeatureInfo();
                     var fields = wmsGetFeatureInfo.read_FeatureInfoResponse(domDoc);
-                    console.log("Fields: ", fields);
-                    me._populateFieldsArray(fieldsArray, fields);
-                    me._drawFieldsTabs(layerName, fieldsArray);
+                    //    console.log("Fields: ", fields);
+                    me.populateFeatureFieldsDisplayArray(fields, fieldsArray);
+                    me._drawFeatureFieldsTabs(layerName, fieldsArray);
                 }else{
                     callback(this, [this.generateErrorComponent('There was an error when attempting to contact the remote WMS instance for information about this point.')], queryTarget);
                 }
@@ -65,62 +54,6 @@ Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
         });
     },
 
-    _populateFieldsArray : function(fieldsArray, fields) {
-        for (var i = 0; i < fields.length; i++) {
-            var record = {};
-            var order = []; // Order want to retrieve field from record map
-            record['order'] = order;
-            fieldsArray.push(record);
-
-            var tile = fields[i];
-            
-            var mapTitle = this._lookupTileData(tile, "LABEL");
-            record[mapTitle[0]] = mapTitle[1];
-            order.push(mapTitle[0]);
-
-            var mapId = this._lookupTileData(tile, "QMAPID");
-            record[mapId[0]] = mapId[1];
-            order.push(mapId[0]);
-            
-            var tileName = this._lookupTileData(tile, "QMAPNAME");
-            record[tileName[0]] = tileName[1];
-            order.push(tileName[0]);
-            
-            var edition = this._lookupTileData(tile, "EDITION");
-            record[edition[0]] = edition[1];
-            order.push(edition[0]);
-            
-            var pubYear = this._lookupTileData(tile, "PUBYEAR");
-            record[pubYear[0]] = pubYear[1];
-            order.push(pubYear[0]);
-            
-            var pubAgency = "";
-            if (tile.data['AGENCY1']) {
-                pubAgency = tile.data['AGENCY1'];
-            }
-            if (tile.data['AGENCY2']) {
-                if (pubAgency.size > 0) {
-                    pubAgency += ", ";
-                } 
-                pubAgency += tile.data['AGENCY2'];
-            }
-            record["Publishing Agency"] = pubAgency;
-            order.push("Publishing Agency");
-            
-            var location125 = this._lookupTileData(tile, "LOCN125");
-            record[location125[0]] = location125[1];
-            order.push(location125[0]);
-            
-            var location250 = this._lookupTileData(tile, "LOCN250");
-            record[location250[0]] = location250[1];
-            order.push(location250[0]);
-        }
-    },
-    
-    _lookupTileData : function(tile, fieldName) {
-        return [this._fieldNameMapping(fieldName), tile.data[fieldName]];
-    },
-    
     _getPopulatedStore : function(fields) {
         // Stores are best way to display data in the Extjs UI
         var store = Ext.create('Ext.data.Store', {
@@ -136,15 +69,14 @@ Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
     }, 
     
     _fieldNameMapping : function (dataKey) {
+        var fieldNameMappingMap = this.getFieldNameMappingMap();
         if (fieldNameMappingMap.hasOwnProperty(dataKey)) {
             return fieldNameMappingMap[dataKey];
         }
         return false;
     },
     
-    _drawFieldsTabs : function(name, fieldsArray) {
-
-        var me = this;
+    _drawFeatureFieldsTabs : function(name, fieldsArray) {
         var win = Ext.create('Ext.Window', {
             border      : true,
             layout      : 'fit',
@@ -189,10 +121,42 @@ Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
             });
      
             tabPanel.add({
-                title : fieldsArray[i]['Map Title'],
+                title : fieldsArray[i][this.getTabTitleMappedName()],
                 items : [gridPanel]
             });
         }
         win.show();
-    }
+    }, 
+    
+    /**
+     * Define the mapping from WFS GetFeatureInfo Key to what should be displayed for it.
+     * eg. 
+     * var fieldNameMappingMap = {
+     *   EDITION: "Edition",
+     *   PUBYEAR: "Publication Year",
+     *   LABEL: "Map Title"
+     * };
+     * return fieldNameMappingMap;
+     */
+    getFieldNameMappingMap : portal.util.UnimplementedFunction,
+    
+    /**
+     * Return the mapped field name as defined in getFieldNameMappingMap() to use to title the tab
+     * eg.
+     * return "Map Title";
+     */
+    getTabTitleMappedName : portal.util.UnimplementedFunction,
+    
+    /**
+     * Populate the passed in array featureFieldsDisplayArray with display data from featureFieldsArray which contains all 
+     * the returned fields for the features that for example, were clicked upon.
+     *
+     * Arguments:
+     *  featureFieldsArray - array of features where each feature is an object Map of the fields from WFS GetFeatureInfo
+     *  featureFieldsDisplayArray - passed in empty array to populate -
+     *      Array of Object Map of fields to be displayed.  Included in that map is 'order' array of the fields keys
+     *          [feature1={'order':[field1, field2, ..], 'field1':scalar string, 'field2':scalar string}, feature2={'order' ...}];
+     *      where each fieldX is the display name as returned in the value part of map by getFieldNameMappingMap()
+     */
+    populateFeatureFieldsDisplayArray : portal.util.UnimplementedFunction
 });
