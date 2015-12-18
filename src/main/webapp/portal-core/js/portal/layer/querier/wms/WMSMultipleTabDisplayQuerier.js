@@ -8,8 +8,8 @@ Ext.define('records', {
     extend : 'Ext.data.Model', 
     fields: [
              {name: 'field', type: 'string'},
-             {name: 'value', type: 'string'},
-     ]
+             {name: 'value', type: 'string'}
+    ]
 });
 
 Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
