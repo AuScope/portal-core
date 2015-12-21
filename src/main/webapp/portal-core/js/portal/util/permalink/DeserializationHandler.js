@@ -169,7 +169,6 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
-
                 layersToAdd.push(newLayer);
 
             } else if (serializedLayer.source === portal.layer.Layer.CSW_RECORD) {
@@ -195,11 +194,10 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 var newLayer = this.layerFactory.generateLayerFromCSWRecord(cswRecord);
               
                 cswRecord.set('layer', newLayer);
+                
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
-
-                //Add this layer to the internal store
-                this.layerStore.add(newLayer);
+                layersToAdd.push(newLayer);
                 
                 if(serializedLayer.customlayer){
                     cswRecord.set('customlayer', true);
@@ -211,11 +209,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
             } else if (serializedLayer.source === 'search') {
                 //Configure it
                 this._configureLayer(serializedLayer, serializedLayer.filter, serializedLayer.visible);
-
-                //Add this layer to the internal store
-                this.layerStore.insert(0, serializedLayer);
-                
-                this.map.addLayer(serializedLayer);
+                layersToAdd.push(newLayer);
             }
         }
 
