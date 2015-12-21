@@ -93,9 +93,10 @@ Ext.define('portal.events.AppEvents', {
           
           mss.addMapState(layer.get('renderer').map);
           mss.addLayers(args.layerStore);
-
+          
           mss.serialize(function(state, version) {
-              localStorage.setItem("storedApplicationState", state);
+              localStorage.setItem("geosciencePortalStoredApplicationState", state);
+              localStorage.setItem("geosciencePortalDefaultBaseLayer", layer.get('renderer').map.map.baseLayer.name);
           });
       }
     },

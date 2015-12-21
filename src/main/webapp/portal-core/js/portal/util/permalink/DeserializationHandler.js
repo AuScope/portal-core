@@ -143,6 +143,9 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         var centerPoint = Ext.create('portal.map.Point', {latitude : s.mapState.center.lat, longitude : s.mapState.center.lng});
         this.map.setCenter(centerPoint);
 
+        // array of layers that we will want to add to the layer store
+        var layersToAdd = [];
+        
         //Add the layers, attempt to load whatever layers are available
         //but warn the user if some layers no longer exist
         for (var i = 0; i < s.serializedLayers.length; i++) {
@@ -167,8 +170,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
 
-                //Add this layer to the internal store
-                this.layerStore.add(newLayer);
+                layersToAdd.push(newLayer);
 
             } else if (serializedLayer.source === portal.layer.Layer.CSW_RECORD) {
 
@@ -211,7 +213,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 this._configureLayer(serializedLayer, serializedLayer.filter, serializedLayer.visible);
 
                 //Add this layer to the internal store
-                this.layerStore.add(serializedLayer);
+                this.layerStore.insert(0, serializedLayer);
                 
                 this.map.addLayer(serializedLayer);
             }
@@ -226,5 +228,8 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 multiline : false
             });
         }
+                
+        //Add the layers to the internal store
+        this.layerStore.add(layersToAdd);
     }
 });
