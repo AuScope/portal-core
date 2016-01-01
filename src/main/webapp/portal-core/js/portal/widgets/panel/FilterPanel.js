@@ -66,7 +66,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         
         if(config.menuFactory){
             var mf= config.menuFactory;
-            if (mf.addResetFormAction) {
+            if (mf.addResetFormActionForWMS) {
                 menuItems.push(this._getResetFormAction());
             }
             mf.appendAdditionalActions(menuItems,this.filterForm.layer,this.filterForm.layer.get('source').get('group'),this._map);            
