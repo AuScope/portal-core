@@ -191,6 +191,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                     me.activelayerstore.suspendEvents(true);
                     me.activelayerstore.insert(0,layer);
                     me.activelayerstore.resumeEvents();
+//                    console.log("Added layer: ", layer);
                 },
                 removelayer : function(layer){
                     me.activelayerstore.remove(layer);

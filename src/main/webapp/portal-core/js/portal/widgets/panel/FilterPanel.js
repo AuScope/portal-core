@@ -20,8 +20,6 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     
     optionsButtonIsHidden : false,
     
-    layerStore: null,
-    
     /**
      * Accepts all parameters for a normal Ext.Panel instance with the following additions
      * {
@@ -36,27 +34,27 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      */
     constructor : function(config) {
  
-        var me = this;
+        this._map = config.map;        
         
-        me._map = config.map;        
-        
-        me.layerStore = config.layerStore;
+        // setup the default options or use those passed in by the portal
+        var menuItems = config.menuItems ? config.menuItems :
+            [this._getResetFormAction(),this._getDeleteAction(),this._setVisibilityAction()];
         
         if(Ext.isIE){
-            me.filterForm = config.filterForm.cloneConfig();        
-            me.filterForm.getForm().setValues(config.filterForm.getForm().getValues());
-            config.filterForm  = me.filterForm;                
-            config.filterForm.layer.set('filterForm',me.filterForm);
+            this.filterForm = config.filterForm.cloneConfig();        
+            this.filterForm.getForm().setValues(config.filterForm.getForm().getValues());
+            config.filterForm  = this.filterForm;                
+            config.filterForm.layer.set('filterForm',this.filterForm);
         }else{
-            me.filterForm = config.filterForm
+            this.filterForm = config.filterForm
         }
                     
         if (typeof config.wantAddLayerButton === 'undefined' || config.wantAddLayerButton ) {
-            me._addLayerButton = Ext.create('Ext.button.Button', {
+            this._addLayerButton = Ext.create('Ext.button.Button', {
                 xtype : 'button',
                 text      : 'Add layer to Map',
                 iconCls    :   'add',
-                handler : Ext.bind(me._onAddLayer, me)
+                handler : Ext.bind(this._onAddLayer, this)
             });
         }
          
@@ -64,36 +62,36 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             this.optionsButtonIsHidden = false;
         } else {
             this.optionsButtonIsHidden = true;
-        }
-        
-        var menuItems = [me._getResetFormAction(),me._getDeleteAction(),me._setVisibilityAction()];
-                        
-              
-        //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
-        //VT:Should have a legend action except for Insar data.
-        if(me.filterForm.layer.get('renderer').getLegend()){            
-            menuItems.push(me._getLegendAction(me.filterForm.layer));
-        }      
-        
-        
+        }                            
         
         if(config.menuFactory){
             var mf= config.menuFactory;
-            mf.appendAdditionalActions(menuItems,me.filterForm.layer,me.filterForm.layer.get('source').get('group'),me._map);            
-        }else{
+            if (mf.addResetFormActionForWMS) {
+                menuItems.push(this._getResetFormAction());
+            }
+            mf.appendAdditionalActions(menuItems,this.filterForm.layer,this.filterForm.layer.get('source').get('group'),this._map);            
+        }
+        
+        //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
+        //VT:Should have a legend action except for Insar data.
+        if(this.filterForm.layer.get('renderer').getLegend()){            
+            menuItems.push(this._getLegendAction(this.filterForm.layer));
+        }   
+        
+        if(!config.menuFactory){
             //VT:Default behavior if there are no menuFactory defined.
-            if(me.filterForm.layer.get('cswRecords').length > 0 &&
-                    me.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
-                     menuItems.push(me._getDownloadAction());
+            if(this.filterForm.layer.get('cswRecords').length > 0 &&
+                    this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
+                     menuItems.push(this._getDownloadAction());
             }
         }
         
         Ext.apply(config, { 
             items : [
-                me.filterForm
+                this.filterForm
             ],
             buttons : [
-                me._addLayerButton,
+                this._addLayerButton,
             {
                 xtype:'tbfill'
             },{
@@ -102,17 +100,18 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 iconCls    :   'setting',
                 arrowAlign: 'right',
                 menu      : menuItems,
-                hidden : me.optionsButtonIsHidden
+                hidden : this.optionsButtonIsHidden
             }]
         
         });
 
-        me.callParent(arguments);
+        this.callParent(arguments);
 
-        me.on('removelayer',function(layer){
+        this.on('removelayer',function(layer){
             config.menuFactory.layerRemoveHandler(layer);
-            me.activelayerstore.remove(layer);
         })
+
+
     },
     
     _getResetFormAction : function(){
@@ -262,11 +261,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Simply updates the appropriate layer filterer. It's the responsibility
      * of renderers/layers to listen for filterer updates.
      */
-    _onAddLayer : function() {   
-        
-        var me = this;
-
-        var layer = me.filterForm.layer; 
+    _onAddLayer : function() {      
+        var layer = this.filterForm.layer; 
         var filterer = layer.get('filterer');      
         
         //Before applying filter, update the spatial bounds (silently)
@@ -275,7 +271,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         this.fireEvent('addlayer', layer);
         // Fire the event for external clients
         console.log("_onAddLayer - layer name: ", layer.get('name'));
-        AppEvents.broadcast('addlayer', {layer:layer, layerStore: me.layerStore});
+        AppEvents.broadcast('addlayer', layer);
 
         this.filterForm.writeToFilterer(filterer);        
       
