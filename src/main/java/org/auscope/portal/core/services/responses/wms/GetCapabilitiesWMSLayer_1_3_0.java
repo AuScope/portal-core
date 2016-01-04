@@ -5,6 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -143,10 +144,17 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      */
     @Override
     public String getMetadataURL() throws XPathExpressionException {
-        if (metadataURL == null) {
-            Node tempNode = (Node) xPath.evaluate("MetadataURL", node, XPathConstants.NODE);
+    	
+    	// look for the metadataURL in the nested OnlineResource element
+        Node tempNode = (Node) getXPath().evaluate("MetadataURL/OnlineResource", node, XPathConstants.NODE);
+        metadataURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
+
+        // iff not there, use the text in the Layer's MetadataURL node directly
+        if (StringUtils.isBlank(metadataURL)) {
+            tempNode = (Node) getXPath().evaluate("MetadataURL", node, XPathConstants.NODE);
             metadataURL = tempNode != null ? tempNode.getTextContent() : "";
-        }
+        }       
+        
         return metadataURL;
     }
 

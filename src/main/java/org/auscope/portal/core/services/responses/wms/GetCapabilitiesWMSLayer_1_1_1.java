@@ -5,6 +5,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -23,6 +24,8 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
 
     /** The log. */
     private final Log log = LogFactory.getLog(getClass());
+    
+    private Node node;
 
     /** The name. */
     private String name;
@@ -45,6 +48,15 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
     /** The child layer srs. */
     private String[] childLayerSRS;
 
+    private XPath xPath;
+
+    private XPath getXPath() {
+        if (xPath == null) {
+            xPath = XPathFactory.newInstance().newXPath();
+        }
+        return xPath;
+    }
+    
     /**
      * Instantiates a new gets the capabilities wms layer record.
      *
@@ -56,6 +68,8 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
     public GetCapabilitiesWMSLayer_1_1_1(Node node) throws XPathExpressionException {
         XPath xPath = XPathFactory.newInstance().newXPath();
 
+        this.node = node;
+        
         String layerNameExpression = "Name";
         Node tempNode = (Node) xPath.evaluate(layerNameExpression, node, XPathConstants.NODE);
         name = tempNode != null ? tempNode.getTextContent() : "";
@@ -72,9 +86,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
         tempNode = (Node) xPath.evaluate(layerLegendURLExpression, node, XPathConstants.NODE);
         legendURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
         
-        String layerMetadataURLExpression = "MetadataURL";
-        tempNode = (Node) xPath.evaluate(layerMetadataURLExpression, node, XPathConstants.NODE);
-        metadataURL = tempNode != null ? tempNode.getTextContent() : "";
+        metadataURL = getMetadataURL();        
         
         String latLonBoundingBox = "LatLonBoundingBox";
         tempNode = (Node) xPath.evaluate(latLonBoundingBox, node, XPathConstants.NODE);
@@ -162,6 +174,17 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      *             the x path expression exception
      */
     public String getMetadataURL() throws XPathExpressionException {
+
+    	// look for the metadataURL in the nested OnlineResource element
+        Node tempNode = (Node) getXPath().evaluate("MetadataURL/OnlineResource", node, XPathConstants.NODE);
+        metadataURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
+
+        // iff not there, use the text in the Layer's MetadataURL node directly
+        if (StringUtils.isBlank(this.metadataURL)) {
+            tempNode = (Node) getXPath().evaluate("MetadataURL", node, XPathConstants.NODE);
+            metadataURL = tempNode != null ? tempNode.getTextContent() : "";
+        }       
+        
         return metadataURL;
     }
     
