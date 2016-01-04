@@ -24,7 +24,10 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
     activelayerstore : null,
     menuFactory : null,
     onlineResourcePanelType : null,
-
+    serviceInformationIcon : null,
+    mapExtentIcon : null,
+    
+    
     /**
      * Define listeners to combine with any passed in with the Options
      */
@@ -36,7 +39,9 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         me.menuFactory = cfg.menuFactory;
         me.activelayerstore = cfg.activelayerstore;
         me.onlineResourcePanelType = cfg.onlineResourcePanelType;
-
+        me.serviceInformationIcon = cfg.serviceInformationIcon;
+        me.mapExtentIcon = cfg.mapExtentIcon;
+        
         me.listeners = Object.extend(me.listenersHere, cfg.listeners);
 
         // Sub classes should define their Columns in their constructors
@@ -147,17 +152,20 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         var containsDataService = serviceType.containsDataService;
         var containsImageService = serviceType.containsImageService;
 
-        
+        // default iconPath where there is no service info available
+        var iconPath = 'portal-core/img/cross.png';
 
-        var iconPath = null;
-        if (containsDataService) {
-            iconPath = 'portal-core/img/binary.png'; //a single data service will label the entire layer as a data layer
-        } else if (containsImageService) {
-            iconPath = 'portal-core/img/picture.png';
-        } else {
-            iconPath = 'portal-core/img/cross.png';
+        // check whether the portal has overridden the icons 
+        if (this.serviceInformationIcon && (containsDataService || containsImageService)) {
+            iconPath = this.serviceInformationIcon;
+        } else {        
+            if (containsDataService) {            
+                iconPath = 'portal-core/img/binary.png'; //a single data service will label the entire layer as a data layer
+            } else if (containsImageService) {
+                iconPath = 'portal-core/img/picture.png';
+            }
         }
-
+        
         return this._generateHTMLIconMarkup(iconPath);
     },
     
@@ -205,9 +213,15 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
      */
     _spatialBoundsRenderer : function(value, metaData, record, row, col, store, gridView) {
         var spatialBounds = this.getSpatialBoundsForRecord(record);
-        if (spatialBounds.length > 0 || record.internalId == 'portal-InSar-reports') {
-            // create one for insar
-            return this._generateHTMLIconMarkup('portal-core/img/magglass.gif');
+
+        if (spatialBounds.length > 0 || record.internalId == 'portal-InSar-reports') {                                   
+            var icon = null;
+            if (this.mapExtentIcon) {
+                icon = this._generateHTMLIconMarkup(this.mapExtentIcon);
+            } else {
+                icon = this._generateHTMLIconMarkup('portal-core/img/magglass.gif');
+            }
+            return icon;
         }
 
         return '';
