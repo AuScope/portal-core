@@ -233,9 +233,17 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                     if (type === portal.csw.OnlineResource.WMS ||
                         type === portal.csw.OnlineResource.WCS) {
 
-                        if(layer.get('filterer').getParameters().serviceFilter &&
-                                (this._getDomain(resourcesToIterate[k].get('url'))!= this._getDomain(layer.get('filterer').getParameters().serviceFilter[0]))){
-                            continue;
+                        var serviceFilter = layer.get('filterer').getParameters().serviceFilter;
+                        if (serviceFilter) {
+                            if (Ext.isArray(serviceFilter)) {
+                                serviceFilter = serviceFilter[0];
+                            }
+                            // layers get filtered based on the service provider
+                            // or from a single provider and based on the layer name
+                            if (resourcesToIterate[k].get('name') != serviceFilter &&
+                                    this._getDomain(resourcesToIterate[k].get('url')) != serviceFilter) {
+                                continue;
+                            }
                         }
 
                         queryTargets.push(Ext.create('portal.layer.querier.QueryTarget', {
