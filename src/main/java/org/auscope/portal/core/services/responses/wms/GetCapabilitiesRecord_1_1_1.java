@@ -36,9 +36,6 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
     /** The get map url. */
     private String getMapUrl = "";
 
-    /** The metadata url. */
-    private String metadataUrl = "";
-    
     private String[] getMapFormats = new String[] {};
 
     /** The layers. */
@@ -61,9 +58,6 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
     /** The extract layer expression. */
     private static final String EXTRACTLAYEREXPRESSION = "/WMT_MS_Capabilities/Capability/descendant::Layer";
 
-    /** The MetadataURL expression. */
-    private static final String METADATAURLREXPRESSION = "/WMS_Capabilities/Capability/Layer/MetadataURL/OnlineResource";
-    
     /**
      * Constructor.
      * 
@@ -80,7 +74,6 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
             this.serviceType = getService(doc);
             this.organisation = getContactOrganisation(doc);
             this.getMapUrl = getGetMapUrl(doc);
-            this.metadataUrl = getMetadataUrl(doc);
             this.layerSRS = getWMSLayerSRS(doc);
             this.getMapFormats = getWMSGetMapFormats(doc);
             if (isWMS()) {
@@ -153,15 +146,6 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
         return this.getMapUrl;
     }
 
-    /**
-     * Gets the MetadataURL for the base layer of this record.
-     *
-     * @return the metadata url
-     */
-    public String getMetadataUrl() {
-        return this.metadataUrl;
-    }
-    
     /**
      * Gets the layers.
      *
@@ -262,30 +246,6 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
     }
 
     /**
-     * Gets the metadata url.
-     *
-     * @param xPath
-     *            the xpath to use to find the element
-     * @param doc
-     *            the document
-     * @return the map url String
-     */
-    private String getMetadataUrl(Document doc) {
-        String metadataUrl = "";
-        try {
-            Element elem = (Element) DOMUtil.compileXPathExpr(METADATAURLREXPRESSION).evaluate(doc, XPathConstants.NODE);
-
-            if (elem != null) {
-            	metadataUrl = elem.getAttribute("xlink:href");
-            }
-            
-        } catch (XPathExpressionException e) {
-            log.error("GetCapabilities MetadataURL xml parsing error: " + e.getMessage());
-        }
-        return metadataUrl;
-    }    
-    
-    /**
      * Gets the wMS layers.
      *
      * @param xPath
@@ -371,5 +331,5 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
     @Override
     public String getVersion() {
         return "1.1.1";
-    }   
+    }
 }
