@@ -1,7 +1,7 @@
 /**
  * Class for making and then parsing a WMS request/response for WMSGetFeatureRequests that may return more than on Feature Field and render each field
  * in a tab in the panel / window.
- * 
+ * Example of this code use, https://github.com/GeoscienceAustralia/geoscience-portal/pull/80/files
  * This should be subclassed with implementations of a number of unimplemented methods defined here. 
  */
 Ext.define('records', {
