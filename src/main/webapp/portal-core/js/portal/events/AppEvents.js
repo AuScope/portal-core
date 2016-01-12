@@ -95,8 +95,8 @@ Ext.define('portal.events.AppEvents', {
           mss.addLayers(args.layerStore);
           
           mss.serialize(function(state, version) {
-              localStorage.setItem("geosciencePortalStoredApplicationState", state);
-              localStorage.setItem("geosciencePortalDefaultBaseLayer", layer.get('renderer').map.map.baseLayer.name);
+              localStorage.setItem("portalStorageApplicationState", state);
+              localStorage.setItem("portalStorageDefaultBaseLayer", layer.get('renderer').map.map.baseLayer.name);
           });
       }
     },
