@@ -1,8 +1,9 @@
 package org.auscope.portal.core.services.responses.wcs;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 
+import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
+import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -15,29 +16,27 @@ public class RangeSetImpl implements RangeSet {
     private ValueEnumType[] nullValues;
     private AxisDescription[] axisDescriptions;
 
-    public RangeSetImpl(Node node, XPath xPath) throws Exception {
-
-        Node tempNode = (Node) xPath.evaluate("wcs:description", node, XPathConstants.NODE);
+    public RangeSetImpl(Node node, WCSNamespaceContext nc) throws Exception {
+        Node tempNode = (Node) DOMUtil.compileXPathExpr("wcs:description", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null)
             description = tempNode.getTextContent();
 
-        tempNode = (Node) xPath.evaluate("wcs:name", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:name", nc).evaluate(node, XPathConstants.NODE);
         name = tempNode.getTextContent();
 
-        tempNode = (Node) xPath.evaluate("wcs:label", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:label", nc).evaluate(node, XPathConstants.NODE);
         label = tempNode.getTextContent();
 
-        NodeList tempNodeList = (NodeList) xPath.evaluate("wcs:axisDescription/wcs:AxisDescription", node,
-                XPathConstants.NODESET);
+        NodeList tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:axisDescription/wcs:AxisDescription", nc).evaluate(node, XPathConstants.NODESET);
         axisDescriptions = new AxisDescription[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
-            axisDescriptions[i] = new AxisDescriptionImpl(tempNodeList.item(i), xPath);
+            axisDescriptions[i] = new AxisDescriptionImpl(tempNodeList.item(i), nc);
         }
 
-        tempNodeList = (NodeList) xPath.evaluate("wcs:nullValues/wcs:*", node, XPathConstants.NODESET);
+        tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:nullValues/wcs:*", nc).evaluate(node, XPathConstants.NODESET);
         nullValues = new ValueEnumType[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
-            nullValues[i] = ValueEnumTypeFactory.parseFromNode(tempNodeList.item(i));
+            nullValues[i] = ValueEnumTypeFactory.parseFromNode(tempNodeList.item(i), nc);
         }
     }
 

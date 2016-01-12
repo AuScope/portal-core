@@ -2,14 +2,14 @@ package org.auscope.portal.core.services.responses.wcs;
 
 import java.io.Serializable;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathExpression;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
+import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -108,24 +108,23 @@ public class DescribeCoverageRecord implements Serializable {
      * @throws Exception
      *             the exception
      */
-    private DescribeCoverageRecord(Node node, XPath xPath) throws Exception {
+    private DescribeCoverageRecord(Node node, WCSNamespaceContext nc) throws Exception {
         Node tempNode = null;
         NodeList tempNodeList = null;
 
-        tempNode = (Node) xPath.evaluate("wcs:description", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:description", nc).evaluate(node, XPathConstants.NODE);
         description = getTextContentOrEmptyString(tempNode);
 
-        tempNode = (Node) xPath.evaluate("wcs:name", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:name", nc).evaluate(node, XPathConstants.NODE);
         name = getTextContentOrEmptyString(tempNode);
 
-        tempNode = (Node) xPath.evaluate("wcs:label", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:label", nc).evaluate(node, XPathConstants.NODE);
         label = getTextContentOrEmptyString(tempNode);
 
         //We will get a list of <requestResponseCRSs> OR a list
         //of <requestCRSs> and <responseCRSs>
         //Lets parse one or the other
-        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedCRSs/wcs:requestResponseCRSs", node,
-                XPathConstants.NODESET);
+        tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:supportedCRSs/wcs:requestResponseCRSs", nc).evaluate(node, XPathConstants.NODESET);
         if (tempNodeList.getLength() > 0) {
             supportedRequestCRSs = new String[tempNodeList.getLength()];
             supportedResponseCRSs = new String[tempNodeList.getLength()];
@@ -134,57 +133,55 @@ public class DescribeCoverageRecord implements Serializable {
                 supportedResponseCRSs[i] = getTextContentOrEmptyString(tempNodeList.item(i));
             }
         } else {
-            tempNodeList = (NodeList) xPath.evaluate("wcs:supportedCRSs/wcs:requestCRSs", node, XPathConstants.NODESET);
+            tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:supportedCRSs/wcs:requestCRSs", nc).evaluate(node, XPathConstants.NODESET);
             supportedRequestCRSs = new String[tempNodeList.getLength()];
             for (int i = 0; i < tempNodeList.getLength(); i++) {
                 supportedRequestCRSs[i] = getTextContentOrEmptyString(tempNodeList.item(i));
             }
 
-            tempNodeList = (NodeList) xPath
-                    .evaluate("wcs:supportedCRSs/wcs:responseCRSs", node, XPathConstants.NODESET);
+            tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:supportedCRSs/wcs:responseCRSs", nc).evaluate(node, XPathConstants.NODESET);
             supportedResponseCRSs = new String[tempNodeList.getLength()];
             for (int i = 0; i < tempNodeList.getLength(); i++) {
                 supportedResponseCRSs[i] = getTextContentOrEmptyString(tempNodeList.item(i));
             }
         }
 
-        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedFormats/wcs:formats", node, XPathConstants.NODESET);
+        tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:supportedFormats/wcs:formats", nc).evaluate(node, XPathConstants.NODESET);
         supportedFormats = new String[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             supportedFormats[i] = getTextContentOrEmptyString(tempNodeList.item(i));
         }
 
-        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedInterpolations/wcs:interpolationMethod", node,
-                XPathConstants.NODESET);
+        tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:supportedInterpolations/wcs:interpolationMethod", nc).evaluate(node, XPathConstants.NODESET);
         supportedInterpolations = new String[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             supportedInterpolations[i] = getTextContentOrEmptyString(tempNodeList.item(i));
         }
 
-        tempNodeList = (NodeList) xPath.evaluate("wcs:supportedCRSs/wcs:nativeCRSs", node, XPathConstants.NODESET);
+        tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:supportedCRSs/wcs:nativeCRSs", nc).evaluate(node, XPathConstants.NODESET);
         nativeCRSs = new String[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             nativeCRSs[i] = getTextContentOrEmptyString(tempNodeList.item(i));
         }
 
         //Parse our spatial domain (only grab gml:Envelopes and wcs:EnvelopeWithTimePeriod
-        tempNode = (Node) xPath.evaluate("wcs:domainSet/wcs:spatialDomain", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:domainSet/wcs:spatialDomain", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null) {
-            spatialDomain = new SpatialDomain(tempNode, xPath);
+            spatialDomain = new SpatialDomain(tempNode, nc);
         }
 
         //Get the temporal range (which is optional)
-        tempNode = (Node) xPath.evaluate("wcs:domainSet/wcs:temporalDomain", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:domainSet/wcs:temporalDomain", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null) {
-            tempNodeList = (NodeList) xPath.evaluate(XPATHALLCHILDREN, tempNode, XPathConstants.NODESET);
+            tempNodeList = (NodeList) DOMUtil.compileXPathExpr(XPATHALLCHILDREN, nc).evaluate(tempNode, XPathConstants.NODESET);
             temporalDomain = new TemporalDomain[tempNodeList.getLength()];
             for (int i = 0; i < tempNodeList.getLength(); i++) {
                 temporalDomain[i] = TemporalDomainFactory.parseFromNode(tempNodeList.item(i));
             }
         }
 
-        tempNode = (Node) xPath.evaluate("wcs:rangeSet/wcs:RangeSet", node, XPathConstants.NODE);
-        rangeSet = new RangeSetImpl(tempNode, xPath);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:rangeSet/wcs:RangeSet", nc).evaluate(node, XPathConstants.NODE);
+        rangeSet = new RangeSetImpl(tempNode, nc);
     }
 
     /**
@@ -314,16 +311,13 @@ public class DescribeCoverageRecord implements Serializable {
         //This is to make sure we actually receive a valid response
         OWSExceptionParser.checkForExceptionResponse(doc);
 
-        XPath xPath = XPathFactory.newInstance().newXPath();
-        xPath.setNamespaceContext(new WCSNamespaceContext());
-
-        String serviceTitleExpression = "/wcs:CoverageDescription/wcs:CoverageOffering";
-
-        NodeList nodes = (NodeList) xPath.evaluate(serviceTitleExpression, doc, XPathConstants.NODESET);
+        WCSNamespaceContext nc = new WCSNamespaceContext();
+        XPathExpression xPath = DOMUtil.compileXPathExpr("/wcs:CoverageDescription/wcs:CoverageOffering", nc);
+        NodeList nodes = (NodeList) xPath.evaluate(doc, XPathConstants.NODESET);
 
         DescribeCoverageRecord[] records = new DescribeCoverageRecord[nodes.getLength()];
         for (int i = 0; i < nodes.getLength(); i++) {
-            records[i] = new DescribeCoverageRecord(nodes.item(i), xPath);
+            records[i] = new DescribeCoverageRecord(nodes.item(i), nc);
         }
 
         return records;
