@@ -36,6 +36,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
  
         this._map = config.map;        
         
+        // setup the default options or use those passed in by the portal
+        var menuItems = config.menuItems ? config.menuItems :
+            [this._getResetFormAction(),this._getDeleteAction(),this._setVisibilityAction()];
+        
         if(Ext.isIE){
             this.filterForm = config.filterForm.cloneConfig();        
             this.filterForm.getForm().setValues(config.filterForm.getForm().getValues());
@@ -58,23 +62,23 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             this.optionsButtonIsHidden = false;
         } else {
             this.optionsButtonIsHidden = true;
+        }                            
+        
+        if(config.menuFactory){
+            var mf= config.menuFactory;
+            if (mf.addResetFormActionForWMS) {
+                menuItems.push(this._getResetFormAction());
+            }
+            mf.appendAdditionalActions(menuItems,this.filterForm.layer,this.filterForm.layer.get('source').get('group'),this._map);            
         }
         
-        var menuItems = [this._getResetFormAction(),this._getDeleteAction(),this._setVisibilityAction()];
-                        
-              
         //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
         //VT:Should have a legend action except for Insar data.
         if(this.filterForm.layer.get('renderer').getLegend()){            
             menuItems.push(this._getLegendAction(this.filterForm.layer));
-        }      
+        }   
         
-        
-        
-        if(config.menuFactory){
-            var mf= config.menuFactory;
-            mf.appendAdditionalActions(menuItems,this.filterForm.layer,this.filterForm.layer.get('source').get('group'),this._map);            
-        }else{
+        if(!config.menuFactory){
             //VT:Default behavior if there are no menuFactory defined.
             if(this.filterForm.layer.get('cswRecords').length > 0 &&
                     this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){

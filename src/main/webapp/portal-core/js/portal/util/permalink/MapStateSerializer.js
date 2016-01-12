@@ -122,8 +122,8 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
                 id : layer.get('id'), //This is only persistent for KnownLayers
                 filter : filterer.getParameters(),
                 source : source               
-            };
-        } else if (source === portal.layer.Layer.CSW_RECORD) {
+            };            
+        } else if (source === portal.layer.Layer.CSW_RECORD || source === 'search') {
             var cswRecord = layer.get('cswRecords')[0];
 
             return {
