@@ -185,6 +185,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
             case portal.csw.OnlineResource.OPeNDAP:
             case portal.csw.OnlineResource.CSWService:
             case portal.csw.OnlineResource.IRIS:
+            case portal.csw.OnlineResource.NCSS:
                 containsDataService = true;
                 break;
             case portal.csw.OnlineResource.WMS:
