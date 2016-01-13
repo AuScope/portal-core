@@ -36,7 +36,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         Ext.apply(this, cfg);
 
         this.callParent(arguments);
-
+ 
         //Ensure our deserialisation occurs now (if appropriate) or when our datastores finish loading
         if (this.knownLayerStore) {
             this.knownLayerStore.on('load', this._deserializeIfReady, this, {single : true});
@@ -143,6 +143,9 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         var centerPoint = Ext.create('portal.map.Point', {latitude : s.mapState.center.lat, longitude : s.mapState.center.lng});
         this.map.setCenter(centerPoint);
 
+        // array of layers that we will want to add to the layer store
+        var layersToAdd = [];
+        
         //Add the layers, attempt to load whatever layers are available
         //but warn the user if some layers no longer exist
         for (var i = 0; i < s.serializedLayers.length; i++) {
@@ -166,9 +169,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
-
-                //Add this layer to the internal store
-                this.layerStore.add(newLayer);
+                layersToAdd.push(newLayer);
 
             } else if (serializedLayer.source === portal.layer.Layer.CSW_RECORD) {
 
@@ -193,11 +194,10 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 var newLayer = this.layerFactory.generateLayerFromCSWRecord(cswRecord);
               
                 cswRecord.set('layer', newLayer);
+                
                 //Configure it
                 this._configureLayer(newLayer, serializedLayer.filter, serializedLayer.visible);
-
-                //Add this layer to the internal store
-                this.layerStore.add(newLayer);
+                layersToAdd.push(newLayer);
                 
                 if(serializedLayer.customlayer){
                     cswRecord.set('customlayer', true);
@@ -205,8 +205,11 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                     var customPanel = tabpanel.getComponent('org-auscope-custom-record-panel');
                     tabpanel.setActiveTab(customPanel);                                       
                     customPanel.getStore().insert(0,cswRecord);                    
-                }
-                
+                }                
+            } else if (serializedLayer.source === 'search') {
+                //Configure it
+                this._configureLayer(serializedLayer, serializedLayer.filter, serializedLayer.visible);
+                layersToAdd.push(newLayer);
             }
         }
 
@@ -219,5 +222,8 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
                 multiline : false
             });
         }
+                
+        //Add the layers to the internal store
+        this.layerStore.add(layersToAdd);
     }
 });
