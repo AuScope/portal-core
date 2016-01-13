@@ -185,6 +185,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             detachOnRemove : false,
             map         : this.map,
             renderTo    : parentElId,
+            layerStore: me.activelayerstore,
             menuItems : [],
             listeners : {
                 addlayer : function(layer){
@@ -397,7 +398,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     _deleteClickHandler :  function(value, record, rowIdx, tip) {
         var layer = record.get('layer');
         if(layer && record.get('active')){            
-        	AppEvents.broadcast('removelayer', {layer:layer, rowIdx:rowIdx});
+        	AppEvents.broadcast('removelayer', {layer:layer, layerStore:this.activelayerstore, rowIdx:rowIdx});
         } 
     },    
     _removeLayer : function(layerArray) {
