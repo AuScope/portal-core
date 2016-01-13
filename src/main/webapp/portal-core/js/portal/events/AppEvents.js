@@ -37,95 +37,84 @@
 Ext.define('portal.events.AppEvents', {
     singleton : true,
     alternateClassName: ['AppEvents'],
+//    //listeners : null,
     listeners : {},
-    
     constructor : function(config) {
         this.initConfig(config);
     },
-    
     clear : function() {
         this.listeners = {};
     },
-    
     /**
      * Add listener to call back (all are called) when an event is broadcast.  All registered listeners will receive the event
-     * but only those that declare a listener of the event name in its "listeners" object will actually receive it.
+     * but only those that declare a listener of the event name in its "listners" object will actually receive it.
      * 
      * listener: listener is the object listener callback
      * args: args - either an associative array (such as if multiple items) or a single item 
      */
     addListener : function (listener, args) {
+//      var theArgs
+//      if (args && typeof(args) != "object") {
+//          // must be a number or string or similar - wrap in an array and when broadcasting if there are no broadcasted args
+//          // then return this single item (not in an array).  If broadcasted args then concatenate into the array
+//          theArgs = [args];
+//      }
       var id = listener.uniqueId; // Defined in js/admin/global.js
       var entry = {listener:listener,args:args};
       this.listeners[id]=entry;
-    },
-  
-    removeListener : function (listener) {
+//      console.log("AppEvents - addListner - id: "+id+", args: ", args, ", listener: ", listener, " # listeners: ", Object.getOwnPropertyNames(this.listeners).length);
+  },
+  removeListener : function (listener) {
       var id = listener.uniqueId; // Defined in js/admin/global.js
       if (this.listeners[id]) {
           delete this.listeners[id];
-      } 
-    },
-  
-    broadcast : function (event, args) {
+//          console.log("AppEvents - removeListener - id: ", id, " # listeners: ", Object.getOwnPropertyNames(this.listeners).length);
+      } else {
+//          console.log("AppEvents - NOT removeListener as doesnt exist - id: ", id)
+      }
+  },
+  broadcast : function (event, args) {
       var me = this;
-
+//      console.log("AppEvents - broadcast - event: ", event, ", args: ", args);
       Object.keys(this.listeners).forEach(function(id, index) {
           if (me.listeners[id]) {
               var listener=me.listeners[id].listener;
               var listenerArgs=me.listeners[id].args;
               var theArgs = me._combineArgs(args, listenerArgs);
+//              console.log("   AppEvents - broadcast - listener: ", listener);
+//              console.log("            args: ",theArgs);
               listener.fireEvent(event, theArgs);
-          } 
-      },this.listeners);
-      
-      // store the application state
-      if(typeof(Storage) !== "undefined" && args) {
-          var mss = Ext.create('portal.util.permalink.MapStateSerializer');
-
-          // grant a bit of flexibility to pass in a layer or an array of layers and use the first element
-          var layer;
-          if (args.layer.length) {
-              layer = args.layer[0];
           } else {
-              layer = args.layer;
+              // Seems to be a timing thing - even though a removed listener it hangs around for a bit 
+//              console.log("  WARNING - trying to broadcast to object without listener - id: ", id);
           }
-          
-          mss.addMapState(layer.get('renderer').map);
-          mss.addLayers(args.layerStore);
-          
-          mss.serialize(function(state, version) {
-              localStorage.setItem("portalStorageApplicationState", state);
-              localStorage.setItem("portalStorageDefaultBaseLayer", layer.get('renderer').map.map.baseLayer.name);
-          });
+      },this.listeners);
+  },
+  /**
+   * Combine Assoc Arrays into one.
+   */
+  _combineArgs : function (leftArgs, rightArgs) {
+      if (! leftArgs) {
+          leftArgs = {};
       }
-    },
-    
-    /**
-     * Combine Assoc Arrays into one.
-     */
-    _combineArgs : function (leftArgs, rightArgs) {
-        if (! leftArgs) {
-            leftArgs = {};
-        }
-        if (! rightArgs) {
-            rightArgs = {};
-        }
-        if (typeof(leftArgs) != "object" && typeof(rightArgs) != "object") {
-            Ext.Error.raise("Cannot have both scalar args for listener and broadcaster")
-        }
+      if (! rightArgs) {
+          rightArgs = {};
+      }
+      if (typeof(leftArgs) != "object" && typeof(rightArgs) != "object") {
+          Ext.Error.raise("Cannot have both scalar args for listener and broadcaster")
+      }
       if (typeof(leftArgs) != "object") {
           leftArgs = {other:leftArgs};
       }
       if (typeof(rightArgs) != "object") {
           rightArgs = {other:rightArgs};
       }
-          
+      
       theCombinedArgs = Object.extend(leftArgs, rightArgs);
       return theCombinedArgs;
-    },
+  },
   
-    getListeners : function() {
-        return this.listeners;
-    }
+  getListeners : function() {
+      return this.listeners;
+  }
 });
