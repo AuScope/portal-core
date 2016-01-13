@@ -18,12 +18,12 @@ Ext.define('portal.layer.LayerStore', {
         add : function(store, records, index, eOpts) {
 //            console.log("LayerStore - Records added to layerstore: ", records);
             // Let the listeners know about the new active layer
-            AppEvents.broadcast('addactivelayer', {layer:records, layerStore:this});
+            AppEvents.broadcast('addactivelayer', {layer:records});
         },
         remove : function( store, records, index, isMove, eOpts ) {
 //            console.log("LayerStore - Records removed from layerstore: ", records);
             // Let the listeners know about the removed active layer
-            AppEvents.broadcast('removeactivelayer', {layer:records, layerStore:this});
+            AppEvents.broadcast('removeactivelayer', {layer:records});
         }
     
     }
