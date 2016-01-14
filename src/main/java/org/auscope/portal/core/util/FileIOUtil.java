@@ -69,7 +69,7 @@ public class FileIOUtil {
 
     /**
      * Utility function for closing a stream quietly (with no exceptions being raised)
-     * 
+     *
      * @param s
      *            The stream to close
      */
@@ -234,18 +234,33 @@ public class FileIOUtil {
      *            - the ZipOutputStream to write the response
      * @throws IOException
      */
-    public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout)
+    public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout) throws IOException {
+        writeResponseJSONToZip(gmlDownloads, zout, null);
+    }
+
+    /**
+     * This util will allow us to write JSON/XML responses to zip file
+     *
+     * @param extension File extension to apply to files in the zip (defaults to .xml)
+     * @param gmlDownloads
+     *            - a list of DownloadResponse
+     * @param zout
+     *            - the ZipOutputStream to write the response
+     * @throws IOException
+     */
+    public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout, String extension)
             throws IOException {
         //VT: this assume all files will be of the sme extension. With paging, we have .zip in the mix.
         if (gmlDownloads.get(0).getContentType().contains("text")
                 || gmlDownloads.get(0).getContentType().contains("zip")) {
-            writeResponseToZip(gmlDownloads, zout, true);
+            writeResponseToZip(gmlDownloads, zout, true, extension);
         } else { //VT: TODO: the different response type should be handled differently.
                  //VT: eg. handle application/json and a final catch all.
             log.warn("No content type found, defaulting to handling JSON responses");
-            writeResponseJSONToZip(gmlDownloads, zout);
+            writeResponseJSONToZip(gmlDownloads, zout, extension);
         }
     }
+
 
     /**
      * Writes a series of DownloadResponse objects to a zip stream, each download response will be put into a separate zip entry. This are the same code as
@@ -258,12 +273,28 @@ public class FileIOUtil {
      * @param closeInput
      *            true to close all the input stream in the gmlDownloads
      */
-    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs)
+    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs) throws IOException {
+        writeResponseToZip(gmlDownloads, zout, closeInputs, null);
+    }
+
+    /**
+     * Writes a series of DownloadResponse objects to a zip stream, each download response will be put into a separate zip entry. This are the same code as
+     * those in BasePortalController
+     *
+     * @param extensionOverride The file extension to apply to files in the zip (defaults to MimeUtil.mimeToFileExtension based on content type)
+     * @param gmlDownloads
+     *            The download responses
+     * @param zout
+     *            The stream to receive the zip entries
+     * @param closeInput
+     *            true to close all the input stream in the gmlDownloads
+     */
+    public static void writeResponseToZip(List<DownloadResponse> gmlDownloads, ZipOutputStream zout, boolean closeInputs, String extensionOverride)
             throws IOException {
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
-            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + "."
-                    + MimeUtil.mimeToFileExtension(gmlDownloads.get(i).getContentType());
+            String extension = extensionOverride == null ? MimeUtil.mimeToFileExtension(gmlDownloads.get(i).getContentType()) : extensionOverride;
+            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + "." + extension;
             //TODO: VT - this method can be further improved if we thread this method as we are processing each stream one by one.
             // Check that attempt to request is successful
             if (!download.hasException()) {
@@ -281,7 +312,7 @@ public class FileIOUtil {
 
     /**
      * Writes an error to a zip stream. This are the same code as those in BasePortalController
-     * 
+     *
      * @param zout
      *            the zout
      * @param debugQuery
@@ -318,7 +349,7 @@ public class FileIOUtil {
 
     /**
      * Writes output to input via an in memory buffer of a certain size This are the same code as those in BasePortalController
-     * 
+     *
      * @param input
      *            The input stream
      * @param output
@@ -352,7 +383,7 @@ public class FileIOUtil {
 
     /**
      * This util will allow us to write JSON responses to zip file
-     * 
+     *
      * @param gmlDownloads
      *            - a list of DownloadResponse
      * @param zout
@@ -360,6 +391,21 @@ public class FileIOUtil {
      * @throws IOException
      */
     public static void writeResponseJSONToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout)
+            throws IOException {
+        writeResponseJSONToZip(gmlDownloads, zout, ".xml");
+    }
+
+    /**
+     * This util will allow us to write JSON responses to zip file
+     *
+     * @param extension File extension to apply to files inside the ZIP (defaults to .xml)
+     * @param gmlDownloads
+     *            - a list of DownloadResponse
+     * @param zout
+     *            - the ZipOutputStream to write the response
+     * @throws IOException
+     */
+    public static void writeResponseJSONToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout, String extension)
             throws IOException {
         StringBuilder errorMsg = new StringBuilder();
 
@@ -392,7 +438,7 @@ public class FileIOUtil {
 
                     zout.putNextEntry(new ZipEntry(new SimpleDateFormat(
                             (i + 1) + "_yyyyMMdd_HHmmss").format(new Date())
-                            + ".xml"));
+                            + extension));
                     zout.write(gmlBytes);
                     zout.closeEntry();
                 }
@@ -412,7 +458,7 @@ public class FileIOUtil {
 
     /**
      * VT: Have to think of a better way to handle exception rather then just encapsulating the error in xml
-     * 
+     *
      * @param e
      * @param out
      * @param closeStream
@@ -424,7 +470,7 @@ public class FileIOUtil {
 
     /**
      * VT: Have to think of a better way to handle exception rather then just encapsulating the error in xml
-     * 
+     *
      * @param e
      * @param out
      * @param closeStream

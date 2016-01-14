@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 /**
  * Utilities for MIME types
- * 
+ *
  * @author Josh Vote
  */
 public class MimeUtil {
@@ -64,6 +64,8 @@ public class MimeUtil {
             return "kmz";
         } else if (mime.contains("xml")) {
             return "xml";
+        } else if (mime.contains("csv")) {
+            return "csv";
         }
 
         return "";

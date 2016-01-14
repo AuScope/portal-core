@@ -1,13 +1,9 @@
 package org.auscope.portal.core.server.http.download;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,14 +29,13 @@ import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
 import org.auscope.portal.core.configuration.ServiceConfigurationItem;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
-import org.auscope.portal.core.services.namespaces.IterableNamespace;
 import org.auscope.portal.core.util.DOMResponseUtil;
 import org.auscope.portal.core.util.FileIOUtil;
 import org.auscope.portal.core.util.MimeUtil;
 
 /**
  * A manager class that to control number of requests to a endpoint and also multithread a request to provide more efficiency
- * 
+ *
  * @author Victor Tey
  *
  */
@@ -67,6 +62,7 @@ public class ServiceDownloadManager {
     private String[] urls;
     private HttpServiceCaller serviceCaller;
     private ServiceConfiguration serviceConfiguration;
+    private String fileExtensionOverride;
 
     public ServiceDownloadManager(String[] urls,
             HttpServiceCaller serviceCaller, ExecutorService executer)
@@ -78,10 +74,17 @@ public class ServiceDownloadManager {
     public ServiceDownloadManager(String[] urls,
             HttpServiceCaller serviceCaller, ExecutorService executer, ServiceConfiguration serviceConfiguration)
             throws URISyntaxException {
+        this(urls, serviceCaller, executer, serviceConfiguration, null);
+    }
+
+    public ServiceDownloadManager(String[] urls,
+            HttpServiceCaller serviceCaller, ExecutorService executer, ServiceConfiguration serviceConfiguration, String fileExtensionOverride)
+            throws URISyntaxException {
         this.serviceConfiguration = serviceConfiguration;
         this.urls = urls;
         this.serviceCaller = serviceCaller;
         this.pool = executer;
+        this.fileExtensionOverride = fileExtensionOverride;
         callerId = globalId++;
         for (int i = 0; i < urls.length; i++) {
             String host = this.getHost(urls[i]);
@@ -103,7 +106,7 @@ public class ServiceDownloadManager {
         for (int i = 0; i < urls.length; i++) {
             Semaphore sem = endpointSemaphores.get(this.getHost(urls[i]));
             GMLDownload gmlDownload = new GMLDownload(urls[i], sem, i,
-                    processSemaphore);
+                    processSemaphore, this.fileExtensionOverride);
             gmlDownloads.add(gmlDownload);
             pool.execute(gmlDownload);
         }
@@ -149,13 +152,15 @@ public class ServiceDownloadManager {
         private boolean downloadComplete = false;
         private Semaphore endPointSem, processSem;
         private int id;
+        private String fileExtensionOverride;
 
         public GMLDownload(String url, Semaphore sem, int id,
-                Semaphore processSem) throws URISyntaxException {
+                Semaphore processSem, String fileExtensionOverride) throws URISyntaxException {
             this.endPointSem = sem;
             this.url = url;
             this.id = id;
             this.processSem = processSem;
+            this.fileExtensionOverride = fileExtensionOverride;
             response = new DownloadResponse(getHost(url));
         }
 
@@ -278,7 +283,9 @@ public class ServiceDownloadManager {
 
                     Header header = httpResponse.getEntity().getContentType();
                     String fileExtension = ".xml";//VT: Default to xml as we will mostly be dealing with xml files
-                    if (header != null && header.getValue().length() > 0) {
+                    if (this.fileExtensionOverride != null) {
+                        fileExtension = this.fileExtensionOverride;
+                    } else if (header != null && header.getValue().length() > 0) {
                         fileExtension = "."
                                 + MimeUtil.mimeToFileExtension(httpResponse.getEntity().getContentType().getValue());
 

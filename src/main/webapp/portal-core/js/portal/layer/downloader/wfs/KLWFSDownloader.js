@@ -438,10 +438,10 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         var sUrl = '<iframe id="nav1" style="overflow:auto;width:100%;height:100%;" frameborder="0" src="';
 
         sUrl += 'downloadGMLAsZip.do?';
-        sUrl += "email=";
-        sUrl += email;
-
-
+        sUrl += "outputFormat=";
+        sUrl += escape(outputFormat);
+        sUrl += "&email=";
+        sUrl += escape(email);
 
 
         //Iterate our WFS records and generate the array of PORTAL BACKEND requests that will be

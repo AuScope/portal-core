@@ -52,7 +52,7 @@ public class DownloadTracker {
 
     /**
      * To get a reference to an instance of the tracker. Each email address acts as a token and is only allowed 1 instance of a tracker
-     * 
+     *
      * @param email
      *            : unique token to identify the tracker and its user
      * @return a reference to a DownloadTracker instance
@@ -74,7 +74,7 @@ public class DownloadTracker {
 
     /**
      * This method cleans up the downloadTracker map object and frees up memory
-     * 
+     *
      * @param timeAllowance
      *            : how much time do we allow the object to sit in memory.
      */
@@ -99,13 +99,25 @@ public class DownloadTracker {
 
     /**
      * Creates a background thread to commence the download
-     * 
+     *
      * @param smd
      *            - ServiceDownloadManager {@link ServiceDownloadManager}
      * @throws InCompleteDownloadException
      *             {@link InCompleteDownloadException}
      */
     public synchronized void startTrack(ServiceDownloadManager sdm) throws InCompleteDownloadException {
+        startTrack(sdm, null);
+    }
+
+    /**
+     * Creates a background thread to commence the download
+     *
+     * @param smd
+     *            - ServiceDownloadManager {@link ServiceDownloadManager}
+     * @throws InCompleteDownloadException
+     *             {@link InCompleteDownloadException}
+     */
+    public synchronized void startTrack(ServiceDownloadManager sdm, String extensionOverride) throws InCompleteDownloadException {
 
         if (this.downloadProgress == Progression.INPROGRESS) {
             throw new InCompleteDownloadException(
@@ -115,7 +127,7 @@ public class DownloadTracker {
                 this.downloadProgress = Progression.INPROGRESS;
             }
         }
-        Process p = new Process(sdm);
+        Process p = new Process(sdm, extensionOverride);
         ExecutorService pool = Executors.newSingleThreadExecutor();
         pool.execute(p);
         pool.shutdown();
@@ -124,7 +136,7 @@ public class DownloadTracker {
 
     /**
      * Retrieve the file after download as stream
-     * 
+     *
      * @return
      * @throws InCompleteDownloadException
      *             {@link InCompleteDownloadException}
@@ -141,7 +153,7 @@ public class DownloadTracker {
 
     /**
      * Retrieve the file after download as a file handle
-     * 
+     *
      * @return
      * @throws InCompleteDownloadException
      * @throws FileNotFoundException
@@ -157,7 +169,7 @@ public class DownloadTracker {
 
     /**
      * return the time of last completion
-     * 
+     *
      * @return time of last completion
      */
     public long getLastCompletedTime() {
@@ -174,7 +186,7 @@ public class DownloadTracker {
 
     /**
      * get current progress of download
-     * 
+     *
      * @return download progress
      */
     public Progression getProgress() {
@@ -183,17 +195,19 @@ public class DownloadTracker {
 
     /**
      * A runnable thread to executed in the background to perform download
-     * 
+     *
      * @author tey006
      *
      */
     public class Process implements Runnable {
         ServiceDownloadManager sdm;
+        String extensionOverride;
 
         // File file;
 
-        public Process(ServiceDownloadManager sdm) {
+        public Process(ServiceDownloadManager sdm, String extensionOverride) {
             this.sdm = sdm;
+            this.extensionOverride = extensionOverride;
             // this.file=file;
         }
 
@@ -215,7 +229,7 @@ public class DownloadTracker {
                 fos = new FileOutputStream(file);
                 zout = new ZipOutputStream(fos);
                 ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
-                FileIOUtil.writeResponseToZip(gmlDownloads, zout);
+                FileIOUtil.writeResponseToZip(gmlDownloads, zout, this.extensionOverride);
                 zout.finish();
                 zout.flush();
                 zout.close();
