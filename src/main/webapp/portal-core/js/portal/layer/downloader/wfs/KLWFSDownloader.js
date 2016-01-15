@@ -333,15 +333,25 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
     },
     
     _updateFeatureCount : function(layer, url, typeName, el, bbox) {
-        var countUrl = layer.get('proxyCountUrl') ? layer.get('proxyCountUrl') : this.featureCountUrl;
+        //Override feature count callback if the known layer specifies it
+        var countUrl = this.featureCountUrl;
+        if (layer.get('sourceType') === portal.layer.Layer.KNOWN_LAYER) {
+            var override = layer.get('source').get('proxyCountUrl');
+            if (!Ext.isEmpty(override)) {
+                countUrl = override;
+            }
+        }
+        
+        //Load filter details into our feature count request
+        var params = layer.get('filterer').getParameters();
+        params.serviceUrl = url;
+        params.typeName = typeName;
+        params.bbox = bbox ? Ext.JSON.encode(bbox) : '';
+        
         el.setHtml('<img src="portal-core/img/dotdotdot.gif" width="16" height="16">'); //our loading placeholder
         Ext.Ajax.request({
             url: countUrl,
-            params: {
-                serviceUrl: url,
-                typeName: typeName,
-                bbox: bbox ? Ext.JSON.encode(bbox) : ''
-            },
+            params: params,
             timeout: 5 * 60 * 1000, //5 minutes  
             callback: function(options, success, response) {
                 if (!success) {
