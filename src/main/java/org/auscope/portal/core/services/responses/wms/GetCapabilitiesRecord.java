@@ -47,6 +47,13 @@ public interface GetCapabilitiesRecord {
     public String getMapUrl();
 
     /**
+     * Gets the Metadata URL in the base layer of this record.
+     *
+     * @return the MetadataURL element
+     */
+    public String getMetadataUrl();
+
+    /**
      * Gets the layers.
      *
      * @return the layers
@@ -62,7 +69,7 @@ public interface GetCapabilitiesRecord {
 
     /**
      * Returns an array of MIME strings representing the valid format for the GetMap operation
-     * 
+     *
      * @return
      */
     public String[] getGetMapFormats();
