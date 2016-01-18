@@ -267,13 +267,14 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         
         //Before applying filter, update the spatial bounds (silently)
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
-
+        
+        this.filterForm.writeToFilterer(filterer); 
+        
         this.fireEvent('addlayer', layer);
         // Fire the event for external clients
         console.log("_onAddLayer - layer name: ", layer.get('name'));
-        AppEvents.broadcast('addlayer', layer);
 
-        this.filterForm.writeToFilterer(filterer);        
+        AppEvents.broadcast('addlayer', {layer:layer, layerStore: me.layerStore});
       
         this._showConstraintWindow(layer);
         
