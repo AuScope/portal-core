@@ -20,6 +20,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     
     optionsButtonIsHidden : false,
     
+    layerStore: null,
+    
     /**
      * Accepts all parameters for a normal Ext.Panel instance with the following additions
      * {
@@ -34,7 +36,9 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      */
     constructor : function(config) {
  
-        this._map = config.map;        
+        this._map = config.map;     
+        
+        this.layerStore = config.layerStore;
         
         // setup the default options or use those passed in by the portal
         var menuItems = config.menuItems ? config.menuItems :
@@ -109,8 +113,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         this.on('removelayer',function(layer){
             config.menuFactory.layerRemoveHandler(layer);
+            me.activelayerstore.remove(layer);
         })
-
 
     },
     
@@ -261,19 +265,24 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Simply updates the appropriate layer filterer. It's the responsibility
      * of renderers/layers to listen for filterer updates.
      */
-    _onAddLayer : function() {      
-        var layer = this.filterForm.layer; 
+    _onAddLayer : function() {   
+        
+        var me = this;
+        
+        var layer = me.filterForm.layer; 
+        
         var filterer = layer.get('filterer');      
         
         //Before applying filter, update the spatial bounds (silently)
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
-
+        
+        this.filterForm.writeToFilterer(filterer); 
+        
         this.fireEvent('addlayer', layer);
         // Fire the event for external clients
         console.log("_onAddLayer - layer name: ", layer.get('name'));
-        AppEvents.broadcast('addlayer', layer);
 
-        this.filterForm.writeToFilterer(filterer);        
+        AppEvents.broadcast('addlayer', {layer:layer, layerStore: me.layerStore});
       
         this._showConstraintWindow(layer);
         
