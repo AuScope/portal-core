@@ -22,6 +22,7 @@ import java.util.zip.ZipOutputStream;
 import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -251,8 +252,18 @@ public class FileIOUtil {
     public static void writeResponseToZip(ArrayList<DownloadResponse> gmlDownloads, ZipOutputStream zout, String extension)
             throws IOException {
         //VT: this assume all files will be of the sme extension. With paging, we have .zip in the mix.
-        if (gmlDownloads.get(0).getContentType().contains("text")
-                || gmlDownloads.get(0).getContentType().contains("zip")) {
+        //JV: Let's make sure we use the first actual content type in case the first download fails
+        String firstValidContentType = null;
+        for (DownloadResponse dr : gmlDownloads) {
+            String ct = dr.getContentType();
+            if (!StringUtils.isEmpty(ct)) {
+                firstValidContentType = ct;
+                break;
+            }
+        }
+
+        if (firstValidContentType != null &&
+           (firstValidContentType.contains("text") || firstValidContentType.contains("zip"))) {
             writeResponseToZip(gmlDownloads, zout, true, extension);
         } else { //VT: TODO: the different response type should be handled differently.
                  //VT: eg. handle application/json and a final catch all.
