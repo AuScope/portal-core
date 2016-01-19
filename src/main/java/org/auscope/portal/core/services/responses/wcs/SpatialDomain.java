@@ -2,7 +2,6 @@ package org.auscope.portal.core.services.responses.wcs;
 
 import java.io.Serializable;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
@@ -13,7 +12,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Represents any of the items that belong as children to a <wcs:spatialDomain> element in a DescribeCoverage response.
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -36,18 +35,17 @@ public class SpatialDomain implements Serializable {
 
     /**
      * Creates a new spatial domain
-     * 
+     *
      * @param envelope
      * @param rectifiedGrid
      * @throws XPathExpressionException
      */
-    public SpatialDomain(Node node, XPath xPath) throws XPathExpressionException {
-        WCSNamespaceContext nc = new WCSNamespaceContext();
+    public SpatialDomain(Node node, WCSNamespaceContext nc) throws XPathExpressionException {
         NodeList envelopeNodes = (NodeList) DOMUtil.compileXPathExpr(
                 "wcs:Envelope | gml:Envelope | wcs:EnvelopeWithTimePeriod", nc).evaluate(node, XPathConstants.NODESET);
         this.envelopes = new SimpleEnvelope[envelopeNodes.getLength()];
         for (int i = 0; i < envelopeNodes.getLength(); i++) {
-            this.envelopes[i] = new SimpleEnvelope(envelopeNodes.item(i), xPath);
+            this.envelopes[i] = new SimpleEnvelope(envelopeNodes.item(i), nc);
         }
 
         Node gridNode = (Node) DOMUtil.compileXPathExpr("gml:RectifiedGrid", nc).evaluate(node, XPathConstants.NODE);
@@ -58,7 +56,7 @@ public class SpatialDomain implements Serializable {
 
     /**
      * The envelopes (if any) associated with this spatial domain). Can be null
-     * 
+     *
      * @return
      */
     public SimpleEnvelope[] getEnvelopes() {
@@ -67,7 +65,7 @@ public class SpatialDomain implements Serializable {
 
     /**
      * Returns the RectifiedGrid (if any) associated with this spatial domain. Can be null.
-     * 
+     *
      * @return
      */
     public RectifiedGrid getRectifiedGrid() {

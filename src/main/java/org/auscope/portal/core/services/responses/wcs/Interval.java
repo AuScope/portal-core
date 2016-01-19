@@ -1,13 +1,14 @@
 package org.auscope.portal.core.services.responses.wcs;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 
+import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
+import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Node;
 
 /**
  * Represents a <wcs:interval> element from a WCS DescribeCoverage response
- * 
+ *
  * @author vot002
  */
 public class Interval implements ValueEnumType {
@@ -23,18 +24,18 @@ public class Interval implements ValueEnumType {
     private Double max;
     private Double resolution;
 
-    public Interval(Node node, XPath xPath) throws Exception {
+    public Interval(Node node, WCSNamespaceContext nc) throws Exception {
         type = node.getLocalName();
 
-        Node tempNode = (Node) xPath.evaluate("wcs:min", node, XPathConstants.NODE);
+        Node tempNode = (Node) DOMUtil.compileXPathExpr("wcs:min", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null)
             min = new Double(tempNode.getTextContent());
 
-        tempNode = (Node) xPath.evaluate("wcs:max", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:max", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null)
             max = new Double(tempNode.getTextContent());
 
-        tempNode = (Node) xPath.evaluate("wcs:resolution", node, XPathConstants.NODE);
+        tempNode = (Node) DOMUtil.compileXPathExpr("wcs:resolution", nc).evaluate(node, XPathConstants.NODE);
         if (tempNode != null)
             resolution = new Double(tempNode.getTextContent());
     }
@@ -45,7 +46,7 @@ public class Interval implements ValueEnumType {
 
     /**
      * Represents the minimum value on this interval (can be null)
-     * 
+     *
      * @return
      */
     public Double getMin() {
@@ -54,7 +55,7 @@ public class Interval implements ValueEnumType {
 
     /**
      * Represents the maximum value on this interval (can be null)
-     * 
+     *
      * @return
      */
     public Double getMax() {
@@ -63,7 +64,7 @@ public class Interval implements ValueEnumType {
 
     /**
      * Represents the resolution of this interval (can be null)
-     * 
+     *
      * @return
      */
     public Double getResolution() {

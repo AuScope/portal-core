@@ -2,16 +2,17 @@ package org.auscope.portal.core.services.responses.wcs;
 
 import java.io.Serializable;
 
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.auscope.portal.core.services.namespaces.WCSNamespaceContext;
+import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
  * This is a "stupid" representation of the spatial elements of a <gml:Envelope> from a WCS DescribeCoverage response
- * 
+ *
  * @author vot002
  *
  */
@@ -47,9 +48,9 @@ public class SimpleEnvelope implements Serializable {
         this.westBoundLongitude = westBoundLongitude;
     }
 
-    public SimpleEnvelope(Node node, XPath xPath) throws XPathExpressionException {
+    public SimpleEnvelope(Node node, WCSNamespaceContext nc) throws XPathExpressionException {
         //get our list of gml:Points and parse our spatial bounds
-        NodeList tempNodeList = (NodeList) xPath.evaluate("gml:pos", node, XPathConstants.NODESET);
+        NodeList tempNodeList = (NodeList) DOMUtil.compileXPathExpr("gml:pos", nc).evaluate(node, XPathConstants.NODESET);
         if (tempNodeList.getLength() != 2)
             throw new XPathExpressionException(String.format("%1$s:%2$s does not have 2 gml:pos nodes",
                     node.getNamespaceURI(), node.getLocalName()));
@@ -64,14 +65,14 @@ public class SimpleEnvelope implements Serializable {
         northBoundLatitude = Double.parseDouble(northEastPoints[1]);
 
         //Get our SRS name (can be null)
-        srsName = (String) xPath.evaluate("@srsName", node, XPathConstants.STRING);
+        srsName = (String) DOMUtil.compileXPathExpr("@srsName", new WCSNamespaceContext()).evaluate(node, XPathConstants.STRING);
 
         type = node.getLocalName();
     }
 
     /**
      * Gets the SRS Name of the ordinates this envelope is representing (Can be null/empty)
-     * 
+     *
      * @return
      */
     public String getSrsName() {
@@ -80,7 +81,7 @@ public class SimpleEnvelope implements Serializable {
 
     /**
      * Gets the southBoundLatitude of the bounding box
-     * 
+     *
      * @return
      */
     public double getSouthBoundLatitude() {
@@ -89,7 +90,7 @@ public class SimpleEnvelope implements Serializable {
 
     /**
      * Gets the northBoundLatitude of the bounding box
-     * 
+     *
      * @return
      */
     public double getNorthBoundLatitude() {
@@ -98,7 +99,7 @@ public class SimpleEnvelope implements Serializable {
 
     /**
      * Gets the eastBoundLongitude of the bounding box
-     * 
+     *
      * @return
      */
     public double getEastBoundLongitude() {
@@ -107,7 +108,7 @@ public class SimpleEnvelope implements Serializable {
 
     /**
      * Gets the westBoundLongitude of the bounding box
-     * 
+     *
      * @return
      */
     public double getWestBoundLongitude() {
