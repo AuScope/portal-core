@@ -70,7 +70,7 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * 
+     *
      * @param success
      *            The result of the operation
      * @return
@@ -81,7 +81,7 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * 
+     *
      * @param success
      *            The result of the operation
      * @param data
@@ -96,7 +96,7 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * 
+     *
      * @param success
      *            The result of the operation
      * @param data
@@ -113,7 +113,7 @@ public abstract class BasePortalController {
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * 
+     *
      * @param success
      *            The result of the operation
      * @param data
@@ -131,8 +131,8 @@ public abstract class BasePortalController {
     }
 
     /**
-     * Generates a JSON response containing WFS response info
-     * 
+     * Generates a JSON response containing WFS response info. The response data will be injected with a configurable name
+     *
      * @param success
      *            The result of the operation
      * @param gml
@@ -143,27 +143,16 @@ public abstract class BasePortalController {
      *            The method used to make the request (used for populating debug info)
      * @return
      */
-    protected ModelAndView generateJSONResponseMAV(boolean success, String gml, String kml, HttpRequestBase method) {
-
-        if (kml == null || kml.isEmpty()) {
-            log.error("Transform failed");
-            log.error("Input GML: "+gml);
-            return generateJSONResponseMAV(false, null, OPERATION_FAILED);
-        }
-
-        ModelMap data = new ModelMap();
-
-        data.put("gml", gml);
-        data.put("kml", kml);
-
+    protected ModelAndView generateNamedJSONResponseMAV(boolean success, String name, String data, HttpRequestBase method) {
+        ModelMap model = new ModelMap();
+        model.put(name, data);
         ModelMap debug = makeDebugInfoModel(method);
-
-        return generateJSONResponseMAV(success, data, "", debug);
+        return generateJSONResponseMAV(success, model, "", debug);
     }
 
     /**
      * Utility method to generate a standard ModelAndView response for rendering JSON
-     * 
+     *
      * @param success
      *            The result of the operation
      * @param data
@@ -187,7 +176,7 @@ public abstract class BasePortalController {
     /**
      * Utility method to generate a HTML MAV response. This will be identical in content to generateJSONResponseMAV but will be set to use a HTML content type.
      * Use this for overcoming weirdness with Ext JS and file uploads.
-     * 
+     *
      * @param success
      *            The result of the operation
      * @param data
@@ -203,7 +192,7 @@ public abstract class BasePortalController {
     /**
      * Utility method to generate a HTML MAV response. This will be identical in content to generateJSONResponseMAV but will be set to use a HTML content type.
      * Use this for overcoming weirdness with Ext JS and file uploads.
-     * 
+     *
      * @param success
      *            The result of the operation
      * @param data
@@ -224,7 +213,7 @@ public abstract class BasePortalController {
 
     /**
      * Turns a HttpRequest into a Map of url - the URI of request info - [Optional] The body of the request if relevant (for POST)
-     * 
+     *
      * @param request
      *            cannot be null
      * @return
@@ -257,7 +246,7 @@ public abstract class BasePortalController {
 
     /**
      * Exception resolver that maps exceptions to views presented to the user.
-     * 
+     *
      * @param e
      *            The exception
      * @param serviceUrl
@@ -270,7 +259,7 @@ public abstract class BasePortalController {
 
     /**
      * Exception resolver that maps exceptions to views presented to the user.
-     * 
+     *
      * @param e
      *            The exception
      * @param serviceUrl
