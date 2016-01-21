@@ -265,28 +265,27 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Simply updates the appropriate layer filterer. It's the responsibility
      * of renderers/layers to listen for filterer updates.
      */
-    _onAddLayer : function() {   
+    _onAddLayer : function() {
+
+        var layer = this.filterForm.layer;    
         
-        var me = this;
-        
-        var layer = me.filterForm.layer; 
-        
-        var filterer = layer.get('filterer');      
+        var filterer = layer.get('filterer');              
         
         //Before applying filter, update the spatial bounds (silently)
-        filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
-
-        this.fireEvent('addlayer', layer);
-        // Fire the event for external clients
-        console.log("_onAddLayer - layer name: ", layer.get('name'));
-        AppEvents.broadcast('addlayer', {layer:layer, layerStore: me.layerStore});
-
+        filterer.setSpatialParam(this._map.getVisibleMapBounds(), true); 
         this.filterForm.writeToFilterer(filterer);        
-      
-        this._showConstraintWindow(layer);
         
+        this.layerStore.suspendEvents(true);
+        this.layerStore.insert(0,layer);
+        this.layerStore.resumeEvents();
+        
+        AppEvents.broadcast('addlayer', {layer:layer, layerStore: this.layerStore});
+        
+        this._showConstraintWindow(layer);
+
         //VT: Tracking
-        portal.util.PiwikAnalytic.trackevent('Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters()));
+        portal.util.PiwikAnalytic.trackevent('Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters())); 
+        
     },
     
     
