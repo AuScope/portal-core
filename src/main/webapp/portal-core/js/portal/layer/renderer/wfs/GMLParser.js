@@ -59,20 +59,17 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
             offset = 0;
         }
         
-        if (srsName.startsWith('http://www.opengis.net/gml/srs/epsg.xml#4283')) {
+        if (srsName.startsWith('http://www.opengis.net/gml/srs/epsg.xml#4283') || 
+            srsName.startsWith('urn:x-ogc:def:crs:EPSG')) {
             //lat/lon
             var tmp = coords[offset];
             coords[offset] = coords[offset + 1];
             coords[offset + 1] = tmp;
         } else if (srsName.startsWith('EPSG') ||
-                   srsName.startsWith('http://www.opengis.net/gml/srs/epsg.xml') ||
-                   srsName.startsWith('urn:x-ogc:def:crs:EPSG')) {
+                   srsName.startsWith('http://www.opengis.net/gml/srs/epsg.xml')) {
             //lon/lat (no action required)
         } else {
-            //fallback to lat/lon
-            var tmp = coords[offset];
-            coords[offset] = coords[offset + 1];
-            coords[offset + 1] = tmp;
+            //fallback to lon/lat
         }
     },
 
@@ -189,7 +186,6 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
                 }
             }
         }
-
 
         return primitives;
     }
