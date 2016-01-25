@@ -78,7 +78,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         
         //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
         //VT:Should have a legend action except for Insar data.
-        if(this.filterForm.layer.get('renderer').getLegend()){            
+        // but even then if the portal is specifiying the menu items then don't add a legend by default
+        if (!config.menuItems && this.filterForm.layer.get('renderer').getLegend()){            
             menuItems.push(this._getLegendAction(this.filterForm.layer));
         }   
         
@@ -88,6 +89,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                     this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
                      menuItems.push(this._getDownloadAction());
             }
+        }
+        
+        if (menuItems.length === 0) {
+            this.optionsButtonIsHidden = true;
         }
         
         Ext.apply(config, { 
