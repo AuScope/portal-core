@@ -275,8 +275,10 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
         try {
             Element elem = (Element) DOMUtil.compileXPathExpr(METADATAURLREXPRESSION).evaluate(doc, XPathConstants.NODE);
 
-            metadataUrl = elem.getAttribute("xlink:href");
-
+            if (elem != null) {
+            	metadataUrl = elem.getAttribute("xlink:href");
+            }
+            
         } catch (XPathExpressionException e) {
             log.error("GetCapabilities MetadataURL xml parsing error: " + e.getMessage());
         }
