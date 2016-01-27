@@ -77,7 +77,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
     _handleDownloadManagerSuccess : function(dm, actualFilterParams, data, debugInfo, onlineResource, layer, icon) {
         var me = this;
         //Parse our KML into a set of overlays and markers
-        var parser = Ext.create('portal.layer.renderer.wfs.KMLParser', {kml : data.kml, map : me.map});
+        var parser = Ext.create('portal.layer.renderer.wfs.GMLParser', {gml : data.gml, map : me.map});
         var primitives = parser.makePrimitives(icon, onlineResource, layer);
 
         //Add our single points and overlays to the overlay manager (which will add them to the map)

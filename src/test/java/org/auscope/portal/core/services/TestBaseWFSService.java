@@ -11,7 +11,7 @@ import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
-import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
+import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.auscope.portal.core.xslt.PortalXSLTTransformer;
@@ -155,7 +155,7 @@ public class TestBaseWFSService extends PortalTestClass {
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testTransformOwsError() throws Exception {
+    public void testOwsError() throws Exception {
         final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml");
 
         context.checking(new Expectations() {
@@ -165,11 +165,11 @@ public class TestBaseWFSService extends PortalTestClass {
             }
         });
 
-        service.getTransformedWFSResponse(mockMethod, mockTransformer, mockProperties);
+        service.getWFSResponse(mockMethod);
     }
 
     @Test(expected = PortalServiceException.class)
-    public void testTransformConnectError() throws Exception {
+    public void testConnectError() throws Exception {
         context.checking(new Expectations() {
             {
                 oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);
@@ -177,33 +177,26 @@ public class TestBaseWFSService extends PortalTestClass {
             }
         });
 
-        service.getTransformedWFSResponse(mockMethod, mockTransformer, mockProperties);
+        service.getWFSResponse(mockMethod);
     }
 
     @Test
-    public void testTransform() throws Exception {
+    public void testResponse() throws Exception {
         final String responseString = new java.util.Scanner(
                 ResourceUtil
                         .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml"))
                 .useDelimiter("\\A").next();
 
-        final String convertedString = "transformed-string";
-
         context.checking(new Expectations() {
             {
                 oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);
                 will(returnValue(responseString));
-
-                oneOf(mockTransformer).convert(with(any(String.class)), with(same(mockProperties)));
-                will(returnValue(convertedString));
             }
         });
 
-        WFSTransformedResponse response = service
-                .getTransformedWFSResponse(mockMethod, mockTransformer, mockProperties);
+        WFSResponse response = service.getWFSResponse(mockMethod);
         Assert.assertNotNull(response);
-        Assert.assertEquals(responseString, response.getGml());
-        Assert.assertEquals(convertedString, response.getTransformed());
+        Assert.assertEquals(responseString, response.getData());
         Assert.assertSame(mockMethod, response.getMethod());
     }
 
