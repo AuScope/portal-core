@@ -37,7 +37,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Asserts that value lies within an specified (inclusive) range of values
-     * 
+     *
      * @param value
      * @param lowerBound
      * @param upperBound
@@ -52,7 +52,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that exceptions in the HTTP call will result in exceptions in the next
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -82,13 +82,13 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to next will block
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testBlockingNext() throws Exception {
-        final long delay2ms = 500;
-        final long timeEpsilonMs = 100; //This should be an order of magnitude smaller than the above delays
+        final long delay2ms = 1500;
+        final long timeEpsilonMs = 300; //This should be an order of magnitude smaller than the above delays
         final ConnectException expectedError = new ConnectException("fooBARbaz");
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(Arrays.asList(mockMethod1,
                 mockMethod2), mockServiceCaller);
@@ -135,14 +135,14 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to next will return the NEXT item to complete
-     * 
+     *
      * @throws Exception
      */
     @Test
     public void testFastestOrdering() throws Exception {
-        final long delay1ms = 400;
-        final long delay2ms = 100;
-        final long delay3ms = 250;
+        final long delay1ms = 1200;
+        final long delay2ms = 300;
+        final long delay3ms = 750;
 
         final DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(
                 Arrays.asList(mockMethod1, mockMethod2, mockMethod3),
@@ -185,7 +185,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     /**
      * Tests that calls to abort actually work...
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -199,19 +199,19 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
         context.checking(new Expectations() {
             {
                 exactly(5).of(mockServiceCaller).getMethodResponseAsStream(mockMethod1);
-                will(delayReturnValue(100, mockInputStream1));
+                will(delayReturnValue(300, mockInputStream1));
             }
         });
 
         //start our threads executing (we need to use this class to pickup any failures)
         dsc.beginCallingServices(threadPool);
 
-        Thread.sleep(50);//ensure that the first 5 startup (the size of our threadpool)
+        Thread.sleep(150);//ensure that the first 5 startup (the size of our threadpool)
 
         dsc.dispose(); //abort everything
 
         //Wait for the threadpool to shutdown
         threadPool.shutdown();
-        Assert.assertTrue("Threadpool didnt shutdown!!", threadPool.awaitTermination(1000, TimeUnit.MILLISECONDS));
+        Assert.assertTrue("Threadpool didnt shutdown!!", threadPool.awaitTermination(3000, TimeUnit.MILLISECONDS));
     }
 }
