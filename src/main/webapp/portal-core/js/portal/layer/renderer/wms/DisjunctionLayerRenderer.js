@@ -35,36 +35,34 @@ Ext.define('portal.layer.renderer.wms.DisjunctionLayerRenderer', {
         this.removeData();
         var wmsResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WMS);
 
-        var urls = [];
-        for (var i = 0; i < wmsResources.length; i++) {
-            urls.push(wmsResources[i].get('url'));
-        }
-        this.renderStatus.initialiseResponses(urls, 'Loading...');
-
+        // filter parameters
+        var serviceFilter = filterer.getParameter('serviceFilter');
+        var filteredLayerName = filterer.getParameter('name');
+        var opacity = filterer.getParameter('opacity');
+        
+        this.renderStatus.initialiseResponses([serviceFilter], 'Loading...');
 
         var primitives = [];
+        
+        // loop through the wms resources looking for the resource with the name from the filter
         for (var i = 0; i < wmsResources.length; i++) {
-            // Find the layer.name that is the same as the selected one
-            var wmsLayer = wmsResources[i].get('name');
-            if (wmsLayer === filterer.getParameter('serviceFilter')) {
-                var wmsUrl = wmsResources[i].get('url');
-                var wmsOpacity = filterer.getParameter('opacity');
-
-                var layer = this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, wmsUrl, wmsLayer,
-                        wmsOpacity);
+            var layerName = wmsResources[i].get('name');
+            if (layerName === filteredLayerName) {
+                var layer = this.map.makeWms(undefined, undefined, wmsResources[i], this.parentLayer, serviceFilter, layerName,
+                        opacity);
 
                 layer.getWmsLayer().events.register("loadstart", this, function() {
                     this.currentRequestCount++;
                     var listOfStatus = this.renderStatus.getParameters();
                     this.fireEvent('renderstarted', this, wmsResources, filterer);
-                    this.renderStatus.updateResponse(layer.getWmsUrl(), "Loading WMS");
+                    this.renderStatus.updateResponse(serviceFilter, "Loading WMS");
                 });
 
                 // VT: Handle the after wms load clean up event.
                 layer.getWmsLayer().events.register("loadend", this, function(evt) {
                     this.currentRequestCount--;
                     var listOfStatus = this.renderStatus.getParameters();
-                    this.renderStatus.updateResponse(layer.getWmsUrl(), "WMS Loaded");
+                    this.renderStatus.updateResponse(serviceFilter, "WMS Loaded");
                     this.fireEvent('renderfinished', this);
                 });
 
