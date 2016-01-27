@@ -51,7 +51,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Gets the list of namespaces that are used when generating WFS requests
-     * 
+     *
      * @return
      */
     public IterableNamespace getNamespaces() {
@@ -60,7 +60,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Sets the list of namespaces that are used when generating WFS requests
-     * 
+     *
      * @param namespaces
      */
     public void setNamespaces(IterableNamespace namespaces) {
@@ -69,7 +69,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Creates a PostMethod given the following parameters.
-     * 
+     *
      * @param serviceURL
      *            - required, exception thrown if not provided
      * @param featureType
@@ -89,7 +89,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Creates a PostMethod given the following parameters.
-     * 
+     *
      * @param serviceURL
      *            - required, exception thrown if not provided
      * @param featureType
@@ -109,7 +109,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Creates a PostMethod given the following parameters.
-     * 
+     *
      * @param serviceURL
      *            - required, exception thrown if not provided
      * @param featureType
@@ -131,7 +131,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Creates a PostMethod given the following parameters.
-     * 
+     *
      * @param serviceURL
      *            - required, exception thrown if not provided
      * @param featureType
@@ -155,7 +155,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Creates a PostMethod given the following parameters.
-     * 
+     *
      * @param serviceURL
      *            - required, exception thrown if not provided
      * @param featureType
@@ -182,7 +182,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Creates a PostMethod given the following parameters.
-     * 
+     *
      * @param serviceURL
      *            - required, exception thrown if not provided
      * @param featureType
@@ -254,12 +254,8 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
         sb.append(">\n");
         sb.append("  <wfs:Query typeName=\"" + featureType + "\"");
-        // GPT-74 - The srsName needs to be the URN version (and not the short one) since the short one causes the Geoserver OGCServiceProvider to return output
-        // coordinates as LONG LAT. Where-as at all times the ArcGis geoserver outputs LAT LONG. We want both to be LAT LONG.
+
         if (srsName != null && ! srsName.isEmpty()) {
-            if (! srsName.contains("urn:")) {
-                srsName = "urn:x-ogc:def:crs:"+srsName;
-            }
             sb.append(" srsName=\""+srsName+"\"");
         }
         sb.append(">");
@@ -280,7 +276,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting a specific feature for a specific typeName.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -372,7 +368,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting a specific feature for a specific typeName.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -391,7 +387,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting a specific feature for a specific typeName.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -412,7 +408,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -431,7 +427,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -452,7 +448,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -471,7 +467,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -492,7 +488,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting all instances of a specific feature type.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -516,7 +512,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting all instances of a specific feature type that pass a CQL filter.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -537,7 +533,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting all instances of a specific feature type that pass a CQL filter.
-     * 
+     *
      * @param serviceUrl
      *            The WFS endpoint
      * @param typeName
@@ -558,7 +554,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting a WFS GetCapabilities response
-     * 
+     *
      * @param serviceUrl
      * @return
      * @throws URISyntaxException
@@ -579,7 +575,7 @@ public class WFSGetFeatureMethodMaker extends AbstractMethodMaker {
 
     /**
      * Generates a method for requesting a WFS DescribeFeatureType response
-     * 
+     *
      * @param serviceUrl
      * @return
      * @throws URISyntaxException
