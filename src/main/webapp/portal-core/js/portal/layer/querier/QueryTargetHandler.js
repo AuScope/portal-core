@@ -160,8 +160,9 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
                         provider = 'New South Wales';
                     }  
                 }
+
             }       
-            
+
             var maxTitleLength = 120;
             
             // append the name of the organisation that supplied the record
