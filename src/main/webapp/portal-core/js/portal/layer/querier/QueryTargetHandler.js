@@ -4,10 +4,10 @@
  * QueryTarget objects to the appropriate querier instances.
  */
 Ext.define('portal.layer.querier.QueryTargetHandler', {
-
+    
     _infoWindowHeight : 350,
-    _infoWindowWidth : 600,
-
+    _infoWindowWidth : 600,    
+    
     /**
      * Accepts a config with {
      *  infoWindowHeight : [Optional] Number height of info window in pixels
@@ -120,17 +120,51 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
                 continue;
             }
 
-
             point = Ext.create('portal.map.Point', {
                 latitude : queryTargets[i].get('lat'),
                 longitude : queryTargets[i].get('lng')
             });
 
+
             var shortTitle = cswRecord.get('name');
+            
+            // abbreviate the service provider name
+            var provider = cswRecord.get('contactOrg');   
+            
+            // list of service providers 
+            var SERVICE_PROVIDERS = [
+                'CSIRO',
+                'Geoscience Australia',
+                'Northern Territory',
+                'Queensland',
+                'South Australia',
+                'Tasmania',
+                'Victoria',
+                'Western Australia'
+            ];
+            
+            for (var i = 0; i < SERVICE_PROVIDERS.length; i++) {                
+                if (String.prototype.includes) {
+                    if (provider.includes(SERVICE_PROVIDERS[i])) {
+                        provider = SERVICE_PROVIDERS[i];
+                        break;
+                    } else if (provider.includes('NSW')) {
+                        provider = 'New South Wales';
+                    }
+                } else {
+                    // try using contains()
+                    if (provider.contains(SERVICE_PROVIDERS[i])) {
+                        provider = SERVICE_PROVIDERS[i];
+                        break;
+                    } else if (provider.contains('NSW')) {
+                        provider = 'New South Wales';
+                    }  
+                }
+            }            
             var maxTitleLength = 120;
             
             // append the name of the organisation that supplied the record
-            shortTitle += ' - ' + cswRecord.get('contactOrg');
+            shortTitle += ' - ' + provider;
             
             if(shortTitle.length > maxTitleLength) {
                 shortTitle = shortTitle.substr(0, maxTitleLength) + "...";
