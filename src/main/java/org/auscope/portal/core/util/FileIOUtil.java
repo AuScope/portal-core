@@ -15,6 +15,7 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -439,11 +440,11 @@ public class FileIOUtil {
                     byte[] gmlBytes = new byte[] {};
                     Object dataObject = jsonObject.get("data");
                     if (dataObject != null && !JSONNull.getInstance().equals(dataObject)) {
-                        Object gmlResponseObject = JSONObject.fromObject(dataObject)
-                                .get("gml");
-
-                        if (gmlResponseObject != null) {
-                            gmlBytes = gmlResponseObject.toString().getBytes();
+                        JSONObject dataObjectJson = JSONObject.fromObject(dataObject);
+                        Iterator children = dataObjectJson.keys();
+                        if (children.hasNext()) {
+                            String firstChild = children.next().toString();
+                            gmlBytes = dataObjectJson.get(firstChild).toString().getBytes();
                         }
                     }
 

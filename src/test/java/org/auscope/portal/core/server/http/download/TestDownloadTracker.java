@@ -36,13 +36,11 @@ public class TestDownloadTracker extends PortalTestClass {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs",
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
 
-        final String dummyGml = "<someGmlHere>the quick brown fox jumps over the</someGmlHere>";
-        final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
-                + dummyGml + "\"},\"success\":true}";
+        final String dummyCsv = "1,2,3,6,3,1";
+        final String dummyJSONResponse = "{\"data\":{\"csv\":\"" + dummyCsv + "\"},\"success\":true}";
 
         final String dummyGml2 = "<someGmlHere>Mary has a little lamb</someGmlHere>";
-        final String dummyJSONResponse2 = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
-                + dummyGml2 + "\"},\"success\":true}";
+        final String dummyJSONResponse2 = "{\"data\":{\"gml\":\"" + dummyGml2 + "\"},\"success\":true}";
 
         final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
         final InputStream dummyJSONResponseIS2 = new ByteArrayInputStream(dummyJSONResponse2.getBytes());
@@ -93,7 +91,7 @@ public class TestDownloadTracker extends PortalTestClass {
             zis.read(bytes, 0, bytes.length);
             String result = new String(bytes);
             result = result.trim();
-            Assert.assertTrue(dummyGml.equals(result) || dummyGml2.equals(result));
+            Assert.assertTrue(dummyCsv.equals(result) || dummyGml2.equals(result));
         }
         zis.close();
     }
@@ -189,8 +187,7 @@ public class TestDownloadTracker extends PortalTestClass {
                 "http://localhost:8088/AuScope-Portal/doBoreholeFilter.do?&serviceUrl=http://nvclwebservices.vm.csiro.au:80/geoserverBH/wfs"};
 
         final String dummyGml = "<someGmlHere>the quick brown fox jumps over the</someGmlHere>";
-        final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
-                + dummyGml + "\"},\"success\":true}";
+        final String dummyJSONResponse = "{\"data\":{\"gml\":\"" + dummyGml + "\"},\"success\":true}";
 
         final String dummyJSONResponse2 = "Exception thrown while attempting to download";
 
