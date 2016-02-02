@@ -14,6 +14,6 @@ public class SimpleBBoxFilter extends AbstractFilter {
         if (bbox == null)
             return getFilterStringAllRecords();
 
-        return this.generateFilter(this.generateBboxFragment(bbox, "SHAPE"));
+        return this.generateFilter(this.generateBboxFragment(bbox, null));
     }
 }

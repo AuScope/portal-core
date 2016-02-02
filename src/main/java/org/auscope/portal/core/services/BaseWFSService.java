@@ -4,7 +4,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
@@ -17,9 +16,8 @@ import org.auscope.portal.core.services.namespaces.WFSNamespaceContext;
 import org.auscope.portal.core.services.responses.ows.OWSExceptionParser;
 import org.auscope.portal.core.services.responses.wfs.WFSCountResponse;
 import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse;
-import org.auscope.portal.core.services.responses.wfs.WFSTransformedResponse;
+import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.util.DOMUtil;
-import org.auscope.portal.core.xslt.PortalXSLTTransformer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -40,15 +38,11 @@ public abstract class BaseWFSService {
 
     /**
      * Creates a new instance of this class with the specified dependencies
-     * 
+     *
      * @param httpServiceCaller
      *            Will be used for making requests
      * @param wfsMethodMaker
      *            Will be used for generating WFS methods
-     * @param gmlToKml
-     *            Will be used for transforming GML (WFS responses) into KML
-     * @param gmlToHtml
-     *            Will be used for transforming GML (WFS responses) into HTML
      */
     public BaseWFSService(HttpServiceCaller httpServiceCaller,
             WFSGetFeatureMethodMaker wfsMethodMaker) {
@@ -58,7 +52,7 @@ public abstract class BaseWFSService {
 
     /**
      * Utility method for choosing the correct WFS method to generate based on specified parameters
-     * 
+     *
      * @param wfsUrl
      *            [required] - the web feature service url
      * @param featureType
@@ -92,7 +86,7 @@ public abstract class BaseWFSService {
 
     /**
      * Utility method for choosing the correct WFS method to generate based on specified parameters
-     * 
+     *
      * @param wfsUrl
      *            [required] - the web feature service url
      * @param featureType
@@ -163,26 +157,19 @@ public abstract class BaseWFSService {
     /**
      * Executes a method that returns GML wrapped in a WFS response, converts that response using transformer and returns the lot bundled in a
      * WFSTransformedResponse
-     * 
+     *
      * @param method
      *            a WFS GetFeature request
-     * @param transformer
-     *            A transformer to work with the resulting WFS response
-     * @param styleSheetParams
-     *            Properties to apply to the transformer
      * @return
      * @throws PortalServiceException
      */
-    protected WFSTransformedResponse getTransformedWFSResponse(HttpRequestBase method,
-            PortalXSLTTransformer transformer, Properties styleSheetParams) throws PortalServiceException {
+    protected WFSResponse getWFSResponse(HttpRequestBase method) throws PortalServiceException {
         try {
             //Make the request and parse the response
             String responseString = httpServiceCaller.getMethodResponseAsString(method);
             OWSExceptionParser.checkForExceptionResponse(responseString);
 
-            String transformed = transformer.convert(responseString, styleSheetParams);
-
-            return new WFSTransformedResponse(responseString, transformed, method);
+            return new WFSResponse(responseString, method);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
@@ -227,7 +214,7 @@ public abstract class BaseWFSService {
                     "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:MetadataURL", new WFSNamespaceContext());
             NodeList metadataURLNodes = (NodeList) xPathGetMetadataURL.evaluate(responseDoc, XPathConstants.NODESET);
             Map<String, String> metadataURLs = new HashMap<String, String>();
-                        
+
             for (int i = 0; i < nameNodes.getLength(); i++) {
                 String typeName = nameNodes.item(i).getTextContent();
                 typeNames[i] = typeName;
@@ -241,7 +228,7 @@ public abstract class BaseWFSService {
             parsedGetCap.setFeatureTypes(typeNames);
             parsedGetCap.setFeatureAbstracts(featureAbstracts);
             parsedGetCap.setMetadataURLs(metadataURLs);
-            
+
             return parsedGetCap;
         } catch (Exception e) {
             throw new PortalServiceException(method, e);
@@ -255,7 +242,7 @@ public abstract class BaseWFSService {
 
     /**
      * Download a wfs based on the type and filter.
-     * 
+     *
      * @param serviceUrl
      *            a Web Feature Service URL
      * @param type
@@ -281,7 +268,7 @@ public abstract class BaseWFSService {
 
     /**
      * Download a CSV based on the type and filter.
-     * 
+     *
      * @param serviceUrl
      *            a Web Feature Service URL
      * @param type

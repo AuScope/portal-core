@@ -78,7 +78,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         
         //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
         //VT:Should have a legend action except for Insar data.
-        if(this.filterForm.layer.get('renderer').getLegend()){            
+        // but even then if the portal is specifiying the menu items then don't add a legend by default
+        if (!config.menuItems && this.filterForm.layer.get('renderer').getLegend()){            
             menuItems.push(this._getLegendAction(this.filterForm.layer));
         }   
         
@@ -88,6 +89,10 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                     this.filterForm.layer.get('cswRecords')[0].get('noCache')==false){
                      menuItems.push(this._getDownloadAction());
             }
+        }
+        
+        if (menuItems.length === 0) {
+            this.optionsButtonIsHidden = true;
         }
         
         Ext.apply(config, { 
@@ -265,13 +270,11 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      * Simply updates the appropriate layer filterer. It's the responsibility
      * of renderers/layers to listen for filterer updates.
      */
-    _onAddLayer : function() {   
+    _onAddLayer : function() {
+
+        var layer = this.filterForm.layer;    
         
-        var me = this;
-        
-        var layer = me.filterForm.layer; 
-        
-        var filterer = layer.get('filterer');      
+        var filterer = layer.get('filterer');              
         
         //Before applying filter, update the spatial bounds (silently)
         filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
@@ -284,10 +287,11 @@ Ext.define('portal.widgets.panel.FilterPanel', {
 
         AppEvents.broadcast('addlayer', {layer:layer, layerStore: me.layerStore});
       
-        this._showConstraintWindow(layer);
-        
+        this._showConstraintWindow(layer);                
+
         //VT: Tracking
-        portal.util.PiwikAnalytic.trackevent('Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters()));
+        portal.util.PiwikAnalytic.trackevent('Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters())); 
+        
     },
     
     
