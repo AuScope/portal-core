@@ -128,40 +128,7 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
 
             var shortTitle = cswRecord.get('name');
             
-            // abbreviate the service provider name
-            var provider = cswRecord.get('contactOrg');   
-            
-            // list of service providers 
-            var SERVICE_PROVIDERS = [
-                'CSIRO',
-                'Geoscience Australia',
-                'Northern Territory',
-                'Queensland',
-                'South Australia',
-                'Tasmania',
-                'Victoria',
-                'Western Australia'
-            ];
-            
-            for (var i = 0; i < SERVICE_PROVIDERS.length; i++) {                
-                if (String.prototype.includes) {
-                    if (provider.includes(SERVICE_PROVIDERS[i])) {
-                        provider = SERVICE_PROVIDERS[i];
-                        break;
-                    } else if (provider.includes('NSW')) {
-                        provider = 'New South Wales';
-                    }
-                } else {
-                    // try using contains()
-                    if (provider.contains(SERVICE_PROVIDERS[i])) {
-                        provider = SERVICE_PROVIDERS[i];
-                        break;
-                    } else if (provider.contains('NSW')) {
-                        provider = 'New South Wales';
-                    }  
-                }
-
-            }       
+            var provider = portal.util.ProviderNameTransformer.abbreviateName(cswRecord.get('contactOrg'));
 
             var maxTitleLength = 120;
             
