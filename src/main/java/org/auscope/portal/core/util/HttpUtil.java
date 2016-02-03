@@ -1,14 +1,15 @@
 package org.auscope.portal.core.util;
 
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.client.utils.URIUtils;
 
 public class HttpUtil {
 
@@ -20,7 +21,17 @@ public class HttpUtil {
         for (NameValuePair param : params) {
             builder.setParameter(param.getName(), param.getValue());
         }
-        return builder.build();
+
+        //We don't want spaces encoded as "+"
+        //URIBuilder has no option to avoid this
+        //This is our workaround
+        URI uri = builder.build();
+        try {
+            String decodedQuery = URLDecoder.decode(uri.getQuery(), "UTF-8");
+            return new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), uri.getPort(), uri.getPath(), decodedQuery, uri.getFragment());
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException("No support for UTF-8", ex);
+        }
     }
 
     /**
