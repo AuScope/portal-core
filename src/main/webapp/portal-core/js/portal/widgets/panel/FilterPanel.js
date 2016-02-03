@@ -12,8 +12,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     extend: 'Ext.panel.Panel',
 
    
-    _addLayerButton : null,
-
+    _addOrUpdateLayerButton : null,
+    
     filterForm : null,
     
     constraintShown : false,
@@ -54,14 +54,21 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         }
                     
         if (typeof config.wantAddLayerButton === 'undefined' || config.wantAddLayerButton ) {
-            this._addLayerButton = Ext.create('Ext.button.Button', {
+            this._addOrUpdateLayerButton = Ext.create('Ext.button.Button', {
                 xtype : 'button',
                 text      : 'Add layer to Map',
                 iconCls    :   'add',
                 handler : Ext.bind(this._onAddLayer, this)
             });
-        }
-         
+        } else if (config.wantUpdateLayerButton ) {
+            this._addOrUpdateLayerButton = Ext.create('Ext.button.Button', {
+                xtype : 'button',
+                text      : 'Update Layer on Map',
+                iconCls    :   'edit',
+                handler : Ext.bind(this._onAddLayer, this)
+            });
+        }        
+        
         if (typeof config.wantOptionsButton === 'undefined' || config.wantOptionsButton ) {
             this.optionsButtonIsHidden = false;
         } else {
@@ -100,7 +107,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 this.filterForm
             ],
             buttons : [
-                this._addLayerButton,
+                this._addOrUpdateLayerButton,
             {
                 xtype:'tbfill'
             },{
@@ -291,9 +298,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         //VT: Tracking
         portal.util.PiwikAnalytic.trackevent('Add:' + layer.get('sourceType'), 'Layer:' + layer.get('name'),'Filter:' + Ext.encode(filterer.getParameters())); 
         
-    },
-    
-    
+    },   
     
     _showConstraintWindow : function(layer){
         if(this.constraintShown){
