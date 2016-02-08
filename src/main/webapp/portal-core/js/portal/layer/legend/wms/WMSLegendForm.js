@@ -19,17 +19,21 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
         var urls={};
         var dimensions = {maxWidth:300,height:0}; // Of all graphics so can resize window - accumulative height, max width (allow for title)
         var me = this;
-
         for (var j = 0; j < wmsOnlineResources.length; j++) {
+
+            var width = config.sld_body ? null : this.getWidth();
+
             portal.layer.legend.wms.WMSLegend.generateLegendUrl(
                     wmsOnlineResources[j].get('url'), 
                     wmsOnlineResources[j].get('name'),
                     wmsOnlineResources[j].get('version'),
-                    this.getWidth(), // 100,    // getWidth() ? - Won't work as don't know width until this constructor is finished
-                    config.sld_body, undefined, function(url) {
+                    width,
+                    config.sld_body,
+                    undefined,
+                    function(url) {
                         if (! urls.hasOwnProperty(url)) {
                             // Add a WIDTH attribute to ?requests (but not to normal resource GETs ie. that don't contain a '?')
-                            if (url.match(/width/i) === null && url.match(/\?/) !== null) {
+                            if (!config.sld_body && url.match(/width/i) === null && url.match(/\?/) !== null) {
                                 // Force a width or else the gis server seems to return it truncated
                                 url += "&WIDTH=100";
                             }
