@@ -80,7 +80,7 @@ Ext.define('portal.events.AppEvents', {
       },this.listeners);
       
       // store the application state
-      if(typeof(Storage) !== "undefined" && args) {
+      if(typeof(Storage) !== "undefined" && args && args.layer) {
           var mss = Ext.create('portal.util.permalink.MapStateSerializer');
 
           // grant a bit of flexibility to pass in a layer or an array of layers and use the first element
