@@ -60,6 +60,7 @@ public class CSWRecordTransformer {
     private static final String LANGUAGEEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:language/gco:CharacterString";
     private static final String OTHERCONSTRAINTSEXPRESSION = "gmd:identificationInfo/gmd:MD_DataIdentification/gmd:resourceConstraints/gmd:MD_LegalConstraints/gmd:otherConstraints/gco:CharacterString";
     private static final String DATAQUALITYSTATEMENTEXPRESSION = "gmd:dataQualityInfo/gmd:DQ_DataQuality/gmd:lineage/gmd:LI_Lineage/gmd:statement/gco:CharacterString";
+    private static final String LAYERNAME = "gmd:distributionInfo/gmd:MD_Distribution/gmd:transferOptions/gmd:MD_DigitalTransferOptions/gmd:onLine/gmd:CI_OnlineResource/gmd:name/gco:CharacterString";
 
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
@@ -569,8 +570,9 @@ public class CSWRecordTransformer {
         record.setSupplementalInformation(evalXPathString(this.mdMetadataNode, SUPPLEMENTALINFOEXPRESSION));
         record.setLanguage(evalXPathString(this.mdMetadataNode, LANGUAGEEXPRESSION));
         record.setDataQualityStatement(evalXPathString(this.mdMetadataNode, DATAQUALITYSTATEMENTEXPRESSION));
+        record.setLayerName(evalXPathString(this.mdMetadataNode, LAYERNAME));
 
-        String resourceProvider = (String) evalXPathString(this.mdMetadataNode, RESOURCEPROVIDEREXPRESSION);
+        String resourceProvider = evalXPathString(this.mdMetadataNode, RESOURCEPROVIDEREXPRESSION);
         if (resourceProvider == null || resourceProvider.isEmpty()) {
             resourceProvider = "Unknown";
         }
@@ -588,7 +590,7 @@ public class CSWRecordTransformer {
         }
 
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
-        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
         List<AbstractCSWOnlineResource> resources = new ArrayList<AbstractCSWOnlineResource>();
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
@@ -603,7 +605,7 @@ public class CSWRecordTransformer {
         record.setOnlineResources(resources.toArray(new AbstractCSWOnlineResource[resources.size()]));
 
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
-        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
             List<CSWGeographicElement> elList = new ArrayList<CSWGeographicElement>();
             for (int i = 0; i < tempNodeList.getLength(); i++) {
@@ -620,7 +622,7 @@ public class CSWRecordTransformer {
         }
 
         //Parse the descriptive keywords
-        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, KEYWORDLISTEXPRESSION);
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, KEYWORDLISTEXPRESSION);
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
             List<String> keywords = new ArrayList<String>();
             Node keyword;
@@ -655,7 +657,7 @@ public class CSWRecordTransformer {
         }
 
         //Parse any legal constraints
-        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
             List<String> constraintsList = new ArrayList<String>();
             Node constraint;

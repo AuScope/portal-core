@@ -86,12 +86,16 @@ public abstract class BaseCSWController extends BasePortalController {
 
             List<ModelMap> viewMappedRecords = new ArrayList<ModelMap>();
             for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
-                viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
+                if (rec != null) {
+                    viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
+                }
             }
 
             List<ModelMap> viewRelatedRecords = new ArrayList<ModelMap>();
             for (CSWRecord rec : knownLayerAndRecords.getRelatedRecords()) {
-                viewRelatedRecords.add(viewCSWRecordFactory.toView(rec));
+                if (rec != null) {
+                    viewRelatedRecords.add(viewCSWRecordFactory.toView(rec));
+                }
             }
 
             viewKnownLayer.put("cswRecords", viewMappedRecords);
