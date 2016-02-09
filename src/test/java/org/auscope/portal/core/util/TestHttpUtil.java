@@ -22,7 +22,7 @@ public class TestHttpUtil extends PortalTestClass {
      */
     @Test
     public void testWhitespaceEscaping() throws Exception {
-        final List<NameValuePair> params = Arrays.asList(new BasicNameValuePair("param1", "value with space"), new BasicNameValuePair("param2", "valuewithoutspace"));;
+        final List<NameValuePair> params = Arrays.asList((NameValuePair) new BasicNameValuePair("param1", "value with space"), (NameValuePair) new BasicNameValuePair("param2", "valuewithoutspace"));
         final String hostUrl = "http://example.com/path";
         URI uri = HttpUtil.parseURI(hostUrl, params);
         Assert.assertEquals(hostUrl + "?param1=value%20with%20space&param2=valuewithoutspace", uri.toString());
