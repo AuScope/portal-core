@@ -120,19 +120,21 @@ Ext.define('portal.layer.querier.QueryTargetHandler', {
                 continue;
             }
 
-
             point = Ext.create('portal.map.Point', {
                 latitude : queryTargets[i].get('lat'),
                 longitude : queryTargets[i].get('lng')
             });
 
-            var shortTitle = cswRecord.get('name');
-            var maxTitleLength = 90;
-//            if (onlineResource && onlineResource.get('name')) {
-//                shortTitle += ' - ' + onlineResource.get('name');
-//            }
-            shortTitle += ' - ' + cswRecord.get('adminArea');
 
+            var shortTitle = cswRecord.get('name');
+            
+            var provider = portal.util.ProviderNameTransformer.abbreviateName(cswRecord.get('contactOrg'));
+
+            var maxTitleLength = 120;
+            
+            // append the name of the organisation that supplied the record
+            shortTitle += ' - ' + provider;
+            
             if(shortTitle.length > maxTitleLength) {
                 shortTitle = shortTitle.substr(0, maxTitleLength) + "...";
             }
