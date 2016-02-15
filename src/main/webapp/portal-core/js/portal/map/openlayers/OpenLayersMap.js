@@ -13,12 +13,12 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
     constructor : function(cfg) {
         this.callParent(arguments);
         
-
-
         // If the portal (eg. Geoscience Portal but NOT it as GP already handles this) doesn't call 
         // renderBaseMap() then the OpenLayers LayerSwitcher won't appear so we set a timeout to 
         // create it if it hasn't
-        Ext.defer(this._callDrawOpenLayerSwitcher, 2000, this);
+        if (!cfg.portalIsHandlingLayerSwitcher) {
+            Ext.defer(this._callDrawOpenLayerSwitcher, 2000, this);
+        }
     },
     
     _callDrawOpenLayerSwitcher : function() {
@@ -996,15 +996,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         var controlList = this.map.getControlsByClass('portal.map.openlayers.ClickControl');
         for(var i = 0; i < controlList.length; i++){
             controlList[i].deactivate();
-        }
-    },
-    
-    /**
-     * The layerStore has been updated and want to force a re-indexing of the LayerIndex (z-order of the layers).
-     */
-    updateLayerIndex : function() {
-        for(position=0;position < this.layerStore.length; position++){
-            this.map.setLayerIndex(layer,position);
         }
     }
 });

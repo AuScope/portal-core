@@ -15,7 +15,9 @@ public class WFSTransformedResponse {
     private String transformed;
     /** The method used to make the request */
     private HttpRequestBase method;
-
+    /** success flag */
+    private Boolean success;
+    
     /**
      * Creates a new instance of this class
      * 
@@ -27,9 +29,24 @@ public class WFSTransformedResponse {
      *            the method used to make the request
      */
     public WFSTransformedResponse(String gml, String transformed, HttpRequestBase method) {
-        this.gml = gml;
+    	this(gml, transformed, method, true);
+    }
+    
+    /**
+     * Creates a new instance of this class
+     * 
+     * @param gml
+     *            The original WFS response as returned by the service
+     * @param transformed
+     *            The gml string after being transformed by a XSLT
+     * @param method
+     *            the method used to make the request
+     */
+    public WFSTransformedResponse(String gml, String transformed, HttpRequestBase method, Boolean success) {
+    	this.gml = gml;
         this.transformed = transformed;
         this.method = method;
+        this.success = success;
     }
 
     /**
@@ -57,5 +74,13 @@ public class WFSTransformedResponse {
      */
     public HttpRequestBase getMethod() {
         return method;
+    }
+    
+    /**
+     * Gets the success value
+     * @return
+     */
+    public Boolean getSuccess() {
+    	return this.success;
     }
 }

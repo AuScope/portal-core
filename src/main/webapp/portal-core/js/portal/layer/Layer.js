@@ -94,7 +94,13 @@ Ext.define('portal.layer.Layer', {
         var activeTab = Ext.getCmp('auscope-tabs-panel').getActiveTab();
         for (var i = 0; i < activeTab.features.length; i++) {
             if (activeTab.features[i] instanceof Ext.grid.feature.Grouping) {
-                activeTab.features[i].expand(groupname,true);
+                // try to expand the group but fail gracefully if not possible
+                // for example because the group may be obtained from the "contactOrg" field
+                // GA Portal thinks the group name of a Custom layer is "Geoscience Australia"
+                try {
+                    activeTab.features[i].expand(groupname,true);
+                }
+                catch(e) {}
             }
         }        
     },

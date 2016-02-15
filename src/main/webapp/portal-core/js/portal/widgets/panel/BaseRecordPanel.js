@@ -18,11 +18,6 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
     extend : 'portal.widgets.panel.CommonBaseRecordPanel',
     alias: 'widget.baserecordpanel',
 
-    listenersHere : {
-            removelayer : function(layerArray){
-                this._removeLayer(layerArray);
-            }
-    },
     constructor : function(cfg) {
         var me = this;
 
@@ -42,7 +37,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             features : [groupingFeature],
             viewConfig : {
                 emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
-                preserveScrollOnRefresh: true    
+                preserveScrollOnRefresh: true
             },          
             dockedItems : [{
                 xtype : 'toolbar',
@@ -169,11 +164,9 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         });
 
         me.callParent(arguments);
-        AppEvents.addListener(me);
     },
     
     onDestroy : function() {
-        AppEvents.removeListener(me);
         me.callParent();
     },
 
@@ -185,18 +178,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             detachOnRemove : false,
             map         : this.map,
             renderTo    : parentElId,
-            layerStore: me.activelayerstore,
-            menuItems : [],
-            listeners : {
-                addlayer : function(layer){
-                    me.activelayerstore.suspendEvents(true);
-                    me.activelayerstore.insert(0,layer); //this adds the layer to our store
-                    me.activelayerstore.resumeEvents();
-                },
-                removelayer : function(layer){
-                    me.activelayerstore.remove(layer);
-                }
-            }
+            menuItems : []
         });   
         
         return panel
@@ -395,25 +377,15 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
             });
         }
     },
+    
     _deleteClickHandler :  function(value, record, rowIdx, tip) {
         var layer = record.get('layer');
-        if(layer && record.get('active')){            
-        	AppEvents.broadcast('removelayer', {layer:layer, layerStore:this.activelayerstore, rowIdx:rowIdx});
-        } 
-    },    
-    _removeLayer : function(layerArray) {
-        var layer = layerArray.layer;
-        var rowIdx = layerArray.rowIdx;
-        if (this.activelayerstore.find('id', layer.id) >= 0) {
-            layer.removeDataFromMap();
-            this.activelayerstore.remove(layer);          
+        if(layer && record.get('active')){
+            ActiveLayerManager.removeLayer(layer);
             this.fireEvent('cellclick',this,undefined,undefined,layer,undefined,rowIdx);
-            this.menuFactory.layerRemoveHandler(layer);
-        } else {
-            console.log('_removeLayer : no activeLayer with id:',layer.id," in this.activelayerstore: ", this.activelayerstore.getData());
         }
     },
-    
+
     /**
      * Renderer for the loading column
      */

@@ -21,7 +21,6 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
     alias: 'widget.commonbaserecordpanel',
     browseCatalogueDNSMessage : false, //VT: Flags the do not show message when browse catalogue is clicked.
     map : null,
-    activelayerstore : null,
     menuFactory : null,
     onlineResourcePanelType : null,
     serviceInformationIcon : null,
@@ -31,27 +30,21 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
     /**
      * Define listeners to combine with any passed in with the Options
      */
-    listenersHere : {
-    },
+    listenersHere : {},
+
     constructor : function(cfg) {
         var me = this;
         me.map = cfg.map;
         me.menuFactory = cfg.menuFactory;
-        me.activelayerstore = cfg.activelayerstore;
         me.onlineResourcePanelType = cfg.onlineResourcePanelType;
         me.serviceInformationIcon = cfg.serviceInformationIcon;
         me.mapExtentIcon = cfg.mapExtentIcon;
-        
         me.listeners = Object.extend(me.listenersHere, cfg.listeners);
 
-        // Sub classes should define their Columns in their constructors
-        
         me.callParent(arguments);
-        AppEvents.addListener(me);
     },
     
     onDestroy : function() {
-        AppEvents.removeListener(me);
         me.callParent();
     },
     
