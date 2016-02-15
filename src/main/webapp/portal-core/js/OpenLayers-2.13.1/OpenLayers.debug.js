@@ -64315,12 +64315,13 @@ OpenLayers.Layer.Google.v3 = {
                             cache.rendered = true;
                             me.setGMapVisibility(me.getVisibility());
                             me.moveTo(me.map.getCenter());
+                            cache.googleControl.appendChild(map.viewPortDiv);
                         });
                     } else {
-                        map.div.appendChild(container);
                         cache.googleControl.appendChild(map.viewPortDiv);
-                        google.maps.event.trigger(this.mapObject, 'resize');
                     }
+                    map.div.appendChild(container);
+                    google.maps.event.trigger(this.mapObject, 'resize');
                 }
                 this.mapObject.setMapTypeId(type);                
             } else if (cache.googleControl.hasChildNodes()) {
