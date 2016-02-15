@@ -61,6 +61,9 @@ Ext.define('portal.map.BaseMap', {
         if (this.layerStore) {
             this.layerStore.on('add', this._onLayerStoreAdd, this);
             this.layerStore.on('remove', this._onLayerStoreRemove, this);
+
+            // give the layerStore an id for fast lookup using ExtJS store manager
+            this.layerStore.storeId = 'activeLayerStore';
         }
     },
 
@@ -249,12 +252,7 @@ Ext.define('portal.map.BaseMap', {
      * function(layerId) : the id of the layer that is being removed
      *
      */
-    closeInfoWindow : Ext.util.UnimplementedFunction,
-    
-    /**
-     * The layerStore has been updated and want to force a re-indexing of the LayerIndex (z-order of the layers).
-     */
-    updateLayerIndex : Ext.util.UnimplementedFunction,
+    closeInfoWindow : Ext.util.UnimplementedFunction,    
     
     ////////////////// Base functionality
 

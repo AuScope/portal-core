@@ -13,7 +13,6 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
     knownLayerStore : null,
     layerFactory : null,
     cswRecordStore : null,
-    layerStore : null,
     map : null,
     stateString : null,
     stateVersion : null,
@@ -23,7 +22,6 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
      *  mapStateSerializer : [Optional] The portal.util.permalink.MapStateSerializer to load from (if empty, it will be decoded from window.location)
      *  knownLayerStore : [Optional] A Ext.data.Store containing portal.knownlayer.KnownLayer models
      *  cswRecordStore : [Optional] A Ext.data.Store containing portal.csw.CSWRecord models
-     *  layerStore : A portal.layer.LayerStore which will be populated with deserialized layers
      *  layerFactory : A portal.layer.LayerFactory which will be used to create layers
      *  map : A portal.util.gmap.GMapWrapper instance
      *  stateString : the raw state string
@@ -224,6 +222,6 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
         }
                 
         //Add the layers to the internal store
-        this.layerStore.add(layersToAdd);
+        ActiveLayerManager.addLayers(layersToAdd);
     }
 });
