@@ -269,7 +269,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
             this.filterForm.writeToFilterer(filterer);
         } catch (e) {
-            console.log(e);
+            console.log(e); 
         }
         
         ActiveLayerManager.addLayer(layer);
