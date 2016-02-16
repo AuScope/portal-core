@@ -138,22 +138,26 @@ Ext.define('portal.util.permalink.MapStateSerializer', {
     },
 
     /**
-     * Extracts all active layers and adds them
-     * to the stored map state
+     * Extracts all active layers from the map and adds them
+     * to the stored map state.
      *
-     * @param layerStore an instance of portal.layer.LayerStore
+     * @param map the OL map wrapper. Contains a portal.layer.LayerStore.
      */
-    addLayers : function(layerStore) {
-        for (var i = 0; i < layerStore.getCount(); i++) {
-            var layer = layerStore.getAt(i);
+    addLayers : function(map) {
+        // get the map's active layer store
+        var activeLayerStore = ActiveLayerManager.getActiveLayerStore(map);
+        if (activeLayerStore) {
+            for (var i = 0; i < activeLayerStore.getCount(); i++) {
+                var layer = activeLayerStore.getAt(i);
 
-            //VT: Unable to support KML perm link at this stage because of the source and size of the kml file.
-            if (!layer || layer.get('sourceType') === portal.layer.Layer.KML_RECORD) {
-                continue;
+                //VT: Unable to support KML perm link at this stage because of the source and size of the kml file.
+                if (!layer || layer.get('sourceType') === portal.layer.Layer.KML_RECORD) {
+                    continue;
+                }
+
+                var serializedLayer = this._serializeLayer(layer);
+                this.serializedLayers.push(serializedLayer);
             }
-
-            var serializedLayer = this._serializeLayer(layer);
-            this.serializedLayers.push(serializedLayer);
         }
     },
 

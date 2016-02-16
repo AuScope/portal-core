@@ -28,11 +28,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
      *  layerPanel : [Required] an instance of a portal.widgets.panel.LayerPanel - selection events will be listend for
      *  wantAddLayerButton : boolean [Optional - defaults to True]
      *  wantOptionsButton : boolean [Optional - defaults to True]
-     * }
-     * 
-     * Adds the following event:
-     * addlayer - fire when we request to add a layer
-     * removelayer - fire when a request to remove layer is made
+     * } 
      */
     constructor : function(config) {
  
@@ -122,12 +118,6 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         });
 
         this.callParent(arguments);
-
-        this.on('removelayer',function(layer){
-            config.menuFactory.layerRemoveHandler(layer);
-            me.activelayerstore.remove(layer);
-        })
-
     },
     
     _getResetFormAction : function(){
@@ -241,9 +231,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             iconCls : 'trash',
             handler : function(){
                 var layer = me.filterForm.layer; 
-                layer.removeDataFromMap();               
-                me.fireEvent('removelayer', layer);
-                portal.events.AppEvents.broadcast('removelayer', {layer:layer});
+                ActiveLayerManager.removeLayer(layer);
             }
         });
         
@@ -284,14 +272,14 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         var filterer = layer.get('filterer');              
         
         //Before applying filter, update the spatial bounds (silently)
-        filterer.setSpatialParam(this._map.getVisibleMapBounds(), true); 
-        this.filterForm.writeToFilterer(filterer);        
+        try {
+            filterer.setSpatialParam(this._map.getVisibleMapBounds(), true);
+            this.filterForm.writeToFilterer(filterer);
+        } catch (e) {
+            console.log(e);
+        }
         
-        this.layerStore.suspendEvents(true);
-        this.layerStore.insert(0,layer);
-        this.layerStore.resumeEvents();
-        
-        AppEvents.broadcast('addlayer', {layer:layer, layerStore: this.layerStore});
+        ActiveLayerManager.addLayer(layer);
         
         this._showConstraintWindow(layer);
 
