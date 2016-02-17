@@ -4,7 +4,7 @@
     <groupId>org.auscope.portal</groupId>
     <artifactId>portal-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
     <name>Portal-Core</name>
     <description>Core functionality common to various AuScope portals.</description>
     <url>http://portal.auscope.org</url>
@@ -21,6 +21,7 @@
         <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
         <url>https://github.com/AuScope/portal-core</url>
     </scm>
+<!--
     <distributionManagement>
         <repository>
             <id>deployment</id>
@@ -28,19 +29,7 @@
             <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/PortalRelease/</url>
         </repository>
     </distributionManagement>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.spring.platform</groupId>
-                <artifactId>platform-bom</artifactId>
-                <version>1.1.2.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
+-->
     <!-- Build Configuration -->
     <organization>
         <name>AuScope</name>
@@ -49,7 +38,12 @@
     <!-- Project properties -->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jetty.version>6.1.25</jetty.version>
+        <log4j.version>1.2.17</log4j.version>
+        <spring.version>3.2.10.RELEASE</spring.version>
+        <spring.security.version>3.2.4.RELEASE</spring.security.version>
         <jclouds.version>1.8.1</jclouds.version>
+        <httpclient.version>4.3.5</httpclient.version>
     </properties>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -164,6 +158,23 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>${jetty.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>log4j</groupId>
+                        <artifactId>log4j</artifactId>
+                        <version>${log4j.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <webApp>${project.build.directory}/${project.build.finalName}</webApp>
+                    <scanIntervalSeconds>9999</scanIntervalSeconds>
+                    <contextPath>/</contextPath>
+                </configuration>
+            </plugin>
+            <plugin> 
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-eclipse-plugin</artifactId>
                 <version>2.9</version>
@@ -185,7 +196,7 @@
                     <charset>UTF-8</charset>
                     <!-- css bit -->
                     <cssSourceDir>portal-core/css/</cssSourceDir>
-                    <jsTargetDir>../classes/portal-core/css</jsTargetDir>
+                    <jsTargetDir>../classes/portal-core/css</jsTargetDir>                    
                     <cssSourceIncludes>
                       <cssSourceInclude>**/*.css</cssSourceInclude>
                     </cssSourceIncludes>
@@ -245,7 +256,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.7</version>
-            </plugin>
+            </plugin>            
         </plugins>
         <resources>
          <resource>
@@ -327,6 +338,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
@@ -341,30 +353,37 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
            <groupId>org.springframework</groupId>
            <artifactId>spring-orm</artifactId>
+           <version>${spring.version}</version>
         </dependency>
         <dependency>
           <groupId>com.racquettrack</groupId>
@@ -385,16 +404,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>4.10</version>
             <optional>false</optional>
-        </dependency>
-        <dependency>
-            <groupId>xmlunit</groupId>
-            <artifactId>xmlunit</artifactId>
-            <version>1.6</version>
-        </dependency>
+        </dependency>        
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.mail</groupId>
@@ -428,10 +444,12 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
+            <version>1.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
+            <version>1.2.1</version>
         </dependency>
         <dependency>
             <groupId>cglib</groupId>
@@ -441,29 +459,35 @@
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+            <version>${httpclient.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient-cache</artifactId>
+            <version>${httpclient.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>xom</groupId>
             <artifactId>xom</artifactId>
+            <version>1.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.6</version>
             <optional>false</optional>
         </dependency>
         <dependency>
@@ -492,18 +516,22 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-        </dependency>
+            <version>1.3.1</version>
+        </dependency> 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-        </dependency>
+            <version>2.3.1</version>
+        </dependency>               
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+            <version>2.2</version>
         </dependency>
         <dependency>
           <groupId>org.apache.jena</groupId>
@@ -517,19 +545,25 @@
           </exclusions>
         </dependency>
         <dependency>
-		  <groupId>org.pacesys</groupId>
-		  <artifactId>openstack4j-core</artifactId>
-		  <version>2.0.3</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.pacesys.openstack4j.connectors</groupId>
-		  <artifactId>openstack4j-httpclient</artifactId>
-		  <version>2.0.3</version>
-		</dependency>
+          <groupId>org.pacesys</groupId>
+          <artifactId>openstack4j-core</artifactId>
+          <version>2.0.3</version>
+        </dependency>
+        <dependency>
+          <groupId>org.pacesys.openstack4j.connectors</groupId>
+          <artifactId>openstack4j-httpclient</artifactId>
+          <version>2.0.3</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>
             <version>1.1</version>
         </dependency>
     </dependencies>
+    <distributionManagement>
+        <snapshotRepository>
+          <id>snapshots</id>
+          <url>http://maven-int.ga.gov.au/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
