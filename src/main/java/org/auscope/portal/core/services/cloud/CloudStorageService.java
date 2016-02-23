@@ -203,8 +203,10 @@ public class CloudStorageService {
         }
 
         ContextBuilder builder = ContextBuilder.newBuilder(provider)
-                .overrides(properties)
-                .credentials(accessKey, secretKey);
+                .overrides(properties);
+        
+        if(accessKey!=null && secretKey!=null)
+        	builder.credentials(accessKey, secretKey);
 
         if (this.endpoint != null) {
             builder.endpoint(this.endpoint);

@@ -177,8 +177,10 @@ public class CloudComputeService {
         this.provider = provider;
 
         ContextBuilder b = ContextBuilder.newBuilder(typeString)
-                .overrides(overrides)
-                .credentials(accessKey, secretKey);
+                .overrides(overrides);
+        
+        if(accessKey!=null && secretKey!=null)
+        	b.credentials(accessKey, secretKey);
 
         if (apiVersion != null) {
             b.apiVersion(apiVersion);
@@ -325,67 +327,13 @@ public class CloudComputeService {
     public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
 
         //We have different template options depending on provider
-        TemplateOptions options = null;
-        Set<? extends NodeMetadata> results = Collections.emptySet();
         NodeMetadata result;
 
         if (provider == ProviderType.AWSEc2) {
-            options = ((AWSEC2TemplateOptions) computeService.templateOptions())
-                    .keyPair(getKeypair())
-                    .userData(userDataString.getBytes(Charset.forName("UTF-8")));
-
-            TemplateBuilder tb = computeService.templateBuilder()
-                    .imageId(job.getComputeVmId())
-                    .hardwareId(job.getComputeInstanceType())
-                    .options(options);
-
-            if (this.zone != null) {
-                tb.locationId(zone);
-            }
-
-            Template template = tb.build();
-
-            //Start up the job, we should have exactly 1 node start
-            try {
-                results = computeService.createNodesInGroup(groupName, 1, template);
-            } catch (RunNodesException e) {
-                logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'",
-                        e.getMessage(), job));
-                logger.debug("Exception:", e);
-                throw new PortalServiceException(
-                        "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-                                + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
-                                + e.getMessage(), e);
-            } catch (AWSResponseException e) {
-                logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'",
-                        e.getMessage(), job));
-                logger.debug("Exception:", e);
-                throw new PortalServiceException(
-                        "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-                                + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
-                                + e.getMessage(), e);
-            }
-            if (results.isEmpty()) {
-                logger.error("JClouds returned an empty result set. Treating it as job failure.");
-                throw new PortalServiceException(
-                        "Unable to start compute node due to an unknown error, no nodes returned");
-            }
-            result = results.iterator().next();
-
-            //Configure the instance to terminate on shutdown:
-            try {
-                ec2Api.setInstanceInitiatedShutdownBehaviour(result.getId(), InstanceInitiatedShutdownBehaviour.Terminate);
-            } catch (Exception ex) {
-                //if we fail here - kill the instance, we don't want a floating VM sitting around
-                logger.error(String.format("Instance ID '%1$s' could NOT be set to terminate on shutdown: %2$s", result.getId(), ex.getMessage()));
-                logger.debug("Exception:", ex);
-                computeService.destroyNode(result.getId());
-                throw new PortalServiceException(
-                        "An unexpected error has occured while executing your job. There were problems when setting up the job in AWS. Please try again at a later date."
-                                ,"Please report it to cg-admin@csiro.au : "
-                                + ex.getMessage(), ex);
-            }
+        	result = executeJobAws(job, userDataString);
         } else {
+            Set<? extends NodeMetadata> results = Collections.emptySet();
+            TemplateOptions options = null;
             //Iterate all regions
             for (String location : novaApi.getConfiguredZones()) {
                 Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
@@ -456,7 +404,71 @@ public class CloudComputeService {
         return result.getId();
     }
 
-    /**
+    private NodeMetadata executeJobAws(CloudJob job, String userDataString) throws PortalServiceException {
+        Set<? extends NodeMetadata> results = Collections.emptySet();
+        TemplateOptions options = null;
+
+    	
+        options = ((AWSEC2TemplateOptions) computeService.templateOptions())
+                .keyPair(getKeypair())
+                .userData(userDataString.getBytes(Charset.forName("UTF-8")));
+
+        TemplateBuilder tb = computeService.templateBuilder()
+                .imageId(job.getComputeVmId())
+                .hardwareId(job.getComputeInstanceType())
+                .options(options);
+
+        if (this.zone != null) {
+            tb.locationId(zone);
+        }
+
+        Template template = tb.build();
+
+        //Start up the job, we should have exactly 1 node start
+        try {
+            results = computeService.createNodesInGroup(groupName, 1, template);
+        } catch (RunNodesException e) {
+            logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'",
+                    e.getMessage(), job));
+            logger.debug("Exception:", e);
+            throw new PortalServiceException(
+                    "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                            + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
+                            + e.getMessage(), e);
+        } catch (AWSResponseException e) {
+            logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'",
+                    e.getMessage(), job));
+            logger.debug("Exception:", e);
+            throw new PortalServiceException(
+                    "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                            + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
+                            + e.getMessage(), e);
+        }
+        if (results.isEmpty()) {
+            logger.error("JClouds returned an empty result set. Treating it as job failure.");
+            throw new PortalServiceException(
+                    "Unable to start compute node due to an unknown error, no nodes returned");
+        }
+        NodeMetadata result = results.iterator().next();
+
+        //Configure the instance to terminate on shutdown:
+        try {
+            ec2Api.setInstanceInitiatedShutdownBehaviour(result.getId(), InstanceInitiatedShutdownBehaviour.Terminate);
+        } catch (Exception ex) {
+            //if we fail here - kill the instance, we don't want a floating VM sitting around
+            logger.error(String.format("Instance ID '%1$s' could NOT be set to terminate on shutdown: %2$s", result.getId(), ex.getMessage()));
+            logger.debug("Exception:", ex);
+            computeService.destroyNode(result.getId());
+            throw new PortalServiceException(
+                    "An unexpected error has occured while executing your job. There were problems when setting up the job in AWS. Please try again at a later date."
+                            ,"Please report it to cg-admin@csiro.au : "
+                            + ex.getMessage(), ex);
+        }
+        
+        return result;
+    }
+
+	/**
      * Makes a request that the VM started by job be terminated
      *
      * @param job
