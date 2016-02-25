@@ -23,8 +23,14 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.sts.STSApi;
+import org.jclouds.sts.domain.UserAndSessionCredentials;
+import org.jclouds.sts.options.AssumeRoleOptions;
+
+import com.google.common.base.Supplier;
 
 /**
  * Service for providing storage of objects (blobs) in a cloud using the JClouds library
@@ -67,7 +73,11 @@ public class CloudStorageService {
      */
     private String bucket = DEFAULT_BUCKET;
 
-    private BlobStoreContext blobStoreContext;
+	private boolean relaxHostName;
+
+	private boolean stripExpectHeader;
+
+	private BlobStoreContext mockBlobStoreContext = null; // Set for unit test only
 
     /**
      * Creates a new instance for connecting to the specified parameters
@@ -186,14 +196,25 @@ public class CloudStorageService {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.regionName = regionName;
-
+        this.relaxHostName=relaxHostName;
+        this.stripExpectHeader=stripExpectHeader;
+        
         try {
             this.jobPrefix = "job-" + InetAddress.getLocalHost().getHostName() + "-";
         } catch (UnknownHostException e) {
             this.jobPrefix = "job-";
             log.error("Unable to lookup hostname. Defaulting prefix to " + this.jobPrefix, e);
         }
+    }
 
+	private static final String STS_ROLE_ARN = "arn:aws:iam::696640869989:role/vbkd-dsadss-AnvglStsRole-1QZG62NWIOK2";
+	private static final String CLIENT_SECRET = "1234"; // Must match value in policy
+
+    /*
+     */
+	public BlobStoreContext getBlobStoreContext() {
+    	if(mockBlobStoreContext!=null) return mockBlobStoreContext; // For unit test
+    	
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
@@ -202,6 +223,25 @@ public class CloudStorageService {
             properties.setProperty("jclouds.region", regionName);
         }
 
+        if(useSTS()) {
+            ContextBuilder builder = ContextBuilder.newBuilder("sts");
+            if(accessKey!=null && secretKey!=null)
+            	builder.credentials(accessKey, secretKey);
+            
+            STSApi api = builder.buildApi(STSApi.class);
+
+            AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600).externalId(CLIENT_SECRET);
+            final UserAndSessionCredentials credentials = api.assumeRole(STS_ROLE_ARN, "anvgl", assumeRoleOptions);
+
+            Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
+                @Override
+                public Credentials get() {
+                    return credentials.getCredentials();
+                }
+            };
+            return ContextBuilder.newBuilder("aws-s3").credentialsSupplier(credentialsSupplier).buildView(BlobStoreContext.class);
+        	
+        } else {
         ContextBuilder builder = ContextBuilder.newBuilder(provider)
                 .overrides(properties);
         
@@ -212,17 +252,22 @@ public class CloudStorageService {
             builder.endpoint(this.endpoint);
         }
 
-        this.blobStoreContext = builder.build(BlobStoreContext.class);
+        return builder.build(BlobStoreContext.class);
+        }
     }
+    
+    private boolean useSTS() {
+		return true;
+	}
 
-    /**
+	/**
      * Creates a new instance for connecting to the specified blob store. Please note that the connection credentials will NOT be available via this instances
      * get methods if this constructor is used.
      * 
      * @param blobStoreContext
      */
-    public CloudStorageService(BlobStoreContext blobStoreContext) {
-        this.blobStoreContext = blobStoreContext;
+    public CloudStorageService(BlobStoreContext blobStoreContext) { // For unit test only!!
+        this.mockBlobStoreContext = blobStoreContext;
     }
 
     /**
@@ -452,7 +497,7 @@ public class CloudStorageService {
      */
     public InputStream getJobFile(CloudFileOwner job, String key) throws PortalServiceException {
         try {
-            BlobStore bs = blobStoreContext.getBlobStore();
+            BlobStore bs = getBlobStoreContext().getBlobStore();
             Blob blob = bs.getBlob(bucket, keyForJobFile(job, key));
             return blob.getPayload().getInput();
         } catch (Exception ex) {
@@ -473,7 +518,7 @@ public class CloudStorageService {
     public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
 
         try {
-            BlobStore bs = blobStoreContext.getBlobStore();
+            BlobStore bs = getBlobStoreContext().getBlobStore();
             String baseKey = generateBaseKey(job);
 
             //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
@@ -524,7 +569,7 @@ public class CloudStorageService {
     public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
 
         try {
-            BlobStore bs = blobStoreContext.getBlobStore();
+            BlobStore bs = getBlobStoreContext().getBlobStore();
 
             for (File file : files) {
 
@@ -560,7 +605,7 @@ public class CloudStorageService {
      */
     public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
         try {
-            BlobStore bs = blobStoreContext.getBlobStore();
+            BlobStore bs = getBlobStoreContext().getBlobStore();
             bs.deleteDirectory(bucket, jobToBaseKey(job));
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);

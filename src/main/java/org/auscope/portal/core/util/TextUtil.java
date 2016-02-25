@@ -11,7 +11,26 @@ import org.apache.commons.io.IOUtils;
  * @author Richard Goh
  */
 public class TextUtil {
-    /**
+	
+	public static boolean isNullOrEmpty(String s) {
+		return s==null || s.length()==0;
+	}
+	
+	public static boolean isAnyNullOrEmpty(String ... strings) {
+		for (String string : strings) {
+			if(isNullOrEmpty(string)) return true;
+		}
+		return false;
+	}
+	
+	public static boolean isAllNullOrEmpty(String ... strings) {
+		for (String string : strings) {
+			if( ! isNullOrEmpty(string)) return false;
+		}
+		return true;
+	}
+
+	/**
      * Get the last N lines of multi-line text. Each line will be separated by platform dependant line separator.
      * 
      * @param text

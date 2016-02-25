@@ -3,11 +3,8 @@ package org.auscope.portal.core.services.cloud;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
-import org.auscope.portal.core.services.cloud.CloudComputeService.ProviderType;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
@@ -29,6 +26,8 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import junit.framework.Assert;
+
 public class TestCloudComputeService extends PortalTestClass {
 
     private final ComputeService mockComputeService = context.mock(ComputeService.class);
@@ -45,7 +44,7 @@ public class TestCloudComputeService extends PortalTestClass {
     private final Predicate<NodeMetadata> mockFilter = context.mock(Predicate.class);
     private final RunNodesException mockException = context.mock(RunNodesException.class);
 
-    private CloudComputeService service;
+    private CloudComputeServiceNectar service;
 
     private Optional<? extends AvailabilityZoneApi> mockOptAZA = context.mock(Optional.class);
 
@@ -56,7 +55,7 @@ public class TestCloudComputeService extends PortalTestClass {
         job = new CloudJob(13);
         job.setComputeVmId("image-id");
         job.setComputeInstanceType("type");
-        service = new CloudComputeService(ProviderType.NovaKeystone, mockComputeService, mockNovaApi, mockFilter);
+        service = new CloudComputeServiceNectar(mockComputeService, mockNovaApi, mockFilter);
         service.setGroupName("group-name");
         service.setKeypair("vgl-developers");
 
