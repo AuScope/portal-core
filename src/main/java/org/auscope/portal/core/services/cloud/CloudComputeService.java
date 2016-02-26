@@ -222,8 +222,9 @@ abstract public class CloudComputeService {
      *
      * @param job
      *            The job whose execution should be terminated
+	 * @throws PortalServiceException 
      */
-    abstract public void terminateJob(CloudJob job);
+    abstract public void terminateJob(CloudJob job) throws PortalServiceException;
 
     public ComputeType[] getAvailableComputeTypes() {
         return getAvailableComputeTypes(null, null, null);

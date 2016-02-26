@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudFileOwner;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.util.TextUtil;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -207,12 +208,12 @@ public class CloudStorageService {
         }
     }
 
-	private static final String STS_ROLE_ARN = "arn:aws:iam::696640869989:role/vbkd-dsadss-AnvglStsRole-1QZG62NWIOK2";
-	private static final String CLIENT_SECRET = "1234"; // Must match value in policy
+//	private static final String STS_ROLE_ARN = "arn:aws:iam::696640869989:role/vbkd-dsadss-AnvglStsRole-1QZG62NWIOK2";
+//	private static final String CLIENT_SECRET = "1234"; // Must match value in policy
 
     /*
      */
-	public BlobStoreContext getBlobStoreContext() {
+	public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) {
     	if(mockBlobStoreContext!=null) return mockBlobStoreContext; // For unit test
     	
         Properties properties = new Properties();
@@ -223,15 +224,15 @@ public class CloudStorageService {
             properties.setProperty("jclouds.region", regionName);
         }
 
-        if(useSTS()) {
+        if(! TextUtil.isNullOrEmpty(arn)) {
             ContextBuilder builder = ContextBuilder.newBuilder("sts");
             if(accessKey!=null && secretKey!=null)
             	builder.credentials(accessKey, secretKey);
             
             STSApi api = builder.buildApi(STSApi.class);
 
-            AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600).externalId(CLIENT_SECRET);
-            final UserAndSessionCredentials credentials = api.assumeRole(STS_ROLE_ARN, "anvgl", assumeRoleOptions);
+            AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600).externalId(clientSecret);
+            final UserAndSessionCredentials credentials = api.assumeRole(arn, "anvgl", assumeRoleOptions);
 
             Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
                 @Override
@@ -256,10 +257,6 @@ public class CloudStorageService {
         }
     }
     
-    private boolean useSTS() {
-		return true;
-	}
-
 	/**
      * Creates a new instance for connecting to the specified blob store. Please note that the connection credentials will NOT be available via this instances
      * get methods if this constructor is used.
@@ -495,9 +492,9 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public InputStream getJobFile(CloudFileOwner job, String key) throws PortalServiceException {
+    public InputStream getJobFile(CloudFileOwner job, String key, String arn, String clientSecret) throws PortalServiceException {
         try {
-            BlobStore bs = getBlobStoreContext().getBlobStore();
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             Blob blob = bs.getBlob(bucket, keyForJobFile(job, key));
             return blob.getPayload().getInput();
         } catch (Exception ex) {
@@ -515,10 +512,10 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
+    public CloudFileInformation[] listJobFiles(CloudFileOwner job, String arn, String clientSecret) throws PortalServiceException {
 
         try {
-            BlobStore bs = getBlobStoreContext().getBlobStore();
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             String baseKey = generateBaseKey(job);
 
             //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
@@ -566,10 +563,10 @@ public class CloudStorageService {
      *            The local files to upload
      * @throws PortalServiceException
      */
-    public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
+    public void uploadJobFiles(CloudFileOwner job, File[] files, String arn, String clientSecret) throws PortalServiceException {
 
         try {
-            BlobStore bs = getBlobStoreContext().getBlobStore();
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
 
             for (File file : files) {
 
@@ -603,9 +600,9 @@ public class CloudStorageService {
      *            The whose storage space will be deleted
      * @throws PortalServiceException
      */
-    public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
+    public void deleteJobFiles(CloudFileOwner job, String arn, String clientSecret) throws PortalServiceException {
         try {
-            BlobStore bs = getBlobStoreContext().getBlobStore();
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             bs.deleteDirectory(bucket, jobToBaseKey(job));
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);

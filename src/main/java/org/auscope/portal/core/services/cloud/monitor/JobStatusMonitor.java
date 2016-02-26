@@ -52,14 +52,16 @@ public class JobStatusMonitor {
      * 
      * @param job
      *            The job to update - may have its fields modified by status change listeners
+     * @param stsArn 
+     * @param clientSecret 
      * @throws JobStatusException
      */
-    public void statusUpdate(CloudJob job) throws JobStatusException {
+    public void statusUpdate(CloudJob job, String stsArn, String clientSecret, String s3Role) throws JobStatusException {
         String oldStatus = job.getStatus();
         String newStatus;
 
         try {
-            newStatus = jobStatusReader.getJobStatus(job);
+            newStatus = jobStatusReader.getJobStatus(job, stsArn, clientSecret, s3Role);
         } catch (Exception ex) {
             throw new JobStatusException(ex, job);
         }
@@ -80,6 +82,8 @@ public class JobStatusMonitor {
      * 
      * @param jobs
      *            The job collection to update - may have its member fields modified by status change listeners
+     * @param stsArn 
+     * @param clientSecret 
      * @throws JobStatusException
      *             If and only if one or more job status updates fail
      */
@@ -90,7 +94,7 @@ public class JobStatusMonitor {
         for (CloudJob job : jobs) {
             //Do all updates before throwing exceptions
             try {
-                statusUpdate(job);
+                statusUpdate(job, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET), job.getProperty(CloudJob.PROPERTY_S3_ROLE));
             } catch (Throwable t) {
                 failedUpdates.add(job);
                 exceptions.add(t);

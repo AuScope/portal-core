@@ -59,8 +59,8 @@ public class CloudComputeServiceAws extends CloudComputeService {
      *            The Compute Secret key (password)
      *
      */
-    public CloudComputeServiceAws(String devAwsKey, String devAwsSecret) {
-        this(null, devAwsKey, devAwsSecret, null);
+    public CloudComputeServiceAws(String accessKey, String secretKey) {
+        this(null, accessKey, secretKey, null);
     }
 
     /**
@@ -81,16 +81,15 @@ public class CloudComputeServiceAws extends CloudComputeService {
         this.devSecretKey = secretKey;
 	}
 
-	public void init() throws PortalServiceException {
-		
-	}
+//	private static final String STS_ROLE_ARN = "arn:aws:iam::696640869989:role/vbkd-dsadss-AnvglStsRole-1QZG62NWIOK2";
+//	private static final String S3_PROFILE_ARN = "arn:aws:iam::696640869989:instance-profile/vbkd-dsadss-AnvglS3InstanceProfile-17Z06U2BEOANC";
+//	private static final String CLIENT_SECRET = "1234"; // Must match value in policy
 
-	private static final String STS_ROLE_ARN = "arn:aws:iam::696640869989:role/vbkd-dsadss-AnvglStsRole-1QZG62NWIOK2";
-	private static final String S3_PROFILE_ARN = "arn:aws:iam::696640869989:instance-profile/vbkd-dsadss-AnvglS3InstanceProfile-17Z06U2BEOANC";
-	private static final String CLIENT_SECRET = "1234"; // Must match value in policy
-
-	protected AWSCredentials getCredentials() {
-		if (useSts()) {
+	protected AWSCredentials getCredentials(String arn, String clientSecret) throws PortalServiceException {
+		if (! TextUtil.isNullOrEmpty(arn)) {
+			if(TextUtil.isNullOrEmpty(clientSecret))
+				throw new PortalServiceException("Job ARN set, but no client secret");
+			
 			AWSSecurityTokenServiceClient stsClient;
 
 			if (TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
@@ -100,8 +99,8 @@ public class CloudComputeServiceAws extends CloudComputeService {
 				stsClient = new AWSSecurityTokenServiceClient();
 			}
 
-			AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(STS_ROLE_ARN)
-					.withDurationSeconds(3600).withExternalId(CLIENT_SECRET).withRoleSessionName("anvgl");
+			AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(arn)
+					.withDurationSeconds(3600).withExternalId(clientSecret).withRoleSessionName("anvgl");
 
 			AssumeRoleResult assumeResult = stsClient.assumeRole(assumeRequest);
 
@@ -117,12 +116,11 @@ public class CloudComputeServiceAws extends CloudComputeService {
 		return null;
 	}
 	
-	private boolean useSts() {
-		return true;
-	}
-
-	protected AmazonEC2 getEc2Client() {
-		AWSCredentials creds = getCredentials();
+	protected AmazonEC2 getEc2Client(CloudJob job) throws PortalServiceException {
+		String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+		String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+		
+		AWSCredentials creds = getCredentials(arn, clientSecret);
 		AmazonEC2 ec2 = creds == null ? new AmazonEC2Client(): new AmazonEC2Client(creds);
 		
 		if(! TextUtil.isNullOrEmpty(getEndpoint()))
@@ -131,14 +129,17 @@ public class CloudComputeServiceAws extends CloudComputeService {
 	}
 	
 	public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
-		
-		IamInstanceProfileSpecification iamInstanceProfile = new IamInstanceProfileSpecification()
-				.withArn(S3_PROFILE_ARN);
-		// CREATE EC2 INSTANCES
 		RunInstancesRequest runInstancesRequest = new RunInstancesRequest().withInstanceType(job.getComputeInstanceType())
-				.withIamInstanceProfile(iamInstanceProfile).withImageId(job.getComputeVmId()).withMinCount(1).withMaxCount(1)
+				.withImageId(job.getComputeVmId()).withMinCount(1).withMaxCount(1)
 				.withInstanceInitiatedShutdownBehavior("terminate").withUserData(userDataString);
 
+		String instanceProfileArn = job.getProperty(CloudJob.PROPERTY_S3_ROLE);
+		if (!TextUtil.isNullOrEmpty(instanceProfileArn)) {
+			IamInstanceProfileSpecification iamInstanceProfile = new IamInstanceProfileSpecification()
+					.withArn(instanceProfileArn);
+			runInstancesRequest = runInstancesRequest.withIamInstanceProfile(iamInstanceProfile);
+		}
+		
 		if(! TextUtil.isNullOrEmpty(getKeypair())) {
 			runInstancesRequest=runInstancesRequest.withKeyName(getKeypair());
 		}
@@ -147,7 +148,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
 			runInstancesRequest=runInstancesRequest.withPlacement(new Placement(getZone()));
 		}
 
-		AmazonEC2 ec2 = getEc2Client();
+		AmazonEC2 ec2 = getEc2Client(job);
 		RunInstancesResult runInstances = ec2.runInstances(runInstancesRequest);
 
 		// TAG EC2 INSTANCES
@@ -168,9 +169,10 @@ public class CloudComputeServiceAws extends CloudComputeService {
      *
      * @param job
      *            The job whose execution should be terminated
+	 * @throws PortalServiceException 
      */
-	public void terminateJob(CloudJob job) {
-		AmazonEC2 ec2 = getEc2Client();
+	public void terminateJob(CloudJob job) throws PortalServiceException {
+		AmazonEC2 ec2 = getEc2Client(job);
 
 		TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest()
 				.withInstanceIds(job.getComputeInstanceId());
@@ -256,7 +258,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
 	public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
 		GetConsoleOutputRequest req = new GetConsoleOutputRequest(job.getComputeInstanceId());
 
-		GetConsoleOutputResult res = getEc2Client().getConsoleOutput(req);
+		GetConsoleOutputResult res = getEc2Client(job).getConsoleOutput(req);
 
 		return res.getDecodedOutput();
 	}
