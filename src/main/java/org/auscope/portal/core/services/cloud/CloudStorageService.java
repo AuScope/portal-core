@@ -240,21 +240,27 @@ public class CloudStorageService {
                     return credentials.getCredentials();
                 }
             };
-            return ContextBuilder.newBuilder("aws-s3").credentialsSupplier(credentialsSupplier).buildView(BlobStoreContext.class);
+            
+            ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties).credentialsSupplier(credentialsSupplier);
+            
+			if (this.endpoint != null) {
+				builder2.endpoint(this.endpoint);
+			}
+
+            return builder2.buildView(BlobStoreContext.class);
         	
-        } else {
-        ContextBuilder builder = ContextBuilder.newBuilder(provider)
-                .overrides(properties);
-        
-        if(accessKey!=null && secretKey!=null)
-        	builder.credentials(accessKey, secretKey);
+		} else {
+			ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
 
-        if (this.endpoint != null) {
-            builder.endpoint(this.endpoint);
-        }
+			if (accessKey != null && secretKey != null)
+				builder.credentials(accessKey, secretKey);
 
-        return builder.build(BlobStoreContext.class);
-        }
+			if (this.endpoint != null) {
+				builder.endpoint(this.endpoint);
+			}
+
+			return builder.build(BlobStoreContext.class);
+		}
     }
     
 	/**
