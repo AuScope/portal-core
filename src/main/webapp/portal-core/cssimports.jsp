@@ -1,8 +1,8 @@
 <!-- Page Style -->
-<!-- VT: I removed <link rel="stylesheet" type="text/css" href="portal-core/css/menu.css"> from core as I wanted the banner to look different
+<%-- VT: I removed <link rel="stylesheet" type="text/css" href="portal-core/css/menu.css"> from core as I wanted the banner to look different
 At the same time, I do not want to force the other portals to follow the same path therefore in gmap.jsp and links.jsp modify the cssimport
       
-      <jsp:include page="../../portal-core/cssimports.htm"/>      
+      <jsp:include page="../../portal-core/cssimports."/>      
       <jsp:include page="../../cssimports.htm"/>
             
  copy menu.css to webapp/css/menu.css and update webapp/cssimport.htm to just
@@ -10,11 +10,11 @@ At the same time, I do not want to force the other portals to follow the same pa
  <link rel="stylesheet" type="text/css" href="css/menu.css">
  
  We will be following this architecture for portal specific css.
--->
+--%>
 
-<link rel="stylesheet" type="text/css" href="portal-core/css/styles.css">
-<link rel="stylesheet" type="text/css" href="portal-core/css/auscope-portal-core.css">
-<link rel="stylesheet" type="text/css" href="portal-core/css/portal-ux.css">
+<link rel="stylesheet" type="text/css" href="portal-core/css/styles.css?v=${portal.build.version}">
+<link rel="stylesheet" type="text/css" href="portal-core/css/auscope-portal-core.css?v=${portal.build.version}">
+<link rel="stylesheet" type="text/css" href="portal-core/css/portal-ux.css?v=${portal.build.version}">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <STYLE type="text/css">
