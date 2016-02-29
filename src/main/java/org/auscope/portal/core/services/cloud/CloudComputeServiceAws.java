@@ -1,9 +1,17 @@
 package org.auscope.portal.core.services.cloud;
 
+import java.io.UnsupportedEncodingException;
+import java.security.CodeSource;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParserFactory;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +36,6 @@ import com.amazonaws.services.ec2.model.GetConsoleOutputRequest;
 import com.amazonaws.services.ec2.model.GetConsoleOutputResult;
 import com.amazonaws.services.ec2.model.IamInstanceProfileSpecification;
 import com.amazonaws.services.ec2.model.Instance;
-import com.amazonaws.services.ec2.model.Placement;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.Tag;
@@ -50,7 +57,16 @@ public class CloudComputeServiceAws extends CloudComputeService {
 
 	private String devSecretKey;
 
-    /**
+	private String endpoint;
+    public String getEndpoint() {
+		return endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
+	}
+
+	/**
      * Creates a new instance with the specified credentials (no endpoint specified - ensure provider type has a fixed endpoint)
      *
      * @param accessKey
@@ -63,6 +79,14 @@ public class CloudComputeServiceAws extends CloudComputeService {
         this(null, accessKey, secretKey, null);
     }
 
+    private static String getJaxpImplementationInfo(String componentName, Class componentClass) {
+        CodeSource source = componentClass.getProtectionDomain().getCodeSource();
+        return MessageFormat.format(
+                "{0} implementation: {1} loaded from: {2}",
+                componentName,
+                componentClass.getName(),
+                source == null ? "Java Runtime" : source.getLocation());
+    }
     /**
      * Creates a new instance with the specified credentials
      *
@@ -79,6 +103,13 @@ public class CloudComputeServiceAws extends CloudComputeService {
     	super(ProviderType.AWSEc2, endpoint, apiVersion);
         this.devAccessKey = accessKey;
         this.devSecretKey = secretKey;
+//        System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME +":" + XPathFactory.DEFAULT_OBJECT_MODEL_URI, " org.apache.xpath.jaxp.XPathFactoryImpl");
+        
+        logger.debug(getJaxpImplementationInfo("DocumentBuilderFactory", DocumentBuilderFactory.newInstance().getClass()));
+        logger.debug(getJaxpImplementationInfo("XPathFactory", XPathFactory.newInstance().getClass()));
+        logger.debug(getJaxpImplementationInfo("TransformerFactory", TransformerFactory.newInstance().getClass()));
+        logger.debug(getJaxpImplementationInfo("SAXParserFactory", SAXParserFactory.newInstance().getClass()));
+
 	}
 
 //	private static final String STS_ROLE_ARN = "arn:aws:iam::696640869989:role/vbkd-dsadss-AnvglStsRole-1QZG62NWIOK2";
@@ -92,7 +123,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
 			
 			AWSSecurityTokenServiceClient stsClient;
 
-			if (TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
+			if (! TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
 				BasicAWSCredentials awsCredentials = new BasicAWSCredentials(devAccessKey, devSecretKey);
 				stsClient = new AWSSecurityTokenServiceClient(awsCredentials);
 			} else {
@@ -129,8 +160,17 @@ public class CloudComputeServiceAws extends CloudComputeService {
 	}
 	
 	public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
+		String vmId = job.getComputeVmId();
+		if( vmId.contains("/")) {
+			vmId = vmId.substring(vmId.lastIndexOf("/")+1);
+		}
+		try {
+			userDataString = com.amazonaws.util.Base64.encodeAsString(userDataString.getBytes("Utf-8"));
+		} catch (UnsupportedEncodingException e) {
+		}
+		
 		RunInstancesRequest runInstancesRequest = new RunInstancesRequest().withInstanceType(job.getComputeInstanceType())
-				.withImageId(job.getComputeVmId()).withMinCount(1).withMaxCount(1)
+				.withImageId(vmId).withMinCount(1).withMaxCount(1)
 				.withInstanceInitiatedShutdownBehavior("terminate").withUserData(userDataString);
 
 		String instanceProfileArn = job.getProperty(CloudJob.PROPERTY_S3_ROLE);
@@ -140,15 +180,17 @@ public class CloudComputeServiceAws extends CloudComputeService {
 			runInstancesRequest = runInstancesRequest.withIamInstanceProfile(iamInstanceProfile);
 		}
 		
-		if(! TextUtil.isNullOrEmpty(getKeypair())) {
-			runInstancesRequest=runInstancesRequest.withKeyName(getKeypair());
-		}
+//		if(! TextUtil.isNullOrEmpty(getKeypair())) {
+//			runInstancesRequest=runInstancesRequest.withKeyName(getKeypair());
+//		}
 		
-		if(! TextUtil.isNullOrEmpty(getZone())) {
-			runInstancesRequest=runInstancesRequest.withPlacement(new Placement(getZone()));
+		AmazonEC2 ec2 = getEc2Client(job);
+
+		if(! TextUtil.isNullOrEmpty(getEndpoint())) {
+			ec2.setEndpoint(getEndpoint());
+//			runInstancesRequest=runInstancesRequest.withPlacement(new Placement(getZone()));
 		}
 
-		AmazonEC2 ec2 = getEc2Client(job);
 		RunInstancesResult runInstances = ec2.runInstances(runInstancesRequest);
 
 		// TAG EC2 INSTANCES

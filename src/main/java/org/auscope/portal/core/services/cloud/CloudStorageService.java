@@ -353,10 +353,17 @@ public class CloudStorageService {
      * @throws PortalServiceException 
      */
     public String getBucket(String postFix) throws PortalServiceException {
-    	if(TextUtil.isNullOrEmpty(postFix)) return bucketPrefix+"csiro";
+    	if(TextUtil.isNullOrEmpty(postFix)) return bucketPrefix+"x";
         try {
         	MessageDigest md = MessageDigest.getInstance("SHA-1");
-			return bucketPrefix+Base64.getEncoder().encodeToString(md.digest(postFix.getBytes("Utf-8"))).toLowerCase().replace('=', '_').replace('/', '_');
+        	
+        	// Generate account specific bucket name. Replace characters which are not valid for AWS with arbitrary strings.
+			String res = bucketPrefix+Base64.getEncoder().encodeToString(md.digest(postFix.getBytes("Utf-8"))).toLowerCase().replace('=', 'a').replace('/', 'b');
+			
+			// AWS restriction: Bucker name must be shorter than 64 characters:
+			if(res.length()>63) return res= res.substring(0, 63); 
+			
+			return res;
 		} catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
 			throw new PortalServiceException("Could not create bucket name"+e.getMessage(), e);
 		}
@@ -509,7 +516,7 @@ public class CloudStorageService {
     public InputStream getJobFile(CloudFileOwner job, String key, String arn, String clientSecret) throws PortalServiceException {
         try {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
-            Blob blob = bs.getBlob(getBucket(clientSecret), keyForJobFile(job, key));
+            Blob blob = bs.getBlob(getBucket(arn), keyForJobFile(job, key));
             return blob.getPayload().getInput();
         } catch (Exception ex) {
             log.error(String.format("Unable to get job file '%1$s' for job %2$s:", key, job));
@@ -532,7 +539,7 @@ public class CloudStorageService {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             String baseKey = generateBaseKey(job);
 
-            String bucketName = getBucket(clientSecret);
+            String bucketName = getBucket(arn);
             
             //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
             PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder.inDirectory(baseKey));
@@ -583,7 +590,7 @@ public class CloudStorageService {
         try {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
 
-            String bucketName = getBucket(clientSecret);
+            String bucketName = getBucket(arn);
             bs.createContainerInLocation(null, bucketName);
             for (File file : files) {
 
@@ -620,7 +627,7 @@ public class CloudStorageService {
     public void deleteJobFiles(CloudFileOwner job, String arn, String clientSecret) throws PortalServiceException {
         try {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
-            bs.deleteDirectory(getBucket(clientSecret), jobToBaseKey(job));
+            bs.deleteDirectory(getBucket(arn), jobToBaseKey(job));
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
             throw new PortalServiceException(

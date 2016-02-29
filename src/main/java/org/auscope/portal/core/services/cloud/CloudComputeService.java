@@ -24,8 +24,6 @@ abstract public class CloudComputeService {
     @SuppressWarnings("unused")
 	private final Log logger = LogFactory.getLog(getClass());
 
-    private String zone; //can be null
-
     /** Unique ID for distinguishing instances of this class - can be null */
     private String id;
     /** A short descriptive name for human identification of this service */
@@ -144,27 +142,6 @@ abstract public class CloudComputeService {
     /** A group name that all jobs will be assigned to */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    /**
-     * Gets the region (if any) where this compute service will be restricted to run in
-     *
-     * Will be ignored if skipped zones is specified
-     * @return
-     */
-    public String getZone() {
-        return zone;
-    }
-
-    /**
-     * Sets the region (if any) where this compute service will be restricted to run in
-     *
-     * Will be ignored if skipped zones is specified
-     *
-     * @param zone
-     */
-    public void setZone(String zone) {
-        this.zone = zone;
     }
 
     /**

@@ -66,6 +66,27 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
 	private ContextBuilder builder;
 
+    private String zone; //can be null
+    /**
+     * Gets the region (if any) where this compute service will be restricted to run in
+     *
+     * Will be ignored if skipped zones is specified
+     * @return
+     */
+    public String getZone() {
+        return zone;
+    }
+
+    /**
+     * Sets the region (if any) where this compute service will be restricted to run in
+     *
+     * Will be ignored if skipped zones is specified
+     *
+     * @param zone
+     */
+    public void setZone(String zone) {
+        this.zone = zone;
+    }
 
     /**
      * Creates a new instance with the specified credentials (no endpoint specified - ensure provider type has a fixed endpoint)
