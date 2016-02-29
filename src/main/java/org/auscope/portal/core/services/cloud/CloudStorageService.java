@@ -353,7 +353,7 @@ public class CloudStorageService {
      * @throws PortalServiceException 
      */
     public String getBucket(String postFix) throws PortalServiceException {
-    	if(TextUtil.isNullOrEmpty(postFix)) return bucketPrefix+"x";
+    	if(TextUtil.isNullOrEmpty(postFix)) return bucketPrefix;
         try {
         	MessageDigest md = MessageDigest.getInstance("SHA-1");
         	

@@ -173,6 +173,9 @@ public class TestCloudStorageService extends PortalTestClass {
                 oneOf(mockBlobStoreContext).getBlobStore();
                 will(returnValue(mockBlobStore));
 
+                oneOf(mockBlobStore).createContainerInLocation(null, bucket);
+                will(returnValue(true));
+
                 allowing(mockFiles[0]).getName();
                 will(returnValue("file1Name"));
                 allowing(mockFiles[1]).getName();
