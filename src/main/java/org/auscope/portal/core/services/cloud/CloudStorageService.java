@@ -539,7 +539,9 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public CloudFileInformation[] listJobFiles(CloudFileOwner job, String arn, String clientSecret) throws PortalServiceException {
+    public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
@@ -651,10 +653,6 @@ public class CloudStorageService {
                 job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
     }
 
-    public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
-        return listJobFiles(job, job.getProperty(CloudJob.PROPERTY_STS_ARN),
-                job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
-    }
 
     public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
         return getJobFile(job, myKey, job.getProperty(CloudJob.PROPERTY_STS_ARN),
