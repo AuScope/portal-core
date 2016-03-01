@@ -195,7 +195,7 @@ abstract public class CloudComputeService {
      */
     abstract public String executeJob(CloudJob job, String userDataString) throws PortalServiceException;
 
-	/**
+    /**
      * Makes a request that the VM started by job be terminated
      *
      * @param job
@@ -213,10 +213,18 @@ abstract public class CloudComputeService {
      */
     abstract public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB);
 
+    /**
+     * Return the ssh keypair to be used with the VM
+     * @return
+     */
     public String getKeypair() {
         return keypair;
     }
 
+    /**
+     * Sets the ssh keypair to be used with the VM
+     * @param keypair
+     */
     public void setKeypair(String keypair) {
         this.keypair = keypair;
     }

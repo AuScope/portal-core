@@ -214,11 +214,10 @@ public class CloudStorageService {
         }
     }
 
-    /*
-     */
-	public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) {
-    	if(mockBlobStoreContext!=null) return mockBlobStoreContext; // For unit test
-    	
+    public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) {
+        if (mockBlobStoreContext != null)
+            return mockBlobStoreContext; // For unit test
+
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
