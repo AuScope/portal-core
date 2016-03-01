@@ -55,7 +55,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
     /** The unique ID of the storage service this job has been using */
     protected String storageServiceId;
     
-    transient Map<String, String> properties = new HashMap<>();
+    transient protected Map<String, String> properties = new HashMap<>();
 
     public final static String PROPERTY_STS_ARN = "sts_arn";
     public final static String PROPERTY_CLIENT_SECRET = "client_secret";

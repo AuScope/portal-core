@@ -519,13 +519,17 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public InputStream getJobFile(CloudFileOwner job, String key, String arn, String clientSecret) throws PortalServiceException {
+
+    public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+        
         try {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
-            Blob blob = bs.getBlob(getBucket(arn), keyForJobFile(job, key));
+            Blob blob = bs.getBlob(getBucket(arn), keyForJobFile(job, myKey));
             return blob.getPayload().getInput();
         } catch (Exception ex) {
-            log.error(String.format("Unable to get job file '%1$s' for job %2$s:", key, job));
+            log.error(String.format("Unable to get job file '%1$s' for job %2$s:", myKey, job));
             log.debug("error:", ex);
             throw new PortalServiceException("Error retriving output file details", ex);
         }
@@ -593,7 +597,9 @@ public class CloudStorageService {
      *            The local files to upload
      * @throws PortalServiceException
      */
-    public void uploadJobFiles(CloudFileOwner job, File[] files, String arn, String clientSecret) throws PortalServiceException {
+    public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
@@ -632,7 +638,9 @@ public class CloudStorageService {
      *            The whose storage space will be deleted
      * @throws PortalServiceException
      */
-    public void deleteJobFiles(CloudFileOwner job, String arn, String clientSecret) throws PortalServiceException {
+    public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
         try {
             BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             bs.deleteDirectory(getBucket(arn), jobToBaseKey(job));
@@ -641,21 +649,5 @@ public class CloudStorageService {
             throw new PortalServiceException(
                     "An unexpected error has occurred while removing job files from S3 storage", ex);
         }
-    }
-
-    public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
-        deleteJobFiles(job, job.getProperty(CloudJob.PROPERTY_STS_ARN),
-                job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
-    }
-
-    public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
-        uploadJobFiles(job, files, job.getProperty(CloudJob.PROPERTY_STS_ARN),
-                job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
-    }
-
-
-    public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
-        return getJobFile(job, myKey, job.getProperty(CloudJob.PROPERTY_STS_ARN),
-                job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
     }
 }
