@@ -44,25 +44,26 @@ abstract public class CloudComputeService {
 
     /** Cloud endpoint to connect to */
     private String endpoint;
+
     public ProviderType getProvider() {
-		return provider;
-	}
+        return provider;
+    }
 
-	public String getEndpoint() {
-		return endpoint;
-	}
+    public String getEndpoint() {
+        return endpoint;
+    }
 
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
 
-	public String getApiVersion() {
-		return apiVersion;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 
 	/**
      * Cloud API version
@@ -213,9 +214,7 @@ abstract public class CloudComputeService {
     abstract public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB);
 
     public String getKeypair() {
-        // Default to the old behaviour until a different keypair is
-        // configured.
-        return keypair != null ? keypair : "vgl-developers";
+        return keypair;
     }
 
     public void setKeypair(String keypair) {
