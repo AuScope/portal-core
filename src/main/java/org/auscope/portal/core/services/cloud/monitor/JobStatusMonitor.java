@@ -56,12 +56,12 @@ public class JobStatusMonitor {
      * @param clientSecret 
      * @throws JobStatusException
      */
-    public void statusUpdate(CloudJob job, String stsArn, String clientSecret, String s3Role) throws JobStatusException {
+    public void statusUpdate(CloudJob job) throws JobStatusException {
         String oldStatus = job.getStatus();
         String newStatus;
 
         try {
-            newStatus = jobStatusReader.getJobStatus(job, stsArn, clientSecret, s3Role);
+            newStatus = jobStatusReader.getJobStatus(job);
         } catch (Exception ex) {
             throw new JobStatusException(ex, job);
         }
@@ -94,7 +94,7 @@ public class JobStatusMonitor {
         for (CloudJob job : jobs) {
             //Do all updates before throwing exceptions
             try {
-                statusUpdate(job, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET), job.getProperty(CloudJob.PROPERTY_S3_ROLE));
+                statusUpdate(job);
             } catch (Throwable t) {
                 failedUpdates.add(job);
                 exceptions.add(t);

@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudFileOwner;
+import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.util.TextUtil;
 import org.jclouds.ContextBuilder;
@@ -634,4 +635,20 @@ public class CloudStorageService {
                     "An unexpected error has occurred while removing job files from S3 storage", ex);
         }
     }
+
+	public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
+		deleteJobFiles(job, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));		
+	}
+
+	public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
+		uploadJobFiles(job, files, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
+	}
+
+	public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
+		return listJobFiles(job, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
+	}
+
+	public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
+		return getJobFile(job, myKey, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
+	}
 }

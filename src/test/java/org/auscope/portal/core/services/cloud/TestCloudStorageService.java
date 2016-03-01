@@ -74,7 +74,7 @@ public class TestCloudStorageService extends PortalTestClass {
             }
         });
 
-        InputStream actualInputStream = service.getJobFile(job, myKey, null, null);
+        InputStream actualInputStream = service.getJobFile(job, myKey);
         Assert.assertSame(mockReturnedInputStream, actualInputStream);
     }
 
@@ -139,7 +139,7 @@ public class TestCloudStorageService extends PortalTestClass {
             }
         });
 
-        CloudFileInformation[] fileInfo = service.listJobFiles(job, null, null);
+        CloudFileInformation[] fileInfo = service.listJobFiles(job);
         Assert.assertNotNull(fileInfo);
         Assert.assertEquals(ls.size(), fileInfo.length);
         Assert.assertEquals(obj1Key, fileInfo[0].getCloudKey());
@@ -201,7 +201,7 @@ public class TestCloudStorageService extends PortalTestClass {
             }
         });
 
-        service.uploadJobFiles(job, mockFiles, null, null);
+        service.uploadJobFiles(job, mockFiles);
     }
 
     /**
@@ -221,7 +221,7 @@ public class TestCloudStorageService extends PortalTestClass {
             }
         });
 
-        service.deleteJobFiles(job, null, null);
+        service.deleteJobFiles(job);
     }
 
     /**

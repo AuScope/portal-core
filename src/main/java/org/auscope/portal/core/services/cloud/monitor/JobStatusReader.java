@@ -16,5 +16,5 @@ public interface JobStatusReader {
      *            a CloudJob whose status will be calculated
      * @return
      */
-	public String getJobStatus(CloudJob cloudJob, String stsArn, String clientSecret, String s3Role);
+	public String getJobStatus(CloudJob cloudJob);
 }

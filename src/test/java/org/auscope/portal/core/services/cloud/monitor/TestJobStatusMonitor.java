@@ -45,9 +45,9 @@ public class TestJobStatusMonitor extends PortalTestClass {
         context.checking(new Expectations() {
             {
 
-                oneOf(mockJobStatusReader).getJobStatus(job1, null, null, null);
+                oneOf(mockJobStatusReader).getJobStatus(job1);
                 will(returnValue(job1NewStat));
-                oneOf(mockJobStatusReader).getJobStatus(job2, null, null, null);
+                oneOf(mockJobStatusReader).getJobStatus(job2);
                 will(returnValue(job2NewStat));
 
                 oneOf(mockJobStatusChangeListeners[0]).handleStatusChange(job1, job1NewStat, job1.getStatus());
@@ -77,9 +77,9 @@ public class TestJobStatusMonitor extends PortalTestClass {
         context.checking(new Expectations() {
             {
 
-                oneOf(mockJobStatusReader).getJobStatus(job1, null, null, null);
+                oneOf(mockJobStatusReader).getJobStatus(job1);
                 will(throwException(new Exception()));
-                oneOf(mockJobStatusReader).getJobStatus(job2, null, null, null);
+                oneOf(mockJobStatusReader).getJobStatus(job2);
                 will(returnValue(job2NewStat));
 
                 oneOf(mockJobStatusChangeListeners[0]).handleStatusChange(job2, job2NewStat, job2.getStatus());

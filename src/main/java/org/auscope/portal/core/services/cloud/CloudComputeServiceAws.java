@@ -57,15 +57,6 @@ public class CloudComputeServiceAws extends CloudComputeService {
 
 	private String devSecretKey;
 
-	private String endpoint;
-    public String getEndpoint() {
-		return endpoint;
-	}
-
-	public void setEndpoint(String endpoint) {
-		this.endpoint = endpoint;
-	}
-
 	/**
      * Creates a new instance with the specified credentials (no endpoint specified - ensure provider type has a fixed endpoint)
      *
@@ -180,9 +171,9 @@ public class CloudComputeServiceAws extends CloudComputeService {
 			runInstancesRequest = runInstancesRequest.withIamInstanceProfile(iamInstanceProfile);
 		}
 		
-//		if(! TextUtil.isNullOrEmpty(getKeypair())) {
-//			runInstancesRequest=runInstancesRequest.withKeyName(getKeypair());
-//		}
+		if(! TextUtil.isNullOrEmpty(getKeypair())) {
+			runInstancesRequest=runInstancesRequest.withKeyName(getKeypair());
+		}
 		
 		AmazonEC2 ec2 = getEc2Client(job);
 
