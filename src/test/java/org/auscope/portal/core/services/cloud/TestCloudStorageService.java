@@ -46,7 +46,7 @@ public class TestCloudStorageService extends PortalTestClass {
     public void initJobObject() {
         job = new CloudJob(13);
         job.setStorageBaseKey(jobStorageBaseKey);
-        service = new CloudStorageService(mockBlobStoreContext);
+        service = new MockCloudStorageService(mockBlobStoreContext);
         service.setBucket(bucket);
     }
 

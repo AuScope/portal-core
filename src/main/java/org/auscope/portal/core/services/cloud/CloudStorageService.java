@@ -83,9 +83,6 @@ public class CloudStorageService {
 
     private boolean stripExpectHeader;
 
-    private BlobStoreContext mockBlobStoreContext = null; // Set for unit test
-                                                          // only
-
     /**
      * Creates a new instance for connecting to the specified parameters
      * 
@@ -215,9 +212,6 @@ public class CloudStorageService {
     }
 
     public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) {
-        if (mockBlobStoreContext != null)
-            return mockBlobStoreContext; // For unit test
-
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
@@ -266,16 +260,6 @@ public class CloudStorageService {
         }
     }
     
-	/**
-     * Creates a new instance for connecting to the specified blob store. Please note that the connection credentials will NOT be available via this instances
-     * get methods if this constructor is used.
-     * 
-     * @param blobStoreContext
-     */
-    public CloudStorageService(BlobStoreContext blobStoreContext) { // For unit test only!!
-        this.mockBlobStoreContext = blobStoreContext;
-    }
-
     /**
      * Username credential for accessing the storage service
      * 
