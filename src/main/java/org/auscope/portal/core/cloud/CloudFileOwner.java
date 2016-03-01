@@ -38,5 +38,11 @@ public interface CloudFileOwner {
      */
     public void setStorageBaseKey(String baseKey);
 
-	public String getProperty(String key);
+    /**
+     * Return job property
+     * @param key
+     *            The property key
+     * @return the property value
+     */
+    public String getProperty(String key);
 }

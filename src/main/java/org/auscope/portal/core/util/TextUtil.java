@@ -11,24 +11,44 @@ import org.apache.commons.io.IOUtils;
  * @author Richard Goh
  */
 public class TextUtil {
-	
-	public static boolean isNullOrEmpty(String s) {
-		return s==null || s.length()==0;
-	}
-	
-	public static boolean isAnyNullOrEmpty(String ... strings) {
-		for (String string : strings) {
-			if(isNullOrEmpty(string)) return true;
-		}
-		return false;
-	}
-	
-	public static boolean isAllNullOrEmpty(String ... strings) {
-		for (String string : strings) {
-			if( ! isNullOrEmpty(string)) return false;
-		}
-		return true;
-	}
+
+    /**
+     * Test whether a string is null or empty
+     * @param s
+     *          The string to test
+     * @return true if null or empty, false otherwise
+     */
+    public static boolean isNullOrEmpty(String s) {
+        return s == null || s.length() == 0;
+    }
+
+    /**
+     * Test whether any of the input strings is null or empty
+     * @param strings
+     *                  The strings to be tested
+     * @return true is at lease one of the strings is null or empty
+     */
+    public static boolean isAnyNullOrEmpty(String... strings) {
+        for (String string : strings) {
+            if (isNullOrEmpty(string))
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Test whether all of the input strings are null or empty
+     * @param strings
+     *                  The strings to be tested
+     * @return true all of the strings is null or empty
+     */
+    public static boolean isAllNullOrEmpty(String... strings) {
+        for (String string : strings) {
+            if (!isNullOrEmpty(string))
+                return false;
+        }
+        return true;
+    }
 
 	/**
      * Get the last N lines of multi-line text. Each line will be separated by platform dependant line separator.

@@ -45,20 +45,21 @@ import com.amazonaws.services.securitytoken.model.AssumeRoleRequest;
 import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
 
 /**
- * Service class wrapper for interacting with a remote cloud compute service using CloudJob objects.
+ * Service class wrapper for interacting with a remote cloud compute service
+ * using CloudJob objects.
  *
  * @author Josh Vote
  */
 public class CloudComputeServiceAws extends CloudComputeService {
-    @SuppressWarnings("unused")
-	private final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
 
-	private String devAccessKey;
+    private String devAccessKey;
 
-	private String devSecretKey;
+    private String devSecretKey;
 
-	/**
-     * Creates a new instance with the specified credentials (no endpoint specified - ensure provider type has a fixed endpoint)
+    /**
+     * Creates a new instance with the specified credentials (no endpoint
+     * specified - ensure provider type has a fixed endpoint)
      *
      * @param accessKey
      *            The Compute Access key (user name)
@@ -72,12 +73,10 @@ public class CloudComputeServiceAws extends CloudComputeService {
 
     private static String getJaxpImplementationInfo(String componentName, Class componentClass) {
         CodeSource source = componentClass.getProtectionDomain().getCodeSource();
-        return MessageFormat.format(
-                "{0} implementation: {1} loaded from: {2}",
-                componentName,
-                componentClass.getName(),
+        return MessageFormat.format("{0} implementation: {1} loaded from: {2}", componentName, componentClass.getName(),
                 source == null ? "Java Runtime" : source.getLocation());
     }
+
     /**
      * Creates a new instance with the specified credentials
      *
@@ -91,140 +90,138 @@ public class CloudComputeServiceAws extends CloudComputeService {
      *            The API version
      */
     public CloudComputeServiceAws(String endpoint, String accessKey, String secretKey, String apiVersion) {
-    	super(ProviderType.AWSEc2, endpoint, apiVersion);
+        super(ProviderType.AWSEc2, endpoint, apiVersion);
         this.devAccessKey = accessKey;
         this.devSecretKey = secretKey;
-//        System.setProperty(XPathFactory.DEFAULT_PROPERTY_NAME +":" + XPathFactory.DEFAULT_OBJECT_MODEL_URI, " org.apache.xpath.jaxp.XPathFactoryImpl");
-        
-        logger.debug(getJaxpImplementationInfo("DocumentBuilderFactory", DocumentBuilderFactory.newInstance().getClass()));
+
+        logger.debug(
+                getJaxpImplementationInfo("DocumentBuilderFactory", DocumentBuilderFactory.newInstance().getClass()));
         logger.debug(getJaxpImplementationInfo("XPathFactory", XPathFactory.newInstance().getClass()));
         logger.debug(getJaxpImplementationInfo("TransformerFactory", TransformerFactory.newInstance().getClass()));
         logger.debug(getJaxpImplementationInfo("SAXParserFactory", SAXParserFactory.newInstance().getClass()));
 
-	}
+    }
 
-//	private static final String STS_ROLE_ARN = "arn:aws:iam::696640869989:role/vbkd-dsadss-AnvglStsRole-1QZG62NWIOK2";
-//	private static final String S3_PROFILE_ARN = "arn:aws:iam::696640869989:instance-profile/vbkd-dsadss-AnvglS3InstanceProfile-17Z06U2BEOANC";
-//	private static final String CLIENT_SECRET = "1234"; // Must match value in policy
+    protected AWSCredentials getCredentials(String arn, String clientSecret) throws PortalServiceException {
+        if (!TextUtil.isNullOrEmpty(arn)) {
+            if (TextUtil.isNullOrEmpty(clientSecret))
+                throw new PortalServiceException("Job ARN set, but no client secret");
 
-	protected AWSCredentials getCredentials(String arn, String clientSecret) throws PortalServiceException {
-		if (! TextUtil.isNullOrEmpty(arn)) {
-			if(TextUtil.isNullOrEmpty(clientSecret))
-				throw new PortalServiceException("Job ARN set, but no client secret");
-			
-			AWSSecurityTokenServiceClient stsClient;
+            AWSSecurityTokenServiceClient stsClient;
 
-			if (! TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
-				BasicAWSCredentials awsCredentials = new BasicAWSCredentials(devAccessKey, devSecretKey);
-				stsClient = new AWSSecurityTokenServiceClient(awsCredentials);
-			} else {
-				stsClient = new AWSSecurityTokenServiceClient();
-			}
+            if (!TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
+                BasicAWSCredentials awsCredentials = new BasicAWSCredentials(devAccessKey, devSecretKey);
+                stsClient = new AWSSecurityTokenServiceClient(awsCredentials);
+            } else {
+                stsClient = new AWSSecurityTokenServiceClient();
+            }
 
-			AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(arn)
-					.withDurationSeconds(3600).withExternalId(clientSecret).withRoleSessionName("anvgl");
+            AssumeRoleRequest assumeRequest = new AssumeRoleRequest().withRoleArn(arn).withDurationSeconds(3600)
+                    .withExternalId(clientSecret).withRoleSessionName("anvgl");
 
-			AssumeRoleResult assumeResult = stsClient.assumeRole(assumeRequest);
+            AssumeRoleResult assumeResult = stsClient.assumeRole(assumeRequest);
 
-			// Step 2. AssumeRole returns temporary security credentials for
-			// the IAM role.
+            // Step 2. AssumeRole returns temporary security credentials for
+            // the IAM role.
 
-			return new BasicSessionCredentials(assumeResult.getCredentials().getAccessKeyId(),
-					assumeResult.getCredentials().getSecretAccessKey(),
-					assumeResult.getCredentials().getSessionToken());
-		} else if (! TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)){
-			return new BasicAWSCredentials(devAccessKey, devSecretKey);
-		}
-		return null;
-	}
-	
-	protected AmazonEC2 getEc2Client(CloudJob job) throws PortalServiceException {
-		String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
-		String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
-		
-		AWSCredentials creds = getCredentials(arn, clientSecret);
-		AmazonEC2 ec2 = creds == null ? new AmazonEC2Client(): new AmazonEC2Client(creds);
-		
-		if(! TextUtil.isNullOrEmpty(getEndpoint()))
-			ec2.setEndpoint(getEndpoint());
-		return ec2;
-	}
-	
-	public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
-		String vmId = job.getComputeVmId();
-		if( vmId.contains("/")) {
-			vmId = vmId.substring(vmId.lastIndexOf("/")+1);
-		}
-		try {
-			userDataString = com.amazonaws.util.Base64.encodeAsString(userDataString.getBytes("Utf-8"));
-		} catch (UnsupportedEncodingException e) {
-		}
-		
-		RunInstancesRequest runInstancesRequest = new RunInstancesRequest().withInstanceType(job.getComputeInstanceType())
-				.withImageId(vmId).withMinCount(1).withMaxCount(1)
-				.withInstanceInitiatedShutdownBehavior("terminate").withUserData(userDataString);
+            return new BasicSessionCredentials(assumeResult.getCredentials().getAccessKeyId(),
+                    assumeResult.getCredentials().getSecretAccessKey(),
+                    assumeResult.getCredentials().getSessionToken());
+        } else if (!TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
+            return new BasicAWSCredentials(devAccessKey, devSecretKey);
+        }
+        return null;
+    }
 
-		String instanceProfileArn = job.getProperty(CloudJob.PROPERTY_S3_ROLE);
-		if (!TextUtil.isNullOrEmpty(instanceProfileArn)) {
-			IamInstanceProfileSpecification iamInstanceProfile = new IamInstanceProfileSpecification()
-					.withArn(instanceProfileArn);
-			runInstancesRequest = runInstancesRequest.withIamInstanceProfile(iamInstanceProfile);
-		}
-		
-		if(! TextUtil.isNullOrEmpty(getKeypair())) {
-			runInstancesRequest=runInstancesRequest.withKeyName(getKeypair());
-		}
-		
-		AmazonEC2 ec2 = getEc2Client(job);
+    protected AmazonEC2 getEc2Client(CloudJob job) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
-		if(! TextUtil.isNullOrEmpty(getEndpoint())) {
-			ec2.setEndpoint(getEndpoint());
-//			runInstancesRequest=runInstancesRequest.withPlacement(new Placement(getZone()));
-		}
+        AWSCredentials creds = getCredentials(arn, clientSecret);
+        AmazonEC2 ec2 = creds == null ? new AmazonEC2Client() : new AmazonEC2Client(creds);
 
-		RunInstancesResult runInstances = ec2.runInstances(runInstancesRequest);
+        if (!TextUtil.isNullOrEmpty(getEndpoint()))
+            ec2.setEndpoint(getEndpoint());
+        return ec2;
+    }
 
-		// TAG EC2 INSTANCES
-		List<Instance> instances = runInstances.getReservation().getInstances();
-		if(instances.isEmpty()) throw new PortalServiceException("AWS Vm start failed without error message");
-		
-		Instance instance = instances.get(0);
-		CreateTagsRequest createTagsRequest = new CreateTagsRequest();
-		createTagsRequest.withResources(instance.getInstanceId()) //
-				.withTags(new Tag("Name", "ANVGL - Job: " + job.getId()));
-		ec2.createTags(createTagsRequest);
-		
-		return instance.getInstanceId();
-	}
+    public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
+        String vmId = job.getComputeVmId();
+        if (vmId.contains("/")) {
+            vmId = vmId.substring(vmId.lastIndexOf("/") + 1);
+        }
+        try {
+            userDataString = com.amazonaws.util.Base64.encodeAsString(userDataString.getBytes("Utf-8"));
+        } catch (UnsupportedEncodingException e) {
+        }
 
-	/**
+        RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
+                .withInstanceType(job.getComputeInstanceType()).withImageId(vmId).withMinCount(1).withMaxCount(1)
+                .withInstanceInitiatedShutdownBehavior("terminate").withUserData(userDataString);
+
+        String instanceProfileArn = job.getProperty(CloudJob.PROPERTY_S3_ROLE);
+        if (!TextUtil.isNullOrEmpty(instanceProfileArn)) {
+            IamInstanceProfileSpecification iamInstanceProfile = new IamInstanceProfileSpecification()
+                    .withArn(instanceProfileArn);
+            runInstancesRequest = runInstancesRequest.withIamInstanceProfile(iamInstanceProfile);
+        }
+
+        if (!TextUtil.isNullOrEmpty(getKeypair())) {
+            runInstancesRequest = runInstancesRequest.withKeyName(getKeypair());
+        }
+
+        AmazonEC2 ec2 = getEc2Client(job);
+
+        if (!TextUtil.isNullOrEmpty(getEndpoint())) {
+            ec2.setEndpoint(getEndpoint());
+            // runInstancesRequest=runInstancesRequest.withPlacement(new
+            // Placement(getZone()));
+        }
+
+        RunInstancesResult runInstances = ec2.runInstances(runInstancesRequest);
+
+        // TAG EC2 INSTANCES
+        List<Instance> instances = runInstances.getReservation().getInstances();
+        if (instances.isEmpty())
+            throw new PortalServiceException("AWS Vm start failed without error message");
+
+        Instance instance = instances.get(0);
+        CreateTagsRequest createTagsRequest = new CreateTagsRequest();
+        createTagsRequest.withResources(instance.getInstanceId()) //
+                .withTags(new Tag("Name", "ANVGL - Job: " + job.getId()));
+        ec2.createTags(createTagsRequest);
+
+        return instance.getInstanceId();
+    }
+
+    /**
      * Makes a request that the VM started by job be terminated
      *
      * @param job
      *            The job whose execution should be terminated
-	 * @throws PortalServiceException 
+     * @throws PortalServiceException
      */
-	public void terminateJob(CloudJob job) throws PortalServiceException {
-		AmazonEC2 ec2 = getEc2Client(job);
+    public void terminateJob(CloudJob job) throws PortalServiceException {
+        AmazonEC2 ec2 = getEc2Client(job);
 
-		TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest()
-				.withInstanceIds(job.getComputeInstanceId());
-		ec2.terminateInstances(terminateInstancesRequest);
-	}
+        TerminateInstancesRequest terminateInstancesRequest = new TerminateInstancesRequest()
+                .withInstanceIds(job.getComputeInstanceId());
+        ec2.terminateInstances(terminateInstancesRequest);
+    }
 
     /**
      * An array of compute types that are available through this compute service
      */
-    public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB) {
-  //  	InstanceType[] types = InstanceType.values();
-    	
+    public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB,
+            Integer minimumRootDiskGB) {
+        // InstanceType[] types = InstanceType.values();
+
         Properties overrides = new Properties();
 
-        ContextBuilder builder = ContextBuilder.newBuilder("aws-ec2")
-                .overrides(overrides);
-        
-        if(devAccessKey!=null && devSecretKey!=null)
-        	builder.credentials(devAccessKey, devSecretKey);
+        ContextBuilder builder = ContextBuilder.newBuilder("aws-ec2").overrides(overrides);
+
+        if (devAccessKey != null && devSecretKey != null)
+            builder.credentials(devAccessKey, devSecretKey);
 
         if (getApiVersion() != null) {
             builder.apiVersion(getApiVersion());
@@ -234,7 +231,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
             builder.endpoint(getEndpoint());
         }
 
-		ComputeServiceContext context = builder.buildView(ComputeServiceContext.class);
+        ComputeServiceContext context = builder.buildView(ComputeServiceContext.class);
         ComputeService computeService = context.getComputeService();
         Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
 
@@ -263,7 +260,7 @@ public class CloudComputeServiceAws extends CloudComputeService {
             ct.setRootDiskGB((int) rootDiskGB);
             ct.setEphemeralDiskGB((int) ephemeralDiskGB);
 
-            //Skip anything that doesn't match our filters
+            // Skip anything that doesn't match our filters
             if (minimumVCPUs != null && minimumVCPUs > ct.getVcpus()) {
                 continue;
             } else if (minimumRamMB != null && minimumRamMB > ct.getRamMB()) {
@@ -279,7 +276,8 @@ public class CloudComputeServiceAws extends CloudComputeService {
     }
 
     /**
-     * Will attempt to tail and return the last {@code numLines} from the given servers console.
+     * Will attempt to tail and return the last {@code numLines} from the given
+     * servers console.
      *
      * @param job
      *            the job which has been executed by this service
@@ -288,11 +286,15 @@ public class CloudComputeServiceAws extends CloudComputeService {
      * @return console output as string or null
      * @return
      */
-	public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
-		GetConsoleOutputRequest req = new GetConsoleOutputRequest(job.getComputeInstanceId());
+    public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
+        GetConsoleOutputRequest req = new GetConsoleOutputRequest(job.getComputeInstanceId());
 
-		GetConsoleOutputResult res = getEc2Client(job).getConsoleOutput(req);
+        GetConsoleOutputResult res = getEc2Client(job).getConsoleOutput(req);
 
-		return res.getDecodedOutput();
-	}
+        try {
+            return res.getDecodedOutput();
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
 }

@@ -52,8 +52,6 @@ public class JobStatusMonitor {
      * 
      * @param job
      *            The job to update - may have its fields modified by status change listeners
-     * @param stsArn 
-     * @param clientSecret 
      * @throws JobStatusException
      */
     public void statusUpdate(CloudJob job) throws JobStatusException {
@@ -82,8 +80,6 @@ public class JobStatusMonitor {
      * 
      * @param jobs
      *            The job collection to update - may have its member fields modified by status change listeners
-     * @param stsArn 
-     * @param clientSecret 
      * @throws JobStatusException
      *             If and only if one or more job status updates fail
      */

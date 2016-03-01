@@ -181,77 +181,73 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *            A string that is made available to the job when it starts execution (this will be Base64 encoded before being sent to the VM)
      * @return null if execution fails or the instance ID of the running VM
      */
-	public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
+  public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
 
-		// We have different template options depending on provider
-		NodeMetadata result;
-		Set<? extends NodeMetadata> results = Collections.emptySet();
-		TemplateOptions options = null;
-		// Iterate all regions
-		for (String location : novaApi.getConfiguredZones()) {
-			Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
-			Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
+    // We have different template options depending on provider
+    NodeMetadata result;
+    Set<? extends NodeMetadata> results = Collections.emptySet();
+    TemplateOptions options = null;
+    // Iterate all regions
+    for (String location : novaApi.getConfiguredZones()) {
+      Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
+      Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
-			for (AvailabilityZone currentZone : zones) {
-				if (skippedZones.contains(currentZone.getName())) {
-					logger.info(
-							String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
-					continue;
-				}
+      for (AvailabilityZone currentZone : zones) {
+        if (skippedZones.contains(currentZone.getName())) {
+          logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
+          continue;
+        }
 
-				if (!currentZone.getState().available()) {
-					logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
-					continue;
-				}
+        if (!currentZone.getState().available()) {
+          logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
+          continue;
+        }
 
-				logger.info(String.format("Trying '%1$s'", currentZone.getName()));
-				options = ((NovaTemplateOptions) computeService.templateOptions()).keyPairName(getKeypair())
-						.availabilityZone(currentZone.getName())
-						.userData(userDataString.getBytes(Charset.forName("UTF-8")));
+        logger.info(String.format("Trying '%1$s'", currentZone.getName()));
+        options = ((NovaTemplateOptions) computeService.templateOptions()).keyPairName(getKeypair())
+            .availabilityZone(currentZone.getName()).userData(userDataString.getBytes(Charset.forName("UTF-8")));
 
-				Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
-						.hardwareId(job.getComputeInstanceType()).options(options).build();
+        Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
+            .hardwareId(job.getComputeInstanceType()).options(options).build();
 
-				try {
-					results = computeService.createNodesInGroup(getGroupName(), 1, template);
-					this.itActuallyLaunchedHere = currentZone.getName();
-					break;
-				} catch (RunNodesException e) {
-					logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
-					logger.debug(e.getMessage());
-					try {
-						// FIXME:
-						// I think this could possibly delete EVERY NODE RUN
-						// from PORTAL-CORE...
-						// JClouds is not very clever here -
-						// issue: how do you delete thing you didnt name and
-						// dont have an ID for??
-						Set<? extends NodeMetadata> destroyedNodes = computeService
-								.destroyNodesMatching(this.terminateFilter);
-						logger.warn(
-								String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
-					} catch (Exception z) {
-						logger.warn("couldnt clean it up");
-					}
-					continue;
-				}
-			}
-		}
-		if (results.isEmpty()) {
-			// Now we have tried everything....
-			logger.error("run out of places to try...");
-			throw new PortalServiceException(
-					"An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-							+ "a smaller virtual machine",
-					"Please report it to cg-admin@csiro.au ");
-		} else {
-			result = results.iterator().next();
-		}
+        try {
+          results = computeService.createNodesInGroup(getGroupName(), 1, template);
+          this.itActuallyLaunchedHere = currentZone.getName();
+          break;
+        } catch (RunNodesException e) {
+          logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
+          logger.debug(e.getMessage());
+          try {
+            // FIXME:
+            // I think this could possibly delete EVERY NODE RUN
+            // from PORTAL-CORE...
+            // JClouds is not very clever here -
+            // issue: how do you delete thing you didnt name and
+            // dont have an ID for??
+            Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
+            logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
+          } catch (Exception z) {
+            logger.warn("couldnt clean it up");
+          }
+          continue;
+        }
+      }
+    }
+    if (results.isEmpty()) {
+      // Now we have tried everything....
+      logger.error("run out of places to try...");
+      throw new PortalServiceException(
+          "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+              + "a smaller virtual machine",
+          "Please report it to cg-admin@csiro.au ");
+    } else {
+      result = results.iterator().next();
+    }
 
-		logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
+    logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
 
-		return result.getId();
-	}
+    return result.getId();
+  }
 
 	/**
      * Makes a request that the VM started by job be terminated

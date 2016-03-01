@@ -79,11 +79,12 @@ public class CloudStorageService {
      */
     private String bucketPrefix = DEFAULT_BUCKET;
 
-	private boolean relaxHostName;
+    private boolean relaxHostName;
 
-	private boolean stripExpectHeader;
+    private boolean stripExpectHeader;
 
-	private BlobStoreContext mockBlobStoreContext = null; // Set for unit test only
+    private BlobStoreContext mockBlobStoreContext = null; // Set for unit test
+                                                          // only
 
     /**
      * Creates a new instance for connecting to the specified parameters
@@ -243,26 +244,27 @@ public class CloudStorageService {
                 }
             };
             
-            ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties).credentialsSupplier(credentialsSupplier);
-            
-			if (this.endpoint != null) {
-				builder2.endpoint(this.endpoint);
-			}
+            ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties)
+                    .credentialsSupplier(credentialsSupplier);
+
+            if (this.endpoint != null) {
+                builder2.endpoint(this.endpoint);
+            }
 
             return builder2.buildView(BlobStoreContext.class);
-        	
-		} else {
-			ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
 
-			if (accessKey != null && secretKey != null)
-				builder.credentials(accessKey, secretKey);
+        } else {
+            ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
 
-			if (this.endpoint != null) {
-				builder.endpoint(this.endpoint);
-			}
+            if (accessKey != null && secretKey != null)
+                builder.credentials(accessKey, secretKey);
 
-			return builder.build(BlobStoreContext.class);
-		}
+            if (this.endpoint != null) {
+                builder.endpoint(this.endpoint);
+            }
+
+            return builder.build(BlobStoreContext.class);
+        }
     }
     
 	/**
@@ -354,20 +356,24 @@ public class CloudStorageService {
      * @throws PortalServiceException 
      */
     public String getBucket(String postFix) throws PortalServiceException {
-    	if(TextUtil.isNullOrEmpty(postFix)) return bucketPrefix;
+        if (TextUtil.isNullOrEmpty(postFix))
+            return bucketPrefix;
         try {
-        	MessageDigest md = MessageDigest.getInstance("SHA-1");
-        	
-        	// Generate account specific bucket name. Replace characters which are not valid for AWS with arbitrary strings.
-			String res = bucketPrefix+Base64.getEncoder().encodeToString(md.digest(postFix.getBytes("Utf-8"))).toLowerCase().replace('=', 'a').replace('/', 'b');
-			
-			// AWS restriction: Bucker name must be shorter than 64 characters:
-			if(res.length()>63) return res= res.substring(0, 63); 
-			
-			return res;
-		} catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
-			throw new PortalServiceException("Could not create bucket name"+e.getMessage(), e);
-		}
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+
+            // Generate account specific bucket name. Replace characters which
+            // are not valid for AWS with arbitrary strings.
+            String res = bucketPrefix + Base64.getEncoder().encodeToString(md.digest(postFix.getBytes("Utf-8")))
+                    .toLowerCase().replace('=', 'a').replace('/', 'b');
+
+            // AWS restriction: Bucker name must be shorter than 64 characters:
+            if (res.length() > 63)
+                return res = res.substring(0, 63);
+
+            return res;
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+            throw new PortalServiceException("Could not create bucket name" + e.getMessage(), e);
+        }
     }
 
     /**
@@ -636,19 +642,23 @@ public class CloudStorageService {
         }
     }
 
-	public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
-		deleteJobFiles(job, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));		
-	}
+    public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
+        deleteJobFiles(job, job.getProperty(CloudJob.PROPERTY_STS_ARN),
+                job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
+    }
 
-	public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
-		uploadJobFiles(job, files, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
-	}
+    public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
+        uploadJobFiles(job, files, job.getProperty(CloudJob.PROPERTY_STS_ARN),
+                job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
+    }
 
-	public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
-		return listJobFiles(job, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
-	}
+    public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
+        return listJobFiles(job, job.getProperty(CloudJob.PROPERTY_STS_ARN),
+                job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
+    }
 
-	public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
-		return getJobFile(job, myKey, job.getProperty(CloudJob.PROPERTY_STS_ARN), job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
-	}
+    public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
+        return getJobFile(job, myKey, job.getProperty(CloudJob.PROPERTY_STS_ARN),
+                job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET));
+    }
 }
