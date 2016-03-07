@@ -223,7 +223,7 @@ public class CloudStorageService {
         if(! TextUtil.isNullOrEmpty(arn)) {
             ContextBuilder builder = ContextBuilder.newBuilder("sts");
             if(accessKey!=null && secretKey!=null)
-            	builder.credentials(accessKey, secretKey);
+                builder.credentials(accessKey, secretKey);
             
             STSApi api = builder.buildApi(STSApi.class);
 

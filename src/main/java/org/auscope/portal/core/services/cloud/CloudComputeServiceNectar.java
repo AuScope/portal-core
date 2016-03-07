@@ -64,7 +64,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     /** Cloud endpoint to connect to */
     private String endpoint;
 
-	private ContextBuilder builder;
+    private ContextBuilder builder;
 
     private String zone; //can be null
     /**
@@ -128,14 +128,13 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @param apiVersion
      *            The API version
      */
-    public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey,
-            String apiVersion) {
-    	super(ProviderType.NovaKeystone, endpoint, apiVersion);
+    public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey, String apiVersion) {
+        super(ProviderType.NovaKeystone, endpoint, apiVersion);
         this.accessKey = accessKey;
         this.secretKey = secretKey;
-	}
+    }
 
-	public void init() throws PortalServiceException {
+    public void init() throws PortalServiceException {
         Properties overrides = new Properties();
 
         String typeString = "openstack-nova";
@@ -144,7 +143,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
                 .overrides(overrides);
         
         if(accessKey!=null && secretKey!=null)
-        	builder.credentials(accessKey, secretKey);
+            builder.credentials(accessKey, secretKey);
 
         if (getApiVersion() != null) {
             builder.apiVersion(getApiVersion());
@@ -156,14 +155,14 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
         this.novaApi = builder.buildApi(NovaApi.class);
 
-		this.context = builder.buildView(ComputeServiceContext.class);
+        this.context = builder.buildView(ComputeServiceContext.class);
         this.computeService = this.context.getComputeService();
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(getGroupName()));
-	}
+    }
 
     public CloudComputeServiceNectar(ComputeService computeService, NovaApi novaApi,
             Predicate<NodeMetadata> terminPredicate) {
-    	super(ProviderType.NovaKeystone);
+        super(ProviderType.NovaKeystone);
         this.computeService = computeService;
         this.novaApi = novaApi;
         this.terminateFilter = terminPredicate;
@@ -249,7 +248,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     return result.getId();
   }
 
-	/**
+  /**
      * Makes a request that the VM started by job be terminated
      *
      * @param job

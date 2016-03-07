@@ -80,11 +80,11 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
     }
 
     public String setProperty(String key, String value) {
-    	return properties.put(key, value);
+        return properties.put(key, value);
     }
-    
+
     public String getProperty(String key) {
-    	return properties.get(key);
+        return properties.get(key);
     }
 
     /**

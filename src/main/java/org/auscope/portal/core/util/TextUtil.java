@@ -50,7 +50,7 @@ public class TextUtil {
         return true;
     }
 
-	/**
+    /**
      * Get the last N lines of multi-line text. Each line will be separated by platform dependant line separator.
      * 
      * @param text

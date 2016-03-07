@@ -22,7 +22,7 @@ abstract public class CloudComputeService {
     }
 
     @SuppressWarnings("unused")
-	private final Log logger = LogFactory.getLog(getClass());
+    private final Log logger = LogFactory.getLog(getClass());
 
     /** Unique ID for distinguishing instances of this class - can be null */
     private String id;
@@ -65,11 +65,10 @@ abstract public class CloudComputeService {
         this.apiVersion = apiVersion;
     }
 
-	/**
+    /**
      * Cloud API version
      */
-	private String apiVersion;
-
+    private String apiVersion;
 
     /**
      * Creates a new instance with the specified credentials (no endpoint specified - ensure provider type has a fixed endpoint)
@@ -112,10 +111,10 @@ abstract public class CloudComputeService {
      *            The API version
      */
     public CloudComputeService(ProviderType provider, String endpoint, String apiVersion) {
-    	this.provider=provider;
+        this.provider = provider;
         this.endpoint = endpoint;
         this.apiVersion = apiVersion;
-	}
+    }
 
     /**
      * Unique ID for distinguishing instances of this class - can be null
@@ -200,7 +199,7 @@ abstract public class CloudComputeService {
      *
      * @param job
      *            The job whose execution should be terminated
-	 * @throws PortalServiceException 
+     * @throws PortalServiceException 
      */
     abstract public void terminateJob(CloudJob job) throws PortalServiceException;
 

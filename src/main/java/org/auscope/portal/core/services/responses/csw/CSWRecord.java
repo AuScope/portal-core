@@ -106,7 +106,7 @@ public class CSWRecord {
     public CSWRecord(String serviceName, String fileIdentifier,
             String recordInfoUrl, String dataIdentificationAbstract,
             AbstractCSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements) {
-    	this(serviceName, fileIdentifier, recordInfoUrl, dataIdentificationAbstract, onlineResources, cswGeographicsElements, "");
+        this(serviceName, fileIdentifier, recordInfoUrl, dataIdentificationAbstract, onlineResources, cswGeographicsElements, "");
     }
     
     /**
@@ -268,10 +268,10 @@ public class CSWRecord {
      * @return array of URIs
      */
     public String[] getDataSetURIs() {
-		return dataSetURIs;
-	}
+        return dataSetURIs;
+    }
 
-	/**
+    /**
      * Gets the constraints.
      *
      * @return the constraints
@@ -352,13 +352,15 @@ public class CSWRecord {
         
     /**
      * Sets the dataset URIs
-	 * @param dataSetURIs the dataSetURIs to set
-	 */
-	public void setDataSetURIs(String[] dataSetURIs) {
-		this.dataSetURIs = dataSetURIs;
-	}
+     * 
+     * @param dataSetURIs
+     *            the dataSetURIs to set
+     */
+    public void setDataSetURIs(String[] dataSetURIs) {
+        this.dataSetURIs = dataSetURIs;
+    }
 
-	/**
+    /**
      * Sets the data identification abstract.
      *
      * @param dataIdentificationAbstract
@@ -655,7 +657,7 @@ public class CSWRecord {
         this.service = service;
     }
 
-	/**
+    /**
      * Creates a hashcode based on this record's file identifier
      */
     @Override
