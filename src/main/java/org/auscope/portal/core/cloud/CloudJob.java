@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base class representing the base state of a job that is sent to the cloud for processing.
@@ -52,7 +54,13 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
     protected String storageBaseKey;
     /** The unique ID of the storage service this job has been using */
     protected String storageServiceId;
+    
+    transient protected Map<String, String> properties = new HashMap<>();
 
+    public final static String PROPERTY_STS_ARN = "sts_arn";
+    public final static String PROPERTY_CLIENT_SECRET = "client_secret";
+    public final static String PROPERTY_S3_ROLE = "s3_role";
+    
     /**
      * Creates a new cloud job will null entries for every field
      */
@@ -69,6 +77,14 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
     public CloudJob(Integer id) {
         super();
         this.id = id;
+    }
+
+    public String setProperty(String key, String value) {
+        return properties.put(key, value);
+    }
+
+    public String getProperty(String key) {
+        return properties.get(key);
     }
 
     /**

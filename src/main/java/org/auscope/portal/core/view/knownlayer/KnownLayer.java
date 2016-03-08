@@ -351,7 +351,7 @@ public class KnownLayer implements Serializable {
     }
 
     public void setOrder(String order) {
-    	this.order = (order == null) ? "" : order;
+        this.order = (order == null) ? "" : order;
         logger.info(String.format("setOrder - group: %s, name: %s, order: %s", getGroup(), getName(), getOrder()));
     }
 

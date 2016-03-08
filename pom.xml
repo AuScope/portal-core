@@ -284,6 +284,7 @@
           </plugins>
         </pluginManagement>
     </build>
+    
     <reporting>
         <plugins>
             <plugin>
@@ -327,6 +328,11 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.10.48</version>
         </dependency>
         <dependency>
             <groupId>taglibs</groupId>
@@ -517,15 +523,15 @@
           </exclusions>
         </dependency>
         <dependency>
-		  <groupId>org.pacesys</groupId>
-		  <artifactId>openstack4j-core</artifactId>
-		  <version>2.0.3</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.pacesys.openstack4j.connectors</groupId>
-		  <artifactId>openstack4j-httpclient</artifactId>
-		  <version>2.0.3</version>
-		</dependency>
+          <groupId>org.pacesys</groupId>
+          <artifactId>openstack4j-core</artifactId>
+          <version>2.0.3</version>
+        </dependency>
+        <dependency>
+          <groupId>org.pacesys.openstack4j.connectors</groupId>
+          <artifactId>openstack4j-httpclient</artifactId>
+          <version>2.0.3</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>

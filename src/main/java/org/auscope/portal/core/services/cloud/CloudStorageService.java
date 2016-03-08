@@ -2,8 +2,11 @@ package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -12,7 +15,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudFileOwner;
+import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.util.TextUtil;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -23,8 +28,15 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.io.ContentMetadata;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.sts.STSApi;
+import org.jclouds.sts.domain.UserAndSessionCredentials;
+import org.jclouds.sts.options.AssumeRoleOptions;
+
+import com.amazonaws.util.Base64;
+import com.google.common.base.Supplier;
 
 /**
  * Service for providing storage of objects (blobs) in a cloud using the JClouds library
@@ -65,9 +77,11 @@ public class CloudStorageService {
     /**
      * The bucket that this service will access - defaults to DEFAULT_BUCKET
      */
-    private String bucket = DEFAULT_BUCKET;
+    private String bucketPrefix = DEFAULT_BUCKET;
 
-    private BlobStoreContext blobStoreContext;
+    private boolean relaxHostName;
+
+    private boolean stripExpectHeader;
 
     /**
      * Creates a new instance for connecting to the specified parameters
@@ -186,14 +200,18 @@ public class CloudStorageService {
         this.accessKey = accessKey;
         this.secretKey = secretKey;
         this.regionName = regionName;
-
+        this.relaxHostName=relaxHostName;
+        this.stripExpectHeader=stripExpectHeader;
+        
         try {
             this.jobPrefix = "job-" + InetAddress.getLocalHost().getHostName() + "-";
         } catch (UnknownHostException e) {
             this.jobPrefix = "job-";
             log.error("Unable to lookup hostname. Defaulting prefix to " + this.jobPrefix, e);
         }
+    }
 
+    public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) {
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
@@ -202,27 +220,46 @@ public class CloudStorageService {
             properties.setProperty("jclouds.region", regionName);
         }
 
-        ContextBuilder builder = ContextBuilder.newBuilder(provider)
-                .overrides(properties)
-                .credentials(accessKey, secretKey);
+        if(! TextUtil.isNullOrEmpty(arn)) {
+            ContextBuilder builder = ContextBuilder.newBuilder("sts");
+            if(accessKey!=null && secretKey!=null)
+                builder.credentials(accessKey, secretKey);
+            
+            STSApi api = builder.buildApi(STSApi.class);
 
-        if (this.endpoint != null) {
-            builder.endpoint(this.endpoint);
+            AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600).externalId(clientSecret);
+            final UserAndSessionCredentials credentials = api.assumeRole(arn, "anvgl", assumeRoleOptions);
+
+            Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
+                @Override
+                public Credentials get() {
+                    return credentials.getCredentials();
+                }
+            };
+            
+            ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties)
+                    .credentialsSupplier(credentialsSupplier);
+
+            if (this.endpoint != null) {
+                builder2.endpoint(this.endpoint);
+            }
+
+            return builder2.buildView(BlobStoreContext.class);
+
+        } else {
+            ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
+
+            if (accessKey != null && secretKey != null)
+                builder.credentials(accessKey, secretKey);
+
+            if (this.endpoint != null) {
+                builder.endpoint(this.endpoint);
+            }
+
+            return builder.build(BlobStoreContext.class);
         }
-
-        this.blobStoreContext = builder.build(BlobStoreContext.class);
     }
-
-    /**
-     * Creates a new instance for connecting to the specified blob store. Please note that the connection credentials will NOT be available via this instances
-     * get methods if this constructor is used.
-     * 
-     * @param blobStoreContext
-     */
-    public CloudStorageService(BlobStoreContext blobStoreContext) {
-        this.blobStoreContext = blobStoreContext;
-    }
-
+    
     /**
      * Username credential for accessing the storage service
      * 
@@ -299,9 +336,27 @@ public class CloudStorageService {
      * The bucket where the data will be stored
      * 
      * @return
+     * @throws PortalServiceException 
      */
-    public String getBucket() {
-        return bucket;
+    public String getBucket(String postFix) throws PortalServiceException {
+        if (TextUtil.isNullOrEmpty(postFix))
+            return bucketPrefix;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+
+            // Generate account specific bucket name. Replace characters which
+            // are not valid for AWS with arbitrary strings.
+            String res = bucketPrefix + Base64.encodeAsString(md.digest(postFix.getBytes("Utf-8")))
+                    .toLowerCase().replace('=', 'a').replace('/', 'b');
+
+            // AWS restriction: Bucker name must be shorter than 64 characters:
+            if (res.length() > 63)
+                return res = res.substring(0, 63);
+
+            return res;
+        } catch (UnsupportedEncodingException | NoSuchAlgorithmException e) {
+            throw new PortalServiceException("Could not create bucket name" + e.getMessage(), e);
+        }
     }
 
     /**
@@ -310,7 +365,7 @@ public class CloudStorageService {
      * @param bucket
      */
     public void setBucket(String bucket) {
-        this.bucket = bucket;
+        this.bucketPrefix = bucket;
     }
 
     /**
@@ -448,13 +503,17 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public InputStream getJobFile(CloudFileOwner job, String key) throws PortalServiceException {
+
+    public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+        
         try {
-            BlobStore bs = blobStoreContext.getBlobStore();
-            Blob blob = bs.getBlob(bucket, keyForJobFile(job, key));
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            Blob blob = bs.getBlob(getBucket(arn), keyForJobFile(job, myKey));
             return blob.getPayload().getInput();
         } catch (Exception ex) {
-            log.error(String.format("Unable to get job file '%1$s' for job %2$s:", key, job));
+            log.error(String.format("Unable to get job file '%1$s' for job %2$s:", myKey, job));
             log.debug("error:", ex);
             throw new PortalServiceException("Error retriving output file details", ex);
         }
@@ -469,19 +528,22 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = blobStoreContext.getBlobStore();
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             String baseKey = generateBaseKey(job);
 
+            String bucketName = getBucket(arn);
+            
             //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
-            PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucket,
-                    ListContainerOptions.Builder.inDirectory(baseKey));
+            PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder.inDirectory(baseKey));
             String nextMarker = null;
             List<CloudFileInformation> jobFiles = new ArrayList<CloudFileInformation>();
             do {
                 if (nextMarker != null) {
-                    currentMetadataPage = bs.list(bucket, ListContainerOptions.Builder
+                    currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder
                             .inDirectory(baseKey)
                             .afterMarker(nextMarker));
                 }
@@ -520,19 +582,23 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = blobStoreContext.getBlobStore();
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
 
+            String bucketName = getBucket(arn);
+            bs.createContainerInLocation(null, bucketName);
             for (File file : files) {
 
                 Blob newBlob = bs.blobBuilder(keyForJobFile(job, file.getName()))
                         .payload(file)
                         .build();
 
-                bs.putBlob(bucket, newBlob);
+                bs.putBlob(bucketName, newBlob);
 
-                log.debug(file.getName() + " uploaded to '" + bucket + "' container");
+                log.debug(file.getName() + " uploaded to '" + bucketName + "' container");
             }
         } catch (AuthorizationException ex) {
             log.error("Storage credentials are not valid for job: " + job, ex);
@@ -557,9 +623,11 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
     public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
         try {
-            BlobStore bs = blobStoreContext.getBlobStore();
-            bs.deleteDirectory(bucket, jobToBaseKey(job));
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            bs.deleteDirectory(getBucket(arn), jobToBaseKey(job));
         } catch (Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
             throw new PortalServiceException(
