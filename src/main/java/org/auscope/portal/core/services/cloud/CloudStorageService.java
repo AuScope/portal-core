@@ -8,7 +8,6 @@ import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,6 +35,7 @@ import org.jclouds.sts.STSApi;
 import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 
+import com.amazonaws.util.Base64;
 import com.google.common.base.Supplier;
 
 /**
@@ -346,7 +346,7 @@ public class CloudStorageService {
 
             // Generate account specific bucket name. Replace characters which
             // are not valid for AWS with arbitrary strings.
-            String res = bucketPrefix + Base64.getEncoder().encodeToString(md.digest(postFix.getBytes("Utf-8")))
+            String res = bucketPrefix + Base64.encodeAsString(md.digest(postFix.getBytes("Utf-8")))
                     .toLowerCase().replace('=', 'a').replace('/', 'b');
 
             // AWS restriction: Bucker name must be shorter than 64 characters:
