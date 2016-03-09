@@ -20,12 +20,12 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
     /**
      * Implemented function, see parent class
      */
-    getLegendComponent : function(resources, filterer,sld_body, callback) {
+    getLegendComponent : function(resources, filterer,sld_body, isSld_body, callback) {
         // GPT-80 - Legend - This is called from BARP / _getLegendAction().  I think I want to change WMSLegendForm ... (see there)
         var form = Ext.create('portal.layer.legend.wms.WMSLegendForm',{resources : resources,filterer : filterer,sld_body:sld_body});
         callback(this, resources, filterer, true, form); //this layer cannot generate a GUI popup
         // GPT-80 - the Legend data now comes from async service calls and needs to added separately (prev. was done in constructor)
-        form.addLegends({resources : resources, form : form, sld_body: sld_body});
+        form.addLegends({resources : resources, form : form, sld_body: sld_body, isSld_body: isSld_body});
     },
 
     /**
@@ -51,7 +51,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
 
     statics : {
 
-        generateImageUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,styles) {
+        generateImageUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles) {
             var url = wmsURL;
             var last_char = url.charAt(url.length - 1);
             if ((last_char !== "?") && (last_char !== "&")) {
@@ -74,8 +74,12 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             //vt: The sld for legend does not require any filter therefore it should be
             // able to accomadate all sld length.
             if(sld_body && sld_body.length< 2000){
-                url += '&SLD_BODY=' + escape(sld_body);
-                url += '&LEGEND_OPTIONS=forceLabels:on';
+            	if (isSld_body === true) {
+            		url += '&SLD_BODY=' + escape(sld_body);
+            	} else {
+            		url += '&SLD=' + encodeURIComponent(sld_body);
+            	}
+            	url += '&LEGEND_OPTIONS=forceLabels:on';
             }
             if (this.styles) {
                 url += '&STYLES=' + escape(this.styles);
@@ -85,9 +89,9 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
         },
     
         // WMS Can specify a <legendUrl> image - retrieve from the service
-        generateLegendUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,styles, callback) {
+        generateLegendUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, callback) {
             
-            var url = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,styles);
+            var url = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles);
             
             if (url) {
                 callback(url);
