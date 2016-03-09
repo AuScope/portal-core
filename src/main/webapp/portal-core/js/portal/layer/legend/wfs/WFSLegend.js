@@ -20,7 +20,7 @@ Ext.define('portal.layer.legend.wfs.WFSLegend', {
     /**
      * Implemented function, see parent class
      */
-    getLegendComponent : function(resources, filterer,response, callback) {
+    getLegendComponent : function(resources, filterer,response, isSld_body, callback) {
         
         var table = '<table>';
         var wfsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
