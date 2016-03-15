@@ -14,7 +14,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
     },
     
     addLegends : function(config) {   
-        if (config.sld_body && config.sld_body.length > 0 && config.sld_body.length < 2000;) {
+        if (config.sld_body && config.sld_body.length > 0 && config.sld_body.length < 2000) {
             this.addStyledLegend(config);           
         } else {
             var wmsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(config.resources, portal.csw.OnlineResource.WMS);
