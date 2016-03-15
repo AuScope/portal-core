@@ -31,6 +31,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
                     wmsOnlineResources[j].get('version'),
                     width,
                     config.sld_body,
+                    config.isSld_body,
                     undefined,
                     function(url) {
                         if (! urls.hasOwnProperty(url)) {
