@@ -12,9 +12,9 @@ At the same time, I do not want to force the other portals to follow the same pa
  We will be following this architecture for portal specific css.
 --%>
 
-<link rel="stylesheet" type="text/css" href="portal-core/css/styles.css?v=${portal.build.version}">
-<link rel="stylesheet" type="text/css" href="portal-core/css/auscope-portal-core.css?v=${portal.build.version}">
-<link rel="stylesheet" type="text/css" href="portal-core/css/portal-ux.css?v=${portal.build.version}">
+<link rel="stylesheet" type="text/css" href="portal-core/css/styles.css?v=${buildTimestamp}">
+<link rel="stylesheet" type="text/css" href="portal-core/css/auscope-portal-core.css?v=${buildTimestamp}">
+<link rel="stylesheet" type="text/css" href="portal-core/css/portal-ux.css?v=${buildTimestamp}">
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <STYLE type="text/css">
