@@ -443,7 +443,29 @@ public abstract class AbstractFilter implements IFilter {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
         return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThan", attributes, propertyName, null, function);
-    }
+    }    
+    
+    /**
+     * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
+     *
+     * Will default to a 'case insensitive' match and no attributes
+     *
+     * Will compare a property to see if it is greater than a literal
+     *
+     * @param propertyName
+     *            The XPath to the property to compare
+     * @param function
+     *            The function to compare against
+     * @return
+     */
+    protected String generateDatePropertyIsGreaterThanOrEqualTo(String propertyName, Boolean matchCase, String function) {
+        HashMap<String, String> attributes = new HashMap<String, String>();
+        if (matchCase != null) {
+            attributes.put("matchCase", Boolean.toString(matchCase));
+        }
+        return generatePropertyComparisonFragment("ogc:PropertyIsGreaterThanOrEqualTo", attributes, propertyName, null, function);
+    }   
+    
     /**
      * Generates an ogc:Filter string fragment that can be embedded in <ogc:And> <ogc:Or> <ogc:Not> <ogc:Filter> parent elements.
      *
@@ -663,5 +685,20 @@ public abstract class AbstractFilter implements IFilter {
                            + "<ogc:Literal>  %s </ogc:Literal> "
                           + "</ogc:Function>", inputDate);
    }
+   
+   /**
+   * Converts a year into a date for use in queries where the data is a date.
+   * In this case a PropertyIsGreaterThanOrEqualTo query and a PropertyIsLessThanTo using the parsed date is
+   * probably the best we can do. (could do a PropertyIsBetween as well)
+   * @param inputDate a string of date with format "yyyy"
+   * @return ogc:function name = "dateParse"
+   */
+  protected String generateFunctionYearParse(int inputYear) {
+
+      return String.format("<ogc:Function name=\"dateParse\"> "
+                          + "<ogc:Literal>yyyy</ogc:Literal>"
+                          + "<ogc:Literal>%d</ogc:Literal>"
+                         + "</ogc:Function>", inputYear);
+  }
 
 }
