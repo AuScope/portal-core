@@ -59,14 +59,14 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
             offset = 0;
         }
         
-        if (srsName.startsWith('http://www.opengis.net/gml/srs/epsg.xml#4283') || 
-            srsName.startsWith('urn:x-ogc:def:crs:EPSG')) {
+        if (srsName.indexOf('http://www.opengis.net/gml/srs/epsg.xml#4283') == 0 || 
+            srsName.indexOf('urn:x-ogc:def:crs:EPSG') == 0) {
             //lat/lon
             var tmp = coords[offset];
             coords[offset] = coords[offset + 1];
             coords[offset + 1] = tmp;
-        } else if (srsName.startsWith('EPSG') ||
-                   srsName.startsWith('http://www.opengis.net/gml/srs/epsg.xml')) {
+        } else if (srsName.indexOf('EPSG') == 0 ||
+                   srsName.indexOf('http://www.opengis.net/gml/srs/epsg.xml') == 0) {
             //lon/lat (no action required)
         } else {
             //fallback to lon/lat
@@ -75,7 +75,7 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
 
     parseLineString : function(onlineResource, layer, name, description, lineStringNode) {
         var srsName = this.getSrsName(lineStringNode);
-        var parsedCoordList = this.generateCoordList(portal.util.xml.SimpleDOM.getNodeTextContent(lineStringNode.getElementsByTagName("gml:posList")[0]), srsName);
+        var parsedCoordList = this.generateCoordList(portal.util.xml.SimpleDOM.getNodeTextContent(lineStringNode.getElementsByTagNameNS("*", "posList")[0]), srsName);
         if (parsedCoordList.length === 0) {
             return null;
         }
@@ -95,7 +95,7 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
     //Returns a single portal.map.primitives.Polygon
     parsePolygon : function(onlineResource, layer, name, description, polygonNode) {
         var srsName = this.getSrsName(polygonNode);
-        var parsedCoordList = this.generateCoordList(portal.util.xml.SimpleDOM.getNodeTextContent(polygonNode.getElementsByTagName("gml:posList")[0]), srsName);
+        var parsedCoordList = this.generateCoordList(portal.util.xml.SimpleDOM.getNodeTextContent(polygonNode.getElementsByTagNameNS("*", "posList")[0]), srsName);
         if (parsedCoordList.length === 0) {
             return null;
         }
@@ -114,7 +114,7 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
     //Given a root placemark node attempt to parse it as a single point and return it
     //Returns a single portal.map.primitives.Marker
     parsePoint : function(onlineResource, layer, name, description, icon, pointNode) {
-        var rawPoints = portal.util.xml.SimpleDOM.getNodeTextContent(pointNode.getElementsByTagName("gml:pos")[0]);
+        var rawPoints = portal.util.xml.SimpleDOM.getNodeTextContent(pointNode.getElementsByTagNameNS("*", "pos")[0]);
         var coordinates = rawPoints.split(' ');
         if (!coordinates || coordinates.length < 2) {
             return null;
@@ -160,9 +160,9 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
             }
             
             //Look for geometry under this feature
-            var pointNodes = featureNode.getElementsByTagName("gml:Point");
-            var polygonNodes = featureNode.getElementsByTagName("gml:Polygon");
-            var lineStringNodes = featureNode.getElementsByTagName("gml:LineString");
+            var pointNodes = featureNode.getElementsByTagNameNS("*", "Point");
+            var polygonNodes = featureNode.getElementsByTagNameNS("*", "Polygon");
+            var lineStringNodes = featureNode.getElementsByTagNameNS("*", "LineString");
             
             //Parse the geometry we found into map primitives
             for (var geomIndex = 0; geomIndex < polygonNodes.length; geomIndex++) {
