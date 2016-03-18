@@ -39,8 +39,8 @@ Ext.define('portal.map.openlayers.ActiveLayerManager', {
             for (var i = 0; i < layers.length; i++) {
                 activeLayerStore.suspendEvents(true);
                 activeLayerStore.add(layers[i]);    
-                layers[i].get('renderer').displayData();
-                layers[i].reRenderLayerDisplay();
+                //layers[i].get('renderer').displayData();
+                //layers[i].reRenderLayerDisplay();
                 activeLayerStore.resumeEvents();
             }
         }
@@ -73,11 +73,6 @@ Ext.define('portal.map.openlayers.ActiveLayerManager', {
     
     /** updates the order of the layers in the store and in the map */
     updateLayerOrder : function(map, layer) {
-        var activeLayerStore = ActiveLayerManager.getActiveLayerStore(map);        
-        for(position=0;position < activeLayerStore.length; position++){
-            map.map.setLayerIndex(layer,position);
-        }
-        layer.reRenderLayerDisplay();
         this.saveApplicationState(map);
     },   
     
