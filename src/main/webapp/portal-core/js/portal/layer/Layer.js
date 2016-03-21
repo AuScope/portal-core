@@ -72,7 +72,6 @@ Ext.define('portal.layer.Layer', {
         
         var map = renderer.map;
         var layerStore = map.layerStore;
-        var zindex
         for (var i = layerStore.data.items.length-1; i >= 0; --i) {
             var onlineResourcesForLayer = [];
             var cswRecords = layerStore.data.items[i].data.cswRecords;
