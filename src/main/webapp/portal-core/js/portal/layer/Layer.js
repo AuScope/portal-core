@@ -72,7 +72,6 @@ Ext.define('portal.layer.Layer', {
         
         var map = renderer.map;
         var layerStore = map.layerStore;
-        
         for (var i = layerStore.data.items.length-1; i >= 0; --i) {
             var onlineResourcesForLayer = [];
             var cswRecords = layerStore.data.items[i].data.cswRecords;
@@ -84,7 +83,8 @@ Ext.define('portal.layer.Layer', {
                 if (mapLayers && mapLayers.length > 0) {
                     for (var k = 0; k < mapLayers.length; k++) {
                         // construct a useable z-index for the layer on the map
-                        map.map.setLayerZIndex(mapLayers[k], (layerStore.data.items.length - i) * 1000 + (j*100) + k)
+                        var zIndex = (layerStore.data.items.length - i) * 100000 + (j*100) + k;
+                        map.map.setLayerZIndex(mapLayers[k], zIndex);
                     }
                 }
             }
