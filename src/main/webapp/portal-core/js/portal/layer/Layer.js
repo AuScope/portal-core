@@ -60,9 +60,35 @@ Ext.define('portal.layer.Layer', {
         this.get('source').set('active', true);
     },
 
+    /** Called when this layer is completely rendered.
+     * Each renderer is responsible for firing the renderfinished
+     * event when all of its resources have been rendered to the map.
+     * 
+     * @param renderer the layer renderer that just fired the renderfinished event
+     */
     onRenderFinished : function(renderer) {
         //this.set('loading', false);
         this.get('source').set('loading', false);
+        
+        var map = renderer.map;
+        var layerStore = map.layerStore;
+        for (var i = layerStore.data.items.length-1; i >= 0; --i) {
+            var onlineResourcesForLayer = [];
+            var cswRecords = layerStore.data.items[i].data.cswRecords;
+            for (var j = 0; j < cswRecords.length; j++) {
+                onlineResourcesForLayer = onlineResourcesForLayer.concat(cswRecords[j].data.onlineResources);
+            }
+            for (var j = 0; j < onlineResourcesForLayer.length; j++) {
+                var mapLayers = map.map.getLayersByName(onlineResourcesForLayer[j].data.name);
+                if (mapLayers && mapLayers.length > 0) {
+                    for (var k = 0; k < mapLayers.length; k++) {
+                        // construct a useable z-index for the layer on the map
+                        var zIndex = (layerStore.data.items.length - i) * 100000 + (j*100) + k;
+                        map.map.setLayerZIndex(mapLayers[k], zIndex);
+                    }
+                }
+            }
+        }
     },
 
 
