@@ -91,37 +91,3 @@ OpenLayers.Map.prototype.addPopup = function(popup, exclusive) {
         this.layerContainerDiv.appendChild(popupDiv);
     }
 };
-
-/**
- * Method: adjustBounds
- * This function will take a bounds, and if wrapDateLine option is set
- *     on the layer, it will return a bounds which is wrapped around the 
- *     world. We do not wrap for bounds which *cross* the 
- *     maxExtent.left/right, only bounds which are entirely to the left 
- *     or entirely to the right.
- * 
- * Parameters:
- * bounds - {<OpenLayers.Bounds>}
- */
-//OpenLayers.Layer.adjustBounds = function(bounds) {
-//    if (this.gutter) {
-//        // Adjust the extent of a bounds in map units by the 
-//        // layer's gutter in pixels.
-//        var mapGutter = this.gutter * this.map.getResolution();
-//        bounds = new OpenLayers.Bounds(bounds.left - mapGutter,
-//                                       bounds.bottom - mapGutter,
-//                                       bounds.right + mapGutter,
-//                                       bounds.top + mapGutter);
-//    }
-//
-//    if (this.wrapDateLine) {
-//        // wrap around the date line, within the limits of rounding error
-//        var wrappingOptions = { 
-//            'rightTolerance':this.getResolution(),
-//            'leftTolerance':this.getResolution()
-//        };    
-//        bounds = bounds.wrapDateLine(this.maxExtent, wrappingOptions);
-//                          
-//    }
-//    return bounds;
-//};
