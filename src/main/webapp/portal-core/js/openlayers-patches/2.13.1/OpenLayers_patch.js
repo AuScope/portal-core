@@ -60,3 +60,68 @@ OpenLayers.Layer.Google.v3.setGMapVisibility = function(visible) {
         }
     }
 };
+
+/**
+ * We set a very high z-index on our featured layers to make sure that they are rendered in the correct order.
+ * This also now means that we need to override the popup and control defaults to make sure they have a higher z-index.
+ */
+OpenLayers.Map.Z_INDEX_BASE = {
+    BaseLayer: 100,
+    Overlay: 1000,
+    Feature: 10000,
+    Popup: 10000000,
+    Control: 20000000
+};
+
+OpenLayers.Map.prototype.addPopup = function(popup, exclusive) {
+    
+    if (exclusive) {
+        //remove all other popups from screen
+        for (var i = this.popups.length - 1; i >= 0; --i) {
+            this.removePopup(this.popups[i]);
+        }
+    }
+
+    popup.map = this;
+    this.popups.push(popup);
+    var popupDiv = popup.draw();
+    if (popupDiv) {
+        popupDiv.style.zIndex = OpenLayers.Map.Z_INDEX_BASE['Popup'] +
+                                this.popups.length;
+        this.layerContainerDiv.appendChild(popupDiv);
+    }
+};
+
+/**
+ * Method: adjustBounds
+ * This function will take a bounds, and if wrapDateLine option is set
+ *     on the layer, it will return a bounds which is wrapped around the 
+ *     world. We do not wrap for bounds which *cross* the 
+ *     maxExtent.left/right, only bounds which are entirely to the left 
+ *     or entirely to the right.
+ * 
+ * Parameters:
+ * bounds - {<OpenLayers.Bounds>}
+ */
+//OpenLayers.Layer.adjustBounds = function(bounds) {
+//    if (this.gutter) {
+//        // Adjust the extent of a bounds in map units by the 
+//        // layer's gutter in pixels.
+//        var mapGutter = this.gutter * this.map.getResolution();
+//        bounds = new OpenLayers.Bounds(bounds.left - mapGutter,
+//                                       bounds.bottom - mapGutter,
+//                                       bounds.right + mapGutter,
+//                                       bounds.top + mapGutter);
+//    }
+//
+//    if (this.wrapDateLine) {
+//        // wrap around the date line, within the limits of rounding error
+//        var wrappingOptions = { 
+//            'rightTolerance':this.getResolution(),
+//            'leftTolerance':this.getResolution()
+//        };    
+//        bounds = bounds.wrapDateLine(this.maxExtent, wrappingOptions);
+//                          
+//    }
+//    return bounds;
+//};
