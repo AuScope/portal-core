@@ -73,7 +73,9 @@ Ext.define('portal.map.openlayers.ActiveLayerManager', {
     
     /** updates the order of the layers in the store and in the map */
     updateLayerOrder : function(map, layer) {
+        layer.reRenderLayerDisplay();
         this.saveApplicationState(map);
+        
     },   
     
     /** Gets the active layer store. 
