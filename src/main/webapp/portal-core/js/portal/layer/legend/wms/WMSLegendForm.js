@@ -80,6 +80,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
                 wmsOnlineResources[loopIndex].get('version'),
                 width,
                 config.sld_body,
+                config.isSld_body,
                 undefined,
                 // callback function. Populates the array of legend urls
                 function(url) {                    
