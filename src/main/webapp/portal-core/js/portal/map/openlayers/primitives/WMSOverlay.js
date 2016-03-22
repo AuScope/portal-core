@@ -45,7 +45,7 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
             projection: cswboundingBox.crs,
             maxExtent: cswboundingBox.bounds,
             tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34),
-            displayInLayerSwitcher : false,
+            displayInLayerSwitcher : false
         };
         
         if (singleTile == true) {
