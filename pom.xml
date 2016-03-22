@@ -21,12 +21,20 @@
         <developerConnection>scm:git:https://github.com/AuScope/portal-core.git</developerConnection>
         <url>https://github.com/AuScope/portal-core</url>
     </scm>
+<!--
     <distributionManagement>
         <repository>
             <id>deployment</id>
             <name>Internal nexus</name>
             <url>https://cgsrv8.arrc.csiro.au/nexus/content/repositories/PortalRelease/</url>
         </repository>
+    </distributionManagement>
+-->
+    <distributionManagement>
+        <snapshotRepository>
+          <id>snapshots</id>
+          <url>http://maven-int.ga.gov.au/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
 
     <dependencyManagement>
@@ -517,15 +525,15 @@
           </exclusions>
         </dependency>
         <dependency>
-		  <groupId>org.pacesys</groupId>
-		  <artifactId>openstack4j-core</artifactId>
-		  <version>2.0.3</version>
-		</dependency>
-		<dependency>
-		  <groupId>org.pacesys.openstack4j.connectors</groupId>
-		  <artifactId>openstack4j-httpclient</artifactId>
-		  <version>2.0.3</version>
-		</dependency>
+          <groupId>org.pacesys</groupId>
+          <artifactId>openstack4j-core</artifactId>
+          <version>2.0.3</version>
+        </dependency>
+        <dependency>
+          <groupId>org.pacesys.openstack4j.connectors</groupId>
+          <artifactId>openstack4j-httpclient</artifactId>
+          <version>2.0.3</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-csv</artifactId>

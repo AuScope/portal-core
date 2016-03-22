@@ -47,6 +47,7 @@ Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
                     //    console.log("Fields: ", fields);
                     me.populateFeatureFieldsDisplayArray(fields, fieldsArray);
                     me._drawFeatureFieldsTabs(layerName, fieldsArray);
+                    callback(me, [], queryTarget);
                 }else{
                     callback(this, [this.generateErrorComponent('There was an error when attempting to contact the remote WMS instance for information about this point.')], queryTarget);
                 }
