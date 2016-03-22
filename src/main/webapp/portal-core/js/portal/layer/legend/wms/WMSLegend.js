@@ -73,7 +73,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             }
             //vt: The sld for legend does not require any filter therefore it should be
             // able to accomadate all sld length.
-            if(sld_body && sld_body.length< 4000){
+            if(sld_body && sld_body.length< 2000){
             	if (isSld_body === true) {
             		url += '&SLD_BODY=' + escape(sld_body);
             	} else {
