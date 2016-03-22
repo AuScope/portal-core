@@ -356,12 +356,12 @@ public class KnownLayer implements Serializable {
     }
 
     public Boolean getSingleTile() {
-		return singleTile;
-	}
+        return singleTile;
+    }
 
-	public void setSingleTile(Boolean singleTile) {
-		this.singleTile = singleTile;
-	}
+    public void setSingleTile(Boolean singleTile) {
+        this.singleTile = singleTile;
+    }
 
 	/* (non-Javadoc)
      * @see java.lang.Object#toString()
