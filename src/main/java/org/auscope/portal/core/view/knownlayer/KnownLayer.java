@@ -4,9 +4,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * A known layer is a grouping of CSWRecords representing some form of logical similarity that the registry couldn't provide.
  *
@@ -16,8 +13,7 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 public class KnownLayer implements Serializable {
-    private final Log logger = LogFactory.getLog(getClass().getName());
-
+	
     /** auto generated version ID */
     private static final long serialVersionUID = 236524163668910226L;
 
@@ -67,6 +63,11 @@ public class KnownLayer implements Serializable {
 
     /** Set an order - defaults to name */
     private String order;
+    
+    /** Whether the layer should be requested as a single tile or many tiles
+     * (many is the default).
+     */
+    private Boolean singleTile = Boolean.FALSE;
 
     /**
      * Creates a new KnownLayer
@@ -352,10 +353,17 @@ public class KnownLayer implements Serializable {
 
     public void setOrder(String order) {
     	this.order = (order == null) ? "" : order;
-        logger.info(String.format("setOrder - group: %s, name: %s, order: %s", getGroup(), getName(), getOrder()));
     }
 
-    /* (non-Javadoc)
+    public Boolean getSingleTile() {
+        return singleTile;
+    }
+
+    public void setSingleTile(Boolean singleTile) {
+        this.singleTile = singleTile;
+    }
+
+	/* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
@@ -365,7 +373,7 @@ public class KnownLayer implements Serializable {
                 + ", proxyStyleUrl=" + proxyStyleUrl + ", proxyDownloadUrl=" + proxyDownloadUrl
                 + ", knownLayerSelector=" + knownLayerSelector + ", iconUrl=" + iconUrl + ", polygonColor="
                 + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", feature_count="
-                + feature_count + ", order=" + order + "]";
+                + feature_count + ", order=" + order + ", singleTile=" + singleTile + "]";
     }
     
     

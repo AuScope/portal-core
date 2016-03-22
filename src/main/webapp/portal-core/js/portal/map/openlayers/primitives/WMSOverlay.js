@@ -25,52 +25,46 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         var wmsVersion='1.1.1';//VT:Default to 1.1.1 unless specified
         if(wmsOnlineResources.length > 0 && wmsOnlineResources[0].get('version')){
             wmsVersion = wmsOnlineResources[0].get('version');
-        }
-        
+        }        
                         
-        var cswboundingBox= this._getCSWBoundingBox(cswRecord);
+        var singleTile = cfg.layer.get('source').get('singleTile');
         
-        var bounds = cswboundingBox.bounds;
+        var cswboundingBox= this._getCSWBoundingBox(cswRecord);        
 
-        var srs = cswboundingBox.crs;
-
-        if(this.getSld_body() && this.getSld_body().length > 0){
-             wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
-                    this.getWmsUrl(),
-                    {
-                         layers: this.getWmsLayer(),
-                         version:wmsVersion,
-                         transparent : true,
-                         exceptions : 'BLANK',
-                         sld_body : this.getSld_body(),
-                         tiled:true
-                    },{
-                         tileOptions: {maxGetUrlLength: 1500},
-                         isBaseLayer : false,
-                         projection: srs,
-                         maxExtent: bounds,
-                         tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34),
-                         displayInLayerSwitcher : false
-                    });
-        }else{
-            wmsLayer = new OpenLayers.Layer.WMS( this.getWmsLayer(),
-                    this.getWmsUrl(),
-                    {
-                        layers: this.getWmsLayer(),
-                        version:wmsVersion ,
-                        exceptions : 'BLANK',
-                        transparent : true,
-                        tiled:true
-                    },{
-                        tileOptions: {maxGetUrlLength: 1500},
-                        isBaseLayer : false,
-                        projection: srs,
-                        maxExtent: bounds,
-                        tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34),
-                        displayInLayerSwitcher : false
-                    });
+        var options = {
+            layers: this.getWmsLayer(),
+            version: wmsVersion,
+            transparent : true,
+            exceptions : 'BLANK',
+            displayOutsideMaxExtent : true
+        };
+                
+        var additionalOptions = {
+            tileOptions: {maxGetUrlLength: 1500},
+            isBaseLayer : false,
+            projection: cswboundingBox.crs,
+            maxExtent: cswboundingBox.bounds,
+            tileOrigin: new OpenLayers.LonLat(-20037508.34, -20037508.34),
+            displayInLayerSwitcher : false,
+        };
+        
+        if (singleTile == true) {
+            additionalOptions.singleTile = true;
+            additionalOptions.ratio = 1;
         }
+        
+        if(this.getSld_body() && this.getSld_body().length > 0){            
+            options.sld_body = this.getSld_body();
+            options.tiled = true;
+        } 
 
+        wmsLayer = new OpenLayers.Layer.WMS(
+            this.getWmsLayer(),
+            this.getWmsUrl(),
+            options,
+            additionalOptions
+        );
+        
         wmsLayer.setOpacity(this.getOpacity());
         wmsLayer._portalBasePrimitive = this;
 
@@ -89,18 +83,17 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
             }
             crs=geoEl.crs;
         }
-        
+
         var openlayerBoundObject = {
                 bounds : new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude),
                 crs : crs
         }
-        
+
         if(crs != 'EPSG:3857'){
             openlayerBoundObject.crs='EPSG:3857';
             openlayerBoundObject.bounds = openlayerBoundObject.bounds.transform(crs,'EPSG:3857');
         }
-        
+
         return openlayerBoundObject;
-        
     }
 });
