@@ -393,6 +393,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                          {numZoomLevels: 20}
                      ),
                      new OpenLayers.Layer.Google(
+                    		 // Name of the layer that will be set as default. If removed or changed, also
+                    		 // change code below which sets as default
                              "Google Satellite",
                              {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
                      )
@@ -404,6 +406,11 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                  zoom: 4
         });
 
+        var selLayer = this.map.getLayersByName("Google Satellite");
+        if (selLayer !== null) {        
+            this.map.setBaseLayer(selLayer[0]);
+        }
+        
         // Creation and rendering of LayerSwitcher moved to renderBaseMap()
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
