@@ -166,8 +166,17 @@ public class CloudComputeServiceAws extends CloudComputeService {
             runInstancesRequest = runInstancesRequest.withIamInstanceProfile(iamInstanceProfile);
         }
 
+        // Check for a keypair in the CloudJob first, then fall back onto the
+        // default one for this instance.
+        String keypair = null;
+        if (!TextUtil.isNullOrEmpty(job.getComputeInstanceKey())) {
+            keypair = job.getComputeInstanceKey();
+        }
         if (!TextUtil.isNullOrEmpty(getKeypair())) {
-            runInstancesRequest = runInstancesRequest.withKeyName(getKeypair());
+            keypair = getKeypair();
+        }
+        if (keypair != null) {
+            runInstancesRequest = runInstancesRequest.withKeyName(keypair);
         }
 
         AmazonEC2 ec2 = getEc2Client(job);
