@@ -22,6 +22,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     
     layerStore: null,
     
+    menuFactory: null,
+
     /**
      * Accepts all parameters for a normal Ext.Panel instance with the following additions
      * {
@@ -72,6 +74,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         }                            
         
         if(config.menuFactory){
+            this.menuFactory = config.menuFactory;
             var mf= config.menuFactory;
             if (mf.addResetFormActionForWMS) {
                 menuItems.push(this._getResetFormAction());
@@ -136,6 +139,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     _getLegendAction : function(layer){                       
         var legend = layer.get('renderer').getLegend();
         var text = 'Get Legend';
+        var me = this;
        
         var getLegendAction = new Ext.Action({
             text : text,
@@ -167,17 +171,14 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 var styleUrl = layer.get('renderer').parentLayer.get('source').get('proxyStyleUrl');    
                 //VT: if a layer has style, the style should take priority as the default GetLegend source else use default
                 if(styleUrl && styleUrl.length > 0){
-                    if (layer.id === "pressuredb-borehole") {	
-                    	//LJ: AUS-2619 Additional params for pressureDB legend.
-                        styleUrl = portal.util.URL.base + styleUrl; //"http://auscope-portal-dev.arrc.csiro.au/portal/" 
-                        var ccProperty = filterer.getParameter('ccProperty') || '';
-                        var ccLevels = filterer.getParameter('ccLevels') || 9;
-                        var sldUrl = styleUrl + "?ccProperty=" + ccProperty + "&ccLevels=" + ccLevels;
-                        legend.getLegendComponent(onlineResources, filterer, sldUrl, false, Ext.bind(legendCallback, this, [layer], true));                        
-                    }  else {
-                    	
+                    //LJ: AUS-2619 Additional params for legend.
+                    var sldConfig = me.menuFactory.appendAdditionalLegendParams(layer, filterer, styleUrl);
+
+                    if (sldConfig.isSld_body === false) {
+                        legend.getLegendComponent(onlineResources, filterer, sldConfig.sldUrl, false, Ext.bind(legendCallback, this, [layer], true));  
+                    } else {
 	                    Ext.Ajax.request({
-	                        url: styleUrl,
+	                        url: sldConfig.sldUrl,
 	                        timeout : 180000,
 	                        scope : this,
 	                        success:function(response,opts){
