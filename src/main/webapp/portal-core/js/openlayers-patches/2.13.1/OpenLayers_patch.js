@@ -59,35 +59,36 @@ if (window.OpenLayers) {
                 map.div.removeChild(container);
             }
         }
-    }
-};
+    };
 
-/**
- * We set a very high z-index on our featured layers to make sure that they are rendered in the correct order.
- * This also now means that we need to override the popup and control defaults to make sure they have a higher z-index.
- */
-OpenLayers.Map.Z_INDEX_BASE = {
-    BaseLayer: 100,
-    Overlay: 1000,
-    Feature: 10000,
-    Popup: 10000000,
-    Control: 20000000
-};
+    /**
+     * We set a very high z-index on our featured layers to make sure that they are rendered in the correct order.
+     * This also now means that we need to override the popup and control defaults to make sure they have a higher z-index.
+     */
+    OpenLayers.Map.Z_INDEX_BASE = {
+        BaseLayer: 100,
+        Overlay: 1000,
+        Feature: 10000,
+        Popup: 10000000,
+        Control: 20000000
+    };
 
-OpenLayers.Map.prototype.addPopup = function(popup, exclusive) {
-    
-    if (exclusive) {
-        //remove all other popups from screen
-        for (var i = this.popups.length - 1; i >= 0; --i) {
-            this.removePopup(this.popups[i]);
+    OpenLayers.Map.prototype.addPopup = function(popup, exclusive) {
+        
+        if (exclusive) {
+            //remove all other popups from screen
+            for (var i = this.popups.length - 1; i >= 0; --i) {
+                this.removePopup(this.popups[i]);
+            }
         }
-    }
 
-    popup.map = this;
-    this.popups.push(popup);
-    var popupDiv = popup.draw();
-    if (popupDiv) {
-        popupDiv.style.zIndex = OpenLayers.Map.Z_INDEX_BASE['Popup'] + this.popups.length;
-        this.layerContainerDiv.appendChild(popupDiv);
-    }
+        popup.map = this;
+        this.popups.push(popup);
+        var popupDiv = popup.draw();
+        if (popupDiv) {
+            popupDiv.style.zIndex = OpenLayers.Map.Z_INDEX_BASE['Popup'] + this.popups.length;
+            this.layerContainerDiv.appendChild(popupDiv);
+        }
+    };
 };
+
