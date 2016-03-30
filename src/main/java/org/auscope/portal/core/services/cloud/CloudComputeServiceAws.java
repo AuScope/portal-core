@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.CodeSource;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -13,6 +14,8 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
@@ -26,12 +29,15 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.CreateTagsRequest;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
+import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.GetConsoleOutputRequest;
 import com.amazonaws.services.ec2.model.GetConsoleOutputResult;
 import com.amazonaws.services.ec2.model.IamInstanceProfileSpecification;
@@ -304,6 +310,59 @@ public class CloudComputeServiceAws extends CloudComputeService {
             return res.getDecodedOutput();
         } catch (NullPointerException e) {
             return null;
+        }
+    }
+
+    /**
+     * Attempts to lookup low level status information about this job's compute instance from the remote cloud.
+     *
+     * Having no computeInstanceId set will result in an exception being thrown.
+     *
+     * @param job
+     * @return
+     * @throws PortalServiceException
+     */
+    public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException {
+
+        if (StringUtils.isEmpty(job.getComputeInstanceId())) {
+            throw new PortalServiceException("No compute instance ID has been set");
+        }
+
+        DescribeInstanceStatusRequest request = new DescribeInstanceStatusRequest();
+        request.setInstanceIds(Arrays.asList(job.getComputeInstanceId()));
+
+        try {
+            AmazonEC2 ec2 = getEc2Client(job);
+
+            DescribeInstanceStatusResult result = ec2.describeInstanceStatus(request);
+            List<com.amazonaws.services.ec2.model.InstanceStatus> statuses = result.getInstanceStatuses();
+            if (statuses.isEmpty()) {
+                return InstanceStatus.Missing;
+            }
+            String status = statuses.get(0).getInstanceState().getName();
+            switch(status) {
+            case "pending":
+                return InstanceStatus.Pending;
+            case "running":
+                return InstanceStatus.Running;
+            default:
+                return InstanceStatus.Missing;
+            }
+        } catch (AmazonServiceException ex) {
+            //Some of the "expected" AWS responses come from parsing exceptions
+            switch (ex.getErrorCode()) {
+            case "InvalidInstanceID.NotFound":
+                return InstanceStatus.Missing;
+            }
+
+            switch (ex.getStatusCode()) {
+            case HttpStatus.SC_FORBIDDEN:
+                return InstanceStatus.Missing;
+            default:
+                throw new PortalServiceException("Unable to lookup status code for :" + job.getComputeInstanceId(), ex);
+            }
+        } catch (Exception ex) {
+            throw new PortalServiceException("Unable to lookup status code for :" + job.getComputeInstanceId(), ex);
         }
     }
 }

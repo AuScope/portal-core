@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
@@ -24,6 +25,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
@@ -141,7 +143,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
         builder = ContextBuilder.newBuilder(typeString)
                 .overrides(overrides);
-        
+
         if(accessKey!=null && secretKey!=null)
             builder.credentials(accessKey, secretKey);
 
@@ -356,4 +358,34 @@ public class CloudComputeServiceNectar extends CloudComputeService {
             throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
         }
      }
+
+    /**
+     * Attempts to lookup low level status information about this job's compute instance from the remote cloud.
+     *
+     * Having no computeInstanceId set will result in an exception being thrown.
+     *
+     * @param job
+     * @return
+     * @throws PortalServiceException
+     */
+    public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException {
+        if (StringUtils.isEmpty(job.getComputeInstanceId())) {
+            throw new PortalServiceException("No compute instance ID has been set");
+        }
+
+        try {
+            NodeMetadata md = computeService.getNodeMetadata(job.getComputeInstanceId());
+            Status status = md.getStatus();
+            switch (status) {
+            case PENDING:
+                return InstanceStatus.Pending;
+            case RUNNING:
+                return InstanceStatus.Running;
+            default:
+                return InstanceStatus.Missing;
+            }
+        } catch (Exception ex) {
+            throw new PortalServiceException("Error fetching node metadata", ex);
+        }
+    }
 }

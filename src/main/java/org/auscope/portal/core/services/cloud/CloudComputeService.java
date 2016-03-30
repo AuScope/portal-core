@@ -21,6 +21,26 @@ abstract public class CloudComputeService {
         AWSEc2,
     }
 
+    /**
+     * The status of a compute instance (not the job status) as reported by the remote cloud.
+     * @author Josh Vote (CSIRO)
+     *
+     */
+    public enum InstanceStatus {
+        /**
+         * Job is still waiting to start
+         */
+        Pending,
+        /**
+         * Instance is running
+         */
+        Running,
+        /**
+         * The instance could not be found or it's in a terminated state.
+         */
+        Missing,
+    }
+
     @SuppressWarnings("unused")
     private final Log logger = LogFactory.getLog(getClass());
 
@@ -199,7 +219,7 @@ abstract public class CloudComputeService {
      *
      * @param job
      *            The job whose execution should be terminated
-     * @throws PortalServiceException 
+     * @throws PortalServiceException
      */
     abstract public void terminateJob(CloudJob job) throws PortalServiceException;
 
@@ -253,4 +273,15 @@ abstract public class CloudComputeService {
      * @return
      */
     abstract public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException;
+
+    /**
+     * Attempts to lookup low level status information about this job's compute instance from the remote cloud.
+     *
+     * Having no computeInstanceId set will result in an exception being thrown.
+     *
+     * @param job
+     * @return
+     * @throws PortalServiceException
+     */
+    abstract public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException;
 }
