@@ -151,7 +151,12 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             handler : function(){
                 var legendCallback = function(legend, resources, filterer, success, form, layer){
                     if (success && form) {
+                        var winId = 'legend-' + layer.get('id');    
+                        if (Ext.getCmp(winId)) {
+                            Ext.getCmp(winId).close();
+                        }
                         var win = Ext.create('Ext.window.Window', {
+                            id          : winId,
                             title       : 'Legend: '+ layer.get('name'),
                             layout      : 'fit',
                             width       : 200,
