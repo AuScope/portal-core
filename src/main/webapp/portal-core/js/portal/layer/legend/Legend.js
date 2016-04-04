@@ -32,7 +32,7 @@ Ext.define('portal.layer.legend.Legend', {
      * resources - an array of data sources that were used to render data
      * filterer - custom filter that was applied when rendering the specified data sources
      * callback - Will be called when the legend creation process is completed and passed an instance of this Legend and the parameters used to call this function
-     *
+     * staticLegendUrl - a url to a canned legend image
      */
     getLegendComponent : portal.util.UnimplementedFunction,
 

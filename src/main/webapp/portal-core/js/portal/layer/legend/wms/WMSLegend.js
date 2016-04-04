@@ -20,12 +20,20 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
     /**
      * Implemented function, see parent class
      */
+<<<<<<< HEAD
     getLegendComponent : function(resources, filterer,sld_body, callback) {
+=======
+    getLegendComponent : function(resources, filterer,sld_body, isSld_body, callback, staticLegendUrl, tryGetCapabilitiesFirst) {
+>>>>>>> 2584395... GPT-145 legend popup
         // GPT-80 - Legend - This is called from BARP / _getLegendAction().  I think I want to change WMSLegendForm ... (see there)
-        var form = Ext.create('portal.layer.legend.wms.WMSLegendForm',{resources : resources,filterer : filterer,sld_body:sld_body});
+        var form = Ext.create('portal.layer.legend.wms.WMSLegendForm',{resources:resources, filterer:filterer, sld_body:sld_body, staticLegendUrl:staticLegendUrl});
         callback(this, resources, filterer, true, form); //this layer cannot generate a GUI popup
         // GPT-80 - the Legend data now comes from async service calls and needs to added separately (prev. was done in constructor)
+<<<<<<< HEAD
         form.addLegends({resources : resources, form : form, sld_body: sld_body});
+=======
+        form.addLegends({resources : resources, form : form, sld_body: sld_body, isSld_body: isSld_body, tryGetCapabilitiesFirst:tryGetCapabilitiesFirst});
+>>>>>>> 2584395... GPT-145 legend popup
     },
 
     /**
@@ -84,38 +92,47 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             return url;
         },
     
+        /* Hits the WMS controller to doa  getCapabilties call on the layer and retrieve the LegendGraphicURL element */
+        generateLegendGraphicFromGetCapabilities : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, callback) {
+            Ext.Ajax.request({
+                url: "getLegendURL.do",
+                timeout : 30000,    // Yes this seems a long time but was necessary
+                params : {
+                    serviceUrl : wmsURL ,
+                    wmsVersion : wmsVersion,
+                    layerName : wmsName
+                },
+                scope : this,
+                success: function(response, options){
+                    var text = response.responseText;
+                    console.log("getLegendURL.do call success - response text: ",text, "options: ", options);
+                    callback(JSON.parse(response.responseText)["data"]);
+                },
+                failure: function(response, opts) {
+                    var status = response.status;
+                    var statusMsg = response.statusText;
+
+                    console.log("getLegendURL.do call failure - layerName: ", opts.params.layerName, ", url: ", wmsURL, ", status: ", status, ", status text: ",statusMsg, ".  Try alternate method.");
+                    var getLegendGraphicUrl = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles);
+                    callback(getLegendGraphicUrl);
+                }
+            });
+        },
+
         // WMS Can specify a <legendUrl> image - retrieve from the service
-        generateLegendUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,styles, callback) {
+        generateLegendUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, tryGetCapabilitiesFirst, callback) {
             
-            var url = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,styles);
-            
-            if (url) {
-                callback(url);
-            } else {            
-                Ext.Ajax.request({
-                    url: "getLegendURL.do",
-                    timeout : 30000,    // Yes this seems a long time but was necessary  
-                    params : {
-                        serviceUrl : wmsURL ,
-                        wmsVersion : wmsVersion,
-                        layerName : wmsName
-                    },
-                    scope : this,
-                    success: function(response, options){
-                        var text = response.responseText;
-                        
-                        console.log("getLegendURL.do call success - response text: ",text, "options: ", options);
-                        callback(JSON.parse(response.responseText)["data"]);
-                    },
-                    failure: function(response, opts) {
-                        var status = response.status;
-                        var statusMsg = response.statusText;
-                        
-                        console.log("getLegendURL.do call failure - layerName: ", opts.params.layerName, ", url: ", wmsURL, ", status: ", status, ", status text: ",statusMsg, ".  Try alternate method.");
-                        var url = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,styles);
-                        callback(url);
-                    }
-                });
+            // first check the getCapabilities if configured to do so
+            if (tryGetCapabilitiesFirst) {
+                this.generateLegendGraphicFromGetCapabilities(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, callback);
+            } else {
+                // the default behaviour: try a getLegendGraphic call and use the getCapabilties iff it fails
+                var getLegendGraphicUrl = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles);
+                if (getLegendGraphicUrl) {
+                    callback(getLegendGraphicUrl);
+                } else {
+                    this.generateLegendGraphicFromGetCapabilities(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, callback);
+                }
             }
         }
     }    
