@@ -32,7 +32,8 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'active', type: 'boolean', defaultValue: false },//Whether this layer is current active on the map.
         { name: 'feature_count', type: 'string'}, //GetFeatureInfo feature_count attribute, 0 would be to default to whatever is set on the server.
         { name: 'order', type: 'string'},	// Order of the layers within a group
-        { name: 'singleTile', type: 'boolean'}    // Whether the layer should be requested as a single image (ie not tiled) 
+        { name: 'singleTile', type: 'boolean'},    // Whether the layer should be requested as a single image (ie not tiled)
+        { name: 'staticLegendUrl', type: 'string'}    // A URL to use to grab a canned legend graphic for the layer, optional.
     ],
 
     /**
