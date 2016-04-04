@@ -20,20 +20,12 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
     /**
      * Implemented function, see parent class
      */
-<<<<<<< HEAD
-    getLegendComponent : function(resources, filterer,sld_body, callback) {
-=======
     getLegendComponent : function(resources, filterer,sld_body, isSld_body, callback, staticLegendUrl, tryGetCapabilitiesFirst) {
->>>>>>> 2584395... GPT-145 legend popup
         // GPT-80 - Legend - This is called from BARP / _getLegendAction().  I think I want to change WMSLegendForm ... (see there)
         var form = Ext.create('portal.layer.legend.wms.WMSLegendForm',{resources:resources, filterer:filterer, sld_body:sld_body, staticLegendUrl:staticLegendUrl});
         callback(this, resources, filterer, true, form); //this layer cannot generate a GUI popup
         // GPT-80 - the Legend data now comes from async service calls and needs to added separately (prev. was done in constructor)
-<<<<<<< HEAD
-        form.addLegends({resources : resources, form : form, sld_body: sld_body});
-=======
         form.addLegends({resources : resources, form : form, sld_body: sld_body, isSld_body: isSld_body, tryGetCapabilitiesFirst:tryGetCapabilitiesFirst});
->>>>>>> 2584395... GPT-145 legend popup
     },
 
     /**
