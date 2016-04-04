@@ -31,7 +31,8 @@ Ext.define('portal.layer.Layer', {
         { name: 'filterForm', type: 'auto'}, //The portal.layer.filterer.BaseFilterForm that houses the GUI for editing this layer's filterer
         { name: 'renderOnAdd', type: 'boolean', defaultValue: false }, //If true then this layer should be rendered the moment it is added as a layer. Currently used by KML
         { name: 'deserialized', type: 'boolean', defaultValue: false }, //If true then this layer has been deserialized from a permanent link
-        { name: 'singleTile', type: 'boolean', defaultValue: false }
+        { name: 'singleTile', type: 'boolean', defaultValue: false},    // Whether the layer should be requested as a single image (ie not tiled)
+        { name: 'staticLegendUrl', type: 'string'} // A URL to use to grab a canned legend graphic for the layer (optional).
     ],
 
     /**

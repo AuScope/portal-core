@@ -31,6 +31,7 @@ Ext.define('portal.layer.legend.wfs.WFSLegend', {
         
         var form = Ext.create('Ext.form.Panel',{
             title : 'WFS Feature',
+            layout: 'fit',
             html :  table
             });
         

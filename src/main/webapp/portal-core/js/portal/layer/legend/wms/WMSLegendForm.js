@@ -5,8 +5,13 @@
 Ext.define('portal.layer.legend.wms.WMSLegendForm', {
     extend: 'portal.layer.legend.BaseComponent',
 
+    staticLegendUrl: null,
+    tryGetCapabilitiesFirst : false,
+
     constructor : function(config) {
  
+        this.staticLegendUrl = config.staticLegendUrl;
+        this.tryGetCapabilitiesFirst = config.tryGetCapabilitiesFirst;
         Ext.apply(config, {
             html    : '<p> Waiting for Legend data ...</p>'
         });
@@ -14,13 +19,28 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
     },
     
     addLegends : function(config) {   
+        var me = this;
+
+        var dimensions = {maxWidth:330,height:30}; // Of all graphics so can resize window - accumulative height, max width (allow for title)
+
+        // if a url to a static image was provided then just use that and
+        if (this.staticLegendUrl) {
+            var html = '<a target="_blank" href="' + this.staticLegendUrl + '">';
+            html += '<img onerror="this.alt=\'There was an error loading this legend. Click here to try again in a new window or contact the data supplier.\'" alt="Loading legend..." src="' + this.staticLegendUrl + '"/>';
+            html += '</a>';
+            html += '<br/>\n';
+            config.form.setData(html);
+            me._setFormHeight(config.form, this.staticLegendUrl, dimensions);
+            return;
+        }
+
         if (config.sld_body && config.sld_body.length > 0 && config.sld_body.length < 2000) {
             this.addStyledLegend(config);           
         } else {
             var wmsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(config.resources, portal.csw.OnlineResource.WMS);
             var urls={};
-            var dimensions = {maxWidth:300,height:0}; // Of all graphics so can resize window - accumulative height, max width (allow for title)
-            var me = this;
+            var dimensions = {maxWidth:330,height:30}; // Of all graphics so can resize window - accumulative height, max width (allow for title)
+
             for (var j = 0; j < wmsOnlineResources.length; j++) {
 
                 var width = config.sld_body ? null : this.getWidth();
@@ -32,6 +52,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
                     width,
                     config.sld_body,
                     undefined,
+                    config.tryGetCapabilitiesFirst,
                     function(url) {
                         if (! urls.hasOwnProperty(url)) {
                             // Add a WIDTH attribute to ?requests (but not to normal resource GETs ie. that don't contain a '?')
@@ -40,7 +61,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
                                 url += "&WIDTH=100";
                             }
                             var html='';
-                            
+
                             urls[url] = 1;
                             Object.getOwnPropertyNames(urls).sort().forEach(function (url, index, array) {
                                 html += '<a target="_blank" href="' + url + '">';
@@ -80,6 +101,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
                 width,
                 config.sld_body,
                 undefined,
+                me.tryGetCapabilitiesFirst,
                 // callback function. Populates the array of legend urls
                 function(url) {                    
                     if (sourceUrls.indexOf(url) == -1) {                                                    
@@ -91,7 +113,7 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
         
         // now loop through looking for a useable image
         for (loopIndex = 0; loopIndex < sourceUrls.length; loopIndex++) {
-            var dimensions = {maxWidth:300,height:0}; 
+            var dimensions = {maxWidth:330,height:30};
             
             var url = sourceUrls[loopIndex];
             var image = new Image();    
