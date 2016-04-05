@@ -1,14 +1,19 @@
 package org.auscope.portal.core.services.cloud;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import junit.framework.Assert;
+
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
+import org.auscope.portal.core.services.cloud.CloudComputeService.InstanceStatus;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
@@ -25,8 +30,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-
-import junit.framework.Assert;
 
 public class TestCloudComputeService extends PortalTestClass {
 
@@ -429,5 +432,32 @@ public class TestCloudComputeService extends PortalTestClass {
         String actualInstanceId = service.executeJob(job, userDataString);
 
         Assert.assertEquals(expectedInstanceId, actualInstanceId);
+    }
+
+    @Test
+    public void testGetJobStatus() throws Exception {
+        job.setComputeInstanceId("i-running");
+
+        context.checking(new Expectations() {{
+            oneOf(mockComputeService).getNodeMetadata("i-running");
+            will(returnValue(mockMetadata));
+
+            allowing(mockMetadata).getStatus();
+            will(returnValue(Status.PENDING));
+        }});
+
+        Assert.assertEquals(InstanceStatus.Pending, service.getJobStatus(job));
+    }
+
+    @Test(expected=PortalServiceException.class)
+    public void testGetJobStatus_IOError() throws Exception {
+        job.setComputeInstanceId("i-running");
+
+        context.checking(new Expectations() {{
+            oneOf(mockComputeService).getNodeMetadata("i-running");
+            will(throwException(new IOException()));
+        }});
+
+        service.getJobStatus(job);
     }
 }
