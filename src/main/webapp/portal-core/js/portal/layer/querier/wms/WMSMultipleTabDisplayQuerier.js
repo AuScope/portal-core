@@ -111,7 +111,7 @@ Ext.define('portal.layer.querier.wms.WMSMultipleTabDisplayQuerier', {
                    },
                    {text : "Value", dataIndex:"value", flex : true, 
                        renderer: function(value){
-                           if (value.startsWith("http")) {
+                           if (value.indexOf("http") == 0) {
                                return '<a href="'+value+'" target="_blank">'+value+'</a>';
                            } else {
                                return value;
