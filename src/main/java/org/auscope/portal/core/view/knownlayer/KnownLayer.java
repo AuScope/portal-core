@@ -13,7 +13,7 @@ import java.io.Serializable;
  *
  */
 public class KnownLayer implements Serializable {
-	
+
     /** auto generated version ID */
     private static final long serialVersionUID = 236524163668910226L;
 
@@ -68,6 +68,10 @@ public class KnownLayer implements Serializable {
      * (many is the default).
      */
     private Boolean singleTile = Boolean.FALSE;
+
+    /** A URL to use to grab a canned legend graphic for the layer (optional). */
+    private String staticLegendUrl;
+
 
     /**
      * Creates a new KnownLayer
@@ -363,6 +367,14 @@ public class KnownLayer implements Serializable {
         this.singleTile = singleTile;
     }
 
+    public String getStaticLegendUrl() {
+        return staticLegendUrl;
+    }
+
+    public void setStaticLegendUrl(String staticLegendUrl) {
+        this.staticLegendUrl = staticLegendUrl;
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -373,8 +385,6 @@ public class KnownLayer implements Serializable {
                 + ", proxyStyleUrl=" + proxyStyleUrl + ", proxyDownloadUrl=" + proxyDownloadUrl
                 + ", knownLayerSelector=" + knownLayerSelector + ", iconUrl=" + iconUrl + ", polygonColor="
                 + polygonColor + ", iconAnchor=" + iconAnchor + ", iconSize=" + iconSize + ", feature_count="
-                + feature_count + ", order=" + order + ", singleTile=" + singleTile + "]";
+                + feature_count + ", order=" + order + ", singleTile=" + singleTile + ", staticLegendUrl=" + staticLegendUrl + "]";
     }
-    
-    
 }
