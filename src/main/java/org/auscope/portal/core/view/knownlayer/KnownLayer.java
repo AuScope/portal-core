@@ -381,7 +381,7 @@ public class KnownLayer implements Serializable {
 		this.forceWMSGet = forceWMSGet;
 	}
 
-	public String getStaticLegendUrl() {
+    public String getStaticLegendUrl() {
         return staticLegendUrl;
     }
 
