@@ -67,6 +67,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 //Loading icon column
                 xtype : 'clickcolumn',
                 dataIndex : 'active',
+                tdCls : 'noTextOverflow',
                 renderer : me._deleteRenderer,
                 hasTip : true,
                 tipRenderer : function(value, layer, column, tip) {
@@ -85,6 +86,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 xtype : 'clickcolumn',
                 dataIndex : 'loading',
                 renderer : me._loadingRenderer,
+                tdCls : 'noTextOverflow',
                 hasTip : true,
                 tipRenderer : Ext.bind(me._loadingTipRenderer, me),
                 width: 32,
