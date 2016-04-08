@@ -28,6 +28,7 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         }        
                         
         var singleTile = cfg.layer.get('source').get('singleTile');
+        var forceWMSGet = cfg.layer.get('source').get('forceWMSGet');
         
         var cswboundingBox= this._getCSWBoundingBox(cswRecord);        
 
@@ -40,7 +41,7 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         };
                 
         var additionalOptions = {
-            tileOptions: {maxGetUrlLength: 1500},
+            tileOptions: {},
             isBaseLayer : false,
             projection: cswboundingBox.crs,
             maxExtent: cswboundingBox.bounds,
@@ -51,6 +52,10 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         if (singleTile == true) {
             additionalOptions.singleTile = true;
             additionalOptions.ratio = 1;
+        }
+        
+        if (forceWMSGet == false) {
+        	additionalOptions.tileOptions.maxGetUrlLength = 1500;
         }
         
         if(this.getSld_body() && this.getSld_body().length > 0){            
