@@ -68,6 +68,12 @@ public class KnownLayer implements Serializable {
      * (many is the default).
      */
     private Boolean singleTile = Boolean.FALSE;
+    
+    /** For cases where POSTing an SLD to a WMS service is not possible (eg ArcGIS) 
+     *  (default is not to force and let the JS framework decide based on URL length
+     *  which usually results in a POST)   
+     */
+    private Boolean forceWMSGet = Boolean.FALSE;
 
     /** A URL to use to grab a canned legend graphic for the layer (optional). */
     private String staticLegendUrl;
@@ -367,7 +373,15 @@ public class KnownLayer implements Serializable {
         this.singleTile = singleTile;
     }
 
-    public String getStaticLegendUrl() {
+	public Boolean getForceWMSGet() {
+		return forceWMSGet;
+	}
+
+	public void setForceWMSGet(Boolean forceWMSGet) {
+		this.forceWMSGet = forceWMSGet;
+	}
+
+	public String getStaticLegendUrl() {
         return staticLegendUrl;
     }
 
