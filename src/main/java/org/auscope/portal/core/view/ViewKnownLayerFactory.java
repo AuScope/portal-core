@@ -48,6 +48,7 @@ public class ViewKnownLayerFactory {
         obj.put("feature_count", k.getFeature_count());
         obj.put("order", k.getOrder());
         obj.put("singleTile", k.getSingleTile());
+        obj.put("forceWMSGet", k.getForceWMSGet());
         obj.put("staticLegendUrl", k.getStaticLegendUrl());
         
         String group = "Others";
