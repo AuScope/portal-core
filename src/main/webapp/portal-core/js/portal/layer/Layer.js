@@ -83,10 +83,18 @@ Ext.define('portal.layer.Layer', {
                 if (mapLayers && mapLayers.length > 0) {
                     for (var k = 0; k < mapLayers.length; k++) {
                         // construct a useable z-index for the layer on the map
-                        var zIndex = (layerStore.data.items.length - i) * 100000 + (j*100) + k;
+                        var zIndex = (layerStore.data.items.length - i) * (j*100) + k;
                         map.map.setLayerZIndex(mapLayers[k], zIndex);
                     }
                 }
+            }
+        }
+
+        // float the vector root containers to the top of the map so that they can be clicked on
+        for (var i = 0; i < map.map.layers.length; i++) {
+            var layer = map.map.layers[i];
+            if (layer.id.indexOf('OpenLayers_Layer_Vector_RootContainer') != -1) {
+                map.map.setLayerZIndex(layer, 10000 + i);
             }
         }
     },
