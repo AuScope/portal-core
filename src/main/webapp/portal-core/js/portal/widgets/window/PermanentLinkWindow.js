@@ -57,6 +57,7 @@ Ext.define('portal.widgets.window.PermanentLinkWindow', {
                 autoHeight : true,
                 items : [{
                     xtype : 'textfield',
+                    id: 'linkField',
                     anchor : '100%',
                     fieldLabel : 'Paste this link',
                     labelStyle: 'font-weight:bold;',
@@ -70,8 +71,22 @@ Ext.define('portal.widgets.window.PermanentLinkWindow', {
                          }
                     }
                 }]
+            }],
+            // in the ancient tradition of implementing odd ideas as requested by users...
+            // add a button that copies the text field content to the clipboard. Yuck.
+            buttons: [{
+                xtype: 'button',
+                text: 'Copy to clipboard',
+                handler: function(button) {
+                    if (window.clipboardData && window.clipboardData.setData) {
+                        return clipboardData.setData("Text", Ext.getCmp('linkField').value); 
+                    } else {
+                        document.getElementById('linkField-inputEl').focus();
+                        document.getElementById('linkField-inputEl').select();
+                        document.execCommand('copy');
+                    }
+                }
             }]
-
         });
 
         this.callParent(arguments);
