@@ -3,7 +3,7 @@ package org.auscope.portal.core.view.knownlayer;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource;
 import org.auscope.portal.core.services.responses.csw.CSWRecord;
 
-public class OGCSelector implements KnownLayerSelector {
+public class WMSWFSSelector implements KnownLayerSelector {
 
 	private String featureTypeName;
 	private String layerName;
@@ -13,12 +13,12 @@ public class OGCSelector implements KnownLayerSelector {
 	private String[] serviceEndpoints;
 	private boolean includeEndpoints;
 
-	public OGCSelector(String featureTypeName, String layerName) {
+	public WMSWFSSelector(String featureTypeName, String layerName) {
 		this.featureTypeName = featureTypeName;
 		this.layerName = layerName;
 	}
 	
-	public OGCSelector(String featureTypeName, String layerName, String[] serviceEndpoints,
+	public WMSWFSSelector(String featureTypeName, String layerName, String[] serviceEndpoints,
 			boolean includeEndpoints) {
 
 		this.featureTypeName = featureTypeName;
