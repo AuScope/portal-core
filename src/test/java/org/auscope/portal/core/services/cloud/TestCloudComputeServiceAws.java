@@ -2,6 +2,7 @@ package org.auscope.portal.core.services.cloud;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
@@ -162,6 +163,34 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
 
         final AmazonServiceException ex = new AmazonServiceException("Testing Exception");
         ex.setErrorCode("InvalidInstanceID.NotFound");
+
+        context.checking(new Expectations() {{
+
+        }});
+
+        Assert.assertEquals(InstanceStatus.Pending, service.getJobStatus(job));
+    }
+
+    /**
+     * In case we have some time issues and a job's submit date is in the future
+     *
+     * In this case we expect it to return pending. If it's only a few seconds in the future then it's probably just a minor date/time
+     * shifting error (or a daylight savings time shift). If it's a LONG time in the future, what can we expect? It's probably overengineering
+     * the checks if we start accounting for the latter.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testJobStatus_FutureJob() throws Exception {
+        CloudJob job = new TestableJob();
+
+        Date now = new Date();
+        Date submitTime = new Date(now.getTime() + TimeUnit.DAYS.toMillis(2)); //Throw the submit 2 days into the future to simulate some weird clock behavior
+
+        job.setComputeInstanceId("testable-id");
+        job.setProperty(CloudJob.PROPERTY_STS_ARN, "sts-arn");
+        job.setProperty(CloudJob.PROPERTY_CLIENT_SECRET, "client-secret");
+        job.setSubmitDate(submitTime);
 
         context.checking(new Expectations() {{
 
