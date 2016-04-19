@@ -130,6 +130,23 @@ Ext.define('portal.layer.renderer.wfs.GMLParser', {
         return this.map.makeMarker(name, description, undefined, onlineResource, layer, point, icon);
     },
 
+    /**
+     * Returns the feature count as reported by the WFS response. Returns null if the count cannot be parsed.
+     */
+    getFeatureCount : function() {
+        var wfsFeatureCollection = portal.util.xml.SimpleDOM.getMatchingChildNodes(this.rootNode, null, "FeatureCollection");
+        if (Ext.isEmpty(wfsFeatureCollection)) {
+            return null;
+        }
+        
+        var count = parseInt(wfsFeatureCollection[0].getAttribute('numberOfFeatures'));
+        if (Ext.isNumber(count)) {
+            return count;
+        }
+        
+        return null;
+    },
+    
     makePrimitives : function(icon, onlineResource, layer) {
         var primitives = [];
         var wfsFeatureCollection = portal.util.xml.SimpleDOM.getMatchingChildNodes(this.rootNode, null, "FeatureCollection");
