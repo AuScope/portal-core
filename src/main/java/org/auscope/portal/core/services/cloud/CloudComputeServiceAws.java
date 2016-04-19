@@ -5,9 +5,11 @@ import java.security.CodeSource;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParserFactory;
@@ -57,6 +59,14 @@ import com.amazonaws.services.securitytoken.model.AssumeRoleResult;
  * @author Josh Vote
  */
 public class CloudComputeServiceAws extends CloudComputeService {
+    /**
+     * Any getStatus request on a job whose submission time is less than STATUS_PENDING_SECONDS seconds
+     * away from the current time will be forced to return a Pending status (ignoring any status checks)
+     *
+     * This is to avoid missing errors occurring when AWS hasn't fully caught up to the new VM.
+     */
+    public static final long STATUS_PENDING_SECONDS = 30;
+
     private final Log logger = LogFactory.getLog(getClass());
 
     private String devAccessKey;
@@ -323,6 +333,17 @@ public class CloudComputeServiceAws extends CloudComputeService {
      * @throws PortalServiceException
      */
     public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException {
+
+        //If the job has just been submitted - don't go checking with AWS, we'll probably get a missing VM message
+        //Let the VM have a chance to propogate through AWS
+        //See also ANVGL-112
+        Date submitDate = job.getSubmitDate();
+        if (submitDate != null) {
+            Date now = new Date();
+            if (TimeUnit.MILLISECONDS.toSeconds(now.getTime() - submitDate.getTime()) < STATUS_PENDING_SECONDS) {
+                return InstanceStatus.Pending;
+            }
+        }
 
         if (StringUtils.isEmpty(job.getComputeInstanceId())) {
             throw new PortalServiceException("No compute instance ID has been set");
