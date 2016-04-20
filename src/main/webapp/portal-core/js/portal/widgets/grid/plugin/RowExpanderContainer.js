@@ -114,12 +114,19 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     /**
      * Utility for accessing the defined "ID" property of a record
      */
-    _getId: function(record) {
+    _getId: function(record, sanitise) {
+        var id;
         if (this.recordIdProperty) {
-            return record.get(this.recordIdProperty).toString().replace(/[^0-9A-Za-z\\-]/g,'-');
+            id = record.get(this.recordIdProperty).toString();
         } else {
-            return record.id.toString().replace(/[^0-9A-Za-z\\-]/g,'-');
+            id = record.id.toString();
         }
+        
+        if (sanitise) {
+            id = id.replace(/[^0-9A-Za-z\\-]/g,'-');
+        }
+        
+        return id;
     },
     
     /**
@@ -150,7 +157,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             return false;
         }
         
-        var body = Ext.DomQuery.selectNode('#'+this.baseId + '-' + id, el.parentNode); // rowexpandercontainer-'
+        var body = Ext.DomQuery.selectNode('#'+this.baseId + '-' + this._getId(record, true), el.parentNode); // rowexpandercontainer-'
         if (body.hasChildNodes()) {
             return false;
         }
@@ -247,7 +254,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         me.generationRunning = true;
         if (me.restorationRequired(record)) {
-            var id = me.baseId + '-' + me._getId(record);   // "rowexpandercontainer-"
+            var id = me.baseId + '-' + me._getId(record, true);   // "rowexpandercontainer-"
             var container = me.generateContainer(record, id, me.grid);
             
             // If a container already existed then destroy it first.
