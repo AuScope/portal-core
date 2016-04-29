@@ -113,28 +113,39 @@ Ext.define('portal.layer.legend.wms.WMSLegendForm', {
             );
         };    
         
-        // now loop through looking for a useable image
-        for (loopIndex = 0; loopIndex < sourceUrls.length; loopIndex++) {
-            var dimensions = {maxWidth:330,height:30};
-            
+    	var useableImage = false;
+    	
+    	// now loop through looking for a useable image
+        for (loopIndex = 0; loopIndex < sourceUrls.length; loopIndex++) {                            
+            if (useableImage)
+             	break;
+                
             var url = sourceUrls[loopIndex];
             var image = new Image();    
-            image.src=url;
-            
-            var html='';
-
-            html += '<a target="_blank" href="' + url + '">';
-            html += '<img onerror="this.alt=\'There was an error loading this legend. Click here to try again in a new window or contact the data supplier.\'" alt="Loading legend..." src="' + url + '"/>';
-            html += '</a>';
-            
-            config.form.setData(html);
-            me._setFormHeight(config.form, url, dimensions);
-            
-            if (image.height > 0) {           
-                // we got a useable image so break out of the loop
-                break;                
-            }   
-        }
+            image.onload = function() {                    
+                if (this.height > 0) {               
+                    var html='';
+                    html += '<a target="_blank" href="' + this.src + '">';
+                    html += '<img onerror="this.alt=\'There was an error loading this legend. Click here to try again in a new window or contact the data supplier.\'" alt="Loading legend..." src="' + this.src + '"/>';
+                    html += '</a>';                        
+                    config.form.setData(html);                    
+                    me._setStyledFormHeight(config.form, this);
+                    
+                    useableImage = true;
+                }   
+            }; 
+            image.src=url;            
+        }               
+    },
+    
+    _setStyledFormHeight : function(form, image) {
+    	var dimensions = {maxWidth:330,height:30};
+        dimensions.height += image.height;
+        // Add extra to allow for spacing
+        dimensions.height += (dimensions.height * 0.02);
+        dimensions.maxWidth = Math.max(dimensions.maxWidth,image.width);
+        form.setHeight(dimensions.height);
+        form.setWidth(dimensions.maxWidth);        
     },
     
     _setFormHeight : function(form, url, dimensions) {
