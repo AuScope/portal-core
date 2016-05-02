@@ -60,6 +60,7 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         
         if(this.getSld_body() && this.getSld_body().length > 0){            
             options.sld_body = this.getSld_body();
+            options.styles = this._getStylesFromSLD();
             options.tiled = true;
         } 
 
@@ -74,6 +75,18 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
         wmsLayer._portalBasePrimitive = this;
 
         this.setWmsLayer(wmsLayer);
+    },
+    
+    /*
+     * Returns STYLES parameter from the SLD, which is required for ArcGIS WMS.
+     * 
+     * The design only permits one layer per SLD.
+     */
+    
+    _getStylesFromSLD : function() {
+    	var sld = portal.util.xml.SimpleDOM.parseStringToDOM(this.getSld_body());
+    	// GPT-MS : This would be better as an XPath '/StyledLayerDescriptor/UserStyle/Name" but I couldn't get it to work.  
+    	return sld.getElementsByTagName("UserStyle")[0].getElementsByTagName("Name")[0].textContent;
     },
     
     _getCSWBoundingBox : function(cswrecords){
