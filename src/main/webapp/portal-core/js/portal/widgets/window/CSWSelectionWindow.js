@@ -3,7 +3,7 @@
  */
 
 CSWSelectionWindow = Ext.extend(Ext.Window, {
-    //this is the store of the personal panal.
+    //this is the store of the personal panel.
     store : null,
     pageSize: 20,
 
@@ -13,9 +13,10 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
 	    iconCls : 'add',
 	    scope : this,
 	    handler : function(button, e) {
-	        var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
+            var myParent = button.findParentByType('window');
+	        var cswPagingPanel = myParent.getComponent('pagingRecordtabPanel').getActiveTab();
 	        var csw = cswPagingPanel.getSelectionModel().getSelection();
-	        this.fireEvent('selectioncomplete',csw);
+	        myParent.fireEvent('selectioncomplete',csw);
 	     }
 	},{
 	    xtype : 'button',
@@ -23,10 +24,11 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
 	    iconCls : 'addall',
 	    scope : this,
 	    handler : function(button, e) {
-	        var cswPagingPanel = button.findParentByType('window').getComponent('pagingRecordtabPanel').getActiveTab();
+            var myParent = button.findParentByType('window');
+	        var cswPagingPanel = myParent.getComponent('pagingRecordtabPanel').getActiveTab();
 	        var allStore = cswPagingPanel.getStore();
 	        var csw = allStore.getRange();
-	        this.fireEvent('selectioncomplete',csw);
+	        myParent.fireEvent('selectioncomplete',csw);
 	     }
 	}],
 
@@ -56,18 +58,6 @@ CSWSelectionWindow = Ext.extend(Ext.Window, {
         //Call parent constructor
         CSWSelectionWindow.superclass.constructor.call(this, cfg);
 
-    },
-    
-    // overridden close method to obtain a reference to the search window and close it as well
-    close: function() {      
-    	var cswFilterWindow = Ext.getCmp('cswFilterWindow');
-    	if (cswFilterWindow) {
-    		cswFilterWindow.close();
-    	}
-    	var searchResultsWindow = Ext.getCmp('cswSelectionWindow');
-    	if (searchResultsWindow) {
-    		searchResultsWindow.destroy();
-    	}
     }
 
 });
