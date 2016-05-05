@@ -69,16 +69,27 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             url += '&LAYER=' + escape(wmsName);
             url += '&LAYERS=' + escape(wmsName);
             if (width) {
-                url += '&WIDTH=' + width;
+                url += '&WIDTH=' + width;  
             }
+            // GPT-MS: Ugly hack that checks if we are making a GetLegendGraphic request to an ArcGIS Server and sets a fixed width
+            else if (wmsURL.toUpperCase().indexOf("MAPSERVER/WMSSERVER") > -1)  {
+            	 url += '&WIDTH=300';
+            }
+            
             //vt: The sld for legend does not require any filter therefore it should be
             // able to accomadate all sld length.
             if(sld_body && sld_body.length< 2000){
                 url += '&SLD_BODY=' + escape(sld_body);
                 url += '&LEGEND_OPTIONS=forceLabels:on';
             }
+            
+            // GPT-MS -- I don't believe the below works. GetLegendGraphic takes a STYLE parameter, not a STYLES parameter. Have left it as is. 
             if (this.styles) {
                 url += '&STYLES=' + escape(this.styles);
+            } else {
+            	var sld = portal.util.xml.SimpleDOM.parseStringToDOM(sld_body);
+            	// GPT-MS : This would be better as an XPath '/StyledLayerDescriptor/UserStyle/Name" but I couldn't get it to work.  
+            	url += '&STYLE=' + sld.getElementsByTagName("UserStyle")[0].getElementsByTagName("Name")[0].textContent;
             }
 
             return url;
