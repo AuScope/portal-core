@@ -92,3 +92,35 @@ if (window.OpenLayers) {
     };
 };
 
+/**
+ * This patch is from ANVGL-106
+ * 
+ * Basically, when using OpenLayers.Handler.RegularPolygon with Control.DrawFeature, the "rubber band" selection
+ * is drawn at the lowest Z-index (despite the layer being top of the Z-order). This patch forces a shuffle of the 
+ * layers to ensure the rubber band is drawn on top
+ * 
+ * This file applies the patch by overriding the containing function in the OpenLayers object.
+ */
+if (window.OpenLayers) {
+    OpenLayers.Handler.RegularPolygon.prototype.activate = function() {
+        var activated = false;
+        if(OpenLayers.Handler.Drag.prototype.activate.apply(this, arguments)) {
+            // create temporary vector layer for rendering geometry sketch
+            var options = OpenLayers.Util.extend({
+                displayInLayerSwitcher: false,
+                // indicate that the temp vector layer will never be out of range
+                // without this, resolution properties must be specified at the
+                // map-level for this temporary layer to init its resolutions
+                // correctly
+                calculateInRange: OpenLayers.Function.True,
+                wrapDateLine: this.citeCompliant
+            }, this.layerOptions);
+            this.layer = new OpenLayers.Layer.Vector(this.CLASS_NAME, options);
+            this.map.addLayer(this.layer);
+            this.map.setLayerIndex(this.layer, this.map.layers.length); //ANVGL-106 - Force this to the top
+            activated = true;
+        }
+        return activated;
+    };
+}
+
