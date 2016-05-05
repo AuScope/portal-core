@@ -64,7 +64,9 @@ Ext.define('portal.layer.querier.wfs.WFSWithMapQuerier', {
         }
 
         var sld_body=null;
-        if(queryTarget.get('layer').get('renderer').sld_body){
+        // GPT-MS: Check whether service is ArcGIS, if so, don't set sld_body in GetFeatureInfo
+        // TODO Refactor task GPT-230
+        if(queryTarget.get('layer').get('renderer').sld_body || wmsOnlineResource.get('url').toUpperCase().indexOf("MAPSERVER/WMSSERVER") < 0){
             sld_body=queryTarget.get('layer').get('renderer').sld_body;
             if(!methodPost && sld_body.length > 1200){//VT; if the length of the sld is too long we HAVE to use post
                 methodPost = true
