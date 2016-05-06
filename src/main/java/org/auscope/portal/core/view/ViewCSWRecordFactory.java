@@ -80,7 +80,7 @@ public class ViewCSWRecordFactory {
         List<String> datasetURIs = new ArrayList<String>();
         if (record.getDataSetURIs() != null) {
             for (String s : record.getDataSetURIs()) {
-            	datasetURIs.add(s);
+                datasetURIs.add(s);
             }
         }
         obj.put("datasetURIs", datasetURIs);

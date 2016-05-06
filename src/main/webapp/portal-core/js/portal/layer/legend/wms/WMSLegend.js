@@ -51,7 +51,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
 
     statics : {
 
-        generateImageUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,styles) {
+        generateImageUrl : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles) {
             var url = wmsURL;
             var last_char = url.charAt(url.length - 1);
             if ((last_char !== "?") && (last_char !== "&")) {
@@ -65,6 +65,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             url += '&SERVICE=WMS';
             url += '&VERSION='+ wmsVersion;
             url += '&FORMAT=image/png';
+            url += '&HEIGHT=25';
             url += '&BGCOLOR=0xFFFFFF';
             url += '&LAYER=' + escape(wmsName);
             url += '&LAYERS=' + escape(wmsName);
@@ -78,9 +79,13 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             
             //vt: The sld for legend does not require any filter therefore it should be
             // able to accomadate all sld length.
-            if(sld_body && sld_body.length< 2000){
-                url += '&SLD_BODY=' + escape(sld_body);
-                url += '&LEGEND_OPTIONS=forceLabels:on';
+            if (sld_body && sld_body.length < 2000) {
+                if (isSld_body === true) {
+                    url += '&SLD_BODY=' + escape(sld_body);
+                } else {
+                    url += '&SLD=' + encodeURIComponent(sld_body);
+                }
+                url += '&LEGEND_OPTIONS=forceLabels:on;minSymbolSize:16';
             }
             
             // GPT-MS -- I don't believe the below works. GetLegendGraphic takes a STYLE parameter, not a STYLES parameter. Have left it as is. 

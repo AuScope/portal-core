@@ -39,8 +39,6 @@ Ext.define('portal.map.openlayers.ActiveLayerManager', {
             for (var i = 0; i < layers.length; i++) {
                 activeLayerStore.suspendEvents(true);
                 activeLayerStore.add(layers[i]);    
-                //layers[i].get('renderer').displayData();
-                //layers[i].reRenderLayerDisplay();
                 activeLayerStore.resumeEvents();
             }
         }

@@ -236,7 +236,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleDatasetURI.xml");
         Assert.assertNotNull(this.records[0].getDataSetURIs());   
         Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150", 
-        		this.records[0].getDataSetURIs()[0]);
+                this.records[0].getDataSetURIs()[0]);
     }
     
     /**
@@ -247,9 +247,9 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         setUpForResponse("org/auscope/portal/core/test/responses/csw/cswRecordResponse_MultipleDatasetURIs.xml");
         Assert.assertNotNull(this.records[0].getDataSetURIs());   
         Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26150", 
-        		this.records[0].getDataSetURIs()[0]);
-        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26151", 
-        		this.records[0].getDataSetURIs()[1]);
+                this.records[0].getDataSetURIs()[0]);
+        Assert.assertEquals("http://geology.data.vic.gov.au/searchAssistant/reference.html?q=record_id:26151",
+                this.records[0].getDataSetURIs()[1]);
     }
     
     /**

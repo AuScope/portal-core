@@ -22,6 +22,8 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     
     layerStore: null,
     
+    menuFactory: null,
+
     /**
      * Accepts all parameters for a normal Ext.Panel instance with the following additions
      * {
@@ -72,6 +74,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         }                            
         
         if(config.menuFactory){
+            this.menuFactory = config.menuFactory;
             var mf= config.menuFactory;
             if (mf.addResetFormActionForWMS) {
                 menuItems.push(this._getResetFormAction());
@@ -82,7 +85,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         //VT:All special menu item should be determined from the menu factory. This is the only exception as all layers 
         //VT:Should have a legend action except for Insar data.
         // but even then if the portal is specifiying the menu items then don't add a legend by default
-        if (!config.menuItems && this.filterForm.layer.get('renderer').getLegend()){            
+        if (config.menuItems && this.filterForm.layer.get('renderer').getLegend()){            
             menuItems.push(this._getLegendAction(this.filterForm.layer));
         }   
         
@@ -136,6 +139,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
     _getLegendAction : function(layer){                       
         var legend = layer.get('renderer').getLegend();
         var text = 'Get Legend';
+        var me = this;
        
         var getLegendAction = new Ext.Action({
             text : text,
@@ -147,7 +151,12 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             handler : function(){
                 var legendCallback = function(legend, resources, filterer, success, form, layer){
                     if (success && form) {
+                        var winId = 'legend-' + layer.get('id');    
+                        if (Ext.getCmp(winId)) {
+                            Ext.getCmp(winId).close();
+                        }
                         var win = Ext.create('Ext.window.Window', {
+                            id          : winId,
                             title       : 'Legend: '+ layer.get('name'),
                             layout      : 'fit',
                             width       : 200,
@@ -164,25 +173,30 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 var legend = renderer.getLegend(onlineResources, filterer);
 
                 //VT: this style is just for the legend therefore no filter is required.
-                var styleUrl = layer.get('renderer').parentLayer.get('source').get('proxyStyleUrl');
-                
+                var styleUrl = layer.get('renderer').parentLayer.get('source').get('proxyStyleUrl');    
                 //VT: if a layer has style, the style should take priority as the default GetLegend source else use default
                 if(styleUrl && styleUrl.length > 0){
+                    //LJ: AUS-2619 Additional params for legend.
+                    var sldConfig = me.menuFactory.appendAdditionalLegendParams(layer, filterer, styleUrl);
 
-                    Ext.Ajax.request({
-                        url: styleUrl,
-                        timeout : 180000,
-                        scope : this,
-                        success:function(response,opts){
-                            legend.getLegendComponent(onlineResources, filterer,response.responseText, Ext.bind(legendCallback, this, [layer], true));
-                        },
-                        failure: function(response, opts) {
-                            legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
-                        }                        
-                    });
+                    if (sldConfig.isSld_body === false) {
+                        legend.getLegendComponent(onlineResources, filterer, sldConfig.sldUrl, false, Ext.bind(legendCallback, this, [layer], true));  
+                    } else {
+	                    Ext.Ajax.request({
+	                        url: sldConfig.sldUrl,
+	                        timeout : 180000,
+	                        scope : this,
+	                        success:function(response,opts){
+	                            legend.getLegendComponent(onlineResources, filterer,response.responseText, true, Ext.bind(legendCallback, this, [layer], true));
+	                        },
+	                        failure: function(response, opts) {
+	                            legend.getLegendComponent(onlineResources, filterer,"", true, Ext.bind(legendCallback, this, [layer], true));
+	                        }                        
+	                    });
+                    }
                 
                 }else{
-                    legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
+                    legend.getLegendComponent(onlineResources, filterer,"", true, Ext.bind(legendCallback, this, [layer], true));
                 }
                 
             }

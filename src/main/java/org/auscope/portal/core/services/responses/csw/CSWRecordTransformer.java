@@ -36,7 +36,7 @@ public class CSWRecordTransformer {
     protected static final String DATEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
     
     protected enum Scope {
-    	service, dataset
+        service, dataset
     };
     
     protected static final CSWNamespaceContext nc = new CSWNamespaceContext();
@@ -396,7 +396,7 @@ public class CSWRecordTransformer {
         String[] datasetURIs = record.getDataSetURIs();
         if (datasetURIs != null) {
             for (String datasetURI : datasetURIs) {
-            	appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "dataSetURI", datasetURI);
+                appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "dataSetURI", datasetURI);
             }
         }
         
@@ -555,14 +555,13 @@ public class CSWRecordTransformer {
         
         String identificationPath = null;
         if (Scope.service.toString().equals(recordType)) {
-        	identificationPath = SERVICEIDENTIFICATIONPATH; 
-        	record.setService(true);
-        }
-        else {
-        	identificationPath = DATAIDENTIFICATIONPATH;
+            identificationPath = SERVICEIDENTIFICATIONPATH;
+            record.setService(true);
+        } else {
+            identificationPath = DATAIDENTIFICATIONPATH;
         }
       
-        record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));  	
+        record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));
         record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
 
         record.setFileIdentifier(evalXPathString(this.mdMetadataNode, FILEIDENTIFIEREXPRESSION));
@@ -639,8 +638,8 @@ public class CSWRecordTransformer {
             List<String> datasetURIs = new ArrayList<String>();
             Node datasetURI;
             for (int j = 0; j < tempNodeList.getLength(); j++) {
-            	datasetURI = tempNodeList.item(j);
-            	datasetURIs.add(datasetURI.getTextContent());
+                datasetURI = tempNodeList.item(j);
+                datasetURIs.add(datasetURI.getTextContent());
             }
             record.setDataSetURIs(datasetURIs.toArray(new String[datasetURIs.size()]));
         }

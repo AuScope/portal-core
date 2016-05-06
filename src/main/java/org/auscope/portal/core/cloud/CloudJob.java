@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base class representing the base state of a job that is sent to the cloud for processing.
@@ -53,6 +55,12 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
     /** The unique ID of the storage service this job has been using */
     protected String storageServiceId;
 
+    transient protected Map<String, String> properties = new HashMap<>();
+
+    public final static String PROPERTY_STS_ARN = "sts_arn";
+    public final static String PROPERTY_CLIENT_SECRET = "client_secret";
+    public final static String PROPERTY_S3_ROLE = "s3_role";
+
     /**
      * Creates a new cloud job will null entries for every field
      */
@@ -62,7 +70,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Creates a new cloud job with the following fields
-     * 
+     *
      * @param id
      *            Unique ID identifying this job
      */
@@ -71,9 +79,17 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
         this.id = id;
     }
 
+    public String setProperty(String key, String value) {
+        return properties.put(key, value);
+    }
+
+    public String getProperty(String key) {
+        return properties.get(key);
+    }
+
     /**
      * Unique ID identifying this job
-     * 
+     *
      * @return
      */
     public Integer getId() {
@@ -82,7 +98,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Unique ID identifying this job
-     * 
+     *
      * @param id
      */
     public void setId(Integer id) {
@@ -91,7 +107,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Descriptive name of this job
-     * 
+     *
      * @return
      */
     public String getName() {
@@ -100,7 +116,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Descriptive name of this job
-     * 
+     *
      * @param name
      */
     public void setName(String name) {
@@ -109,7 +125,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Long description of this job
-     * 
+     *
      * @return
      */
     public String getDescription() {
@@ -118,7 +134,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Long description of this job
-     * 
+     *
      * @param description
      */
     public void setDescription(String description) {
@@ -127,7 +143,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Email address of job submitter
-     * 
+     *
      * @return
      */
     public String getEmailAddress() {
@@ -136,7 +152,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * Email address of job submitter
-     * 
+     *
      * @param emailAddress
      */
     public void setEmailAddress(String emailAddress) {
@@ -145,7 +161,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * user name of job submitter
-     * 
+     *
      * @return
      */
     public String getUser() {
@@ -154,7 +170,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * user name of job submitter
-     * 
+     *
      * @param user
      */
     public void setUser(String user) {
@@ -163,7 +179,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * date/time when this job was submitted
-     * 
+     *
      * @return
      */
     public Date getSubmitDate() {
@@ -172,7 +188,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * date/time when this job was submitted
-     * 
+     *
      * @param submitDate
      */
     public void setSubmitDate(Date submitDate) {
@@ -181,7 +197,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * date/time when this job was processed
-     * 
+     *
      * @return
      */
     public Date getProcessDate() {
@@ -190,7 +206,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * date/time when this job was processed
-     * 
+     *
      * @param processDate
      */
     public void setProcessDate(Date processDate) {
@@ -210,7 +226,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * descriptive status of this job
-     * 
+     *
      * @return
      */
     public String getStatus() {
@@ -219,7 +235,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * descriptive status of this job
-     * 
+     *
      * @param status
      */
     public void setStatus(String status) {
@@ -228,7 +244,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * the ID of the VM that will be used to run this job
-     * 
+     *
      * @return
      */
     public String getComputeVmId() {
@@ -237,7 +253,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * the ID of the VM that will be used to run this job
-     * 
+     *
      * @param computeVmId
      */
     public void setComputeVmId(String computeVmId) {
@@ -246,7 +262,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * the ID of the VM instance that is running this job (will be null if no job is currently running)
-     * 
+     *
      * @return
      */
     public String getComputeInstanceId() {
@@ -255,7 +271,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * the ID of the VM instance that is running this job (will be null if no job is currently running)
-     * 
+     *
      * @param computeInstanceId
      */
     public void setComputeInstanceId(String computeInstanceId) {
@@ -292,7 +308,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * The unique ID of the compute service this job has been using
-     * 
+     *
      * @return
      */
     public String getComputeServiceId() {
@@ -301,7 +317,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * The unique ID of the compute service this job has been using
-     * 
+     *
      * @param computeServiceId
      */
     public void setComputeServiceId(String computeServiceId) {
@@ -310,7 +326,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * The unique ID of the storage service this job has been using
-     * 
+     *
      * @return
      */
     public String getStorageServiceId() {
@@ -319,7 +335,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * The unique ID of the storage service this job has been using
-     * 
+     *
      * @param storageServiceId
      */
     public void setStorageServiceId(String storageServiceId) {
@@ -328,7 +344,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * The key prefix for all files associated with this job in the specified storage bucket
-     * 
+     *
      * @return
      */
     public String getStorageBaseKey() {
@@ -337,10 +353,18 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
 
     /**
      * The key prefix for all files associated with this job in the specified storage bucket
-     * 
+     *
      * @param storageBaseKey
      */
     public void setStorageBaseKey(String storageBaseKey) {
         this.storageBaseKey = storageBaseKey;
+    }
+
+    /**
+     * Default behaviour is to offload bucket requirements to the CloudStorageService.
+     */
+    @Override
+    public String getStorageBucket() {
+        return null;
     }
 }

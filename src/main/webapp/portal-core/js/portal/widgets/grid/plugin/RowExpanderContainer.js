@@ -7,7 +7,9 @@
  * {
  *  generateContainer : function(record, parentElId, grid) - returns Ext.container.Container,
  *  allowMultipleOpen : Boolean - whether multiple containers can be open simultaneously.
- *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column 
+ *  toggleColIndexes : int[] - Optional - Which column indexes can toggle open/close on single click - Defaults to every column
+ *  recordIdProperty: Optional String - The property that should be used for record ID value (defaults to 'id'). If the 
+ *                                      record idProperty has been defined you will to specify that value here. 
  *  baseId : String - Optional (default='rowexpandercontainer') - To be used as the base in the containing element Id so can 
  *      reuse this control in multiple locations (all baseIds must be unique) 
  * }
@@ -37,6 +39,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     alias: 'plugin.rowexpandercontainer',
     generateContainer : portal.util.UnimplementedFunction,
     allowMultipleOpen : false,
+    recordIdProperty: null, //can be null
     rowBodyTpl: null, 
     storedHtml: null,   
     recordStatus: null,  
@@ -53,10 +56,15 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         this.allowMultipleOpen = config.allowMultipleOpen ? true : false;
         this.storedHtml = {};
         this.recordStatus = {};
+        
+        if (config.recordIdProperty) {
+            this.recordIdProperty = config.recordIdProperty;
+        }
+        
         if (config.baseId) {
             this.baseId = config.baseId;
         }
-        this.rowBodyTpl = '<div id="'+this.baseId+'-{id}"></div>'
+        this.rowBodyTpl = '<div id="'+this.baseId+'-{[values.' + (this.recordIdProperty ? this.recordIdProperty : 'id') + '.toString().replace(/[^0-9A-Za-z\\-]/g,\'-\')]}"></div>'
     },
     
     //override to do nothing. We don't want an expander column
@@ -82,8 +90,45 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         view.on('itemupdate', this.restoreRowContainer, this);
         
         view.on('resize', this.onResize, this);
+        
+        grid.getStore().on('clear', function(store) {
+            this._hardReset();
+        }, this);
     },
-           
+    
+    /**
+     * Resets the row expander state to that of a fresh instance. Cleans up any existing containers
+     */
+    _hardReset: function() {
+        for (id in this.recordStatus) {
+            var status = this.recordStatus[id];
+            if (status && status.container) {
+                status.container.destroy();
+            }
+        }
+        
+        this.storedHtml = {};
+        this.recordStatus = {};
+    },
+    
+    /**
+     * Utility for accessing the defined "ID" property of a record
+     */
+    _getId: function(record, sanitise) {
+        var id;
+        if (this.recordIdProperty) {
+            id = record.get(this.recordIdProperty).toString();
+        } else {
+            id = record.id.toString();
+        }
+        
+        if (sanitise) {
+            id = id.replace(/[^0-9A-Za-z\\-]/g,'-');
+        }
+        
+        return id;
+    },
+    
     /**
      * Returns record if it exists or null.
      * 
@@ -99,9 +144,10 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
      */
     restorationRequired: function(record) {
         //Is the record expanded?
-        if (!(record.id in this.recordStatus)) {
+        var id = this._getId(record);
+        if (!(id in this.recordStatus)) {
             return false;
-        } else if (!this.recordStatus[record.id].expanded) {
+        } else if (!this.recordStatus[id].expanded) {
             return false;
         } 
         
@@ -111,7 +157,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             return false;
         }
         
-        var body = Ext.DomQuery.selectNode('#'+this.baseId + '-' + record.id, el.parentNode); // rowexpandercontainer-'
+        var body = Ext.DomQuery.selectNode('#'+this.baseId + '-' + this._getId(record, true), el.parentNode); // rowexpandercontainer-'
         if (body.hasChildNodes()) {
             return false;
         }
@@ -145,7 +191,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
             }
         }
         
-        this.recordStatus[record.id] = {
+        this.recordStatus[this._getId(record)] = {
             expanded : true,
             container : null 
         };
@@ -154,7 +200,7 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
     },
     
     onCollapseBody: function(rowNode, record, collapseRow) {
-        this.recordStatus[record.id].expanded = false;
+        this.recordStatus[this._getId(record)].expanded = false;
     },
     
     onCellClick: function(view, td, cellIndex, record, tr, rowIndex) {
@@ -208,21 +254,21 @@ Ext.define('portal.widgets.grid.plugin.RowExpanderContainer', {
         
         me.generationRunning = true;
         if (me.restorationRequired(record)) {
-            var id = me.baseId + '-' + record.id;   // "rowexpandercontainer-"
+            var id = me.baseId + '-' + me._getId(record, true);   // "rowexpandercontainer-"
             var container = me.generateContainer(record, id, me.grid);
             
             // If a container already existed then destroy it first.
-            if (me.recordStatus[record.id].container) {
+            if (me.recordStatus[me._getId(record)].container) {
                 //AUS-2608 - Wrapped this in a try-catch due to some tooltips getting orphaned and throwing a JS error when
                 //           trying to reference their dead parent.                
                 try {
-                    me.recordStatus[record.id].container.destroy();
+                    me.recordStatus[me._getId(record)].container.destroy();
                 } catch(err) {
                     console.log("Error destroying parent container:", err);
                 }
             }
-            me.recordStatus[record.id].container = container;
-            me.recordStatus[record.id].container.updateLayout({
+            me.recordStatus[me._getId(record)].container = container;
+            me.recordStatus[me._getId(record)].container.updateLayout({
                 defer:false,
                 isRoot:false
             });

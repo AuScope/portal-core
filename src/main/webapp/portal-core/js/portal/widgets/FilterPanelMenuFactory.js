@@ -24,6 +24,22 @@ Ext.define('portal.widgets.FilterPanelMenuFactory', {
      * }
      *
      */
-    appendAdditionalActions : portal.util.UnimplementedFunction
+    appendAdditionalActions : portal.util.UnimplementedFunction,
+
+    /**
+     * Given an portal.layer.Layer, work out whether there is necessary to append additional style url params.
+     *
+     * function(layer)
+     *
+     * layer - a portal.layer.Layer
+     *
+     * Returns sldConfig
+     * {
+     *    sldUrl : styleUrl with params
+     *    isSld_body : boolean - whether styleUrl is for SLD_BODY or SLD in legend query
+     * }
+     *
+     */
+    appendAdditionalLegendParams : portal.util.UnimplementedFunction
     
 });

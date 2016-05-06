@@ -329,10 +329,10 @@ Ext.define('portal.widgets.panel.LayerPanel', {
             timeout : 180000,
             scope : this,
             success:function(response,opts){
-                legend.getLegendComponent(onlineResources, filterer,response.responseText, Ext.bind(legendCallback, this, [layer], true));
+                legend.getLegendComponent(onlineResources, filterer,response.responseText, true, Ext.bind(legendCallback, this, [layer], true));
             },
             failure: function(response, opts) {
-                legend.getLegendComponent(onlineResources, filterer,"", Ext.bind(legendCallback, this, [layer], true));
+                legend.getLegendComponent(onlineResources, filterer,"", true, Ext.bind(legendCallback, this, [layer], true));
             }
         });
 
