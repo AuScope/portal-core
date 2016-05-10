@@ -8,6 +8,7 @@ import java.util.LinkedList;
 
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudJob;
+import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -276,4 +277,12 @@ public class TestCloudStorageService extends PortalTestClass {
             Assert.assertFalse(test.startsWith(base));
         }
     }
+    
+    @Test(expected=PortalServiceException.class)
+    public void testStsRequired() throws Exception {
+        CloudStorageService stsService = new CloudStorageService("dummy1", "dummy2", "dummy3");
+        stsService.setRequireSts(true);
+        stsService.getBlobStoreContext(null, null);
+    }
+
 }

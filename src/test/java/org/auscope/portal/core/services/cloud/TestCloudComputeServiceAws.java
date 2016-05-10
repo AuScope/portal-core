@@ -200,6 +200,13 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     }
 
     @Test(expected=PortalServiceException.class)
+    public void testStsRequired() throws Exception {
+        final TestableCCS stsService = new TestableCCS(mockClient);
+        stsService.setRequireSts(true);
+        stsService.getCredentials(null, null);
+    }
+
+    @Test(expected=PortalServiceException.class)
     public void testJobStatus_BadResponse() throws Exception {
         CloudJob job = new TestableJob();
 

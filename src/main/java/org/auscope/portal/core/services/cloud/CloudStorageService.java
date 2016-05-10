@@ -79,6 +79,24 @@ public class CloudStorageService {
 
     private boolean stripExpectHeader;
 
+    private boolean requireSts=false;
+    
+    /**
+     * Returns whether AWS cross account authorization is mandatory.
+     * @return whether AWS cross account authorization is mandatory.
+     */
+    public boolean isRequireSts() {
+      return requireSts;
+    }
+
+    /**
+     * Sets whether AWS cross account authorization is mandatory.
+     * @param requireSts if true, AWS cross account authorization will be mandatory.
+     */
+    public void setRequireSts(boolean requireSts) {
+      this.requireSts = requireSts;
+    }
+
     /**
      * Creates a new instance for connecting to the specified parameters
      *
@@ -207,7 +225,7 @@ public class CloudStorageService {
         }
     }
 
-    public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) {
+    public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) throws PortalServiceException {
         Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
@@ -243,6 +261,9 @@ public class CloudStorageService {
             return builder2.buildView(BlobStoreContext.class);
 
         } else {
+            if(isRequireSts())
+                throw new PortalServiceException("AWS cross account access is required, but not configured");
+            
             ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
 
             if (accessKey != null && secretKey != null)
