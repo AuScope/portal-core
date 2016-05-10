@@ -72,6 +72,24 @@ public class CloudComputeServiceAws extends CloudComputeService {
     private String devAccessKey;
 
     private String devSecretKey;
+    
+    private boolean requireSts=false;
+    
+    /**
+     * Returns whether AWS cross account authorization is mandatory.
+     * @return whether AWS cross account authorization is mandatory.
+     */
+    public boolean isRequireSts() {
+      return requireSts;
+    }
+
+    /**
+     * Sets whether AWS cross account authorization is mandatory.
+     * @param requireSts if true, AWS cross account authorization will be mandatory.
+     */
+    public void setRequireSts(boolean requireSts) {
+      this.requireSts = requireSts;
+    }
 
     /**
      * Creates a new instance with the specified credentials (no endpoint
@@ -143,6 +161,8 @@ public class CloudComputeServiceAws extends CloudComputeService {
             return new BasicSessionCredentials(assumeResult.getCredentials().getAccessKeyId(),
                     assumeResult.getCredentials().getSecretAccessKey(),
                     assumeResult.getCredentials().getSessionToken());
+        } else if (isRequireSts()) {
+            throw new PortalServiceException("AWS cross account authorization required, but not configured");
         } else if (!TextUtil.isAnyNullOrEmpty(devAccessKey, devSecretKey)) {
             return new BasicAWSCredentials(devAccessKey, devSecretKey);
         }
