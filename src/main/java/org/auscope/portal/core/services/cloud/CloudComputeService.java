@@ -1,56 +1,18 @@
 package org.auscope.portal.core.services.cloud;
 
-import static com.google.common.base.Predicates.not;
-import static org.jclouds.compute.predicates.NodePredicates.RUNNING;
-import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
-import static org.jclouds.compute.predicates.NodePredicates.inGroup;
-
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.cloud.ComputeType;
 import org.auscope.portal.core.cloud.MachineImage;
-import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.PortalServiceException;
-import org.auscope.portal.core.services.cloud.SimpleEC2Client.InstanceInitiatedShutdownBehaviour;
-import org.jclouds.ContextBuilder;
-import org.jclouds.aws.AWSResponseException;
-import org.jclouds.aws.ec2.compute.AWSEC2TemplateOptions;
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.openstack.nova.v2_0.NovaApi;
-import org.jclouds.openstack.nova.v2_0.compute.options.NovaTemplateOptions;
-import org.jclouds.openstack.nova.v2_0.domain.zonescoped.AvailabilityZone;
-import org.jclouds.openstack.nova.v2_0.extensions.AvailabilityZoneApi;
-import org.openstack4j.api.OSClient;
-import org.openstack4j.openstack.OSFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 
 /**
  * Service class wrapper for interacting with a remote cloud compute service using CloudJob objects.
  *
  * @author Josh Vote
  */
-public class CloudComputeService {
+abstract public class CloudComputeService {
 
     public enum ProviderType {
         /** Connect to an Openstack instance via the Keystone Identity service */
@@ -59,18 +21,28 @@ public class CloudComputeService {
         AWSEc2,
     }
 
+    /**
+     * The status of a compute instance (not the job status) as reported by the remote cloud.
+     * @author Josh Vote (CSIRO)
+     *
+     */
+    public enum InstanceStatus {
+        /**
+         * Job is still waiting to start
+         */
+        Pending,
+        /**
+         * Instance is running
+         */
+        Running,
+        /**
+         * The instance could not be found or it's in a terminated state.
+         */
+        Missing,
+    }
+
+    @SuppressWarnings("unused")
     private final Log logger = LogFactory.getLog(getClass());
-
-    private ComputeService computeService;
-    private ComputeServiceContext context;
-    private NovaApi novaApi; //will be null for non nova API's
-    private SimpleEC2Client ec2Api; //will be null for non ec2 API's
-    private Set<String> skippedZones = new HashSet<String>();
-    private String zone; //can be null
-
-    private Predicate<NodeMetadata> terminateFilter;
-
-    private String itActuallyLaunchedHere;
 
     /** Unique ID for distinguishing instances of this class - can be null */
     private String id;
@@ -89,12 +61,34 @@ public class CloudComputeService {
      * Name of the developers' keypair to inject into instances on this provider.
      */
     private String keypair;
-    /** Name of accessKey for authentication */
-    private String accessKey;
-    /** Name of secretKey for authentication */
-    private String secretKey;
+
     /** Cloud endpoint to connect to */
     private String endpoint;
+
+    public ProviderType getProvider() {
+        return provider;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
+
+    /**
+     * Cloud API version
+     */
+    private String apiVersion;
 
     /**
      * Creates a new instance with the specified credentials (no endpoint specified - ensure provider type has a fixed endpoint)
@@ -105,8 +99,8 @@ public class CloudComputeService {
      *            The Compute Secret key (password)
      *
      */
-    public CloudComputeService(ProviderType provider, String accessKey, String secretKey) {
-        this(provider, null, accessKey, secretKey, null);
+    public CloudComputeService(ProviderType provider) {
+        this(provider, null, null);
     }
 
     /**
@@ -120,26 +114,8 @@ public class CloudComputeService {
      *            The Compute Secret key (password)
      *
      */
-    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey) {
-        this(provider, endpoint, accessKey, secretKey, null);
-    }
-
-    /**
-     * Creates a new instance with the specified credentials
-     *
-     * @param endpoint
-     *            (URL) The location of the Compute (Nova) service
-     * @param accessKey
-     *            The Compute Access key (user name)
-     * @param secretKey
-     *            The Compute Secret key (password)
-     * @param apiVersion
-     *            The API version
-     * @param httpServiceCaller - required for EC2, can be null for Nova
-     */
-    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey,
-            String apiVersion) {
-        this(provider, endpoint, accessKey, secretKey, apiVersion, null);
+    public CloudComputeService(ProviderType provider, String endpoint) {
+        this(provider, endpoint, null);
     }
 
     /**
@@ -153,73 +129,11 @@ public class CloudComputeService {
      *            The Compute Secret key (password)
      * @param apiVersion
      *            The API version
-     * @param httpServiceCaller - required for EC2, can be null for Nova
      */
-    public CloudComputeService(ProviderType provider, String endpoint, String accessKey, String secretKey,
-            String apiVersion, HttpServiceCaller httpServiceCaller) {
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
+    public CloudComputeService(ProviderType provider, String endpoint, String apiVersion) {
+        this.provider = provider;
         this.endpoint = endpoint;
-
-        Properties overrides = new Properties();
-
-        String typeString = "";
-        switch (provider) {
-        case NovaKeystone:
-            typeString = "openstack-nova";
-            break;
-        case AWSEc2:
-            typeString = "aws-ec2";
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported provider: " + provider.name());
-        }
-        this.provider = provider;
-
-        ContextBuilder b = ContextBuilder.newBuilder(typeString)
-                .overrides(overrides)
-                .credentials(accessKey, secretKey);
-
-        if (apiVersion != null) {
-            b.apiVersion(apiVersion);
-        }
-
-        if (endpoint != null) {
-            b.endpoint(endpoint);
-        }
-
-        //Setup our low level API's
-        switch (provider) {
-        case NovaKeystone:
-            this.novaApi = b.buildApi(NovaApi.class);
-            break;
-        case AWSEc2:
-            this.ec2Api = new SimpleEC2Client(httpServiceCaller, accessKey, secretKey, zone);
-            break;
-        }
-
-        this.context = b.buildView(ComputeServiceContext.class);
-        this.computeService = this.context.getComputeService();
-
-        this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(groupName));
-
-    }
-
-
-    /**
-     * This is overridable for test mocking
-     * @param ec2Api
-     */
-    protected void setEc2Api(SimpleEC2Client ec2Api) {
-        this.ec2Api = ec2Api;
-    }
-
-    public CloudComputeService(ProviderType provider, ComputeService computeService, NovaApi novaApi,
-            Predicate<NodeMetadata> terminPredicate) {
-        this.provider = provider;
-        this.computeService = computeService;
-        this.novaApi = novaApi;
-        this.terminateFilter = terminPredicate;
+        this.apiVersion = apiVersion;
     }
 
     /**
@@ -248,30 +162,6 @@ public class CloudComputeService {
     /** A group name that all jobs will be assigned to */
     public void setGroupName(String groupName) {
         this.groupName = groupName;
-    }
-
-    /**
-     * Gets the region (if any) where this compute service will be restricted to run in
-     *
-     * Will be ignored if skipped zones is specified
-     * @return
-     */
-    public String getZone() {
-        return zone;
-    }
-
-    /**
-     * Sets the region (if any) where this compute service will be restricted to run in
-     *
-     * Will be ignored if skipped zones is specified
-     *
-     * @param zone
-     */
-    public void setZone(String zone) {
-        this.zone = zone;
-        if (this.ec2Api != null) {
-            this.ec2Api.setRegion(zone);
-        }
     }
 
     /**
@@ -322,149 +212,16 @@ public class CloudComputeService {
      *            A string that is made available to the job when it starts execution (this will be Base64 encoded before being sent to the VM)
      * @return null if execution fails or the instance ID of the running VM
      */
-    public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
-
-        //We have different template options depending on provider
-        TemplateOptions options = null;
-        Set<? extends NodeMetadata> results = Collections.emptySet();
-        NodeMetadata result;
-
-        if (provider == ProviderType.AWSEc2) {
-            options = ((AWSEC2TemplateOptions) computeService.templateOptions())
-                    .keyPair(getKeypair())
-                    .userData(userDataString.getBytes(Charset.forName("UTF-8")));
-
-            TemplateBuilder tb = computeService.templateBuilder()
-                    .imageId(job.getComputeVmId())
-                    .hardwareId(job.getComputeInstanceType())
-                    .options(options);
-
-            if (this.zone != null) {
-                tb.locationId(zone);
-            }
-
-            Template template = tb.build();
-
-            //Start up the job, we should have exactly 1 node start
-            try {
-                results = computeService.createNodesInGroup(groupName, 1, template);
-            } catch (RunNodesException e) {
-                logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'",
-                        e.getMessage(), job));
-                logger.debug("Exception:", e);
-                throw new PortalServiceException(
-                        "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-                                + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
-                                + e.getMessage(), e);
-            } catch (AWSResponseException e) {
-                logger.error(String.format("An unexpected error '%1$s' occured while executing job '%2$s'",
-                        e.getMessage(), job));
-                logger.debug("Exception:", e);
-                throw new PortalServiceException(
-                        "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-                                + "a smaller virtual machine", "Please report it to cg-admin@csiro.au : "
-                                + e.getMessage(), e);
-            }
-            if (results.isEmpty()) {
-                logger.error("JClouds returned an empty result set. Treating it as job failure.");
-                throw new PortalServiceException(
-                        "Unable to start compute node due to an unknown error, no nodes returned");
-            }
-            result = results.iterator().next();
-
-            //Configure the instance to terminate on shutdown:
-            try {
-                ec2Api.setInstanceInitiatedShutdownBehaviour(result.getId(), InstanceInitiatedShutdownBehaviour.Terminate);
-            } catch (Exception ex) {
-                //if we fail here - kill the instance, we don't want a floating VM sitting around
-                logger.error(String.format("Instance ID '%1$s' could NOT be set to terminate on shutdown: %2$s", result.getId(), ex.getMessage()));
-                logger.debug("Exception:", ex);
-                computeService.destroyNode(result.getId());
-                throw new PortalServiceException(
-                        "An unexpected error has occured while executing your job. There were problems when setting up the job in AWS. Please try again at a later date."
-                                ,"Please report it to cg-admin@csiro.au : "
-                                + ex.getMessage(), ex);
-            }
-        } else {
-            //Iterate all regions
-            for (String location : novaApi.getConfiguredZones()) {
-                Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
-                Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
-
-                for (AvailabilityZone currentZone : zones) {
-                    if (skippedZones.contains(currentZone.getName())) {
-                        logger.info(String.format("skipping: '%1$s' - configured as a skipped zone",
-                                currentZone.getName()));
-                        continue;
-                    }
-
-                    if (!currentZone.getState().available()) {
-                        logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
-                        continue;
-                    }
-
-                    logger.info(String.format("Trying '%1$s'", currentZone.getName()));
-                    options = ((NovaTemplateOptions) computeService.templateOptions())
-                            .keyPairName(getKeypair())
-                            .availabilityZone(currentZone.getName())
-                            .userData(userDataString.getBytes(Charset.forName("UTF-8")));
-
-                    Template template = computeService.templateBuilder()
-                            .imageId(job.getComputeVmId())
-                            .hardwareId(job.getComputeInstanceType())
-                            .options(options)
-                            .build();
-
-                    try {
-                        results = computeService.createNodesInGroup(groupName, 1, template);
-                        this.itActuallyLaunchedHere = currentZone.getName();
-                        break;
-                    } catch (RunNodesException e) {
-                        logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
-                        logger.debug(e.getMessage());
-                        try {
-                            // FIXME:
-                            // I think this could possibly delete EVERY NODE RUN from PORTAL-CORE...
-                            // JClouds is not very clever here -
-                            // issue: how do you delete thing you didnt name and dont have an ID for??
-                            Set<? extends NodeMetadata> destroyedNodes = computeService
-                                    .destroyNodesMatching(this.terminateFilter);
-                            logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(),
-                                    destroyedNodes));
-                        } catch (Exception z) {
-                            logger.warn("couldnt clean it up");
-                        }
-                        continue;
-                    }
-                }
-            }
-            if (results.isEmpty()) {
-                //Now we have tried everything....
-                logger.error("run out of places to try...");
-                throw new PortalServiceException(
-                        "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-                                + "a smaller virtual machine", "Please report it to cg-admin@csiro.au ");
-            }
-            else {
-                result = results.iterator().next();
-            }
-
-        }
-
-        logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
-
-        return result.getId();
-    }
+    abstract public String executeJob(CloudJob job, String userDataString) throws PortalServiceException;
 
     /**
      * Makes a request that the VM started by job be terminated
      *
      * @param job
      *            The job whose execution should be terminated
+     * @throws PortalServiceException
      */
-    public void terminateJob(CloudJob job) {
-        computeService.destroyNode(job.getComputeInstanceId());
-    }
+    abstract public void terminateJob(CloudJob job) throws PortalServiceException;
 
     public ComputeType[] getAvailableComputeTypes() {
         return getAvailableComputeTypes(null, null, null);
@@ -473,75 +230,22 @@ public class CloudComputeService {
     /**
      * An array of compute types that are available through this compute service
      */
-    public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB) {
-        Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
-
-        List<ComputeType> computeTypes = new ArrayList<ComputeType>();
-
-        for (Hardware hw : hardwareSet) {
-            ComputeType ct = new ComputeType(hw.getId());
-
-            ct.setDescription(hw.getName());
-            double vCpus = 0;
-            for (Processor p : hw.getProcessors()) {
-                vCpus += p.getCores();
-            }
-            ct.setVcpus((int) vCpus);
-            ct.setRamMB(hw.getRam());
-
-            double rootDiskGB = 0;
-            double ephemeralDiskGB = 0;
-            for (Volume v : hw.getVolumes()) {
-                if (v.isBootDevice()) {
-                    rootDiskGB += v.getSize();
-                } else {
-                    ephemeralDiskGB += v.getSize();
-                }
-            }
-            ct.setRootDiskGB((int) rootDiskGB);
-            ct.setEphemeralDiskGB((int) ephemeralDiskGB);
-
-            //Skip anything that doesn't match our filters
-            if (minimumVCPUs != null && minimumVCPUs > ct.getVcpus()) {
-                continue;
-            } else if (minimumRamMB != null && minimumRamMB > ct.getRamMB()) {
-                continue;
-            } else if (minimumRootDiskGB != null && minimumRootDiskGB > ct.getRootDiskGB()) {
-                continue;
-            }
-
-            computeTypes.add(ct);
-        }
-
-        return computeTypes.toArray(new ComputeType[computeTypes.size()]);
-    }
-
-    public String getKeypair() {
-        // Default to the old behaviour until a different keypair is
-        // configured.
-        return keypair != null ? keypair : "vgl-developers";
-    }
-
-    public void setKeypair(String keypair) {
-        this.keypair = keypair;
-    }
+    abstract public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB);
 
     /**
-     * Gets the set of zone names that should be skipped when attempting to find a zone to run a job at.
-     *
+     * Return the ssh keypair to be used with the VM
      * @return
      */
-    public Set<String> getSkippedZones() {
-        return skippedZones;
+    public String getKeypair() {
+        return keypair;
     }
 
     /**
-     * Sets the set of zone names that should be skipped when attempting to find a zone to run a job at.
-     *
-     * @param skippedZones
+     * Sets the ssh keypair to be used with the VM
+     * @param keypair
      */
-    public void setSkippedZones(Set<String> skippedZones) {
-        this.skippedZones = skippedZones;
+    public void setKeypair(String keypair) {
+        this.keypair = keypair;
     }
 
     /**
@@ -559,51 +263,6 @@ public class CloudComputeService {
     }
 
     /**
-     * Gets console logs specifically for an OpenStack instance
-     * @param computeInstanceId
-     * @param job
-     * @param numLines
-     * @return
-     * @throws PortalServiceException
-     */
-    private String getConsoleLogOpenStack(String computeInstanceId, CloudJob job, int numLines) throws PortalServiceException {
-        try {
-            String[] accessParts = this.accessKey.split(":");
-            String[] idParts = computeInstanceId.split("/");
-
-            //JClouds has no support (currently) for tailing server console output. Our current workaround
-            //is to offload this to openstack4j.
-            OSClient os = OSFactory.builder()
-                    .endpoint(endpoint)
-                    .credentials(accessParts[1], secretKey)
-                    .tenantName(accessParts[0])
-                    .authenticate();
-
-            return os.compute().servers().getConsoleOutput(idParts[1], numLines);
-        } catch (Exception ex) {
-            logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
-            throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
-        }
-    }
-
-    /**
-     * Gets console logs specifically for an AWS instance
-     * @param computeInstanceId
-     * @param job
-     * @param numLines
-     * @return
-     * @throws PortalServiceException
-     */
-    private String getConsoleLogAws(String computeInstanceId, CloudJob job, int numLines) throws PortalServiceException {
-        try {
-            return ec2Api.getConsoleOutput(computeInstanceId);
-        } catch (Exception ex) {
-            logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
-            throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
-        }
-    }
-
-    /**
      * Will attempt to tail and return the last {@code numLines} from the given servers console.
      *
      * @param job
@@ -613,19 +272,16 @@ public class CloudComputeService {
      * @return console output as string or null
      * @return
      */
-    public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
-        String computeInstanceId = job.getComputeInstanceId();
-        if (computeInstanceId == null) {
-            return null;
-        }
+    abstract public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException;
 
-        switch (provider) {
-        case NovaKeystone:
-            return getConsoleLogOpenStack(computeInstanceId, job, numLines);
-        case AWSEc2:
-            return getConsoleLogAws(computeInstanceId, job, numLines);
-        }
-
-        throw new PortalServiceException("Cannot get logs for provider type: " + provider);
-    }
+    /**
+     * Attempts to lookup low level status information about this job's compute instance from the remote cloud.
+     *
+     * Having no computeInstanceId set will result in an exception being thrown.
+     *
+     * @param job
+     * @return
+     * @throws PortalServiceException
+     */
+    abstract public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException;
 }

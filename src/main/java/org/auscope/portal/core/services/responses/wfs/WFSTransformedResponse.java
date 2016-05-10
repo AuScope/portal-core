@@ -29,7 +29,7 @@ public class WFSTransformedResponse {
      *            the method used to make the request
      */
     public WFSTransformedResponse(String gml, String transformed, HttpRequestBase method) {
-    	this(gml, transformed, method, true);
+        this(gml, transformed, method, true);
     }
     
     /**
@@ -43,7 +43,7 @@ public class WFSTransformedResponse {
      *            the method used to make the request
      */
     public WFSTransformedResponse(String gml, String transformed, HttpRequestBase method, Boolean success) {
-    	this.gml = gml;
+        this.gml = gml;
         this.transformed = transformed;
         this.method = method;
         this.success = success;
@@ -81,6 +81,6 @@ public class WFSTransformedResponse {
      * @return
      */
     public Boolean getSuccess() {
-    	return this.success;
+        return this.success;
     }
 }

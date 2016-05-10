@@ -393,6 +393,8 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                          {numZoomLevels: 20}
                      ),
                      new OpenLayers.Layer.Google(
+                    		 // Name of the layer that will be set as default. If removed or changed, also
+                    		 // change code below which sets as default
                              "Google Satellite",
                              {type: google.maps.MapTypeId.SATELLITE, numZoomLevels: 22}
                      )
@@ -404,6 +406,11 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
                  zoom: 4
         });
 
+        var selLayer = this.map.getLayersByName("Google Satellite");
+        if (selLayer !== null) {        
+            this.map.setBaseLayer(selLayer[0]);
+        }
+        
         // Creation and rendering of LayerSwitcher moved to renderBaseMap()
 
         this.highlightPrimitiveManager = this.makePrimitiveManager();
@@ -498,9 +505,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
 
             this.map.addControl(panel);
         }
-        
-        // There was an option to call _addMapCreatedEventListener(fn, args) to callback once the map is created.  Call them.
-        this._callMapCreatedEventListeners();
 
         //Finally listen for resize events on the parent container so we can pass the details
         //on to Openlayers.
@@ -513,24 +517,6 @@ Ext.define('portal.map.openlayers.OpenLayersMap', {
         container.on('boxready', function() {
             this.map.updateSize();
         }, this);        
-    },
-
-    // Save functions as listeners to call back once the map is created
-//    _addMapCreatedEventListener : function(fnCallback, args) {
-//        console.log("_addMapCreatedEventListener - fnCallback: " + fnCallback.$name+", args:"+ args);
-//        this.mapCreatedEventListeners.push({functionCallback: fnCallback, args : args});
-//        console.log("  array now: ",this.mapCreatedEventListeners);
-//        return true;
-//    },
-
-    // Call the 'after map created' listeners
-    _callMapCreatedEventListeners : function() {
-        var me = this;
-        if (this.map) {
-            portal.events.AppEvents.broadcast('mapcreated');
-        } else {
-            console.log("_callMapCreatedEventListeners - this.map is null ");
-        }
     },
 
     // Draw the OpenLayers layers (eg. "Google Street View"/"Google Satellite") Controls (GPT-40 Active Layers)

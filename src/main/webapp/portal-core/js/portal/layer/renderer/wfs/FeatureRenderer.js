@@ -79,7 +79,8 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
         //Parse our KML into a set of overlays and markers
         var parser = Ext.create('portal.layer.renderer.wfs.GMLParser', {gml : data.gml, map : me.map});
         var primitives = parser.makePrimitives(icon, onlineResource, layer);
-
+        var count = parser.getFeatureCount();
+        
         //Add our single points and overlays to the overlay manager (which will add them to the map)
         this.primitiveManager.addPrimitives(primitives);
 
@@ -89,7 +90,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureRenderer', {
         }
 
         //store the status
-        this.renderStatus.updateResponse(onlineResource.get('url'), (primitives.length) + " record(s) retrieved.");
+        this.renderStatus.updateResponse(onlineResource.get('url'), count == null ? ('Unknown number of features retrieved.') : (count + " feature(s) retrieved."));
 
         //we are finished
         this._finishDownloadManagerResponse(primitives);

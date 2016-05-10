@@ -175,7 +175,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      */
     public String getMetadataURL() throws XPathExpressionException {
 
-    	// look for the metadataURL in the nested OnlineResource element
+        // look for the metadataURL in the nested OnlineResource element
         Node tempNode = (Node) getXPath().evaluate("MetadataURL/OnlineResource", node, XPathConstants.NODE);
         metadataURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
 

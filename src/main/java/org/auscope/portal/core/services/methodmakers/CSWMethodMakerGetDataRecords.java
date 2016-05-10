@@ -118,23 +118,23 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         }
         
         if (filter != null) {
-	        SortType sortType = filter.getSortType();
-	        if (sortType != null && sortType != SortType.serviceDefault) {        	
-	            sb.append("<ogc:SortBy><ogc:SortProperty>"); 
-	            switch (sortType) {
-	                case title:
-	                	sb.append("<ogc:PropertyName>title</ogc:PropertyName>");
-	                	sb.append("<ogc:SortOrder>ASC</ogc:SortOrder>");	
-	                	break;
-	                case publicationDate:
-	                	sb.append("<ogc:PropertyName>publicationDate</ogc:PropertyName>");
-	                	sb.append("<ogc:SortOrder>DESC</ogc:SortOrder>");	
-	                	break;                	
-	                default: 
-	                	break;
-	            }            
-	            sb.append("</ogc:SortProperty> </ogc:SortBy>");
-	        }
+            SortType sortType = filter.getSortType();
+            if (sortType != null && sortType != SortType.serviceDefault) {
+                sb.append("<ogc:SortBy><ogc:SortProperty>");
+                switch (sortType) {
+                case title:
+                    sb.append("<ogc:PropertyName>title</ogc:PropertyName>");
+                    sb.append("<ogc:SortOrder>ASC</ogc:SortOrder>");
+                    break;
+                case publicationDate:
+                    sb.append("<ogc:PropertyName>publicationDate</ogc:PropertyName>");
+                    sb.append("<ogc:SortOrder>DESC</ogc:SortOrder>");
+                    break;
+                default:
+                    break;
+                }
+                sb.append("</ogc:SortProperty> </ogc:SortBy>");
+            }
         }
         
         sb.append("</csw:Query>");

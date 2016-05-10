@@ -1,5 +1,6 @@
 package org.auscope.portal.core.services.cloud;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
@@ -7,11 +8,12 @@ import junit.framework.Assert;
 
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
-import org.auscope.portal.core.services.cloud.CloudComputeService.ProviderType;
+import org.auscope.portal.core.services.cloud.CloudComputeService.InstanceStatus;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadata.Status;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.openstack.nova.v2_0.NovaApi;
@@ -45,7 +47,7 @@ public class TestCloudComputeService extends PortalTestClass {
     private final Predicate<NodeMetadata> mockFilter = context.mock(Predicate.class);
     private final RunNodesException mockException = context.mock(RunNodesException.class);
 
-    private CloudComputeService service;
+    private CloudComputeServiceNectar service;
 
     private Optional<? extends AvailabilityZoneApi> mockOptAZA = context.mock(Optional.class);
 
@@ -56,7 +58,7 @@ public class TestCloudComputeService extends PortalTestClass {
         job = new CloudJob(13);
         job.setComputeVmId("image-id");
         job.setComputeInstanceType("type");
-        service = new CloudComputeService(ProviderType.NovaKeystone, mockComputeService, mockNovaApi, mockFilter);
+        service = new CloudComputeServiceNectar(mockComputeService, mockNovaApi, mockFilter);
         service.setGroupName("group-name");
         service.setKeypair("vgl-developers");
 
@@ -430,5 +432,32 @@ public class TestCloudComputeService extends PortalTestClass {
         String actualInstanceId = service.executeJob(job, userDataString);
 
         Assert.assertEquals(expectedInstanceId, actualInstanceId);
+    }
+
+    @Test
+    public void testGetJobStatus() throws Exception {
+        job.setComputeInstanceId("i-running");
+
+        context.checking(new Expectations() {{
+            oneOf(mockComputeService).getNodeMetadata("i-running");
+            will(returnValue(mockMetadata));
+
+            allowing(mockMetadata).getStatus();
+            will(returnValue(Status.PENDING));
+        }});
+
+        Assert.assertEquals(InstanceStatus.Pending, service.getJobStatus(job));
+    }
+
+    @Test(expected=PortalServiceException.class)
+    public void testGetJobStatus_IOError() throws Exception {
+        job.setComputeInstanceId("i-running");
+
+        context.checking(new Expectations() {{
+            oneOf(mockComputeService).getNodeMetadata("i-running");
+            will(throwException(new IOException()));
+        }});
+
+        service.getJobStatus(job);
     }
 }
