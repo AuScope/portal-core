@@ -83,26 +83,7 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
         this._updateStatusforWMS(wmsUrl, "Testing Connection");
         this.fireEvent('renderstarted', this, wmsResource, filterer);
 
-        
-        Ext.Ajax.request({
-            url: "testServiceGetCap.do",
-            timeout : 180000,  
-            params : {
-                serviceUrl : wmsUrl  
-            },
-            scope : this,
-            success: Ext.bind(this._addWMSLayer,this,[wmsResource, wmsUrl, wmsLayer, wmsOpacity, filterer,sld_body],true),
-            failure: function(response, opts) {
-                 this._updateStatusforWMS(wmsUrl, "Address cannot be reached");
-                 this.fireEvent('renderfinished', this);
-            }
-        });
-        
-       
-    },
     
-    _addWMSLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,filterer,sld_body){
-        
         var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity,sld_body)
 
         layer.getWmsLayer().events.register("loadstart",this,function(){
