@@ -80,9 +80,6 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
                 return
             }
         }
-        this._updateStatusforWMS(wmsUrl, "Testing Connection");
-        this.fireEvent('renderstarted', this, wmsResource, filterer);
-
     
         var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity,sld_body)
 
