@@ -37,12 +37,16 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.BlockDeviceMapping;
 import com.amazonaws.services.ec2.model.CreateTagsRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.GetConsoleOutputRequest;
 import com.amazonaws.services.ec2.model.GetConsoleOutputResult;
 import com.amazonaws.services.ec2.model.IamInstanceProfileSpecification;
+import com.amazonaws.services.ec2.model.Image;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -191,6 +195,26 @@ public class CloudComputeServiceAws extends CloudComputeService {
         } catch (UnsupportedEncodingException e) {
         }
 
+        
+        DescribeImagesRequest dir = new DescribeImagesRequest().withImageIds(vmId);
+        DescribeImagesResult imageDescs = getEc2Client(job).describeImages(dir);
+        if(imageDescs.getImages().isEmpty())
+            throw new PortalServiceException("Could not get description for image: " + vmId);
+        
+        Image imageDesc = imageDescs.getImages().get(0);
+        
+        boolean containsPersitentVolumes = false;
+        for (BlockDeviceMapping bdm : imageDesc.getBlockDeviceMappings()) {
+            if( bdm.getEbs().getDeleteOnTermination()) {
+                containsPersitentVolumes=true;
+                break;
+            }
+        }
+        
+        if(containsPersitentVolumes) {
+            logger.info("Toolbox "+vmId+" contains volumes that are not deleted whem the job terminates");
+        }
+        
         RunInstancesRequest runInstancesRequest = new RunInstancesRequest()
                 .withInstanceType(job.getComputeInstanceType()).withImageId(vmId).withMinCount(1).withMaxCount(1)
                 .withInstanceInitiatedShutdownBehavior("terminate").withUserData(userDataString);
