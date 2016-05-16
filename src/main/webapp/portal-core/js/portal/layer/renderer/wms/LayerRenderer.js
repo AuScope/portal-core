@@ -48,26 +48,20 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
             var wmsOpacity = filterer.getParameter('opacity');
             
             var proxyUrl = this.parentLayer.get('source').get('proxyStyleUrl');
-            var styleUrl="";
             if(proxyUrl){
-                styleUrl = Ext.urlAppend(proxyUrl);
-            }else{
-                //VT: if style proxy url is not defined, we assign it a default.
-                styleUrl = Ext.urlAppend("getDefaultStyle.do","layerName="+wmsLayer);
+                Ext.Ajax.request({
+                    url: Ext.urlAppend(proxyUrl),
+                    timeout : 180000,
+                    scope : this,
+                    success: Ext.bind(this._getRenderLayer,this,[wmsResources[i], wmsUrl, wmsLayer, wmsOpacity, filterer],true),
+                    failure: function(response, opts) {                    
+                        this.fireEvent('renderfinished', this);
+                        console.log('server-side failure with status code ' + response.status);
+                    }
+                });
+            } else {
+                this._getRenderLayer(null,null,wmsResources[i], wmsUrl, wmsLayer, wmsOpacity, filterer);
             }
-
-            Ext.Ajax.request({
-                url: styleUrl,
-                timeout : 180000,
-                scope : this,
-                success: Ext.bind(this._getRenderLayer,this,[wmsResources[i], wmsUrl, wmsLayer, wmsOpacity, filterer],true),
-                failure: function(response, opts) {                    
-                    this.fireEvent('renderfinished', this);
-                    console.log('server-side failure with status code ' + response.status);
-                }
-            });
-
-
 
         }
 
@@ -77,36 +71,16 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
     },
     
     _getRenderLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,filterer){
-        var sld_body = response.responseText;
-        this.sld_body = sld_body;
-        if(sld_body.indexOf("<?xml version=")!=0){
-            this._updateStatusforWMS(wmsUrl, "error: invalid SLD response");
-            return
-        }
-        
-        this._updateStatusforWMS(wmsUrl, "Testing Connection");
-        this.fireEvent('renderstarted', this, wmsResource, filterer);
-
-        
-        Ext.Ajax.request({
-            url: "testServiceGetCap.do",
-            timeout : 180000,  
-            params : {
-                serviceUrl : wmsUrl  
-            },
-            scope : this,
-            success: Ext.bind(this._addWMSLayer,this,[wmsResource, wmsUrl, wmsLayer, wmsOpacity, filterer,sld_body],true),
-            failure: function(response, opts) {
-                 this._updateStatusforWMS(wmsUrl, "Address cannot be reached");
-                 this.fireEvent('renderfinished', this);
+        var sld_body = "";
+        if (response !== null) {
+            var sld_body = response.responseText;
+            this.sld_body = sld_body;
+            if(sld_body.indexOf("<?xml version=")!=0){
+                this._updateStatusforWMS(wmsUrl, "error: invalid SLD response");
+                return
             }
-        });
-        
-       
-    },
+        }
     
-    _addWMSLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,filterer,sld_body){
-        
         var layer=this.map.makeWms(undefined, undefined, wmsResource, this.parentLayer, wmsUrl, wmsLayer, wmsOpacity,sld_body)
 
         layer.getWmsLayer().events.register("loadstart",this,function(){
