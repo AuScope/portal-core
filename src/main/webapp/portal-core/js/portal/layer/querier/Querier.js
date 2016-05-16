@@ -34,8 +34,9 @@ Ext.define('portal.layer.querier.Querier', {
         //VT: default to use GET rather then post.
         var postMethod = false;
         var sld_body=null;
-
-        if(queryTarget.get('layer').get('renderer').sld_body){
+        // GPT-MS: Check whether service is ArcGIS, if so, don't set sld_body
+        // TODO Refactor task GPT-230
+        if(queryTarget.get('layer').get('renderer').sld_body && queryTarget.get('onlineResource').get('url').toUpperCase().indexOf("MAPSERVER/WMSSERVER") < 0){
             sld_body=queryTarget.get('layer').get('renderer').sld_body;
             //VT: if post is undefined and we have a very long sld_body
             //VT: we are goign to take a best guess approach and use post instead of get
