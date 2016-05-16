@@ -91,7 +91,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             // GPT-MS -- I don't believe the below works. GetLegendGraphic takes a STYLE parameter, not a STYLES parameter. Have left it as is. 
             if (this.styles) {
                 url += '&STYLES=' + escape(this.styles);
-            } else {
+            } else if (wmsURL.toUpperCase().indexOf("MAPSERVER/WMSSERVER") > -1){
             	var sld = portal.util.xml.SimpleDOM.parseStringToDOM(sld_body);
             	// GPT-MS : This would be better as an XPath '/StyledLayerDescriptor/UserStyle/Name" but I couldn't get it to work.  
             	url += '&STYLE=' + sld.getElementsByTagName("UserStyle")[0].getElementsByTagName("Name")[0].textContent;
