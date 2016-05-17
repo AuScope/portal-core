@@ -283,12 +283,12 @@ Ext.define('portal.layer.renderer.wfs.FeatureWithMapRenderer', {
 
 
     _getRenderLayer : function(response,opts,wmsResource, wmsUrl, wmsLayer, wmsOpacity,wfsResources,filterer){
-        
-    	if(wmsOpacity === undefined){
-    		wmsOpacity = filterer.parameters.opacity;
-    	}
-    	
-    	var sld_body = response.responseText;
+
+        if(wmsOpacity === undefined){
+            wmsOpacity = filterer.parameters.opacity;
+        }
+
+        var sld_body = response.responseText;
         this.sld_body = sld_body;
         if(sld_body.indexOf("<?xml version=")!=0){
             this._updateStatusforWFSWMS(wmsUrl, "error: invalid SLD response");
