@@ -84,6 +84,7 @@ Ext.define('portal.map.openlayers.primitives.WMSOverlay', {
      */
     
     _getStylesFromSLD : function() {
+        if (this.getWmsUrl().toUpperCase().indexOf("MAPSERVER/WMSSERVER") < 0) return null;
     	var sld = portal.util.xml.SimpleDOM.parseStringToDOM(this.getSld_body());
     	// GPT-MS : This would be better as an XPath '/StyledLayerDescriptor/UserStyle/Name" but I couldn't get it to work.  
     	return sld.getElementsByTagName("UserStyle")[0].getElementsByTagName("Name")[0].textContent;
