@@ -109,6 +109,14 @@ Ext.define('portal.layer.Layer', {
                 map.map.setLayerZIndex(layer, 20000 + i);
             }
         }
+
+        // float the vector root containers to the top of the map so that they can be clicked on
+        for (var i = 0; i < map.map.layers.length; i++) {
+            var layer = map.map.layers[i];
+            if (layer.id.indexOf('OpenLayers_Layer_Vector_RootContainer') != -1) {
+                map.map.setLayerZIndex(layer, 10000 + i);
+            }
+        }
     },
 
 
