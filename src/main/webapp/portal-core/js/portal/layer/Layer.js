@@ -77,7 +77,8 @@ Ext.define('portal.layer.Layer', {
             var onlineResourcesForLayer = [];
             var cswRecords = layerStore.data.items[i].data.cswRecords;
             for (var j = 0; j < cswRecords.length; j++) {
-                onlineResourcesForLayer = onlineResourcesForLayer.concat(cswRecords[j].data.onlineResources);
+			    if (cswRecords[j].data.onlineResources)
+                    onlineResourcesForLayer = onlineResourcesForLayer.concat(cswRecords[j].data.onlineResources);
             }
             for (var j = 0; j < onlineResourcesForLayer.length; j++) {
                 var mapLayers = map.map.getLayersByName(onlineResourcesForLayer[j].data.name);
