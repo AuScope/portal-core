@@ -80,7 +80,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
         // We should be using a library for this call...
         StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        sb.append("<csw:GetRecords xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" service=\"CSW\" version=\"2.0.2\" constraint_language_version=\"1.1.0\" outputFormat=\"application/xml\" outputSchema=\"csw:IsoRecord\" typeNames=\"gmd:MD_Metadata\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"");
+        sb.append("<csw:GetRecords xmlns:csw=\"http://www.opengis.net/cat/csw/2.0.2\" service=\"CSW\" version=\"2.0.2\" constraint_language_version=\"1.1.0\" outputFormat=\"application/xml\" outputSchema=\"http://www.isotc211.org/2005/gmd\" typeNames=\"gmd:MD_Metadata\" xmlns:ogc=\"http://www.opengis.net/ogc\" xmlns:gml=\"http://www.opengis.net/gml\"");
         sb.append(String.format(" maxRecords=\"%1$s\"", maxRecords));
         if (resultType != null) {
             switch (resultType) {
