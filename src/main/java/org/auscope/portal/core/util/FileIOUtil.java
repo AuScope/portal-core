@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
@@ -307,21 +305,8 @@ public class FileIOUtil {
             throws IOException {
         for (int i = 0; i < gmlDownloads.size(); i++) {
             DownloadResponse download = gmlDownloads.get(i);
-
-            URI downloadURI = null;
-            try {
-                downloadURI = new URI(download.getRequestURL());
-            } catch (URISyntaxException e1) {
-                log.error("Invalid URL", e1);
-            }
-
-            String downloadDomain = downloadURI.getHost().replace(".","_");
             String extension = extensionOverride == null ? MimeUtil.mimeToFileExtension(gmlDownloads.get(i).getContentType()) : extensionOverride;
-
-            if (extension.equals(".csv"))
-                extension = "csv";
-
-            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + "_" + downloadDomain + "." + extension;
+            String entryName = new SimpleDateFormat((i + 1) + "_yyyyMMdd_HHmmss").format(new Date()) + "." + extension;
             //TODO: VT - this method can be further improved if we thread this method as we are processing each stream one by one.
             // Check that attempt to request is successful
             if (!download.hasException()) {
@@ -463,17 +448,8 @@ public class FileIOUtil {
                         }
                     }
 
-                    URI downloadURI = null;
-                    try {
-                        downloadURI = new URI(download.getRequestURL());
-                    } catch (URISyntaxException e1) {
-                        log.error("Invalid URL", e1);
-                    }
-
-                    String downloadDomain = downloadURI.getHost().replace(".","_");
                     zout.putNextEntry(new ZipEntry(new SimpleDateFormat(
                             (i + 1) + "_yyyyMMdd_HHmmss").format(new Date())
-                            + "_" + downloadDomain
                             + (extension == null ? ".xml" : extension)));
                     zout.write(gmlBytes);
                     zout.closeEntry();
