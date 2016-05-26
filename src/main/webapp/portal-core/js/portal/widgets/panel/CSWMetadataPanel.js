@@ -52,7 +52,7 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
                 items : [{
                     xtype : 'displayfield',
                     fieldLabel : 'Source',
-                    value : Ext.util.Format.format('<a target="_blank" href="{0}">Link back to registry</a>', source)
+                    value : Ext.util.Format.format('<a target="_blank" href="{0}">Full metadata and downloads</a>', source)
                 },{
                     xtype : 'displayfield',
                     fieldLabel : 'Title',
