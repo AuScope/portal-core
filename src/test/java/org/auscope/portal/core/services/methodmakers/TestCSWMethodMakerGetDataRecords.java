@@ -112,7 +112,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
         Assert.assertNotNull(method);
         String postBody = IOUtils.toString(((HttpPost) method).getEntity().getContent());
         Assert.assertTrue(postBody.contains(String.format("version=\"2.0.2\"")));
-        Assert.assertTrue(postBody.contains(String.format("outputSchema=\"csw:IsoRecord\"")));
+        Assert.assertTrue(postBody.contains(String.format("outputSchema=\"http://www.isotc211.org/2005/gmd\"")));
         Assert.assertTrue(postBody.contains(String.format("typeNames=\"gmd:MD_Metadata\"")));
 
         //Test GET
