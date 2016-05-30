@@ -22,6 +22,7 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -80,7 +81,7 @@ public class CloudStorageService {
     private boolean stripExpectHeader;
 
     private boolean requireSts=false;
-    
+
     /**
      * Returns whether AWS cross account authorization is mandatory.
      * @return whether AWS cross account authorization is mandatory.
@@ -263,7 +264,7 @@ public class CloudStorageService {
         } else {
             if(isRequireSts())
                 throw new PortalServiceException("AWS cross account access is required, but not configured");
-            
+
             ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
 
             if (accessKey != null && secretKey != null)
@@ -563,6 +564,11 @@ public class CloudStorageService {
 
                 //Turn our StorageMetadata objects into simpler CloudFileInformation objects
                 for (StorageMetadata md : currentMetadataPage) {
+                    //Skip objects that are not files
+                    if (md.getType() != StorageType.BLOB) {
+                        continue;
+                    }
+
                     long fileSize = 1L;
                     if (md instanceof BlobMetadataImpl) {
                         ContentMetadata cmd = ((BlobMetadataImpl) md).getContentMetadata();
@@ -571,6 +577,7 @@ public class CloudStorageService {
                         ContentMetadata cmd = ((MutableBlobMetadataImpl) md).getContentMetadata();
                         fileSize = cmd.getContentLength();
                     }
+
                     jobFiles.add(new CloudFileInformation(md.getName(), fileSize, md.getUri().toString()));
                 }
 

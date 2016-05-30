@@ -16,6 +16,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobBuilder.PayloadBlobBuilder;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -81,7 +82,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     /**
      * Tests that requests for listing files successfully call all dependencies
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -90,9 +91,11 @@ public class TestCloudStorageService extends PortalTestClass {
 
         final BlobMetadataImpl mockStorageMetadata1 = context.mock(BlobMetadataImpl.class, "mockStorageMetadata1");
         final BlobMetadataImpl mockStorageMetadata2 = context.mock(BlobMetadataImpl.class, "mockStorageMetadata2");
+        final BlobMetadataImpl mockStorageMetadata3 = context.mock(BlobMetadataImpl.class, "mockStorageMetadata3");
 
         final MutableContentMetadata mockObj1ContentMetadata = context.mock(MutableContentMetadata.class, "mockObj1Md");
         final MutableContentMetadata mockObj2ContentMetadata = context.mock(MutableContentMetadata.class, "mockObj2Md");
+        final MutableContentMetadata mockObj3ContentMetadata = context.mock(MutableContentMetadata.class, "mockObj3Md");
         final PageSet<? extends StorageMetadata> mockPageSet = context.mock(PageSet.class);
 
         LinkedList<MutableBlobMetadataImpl> ls = new LinkedList<MutableBlobMetadataImpl>();
@@ -118,7 +121,7 @@ public class TestCloudStorageService extends PortalTestClass {
                 will(returnValue(null));
 
                 allowing(mockPageSet).iterator();
-                will(returnValue(Arrays.asList(mockStorageMetadata1, mockStorageMetadata2).iterator()));
+                will(returnValue(Arrays.asList(mockStorageMetadata1, mockStorageMetadata2, mockStorageMetadata3).iterator()));
 
                 allowing(mockStorageMetadata1).getName();
                 will(returnValue(obj1Key));
@@ -126,8 +129,11 @@ public class TestCloudStorageService extends PortalTestClass {
                 will(returnValue(new URI(obj1Bucket)));
                 allowing(mockStorageMetadata1).getContentMetadata();
                 will(returnValue(mockObj1ContentMetadata));
+                allowing(mockStorageMetadata1).getType();
+                will(returnValue(StorageType.BLOB));
                 allowing(mockObj1ContentMetadata).getContentLength();
                 will(returnValue(obj1Length));
+
 
                 allowing(mockStorageMetadata2).getName();
                 will(returnValue(obj2Key));
@@ -135,8 +141,15 @@ public class TestCloudStorageService extends PortalTestClass {
                 will(returnValue(new URI(obj2Bucket)));
                 allowing(mockStorageMetadata2).getContentMetadata();
                 will(returnValue(mockObj2ContentMetadata));
+                allowing(mockStorageMetadata2).getType();
+                will(returnValue(StorageType.BLOB));
                 allowing(mockObj2ContentMetadata).getContentLength();
                 will(returnValue(obj2Length));
+
+                allowing(mockStorageMetadata3).getContentMetadata();
+                will(returnValue(mockObj3ContentMetadata));
+                allowing(mockStorageMetadata3).getType();
+                will(returnValue(StorageType.FOLDER));
             }
         });
 
@@ -151,7 +164,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     /**
      * Tests that requests for uploading files successfully call all dependencies
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -207,7 +220,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     /**
      * Tests that requests for deleting files successfully call all dependencies
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -227,7 +240,7 @@ public class TestCloudStorageService extends PortalTestClass {
 
     /**
      * Tests that no exceptions occur during base key generation edge cases
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -256,7 +269,7 @@ public class TestCloudStorageService extends PortalTestClass {
      *
      * And searched for all files whose prefix begins 'job5' (i.e. to list all files in the job5 directory), you would get BOTH of the above files returned. We
      * need to manage this edge case by ensuring our prefixes don't overlap like that.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -277,7 +290,7 @@ public class TestCloudStorageService extends PortalTestClass {
             Assert.assertFalse(test.startsWith(base));
         }
     }
-    
+
     @Test(expected=PortalServiceException.class)
     public void testStsRequired() throws Exception {
         CloudStorageService stsService = new CloudStorageService("dummy1", "dummy2", "dummy3");
