@@ -47,10 +47,13 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
             var wmsLayer = wmsResources[i].get('name');
             var wmsOpacity = filterer.getParameter('opacity');
             
+            var filterParams = (Ext.Object.toQueryString(filterer.getMercatorCompatibleParameters()));
             var proxyUrl = this.parentLayer.get('source').get('proxyStyleUrl');
+
             if(proxyUrl){
+                var styleurl =  proxyUrl = Ext.urlAppend(proxyUrl,filterParams);
                 Ext.Ajax.request({
-                    url: Ext.urlAppend(proxyUrl),
+                    url: Ext.urlAppend(styleurl),
                     timeout : 180000,
                     scope : this,
                     success: Ext.bind(this._getRenderLayer,this,[wmsResources[i], wmsUrl, wmsLayer, wmsOpacity, filterer],true),
@@ -75,7 +78,7 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
         if (response !== null) {
             var sld_body = response.responseText;
             this.sld_body = sld_body;
-            if(sld_body.indexOf("<?xml version=")!=0){
+            if(sld_body.indexOf("<?xml version=")!=0 && sld_body.indexOf("<StyledLayerDescriptor") != 0){
                 this._updateStatusforWMS(wmsUrl, "error: invalid SLD response");
                 return
             }
