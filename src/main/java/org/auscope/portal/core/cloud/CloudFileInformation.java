@@ -28,14 +28,26 @@ public class CloudFileInformation implements Serializable {
      * URL where the file can be accessed by anyone (only valid if file is publicly readable)
      */
     private String publicUrl = "";
+    /**
+     * The hash information of the currently stored file (implementation depends on cloud provider). Can be null/empty
+     */
+    private String fileHash = "";
 
     /**
      * Constructor with name and size
      */
     public CloudFileInformation(String cloudKey, long size, String publicUrl) {
+        this(cloudKey, size, publicUrl, null);
+    }
+
+    /**
+     * Constructor with name and size
+     */
+    public CloudFileInformation(String cloudKey, long size, String publicUrl, String fileHash) {
         this.cloudKey = cloudKey;
         this.size = size;
         this.publicUrl = publicUrl;
+        this.fileHash = fileHash;
     }
 
     /**
@@ -91,6 +103,22 @@ public class CloudFileInformation implements Serializable {
      */
     public void setPublicUrl(String publicUrl) {
         this.publicUrl = publicUrl;
+    }
+
+    /**
+     * The hash information of the currently stored file (implementation depends on cloud provider). Can be null/empty
+     * @return
+     */
+    public String getFileHash() {
+        return fileHash;
+    }
+
+    /**
+     * The hash information of the currently stored file (implementation depends on cloud provider). Can be null/empty
+     * @param hash
+     */
+    public void setFileHash(String fileHash) {
+        this.fileHash = fileHash;
     }
 
 }
