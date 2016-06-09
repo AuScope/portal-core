@@ -276,7 +276,7 @@ Ext.define('portal.widgets.panel.OnlineResourcePanelRow', {
                     //ensure we have a type we want to describe
                     var group = portal.csw.OnlineResource.typeToString(onlineResources[j].get('type'),onlineResources[j].get('version'));
                     if (!group) {
-                        group = "Downloads"; // If unsupported type, call it 'Downloads'
+                        continue; //don't include anything else
                     }
 
                     dataItems.push(Ext.create('portal.widgets.panel.OnlineResourcePanelRow',{
