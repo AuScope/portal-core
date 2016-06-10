@@ -78,7 +78,7 @@ Ext.define('portal.layer.renderer.wms.LayerRenderer', {
         if (response !== null) {
             var sld_body = response.responseText;
             this.sld_body = sld_body;
-            if(sld_body.indexOf("<?xml version=")!=0 && sld_body.indexOf("<StyledLayerDescriptor") != 0){
+            if(sld_body.indexOf("<?xml version=")!=0){
                 this._updateStatusforWMS(wmsUrl, "error: invalid SLD response");
                 return
             }
