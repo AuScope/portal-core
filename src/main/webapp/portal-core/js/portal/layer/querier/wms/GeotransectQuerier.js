@@ -91,13 +91,7 @@ Ext.define('portal.layer.querier.wms.GeotransectQuerier', {
                         var cswUrl = portal.util.xml.SimpleXPath.evaluateXPathString(domDoc.childNodes[0], "//*[local-name()='FIELDS']/@url");
                     }
 
-                    //VT: The response back from GA is a invalid url. Further it gets redirected to another URL
-                    //VT: therefore concatenating /xml to the returned url won't work.
-                    //VT: Rini advise to hardcode the URL.
-                    //https://www.ga.gov.au/products/servlet/controller?event=GEOCAT_DETAILS&amp;catno=76436
-                    var startIndex= cswUrl.lastIndexOf("catno=") + 6;
-                    var catno = cswUrl.substring(startIndex,cswUrl.length);
-                    cswUrl = "http://www.ga.gov.au/metadata-gateway/metadata/record/gcat_" + catno + "/xml";
+                    cswUrl = cswUrl + "/xml";
                     this._getCSWRecord(cswUrl,queryTarget,callback);
                 }else{
                     callback(this, [this.generateErrorComponent('There was an error when attempting to contact the remote WMS instance for information about this point.')], queryTarget);
