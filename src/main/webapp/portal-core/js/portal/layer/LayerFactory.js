@@ -71,8 +71,8 @@ Ext.define('portal.layer.LayerFactory', {
             filterer : filterer,
             downloader : downloader,
             querier : querier,
-            cswRecords : cswRecords,
-            loading : false
+            cswRecords : cswRecords
+            //loading : false
         });
 
         //Wire up references to our layer
@@ -174,8 +174,8 @@ Ext.define('portal.layer.LayerFactory', {
             renderer : renderer,
             filterer : filterer, 
             querier : querier,
-            cswRecords : cswRecords,
-            loading : false
+            cswRecords : cswRecords
+            //loading : false
         });
 
         //Wire up references to our layer
