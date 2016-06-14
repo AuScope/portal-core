@@ -82,6 +82,22 @@ public class CloudStorageService {
 
     private boolean requireSts=false;
 
+    private String adminEmail = "cg-admin@csiro.au";
+    
+    /**
+     * @return the adminEmail
+     */
+    public String getAdminEmail() {
+        return adminEmail;
+    }
+
+    /**
+     * @param adminEmail the adminEmail to set
+     */
+    public void setAdminEmail(String adminEmail) {
+        this.adminEmail = adminEmail;
+    }
+
     /**
      * Returns whether AWS cross account authorization is mandatory.
      * @return whether AWS cross account authorization is mandatory.
@@ -669,7 +685,7 @@ public class CloudStorageService {
         } catch (Exception ex) {
             log.error("Unable to upload files for job: " + job, ex);
             throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to storage.",
-                    "Please report it to cg-admin@csiro.au.");
+                    "Please report it to " + getAdminEmail()+".");
         }
     }
 

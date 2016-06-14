@@ -69,6 +69,23 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     private ContextBuilder builder;
 
     private String zone; //can be null
+    
+    private String adminEmail = "cg-admin@csiro.au";
+    
+    /**
+     * @return the adminEmail
+     */
+    public String getAdminEmail() {
+        return adminEmail;
+    }
+
+    /**
+     * @param adminEmail the adminEmail to set
+     */
+    public void setAdminEmail(String adminEmail) {
+        this.adminEmail = adminEmail;
+    }
+
     /**
      * Gets the region (if any) where this compute service will be restricted to run in
      *
@@ -240,7 +257,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
       throw new PortalServiceException(
           "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
               + "a smaller virtual machine",
-          "Please report it to cg-admin@csiro.au ");
+          "Please report it to " +getAdminEmail()+".");
     } else {
       result = results.iterator().next();
     }
