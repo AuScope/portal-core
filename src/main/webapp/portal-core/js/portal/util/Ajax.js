@@ -70,7 +70,7 @@ Ext.define('portal.util.Ajax', {
         var userCallbacks = {
             success: cfg.success ? Ext.bind(cfg.success, cfg.scope) : undefined,
             failure: cfg.failure ? Ext.bind(cfg.failure, cfg.scope) : undefined,
-            callback: cfg.callback ? Ext.bind(cfg.callback, cfg.scope) : undefined,
+            callback: cfg.callback ? Ext.bind(cfg.callback, cfg.scope) : undefined
         };
         delete cfg.failure;
         delete cfg.success;
