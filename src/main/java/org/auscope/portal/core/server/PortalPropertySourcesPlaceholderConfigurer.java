@@ -7,12 +7,7 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.ConfigurablePropertyResolver;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySources;
 
 /**
  * 
@@ -48,7 +43,9 @@ public class PortalPropertySourcesPlaceholderConfigurer extends PropertySourcesP
                 }
                 else if(prop.startsWith("DEFAULT.")){
                     String newProp = "HOST"+prop.substring("DEFAULT".length());
-                    hostProps.putIfAbsent(newProp, props.get(property));
+                    if(! hostProps.containsKey(newProp)) {
+                        hostProps.put(newProp, props.get(property));
+                    }
                 }
             }
         }
