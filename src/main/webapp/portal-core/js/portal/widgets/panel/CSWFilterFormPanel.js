@@ -613,18 +613,18 @@ Ext.define('portal.widgets.panel.CSWFilterFormPanel', {
 
         var customRegistryForm = this.query('form[itemId=customRegistryFormID]')[0]
 
-        Ext.Ajax.request({
+        portal.util.Ajax.request({
             url: 'getCSWGetCapabilities.do',
             scope : this,
             params: {
                 cswServiceUrl: customRegistryForm.getValues().DNA_serviceUrl
             },
-            callback : function(options, success, response) {
+            callback : function(success, data) {
                 //Check for errors
                 //VT: title should be extracted from the response;
                 if (success) {
                     //VT if title == null pop up box to ask user for title;
-                    var title = Ext.decode(response.responseText).data.title;
+                    var title = data.title;
 
 
                     var registry=Ext.getCmp('registryTabCheckboxGroup');

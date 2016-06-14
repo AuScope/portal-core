@@ -18,7 +18,7 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
     showWCSDownload : function (serviceUrl, layerName, map, ftpURL) {
         var currentVisibleBounds = map.getVisibleMapBounds();
         me = this;
-        Ext.Ajax.request({
+        portal.util.Ajax.request({
             url         : 'describeCoverage.do',
             timeout     : 180000,
             params      : {
@@ -26,24 +26,18 @@ Ext.define('portal.layer.downloader.coverage.WCSDownloader', {
                 layerName       : layerName
             },
             //This gets called if the server returns an error
-            failure     : function(response, options) {
-                Ext.Msg.alert('Error Describing Coverage', 'Error (' + response.status + '): ' + response.statusText);
+            failure     : function(message) {
+                Ext.Msg.alert('Error Describing Coverage', 'ERROR: ' + message);
             },
             //This gets called if the server returned HTTP 200 (the actual response object could still be bad though)
-            success : function(response, options) {
-                var responseObj = Ext.JSON.decode(response.responseText);
-
-                //Generate an error / success fragment to display to the user
-                if (!responseObj.success) {
-                    Ext.Msg.alert('Error Describing Coverage', 'There was an error whilst communicating with ' + serviceUrl);
-                    return;
-                } else if (responseObj.data.length === 0) {
+            success : function(data, message) {
+                if (data.length === 0) {
                     Ext.Msg.alert('Error Describing Coverage', 'The URL ' + serviceUrl + ' returned no parsable DescribeCoverage records');
                     return;
                 }
 
                 //We only parse the first record (as there should only be 1)
-                var rec = responseObj.data[0];
+                var rec = data[0];
                 var interpolationAllowed = rec.supportedInterpolations.length === 0 || rec.supportedInterpolations[0] !== 'none';
 
                 if (!rec.temporalDomain) {

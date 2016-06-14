@@ -73,23 +73,14 @@ Ext.define('portal.layer.renderer.wfs.FeatureDownloadManager', {
      */
     _doDownload : function (boundingBox, maxFeatures) {
         var params = this._buildRequestParams(boundingBox, maxFeatures);
-        this.currentRequest = Ext.Ajax.request({
+        this.currentRequest = portal.util.Ajax.request({
             url : this.proxyFetchUrl,
             params : params,
-            callback : function(options, success, response) {
+            callback : function(success, data, message, debugInfo) {
                 if (success) {
-                    var jsonResponse = Ext.JSON.decode(response.responseText);
-                    if (jsonResponse) {
-                        if (jsonResponse.success) {
-                            this.fireEvent('success', this, params, jsonResponse.data, jsonResponse.debugInfo);
-                        } else {
-                            this.fireEvent('error', this, jsonResponse.msg, jsonResponse.debugInfo);
-                        }
-                    } else {
-                        this.fireEvent('error', this, 'Bad JSON response.', null);
-                    }
+                    this.fireEvent('success', this, params, data, debugInfo);
                 } else {
-                    this.fireEvent('error', this, 'AJAX feature request failed.', null);
+                    this.fireEvent('error', this, message, debugInfo);
                 }
             },
             timeout : this.timeout,
@@ -100,67 +91,62 @@ Ext.define('portal.layer.renderer.wfs.FeatureDownloadManager', {
     /**
      * Internal function for handling a response from a 'count proxy url'
      */
-    _doCount : function(options, success, response, alreadyPrompted) {
-        if (success) {
-            var jsonResponse = Ext.JSON.decode(response.responseText);
-            if (!jsonResponse.success) {
-                this.fireEvent('error', this, jsonResponse.msg, jsonResponse.debugInfo);
-                return;
-            }
-
-            if (jsonResponse.data > this.featureSetSizeThreshold) {
-                var callingInstance = this;
-
-                //If we have too many features, tell the user
-                var win = Ext.create('Ext.window.Window', {
-                    width : 600,
-                    height : 150,
-                    closable : false,
-                    modal : true,
-                    title : 'Warning: Large feature set',
-                    layout : 'fit',
-                    items : [{
-                        xtype : 'component',
-                        autoEl : {
-                            tag: 'span',
-                            html : Ext.util.Format.format('<p>You are about to display <b>{0}</b> features, doing so could make the portal run extremely slowly. Would you still like to continue?</p><br/><p>Alternatively you can abort this operation, adjust your zoom/filter and then try again.</p>', jsonResponse.data)
-                        },
-                        cls : 'ext-mb-text'
-                    }],
-                    dockedItems : [{
-                        xtype : 'toolbar',
-                        dock : 'bottom',
-                        ui : 'footer',
-                        layout : {
-                            type : 'hbox',
-                            pack : 'center'
-                        },
-                        items : [{
-                            xtype : 'button',
-                            text : Ext.util.Format.format('Display {0} features', jsonResponse.data),
-                            handler : function(button) {
-                                callingInstance._doDownload(callingInstance._visibleMapBounds);
-                                button.ownerCt.ownerCt.close();
-                            }
-                        },{
-                            xtype : 'button',
-                            text : 'Abort operation',
-                            handler : function(button) {
-                                callingInstance.fireEvent('cancelled', callingInstance);
-                                button.ownerCt.ownerCt.close();
-                            }
-                        }]
-                    }]
-                });
-                win.show();
-            } else {
-                //If we have an acceptable number of records, this is how we shall proceed
-                this._doDownload(this.visibleMapBounds);
-            }
-        } else {
-            //If the count download fails,
-            this.fireEvent('error', this, 'AJAX count request failed.', null);
+    _doCount : function(success, data, message, debugInfo) {
+        if (!success) {
+            this.fireEvent('error', this, message, debugInfo);
+            return;
         }
+
+        if (data > this.featureSetSizeThreshold) {
+            var callingInstance = this;
+
+            //If we have too many features, tell the user
+            var win = Ext.create('Ext.window.Window', {
+                width : 600,
+                height : 150,
+                closable : false,
+                modal : true,
+                title : 'Warning: Large feature set',
+                layout : 'fit',
+                items : [{
+                    xtype : 'component',
+                    autoEl : {
+                        tag: 'span',
+                        html : Ext.util.Format.format('<p>You are about to display <b>{0}</b> features, doing so could make the portal run extremely slowly. Would you still like to continue?</p><br/><p>Alternatively you can abort this operation, adjust your zoom/filter and then try again.</p>', data)
+                    },
+                    cls : 'ext-mb-text'
+                }],
+                dockedItems : [{
+                    xtype : 'toolbar',
+                    dock : 'bottom',
+                    ui : 'footer',
+                    layout : {
+                        type : 'hbox',
+                        pack : 'center'
+                    },
+                    items : [{
+                        xtype : 'button',
+                        text : Ext.util.Format.format('Display {0} features', data),
+                        handler : function(button) {
+                            callingInstance._doDownload(callingInstance._visibleMapBounds);
+                            button.ownerCt.ownerCt.close();
+                        }
+                    },{
+                        xtype : 'button',
+                        text : 'Abort operation',
+                        handler : function(button) {
+                            callingInstance.fireEvent('cancelled', callingInstance);
+                            button.ownerCt.ownerCt.close();
+                        }
+                    }]
+                }]
+            });
+            win.show();
+        } else {
+            //If we have an acceptable number of records, this is how we shall proceed
+            this._doDownload(this.visibleMapBounds);
+        }
+        
     },
 
     /**
@@ -170,7 +156,7 @@ Ext.define('portal.layer.renderer.wfs.FeatureDownloadManager', {
         //Firstly attempt to discern how many records are available, this will affect how we proceed
         //If we dont have a proxy for doing this, then just download everything
         if (this.proxyCountUrl && this.proxyCountUrl.length > 0) {
-            this.currentRequest = Ext.Ajax.request({
+            this.currentRequest = portal.util.Ajax.request({
                 url : this.proxyCountUrl,
                 params : this._buildRequestParams(this.visibleMapBounds),
                 scope : this,
