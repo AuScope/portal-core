@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.auscope.portal.core.cloud.CloudFileInformation;
 import org.auscope.portal.core.cloud.CloudJob;
@@ -22,6 +25,7 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
+import org.jclouds.io.payloads.BaseImmutableContentMetadata;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -80,6 +84,33 @@ public class TestCloudStorageService extends PortalTestClass {
         Assert.assertSame(mockReturnedInputStream, actualInputStream);
     }
 
+    @Test
+    public void testGetJobFileMetaData() throws Exception {
+        final String myKey = "my/key";
+        final BlobStore mockBlobStore = context.mock(BlobStore.class);
+
+        final Map<String, String> userMetadata = new HashMap<String, String>();
+        final BaseImmutableContentMetadata contentMetadata = new BaseImmutableContentMetadata("mime/type", 24L, null, null, null, null, null);
+        final StorageMetadata metadata = new BlobMetadataImpl("id", "name", null, new URI("http://example.cloud/file"), "asdsadsasd", new Date(), new Date(), userMetadata, new URI("http://example.cloud/publicfile"), null, contentMetadata);
+
+
+        context.checking(new Expectations() {
+            {
+                oneOf(mockBlobStoreContext).getBlobStore();
+                will(returnValue(mockBlobStore));
+
+                oneOf(mockBlobStore).blobMetadata(bucket, jobStorageBaseKey + "/" + myKey);
+                will(returnValue(metadata));
+            }
+        });
+
+        CloudFileInformation result = service.getJobFileMetadata(job, myKey);
+
+        Assert.assertEquals("asdsadsasd", result.getFileHash());
+        Assert.assertEquals("name", result.getName());
+        Assert.assertEquals(24L, result.getSize());
+    }
+
     /**
      * Tests that requests for listing files successfully call all dependencies
      *
@@ -133,6 +164,8 @@ public class TestCloudStorageService extends PortalTestClass {
                 will(returnValue(StorageType.BLOB));
                 allowing(mockObj1ContentMetadata).getContentLength();
                 will(returnValue(obj1Length));
+                allowing(mockStorageMetadata1).getETag();
+                will(returnValue("sadgafsadfa"));
 
 
                 allowing(mockStorageMetadata2).getName();
@@ -145,6 +178,8 @@ public class TestCloudStorageService extends PortalTestClass {
                 will(returnValue(StorageType.BLOB));
                 allowing(mockObj2ContentMetadata).getContentLength();
                 will(returnValue(obj2Length));
+                allowing(mockStorageMetadata2).getETag();
+                will(returnValue("mocoqqwiiluhqw"));
 
                 allowing(mockStorageMetadata3).getContentMetadata();
                 will(returnValue(mockObj3ContentMetadata));
