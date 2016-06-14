@@ -29,23 +29,17 @@ Ext.define('portal.layer.querier.wfs.featuresources.WFSFeatureSource', {
         });
 
         var me = this;
-        Ext.Ajax.request({
+        portal.util.Ajax.request({
             url : 'requestFeature.do',
             params : params,
-            callback : function(options, success, response) {
+            callback : function(success, data) {
                 if (!success) {
                     callback(null, featureId, featureType, wfsUrl);
                     return;
                 }
 
-                var jsonResponse = Ext.JSON.decode(response.responseText);
-                if (!jsonResponse.success) {
-                    callback(null, featureId, featureType, wfsUrl);
-                    return;
-                }
-
                 // Load our xml string into DOM, extract the first feature
-                var xmlDocument = portal.util.xml.SimpleDOM.parseStringToDOM(jsonResponse.data.gml);
+                var xmlDocument = portal.util.xml.SimpleDOM.parseStringToDOM(data.gml);
                 if (!xmlDocument) {
                     callback(null, featureId, featureType, wfsUrl);
                     return;
