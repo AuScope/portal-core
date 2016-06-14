@@ -57,7 +57,6 @@ Ext.define('portal.layer.Layer', {
 
     onRenderStarted : function(renderer, onlineResources, filterer) {
         //this.set('loading', true);
-        this.get('source').set('loading', true);
         this.get('source').set('active', true);
     },
 
@@ -69,7 +68,7 @@ Ext.define('portal.layer.Layer', {
      */
     onRenderFinished : function(renderer) {
         //this.set('loading', false);
-        this.get('source').set('loading', false);
+
         
         var map = renderer.map;
         var layerStore = map.layerStore;
