@@ -115,11 +115,7 @@ Ext.define('portal.widgets.panel.FilterPanel', {
         }
 
         optionsButton.setHidden(this.optionsButtonIsHidden)
-        
-        if (menuItems.length === 0) {
-            this.optionsButtonIsHidden = true;
-        }
-        
+
         Ext.apply(config, { 
             items : [
                 this.filterForm
@@ -128,14 +124,9 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 this._addOrUpdateLayerButton,
             {
                 xtype:'tbfill'
-            },{
-                xtype : 'button',
-                text      : 'Options',
-                iconCls    :   'setting',
-                arrowAlign: 'right',
-                menu      : menuItems,
-                hidden : this.optionsButtonIsHidden
-            }]
+            },
+            optionsButton
+            ]
         
         });
 
