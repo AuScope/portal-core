@@ -99,10 +99,25 @@ Ext.define('portal.widgets.panel.FilterPanel', {
             }
         }
         
+
+        var optionsButton = Ext.create('Ext.button.Button', {
+            xtype : 'button',
+            text : 'Options',
+            iconCls : 'setting',
+            arrowAlign : 'right'
+        });
+        
         if (menuItems.length === 0) {
             this.optionsButtonIsHidden = true;
+        } else if (menuItems.length === 1) {
+            var optionsAction = menuItems[0];
+            optionsButton = Ext.create('Ext.button.Button', optionsAction);
+        } else {
+            optionsButton.setMenu(menuItems)
         }
-        
+
+        optionsButton.setHidden(this.optionsButtonIsHidden)
+
         Ext.apply(config, { 
             items : [
                 this.filterForm
@@ -111,14 +126,9 @@ Ext.define('portal.widgets.panel.FilterPanel', {
                 this._addOrUpdateLayerButton,
             {
                 xtype:'tbfill'
-            },{
-                xtype : 'button',
-                text      : 'Options',
-                iconCls    :   'setting',
-                arrowAlign: 'right',
-                menu      : menuItems,
-                hidden : this.optionsButtonIsHidden
-            }]
+            },
+            optionsButton
+            ]
         
         });
 
