@@ -82,6 +82,22 @@ public class CloudStorageService {
 
     private boolean requireSts=false;
 
+    private String adminEmail = "cg-admin@csiro.au";
+    
+    /**
+     * @return the adminEmail
+     */
+    public String getAdminEmail() {
+        return adminEmail;
+    }
+
+    /**
+     * @param adminEmail the adminEmail to set
+     */
+    public void setAdminEmail(String adminEmail) {
+        this.adminEmail = adminEmail;
+    }
+
     /**
      * Returns whether AWS cross account authorization is mandatory.
      * @return whether AWS cross account authorization is mandatory.
@@ -534,6 +550,55 @@ public class CloudStorageService {
     }
 
     /**
+     * Converts JClouds StorageMetadata into simpler CloudFileInformation.
+     * Returns null if the conversion is not possible
+     * @param md
+     * @return
+     */
+    private CloudFileInformation metadataToCloudFile(StorageMetadata md) {
+        //Skip objects that are not files
+        if (md.getType() != StorageType.BLOB) {
+            return null;
+        }
+
+        long fileSize = 1L;
+        if (md instanceof BlobMetadataImpl) {
+            ContentMetadata cmd = ((BlobMetadataImpl) md).getContentMetadata();
+            fileSize = cmd.getContentLength();
+        } else if (md instanceof MutableBlobMetadataImpl) {
+            ContentMetadata cmd = ((MutableBlobMetadataImpl) md).getContentMetadata();
+            fileSize = cmd.getContentLength();
+        }
+
+        return new CloudFileInformation(md.getName(), fileSize, md.getUri().toString(), md.getETag());
+    }
+
+    /**
+     * Gets the metadata for a job file identified by key.
+     *
+     * @param job
+     *            The job whose storage space will be queried
+     * @param key
+     *            The file name (no prefixes)
+     * @return
+     * @throws PortalServiceException
+     */
+    public CloudFileInformation getJobFileMetadata(CloudFileOwner job, String myKey) throws PortalServiceException {
+        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+
+        try {
+            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            StorageMetadata md = bs.blobMetadata(getBucket(job), keyForJobFile(job, myKey));
+            return metadataToCloudFile(md);
+        } catch (Exception ex) {
+            log.error(String.format("Unable to get job file metadata '%1$s' for job %2$s:", myKey, job));
+            log.debug("error:", ex);
+            throw new PortalServiceException("Error retriving output file details", ex);
+        }
+    }
+
+    /**
      * Gets information about every file in the job's cloud storage space
      *
      * @param job
@@ -564,21 +629,10 @@ public class CloudStorageService {
 
                 //Turn our StorageMetadata objects into simpler CloudFileInformation objects
                 for (StorageMetadata md : currentMetadataPage) {
-                    //Skip objects that are not files
-                    if (md.getType() != StorageType.BLOB) {
-                        continue;
+                    CloudFileInformation info = metadataToCloudFile(md);
+                    if (info != null) {
+                        jobFiles.add(info);
                     }
-
-                    long fileSize = 1L;
-                    if (md instanceof BlobMetadataImpl) {
-                        ContentMetadata cmd = ((BlobMetadataImpl) md).getContentMetadata();
-                        fileSize = cmd.getContentLength();
-                    } else if (md instanceof MutableBlobMetadataImpl) {
-                        ContentMetadata cmd = ((MutableBlobMetadataImpl) md).getContentMetadata();
-                        fileSize = cmd.getContentLength();
-                    }
-
-                    jobFiles.add(new CloudFileInformation(md.getName(), fileSize, md.getUri().toString()));
                 }
 
                 nextMarker = currentMetadataPage.getNextMarker();
@@ -631,7 +685,7 @@ public class CloudStorageService {
         } catch (Exception ex) {
             log.error("Unable to upload files for job: " + job, ex);
             throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to storage.",
-                    "Please report it to cg-admin@csiro.au.");
+                    "Please report it to " + getAdminEmail()+".");
         }
     }
 

@@ -28,6 +28,7 @@
 <script src="portal-core/js/portal/util/help/InstructionManager.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/util/xml/SimpleDOM.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/util/xml/SimpleXPath.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/util/Ajax.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/util/Base64.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/util/BBoxType.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/util/BBox.js?v=${buildTimestamp}" type="text/javascript"></script>

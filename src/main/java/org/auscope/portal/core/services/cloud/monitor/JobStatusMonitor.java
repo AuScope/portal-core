@@ -41,7 +41,7 @@ public class JobStatusMonitor {
                 l.handleStatusChange(job, newStatus, oldStatus);
             } catch (Exception ex) {
                 //Simply log it if the event handler fails and move on
-                log.error("An error has occurred while handling status change event." + ex.getMessage());
+                log.error("An error has occurred while handling status change event: " + ex.getMessage());
                 log.debug("Exception: ", ex);
             }
         }
