@@ -349,20 +349,15 @@ Ext.define('portal.layer.downloader.wfs.KLWFSDownloader', {
         params.bbox = bbox ? Ext.JSON.encode(bbox) : '';
         
         el.setHtml('<img src="portal-core/img/dotdotdot.gif" width="16" height="16">'); //our loading placeholder
-        Ext.Ajax.request({
+        portal.util.Ajax.request({
             url: countUrl,
             params: params,
             timeout: 5 * 60 * 1000, //5 minutes  
-            callback: function(options, success, response) {
+            callback: function(success, data) {
                 if (!success) {
                     el.setHtml('Error');
                 } else {
-                    var responseObj = Ext.JSON.decode(response.responseText);
-                    if (!responseObj.success) {
-                        el.setHtml('Error');
-                    } else {
-                        el.setHtml(responseObj.data);
-                    }
+                    el.setHtml(responseObj.data);
                 }
             }
         });

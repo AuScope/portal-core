@@ -146,7 +146,7 @@ Ext.define('portal.widgets.panel.CommonBaseRecordPanel', {
         var containsImageService = serviceType.containsImageService;
 
         // default iconPath where there is no service info available
-        var iconPath = 'portal-core/img/cross.png';
+        var iconPath = 'portal-core/img/warning.png';
 
         // check whether the portal has overridden the icons 
         if (this.serviceInformationIcon && (containsDataService || containsImageService)) {

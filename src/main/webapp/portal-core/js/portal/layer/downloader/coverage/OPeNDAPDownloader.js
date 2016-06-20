@@ -201,22 +201,17 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
      */
     _onWindowOpen : function(win, eOpts, opendapUrl, variableName) {
         //Download our variable list - this will be used to generate our form parameters
-        Ext.Ajax.request({
+        portal.util.Ajax.request({
             url     : 'opendapGetVariables.do',
             scope : this,
             params  : {
                 opendapUrl : opendapUrl,
                 variableName : variableName
             },
-            callback : function(options, success, response) {
+            callback : function(success, data, message) {
                 //Check for errors
                 if (!success) {
-                    this._updateLoadingStatus(win, 'Error (' + response.status + '): ' + response.statusText);
-                    return;
-                }
-                var responseObj = Ext.JSON.decode(response.responseText);
-                if (!responseObj.success) {
-                    this._updateLoadingStatus(win, 'Error: ' + responseObj.msg);
+                    this._updateLoadingStatus(win, 'Error: ' + message);
                     return;
                 }
 
@@ -224,7 +219,7 @@ Ext.define('portal.layer.downloader.coverage.OPeNDAPDownloader', {
                 this._updateLoadingStatus(win, null);
 
                 //Update our form with the downloaded variables
-                this._variableListToWindow(win, responseObj.data);
+                this._variableListToWindow(win, data);
             }
         });
     },

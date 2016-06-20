@@ -49,41 +49,49 @@ Ext.define('portal.widgets.panel.CSWMetadataPanel', {
             layout : 'fit',
             items : [{
                 xtype : 'fieldset',
-                items : [{
-                    xtype : 'displayfield',
-                    fieldLabel : 'Source',
-                    value : Ext.util.Format.format('<a target="_blank" href="{0}">Link back to registry</a>', source)
-                },{
-                    xtype : 'displayfield',
-                    fieldLabel : 'Title',
-                    anchor : '100%',
-                    value : this.cswRecord.get('name')
-                }, {
-                    xtype : 'textarea',
-                    fieldLabel : 'Abstract',
-                    anchor : '100%',
-                    value : this.cswRecord.get('description'),
-                    readOnly : true
-                },{
-                    xtype : 'displayfield',
-                    fieldLabel : 'Keywords',
-                    anchor : '100%',
-                    value : keywordsString
-                },{
-                    xtype : 'displayfield',
-                    fieldLabel : 'Contact Org',
-                    anchor : '100%',
-                    value : this.cswRecord.get('contactOrg')
-                }]
-                .concat(this.extraItems)
-                .concat({
-                    fieldLabel : 'Resources',
-                    xtype : 'onlineresourcepanel',
-                    cswRecords : this.cswRecord
-                })
+                items : this._getMetadataItems(source,keywordsString)
             }]
         });
 
         this.callParent(arguments);
+    },
+
+    _getMetadataItems : function(source,keywordsString) {
+      var items = [{
+        xtype : 'displayfield',
+        fieldLabel : 'Source',
+        value : Ext.util.Format.format('<a target="_blank" href="{0}">Full metadata and downloads</a>', source)
+      },{
+        xtype : 'displayfield',
+        fieldLabel : 'Title',
+        anchor : '100%',
+        value : this.cswRecord.get('name')
+      }, {
+        xtype : 'textarea',
+        fieldLabel : 'Abstract',
+        anchor : '100%',
+        value : this.cswRecord.get('description'),
+        readOnly : true
+      },{
+        xtype : 'displayfield',
+        fieldLabel : 'Keywords',
+        anchor : '100%',
+        value : keywordsString
+      },{
+        xtype : 'displayfield',
+        fieldLabel : 'Contact Org',
+        anchor : '100%',
+        value : this.cswRecord.get('contactOrg')
+      }];
+      items.concat(this.extraItems);
+      if (this.cswRecord!=null) {
+        items.concat({
+                    fieldLabel : 'Resources',
+                    xtype : 'onlineresourcepanel',
+                    cswRecords : this.cswRecord
+                });
+      }
+      return items;
     }
+      
 });

@@ -24,14 +24,13 @@ Ext.define('portal.layer.legend.wfs.WFSLegend', {
         
         var table = '<table>';
         var wfsOnlineResources = portal.csw.OnlineResource.getFilteredFromArray(resources, portal.csw.OnlineResource.WFS);
-        for (var i = 0; i < wfsOnlineResources.length; i++) {
-            table += '<tr><td><img height="16" width="16" src="' + this.iconUrl +'"><td><td>' + wfsOnlineResources[i].get('name') + '<td><tr>'
-        }
+        table += '<tr><td><img height="16" width="16" src="' + this.iconUrl +'"><td><td>' + wfsOnlineResources[0].get('name') + '<td><tr>';
         table += '</table';
         
         var form = Ext.create('Ext.form.Panel',{
             title : 'WFS Feature',
             layout: 'fit',
+            width: 250,
             html :  table
             });
         

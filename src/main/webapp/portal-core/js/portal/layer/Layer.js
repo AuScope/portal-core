@@ -70,24 +70,44 @@ Ext.define('portal.layer.Layer', {
     onRenderFinished : function(renderer) {
         //this.set('loading', false);
         this.get('source').set('loading', false);
-        
+
         var map = renderer.map;
         var layerStore = map.layerStore;
+
+        var l = 0;
+        var zIndex = 0;
         for (var i = layerStore.data.items.length-1; i >= 0; --i) {
             var onlineResourcesForLayer = [];
             var cswRecords = layerStore.data.items[i].data.cswRecords;
             for (var j = 0; j < cswRecords.length; j++) {
                 onlineResourcesForLayer = onlineResourcesForLayer.concat(cswRecords[j].data.onlineResources);
             }
+
+            var layerNameArray = [];
             for (var j = 0; j < onlineResourcesForLayer.length; j++) {
-                var mapLayers = map.map.getLayersByName(onlineResourcesForLayer[j].data.name);
-                if (mapLayers && mapLayers.length > 0) {
-                    for (var k = 0; k < mapLayers.length; k++) {
+                var layerName = onlineResourcesForLayer[j].data.name;
+                var mapLayers = map.map.getLayersByName(layerName);
+
+                if (layerNameArray.indexOf(layerName) < 0)
+                {
+                    layerNameArray.push(layerName);
+                    if (mapLayers && mapLayers.length > 0) {
+                        for (var k = 0; k < mapLayers.length; k++) {
                         // construct a useable z-index for the layer on the map
-                        var zIndex = (layerStore.data.items.length - i) * 100000 + (j*100) + k;
+                        var zIndex = zIndex + 1;
                         map.map.setLayerZIndex(mapLayers[k], zIndex);
+                        }
                     }
                 }
+            }
+            l = l + 100;
+        }
+
+        // float the vector root containers to the top of the map so that they can be clicked on
+        for (var i = 0; i < map.map.layers.length; i++) {
+            var layer = map.map.layers[i];
+            if (layer.id.indexOf('OpenLayers_Layer_Vector_RootContainer') != -1) {
+                map.map.setLayerZIndex(layer, 20000 + i);
             }
         }
     },

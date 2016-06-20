@@ -42,7 +42,7 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
         var allOnlineResources = queryTarget.get('cswRecord').get('onlineResources');
         var opendapResources = portal.csw.OnlineResource.getFilteredFromArray(allOnlineResources, portal.csw.OnlineResource.OPeNDAP);
 
-        Ext.Ajax.request({
+        portal.util.Ajax.request({
             url: 'describeCoverage.do',
             timeout : 180000,
             params      : {
@@ -51,14 +51,13 @@ Ext.define('portal.layer.querier.coverage.WCSQuerier', {
                 //cswRecord       : queryTarget.get('cswRecord')
             },
             scope : this,
-            callback : function(options, success, response) {
+            callback : function(success, data, message) {
                 if(success){
-                    var responseObj = Ext.JSON.decode(response.responseText);
-                    if (!responseObj.data) { //LJ: AUS-2598 ASTER mask hanging when server is down.
+                    if (!data) { //LJ: AUS-2598 ASTER mask hanging when server is down.
                         callback(this, [this._generateErrorComponent('There was a problem when looking up the point')], queryTarget);
                         return;
                     }                    
-                    var record = responseObj.data[0];
+                    var record = data[0];
                     var spatialFunc=function(item) {
                         var s = '';
                         if (item.type === 'Envelope' || item.type === 'EnvelopeWithTimePeriod') {

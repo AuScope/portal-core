@@ -91,7 +91,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
             // GPT-MS -- I don't believe the below works. GetLegendGraphic takes a STYLE parameter, not a STYLES parameter. Have left it as is. 
             if (this.styles) {
                 url += '&STYLES=' + escape(this.styles);
-            } else {
+            } else if (wmsURL.toUpperCase().indexOf("MAPSERVER/WMSSERVER") > -1){
             	var sld = portal.util.xml.SimpleDOM.parseStringToDOM(sld_body);
             	// GPT-MS : This would be better as an XPath '/StyledLayerDescriptor/UserStyle/Name" but I couldn't get it to work.  
             	url += '&STYLE=' + sld.getElementsByTagName("UserStyle")[0].getElementsByTagName("Name")[0].textContent;
@@ -102,7 +102,7 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
     
         /* Hits the WMS controller to doa  getCapabilties call on the layer and retrieve the LegendGraphicURL element */
         generateLegendGraphicFromGetCapabilities : function(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles, callback) {
-            Ext.Ajax.request({
+            portal.util.Ajax.request({
                 url: "getLegendURL.do",
                 timeout : 30000,    // Yes this seems a long time but was necessary
                 params : {
@@ -111,16 +111,10 @@ Ext.define('portal.layer.legend.wms.WMSLegend', {
                     layerName : wmsName
                 },
                 scope : this,
-                success: function(response, options){
-                    var text = response.responseText;
-                    console.log("getLegendURL.do call success - response text: ",text, "options: ", options);
-                    callback(JSON.parse(response.responseText)["data"]);
+                success: function(data, message){
+                    callback(data);
                 },
-                failure: function(response, opts) {
-                    var status = response.status;
-                    var statusMsg = response.statusText;
-
-                    console.log("getLegendURL.do call failure - layerName: ", opts.params.layerName, ", url: ", wmsURL, ", status: ", status, ", status text: ",statusMsg, ".  Try alternate method.");
+                failure: function(message) {
                     var getLegendGraphicUrl = portal.layer.legend.wms.WMSLegend.generateImageUrl(wmsURL,wmsName,wmsVersion,width,sld_body,isSld_body,styles);
                     callback(getLegendGraphicUrl);
                 }
