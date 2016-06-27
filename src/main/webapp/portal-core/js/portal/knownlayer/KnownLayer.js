@@ -27,6 +27,7 @@ Ext.define('portal.knownlayer.KnownLayer', {
         { name: 'iconSize', type: 'auto' }, //An object containing width,height for the pixel size of the icon
         { name: 'cswRecords', convert: portal.csw.CSWRecordType.convert}, //a set of portal.csw.CSWRecord objects that belong to this KnownLayer grouping
         { name: 'relatedRecords', convert: portal.csw.CSWRecordType.convert},// a set of portal.csw.CSWRecord objects that relate to this knownlayer
+        { name: 'loading', type: 'boolean', defaultValue: false },//Whether this layer is currently loading data or not
         { name: 'layer', type: 'auto'}, // store the layer after it has been converted.        
         { name: 'active', type: 'boolean', defaultValue: false },//Whether this layer is current active on the map.
         { name: 'feature_count', type: 'string'}, //GetFeatureInfo feature_count attribute, 0 would be to default to whatever is set on the server.
