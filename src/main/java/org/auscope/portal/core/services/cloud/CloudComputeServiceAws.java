@@ -31,18 +31,23 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.BasicSessionCredentials;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.BlockDeviceMapping;
 import com.amazonaws.services.ec2.model.CreateTagsRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
 import com.amazonaws.services.ec2.model.GetConsoleOutputRequest;
 import com.amazonaws.services.ec2.model.GetConsoleOutputResult;
 import com.amazonaws.services.ec2.model.IamInstanceProfileSpecification;
+import com.amazonaws.services.ec2.model.Image;
 import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
@@ -72,9 +77,9 @@ public class CloudComputeServiceAws extends CloudComputeService {
     private String devAccessKey;
 
     private String devSecretKey;
-    
+
     private boolean requireSts=false;
-    
+
     /**
      * Returns whether AWS cross account authorization is mandatory.
      * @return whether AWS cross account authorization is mandatory.
@@ -179,6 +184,42 @@ public class CloudComputeServiceAws extends CloudComputeService {
         if (!TextUtil.isNullOrEmpty(getEndpoint()))
             ec2.setEndpoint(getEndpoint());
         return ec2;
+    }
+
+    /**
+     * Returns true if the Compute VM ID in job has one or more persistent volumes (volumes that
+     * won't delete on termination).
+     *
+     * @param job The job whose Compute VM will be checked for persistent volumes
+     * @throws PortalServiceException If there is an error communicating with AWS
+     * @return
+     */
+    public boolean containsPersistentVolumes(CloudJob job) throws PortalServiceException {
+        String vmId = job.getComputeVmId();
+        if (vmId.contains("/")) {
+            vmId = vmId.substring(vmId.lastIndexOf("/") + 1);
+        }
+
+        try {
+            DescribeImagesRequest dir = new DescribeImagesRequest().withImageIds(vmId);
+            DescribeImagesResult imageDescs = getEc2Client(job).describeImages(dir);
+            if(imageDescs.getImages().isEmpty()) {
+                throw new PortalServiceException("Could not get description for image: " + vmId);
+            }
+
+            Image imageDesc = imageDescs.getImages().get(0);
+            for (BlockDeviceMapping bdm : imageDesc.getBlockDeviceMappings()) {
+                Boolean deleteOnTermination =  bdm.getEbs().getDeleteOnTermination();
+                if( deleteOnTermination != null && deleteOnTermination == false) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (AmazonClientException ex) {
+            logger.error("Unable to describe images: " + ex.getMessage());
+            logger.debug("Error:", ex);
+            throw new PortalServiceException("Unable to describe images: " + ex.getMessage(), ex);
+        }
     }
 
     public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
