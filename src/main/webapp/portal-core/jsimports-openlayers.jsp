@@ -71,4 +71,4 @@
 <script src="portal-core/js/portal/map/openlayers/primitives/Polygon.js" type="text/javascript"></script>
 <script src="portal-core/js/portal/map/openlayers/primitives/Polyline.js" type="text/javascript"></script>
 <script src="portal-core/js/portal/map/openlayers/primitives/WMSOverlay.js" type="text/javascript"></script>
-<script src="https://maps.google.com/maps/api/js?v=3.8&sensor=false"></script>
+<script src="https://maps.google.com/maps/api/js?v=3.8&sensor=false&key=${googleKey}"></script>
