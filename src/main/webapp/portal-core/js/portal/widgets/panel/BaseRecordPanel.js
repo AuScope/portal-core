@@ -20,11 +20,6 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
     constructor : function(cfg) {
         var me = this;
-
-        var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-            groupHeaderTpl: '{name} ({[values.rows.length]} {[values.rows.length > 1 ? "Items" : "Item"]})',
-            startCollapsed : true
-        });
        
         me.listeners = Object.extend(me.listenersHere, cfg.listeners);
         
@@ -33,12 +28,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
 
         Ext.apply(cfg, {
             cls : 'auscope-dark-grid',
-            hideHeaders : true,
-            features : [groupingFeature],
-            viewConfig : {
-                emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
-                preserveScrollOnRefresh: true
-            },          
+            emptyText : '<p class="centeredlabel">No records match the current filter.</p>',
             dockedItems : [{
                 xtype : 'toolbar',
                 dock : 'top',
@@ -63,104 +53,70 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                    
                 }]
             }],
-            columns : [{
-                //Loading icon column
-                xtype : 'clickcolumn',
-                dataIndex : 'active',
-                renderer : me._deleteRenderer,
-                hasTip : true,
-                tipRenderer : function(value, layer, column, tip) {
-                    if(layer.get('active')){
+            titleField: 'name',
+            titleIndex: 2,
+            tools: [{
+                field: 'active',
+                clickHandler: Ext.bind(me._deleteClickHandler, me),
+                stopEvent: false,
+                tipRenderer: function(value, layer, tip) {
+                    if(value) {
                         return 'Click to remove layer from map';
-                    }else{
+                    } else {
                         return 'Click to anywhere on this row to select drop down menu';
                     }
                 },
-                width: 32,
-                listeners : {
-                    columnclick : Ext.bind(me._deleteClickHandler, me)
-                }
+                iconRenderer: me._deleteRenderer
             },{
-                //Loading icon column
-                xtype : 'clickcolumn',
-                dataIndex : 'loading',
-                renderer : me._loadingRenderer,
-                hasTip : true,
-                tipRenderer : Ext.bind(me._loadingTipRenderer, me),
-                width: 32,
-                listeners : {
-                    columnclick : Ext.bind(me._loadingClickHandler, me)
-                }
+                field: 'loading',
+                stopEvent: true,
+                clickHandler: Ext.bind(me._loadingClickHandler, me),
+                tipRenderer: Ext.bind(me._loadingTipRenderer, me),
+                iconRenderer: Ext.bind(me._loadingRenderer, this)
             },{
-                //Title column
-                text : 'Title',
-                dataIndex : 'name',
-                flex: 1,
-                renderer : me._titleRenderer
-            },{
-                //Service information column
-                xtype : 'clickcolumn',
-                dataIndex : 'serviceInformation',
-                width: 32,
-                renderer : me._serviceInformationRenderer,
-                hasTip : true,
-                tipRenderer : function(value, layer, column, tip) {
+                field: 'serviceInformation',
+                stopEvent: true,
+                clickHandler: Ext.bind(me._serviceInformationClickHandler, me),
+                tipRenderer: function(layer, tip) {
                     return 'Click for detailed information about the web services this layer utilises.';
                 },
-                listeners : {
-                    columnclick : Ext.bind(me._serviceInformationClickHandler, me)
-                }
+                iconRenderer: Ext.bind(me._serviceInformationRenderer, me)
             },{
-                //Spatial bounds column
-                xtype : 'clickcolumn',
-                dataIndex : 'spatialBoundsRenderer',
-                width: 32,
-                renderer : me._spatialBoundsRenderer,
-                hasTip : true,
-                tipRenderer : function(value, layer, column, tip) {
-                    return 'Click to see the bounds of this layer, double click to pan the map to those bounds.';
+                field: 'spatialBoundsRenderer',
+                stopEvent: true,
+                clickHandler: Ext.bind(me._spatialBoundsClickHandler, me),
+                doubleClickHandler: Ext.bind(me._spatialBoundsDoubleClickHandler, me),
+                tipRenderer: function(layer, tip) {
+                    return 'Click to see the bounds of this layer, double click to pan the map to those bounds';
                 },
-                listeners : {
-                    columnclick : Ext.bind(me._spatialBoundsClickHandler, me),
-                    columndblclick : Ext.bind(me._spatialBoundsDoubleClickHandler, me)
-                }
+                iconRenderer: Ext.bind(me._spatialBoundsRenderer, me)
             }],
-          plugins:[{                
-              ptype : 'rowexpandercontainer',
-              pluginId : 'maingrid_rowexpandercontainer',
-              toggleColIndexes: [0, 2],
-              generateContainer : function(record, parentElId, grid) {                  
-                  //VT:if this is deserialized, we don't need to regenerate the layer
-                  if(record.get('layer')) {                        
-                      newLayer =  record.get('layer');                                    
-                  }else if(record instanceof portal.csw.CSWRecord){                        
-                      newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);                                                     
-                  }else{
-                      newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);                      
-                  }           
-                  record.set('layer',newLayer);
-                  var filterForm = cfg.layerFactory.formFactory.getFilterForm(newLayer).form; //ALWAYS recreate filter form - see https://jira.csiro.au/browse/AUS-2588
-                  filterForm.setLayer(newLayer);
-                  var filterPanel = me._getInlineLayerPanel(filterForm, parentElId, this);
-                  
-                  //Update the layer panel to use
-                  if (filterForm) {
-                      var filterer = newLayer.get('filterer');
-                      if (filterer) {
-                          var existingParams = filterer.getParameters();
-                          filterForm.getForm().setValues(existingParams);
-                      }
-                  }
-                  grid.updateLayout({
-                      defer:false,
-                      isRoot:false
-                  });                    
-                  return filterPanel;
-             }
-         },{
-          ptype: 'celltips'
-         }]
-                  
+            childPanelGenerator: function(record) {                  
+                var newLayer = null;
+                
+                //VT:if this is deserialized, we don't need to regenerate the layer
+                if(record.get('layer')) {                        
+                    newLayer =  record.get('layer');                                    
+                }else if(record instanceof portal.csw.CSWRecord){                        
+                    newLayer = cfg.layerFactory.generateLayerFromCSWRecord(record);                                                     
+                }else{
+                    newLayer = cfg.layerFactory.generateLayerFromKnownLayer(record);                      
+                }           
+                record.set('layer',newLayer);
+                var filterForm = cfg.layerFactory.formFactory.getFilterForm(newLayer).form; //ALWAYS recreate filter form - see https://jira.csiro.au/browse/AUS-2588
+                filterForm.setLayer(newLayer);
+                var filterPanel = me._getInlineLayerPanel(filterForm);
+                
+                //Update the layer panel to use
+                if (filterForm) {
+                    var filterer = newLayer.get('filterer');
+                    if (filterer) {
+                        var existingParams = filterer.getParameters();
+                        filterForm.getForm().setValues(existingParams);
+                    }
+                }
+                return filterPanel;
+           }
         });
 
         me.callParent(arguments);
@@ -170,14 +126,13 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         me.callParent();
     },
 
-    _getInlineLayerPanel : function(filterForm, parentElId){                             
+    _getInlineLayerPanel : function(filterForm){                             
         var me = this;   
         var panel = Ext.create('portal.widgets.panel.FilterPanel', {    
             menuFactory : this.menuFactory,
             filterForm  : filterForm, 
             detachOnRemove : false,
             map         : this.map,
-            renderTo    : parentElId,
             menuItems : []
         });   
         
@@ -360,43 +315,28 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         }
     },
 
-    _deleteRenderer : function(value, metaData, record, row, col, store, gridView) {
+    _deleteRenderer : function(value, record) {
         if (value) {
-            return Ext.DomHelper.markup({
-                tag : 'img',
-                width : 16,
-                height : 16,
-                src: 'portal-core/img/trash.png'
-            });
+            return 'portal-core/img/trash.png';
         } else {
-            return Ext.DomHelper.markup({
-                tag : 'img',
-                width : 16,
-                height : 16,
-                src: 'portal-core/img/play_blue.png'
-            });
+            return 'portal-core/img/play_blue.png';
         }
     },
     
-    _deleteClickHandler :  function(value, record, rowIdx, tip) {
+    _deleteClickHandler :  function(value, record) {
         var layer = record.get('layer');
         if(layer && record.get('active')){
             ActiveLayerManager.removeLayer(layer);
-            this.fireEvent('cellclick',this,undefined,undefined,layer,undefined,rowIdx);
+            this.fireEvent('cellclick',this,undefined,undefined,layer,undefined,undefined);
         }
     },
 
     /**
      * Renderer for the loading column
      */
-    _loadingRenderer : function(value, metaData, record, row, col, store, gridView) {
+    _loadingRenderer : function(value, record) {
         if (value) {
-            return Ext.DomHelper.markup({
-                tag : 'img',
-                width : 16,
-                height : 16,
-                src: 'portal-core/img/loading.gif'
-            });
+            return 'portal-core/img/loading.gif';
         } else {
             
             if(record.get('active')){
@@ -406,38 +346,16 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
                 var errorCount = this._statusListErrorCount(listOfStatus);
                 var sizeOfList = Ext.Object.getSize(listOfStatus);
                 if(errorCount > 0 && errorCount == sizeOfList){
-                    return Ext.DomHelper.markup({
-                        tag : 'img',
-                        width : 16,
-                        height : 16,
-                        src: 'portal-core/img/exclamation.png'
-                    });
+                    return 'portal-core/img/exclamation.png';
                 }else if(errorCount > 0 && errorCount < sizeOfList){
-                    return Ext.DomHelper.markup({
-                        tag : 'img',
-                        width : 16,
-                        height : 16,
-                        src: 'portal-core/img/warning.png'
-                    });
+                    return 'portal-core/img/warning.png';
                 }else{
-                    return Ext.DomHelper.markup({
-                        tag : 'img',
-                        width : 16,
-                        height : 16,
-                        src: 'portal-core/img/tick.png'
-                    });
+                    return 'portal-core/img/tick.png';
                 }
                 
             }else{
-                return Ext.DomHelper.markup({
-                    tag : 'img',
-                    width : 16,
-                    height : 16,
-                    src: 'portal-core/img/notloading.gif'
-                });
+                return 'portal-core/img/notloading.gif';
             }
-            
-            
         }
     },
     
@@ -462,7 +380,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
      * A renderer for generating the contents of the tooltip that shows when the
      * layer is loading
      */
-    _loadingTipRenderer : function(value, record, column, tip) {
+    _loadingTipRenderer : function(value, record, tip) {
         var layer = record.get('layer');
         if(!layer){//VT:The layer has yet to be created.
             return 'No status has been recorded';
@@ -481,7 +399,7 @@ Ext.define('portal.widgets.panel.BaseRecordPanel', {
         return renderer.renderStatus.renderHtml();
     },
     
-    _loadingClickHandler : function(value, record, rowIdx, tip) {
+    _loadingClickHandler : function(value, record) {
         
         var layer = record.get('layer');
         

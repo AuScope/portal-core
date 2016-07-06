@@ -2,7 +2,6 @@
 <link rel="stylesheet" type="text/css" href="portal-core/js/ext-5.1.1/build/packages/ext-theme-neptune/build/resources/ext-theme-neptune-all.css">
 <link rel="stylesheet" type="text/css" href="portal-core/js/ext-5.1.1/build/packages/sencha-charts/build/neptune/resources/sencha-charts-all.css">
 
-
 <!-- link extjs 5 -->
 <script type="text/javascript" src="portal-core/js/ext-5.1.1/build/ext-all-debug.js?v=${buildTimestamp}"></script>
 <script type="text/javascript" src="portal-core/js/ext-5.1.1/build/packages/ext-ux/build/ext-ux-debug.js?v=${buildTimestamp}"></script>
@@ -141,6 +140,10 @@
 <script src="portal-core/js/portal/widgets/grid/plugin/RowContextMenu.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/grid/plugin/RowExpanderContainer.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/grid/plugin/InlineContextMenu.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/layout/AccordianDefault.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/RecordGroupPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/RecordRowPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/panel/RecordPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/CommonBaseRecordPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/BaseRecordPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/CSWConstraintsPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
@@ -152,6 +155,8 @@
 <script src="portal-core/js/portal/widgets/panel/KnownLayerPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/LayerPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/OnlineResourcesPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/plugins/ClickableImage.js?v=${buildTimestamp}" type="text/javascript"></script>
+<script src="portal-core/js/portal/widgets/plugins/CollapsedAccordianLayout.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/tab/ActivePreRenderTabPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/window/CSWRecordConstraintsWindow.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/window/CSWSelectionWindow.js?v=${buildTimestamp}" type="text/javascript"></script>
@@ -164,8 +169,6 @@
 <script src="portal-core/js/portal/widgets/model/CSWServices.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/panel/CSWFilterFormPanel.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/widgets/FilterPanelMenuFactory.js?v=${buildTimestamp}" type="text/javascript"></script>
-
-
 
 <script src="portal-core/js/portal/charts/BaseD3Chart.js?v=${buildTimestamp}" type="text/javascript"></script>
 <script src="portal-core/js/portal/charts/3DScatterPlot.js?v=${buildTimestamp}" type="text/javascript"></script>
