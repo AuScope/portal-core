@@ -17,8 +17,13 @@ import org.junit.Test;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
+import com.amazonaws.services.ec2.model.BlockDeviceMapping;
+import com.amazonaws.services.ec2.model.DescribeImagesRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusRequest;
 import com.amazonaws.services.ec2.model.DescribeInstanceStatusResult;
+import com.amazonaws.services.ec2.model.EbsBlockDevice;
+import com.amazonaws.services.ec2.model.Image;
 import com.amazonaws.services.ec2.model.InstanceState;
 
 public class TestCloudComputeServiceAws extends PortalTestClass{
@@ -45,6 +50,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     private DescribeInstanceStatusResult mockDescribeResult = context.mock(DescribeInstanceStatusResult.class);
     private com.amazonaws.services.ec2.model.InstanceStatus mockStatus = context.mock(com.amazonaws.services.ec2.model.InstanceStatus.class);
     private InstanceState mockState = context.mock(InstanceState.class);
+    private DescribeImagesResult mockDescribeImageResult = context.mock(DescribeImagesResult.class);
     private CloudComputeServiceAws service;
 
     @Before
@@ -224,5 +230,62 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
         }});
 
         service.getJobStatus(job);
+    }
+
+    @Test
+    public void testContainsPersistentVolumes_HandleMultipleVolumes() throws Exception {
+        CloudJob job = new TestableJob();
+
+        job.setComputeVmId("computeid");
+        job.setComputeInstanceId("testable-id");
+        job.setProperty(CloudJob.PROPERTY_STS_ARN, "sts-arn");
+        job.setProperty(CloudJob.PROPERTY_CLIENT_SECRET, "client-secret");
+
+        final Image mockImage = context.mock(Image.class);
+        final BlockDeviceMapping bdm1 = context.mock(BlockDeviceMapping.class, "bdm1");
+        final BlockDeviceMapping bdm2 = context.mock(BlockDeviceMapping.class, "bdm2");
+
+        final EbsBlockDevice ebd1 = context.mock(EbsBlockDevice.class, "ebd1");
+        final EbsBlockDevice ebd2 = context.mock(EbsBlockDevice.class, "ebd2");
+
+        context.checking(new Expectations() {{
+            oneOf(mockClient).describeImages(with(any(DescribeImagesRequest.class)));
+            will(returnValue(mockDescribeImageResult));
+
+            allowing(mockDescribeImageResult).getImages();
+            will(returnValue(Arrays.asList(mockImage)));
+
+            allowing(mockImage).getBlockDeviceMappings();
+            will(returnValue(Arrays.asList(bdm1, bdm2)));
+
+            allowing(bdm1).getEbs();
+            will(returnValue(ebd1));
+            allowing(bdm2).getEbs();
+            will(returnValue(ebd2));
+
+            allowing(ebd1).getDeleteOnTermination();
+            will(returnValue(true));
+            allowing(ebd2).getDeleteOnTermination();
+            will(returnValue(false));
+        }});
+
+        Assert.assertTrue(service.containsPersistentVolumes(job));
+    }
+
+    @Test(expected=PortalServiceException.class)
+    public void testContainsPersistentVolumes_AwsError() throws Exception {
+        CloudJob job = new TestableJob();
+
+        job.setComputeVmId("computeid");
+        job.setComputeInstanceId("testable-id");
+        job.setProperty(CloudJob.PROPERTY_STS_ARN, "sts-arn");
+        job.setProperty(CloudJob.PROPERTY_CLIENT_SECRET, "client-secret");
+
+        context.checking(new Expectations() {{
+            oneOf(mockClient).describeImages(with(any(DescribeImagesRequest.class)));
+            will(throwException(new AmazonServiceException("error")));
+        }});
+
+        service.containsPersistentVolumes(job);
     }
 }

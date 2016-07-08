@@ -55,19 +55,19 @@ Ext.define('portal.layer.filterer.Filterer', {
 
         var bbox = this.getSpatialParam();            	
 
-        if(bbox.crs=='EPSG:4326'){
-            var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
-            bounds = bounds.transform('EPSG:4326','EPSG:3857');
-            bbox = Ext.create('portal.util.BBox', {
-                northBoundLatitude : bounds.top,
-                southBoundLatitude : bounds.bottom,
-                eastBoundLongitude : bounds.right,
-                westBoundLongitude : bounds.left,
-                crs : 'EPSG:3857'
-            });
-        }
-
-        if (bbox) {
+        if(bbox) {
+            if (bbox.crs=='EPSG:4326') {
+                var bounds = new OpenLayers.Bounds(bbox.westBoundLongitude, bbox.southBoundLatitude, bbox.eastBoundLongitude, bbox.northBoundLatitude);
+                bounds = bounds.transform('EPSG:4326','EPSG:3857');
+                bbox = Ext.create('portal.util.BBox', {
+                    northBoundLatitude : bounds.top,
+                    southBoundLatitude : bounds.bottom,
+                    eastBoundLongitude : bounds.right,
+                    westBoundLongitude : bounds.left,
+                    crs : 'EPSG:3857'
+                });
+            }
+            
             params[portal.layer.filterer.Filterer.BBOX_FIELD] = Ext.JSON.encode(bbox);
         }
 
