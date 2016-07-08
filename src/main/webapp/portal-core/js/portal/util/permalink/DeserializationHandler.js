@@ -133,6 +133,23 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
     },
 
     _deserialize : function() {
+        var featureLayers = this._getLayersToAdd();
+
+        if (featureLayers.length < this.mapStateSerializer.serializedLayers.length) {
+            Ext.MessageBox.show({
+                title : 'Missing Layers',
+                icon : Ext.MessageBox.WARNING,
+                buttons : Ext.MessageBox.OK,
+                msg : 'Some of the saved layers no longer exist and will be ignored. The remaining layers will load normally.',
+                multiline : false
+            });
+        }
+
+        //Add the layers to the internal store
+        ActiveLayerManager.addLayers(featureLayers);
+    },
+
+    _getLayersToAdd : function() {
         var s = this.mapStateSerializer;
         var missingLayers = false;
 
@@ -143,7 +160,7 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
 
         // array of layers that we will want to add to the layer store
         var layersToAdd = [];
-        
+
         //Add the layers, attempt to load whatever layers are available
         //but warn the user if some layers no longer exist
         for (var i = 0; i < s.serializedLayers.length; i++) {
@@ -211,17 +228,6 @@ Ext.define('portal.util.permalink.DeserializationHandler', {
             }
         }
 
-        if (missingLayers) {
-            Ext.MessageBox.show({
-                title : 'Missing Layers',
-                icon : Ext.MessageBox.WARNING,
-                buttons : Ext.MessageBox.OK,
-                msg : 'Some of the saved layers no longer exist and will be ignored. The remaining layers will load normally.',
-                multiline : false
-            });
-        }
-                
-        //Add the layers to the internal store
-        ActiveLayerManager.addLayers(layersToAdd);
+        return layersToAdd;
     }
 });
