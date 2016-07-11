@@ -1,13 +1,14 @@
 package org.auscope.portal.core.services.methodmakers.sissvoc;
 
-import junit.framework.Assert;
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
+
+@SuppressWarnings("deprecation")
 public class TestSISSVoc3MethodMaker extends PortalTestClass {
     SISSVoc3MethodMaker mm;
 

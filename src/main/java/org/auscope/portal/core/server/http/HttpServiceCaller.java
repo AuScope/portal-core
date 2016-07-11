@@ -22,6 +22,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 
@@ -86,7 +87,19 @@ public class HttpServiceCaller {
      * @return
      */
     public InputStream getMethodResponseAsStream(HttpRequestBase method) throws Exception {
-        return this.getMethodResponseAsStream(method, null);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeOut)
+                .setSocketTimeout(this.connectionTimeOut)
+                .build();
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+        
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setConnectionManager(man)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build()) {
+            return this.getMethodResponseAsStream(method, httpClient);
+        } 
     }
 
     /**
@@ -114,7 +127,19 @@ public class HttpServiceCaller {
      * @return
      */
     public byte[] getMethodResponseAsBytes(HttpRequestBase method) throws Exception {
-        return getMethodResponseAsBytes(method, null);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeOut)
+                .setSocketTimeout(this.connectionTimeOut)
+                .build();
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+        
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setConnectionManager(man)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build()) {
+            return getMethodResponseAsBytes(method, httpClient);
+        } 
     }
 
     /**
@@ -141,7 +166,20 @@ public class HttpServiceCaller {
     }
 
     public HttpResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws Exception {
-        return this.invokeTheMethod(method, null);
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeOut)
+                .setSocketTimeout(this.connectionTimeOut)
+                .build();
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+        
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+                    .useSystemProperties()
+                    .setConnectionManager(man)
+                    .setDefaultRequestConfig(requestConfig)
+                    .build()) {
+
+            return this.invokeTheMethod(method, httpClient);
+        } 
     }
 
     /**
@@ -151,25 +189,9 @@ public class HttpServiceCaller {
      * @param httpClient
      */
     private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws Exception {
+        if(client==null) throw new IllegalArgumentException("HttpClient must not be null");
+        
         log.debug("method=" + method.getURI());
-        HttpClient httpClient = null;
-
-        if (client == null) {
-            RequestConfig requestConfig = RequestConfig.custom().
-                    setConnectTimeout(this.connectionTimeOut)
-                    .setSocketTimeout(this.connectionTimeOut)
-                    .build();
-
-            HttpClientConnectionManager man = new PoolingHttpClientConnectionManager();
-
-            httpClient = HttpClientBuilder.create()
-                    .useSystemProperties()
-                    .setConnectionManager(man)
-                    .setDefaultRequestConfig(requestConfig)
-                    .build();
-        } else {
-            httpClient = client;
-        }
 
         if (log.isTraceEnabled()) {
             log.trace("Outgoing request headers: " + Arrays.toString(method.getAllHeaders()));
@@ -183,7 +205,7 @@ public class HttpServiceCaller {
         }
 
         // make the call
-        HttpResponse response = httpClient.execute(method);
+        HttpResponse response = client.execute(method);
 
         int statusCode = response.getStatusLine().getStatusCode();
         String statusCodeText = HttpStatus.getStatusText(statusCode);

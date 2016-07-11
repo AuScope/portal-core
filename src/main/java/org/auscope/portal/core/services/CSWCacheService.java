@@ -89,7 +89,7 @@ public class CSWCacheService {
      */
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
-            ArrayList cswServiceList) {
+            @SuppressWarnings("rawtypes") ArrayList cswServiceList) {
         this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory());
     }
 
@@ -106,13 +106,13 @@ public class CSWCacheService {
      */
     public CSWCacheService(Executor executor,
             HttpServiceCaller serviceCaller,
-            ArrayList cswServiceList,
+            @SuppressWarnings("rawtypes") ArrayList cswServiceList,
             CSWRecordTransformerFactory transformerFactory) {
         this.updateRunning = false;
         this.executor = executor;
         this.serviceCaller = serviceCaller;
-        this.keywordCache = new HashMap<String, Set<CSWRecord>>();
-        this.recordCache = new ArrayList<CSWRecord>();
+        this.keywordCache = new HashMap<>();
+        this.recordCache = new ArrayList<>();
         this.transformerFactory = transformerFactory;
         this.cswServiceList = new CSWServiceItem[cswServiceList.size()];
         for (int i = 0; i < cswServiceList.size(); i++) {
@@ -241,8 +241,8 @@ public class CSWCacheService {
         }
 
         //This will be our new cache
-        Map<String, Set<CSWRecord>> newKeywordCache = new HashMap<String, Set<CSWRecord>>();
-        List<CSWRecord> newRecordCache = new ArrayList<CSWRecord>();
+        Map<String, Set<CSWRecord>> newKeywordCache = new HashMap<>();
+        List<CSWRecord> newRecordCache = new ArrayList<>();
 
         //Create our worker threads (ensure they are all aware of each other)
         CSWCacheUpdateThread[] updateThreads = new CSWCacheUpdateThread[cswServiceList.length];
@@ -301,7 +301,7 @@ public class CSWCacheService {
     private synchronized List<CSWRecord> getFilteredRecords(
             AbstractCSWOnlineResource.OnlineResourceType... types) {
 
-        ArrayList<CSWRecord> records = new ArrayList<CSWRecord>();
+        ArrayList<CSWRecord> records = new ArrayList<>();
 
         //Iterate EVERY record for EVERY service URL
         for (CSWRecord rec : recordCache) {
@@ -317,7 +317,7 @@ public class CSWCacheService {
      * Our worker class for updating our CSW cache
      */
     private class CSWCacheUpdateThread extends Thread {
-        private final Log log = LogFactory.getLog(getClass());
+        private final Log threadLog = LogFactory.getLog(getClass());
 
         private CSWCacheService parent;
         private CSWCacheUpdateThread[] siblings; //this is also used as a shared locking object
@@ -401,15 +401,15 @@ public class CSWCacheService {
          * @param keyword
          * @param record
          */
-        private void addToKeywordCache(String keyword, CSWRecord record, Map<String, Set<CSWRecord>> keywordCache) {
+        private void addToKeywordCache(String keyword, CSWRecord record, Map<String, Set<CSWRecord>> cache) {
             if (keyword == null || keyword.isEmpty()) {
                 return;
             }
 
-            Set<CSWRecord> existingRecsWithKeyword = keywordCache.get(keyword);
+            Set<CSWRecord> existingRecsWithKeyword = cache.get(keyword);
             if (existingRecsWithKeyword == null) {
-                existingRecsWithKeyword = new HashSet<CSWRecord>();
-                keywordCache.put(keyword, existingRecsWithKeyword);
+                existingRecsWithKeyword = new HashSet<>();
+                cache.put(keyword, existingRecsWithKeyword);
             }
 
             existingRecsWithKeyword.add(record);
@@ -422,23 +422,23 @@ public class CSWCacheService {
          *            Will received source's contents
          * @param source
          *            Will have it's contents merged into destination
-         * @param keywordCache
+         * @param cache
          *            will be updated with destination referenced by source's keywords
          */
-        private void mergeRecords(CSWRecord destination, CSWRecord source, Map<String, Set<CSWRecord>> keywordCache) {
+        private void mergeRecords(CSWRecord destination, CSWRecord source, Map<String, Set<CSWRecord>> cache) {
             //Merge onlineresources
             AbstractCSWOnlineResource[] merged = (AbstractCSWOnlineResource[]) ArrayUtils.addAll(
                     destination.getOnlineResources(), source.getOnlineResources());
             destination.setOnlineResources(merged);
 
             //Merge keywords (get rid of duplicates)
-            Set<String> keywordSet = new HashSet<String>();
+            Set<String> keywordSet = new HashSet<>();
             keywordSet.addAll(Arrays.asList(destination.getDescriptiveKeywords()));
             keywordSet.addAll(Arrays.asList(source.getDescriptiveKeywords()));
             destination.setDescriptiveKeywords(keywordSet.toArray(new String[keywordSet.size()]));
 
             for (String sourceKeyword : source.getDescriptiveKeywords()) {
-                addToKeywordCache(sourceKeyword, destination, keywordCache);
+                addToKeywordCache(sourceKeyword, destination, cache);
             }
         }
 
@@ -477,7 +477,7 @@ public class CSWCacheService {
                     int startPosition = 1;
 
                     // Request page after page of CSWRecords until we've iterated the entire store
-                    HashMap<String, CSWRecord> cswRecordMap = new HashMap<String, CSWRecord>();
+                    HashMap<String, CSWRecord> cswRecordMap = new HashMap<>();
                     do {
                         CSWGetRecordResponse response = this.cswService.queryCSWEndpoint(startPosition,
                                 MAX_QUERY_LENGTH, this.connectionAttempts, this.timeBtwConnectionAttempts);
@@ -485,7 +485,7 @@ public class CSWCacheService {
                             cswRecordMap.put(rec.getFileIdentifier(), rec);
                         }
 
-                        log.trace(String.format("%1$s - Response parsed!", this.endpoint.getServiceUrl()));
+                        threadLog.trace(String.format("%1$s - Response parsed!", this.endpoint.getServiceUrl()));
 
                         //Prepare to request next 'page' of records (if required)
                         if (response.getNextRecord() > response.getRecordsMatched() ||
@@ -503,13 +503,13 @@ public class CSWCacheService {
 
                         String parentId = next.getParentIdentifier();
                         if (parentId != null && !parentId.isEmpty()) {
-                            CSWRecord parent = cswRecordMap.get(parentId);
-                            if (parent == null) {
-                                log.debug(String.format(
+                            CSWRecord parentRecord = cswRecordMap.get(parentId);
+                            if (parentRecord == null) {
+                                threadLog.debug(String.format(
                                         "Record '%1$s' is an orphan referencing non existent parent '%2$s'",
                                         next.getFileIdentifier(), parentId));
                             } else {
-                                parent.addChildRecord(next);
+                                parentRecord.addChildRecord(next);
                             }
                         }
                     }
@@ -557,9 +557,9 @@ public class CSWCacheService {
 
                 }
             } catch (Exception ex) {
-                log.warn(String.format("Error updating keyword cache for '%1$s': %2$s", this.endpoint.getServiceUrl(),
+                threadLog.warn(String.format("Error updating keyword cache for '%1$s': %2$s", this.endpoint.getServiceUrl(),
                         ex));
-                log.warn("Exception: ", ex);
+                threadLog.warn("Exception: ", ex);
             } finally {
                 attemptCleanup();
             }

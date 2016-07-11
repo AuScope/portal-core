@@ -13,10 +13,11 @@ import junit.framework.Assert;
  * @author Josh Vote
  *
  */
+@SuppressWarnings("deprecation")
 public class TestFilterBoundingBox extends PortalTestClass {
 
-    private void assertBBoxEquals(FilterBoundingBox expected, FilterBoundingBox actual, double delta) {
-        if (expected == null && actual == null) {
+    private static void assertBBoxEquals(FilterBoundingBox expected, FilterBoundingBox actual, double delta) {
+        if (expected == null || actual == null) {
             return;
         }
         Assert.assertEquals(expected.getBboxSrs(), actual.getBboxSrs());

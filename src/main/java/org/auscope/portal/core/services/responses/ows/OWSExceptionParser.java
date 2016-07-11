@@ -13,10 +13,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-// TODO: Auto-generated Javadoc
 /**
  * A utility class that provides convenience methods for detecting an ows:Exception response in an arbitrary ows response.
- * 
+ *
  * @author vot002
  *
  */
@@ -31,21 +30,23 @@ public class OWSExceptionParser {
      * @return the XPath object
      * @throws OWSException
      */
-    private static NamespaceContext createNamespaceContext() throws OWSException {
+    private static NamespaceContext createNamespaceContext() {
         // use our own bodgy namespace context that just recognizes
         // xmlns:ows
         return new NamespaceContext() {
 
-            @SuppressWarnings("rawtypes")
-            public Iterator getPrefixes(String namespaceURI) {
+            @Override
+            public Iterator getPrefixes(final String namespaceURI) {
                 return null; // not used
             }
 
-            public String getPrefix(String namespaceURI) {
+            @Override
+            public String getPrefix(final String namespaceURI) {
                 return null; // not used
             }
 
-            public String getNamespaceURI(String prefix) {
+            @Override
+            public String getNamespaceURI(final String prefix) {
                 if (prefix.equals("ows")) {
                     return "http://www.opengis.net/ows";
                 } else {
@@ -65,11 +66,11 @@ public class OWSExceptionParser {
      * @throws OWSException
      *             the oWS exception
      */
-    public static void checkForExceptionResponse(String xmlString) throws OWSException {
+    public static void checkForExceptionResponse(final String xmlString) throws OWSException {
         Document doc = null;
         try {
             doc = DOMUtil.buildDomFromString(xmlString);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             //This should *hopefully* never occur
             log.error("Error whilst attempting to parse xmlString for errors", ex);
             throw new OWSException("Unable to parse xmlString", ex);
@@ -88,26 +89,26 @@ public class OWSExceptionParser {
      * @throws OWSException
      *             the oWS exception
      */
-    public static void checkForExceptionResponse(Document doc) throws OWSException {
-        NamespaceContext nc = createNamespaceContext();
+    public static void checkForExceptionResponse(final Document doc) throws OWSException {
+        final NamespaceContext nc = createNamespaceContext();
 
         try {
             //Check for an exception response
-            NodeList exceptionNodes = (NodeList) DOMUtil.compileXPathExpr("/ows:ExceptionReport/ows:Exception", nc)
+            final NodeList exceptionNodes = (NodeList) DOMUtil.compileXPathExpr("/ows:ExceptionReport/ows:Exception", nc)
                     .evaluate(doc, XPathConstants.NODESET);
             if (exceptionNodes.getLength() > 0) {
-                Node exceptionNode = exceptionNodes.item(0);
+                final Node exceptionNode = exceptionNodes.item(0);
 
-                Node exceptionTextNode = (Node) DOMUtil.compileXPathExpr("ows:ExceptionText", nc).evaluate(
+                final Node exceptionTextNode = (Node) DOMUtil.compileXPathExpr("ows:ExceptionText", nc).evaluate(
                         exceptionNode, XPathConstants.NODE);
-                String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]"
+                final String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]"
                         : exceptionTextNode.getTextContent();
-                String exceptionCode = (String) DOMUtil.compileXPathExpr("@exceptionCode", nc).evaluate(exceptionNode,
+                final String exceptionCode = (String) DOMUtil.compileXPathExpr("@exceptionCode", nc).evaluate(exceptionNode,
                         XPathConstants.STRING);
 
                 throw new OWSException(String.format("Code='%1$s' Message='%2$s'", exceptionCode, exceptionText));
             }
-        } catch (XPathExpressionException ex) {
+        } catch (final XPathExpressionException ex) {
             //This should *hopefully* never occur
             log.error("Error whilst attempting to check for errors", ex);
         }

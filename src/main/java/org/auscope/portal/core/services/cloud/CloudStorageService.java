@@ -1,6 +1,7 @@
 package org.auscope.portal.core.services.cloud;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -83,7 +84,7 @@ public class CloudStorageService {
     private boolean requireSts=false;
 
     private String adminEmail = "cg-admin@csiro.au";
-    
+
     /**
      * @return the adminEmail
      */
@@ -94,7 +95,7 @@ public class CloudStorageService {
     /**
      * @param adminEmail the adminEmail to set
      */
-    public void setAdminEmail(String adminEmail) {
+    public void setAdminEmail(final String adminEmail) {
         this.adminEmail = adminEmail;
     }
 
@@ -103,15 +104,15 @@ public class CloudStorageService {
      * @return whether AWS cross account authorization is mandatory.
      */
     public boolean isRequireSts() {
-      return requireSts;
+        return requireSts;
     }
 
     /**
      * Sets whether AWS cross account authorization is mandatory.
      * @param requireSts if true, AWS cross account authorization will be mandatory.
      */
-    public void setRequireSts(boolean requireSts) {
-      this.requireSts = requireSts;
+    public void setRequireSts(final boolean requireSts) {
+        this.requireSts = requireSts;
     }
 
     /**
@@ -126,7 +127,7 @@ public class CloudStorageService {
      * @param secretKey
      *            Password credentials for accessing the storage service
      */
-    public CloudStorageService(String provider, String accessKey, String secretKey) {
+    public CloudStorageService(final String provider, final String accessKey, final String secretKey) {
         this(null, provider, accessKey, secretKey, null, false);
     }
 
@@ -142,7 +143,7 @@ public class CloudStorageService {
      * @param secretKey
      *            Password credentials for accessing the storage service
      */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey) {
+    public CloudStorageService(final String endpoint, final String provider, final String accessKey, final String secretKey) {
         this(endpoint, provider, accessKey, secretKey, null, false);
     }
 
@@ -160,8 +161,8 @@ public class CloudStorageService {
      * @param relaxHostName
      *            Whether security certs are required to strictly match the host
      */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey,
-            boolean relaxHostName) {
+    public CloudStorageService(final String endpoint, final String provider, final String accessKey, final String secretKey,
+            final boolean relaxHostName) {
         this(endpoint, provider, accessKey, secretKey, null, relaxHostName);
     }
 
@@ -179,7 +180,7 @@ public class CloudStorageService {
      * @param regionName
      *            The region identifier string for this service (if any). Can be null/empty.
      */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName) {
+    public CloudStorageService(final String endpoint, final String provider, final String accessKey, final String secretKey, final String regionName) {
         this(endpoint, provider, accessKey, secretKey, regionName, false);
     }
 
@@ -199,8 +200,8 @@ public class CloudStorageService {
      * @param relaxHostName
      *            Whether security certs are required to strictly match the host
      */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName,
-            boolean relaxHostName) {
+    public CloudStorageService(final String endpoint, final String provider, final String accessKey, final String secretKey, final String regionName,
+            final boolean relaxHostName) {
         this(endpoint, provider, accessKey, secretKey, regionName, relaxHostName, false);
     }
 
@@ -222,8 +223,8 @@ public class CloudStorageService {
      * @param stripExpectHeader
      *            Whether to remove HTTP Expect header from requests; set to true for blobstores that do not support 100-Continue
      */
-    public CloudStorageService(String endpoint, String provider, String accessKey, String secretKey, String regionName,
-            boolean relaxHostName, boolean stripExpectHeader) {
+    public CloudStorageService(final String endpoint, final String provider, final String accessKey, final String secretKey, final String regionName,
+            final boolean relaxHostName, final boolean stripExpectHeader) {
         super();
 
         this.endpoint = endpoint;
@@ -236,14 +237,14 @@ public class CloudStorageService {
 
         try {
             this.jobPrefix = "job-" + InetAddress.getLocalHost().getHostName() + "-";
-        } catch (UnknownHostException e) {
+        } catch (final UnknownHostException e) {
             this.jobPrefix = "job-";
             log.error("Unable to lookup hostname. Defaulting prefix to " + this.jobPrefix, e);
         }
     }
 
-    public BlobStoreContext getBlobStoreContext(String arn, String clientSecret) throws PortalServiceException {
-        Properties properties = new Properties();
+    public BlobStoreContext getBlobStoreContext(final String arn, final String clientSecret) throws PortalServiceException {
+        final Properties properties = new Properties();
         properties.setProperty("jclouds.relax-hostname", relaxHostName ? "true" : "false");
         properties.setProperty("jclouds.strip-expect-header", stripExpectHeader ? "true" : "false");
 
@@ -252,36 +253,38 @@ public class CloudStorageService {
         }
 
         if(! TextUtil.isNullOrEmpty(arn)) {
-            ContextBuilder builder = ContextBuilder.newBuilder("sts");
+            final ContextBuilder builder = ContextBuilder.newBuilder("sts");
             if(accessKey!=null && secretKey!=null)
                 builder.credentials(accessKey, secretKey);
 
-            STSApi api = builder.buildApi(STSApi.class);
+            try (STSApi api = builder.buildApi(STSApi.class)) {
+                final AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600)
+                        .externalId(clientSecret);
+                final UserAndSessionCredentials credentials = api.assumeRole(arn, "anvgl", assumeRoleOptions);
 
-            AssumeRoleOptions assumeRoleOptions = new AssumeRoleOptions().durationSeconds(3600).externalId(clientSecret);
-            final UserAndSessionCredentials credentials = api.assumeRole(arn, "anvgl", assumeRoleOptions);
+                final Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
+                    @Override
+                    public Credentials get() {
+                        return credentials.getCredentials();
+                    }
+                };
 
-            Supplier<Credentials> credentialsSupplier = new Supplier<Credentials>() {
-                @Override
-                public Credentials get() {
-                    return credentials.getCredentials();
+                final ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties)
+                        .credentialsSupplier(credentialsSupplier);
+
+                if (this.endpoint != null) {
+                    builder2.endpoint(this.endpoint);
                 }
-            };
 
-            ContextBuilder builder2 = ContextBuilder.newBuilder("aws-s3").overrides(properties)
-                    .credentialsSupplier(credentialsSupplier);
-
-            if (this.endpoint != null) {
-                builder2.endpoint(this.endpoint);
+                return builder2.buildView(BlobStoreContext.class);
+            } catch (IOException e) {
+                throw new PortalServiceException(e.getMessage(), e);
             }
-
-            return builder2.buildView(BlobStoreContext.class);
-
         } else {
             if(isRequireSts())
                 throw new PortalServiceException("AWS cross account access is required, but not configured");
 
-            ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
+            final ContextBuilder builder = ContextBuilder.newBuilder(provider).overrides(properties);
 
             if (accessKey != null && secretKey != null)
                 builder.credentials(accessKey, secretKey);
@@ -344,7 +347,7 @@ public class CloudStorageService {
      *
      * @param jobPrefix
      */
-    public void setJobPrefix(String jobPrefix) {
+    public void setJobPrefix(final String jobPrefix) {
         this.jobPrefix = jobPrefix;
     }
 
@@ -362,7 +365,7 @@ public class CloudStorageService {
      *
      * @param id
      */
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -371,8 +374,8 @@ public class CloudStorageService {
      * @param owner
      * @return
      */
-    private String getBucket(CloudFileOwner owner) {
-        String ownerBucket = owner.getStorageBucket();
+    private String getBucket(final CloudFileOwner owner) {
+        final String ownerBucket = owner.getStorageBucket();
         if (TextUtil.isNullOrEmpty(ownerBucket)) {
             return defaultBucket;
         }
@@ -394,7 +397,7 @@ public class CloudStorageService {
      *
      * @param bucket
      */
-    public void setBucket(String bucket) {
+    public void setBucket(final String bucket) {
         this.defaultBucket = bucket;
     }
 
@@ -412,7 +415,7 @@ public class CloudStorageService {
      *
      * @param authVersion
      */
-    public void setAuthVersion(String authVersion) {
+    public void setAuthVersion(final String authVersion) {
         this.authVersion = authVersion;
     }
 
@@ -430,7 +433,7 @@ public class CloudStorageService {
      *
      * @param name
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -450,7 +453,7 @@ public class CloudStorageService {
      *
      * @param regionName
      */
-    public void setRegionName(String regionName) {
+    public void setRegionName(final String regionName) {
         this.regionName = regionName;
     }
 
@@ -460,7 +463,7 @@ public class CloudStorageService {
      * @param s
      * @return
      */
-    private String sanitise(String s) {
+    private static String sanitise(final String s) {
         return s.replaceAll("[^a-zA-Z0-9_\\-]", "_");
     }
 
@@ -470,8 +473,8 @@ public class CloudStorageService {
      * @param job
      * @return
      */
-    public String generateBaseKey(CloudFileOwner job) {
-        String baseKey = String.format("%1$s%2$s-%3$010d", jobPrefix, job.getUser(), job.getId());
+    public String generateBaseKey(final CloudFileOwner job) {
+        final String baseKey = String.format("%1$s%2$s-%3$010d", jobPrefix, job.getUser(), job.getId());
         return sanitise(baseKey);
     }
 
@@ -484,7 +487,7 @@ public class CloudStorageService {
      *            The key of the file (local to job).
      * @return
      */
-    public String keyForJobFile(CloudFileOwner job, String key) {
+    public String keyForJobFile(final CloudFileOwner job, final String key) {
         return String.format("%1$s/%2$s", jobToBaseKey(job), key);
     }
 
@@ -495,7 +498,7 @@ public class CloudStorageService {
      *            Will have its baseKey parameter set if it's null
      * @return
      */
-    protected String jobToBaseKey(CloudFileOwner job) {
+    protected String jobToBaseKey(final CloudFileOwner job) {
         if (job.getStorageBaseKey() == null) {
             job.setStorageBaseKey(generateBaseKey(job));
         }
@@ -509,12 +512,12 @@ public class CloudStorageService {
      * @param smd
      * @return
      */
-    protected Long getFileSize(StorageMetadata smd) {
+    protected Long getFileSize(final StorageMetadata smd) {
         if (smd instanceof BlobMetadataImpl) {
-            ContentMetadata cmd = ((BlobMetadataImpl) smd).getContentMetadata();
+            final ContentMetadata cmd = ((BlobMetadataImpl) smd).getContentMetadata();
             return cmd.getContentLength();
         } else if (smd instanceof MutableBlobMetadataImpl) {
-            ContentMetadata cmd = ((MutableBlobMetadataImpl) smd).getContentMetadata();
+            final ContentMetadata cmd = ((MutableBlobMetadataImpl) smd).getContentMetadata();
             return cmd.getContentLength();
         } else {
             return 1L;
@@ -534,15 +537,15 @@ public class CloudStorageService {
      * @throws PortalServiceException
      */
 
-    public InputStream getJobFile(CloudFileOwner job, String myKey) throws PortalServiceException {
-        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
-        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+    public InputStream getJobFile(final CloudFileOwner job, final String myKey) throws PortalServiceException {
+        final String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        final String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
-            Blob blob = bs.getBlob(getBucket(job), keyForJobFile(job, myKey));
+            final BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            final Blob blob = bs.getBlob(getBucket(job), keyForJobFile(job, myKey));
             return blob.getPayload().getInput();
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             log.error(String.format("Unable to get job file '%1$s' for job %2$s:", myKey, job));
             log.debug("error:", ex);
             throw new PortalServiceException("Error retriving output file details", ex);
@@ -555,7 +558,7 @@ public class CloudStorageService {
      * @param md
      * @return
      */
-    private CloudFileInformation metadataToCloudFile(StorageMetadata md) {
+    private static CloudFileInformation metadataToCloudFile(final StorageMetadata md) {
         //Skip objects that are not files
         if (md.getType() != StorageType.BLOB) {
             return null;
@@ -563,10 +566,10 @@ public class CloudStorageService {
 
         long fileSize = 1L;
         if (md instanceof BlobMetadataImpl) {
-            ContentMetadata cmd = ((BlobMetadataImpl) md).getContentMetadata();
+            final ContentMetadata cmd = ((BlobMetadataImpl) md).getContentMetadata();
             fileSize = cmd.getContentLength();
         } else if (md instanceof MutableBlobMetadataImpl) {
-            ContentMetadata cmd = ((MutableBlobMetadataImpl) md).getContentMetadata();
+            final ContentMetadata cmd = ((MutableBlobMetadataImpl) md).getContentMetadata();
             fileSize = cmd.getContentLength();
         }
 
@@ -583,15 +586,15 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public CloudFileInformation getJobFileMetadata(CloudFileOwner job, String myKey) throws PortalServiceException {
-        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
-        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+    public CloudFileInformation getJobFileMetadata(final CloudFileOwner job, final String myKey) throws PortalServiceException {
+        final String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        final String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
-            StorageMetadata md = bs.blobMetadata(getBucket(job), keyForJobFile(job, myKey));
+            final BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            final StorageMetadata md = bs.blobMetadata(getBucket(job), keyForJobFile(job, myKey));
             return metadataToCloudFile(md);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             log.error(String.format("Unable to get job file metadata '%1$s' for job %2$s:", myKey, job));
             log.debug("error:", ex);
             throw new PortalServiceException("Error retriving output file details", ex);
@@ -606,20 +609,20 @@ public class CloudStorageService {
      * @return
      * @throws PortalServiceException
      */
-    public CloudFileInformation[] listJobFiles(CloudFileOwner job) throws PortalServiceException {
-        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
-        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+    public CloudFileInformation[] listJobFiles(final CloudFileOwner job) throws PortalServiceException {
+        final String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        final String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
-            String baseKey = generateBaseKey(job);
+            final BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            final String baseKey = generateBaseKey(job);
 
-            String bucketName = getBucket(job);
+            final String bucketName = getBucket(job);
 
             //Paging is a little awkward - this list method may return an incomplete list requiring followup queries
             PageSet<? extends StorageMetadata> currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder.inDirectory(baseKey));
             String nextMarker = null;
-            List<CloudFileInformation> jobFiles = new ArrayList<CloudFileInformation>();
+            final List<CloudFileInformation> jobFiles = new ArrayList<>();
             do {
                 if (nextMarker != null) {
                     currentMetadataPage = bs.list(bucketName, ListContainerOptions.Builder
@@ -628,8 +631,8 @@ public class CloudStorageService {
                 }
 
                 //Turn our StorageMetadata objects into simpler CloudFileInformation objects
-                for (StorageMetadata md : currentMetadataPage) {
-                    CloudFileInformation info = metadataToCloudFile(md);
+                for (final StorageMetadata md : currentMetadataPage) {
+                    final CloudFileInformation info = metadataToCloudFile(md);
                     if (info != null) {
                         jobFiles.add(info);
                     }
@@ -639,7 +642,7 @@ public class CloudStorageService {
             } while (nextMarker != null);
 
             return jobFiles.toArray(new CloudFileInformation[jobFiles.size()]);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             log.error("Unable to list files for job:" + job.toString());
             log.debug("error:", ex);
             throw new PortalServiceException("Error retriving output file details", ex);
@@ -655,18 +658,18 @@ public class CloudStorageService {
      *            The local files to upload
      * @throws PortalServiceException
      */
-    public void uploadJobFiles(CloudFileOwner job, File[] files) throws PortalServiceException {
-        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
-        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+    public void uploadJobFiles(final CloudFileOwner job, final File[] files) throws PortalServiceException {
+        final String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        final String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
 
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            final BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
 
-            String bucketName = getBucket(job);
+            final String bucketName = getBucket(job);
             bs.createContainerInLocation(null, bucketName);
-            for (File file : files) {
+            for (final File file : files) {
 
-                Blob newBlob = bs.blobBuilder(keyForJobFile(job, file.getName()))
+                final Blob newBlob = bs.blobBuilder(keyForJobFile(job, file.getName()))
                         .payload(file)
                         .build();
 
@@ -674,15 +677,15 @@ public class CloudStorageService {
 
                 log.debug(file.getName() + " uploaded to '" + bucketName + "' container");
             }
-        } catch (AuthorizationException ex) {
+        } catch (final AuthorizationException ex) {
             log.error("Storage credentials are not valid for job: " + job, ex);
             throw new PortalServiceException("Storage credentials are not valid.",
                     "Please provide valid storage credentials.");
-        } catch (KeyNotFoundException ex) {
+        } catch (final KeyNotFoundException ex) {
             log.error("Storage container does not exist for job: " + job, ex);
             throw new PortalServiceException("Storage container does not exist.",
                     "Please provide a valid storage container.");
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             log.error("Unable to upload files for job: " + job, ex);
             throw new PortalServiceException("An unexpected error has occurred while uploading file(s) to storage.",
                     "Please report it to " + getAdminEmail()+".");
@@ -696,13 +699,13 @@ public class CloudStorageService {
      *            The whose storage space will be deleted
      * @throws PortalServiceException
      */
-    public void deleteJobFiles(CloudFileOwner job) throws PortalServiceException {
-        String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
-        String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
+    public void deleteJobFiles(final CloudFileOwner job) throws PortalServiceException {
+        final String arn = job.getProperty(CloudJob.PROPERTY_STS_ARN);
+        final String clientSecret = job.getProperty(CloudJob.PROPERTY_CLIENT_SECRET);
         try {
-            BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
+            final BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             bs.deleteDirectory(getBucket(job), jobToBaseKey(job));
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             log.error("Error in removing job files or storage key.", ex);
             throw new PortalServiceException(
                     "An unexpected error has occurred while removing job files from S3 storage", ex);

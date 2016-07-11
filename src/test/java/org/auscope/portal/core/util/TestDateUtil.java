@@ -4,17 +4,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Before;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * Unit tests for DateUtil.
  * 
  * @author Richard Goh
  */
+@SuppressWarnings("deprecation")
 public class TestDateUtil extends PortalTestClass {
     Date d1 = null;
     Date d2 = null;

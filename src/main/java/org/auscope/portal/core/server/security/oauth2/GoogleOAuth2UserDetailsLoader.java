@@ -1,7 +1,6 @@
 package org.auscope.portal.core.server.security.oauth2;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,37 +23,37 @@ import com.racquettrack.security.oauth.OAuth2UserDetailsLoader;
  *
  */
 public class GoogleOAuth2UserDetailsLoader implements
-        OAuth2UserDetailsLoader<PortalUser> {
+OAuth2UserDetailsLoader<PortalUser> {
 
     protected String defaultRole;
     protected Map<String, List<SimpleGrantedAuthority>> rolesByUser;
 
     /**
      * Creates a new GoogleOAuth2UserDetailsLoader that will assign defaultRole to every user as a granted authority.
-     * 
+     *
      * @param defaultRole
      */
-    public GoogleOAuth2UserDetailsLoader(String defaultRole) {
+    public GoogleOAuth2UserDetailsLoader(final String defaultRole) {
         this(defaultRole, null);
     }
 
     /**
      * Creates a new GoogleOAuth2UserDetailsLoader that will assign defaultRole to every user AND any authorities found in rolesByUser if the ID matches the
      * current user ID
-     * 
+     *
      * @param defaultRole
      * @param rolesByUser
      */
-    public GoogleOAuth2UserDetailsLoader(String defaultRole, Map<String, List<String>> rolesByUser) {
+    public GoogleOAuth2UserDetailsLoader(final String defaultRole, final Map<String, List<String>> rolesByUser) {
         this.defaultRole = defaultRole;
-        this.rolesByUser = new HashMap<String, List<SimpleGrantedAuthority>>();
+        this.rolesByUser = new HashMap<>();
 
         if (rolesByUser != null) {
-            for (Entry<String, List<String>> entry : rolesByUser.entrySet()) {
-                List<String> authorityStrings = entry.getValue();
-                List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>(
+            for (final Entry<String, List<String>> entry : rolesByUser.entrySet()) {
+                final List<String> authorityStrings = entry.getValue();
+                final List<SimpleGrantedAuthority> authorities = new ArrayList<>(
                         authorityStrings.size());
-                for (String authority : authorityStrings) {
+                for (final String authority : authorityStrings) {
                     authorities.add(new SimpleGrantedAuthority(authority));
                 }
 
@@ -67,45 +66,45 @@ public class GoogleOAuth2UserDetailsLoader implements
      * Always returns null - users will always need to be created
      */
     @Override
-    public PortalUser getUserByUserId(String id) {
+    public PortalUser getUserByUserId(final String id) {
         return null;
     }
 
     @Override
-    public boolean isCreatable(Map<String, Object> userInfo) {
+    public boolean isCreatable(final Map<String, Object> userInfo) {
         return userInfo.containsKey("id");
     }
 
     /**
      * Extracts keys from userInfo and applies them to appropriate properties in user
-     * 
+     *
      * @param user
      * @param userInfo
      */
-    protected void applyInfoToUser(PortalUser user, Map<String, Object> userInfo) {
+    protected void applyInfoToUser(final PortalUser user, final Map<String, Object> userInfo) {
         user.setEmail(userInfo.get("email").toString());
         user.setFullName(userInfo.get("name").toString());
     }
 
     @Override
-    public UserDetails createUser(String id, Map<String, Object> userInfo) {
-        List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+    public UserDetails createUser(final String id, final Map<String, Object> userInfo) {
+        final List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(defaultRole));
         if (rolesByUser != null) {
-            List<SimpleGrantedAuthority> additionalAuthorities = rolesByUser.get(id);
+            final List<SimpleGrantedAuthority> additionalAuthorities = rolesByUser.get(id);
             if (additionalAuthorities != null) {
                 authorities.addAll(additionalAuthorities);
             }
         }
 
-        PortalUser newUser = new PortalUser(id, "", authorities);
+        final PortalUser newUser = new PortalUser(id, "", authorities);
         applyInfoToUser(newUser, userInfo);
         return newUser;
     }
 
     @Override
-    public UserDetails updateUser(UserDetails userDetails,
-            Map<String, Object> userInfo) {
+    public UserDetails updateUser(final UserDetails userDetails,
+            final Map<String, Object> userInfo) {
 
         if (userDetails instanceof PortalUser) {
             applyInfoToUser((PortalUser) userDetails, userInfo);

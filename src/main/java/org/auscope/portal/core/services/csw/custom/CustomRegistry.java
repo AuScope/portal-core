@@ -5,14 +5,14 @@ public class CustomRegistry implements CustomRegistryInt {
     private String title, serviceUrl;
     private String recordInformationUrl;
 
-    public CustomRegistry(String id, String title, String serviceUrl, String recordInformationUrl) {
+    public CustomRegistry(final String id, final String title, final String serviceUrl, final String recordInformationUrl) {
         this.id = id;
         this.title = title;
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
     }
 
-    public CustomRegistry(String[] registryInfo) {
+    public CustomRegistry(final String[] registryInfo) {
         this(registryInfo[0], registryInfo[1], registryInfo[2], registryInfo[3]);
     }
 
@@ -30,6 +30,7 @@ public class CustomRegistry implements CustomRegistryInt {
     /**
      * @return the recordInformationUrl
      */
+    @Override
     public String getRecordInformationUrl() {
         return recordInformationUrl;
     }
@@ -38,13 +39,15 @@ public class CustomRegistry implements CustomRegistryInt {
      * @param recordInformationUrl
      *            the recordInformationUrl to set
      */
-    public void setRecordInformationUrl(String recordInformationUrl) {
+    @Override
+    public void setRecordInformationUrl(final String recordInformationUrl) {
         this.recordInformationUrl = recordInformationUrl;
     }
 
     /**
      * @return the serviceUrl
      */
+    @Override
     public String getServiceUrl() {
         return serviceUrl;
     }
@@ -53,13 +56,15 @@ public class CustomRegistry implements CustomRegistryInt {
      * @param serviceUrl
      *            the serviceUrl to set
      */
-    public void setServiceUrl(String serviceUrl) {
+    @Override
+    public void setServiceUrl(final String serviceUrl) {
         this.serviceUrl = serviceUrl;
     }
 
     /**
      * @return the title
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -68,13 +73,15 @@ public class CustomRegistry implements CustomRegistryInt {
      * @param title
      *            the title to set
      */
-    public void setTitle(String title) {
+    @Override
+    public void setTitle(final String title) {
         this.title = title;
     }
 
     /**
      * @return the id
      */
+    @Override
     public String getId() {
         return id;
     }
@@ -83,7 +90,8 @@ public class CustomRegistry implements CustomRegistryInt {
      * @param id
      *            the id to set
      */
-    public void setId(String id) {
+    @Override
+    public void setId(final String id) {
         this.id = id;
     }
 }

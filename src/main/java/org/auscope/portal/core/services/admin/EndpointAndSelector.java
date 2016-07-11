@@ -62,8 +62,8 @@ public class EndpointAndSelector {
      * @return
      */
     public boolean equals(EndpointAndSelector comparison) {
-        if (this == null || comparison == null) {
-            return this == comparison;
+        if (comparison == null) {
+            return false;
         }
 
         return this.endpoint.equals(comparison.endpoint) &&

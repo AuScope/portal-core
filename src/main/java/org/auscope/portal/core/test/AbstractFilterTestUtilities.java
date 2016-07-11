@@ -7,12 +7,12 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.services.namespaces.OGCNamespaceContext;
 import org.auscope.portal.core.util.DOMUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
+import junit.framework.Assert;
 
 /**
  * Contains a number of unit test utility methods that are useful for testing ogc:Filters
@@ -20,6 +20,7 @@ import org.w3c.dom.NodeList;
  * @author vot002
  *
  */
+@SuppressWarnings("deprecation")
 public abstract class AbstractFilterTestUtilities {
 
     /**
@@ -33,7 +34,7 @@ public abstract class AbstractFilterTestUtilities {
         NamespaceContext nsc = new OGCNamespaceContext();
         xmlString = String.format("<test xmlns:ogc=\"%1$s\">%2$s</test>", nsc.getNamespaceURI("ogc"), xmlString);
 
-        return new DOMUtil().buildDomFromString(xmlString);
+        return DOMUtil.buildDomFromString(xmlString);
     }
 
     /**

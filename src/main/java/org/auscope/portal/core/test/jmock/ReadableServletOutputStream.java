@@ -18,6 +18,7 @@ import javax.servlet.ServletOutputStream;
 public class ReadableServletOutputStream extends ServletOutputStream {
     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
+    @Override
     public void write(int i) throws IOException {
         byteArrayOutputStream.write(i);
     }

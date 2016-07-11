@@ -3,15 +3,16 @@ package org.auscope.portal.core.services.namespaces;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * @author san218
  * @version $Id$
  */
+@SuppressWarnings("deprecation")
 public class TestCSWNamespaceContext extends PortalTestClass {
 
     private String TEST_PREFIX = "gmd";

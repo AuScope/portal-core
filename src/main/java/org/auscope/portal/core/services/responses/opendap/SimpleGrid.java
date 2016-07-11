@@ -44,6 +44,7 @@ public class SimpleGrid extends AbstractViewVariable {
         this.axes = axes;
     }
 
+    @Override
     public String toString() {
         return "SimpleGrid [axes=" + Arrays.toString(axes) + ", type=" + type
                 + ", dataType=" + dataType + ", name=" + name + ", units="

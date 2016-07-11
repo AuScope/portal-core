@@ -4,8 +4,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.cloud.CloudComputeService.InstanceStatus;
@@ -26,10 +24,13 @@ import com.amazonaws.services.ec2.model.EbsBlockDevice;
 import com.amazonaws.services.ec2.model.Image;
 import com.amazonaws.services.ec2.model.InstanceState;
 
+import junit.framework.Assert;
+
+@SuppressWarnings("deprecation")
 public class TestCloudComputeServiceAws extends PortalTestClass{
 
     private class TestableJob extends CloudJob {
-
+        // empty
     }
 
     private class TestableCCS extends CloudComputeServiceAws {
@@ -41,6 +42,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
             testableClient = client;
         }
 
+        @Override
         protected AmazonEC2 getEc2Client(CloudJob job) throws PortalServiceException {
             return testableClient;
         }
@@ -87,8 +89,8 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
     public void testJobStatus_ParsePending() throws Exception {
         CloudJob job = new TestableJob();
 
-        Date now = new Date();
-        Date submitTime = new Date(now.getTime() - (CloudComputeServiceAws.STATUS_PENDING_SECONDS * 1000) - 1000);
+ //       Date now = new Date();
+ //       Date submitTime = new Date(now.getTime() - (CloudComputeServiceAws.STATUS_PENDING_SECONDS * 1000) - 1000);
 
         job.setComputeInstanceId("testable-id");
         job.setProperty(CloudJob.PROPERTY_STS_ARN, "sts-arn");
@@ -170,9 +172,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
         final AmazonServiceException ex = new AmazonServiceException("Testing Exception");
         ex.setErrorCode("InvalidInstanceID.NotFound");
 
-        context.checking(new Expectations() {{
-
-        }});
+        context.checking(new Expectations());
 
         Assert.assertEquals(InstanceStatus.Pending, service.getJobStatus(job));
     }
@@ -198,9 +198,7 @@ public class TestCloudComputeServiceAws extends PortalTestClass{
         job.setProperty(CloudJob.PROPERTY_CLIENT_SECRET, "client-secret");
         job.setSubmitDate(submitTime);
 
-        context.checking(new Expectations() {{
-
-        }});
+        context.checking(new Expectations());
 
         Assert.assertEquals(InstanceStatus.Pending, service.getJobStatus(job));
     }

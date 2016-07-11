@@ -2,8 +2,6 @@ package org.auscope.portal.core.services;
 
 import java.net.URI;
 
-import junit.framework.Assert;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.message.BasicHeader;
@@ -16,18 +14,13 @@ import org.auscope.portal.core.services.responses.csw.CSWRecord;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
 import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TestGeonetworkService extends PortalTestClass {
+import junit.framework.Assert;
 
-    private Mockery context = new Mockery() {
-        {
-            setImposteriser(ClassImposteriser.INSTANCE);
-        }
-    };
+@SuppressWarnings("deprecation")
+public class TestGeonetworkService extends PortalTestClass {
 
     private HttpServiceCaller serviceCaller;
     private GeonetworkMethodMaker gnMethodMaker;

@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.cloud.CloudJob;
 import org.auscope.portal.core.services.PortalServiceException;
 import org.auscope.portal.core.services.cloud.CloudComputeService.InstanceStatus;
@@ -31,6 +29,9 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import junit.framework.Assert;
+
+@SuppressWarnings("deprecation")
 public class TestCloudComputeService extends PortalTestClass {
 
     private final ComputeService mockComputeService = context.mock(ComputeService.class);
@@ -43,7 +44,7 @@ public class TestCloudComputeService extends PortalTestClass {
     private final AvailabilityZone mockAvailZone = context.mock(AvailabilityZone.class, "mockAvailZone");
     private final AvailabilityZone mockAvailZone2 = context.mock(AvailabilityZone.class, "mockAvailZone2");
     private final ZoneState mockZoneState = context.mock(ZoneState.class);
-    private final FluentIterable mockAvailZoneList = context.mock(FluentIterable.class);
+    private final FluentIterable<?> mockAvailZoneList = context.mock(FluentIterable.class);
     private final Predicate<NodeMetadata> mockFilter = context.mock(Predicate.class);
     private final RunNodesException mockException = context.mock(RunNodesException.class);
 

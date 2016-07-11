@@ -8,14 +8,15 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.Assert;
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
+
+@SuppressWarnings("deprecation")
 public class TestDistributedHTTPServiceCaller extends PortalTestClass {
 
     private HttpRequestBase mockMethod1 = context.mock(HttpRequestBase.class, "method1");

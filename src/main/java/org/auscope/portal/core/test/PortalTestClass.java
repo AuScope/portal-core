@@ -14,8 +14,6 @@ import java.util.regex.Pattern;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.test.jmock.DelayedReturnValueAction;
 import org.auscope.portal.core.test.jmock.DelayedThrowAction;
 import org.auscope.portal.core.test.jmock.FileWithNameMatcher;
@@ -37,6 +35,8 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import junit.framework.Assert;
+
 /**
  * Base class for all unit test classes to inherit from
  *
@@ -45,6 +45,7 @@ import org.xml.sax.SAXException;
  * @author Josh Vote
  *
  */
+@SuppressWarnings("deprecation")
 @RunWith(JMock.class)
 public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler {
 
@@ -58,7 +59,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * teardownUncaughtExceptionHandler
      */
     @Override
-    public void uncaughtException(Thread t, Throwable e) {
+    public void uncaughtException(final Thread t, final Throwable e) {
         if (e instanceof ExpectationError) {
             expectationErrors.add((ExpectationError) e);
         }
@@ -69,7 +70,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      */
     @Before
     public void initialiseUncaughtExceptionHandler() {
-        expectationErrors = new ArrayList<ExpectationError>();
+        expectationErrors = new ArrayList<>();
         Thread.setDefaultUncaughtExceptionHandler(this);
     }
 
@@ -104,7 +105,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @return
      * @throws Exception
      */
-    protected Action delayReturnValue(long msDelay, Object returnValue) throws Exception {
+    protected Action delayReturnValue(final long msDelay, final Object returnValue) {
         return new DelayedReturnValueAction(msDelay, returnValue);
     }
 
@@ -120,7 +121,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @return
      * @throws Exception
      */
-    protected Action delayThrowException(long msDelay, Throwable throwable) throws Exception {
+    protected Action delayThrowException(final long msDelay, final Throwable throwable) {
         return new DelayedThrowAction(throwable, msDelay);
     }
 
@@ -135,7 +136,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      *            If not null (and a PostMethod) the body of the post to match for (exact match required)
      * @return
      */
-    protected HttpMethodBaseMatcher aHttpMethodBase(HttpMethodType type, String url, String postBody) {
+    protected HttpMethodBaseMatcher aHttpMethodBase(final HttpMethodType type, final String url, final String postBody) {
         return new HttpMethodBaseMatcher(type, url, postBody);
     }
 
@@ -150,7 +151,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      *            If not null (and a PostMethod) the pattern to match against the body of the post.
      * @return
      */
-    protected HttpMethodBaseMatcher aHttpMethodBase(HttpMethodType type, Pattern urlPattern, Pattern postBodyPattern) {
+    protected HttpMethodBaseMatcher aHttpMethodBase(final HttpMethodType type, final Pattern urlPattern, final Pattern postBodyPattern) {
         return new HttpMethodBaseMatcher(type, urlPattern, postBodyPattern);
     }
 
@@ -163,7 +164,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      *            The property value
      * @return
      */
-    protected PropertiesMatcher aProperty(String property, String value) {
+    protected PropertiesMatcher aProperty(final String property, final String value) {
         return aProperty(property, value, true);
     }
 
@@ -178,8 +179,8 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      *            if true, the compared properties must contain ONLY the specified property=value, if false it may also contain other property names
      * @return
      */
-    protected PropertiesMatcher aProperty(String property, String value, boolean matchExactly) {
-        Properties prop = new Properties();
+    protected PropertiesMatcher aProperty(final String property, final String value, final boolean matchExactly) {
+        final Properties prop = new Properties();
         prop.setProperty(property, value);
         return new PropertiesMatcher(prop, matchExactly);
     }
@@ -191,8 +192,8 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      *            The values to test for
      * @return
      */
-    protected <K, V> MapMatcher<K, V> aMap(Map<K, V> map) {
-        return new MapMatcher<K, V>(map);
+    protected <K, V> MapMatcher<K, V> aMap(final Map<K, V> map) {
+        return new MapMatcher<>(map);
     }
 
     /**
@@ -204,12 +205,12 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      *            The Values to match for (must correspond 1:1 with keys
      * @return
      */
-    protected <K, V> MapMatcher<K, V> aMap(K[] keys, V[] values) {
+    protected <K, V> MapMatcher<K, V> aMap(final K[] keys, final V[] values) {
         if (keys.length != values.length) {
             throw new IllegalArgumentException();
         }
 
-        Map<K, V> map = new HashMap<K, V>();
+        final Map<K, V> map = new HashMap<>();
         for (int i = 0; i < keys.length; i++) {
             map.put(keys[i], values[i]);
         }
@@ -242,14 +243,14 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      *
      * @param resource
      */
-    protected String getSystemResourceAsString(String resource) {
-        InputStream is = ClassLoader.getSystemResourceAsStream(resource);
+    protected String getSystemResourceAsString(final String resource) {
+        final InputStream is = ClassLoader.getSystemResourceAsStream(resource);
         if (is == null) {
             return null;
         }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuffer contents = new StringBuffer();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        final StringBuffer contents = new StringBuffer();
 
         try {
             String str;
@@ -257,7 +258,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
                 contents.append(str);
             }
             reader.close();
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             return null;
         }
 
@@ -277,7 +278,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @param o2
      *            The second object to compare
      */
-    protected boolean equalsWithHashcode(Object o1, Object o2) {
+    protected boolean equalsWithHashcode(final Object o1, final Object o2) {
         if (o1 == null || o2 == null) {
             return o1 == o2;
         }
@@ -296,7 +297,7 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      *            The name of the file to match
      * @return
      */
-    protected FileWithNameMatcher aFileWithName(String fileName) {
+    protected FileWithNameMatcher aFileWithName(final String fileName) {
         return new FileWithNameMatcher(fileName);
     }
 
@@ -309,11 +310,11 @@ public abstract class PortalTestClass implements Thread.UncaughtExceptionHandler
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    protected boolean xmlStringEquals(String xml1, String xml2, boolean namespaceAware) throws ParserConfigurationException, IOException, SAXException {
-        Document d1 = DOMUtil.buildDomFromString(xml1, namespaceAware);
-        Document d2 = DOMUtil.buildDomFromString(xml2, namespaceAware);
+    protected boolean xmlStringEquals(final String xml1, final String xml2, final boolean namespaceAware) throws ParserConfigurationException, IOException, SAXException {
+        final Document d1 = DOMUtil.buildDomFromString(xml1, namespaceAware);
+        final Document d2 = DOMUtil.buildDomFromString(xml2, namespaceAware);
 
-        Diff diff = XMLUnit.compareXML(d1, d2);
+        final Diff diff = XMLUnit.compareXML(d1, d2);
         return diff.identical();
     }
 }

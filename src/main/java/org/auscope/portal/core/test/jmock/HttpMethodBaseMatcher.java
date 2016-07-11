@@ -3,24 +3,24 @@ package org.auscope.portal.core.test.jmock;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import junit.framework.Assert;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
-import org.auscope.portal.core.util.FileIOUtil;
 import org.hamcrest.Description;
 import org.junit.matchers.TypeSafeMatcher;
 
+import junit.framework.Assert;
+
 /**
  * A JUnit matcher for matching HttpMethodBase objects based on a few simplified terms
- * 
+ *
  * @author Josh Vote
  *
  */
+@SuppressWarnings("deprecation")
 public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
     /**
      * What different types of HttpMethods we can match for
@@ -38,7 +38,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
 
     /**
      * Creates a new matcher looking for the specified elements
-     * 
+     *
      * @param type
      *            If not null, the type of method to match for
      * @param url
@@ -46,7 +46,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
      * @param postBody
      *            If not null (and a PostMethod) the pattern of the body of the post to match for
      */
-    public HttpMethodBaseMatcher(HttpMethodType type, Pattern url, Pattern postBody) {
+    public HttpMethodBaseMatcher(final HttpMethodType type, final Pattern url, final Pattern postBody) {
         super();
         this.type = type;
         this.urlPattern = url;
@@ -55,7 +55,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
 
     /**
      * Creates a new matcher looking for the specified elements
-     * 
+     *
      * @param type
      *            If not null, the type of method to match for
      * @param url
@@ -63,7 +63,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
      * @param postBody
      *            If not null (and a PostMethod) the body of the post to match for
      */
-    public HttpMethodBaseMatcher(HttpMethodType type, String url, String postBody) {
+    public HttpMethodBaseMatcher(final HttpMethodType type, final String url, final String postBody) {
         super();
         this.type = type;
         this.url = url;
@@ -71,13 +71,13 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
     }
 
     @Override
-    public void describeTo(Description description) {
+    public void describeTo(final Description description) {
         description.appendText(String.format("a HttpMethodBase with type='%1$s' url='%2$s' postBody='%3$s'", type, url,
                 postBody));
     }
 
     @Override
-    public boolean matchesSafely(HttpRequestBase method) {
+    public boolean matchesSafely(final HttpRequestBase method) {
         boolean matches = true;
         if (type != null) {
             switch (type) {
@@ -95,7 +95,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
         if (url != null) {
             try {
                 matches &= url.equals(method.getURI().toString());
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail();
             }
         }
@@ -103,19 +103,19 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
         if (urlPattern != null) {
             try {
                 matches &= urlPattern.matcher(method.getURI().toString()).matches();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Assert.fail();
             }
         }
 
         if (method instanceof HttpPost) {
-            HttpPost postMethod = (HttpPost) method;
-            HttpEntity entity = postMethod.getEntity();
+            final HttpPost postMethod = (HttpPost) method;
+            final HttpEntity entity = postMethod.getEntity();
             if (entity instanceof StringEntity) {
                 String content = "";
                 try {
                     content = IOUtils.toString(((StringEntity) entity).getContent());
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     e.printStackTrace();
                     return false;
                 }

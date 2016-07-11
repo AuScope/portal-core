@@ -23,7 +23,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * A class for providing methods to transform between CSWRecord and a DOM ANZLIC representation.
- * 
+ *
  * @author Josh Vote
  */
 public class CSWRecordTransformer {
@@ -34,18 +34,18 @@ public class CSWRecordTransformer {
     protected Node mdMetadataNode;
 
     protected static final String DATEFORMATSTRING = "yyyy-MM-dd'T'HH:mm:ss";
-    
+
     protected enum Scope {
         service, dataset
     };
-    
+
     protected static final CSWNamespaceContext nc = new CSWNamespaceContext();
     private static final String SERVICEIDENTIFICATIONPATH = "gmd:identificationInfo/srv:SV_ServiceIdentification";
     private static final String DATAIDENTIFICATIONPATH = "gmd:identificationInfo/gmd:MD_DataIdentification";
     private static final String TITLEEXPRESSION = "/gmd:citation/gmd:CI_Citation/gmd:title/gco:CharacterString";
-    
+
     private static final String DATESTAMPEXPRESSION = "gmd:dateStamp/gco:DateTime";
-    private static final String SCOPEEXPRESSION = "gmd:hierarchyLevel/gmd:MD_ScopeCode/@codeListValue";    
+    private static final String SCOPEEXPRESSION = "gmd:hierarchyLevel/gmd:MD_ScopeCode/@codeListValue";
     private static final String ABSTRACTEXPRESSION = "/gmd:abstract/gco:CharacterString";
 
     private static final String CONTACTEXPRESSION = "gmd:contact/gmd:CI_ResponsibleParty";
@@ -64,21 +64,21 @@ public class CSWRecordTransformer {
 
     /**
      * Creates a new instance of this class and generates an empty document that will be used for constructing DOM.
-     * 
+     *
      * @throws Exception
      */
     public CSWRecordTransformer() throws Exception {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true); // never forget this!
-        DocumentBuilder builder = factory.newDocumentBuilder();
+        final DocumentBuilder builder = factory.newDocumentBuilder();
 
         //Build an empty document and a simple mdMetadataNode template
         this.document = builder.newDocument();
-        Element mdMetadataNode = createChildNode(document, nc.getNamespaceURI("gmd"), "MD_Metadata");
+        final Element mdMetadataNode = createChildNode(document, nc.getNamespaceURI("gmd"), "MD_Metadata");
 
-        Iterator<String> prefixIterator = nc.getPrefixIterator();
+        final Iterator<String> prefixIterator = nc.getPrefixIterator();
         while (prefixIterator.hasNext()) {
-            String prefix = prefixIterator.next();
+            final String prefix = prefixIterator.next();
             mdMetadataNode.setAttributeNS("", prefix, nc.getNamespaceURI(prefix));
         }
 
@@ -87,7 +87,7 @@ public class CSWRecordTransformer {
 
     /**
      * Creates a new instance of this class which will draw from the specified gmd:MD_Metadata Node representation as a template
-     * 
+     *
      * @param rootNode
      */
     public CSWRecordTransformer(final Node mdMetadataNode) {
@@ -97,7 +97,7 @@ public class CSWRecordTransformer {
 
     /**
      * Helper method for creating child XML elements using the template document
-     * 
+     *
      * @param parent
      *            The node who will be the parent of this node
      * @param namespaceUri
@@ -107,7 +107,7 @@ public class CSWRecordTransformer {
      * @return
      */
     protected Element createChildNode(final Node parent, final String namespaceUri, final String name) {
-        Element child = this.document.createElementNS(namespaceUri, name);
+        final Element child = this.document.createElementNS(namespaceUri, name);
 
         parent.appendChild(child);
 
@@ -116,27 +116,27 @@ public class CSWRecordTransformer {
 
     /**
      * Helper method for appending a child element containing a single gco:DateTime element
-     * 
+     *
      * @param parent
      * @param namespaceUri
      * @param name
      * @param value
      */
     protected void appendChildDate(final Node parent, final String namespaceUri, final String name, final Date value) {
-        Element child = createChildNode(parent, namespaceUri, name);
-        Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "DateTime");
+        final Element child = createChildNode(parent, namespaceUri, name);
+        final Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "DateTime");
 
         if (value == null) {
             child.setAttributeNS(nc.getNamespaceURI("gco"), "nilReason", "missing");
         } else {
-            SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
+            final SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
             characterStr.setTextContent(sdf.format(value));
         }
     }
 
     /**
      * Helper method for appending a child element containing a single gco:Decimal element
-     * 
+     *
      * @param parent
      * @param namespaceUri
      * @param name
@@ -144,14 +144,14 @@ public class CSWRecordTransformer {
      */
     protected void appendChildDecimal(final Node parent, final String namespaceUri, final String name,
             final double value) {
-        Element child = createChildNode(parent, namespaceUri, name);
-        Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "Decimal");
+        final Element child = createChildNode(parent, namespaceUri, name);
+        final Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "Decimal");
         characterStr.setTextContent(Double.toString(value));
     }
 
     /**
      * Helper method for appending a child element containing a single gco:CharacterString element
-     * 
+     *
      * @param parent
      *            where it will be appended
      * @param namespaceUri
@@ -160,8 +160,8 @@ public class CSWRecordTransformer {
      */
     protected void appendChildCharacterString(final Node parent, final String namespaceUri, final String name,
             final String value) {
-        Element child = createChildNode(parent, namespaceUri, name);
-        Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "CharacterString");
+        final Element child = createChildNode(parent, namespaceUri, name);
+        final Node characterStr = createChildNode(child, nc.getNamespaceURI("gco"), "CharacterString");
         if (value == null || value.isEmpty()) {
             child.setAttributeNS(nc.getNamespaceURI("gco"), "nilReason", "missing");
         } else {
@@ -171,7 +171,7 @@ public class CSWRecordTransformer {
 
     /**
      * Helper method for appending a child element containing a single gmd:EX_Extent element
-     * 
+     *
      * @param parent
      * @param namespaceUri
      * @param name
@@ -179,11 +179,11 @@ public class CSWRecordTransformer {
      */
     protected void appendChildExtent(final Node parent, final String namespaceUri, final String name,
             final CSWGeographicBoundingBox bbox) {
-        Node child = createChildNode(parent, namespaceUri, name);
-        Node exExtent = createChildNode(child, nc.getNamespaceURI("gmd"), "EX_Extent");
+        final Node child = createChildNode(parent, namespaceUri, name);
+        final Node exExtent = createChildNode(child, nc.getNamespaceURI("gmd"), "EX_Extent");
 
-        Node geoEl = createChildNode(exExtent, nc.getNamespaceURI("gmd"), "geographicElement");
-        Node geoBbox = createChildNode(geoEl, nc.getNamespaceURI("gmd"), "EX_GeographicBoundingBox");
+        final Node geoEl = createChildNode(exExtent, nc.getNamespaceURI("gmd"), "geographicElement");
+        final Node geoBbox = createChildNode(geoEl, nc.getNamespaceURI("gmd"), "EX_GeographicBoundingBox");
 
         appendChildDecimal(geoBbox, nc.getNamespaceURI("gmd"), "westBoundLongitude", bbox.getWestBoundLongitude());
         appendChildDecimal(geoBbox, nc.getNamespaceURI("gmd"), "eastBoundLongitude", bbox.getEastBoundLongitude());
@@ -193,7 +193,7 @@ public class CSWRecordTransformer {
 
     /**
      * Helper method for appending a child element containing a single gmd:CI_Citation element
-     * 
+     *
      * @param parent
      * @param namespaceUri
      * @param name
@@ -201,12 +201,12 @@ public class CSWRecordTransformer {
      */
     protected void appendChildOnlineResource(final Node parent, final String namespaceUri, final String name,
             final AbstractCSWOnlineResource onlineResource) {
-        Node child = createChildNode(parent, namespaceUri, name);
-        Node ciOnlineResource = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_OnlineResource");
+        final Node child = createChildNode(parent, namespaceUri, name);
+        final Node ciOnlineResource = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_OnlineResource");
 
         //Add linkage
-        Node linkage = createChildNode(ciOnlineResource, nc.getNamespaceURI("gmd"), "linkage");
-        Node url = createChildNode(linkage, nc.getNamespaceURI("gmd"), "URL");
+        final Node linkage = createChildNode(ciOnlineResource, nc.getNamespaceURI("gmd"), "linkage");
+        final Node url = createChildNode(linkage, nc.getNamespaceURI("gmd"), "URL");
         url.setTextContent(onlineResource.getLinkage().toString());
 
         //Add protocol
@@ -229,23 +229,23 @@ public class CSWRecordTransformer {
 
     /**
      * Helper method for appending a child element containing a single gmd:CI_Contact element
-     * 
+     *
      * @param contact
      *            the CSWContact to append
      * @return
      */
     private void appendChildContact(final Node parent, final String namespaceUri, final String name,
             final CSWContact contact) {
-        Node child = createChildNode(parent, namespaceUri, name);
-        Element ciContactNode = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_Contact");
+        final Node child = createChildNode(parent, namespaceUri, name);
+        final Element ciContactNode = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_Contact");
 
-        Element phone = createChildNode(ciContactNode, nc.getNamespaceURI("gmd"), "phone");
-        Element telephone = createChildNode(phone, nc.getNamespaceURI("gmd"), "CI_Telephone");
+        final Element phone = createChildNode(ciContactNode, nc.getNamespaceURI("gmd"), "phone");
+        final Element telephone = createChildNode(phone, nc.getNamespaceURI("gmd"), "CI_Telephone");
         appendChildCharacterString(telephone, nc.getNamespaceURI("gmd"), "voice", contact.getTelephone());
         appendChildCharacterString(telephone, nc.getNamespaceURI("gmd"), "facsimile", contact.getFacsimile());
 
-        Element address = createChildNode(ciContactNode, nc.getNamespaceURI("gmd"), "address");
-        Element ciAddress = createChildNode(address, nc.getNamespaceURI("gmd"), "CI_Address");
+        final Element address = createChildNode(ciContactNode, nc.getNamespaceURI("gmd"), "address");
+        final Element ciAddress = createChildNode(address, nc.getNamespaceURI("gmd"), "CI_Address");
         appendChildCharacterString(ciAddress, nc.getNamespaceURI("gmd"), "deliveryPoint",
                 contact.getAddressDeliveryPoint());
         appendChildCharacterString(ciAddress, nc.getNamespaceURI("gmd"), "city", contact.getAddressCity());
@@ -264,7 +264,7 @@ public class CSWRecordTransformer {
 
     /**
      * Transforms the specified CSWResponsibleParty back into a CI_ResponsibleParty element represented by a Node
-     * 
+     *
      * @param rp
      *            the CSWResponsibleParty to transform
      * @param rpNode
@@ -273,8 +273,8 @@ public class CSWRecordTransformer {
      */
     private void appendChildResponsibleParty(final Node parent, final String namespaceUri, final String name,
             final CSWResponsibleParty rp) {
-        Node child = createChildNode(parent, namespaceUri, name);
-        Node rpNode = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_ResponsibleParty");
+        final Node child = createChildNode(parent, namespaceUri, name);
+        final Node rpNode = createChildNode(child, nc.getNamespaceURI("gmd"), "CI_ResponsibleParty");
 
         appendChildCharacterString(rpNode, nc.getNamespaceURI("gmd"), "individualName", rp.getIndividualName());
         appendChildCharacterString(rpNode, nc.getNamespaceURI("gmd"), "organisationName", rp.getOrganisationName());
@@ -286,8 +286,8 @@ public class CSWRecordTransformer {
         }
 
         //Add our constant role node
-        Element role = createChildNode(rpNode, nc.getNamespaceURI("gmd"), "role");
-        Element roleCode = createChildNode(role, nc.getNamespaceURI("gmd"), "CI_RoleCode");
+        final Element role = createChildNode(rpNode, nc.getNamespaceURI("gmd"), "role");
+        final Element roleCode = createChildNode(role, nc.getNamespaceURI("gmd"), "CI_RoleCode");
         roleCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#CI_RoleCode");
         roleCode.setAttributeNS("", "codeListValue", "pointOfContact");
@@ -299,25 +299,25 @@ public class CSWRecordTransformer {
      * The transformation is built from the internal template specified at construction time.
      *
      * The internal template will NOT be modified by this function
-     * 
+     *
      * @param record
      * @return
      * @throws XPathExpressionException
      */
     public Node transformToNode(final CSWRecord record) throws XPathExpressionException {
-        Node root = this.mdMetadataNode.cloneNode(false);
+        final Node root = this.mdMetadataNode.cloneNode(false);
 
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "fileIdentifier", record.getFileIdentifier());
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "language", record.getLanguage());
 
         //Hardcode our character set code
-        Node characterSet = createChildNode(root, nc.getNamespaceURI("gmd"), "characterSet");
-        Element mdCharacterSetCode = createChildNode(characterSet, nc.getNamespaceURI("gmd"), "MD_CharacterSetCode");
+        final Node characterSet = createChildNode(root, nc.getNamespaceURI("gmd"), "characterSet");
+        final Element mdCharacterSetCode = createChildNode(characterSet, nc.getNamespaceURI("gmd"), "MD_CharacterSetCode");
         mdCharacterSetCode.setAttributeNS("", "codeListValue", "utf8");
         mdCharacterSetCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_CharacterSetCode");
 
-        CSWResponsibleParty responsibleParty = record.getContact();
+        final CSWResponsibleParty responsibleParty = record.getContact();
         if (responsibleParty != null) {
             appendChildResponsibleParty(root, nc.getNamespaceURI("gmd"), "contact", responsibleParty);
         }
@@ -327,19 +327,19 @@ public class CSWRecordTransformer {
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "metadataStandardVersion", "1.0");
 
         //We manually construct our mdDataIdentification element as CSWRecords aren't that normalised yet...
-        Node identificationInfo = createChildNode(root, nc.getNamespaceURI("gmd"), "identificationInfo");
-        Node mdDataIdentification = createChildNode(identificationInfo, nc.getNamespaceURI("gmd"),
+        final Node identificationInfo = createChildNode(root, nc.getNamespaceURI("gmd"), "identificationInfo");
+        final Node mdDataIdentification = createChildNode(identificationInfo, nc.getNamespaceURI("gmd"),
                 "MD_DataIdentification");
 
         //DataIdentification -> citation (manually built)
-        Node citation = createChildNode(mdDataIdentification, nc.getNamespaceURI("gmd"), "citation");
-        Node ciCitation = createChildNode(citation, nc.getNamespaceURI("gmd"), "CI_Citation");
+        final Node citation = createChildNode(mdDataIdentification, nc.getNamespaceURI("gmd"), "citation");
+        final Node ciCitation = createChildNode(citation, nc.getNamespaceURI("gmd"), "CI_Citation");
         appendChildCharacterString(ciCitation, nc.getNamespaceURI("gmd"), "title", record.getServiceName());
-        Node ciCitationDate = createChildNode(ciCitation, nc.getNamespaceURI("gmd"), "date");
-        Node ciCitationCIDate = createChildNode(ciCitationDate, nc.getNamespaceURI("gmd"), "CI_Date");
+        final Node ciCitationDate = createChildNode(ciCitation, nc.getNamespaceURI("gmd"), "date");
+        final Node ciCitationCIDate = createChildNode(ciCitationDate, nc.getNamespaceURI("gmd"), "CI_Date");
         appendChildDate(ciCitationCIDate, nc.getNamespaceURI("gmd"), "date", record.getDate());
-        Node ciCitationCIDateType = createChildNode(ciCitationCIDate, nc.getNamespaceURI("gmd"), "dateType");
-        Element ciCitationCIDateTypeCode = createChildNode(ciCitationCIDateType, nc.getNamespaceURI("gmd"),
+        final Node ciCitationCIDateType = createChildNode(ciCitationCIDate, nc.getNamespaceURI("gmd"), "dateType");
+        final Element ciCitationCIDateTypeCode = createChildNode(ciCitationCIDateType, nc.getNamespaceURI("gmd"),
                 "CI_DateTypeCode");
         ciCitationCIDateTypeCode.setAttributeNS("", "codeListValue", "creation");
         ciCitationCIDateTypeCode.setAttributeNS("", "codeList",
@@ -350,20 +350,20 @@ public class CSWRecordTransformer {
                 record.getDataIdentificationAbstract());
 
         //DataIdentification -> status
-        Node dataIdStatus = createChildNode(mdDataIdentification, nc.getNamespaceURI("gmd"), "status");
-        Element dataIdStatusCode = createChildNode(dataIdStatus, nc.getNamespaceURI("gmd"), "MD_ProgressCode");
+        final Node dataIdStatus = createChildNode(mdDataIdentification, nc.getNamespaceURI("gmd"), "status");
+        final Element dataIdStatusCode = createChildNode(dataIdStatus, nc.getNamespaceURI("gmd"), "MD_ProgressCode");
         dataIdStatusCode.setAttributeNS("", "codeListValue", "completed");
         dataIdStatusCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ProgressCode");
 
         //DataIdentification -> resourceConstraints
-        Node dataIdResourceConstraints = createChildNode(mdDataIdentification, nc.getNamespaceURI("gmd"),
+        final Node dataIdResourceConstraints = createChildNode(mdDataIdentification, nc.getNamespaceURI("gmd"),
                 "resourceConstraints");
-        Node dataIdLegalConstraints = createChildNode(dataIdResourceConstraints, nc.getNamespaceURI("gmd"),
+        final Node dataIdLegalConstraints = createChildNode(dataIdResourceConstraints, nc.getNamespaceURI("gmd"),
                 "MD_LegalConstraints");
-        String[] legalConstraints = record.getConstraints();
+        final String[] legalConstraints = record.getConstraints();
         if (legalConstraints != null) {
-            for (String constraint : legalConstraints) {
+            for (final String constraint : legalConstraints) {
                 appendChildCharacterString(dataIdLegalConstraints, nc.getNamespaceURI("gmd"), "otherConstraints",
                         constraint);
             }
@@ -376,37 +376,37 @@ public class CSWRecordTransformer {
         }
 
         //DataIdentification -> descriptiveKeywords
-        Node dataIdDescriptiveKeywords = createChildNode(mdDataIdentification, nc.getNamespaceURI("gmd"),
+        final Node dataIdDescriptiveKeywords = createChildNode(mdDataIdentification, nc.getNamespaceURI("gmd"),
                 "descriptiveKeywords");
-        Node dataIdMDKeywords = createChildNode(dataIdDescriptiveKeywords, nc.getNamespaceURI("gmd"), "MD_Keywords");
-        String[] keywords = record.getDescriptiveKeywords();
+        final Node dataIdMDKeywords = createChildNode(dataIdDescriptiveKeywords, nc.getNamespaceURI("gmd"), "MD_Keywords");
+        final String[] keywords = record.getDescriptiveKeywords();
         if (keywords != null) {
-            for (String keyword : keywords) {
+            for (final String keyword : keywords) {
                 appendChildCharacterString(dataIdMDKeywords, nc.getNamespaceURI("gmd"), "keyword", keyword);
             }
         }
-        Node dataIdMDKeywordsType = createChildNode(dataIdMDKeywords, nc.getNamespaceURI("gmd"), "type");
-        Element dataIdMDKeywordsTypeCode = createChildNode(dataIdMDKeywordsType, nc.getNamespaceURI("gmd"),
+        final Node dataIdMDKeywordsType = createChildNode(dataIdMDKeywords, nc.getNamespaceURI("gmd"), "type");
+        final Element dataIdMDKeywordsTypeCode = createChildNode(dataIdMDKeywordsType, nc.getNamespaceURI("gmd"),
                 "MD_KeywordTypeCode");
         dataIdMDKeywordsTypeCode.setAttributeNS("", "codeListValue", "theme");
         dataIdMDKeywordsTypeCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_KeywordTypeCode");
 
         //MD_Metadata -> dataSetURI
-        String[] datasetURIs = record.getDataSetURIs();
+        final String[] datasetURIs = record.getDataSetURIs();
         if (datasetURIs != null) {
-            for (String datasetURI : datasetURIs) {
+            for (final String datasetURI : datasetURIs) {
                 appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "dataSetURI", datasetURI);
             }
         }
-        
+
         //DataIdentification -> language
         appendChildCharacterString(mdDataIdentification, nc.getNamespaceURI("gmd"), "language", record.getLanguage());
 
         //DataIdentification -> extent
-        CSWGeographicElement[] geoEls = record.getCSWGeographicElements();
+        final CSWGeographicElement[] geoEls = record.getCSWGeographicElements();
         if (geoEls != null) {
-            for (CSWGeographicElement geoEl : geoEls) {
+            for (final CSWGeographicElement geoEl : geoEls) {
                 if (geoEl instanceof CSWGeographicBoundingBox) {
                     appendChildExtent(mdDataIdentification, nc.getNamespaceURI("gmd"), "extent",
                             (CSWGeographicBoundingBox) geoEl);
@@ -419,33 +419,33 @@ public class CSWRecordTransformer {
                 record.getSupplementalInformation());
 
         //Online resources
-        AbstractCSWOnlineResource[] onlineResources = record.getOnlineResources();
+        final AbstractCSWOnlineResource[] onlineResources = record.getOnlineResources();
         if (onlineResources != null && onlineResources.length > 0) {
-            Node distrInfo = createChildNode(root, nc.getNamespaceURI("gmd"), "distributionInfo");
-            Node mdDistribution = createChildNode(distrInfo, nc.getNamespaceURI("gmd"), "MD_Distribution");
-            Node transferOptions = createChildNode(mdDistribution, nc.getNamespaceURI("gmd"), "transferOptions");
-            Node mdDigitalTransferOptions = createChildNode(transferOptions, nc.getNamespaceURI("gmd"),
+            final Node distrInfo = createChildNode(root, nc.getNamespaceURI("gmd"), "distributionInfo");
+            final Node mdDistribution = createChildNode(distrInfo, nc.getNamespaceURI("gmd"), "MD_Distribution");
+            final Node transferOptions = createChildNode(mdDistribution, nc.getNamespaceURI("gmd"), "transferOptions");
+            final Node mdDigitalTransferOptions = createChildNode(transferOptions, nc.getNamespaceURI("gmd"),
                     "MD_DigitalTransferOptions");
 
-            for (AbstractCSWOnlineResource onlineResource : onlineResources) {
+            for (final AbstractCSWOnlineResource onlineResource : onlineResources) {
                 appendChildOnlineResource(mdDigitalTransferOptions, nc.getNamespaceURI("gmd"), "onLine", onlineResource);
             }
         }
 
         //Data Quality (partially hardcoded)
-        Node dataQualityInfo = createChildNode(root, nc.getNamespaceURI("gmd"), "dataQualityInfo");
-        Node dqDataQuality = createChildNode(dataQualityInfo, nc.getNamespaceURI("gmd"), "DQ_DataQuality");
-        Node dataQualityScope = createChildNode(dqDataQuality, nc.getNamespaceURI("gmd"), "scope");
-        Node dqDataQualityScope = createChildNode(dataQualityScope, nc.getNamespaceURI("gmd"), "DQ_Scope");
-        Node dataQualityScopeLevel = createChildNode(dqDataQualityScope, nc.getNamespaceURI("gmd"), "level");
-        Element dataQualityScopeLevelCode = createChildNode(dataQualityScopeLevel, nc.getNamespaceURI("gmd"),
+        final Node dataQualityInfo = createChildNode(root, nc.getNamespaceURI("gmd"), "dataQualityInfo");
+        final Node dqDataQuality = createChildNode(dataQualityInfo, nc.getNamespaceURI("gmd"), "DQ_DataQuality");
+        final Node dataQualityScope = createChildNode(dqDataQuality, nc.getNamespaceURI("gmd"), "scope");
+        final Node dqDataQualityScope = createChildNode(dataQualityScope, nc.getNamespaceURI("gmd"), "DQ_Scope");
+        final Node dataQualityScopeLevel = createChildNode(dqDataQualityScope, nc.getNamespaceURI("gmd"), "level");
+        final Element dataQualityScopeLevelCode = createChildNode(dataQualityScopeLevel, nc.getNamespaceURI("gmd"),
                 "MD_ScopeCode");
         dataQualityScopeLevelCode.setAttributeNS("", "codeListValue", "dataset");
         dataQualityScopeLevelCode.setAttributeNS("", "codeList",
                 "http://www.isotc211.org/2005/resources/codelist/codeList.xml#MD_ScopeCode");
         if (record.getDataQualityStatement() != null && !record.getDataQualityStatement().isEmpty()) {
-            Node dqLineage = createChildNode(dqDataQuality, nc.getNamespaceURI("gmd"), "lineage");
-            Node dqLILineage = createChildNode(dqLineage, nc.getNamespaceURI("gmd"), "LI_Lineage");
+            final Node dqLineage = createChildNode(dqDataQuality, nc.getNamespaceURI("gmd"), "lineage");
+            final Node dqLILineage = createChildNode(dqLineage, nc.getNamespaceURI("gmd"), "LI_Lineage");
             appendChildCharacterString(dqLILineage, nc.getNamespaceURI("gmd"), "statement",
                     record.getDataQualityStatement());
         }
@@ -455,7 +455,7 @@ public class CSWRecordTransformer {
 
     /**
      * Helper method for evaluating an xpath string on a particular node and returning the result as a string (or null)
-     * 
+     *
      * @param node
      * @param xPath
      *            A valid XPath expression
@@ -463,13 +463,13 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     protected String evalXPathString(final Node node, final String xPath) throws XPathExpressionException {
-        XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
+        final XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (String) expression.evaluate(node, XPathConstants.STRING);
     }
 
     /**
      * Helper method for evaluating an xpath string on a particular node and returning the result as a (possible empty) list of matching nodes
-     * 
+     *
      * @param node
      * @param xPath
      *            A valid XPath expression
@@ -477,13 +477,13 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     protected NodeList evalXPathNodeList(final Node node, final String xPath) throws XPathExpressionException {
-        XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
+        final XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (NodeList) expression.evaluate(node, XPathConstants.NODESET);
     }
 
     /**
      * Helper method for evaluating an xpath string on a particular node and returning the result as a (possible empty) DOM node
-     * 
+     *
      * @param node
      * @param xPath
      *            A valid XPath expression
@@ -491,7 +491,7 @@ public class CSWRecordTransformer {
      * @throws XPathExpressionException
      */
     protected Node evalXPathNode(final Node node, final String xPath) throws XPathExpressionException {
-        XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
+        final XPathExpression expression = DOMUtil.compileXPathExpr(xPath, nc);
         return (Node) expression.evaluate(node, XPathConstants.NODE);
     }
 
@@ -499,20 +499,20 @@ public class CSWRecordTransformer {
      * Iterates through the record's online resource list and removes any pairs of online resources that match on: 1) URL (sans query string) 2) name 3)
      * protocol
      */
-    private List<AbstractCSWOnlineResource> removeDuplicateOnlineResources(List<AbstractCSWOnlineResource> resources) {
+    private List<AbstractCSWOnlineResource> removeDuplicateOnlineResources(final List<AbstractCSWOnlineResource> resources) {
         for (int i = 0; i < resources.size(); i++) {
-            AbstractCSWOnlineResource resource = resources.get(i);
-            boolean foundMatching = false;
+            final AbstractCSWOnlineResource resource = resources.get(i);
+            final boolean foundMatching = false;
             for (int j = i + 1; j < resources.size() && !foundMatching; j++) {
-                AbstractCSWOnlineResource cmp = resources.get(j);
+                final AbstractCSWOnlineResource cmp = resources.get(j);
 
                 //Do the easy check first
                 if (resource.getName().equals(cmp.getName()) &&
                         resource.getType() == cmp.getType()) {
                     //Then test the URL host + path
                     if (resource.getLinkage() != null && cmp.getLinkage() != null) {
-                        String resourceUrl = resource.getLinkage().toString().split("\\?")[0];
-                        String cmpUrl = cmp.getLinkage().toString().split("\\?")[0];
+                        final String resourceUrl = resource.getLinkage().toString().split("\\?")[0];
+                        final String cmpUrl = cmp.getLinkage().toString().split("\\?")[0];
 
                         if (resourceUrl.equals(cmpUrl)) {
                             resources.remove(j--);
@@ -546,13 +546,13 @@ public class CSWRecordTransformer {
      * @return
      * @throws XPathExpressionException
      */
-    protected CSWRecord transformToCSWRecord(CSWRecord record) throws XPathExpressionException {
+    protected CSWRecord transformToCSWRecord(final CSWRecord record) throws XPathExpressionException {
         NodeList tempNodeList = null;
 
         //Parse our simple strings
-        Node scopeNode = evalXPathNode(this.mdMetadataNode, SCOPEEXPRESSION);
-        String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
-        
+        final Node scopeNode = evalXPathNode(this.mdMetadataNode, SCOPEEXPRESSION);
+        final String recordType = scopeNode != null ? scopeNode.getNodeValue() : null;
+
         String identificationPath = null;
         if (Scope.service.toString().equals(recordType)) {
             identificationPath = SERVICEIDENTIFICATIONPATH;
@@ -560,7 +560,7 @@ public class CSWRecordTransformer {
         } else {
             identificationPath = DATAIDENTIFICATIONPATH;
         }
-      
+
         record.setServiceName(evalXPathString(this.mdMetadataNode, identificationPath + TITLEEXPRESSION));
         record.setDataIdentificationAbstract(evalXPathString(this.mdMetadataNode, identificationPath + ABSTRACTEXPRESSION));
 
@@ -577,12 +577,12 @@ public class CSWRecordTransformer {
         }
         record.setResourceProvider(resourceProvider);
 
-        String dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
+        final String dateStampString = evalXPathString(this.mdMetadataNode, DATESTAMPEXPRESSION);
         if (dateStampString != null && !dateStampString.isEmpty()) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
+                final SimpleDateFormat sdf = new SimpleDateFormat(DATEFORMATSTRING);
                 record.setDate(sdf.parse(dateStampString));
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 logger.debug(String.format("Unable to parse date for serviceName='%1$s' %2$s", record.getServiceName(),
                         ex));
             }
@@ -590,12 +590,12 @@ public class CSWRecordTransformer {
 
         //There can be multiple gmd:onLine elements (which contain a number of fields we want)
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, ONLINETRANSFERSEXPRESSION);
-        List<AbstractCSWOnlineResource> resources = new ArrayList<AbstractCSWOnlineResource>();
+        final List<AbstractCSWOnlineResource> resources = new ArrayList<>();
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             try {
-                Node onlineNode = tempNodeList.item(i);
+                final Node onlineNode = tempNodeList.item(i);
                 resources.add(CSWOnlineResourceFactory.parseFromNode(onlineNode));
-            } catch (IllegalArgumentException ex) {
+            } catch (final IllegalArgumentException ex) {
                 logger.debug(String.format("Unable to parse online resource for serviceName='%1$s' %2$s",
                         record.getServiceName(), ex));
             }
@@ -606,12 +606,12 @@ public class CSWRecordTransformer {
         //Parse our bounding boxes (if they exist). If any are unparsable, don't worry and just continue
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, BBOXEXPRESSION);
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
-            List<CSWGeographicElement> elList = new ArrayList<CSWGeographicElement>();
+            final List<CSWGeographicElement> elList = new ArrayList<>();
             for (int i = 0; i < tempNodeList.getLength(); i++) {
                 try {
-                    Node geographyNode = tempNodeList.item(i);
+                    final Node geographyNode = tempNodeList.item(i);
                     elList.add(CSWGeographicBoundingBox.fromGeographicBoundingBoxNode(geographyNode));
-                } catch (Exception ex) {
+                } catch (final Exception ex) {
                     logger.debug(String.format(
                             "Unable to parse CSWGeographicBoundingBox resource for serviceName='%1$s' %2$s",
                             record.getServiceName(), ex));
@@ -623,7 +623,7 @@ public class CSWRecordTransformer {
         //Parse the descriptive keywords
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, KEYWORDLISTEXPRESSION);
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
-            List<String> keywords = new ArrayList<String>();
+            final List<String> keywords = new ArrayList<>();
             Node keyword;
             for (int j = 0; j < tempNodeList.getLength(); j++) {
                 keyword = tempNodeList.item(j);
@@ -633,9 +633,9 @@ public class CSWRecordTransformer {
         }
 
         //Parse the dataset URIs
-        tempNodeList = (NodeList) evalXPathNodeList(this.mdMetadataNode, DATASETURIEXPRESSION);
+        tempNodeList = evalXPathNodeList(this.mdMetadataNode, DATASETURIEXPRESSION);
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
-            List<String> datasetURIs = new ArrayList<String>();
+            final List<String> datasetURIs = new ArrayList<>();
             Node datasetURI;
             for (int j = 0; j < tempNodeList.getLength(); j++) {
                 datasetURI = tempNodeList.item(j);
@@ -643,13 +643,13 @@ public class CSWRecordTransformer {
             }
             record.setDataSetURIs(datasetURIs.toArray(new String[datasetURIs.size()]));
         }
-        
-        Node tempNode = evalXPathNode(this.mdMetadataNode, CONTACTEXPRESSION);
+
+        final Node tempNode = evalXPathNode(this.mdMetadataNode, CONTACTEXPRESSION);
         if (tempNode != null) {
             try {
-                CSWResponsibleParty respParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
+                final CSWResponsibleParty respParty = CSWResponsiblePartyFactory.generateResponsiblePartyFromNode(tempNode);
                 record.setContact(respParty);
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 logger.debug(String.format("Unable to parse contact for serviceName='%1$s' %2$s",
                         record.getServiceName(), ex));
             }
@@ -658,7 +658,7 @@ public class CSWRecordTransformer {
         //Parse any legal constraints
         tempNodeList = evalXPathNodeList(this.mdMetadataNode, OTHERCONSTRAINTSEXPRESSION);
         if (tempNodeList != null && tempNodeList.getLength() > 0) {
-            List<String> constraintsList = new ArrayList<String>();
+            final List<String> constraintsList = new ArrayList<>();
             Node constraint;
             for (int j = 0; j < tempNodeList.getLength(); j++) {
                 constraint = tempNodeList.item(j);

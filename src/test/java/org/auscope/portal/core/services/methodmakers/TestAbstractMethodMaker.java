@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class TestAbstractMethodMaker extends PortalTestClass {
     private class TestableAbstractMethodMaker extends AbstractMethodMaker {
-
+        // empty
     }
 
     /**
@@ -19,7 +19,7 @@ public class TestAbstractMethodMaker extends PortalTestClass {
      */
     @Test
     public void testExtractQueryParams() {
-        List<NameValuePair> empty = new ArrayList<NameValuePair>();
+        List<NameValuePair> empty = new ArrayList<>();
         TestableAbstractMethodMaker mm = new TestableAbstractMethodMaker();
 
         //Test no values
@@ -39,19 +39,19 @@ public class TestAbstractMethodMaker extends PortalTestClass {
 
         //Test single
         actual = mm.extractQueryParams("http://example.org?param1=test1");
-        expected = new ArrayList<NameValuePair>();
+        expected = new ArrayList<>();
         expected.add(new BasicNameValuePair("param1", "test1"));
         Assert.assertEquals(expected, actual);
 
         //Test single (with junk)
         actual = mm.extractQueryParams("http://example.org?&param1=test1&&");
-        expected = new ArrayList<NameValuePair>();
+        expected = new ArrayList<>();
         expected.add(new BasicNameValuePair("param1", "test1"));
         Assert.assertEquals(expected, actual);
 
         //Test many (with junk)
         actual = mm.extractQueryParams("http://example.org?&param1=test1&&param2=test2&");
-        expected = new ArrayList<NameValuePair>();
+        expected = new ArrayList<>();
         expected.add(new BasicNameValuePair("param1", "test1"));
         expected.add(new BasicNameValuePair("param2", "test2"));
 
@@ -64,7 +64,7 @@ public class TestAbstractMethodMaker extends PortalTestClass {
      * @throws Exception
      */
     @Test
-    public void testUrlPathConcat() throws Exception {
+    public void testUrlPathConcat() {
         TestableAbstractMethodMaker mm = new TestableAbstractMethodMaker();
 
         Assert.assertEquals("http://example.org", mm.urlPathConcat("http://example.org"));

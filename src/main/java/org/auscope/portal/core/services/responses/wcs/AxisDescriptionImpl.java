@@ -21,7 +21,7 @@ public class AxisDescriptionImpl implements AxisDescription {
     private String label;
     private ValueEnumType[] values;
 
-    public AxisDescriptionImpl(Node node, WCSNamespaceContext nc) throws Exception {
+    public AxisDescriptionImpl(final Node node, final WCSNamespaceContext nc) throws Exception {
         Node tempNode;
 
         //optional
@@ -35,25 +35,29 @@ public class AxisDescriptionImpl implements AxisDescription {
         tempNode = (Node) DOMUtil.compileXPathExpr("wcs:label", nc).evaluate(node, XPathConstants.NODE);
         label = tempNode.getTextContent();
 
-        NodeList tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:values/wcs:*", nc).evaluate(node, XPathConstants.NODESET);
+        final NodeList tempNodeList = (NodeList) DOMUtil.compileXPathExpr("wcs:values/wcs:*", nc).evaluate(node, XPathConstants.NODESET);
         values = new ValueEnumType[tempNodeList.getLength()];
         for (int i = 0; i < tempNodeList.getLength(); i++) {
             values[i] = ValueEnumTypeFactory.parseFromNode(tempNodeList.item(i), nc);
         }
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getLabel() {
         return label;
     }
 
+    @Override
     public ValueEnumType[] getValues() {
         return values;
     }

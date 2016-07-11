@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executor;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
@@ -52,7 +53,7 @@ public class CSWFilterService {
      */
     public CSWFilterService(Executor executor,
             HttpServiceCaller serviceCaller,
-            ArrayList cswServiceList) {
+            @SuppressWarnings("rawtypes") ArrayList cswServiceList) {
         this(executor, serviceCaller, cswServiceList, new CSWRecordTransformerFactory());
     }
 
@@ -69,7 +70,7 @@ public class CSWFilterService {
      */
     public CSWFilterService(Executor executor,
             HttpServiceCaller serviceCaller,
-            ArrayList cswServiceList,
+            @SuppressWarnings("rawtypes") ArrayList cswServiceList,
             CSWRecordTransformerFactory transformerFactory) {
         this.executor = executor;
         this.serviceCaller = serviceCaller;
@@ -101,14 +102,16 @@ public class CSWFilterService {
         log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem,
                 maxRecords, resultType, filter));
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-        HttpRequestBase method = null;
-
+        HttpRequestBase method;
         try {
             method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,
                     null);
-            InputStream responseStream = serviceCaller.getMethodResponseAsStream(method);
-            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+        } catch (UnsupportedEncodingException e) {
+            throw new PortalServiceException(e.getMessage(), e);
+        }
 
+        try (InputStream responseStream = serviceCaller.getMethodResponseAsStream(method)) {
+            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             return new CSWGetRecordResponse(serviceItem, responseDoc, transformerFactory);
         } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
@@ -132,8 +135,8 @@ public class CSWFilterService {
      */
     private DistributedHTTPServiceCaller callAllServices(CSWGetDataRecordsFilter filter, int maxRecords,
             int startIndex, ResultType resultType) throws DistributedHTTPServiceCallerException {
-        List<HttpRequestBase> requestMethods = new ArrayList<HttpRequestBase>();
-        List<Object> additionalInfo = new ArrayList<Object>();
+        List<HttpRequestBase> requestMethods = new ArrayList<>();
+        List<Object> additionalInfo = new ArrayList<>();
 
         //Create various HTTP Methods for making each and every CSW request
         for (CSWServiceItem serviceItem : cswServiceList) {
@@ -182,22 +185,19 @@ public class CSWFilterService {
      */
     public CSWGetRecordResponse[] getFilteredRecords(CSWGetDataRecordsFilter filter, int maxRecords)
             throws PortalServiceException {
-        List<CSWGetRecordResponse> responses = new ArrayList<CSWGetRecordResponse>();
+        List<CSWGetRecordResponse> responses = new ArrayList<>();
 
         //Call our services and start iterating the responses
         DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Results);
         while (dsc.hasNext()) {
-            InputStream responseStream = dsc.next();
-            CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
-            try {
+            try (InputStream responseStream = dsc.next()) {
+                CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
                 Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
                 responses.add(new CSWGetRecordResponse(origin, responseDoc, transformerFactory));
             } catch (Exception ex) {
                 throw new PortalServiceException("Error parsing response document", ex);
             }
-
         }
-
         return responses.toArray(new CSWGetRecordResponse[responses.size()]);
     }
 
@@ -277,12 +277,12 @@ public class CSWFilterService {
         //Call our services and start iterating the responses
         DistributedHTTPServiceCaller dsc = callAllServices(filter, maxRecords, 1, ResultType.Hits);
         while (dsc.hasNext()) {
-            InputStream responseStream = dsc.next();
-            CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
-            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
-            CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc, transformerFactory);
-
-            count += response.getRecordsMatched();
+            try (InputStream responseStream = dsc.next()) {
+                CSWServiceItem origin = (CSWServiceItem) dsc.getLastAdditionalInformation();
+                Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+                CSWGetRecordResponse response = new CSWGetRecordResponse(origin, responseDoc, transformerFactory);
+                count += response.getRecordsMatched();
+            }
         }
 
         return count;
@@ -329,7 +329,6 @@ public class CSWFilterService {
             method.setURI(builder.build());
             getCap = new CSWGetCapabilities(this.serviceCaller.getMethodResponseAsStream(method));
             return getCap;
-
         } catch (Exception e) {
             throw e;
         }

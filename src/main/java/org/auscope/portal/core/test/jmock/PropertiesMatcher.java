@@ -44,10 +44,7 @@ public class PropertiesMatcher extends TypeSafeMatcher<Properties> {
     public void describeTo(Description description) {
         if (matchAll) {
             description.appendText(String.format("a Properties with '%1$s'", comparison));
-        } else {
-
-        }
-
+        } 
     }
 
     @Override
@@ -61,6 +58,7 @@ public class PropertiesMatcher extends TypeSafeMatcher<Properties> {
             return true;
         }
 
+        @SuppressWarnings("null")
         Set<String> toMatchNames = toMatch.stringPropertyNames();
         Set<String> comparisonNames = comparison.stringPropertyNames();
         if (matchAll && toMatchNames.size() != comparisonNames.size()) {

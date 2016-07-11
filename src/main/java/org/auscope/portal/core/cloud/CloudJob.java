@@ -74,16 +74,17 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      * @param id
      *            Unique ID identifying this job
      */
-    public CloudJob(Integer id) {
+    public CloudJob(final Integer id) {
         super();
         this.id = id;
     }
 
-    public String setProperty(String key, String value) {
+    public String setProperty(final String key, final String value) {
         return properties.put(key, value);
     }
 
-    public String getProperty(String key) {
+    @Override
+    public String getProperty(final String key) {
         return properties.get(key);
     }
 
@@ -92,6 +93,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @return
      */
+    @Override
     public Integer getId() {
         return id;
     }
@@ -101,7 +103,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param id
      */
-    public void setId(Integer id) {
+    public void setId(final Integer id) {
         this.id = id;
     }
 
@@ -119,7 +121,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param name
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -137,7 +139,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param description
      */
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -155,7 +157,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param emailAddress
      */
-    public void setEmailAddress(String emailAddress) {
+    public void setEmailAddress(final String emailAddress) {
         this.emailAddress = emailAddress;
     }
 
@@ -164,6 +166,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @return
      */
+    @Override
     public String getUser() {
         return user;
     }
@@ -173,7 +176,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param user
      */
-    public void setUser(String user) {
+    public void setUser(final String user) {
         this.user = user;
     }
 
@@ -191,7 +194,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param submitDate
      */
-    public void setSubmitDate(Date submitDate) {
+    public void setSubmitDate(final Date submitDate) {
         this.submitDate = submitDate;
     }
 
@@ -209,7 +212,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param processDate
      */
-    public void setProcessDate(Date processDate) {
+    public void setProcessDate(final Date processDate) {
         this.processDate = processDate;
     }
 
@@ -219,8 +222,8 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      * @param submitDate
      * @throws ParseException
      */
-    public void setSubmitDate(String submitDate) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+    public void setSubmitDate(final String submitDate) throws ParseException {
+        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         this.setSubmitDate(sdf.parse(submitDate));
     }
 
@@ -238,7 +241,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param status
      */
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -256,7 +259,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param computeVmId
      */
-    public void setComputeVmId(String computeVmId) {
+    public void setComputeVmId(final String computeVmId) {
         this.computeVmId = computeVmId;
     }
 
@@ -274,7 +277,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param computeInstanceId
      */
-    public void setComputeInstanceId(String computeInstanceId) {
+    public void setComputeInstanceId(final String computeInstanceId) {
         this.computeInstanceId = computeInstanceId;
     }
 
@@ -288,7 +291,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
     /**
      * The type of the compute instance to start (size of memory, number of CPUs etc) - eg m1.large. Can be null
      */
-    public void setComputeInstanceType(String computeInstanceType) {
+    public void setComputeInstanceType(final String computeInstanceType) {
         this.computeInstanceType = computeInstanceType;
     }
 
@@ -302,7 +305,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
     /**
      * The name of the key to inject into the instance at startup for root access. Can be null
      */
-    public void setComputeInstanceKey(String computeInstanceKey) {
+    public void setComputeInstanceKey(final String computeInstanceKey) {
         this.computeInstanceKey = computeInstanceKey;
     }
 
@@ -320,7 +323,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param computeServiceId
      */
-    public void setComputeServiceId(String computeServiceId) {
+    public void setComputeServiceId(final String computeServiceId) {
         this.computeServiceId = computeServiceId;
     }
 
@@ -338,7 +341,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param storageServiceId
      */
-    public void setStorageServiceId(String storageServiceId) {
+    public void setStorageServiceId(final String storageServiceId) {
         this.storageServiceId = storageServiceId;
     }
 
@@ -347,6 +350,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @return
      */
+    @Override
     public String getStorageBaseKey() {
         return storageBaseKey;
     }
@@ -356,7 +360,8 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param storageBaseKey
      */
-    public void setStorageBaseKey(String storageBaseKey) {
+    @Override
+    public void setStorageBaseKey(final String storageBaseKey) {
         this.storageBaseKey = storageBaseKey;
     }
 

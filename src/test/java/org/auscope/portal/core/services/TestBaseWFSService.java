@@ -3,7 +3,7 @@ package org.auscope.portal.core.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ConnectException;
-import java.util.Properties;
+import java.util.Scanner;
 
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
@@ -14,7 +14,6 @@ import org.auscope.portal.core.services.responses.wfs.WFSGetCapabilitiesResponse
 import org.auscope.portal.core.services.responses.wfs.WFSResponse;
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.test.ResourceUtil;
-import org.auscope.portal.core.xslt.PortalXSLTTransformer;
 import org.jmock.Expectations;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,8 +21,8 @@ import org.junit.Test;
 
 public class TestBaseWFSService extends PortalTestClass {
 
-    private PortalXSLTTransformer mockTransformer = context.mock(PortalXSLTTransformer.class);
-    private Properties mockProperties = context.mock(Properties.class);
+//    private PortalXSLTTransformer mockTransformer = context.mock(PortalXSLTTransformer.class);
+//    private Properties mockProperties = context.mock(Properties.class);
     private HttpServiceCaller mockHttpServiceCaller = context.mock(HttpServiceCaller.class);
     private HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
     private WFSGetFeatureMethodMaker mockMethodMaker = context.mock(WFSGetFeatureMethodMaker.class);
@@ -110,20 +109,20 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test
     public void testGetFeatureCount() throws Exception {
-        final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml");
+        try (final InputStream responseStream = ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml")) {
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(responseStream));
+                    oneOf(mockMethod).releaseConnection();
+                }
+            });
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(responseStream));
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
-
-        WFSCountResponse response = service.getWfsFeatureCount(mockMethod);
-        Assert.assertNotNull(response);
-        Assert.assertEquals(161, response.getNumberOfFeatures());
+            WFSCountResponse response = service.getWfsFeatureCount(mockMethod);
+            Assert.assertNotNull(response);
+            Assert.assertEquals(161, response.getNumberOfFeatures());
+        }
     }
 
     @Test(expected = PortalServiceException.class)
@@ -141,31 +140,32 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test(expected = PortalServiceException.class)
     public void testGetFeatureCountOWSError() throws Exception {
-        final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml");
+        try (final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(responseStream));
-                oneOf(mockMethod).releaseConnection();
-            }
-        });
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(responseStream));
+                    oneOf(mockMethod).releaseConnection();
+                }
+            });
 
-        service.getWfsFeatureCount(mockMethod);
+            service.getWfsFeatureCount(mockMethod);
+        }
     }
 
     @Test(expected = PortalServiceException.class)
     public void testOwsError() throws Exception {
-        final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml");
+        try (final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);
+                    will(returnValue(responseStream));
+                }
+            });
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);
-                will(returnValue(responseStream));
-            }
-        });
-
-        service.getWFSResponse(mockMethod);
+            service.getWFSResponse(mockMethod);
+        }
     }
 
     @Test(expected = PortalServiceException.class)
@@ -182,22 +182,23 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test
     public void testResponse() throws Exception {
-        final String responseString = new java.util.Scanner(
+        try (Scanner sc = new java.util.Scanner(
                 ResourceUtil
                         .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml"))
-                .useDelimiter("\\A").next();
+                                        ) {
+            final String responseString = sc.useDelimiter("\\A").next();
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);
+                    will(returnValue(responseString));
+                }
+            });
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);
-                will(returnValue(responseString));
-            }
-        });
-
-        WFSResponse response = service.getWFSResponse(mockMethod);
-        Assert.assertNotNull(response);
-        Assert.assertEquals(responseString, response.getData());
-        Assert.assertSame(mockMethod, response.getMethod());
+            WFSResponse response = service.getWFSResponse(mockMethod);
+            Assert.assertNotNull(response);
+            Assert.assertEquals(responseString, response.getData());
+            Assert.assertSame(mockMethod, response.getMethod());
+        }
     }
 
     @Test

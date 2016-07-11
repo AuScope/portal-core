@@ -1,6 +1,5 @@
 package org.auscope.portal.core.services.methodmakers;
 
-import java.net.URI;
 import java.net.URLEncoder;
 
 import org.apache.commons.logging.Log;
@@ -8,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
-
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
 import org.auscope.portal.core.services.responses.opendap.SimpleBounds;
@@ -21,7 +19,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 /**
  * An class for generating HttpMethods that will query an OPeNDAP Service for data in a given format which is constrained by a list of constraints (which are a
  * simplification of variables in ds).
- * 
+ *
  * @author JoshVote
  *
  */
@@ -36,12 +34,12 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
     /**
      * Given a ViewVariable, this function will populate the appropriate "SimpleBounds" field representing an index bounds IFF the value bounds is specified AND
      * the index bounds are unspecified
-     * 
+     *
      * @param ds
      * @param var
      * @throws Exception
      */
-    private void calculateIndexBounds(NetcdfDataset ds, AbstractViewVariable var) throws Exception {
+    private void calculateIndexBounds(final NetcdfDataset ds, final AbstractViewVariable var) throws Exception {
         if (var instanceof SimpleAxis) {
             calculateIndexBounds(ds, (SimpleAxis) var);
         } else if (var instanceof SimpleGrid) {
@@ -52,7 +50,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private void calculateIndexBounds(NetcdfDataset ds, SimpleAxis axis) throws Exception {
+    private void calculateIndexBounds(final NetcdfDataset ds, final SimpleAxis axis) throws Exception {
         //Only calculate dimension bounds if required (and possible)
         if (axis.getValueBounds() != null && axis.getDimensionBounds() == null) {
             String parentGroupName = "";
@@ -67,7 +65,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
                 rawVar = ds.findVariable("/" + parentGroupName + "/" + axis.getName());
 
             //Lookup the data
-            Array entireBounds = rawVar.read();
+            final Array entireBounds = rawVar.read();
             if (entireBounds.getSize() > Integer.MAX_VALUE)
                 throw new IllegalArgumentException("Bounds contains too many indexes");
 
@@ -93,28 +91,28 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private void calculateIndexBounds(NetcdfDataset ds, SimpleGrid grid) throws Exception {
-        for (AbstractViewVariable var : grid.getAxes()) {
+    private void calculateIndexBounds(final NetcdfDataset ds, final SimpleGrid grid) throws Exception {
+        for (final AbstractViewVariable var : grid.getAxes()) {
             calculateIndexBounds(ds, var);
         }
     }
 
-    private String simpleBoundsToQuery(SimpleBounds bounds) {
+    private String simpleBoundsToQuery(final SimpleBounds bounds) {
         return String.format("[%1$d:%2$d]", (int) bounds.getFrom(), (int) bounds.getTo());
     }
 
     /**
      * Given a variable, this function generates an OPeNDAP query string that will query according to the specified constraints (Each ViewVariable must have
      * their appropriate dimension bounds specified).
-     * 
+     *
      * @param vars
      *            The list of constraints
      * @return
      */
-    private String generateQueryForConstraints(AbstractViewVariable[] vars) {
-        StringBuilder result = new StringBuilder();
+    private String generateQueryForConstraints(final AbstractViewVariable[] vars) {
+        final StringBuilder result = new StringBuilder();
 
-        for (AbstractViewVariable var : vars) {
+        for (final AbstractViewVariable var : vars) {
 
             if (result.length() > 0)
                 result.append(",");
@@ -123,13 +121,13 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
 
             //Append the body of the constraint
             if (var instanceof SimpleAxis) {
-                SimpleAxis axis = (SimpleAxis) var;
+                final SimpleAxis axis = (SimpleAxis) var;
                 result.append(simpleBoundsToQuery(axis.getDimensionBounds()));
             } else if (var instanceof SimpleGrid) {
-                SimpleGrid grid = (SimpleGrid) var;
+                final SimpleGrid grid = (SimpleGrid) var;
 
-                StringBuilder sb = new StringBuilder();
-                for (AbstractViewVariable child : grid.getAxes()) {
+                final StringBuilder sb = new StringBuilder();
+                for (final AbstractViewVariable child : grid.getAxes()) {
                     if (child instanceof SimpleAxis) {
                         sb.append(simpleBoundsToQuery(((SimpleAxis) child).getDimensionBounds()));
                     } else {
@@ -147,8 +145,8 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         return result.toString();
     }
 
-    public HttpRequestBase getMethod(String opendapUrl, OPeNDAPFormat format, NetcdfDataset ds,
-            AbstractViewVariable[] constraints) throws Exception {
+    public HttpRequestBase getMethod(final String opendapUrl, final OPeNDAPFormat format, final NetcdfDataset ds,
+            final AbstractViewVariable[] constraints) throws Exception {
 
         //Generate our base URL (which depends on the format)
         HttpRequestBase method = null;
@@ -166,11 +164,11 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         //We may only have a value constraint (when we need to know the actual index constraints)
         //We can convert from value to index by taking the minimum bounding box.
         if (constraints != null) {
-            for (AbstractViewVariable constraint : constraints) {
+            for (final AbstractViewVariable constraint : constraints) {
                 calculateIndexBounds(ds, constraint);
             }
 
-            URIBuilder builder = new URIBuilder(method.getURI());
+            final URIBuilder builder = new URIBuilder(method.getURI());
             builder.setQuery(URLEncoder.encode((generateQueryForConstraints(constraints)), "UTF-8"));
             method.setURI(builder.build());
         }

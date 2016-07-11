@@ -8,16 +8,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import junit.framework.Assert;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.auscope.portal.core.test.PortalTestClass;
 import org.auscope.portal.core.view.JSONModelAndView;
 import org.jmock.Expectations;
 import org.junit.Test;
 import org.springframework.web.servlet.view.AbstractView;
 
+import junit.framework.Assert;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.nc2.Dimension;
@@ -31,6 +30,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author vot002
  *
  */
+@SuppressWarnings("deprecation")
 public class TestViewVariableFactory extends PortalTestClass {
 
     private HttpServletResponse mockHttpResponse = context.mock(HttpServletResponse.class);
@@ -418,7 +418,7 @@ public class TestViewVariableFactory extends PortalTestClass {
         final List<Variable> variableList = Arrays.asList(mockVariable1, mockVariable2);
         final List<Dimension> dimensionList1 = Arrays.asList(mockDimension1, mockDimension2);
         final List<Dimension> dimensionList2 = Arrays.asList(mockDimension1);
-        final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
+   //     final List<Dimension> dimensionList3 = Arrays.asList(mockDimension2);
 
         //Build up our "mock" dataset
         context.checking(new Expectations() {

@@ -24,7 +24,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
 
     /** The log. */
     private final Log log = LogFactory.getLog(getClass());
-    
+
     private Node node;
 
     /** The name. */
@@ -37,11 +37,11 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
     private String description;
 
     /** The legendURL. */
-    private String legendURL;    
-    
+    private String legendURL;
+
     /** The metadataURL. */
-    private String metadataURL;   
-    
+    private String metadataURL;
+
     /** The bbox. */
     private CSWGeographicBoundingBox bbox;
 
@@ -56,7 +56,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
         }
         return xPath;
     }
-    
+
     /**
      * Instantiates a new gets the capabilities wms layer record.
      *
@@ -65,36 +65,36 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * @throws XPathExpressionException
      *             the xpath expression exception
      */
-    public GetCapabilitiesWMSLayer_1_1_1(Node node) throws XPathExpressionException {
-        XPath xPath = XPathFactory.newInstance().newXPath();
+    public GetCapabilitiesWMSLayer_1_1_1(final Node node) throws XPathExpressionException {
+        final XPath xPath = XPathFactory.newInstance().newXPath();
 
         this.node = node;
-        
-        String layerNameExpression = "Name";
+
+        final String layerNameExpression = "Name";
         Node tempNode = (Node) xPath.evaluate(layerNameExpression, node, XPathConstants.NODE);
         name = tempNode != null ? tempNode.getTextContent() : "";
 
-        String layerTitleExpression = "Title";
+        final String layerTitleExpression = "Title";
         tempNode = (Node) xPath.evaluate(layerTitleExpression, node, XPathConstants.NODE);
         title = tempNode != null ? tempNode.getTextContent() : "";
 
-        String layerAbstractExpression = "Abstract";
+        final String layerAbstractExpression = "Abstract";
         tempNode = (Node) xPath.evaluate(layerAbstractExpression, node, XPathConstants.NODE);
         description = tempNode != null ? tempNode.getTextContent() : "";
 
-        String layerLegendURLExpression = "Style/LegendURL/OnlineResource";
+        final String layerLegendURLExpression = "Style/LegendURL/OnlineResource";
         tempNode = (Node) xPath.evaluate(layerLegendURLExpression, node, XPathConstants.NODE);
         legendURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
-        
-        metadataURL = getMetadataURL();        
-        
-        String latLonBoundingBox = "LatLonBoundingBox";
+
+        metadataURL = getMetadataURL();
+
+        final String latLonBoundingBox = "LatLonBoundingBox";
         tempNode = (Node) xPath.evaluate(latLonBoundingBox, node, XPathConstants.NODE);
         if (tempNode != null) {
-            String minx = (String) xPath.evaluate("@minx", tempNode, XPathConstants.STRING);
-            String maxx = (String) xPath.evaluate("@maxx", tempNode, XPathConstants.STRING);
-            String miny = (String) xPath.evaluate("@miny", tempNode, XPathConstants.STRING);
-            String maxy = (String) xPath.evaluate("@maxy", tempNode, XPathConstants.STRING);
+            final String minx = (String) xPath.evaluate("@minx", tempNode, XPathConstants.STRING);
+            final String maxx = (String) xPath.evaluate("@maxx", tempNode, XPathConstants.STRING);
+            final String miny = (String) xPath.evaluate("@miny", tempNode, XPathConstants.STRING);
+            final String maxy = (String) xPath.evaluate("@maxy", tempNode, XPathConstants.STRING);
 
             //Attempt to parse our bounding box
             try {
@@ -102,19 +102,19 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
                         Double.parseDouble(maxx),
                         Double.parseDouble(miny),
                         Double.parseDouble(maxy));
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 log.debug("Unable to parse the bounding box.");
             }
 
         }
 
-        String layerSRSExpression = "SRS";
-        NodeList nodes = (NodeList) xPath.evaluate(layerSRSExpression,
+        final String layerSRSExpression = "SRS";
+        final NodeList nodes = (NodeList) xPath.evaluate(layerSRSExpression,
                 node,
                 XPathConstants.NODESET);
         childLayerSRS = new String[nodes.getLength()];
         for (int i = 0; i < nodes.getLength(); i++) {
-            Node childSRSNode = nodes.item(i);
+            final Node childSRSNode = nodes.item(i);
             childLayerSRS[i] = childSRSNode != null ? childSRSNode.getTextContent() : "";
         }
     }
@@ -128,6 +128,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * @throws XPathExpressionException
      *             the x path expression exception
      */
+    @Override
     public String getName() throws XPathExpressionException {
         return name;
     }
@@ -139,6 +140,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * @throws XPathExpressionException
      *             the x path expression exception
      */
+    @Override
     public String getTitle() throws XPathExpressionException {
         return title;
     }
@@ -150,6 +152,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * @throws XPathExpressionException
      *             the x path expression exception
      */
+    @Override
     public String getAbstract() throws XPathExpressionException {
         return description;
     }
@@ -161,11 +164,12 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * @throws XPathExpressionException
      *             the x path expression exception
      */
+    @Override
     public String getLegendURL() throws XPathExpressionException {
         return legendURL;
     }
-    
-    
+
+
     /**
      * Gets the metadataURL.
      *
@@ -173,6 +177,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * @throws XPathExpressionException
      *             the x path expression exception
      */
+    @Override
     public String getMetadataURL() throws XPathExpressionException {
 
         // look for the metadataURL in the nested OnlineResource element
@@ -183,16 +188,17 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
         if (StringUtils.isBlank(this.metadataURL)) {
             tempNode = (Node) getXPath().evaluate("MetadataURL", node, XPathConstants.NODE);
             metadataURL = tempNode != null ? tempNode.getTextContent() : "";
-        }       
-        
+        }
+
         return metadataURL;
     }
-    
+
     /**
      * Gets the bounding box.
      *
      * @return the bounding box
      */
+    @Override
     public CSWGeographicBoundingBox getBoundingBox() {
         return bbox;
     }
@@ -204,6 +210,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * @throws XPathExpressionException
      *             the x path expression exception
      */
+    @Override
     public String[] getChildLayerSRS() throws XPathExpressionException {
         return childLayerSRS;
     }
@@ -211,10 +218,11 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         final String seperator = ",";
 
-        StringBuffer buf = new StringBuffer();
+        final StringBuffer buf = new StringBuffer();
         buf.append(name);
         buf.append(seperator);
         buf.append(title);

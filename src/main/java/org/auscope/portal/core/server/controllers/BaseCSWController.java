@@ -18,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
  *
  */
 public abstract class BaseCSWController extends BasePortalController {
-
     /** Used for converting data to something the view can understand */
     protected ViewCSWRecordFactory viewCSWRecordFactory;
 

@@ -53,7 +53,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     private ComputeServiceContext context;
     private NovaApi novaApi; //will be null for non nova API's
 
-    private Set<String> skippedZones = new HashSet<String>();
+    private Set<String> skippedZones = new HashSet<>();
 
     private Predicate<NodeMetadata> terminateFilter;
 
@@ -69,9 +69,9 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     private ContextBuilder builder;
 
     private String zone; //can be null
-    
+
     private String adminEmail = "cg-admin@csiro.au";
-    
+
     /**
      * @return the adminEmail
      */
@@ -82,7 +82,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     /**
      * @param adminEmail the adminEmail to set
      */
-    public void setAdminEmail(String adminEmail) {
+    public void setAdminEmail(final String adminEmail) {
         this.adminEmail = adminEmail;
     }
 
@@ -103,7 +103,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *
      * @param zone
      */
-    public void setZone(String zone) {
+    public void setZone(final String zone) {
         this.zone = zone;
     }
 
@@ -116,7 +116,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *            The Compute Secret key (password)
      *
      */
-    public CloudComputeServiceNectar(String accessKey, String secretKey) {
+    public CloudComputeServiceNectar(final String accessKey, final String secretKey) {
         this(null, accessKey, secretKey, null);
     }
 
@@ -131,7 +131,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *            The Compute Secret key (password)
      *
      */
-    public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey) {
+    public CloudComputeServiceNectar(final String endpoint, final String accessKey, final String secretKey) {
         this(endpoint, accessKey, secretKey, null);
     }
 
@@ -147,16 +147,16 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @param apiVersion
      *            The API version
      */
-    public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey, String apiVersion) {
+    public CloudComputeServiceNectar(final String endpoint, final String accessKey, final String secretKey, final String apiVersion) {
         super(ProviderType.NovaKeystone, endpoint, apiVersion);
         this.accessKey = accessKey;
         this.secretKey = secretKey;
     }
 
-    public void init() throws PortalServiceException {
-        Properties overrides = new Properties();
+    public void init() {
+        final Properties overrides = new Properties();
 
-        String typeString = "openstack-nova";
+        final String typeString = "openstack-nova";
 
         builder = ContextBuilder.newBuilder(typeString)
                 .overrides(overrides);
@@ -179,8 +179,8 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(getGroupName()));
     }
 
-    public CloudComputeServiceNectar(ComputeService computeService, NovaApi novaApi,
-            Predicate<NodeMetadata> terminPredicate) {
+    public CloudComputeServiceNectar(final ComputeService computeService, final NovaApi novaApi,
+            final Predicate<NodeMetadata> terminPredicate) {
         super(ProviderType.NovaKeystone);
         this.computeService = computeService;
         this.novaApi = novaApi;
@@ -199,98 +199,101 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *            A string that is made available to the job when it starts execution (this will be Base64 encoded before being sent to the VM)
      * @return null if execution fails or the instance ID of the running VM
      */
-  public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
+    @Override
+    public String executeJob(final CloudJob job, final String userDataString) throws PortalServiceException {
 
-    // We have different template options depending on provider
-    NodeMetadata result;
-    Set<? extends NodeMetadata> results = Collections.emptySet();
-    TemplateOptions options = null;
-    // Iterate all regions
-    for (String location : novaApi.getConfiguredZones()) {
-      Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
-      Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
+        // We have different template options depending on provider
+        NodeMetadata result;
+        Set<? extends NodeMetadata> results = Collections.emptySet();
+        TemplateOptions options = null;
+        // Iterate all regions
+        for (final String location : novaApi.getConfiguredZones()) {
+            final Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
+            final Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
-      for (AvailabilityZone currentZone : zones) {
-        if (skippedZones.contains(currentZone.getName())) {
-          logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
-          continue;
+            for (final AvailabilityZone currentZone : zones) {
+                if (skippedZones.contains(currentZone.getName())) {
+                    logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
+                    continue;
+                }
+
+                if (!currentZone.getState().available()) {
+                    logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
+                    continue;
+                }
+
+                logger.info(String.format("Trying '%1$s'", currentZone.getName()));
+                options = ((NovaTemplateOptions) computeService.templateOptions()).keyPairName(getKeypair())
+                        .availabilityZone(currentZone.getName()).userData(userDataString.getBytes(Charset.forName("UTF-8")));
+
+                final Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
+                        .hardwareId(job.getComputeInstanceType()).options(options).build();
+
+                try {
+                    results = computeService.createNodesInGroup(getGroupName(), 1, template);
+                    this.itActuallyLaunchedHere = currentZone.getName();
+                    break;
+                } catch (final RunNodesException e) {
+                    logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
+                    logger.debug(e.getMessage());
+                    try {
+                        // FIXME:
+                        // I think this could possibly delete EVERY NODE RUN
+                        // from PORTAL-CORE...
+                        // JClouds is not very clever here -
+                        // issue: how do you delete thing you didnt name and
+                        // dont have an ID for??
+                        final Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
+                        logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
+                    } catch (final Exception z) {
+                        logger.warn("couldnt clean it up");
+                    }
+                    continue;
+                }
+            }
+        }
+        if (results.isEmpty()) {
+            // Now we have tried everything....
+            logger.error("run out of places to try...");
+            throw new PortalServiceException(
+                    "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
+                            + "a smaller virtual machine",
+                            "Please report it to " +getAdminEmail()+".");
+        } else {
+            result = results.iterator().next();
         }
 
-        if (!currentZone.getState().available()) {
-          logger.info(String.format("skipping: '%1$s' - not available", currentZone.getName()));
-          continue;
-        }
+        logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
 
-        logger.info(String.format("Trying '%1$s'", currentZone.getName()));
-        options = ((NovaTemplateOptions) computeService.templateOptions()).keyPairName(getKeypair())
-            .availabilityZone(currentZone.getName()).userData(userDataString.getBytes(Charset.forName("UTF-8")));
-
-        Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
-            .hardwareId(job.getComputeInstanceType()).options(options).build();
-
-        try {
-          results = computeService.createNodesInGroup(getGroupName(), 1, template);
-          this.itActuallyLaunchedHere = currentZone.getName();
-          break;
-        } catch (RunNodesException e) {
-          logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
-          logger.debug(e.getMessage());
-          try {
-            // FIXME:
-            // I think this could possibly delete EVERY NODE RUN
-            // from PORTAL-CORE...
-            // JClouds is not very clever here -
-            // issue: how do you delete thing you didnt name and
-            // dont have an ID for??
-            Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
-            logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
-          } catch (Exception z) {
-            logger.warn("couldnt clean it up");
-          }
-          continue;
-        }
-      }
+        return result.getId();
     }
-    if (results.isEmpty()) {
-      // Now we have tried everything....
-      logger.error("run out of places to try...");
-      throw new PortalServiceException(
-          "An unexpected error has occured while executing your job. Most likely this is from the lack of available resources. Please try using"
-              + "a smaller virtual machine",
-          "Please report it to " +getAdminEmail()+".");
-    } else {
-      result = results.iterator().next();
-    }
 
-    logger.info(String.format("We have a successful launch @ '%1$s'", this.itActuallyLaunchedHere));
-
-    return result.getId();
-  }
-
-  /**
+    /**
      * Makes a request that the VM started by job be terminated
      *
      * @param job
      *            The job whose execution should be terminated
      */
-    public void terminateJob(CloudJob job) {
+    @Override
+    public void terminateJob(final CloudJob job) {
         computeService.destroyNode(job.getComputeInstanceId());
     }
 
     /**
      * An array of compute types that are available through this compute service
      */
-    public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB) {
-        Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
+    @Override
+    public ComputeType[] getAvailableComputeTypes(final Integer minimumVCPUs, final Integer minimumRamMB, final Integer minimumRootDiskGB) {
+        final Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
 
-        List<ComputeType> computeTypes = new ArrayList<ComputeType>();
+        final List<ComputeType> computeTypes = new ArrayList<>();
 
-        for (Hardware hw : hardwareSet) {
-            ComputeType ct = new ComputeType(hw.getId());
+        for (final Hardware hw : hardwareSet) {
+            final ComputeType ct = new ComputeType(hw.getId());
 
             ct.setDescription(hw.getName());
             double vCpus = 0;
-            for (Processor p : hw.getProcessors()) {
+            for (final Processor p : hw.getProcessors()) {
                 vCpus += p.getCores();
             }
             ct.setVcpus((int) vCpus);
@@ -298,7 +301,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
             double rootDiskGB = 0;
             double ephemeralDiskGB = 0;
-            for (Volume v : hw.getVolumes()) {
+            for (final Volume v : hw.getVolumes()) {
                 if (v.isBootDevice()) {
                     rootDiskGB += v.getSize();
                 } else {
@@ -337,7 +340,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *
      * @param skippedZones
      */
-    public void setSkippedZones(Set<String> skippedZones) {
+    public void setSkippedZones(final Set<String> skippedZones) {
         this.skippedZones = skippedZones;
     }
 
@@ -351,30 +354,31 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @return console output as string or null
      * @return
      */
-    public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
-        String computeInstanceId = job.getComputeInstanceId();
+    @Override
+    public String getConsoleLog(final CloudJob job, final int numLines) throws PortalServiceException {
+        final String computeInstanceId = job.getComputeInstanceId();
         if (computeInstanceId == null) {
             return null;
         }
 
         try {
-            String[] accessParts = this.accessKey.split(":");
-            String[] idParts = computeInstanceId.split("/");
+            final String[] accessParts = this.accessKey.split(":");
+            final String[] idParts = computeInstanceId.split("/");
 
             //JClouds has no support (currently) for tailing server console output. Our current workaround
             //is to offload this to openstack4j.
-            OSClient os = OSFactory.builder()
+            final OSClient os = OSFactory.builder()
                     .endpoint(endpoint)
                     .credentials(accessParts[1], secretKey)
                     .tenantName(accessParts[0])
                     .authenticate();
 
             return os.compute().servers().getConsoleOutput(idParts[1], numLines);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
             throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
         }
-     }
+    }
 
     /**
      * Attempts to lookup low level status information about this job's compute instance from the remote cloud.
@@ -385,14 +389,15 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @return
      * @throws PortalServiceException
      */
-    public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException {
+    @Override
+    public InstanceStatus getJobStatus(final CloudJob job) throws PortalServiceException {
         if (StringUtils.isEmpty(job.getComputeInstanceId())) {
             throw new PortalServiceException("No compute instance ID has been set");
         }
 
         try {
-            NodeMetadata md = computeService.getNodeMetadata(job.getComputeInstanceId());
-            Status status = md.getStatus();
+            final NodeMetadata md = computeService.getNodeMetadata(job.getComputeInstanceId());
+            final Status status = md.getStatus();
             switch (status) {
             case PENDING:
                 return InstanceStatus.Pending;
@@ -401,7 +406,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
             default:
                 return InstanceStatus.Missing;
             }
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             throw new PortalServiceException("Error fetching node metadata", ex);
         }
     }

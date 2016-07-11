@@ -71,11 +71,7 @@ public class TestCSWMethodMakerGetDataRecords extends PortalTestClass {
     public void testMakeMethodNoFilter() throws Exception {
         final int maxRecords = 14;
 
-        context.checking(new Expectations() {
-            {
-
-            }
-        });
+        context.checking(new Expectations());
 
         HttpRequestBase method = methodMaker.makeMethod(uri, null, ResultType.Hits, maxRecords);
         Assert.assertNotNull(method);

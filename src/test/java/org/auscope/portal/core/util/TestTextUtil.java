@@ -1,15 +1,16 @@
 package org.auscope.portal.core.util;
 
-import junit.framework.Assert;
-
 import org.auscope.portal.core.test.PortalTestClass;
 import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * Unit tests for TextUtil.
  * 
  * @author Richard Goh
  */
+@SuppressWarnings("deprecation")
 public class TestTextUtil extends PortalTestClass {
     /**
      * Tests that the get last N lines of multi-line text succeeds.

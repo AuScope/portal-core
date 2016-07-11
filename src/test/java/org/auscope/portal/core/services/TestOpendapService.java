@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
 import org.apache.http.client.methods.HttpRequestBase;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
@@ -18,12 +16,14 @@ import org.jmock.Expectations;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.Assert;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
+@SuppressWarnings("deprecation")
 public class TestOpendapService extends PortalTestClass {
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private OPeNDAPGetDataMethodMaker mockMethodMaker = context.mock(OPeNDAPGetDataMethodMaker.class);
@@ -43,6 +43,7 @@ public class TestOpendapService extends PortalTestClass {
             this.dataset = dataset;
         }
 
+        @Override
         protected NetcdfDataset fetchDataset(String serviceUrl) {
             return mockDataset;
         }

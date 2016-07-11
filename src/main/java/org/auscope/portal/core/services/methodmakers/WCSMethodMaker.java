@@ -82,7 +82,7 @@ public class WCSMethodMaker extends AbstractMethodMaker {
             builder.setParameter("response_crs", outputCrs);
         }
 
-        if (inputCrs != null && !inputCrs.isEmpty()) {
+        if (!inputCrs.isEmpty()) {
             builder.setParameter("crs", inputCrs);
         }
 
