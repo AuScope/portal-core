@@ -43,40 +43,49 @@ public class EndpointAndSelector {
     }
 
     /**
-     * Compares two instances of this class for equality. Only equal if endpoint AND selector match
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof EndpointAndSelector) {
-            return this.equals((EndpointAndSelector) o);
-        }
-
-        return this == o;
-    }
-
-    /**
-     * Compares two instances of this class for equality. Only equal if endpoint AND selector match
-     * 
-     * @param comparison
-     *            the comparison object
-     * @return
-     */
-    public boolean equals(EndpointAndSelector comparison) {
-        if (comparison == null) {
-            return false;
-        }
-
-        return this.endpoint.equals(comparison.endpoint) &&
-                this.selector.equals(comparison.selector);
-    }
-
-    /**
      * Prints the contents of this instance.
      */
     @Override
     public String toString() {
         return "EndpointAndSelector [endpoint=" + endpoint + ", selector="
                 + selector + "]";
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((endpoint == null) ? 0 : endpoint.hashCode());
+        result = prime * result + ((selector == null) ? 0 : selector.hashCode());
+        return result;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof EndpointAndSelector))
+            return false;
+        EndpointAndSelector other = (EndpointAndSelector) obj;
+        if (endpoint == null) {
+            if (other.endpoint != null)
+                return false;
+        } else if (!endpoint.equals(other.endpoint))
+            return false;
+        if (selector == null) {
+            if (other.selector != null)
+                return false;
+        } else if (!selector.equals(other.selector))
+            return false;
+        return true;
     }
 
 }

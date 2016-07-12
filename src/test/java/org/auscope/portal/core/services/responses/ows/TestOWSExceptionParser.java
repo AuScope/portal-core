@@ -8,7 +8,7 @@ import org.w3c.dom.Document;
 
 public class TestOWSExceptionParser extends PortalTestClass {
 
-    private void check(String path) throws Exception {
+    private static void check(String path) throws Exception {
         final String xmlString = ResourceUtil.loadResourceAsString(path);
 
         Document doc = DOMUtil.buildDomFromString(xmlString);

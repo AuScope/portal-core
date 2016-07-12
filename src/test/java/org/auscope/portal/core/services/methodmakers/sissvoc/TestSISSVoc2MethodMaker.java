@@ -59,11 +59,9 @@ public class TestSISSVoc2MethodMaker extends PortalTestClass {
 
     /**
      * Tests the getRepositoryInfoMethod performs correctly
-     * 
-     * @throws Exception
      */
     @Test
-    public void testRepoInfo() throws Exception {
+    public void testRepoInfo() {
         HttpRequestBase method = mm.getRepositoryInfoMethod("http://example.org");
 
         Assert.assertEquals("http://example.org/RepositoryInfo", method.getURI().toString());

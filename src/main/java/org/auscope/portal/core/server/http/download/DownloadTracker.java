@@ -164,9 +164,8 @@ public class DownloadTracker {
      *
      * @return
      * @throws InCompleteDownloadException
-     * @throws FileNotFoundException
      */
-    public synchronized File getFileHandle() throws InCompleteDownloadException, FileNotFoundException {
+    public synchronized File getFileHandle() throws InCompleteDownloadException {
         if (getProgress() == Progression.COMPLETED) {
             return this.file;
         } else {

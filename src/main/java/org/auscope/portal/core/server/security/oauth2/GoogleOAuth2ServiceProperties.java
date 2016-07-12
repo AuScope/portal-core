@@ -17,7 +17,7 @@ import com.racquettrack.security.oauth.OAuth2ServiceProperties;
 public class GoogleOAuth2ServiceProperties extends OAuth2ServiceProperties {
     /**
      * Create a new properties object with the following deployment specific params
-     * 
+     *
      * @param clientId
      *            The google OAuth2 client ID
      * @param clientSecret
@@ -25,13 +25,13 @@ public class GoogleOAuth2ServiceProperties extends OAuth2ServiceProperties {
      * @param redirectUri
      *            The URI to receive the access_token from Google. eg: http://localhost:8080/portal/oauth/callback
      */
-    public GoogleOAuth2ServiceProperties(String clientId, String clientSecret, String redirectUri) {
+    public GoogleOAuth2ServiceProperties(final String clientId, final String clientSecret, final String redirectUri) {
         super();
 
         this.setUserAuthorisationUri("https://accounts.google.com/o/oauth2/auth");
         this.setAccessTokenUri("https://accounts.google.com/o/oauth2/token");
 
-        Map<String, String> additionalAuthParams = new HashMap<String, String>();
+        final Map<String, String> additionalAuthParams = new HashMap<>();
         additionalAuthParams.put("scope", "https://www.googleapis.com/auth/userinfo.email");
         this.setAdditionalAuthParams(additionalAuthParams);
 

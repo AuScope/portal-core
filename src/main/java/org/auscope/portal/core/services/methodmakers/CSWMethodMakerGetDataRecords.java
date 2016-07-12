@@ -152,12 +152,10 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * Generates a HTTP Get method that performs a CSW GetRecords request
      *
      * @return
-     * @throws UnsupportedEncodingException
-     *             If the PostMethod body cannot be encoded ISO-8859-1
      * @throws URISyntaxException
      */
     public HttpRequestBase makeGetMethod(String serviceUrl, ResultType resultType, int maxRecords, int startPosition)
-            throws UnsupportedEncodingException, URISyntaxException {
+            throws URISyntaxException {
         HttpGet method = new HttpGet();
 
         URIBuilder builder = new URIBuilder(serviceUrl);

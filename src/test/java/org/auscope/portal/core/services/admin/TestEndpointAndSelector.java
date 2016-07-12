@@ -16,11 +16,9 @@ import org.junit.Test;
 public class TestEndpointAndSelector extends PortalTestClass {
     /**
      * Tests the equality operator works as expected
-     * 
-     * @throws Exception
      */
     @Test
-    public void testEquals() throws Exception {
+    public void testEquals() {
         //Our list of values to test (they should all be 'different'
         List<EndpointAndSelector> eas = Arrays.asList(
                 new EndpointAndSelector("endpoint1", "selector1"), //our base comparison object

@@ -87,21 +87,17 @@ public class TestHttpServiceCaller extends PortalTestClass {
 
     /**
      * If there is no feature type given, we expect there to be an exception thrown
-     *
-     * @throws Exception
      */
     @Test(expected = Exception.class)
-    public void testConstructWFSGetFeatureMethodNoFeatureType() throws Exception {
+    public void testConstructWFSGetFeatureMethodNoFeatureType() {
         methodMaker.makePostMethod(SERVICE_URL, "", FILTER_STRING, 0);
     }
 
     /**
      * If there is no URL given, expect there an error to be thrown
-     *
-     * @throws Exception
      */
     @Test(expected = Exception.class)
-    public void testConstructWFSGetFeatureMethodNoURL() throws Exception {
+    public void testConstructWFSGetFeatureMethodNoURL() {
         methodMaker.makePostMethod("", FEATURE_TYPE, FILTER_STRING, 0);
     }
 

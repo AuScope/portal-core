@@ -30,7 +30,7 @@ public class TestKnownLayerSelectors extends PortalTestClass {
      */
     @Before
     public void setupRecordList() throws Exception {
-        recordList = new ArrayList<CSWRecord>();
+        recordList = new ArrayList<>();
 
         //WWW:LINK-1.0-http--link
         //OGC:WFS-1.0.0-http-get-feature

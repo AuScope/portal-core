@@ -442,6 +442,9 @@ public class CloudComputeServiceAws extends CloudComputeService {
             switch (ex.getErrorCode()) {
             case "InvalidInstanceID.NotFound":
                 return InstanceStatus.Missing;
+            default:
+                // ignore all other cases
+                break;
             }
 
             switch (ex.getStatusCode()) {

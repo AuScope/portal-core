@@ -91,7 +91,7 @@ public class DescribeCoverageRecord implements Serializable {
      *            the node
      * @return the text content or empty string
      */
-    private String getTextContentOrEmptyString(Node node) {
+    private static String getTextContentOrEmptyString(Node node) {
         if (node != null) {
             return node.getTextContent();
         } else {

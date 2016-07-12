@@ -47,7 +47,7 @@ public class TestViewVariableFactory extends PortalTestClass {
     private Array mockArray4 = context.mock(Array.class, "Array4");
     private Group mockGroup = context.mock(Group.class);
 
-    private void assertViewVariableEquals(SimpleAxis a1, SimpleAxis a2) {
+    private static void assertViewVariableEquals(SimpleAxis a1, SimpleAxis a2) {
         Assert.assertEquals(a1.getName(), a2.getName());
         Assert.assertEquals(a1.getDataType(), a2.getDataType());
         Assert.assertEquals(a1.getType(), a2.getType());
@@ -160,11 +160,9 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * Tests parsing from a JSON String where only SOME fields are specified
-     * 
-     * @throws Exception
      */
     @Test
-    public void testParseJSONPartial1() throws Exception {
+    public void testParseJSONPartial1() {
         SimpleAxis a1 = new SimpleAxis("time", null, null, null, new SimpleBounds(0, 3));
         SimpleAxis a2 = new SimpleAxis("isobaric", null, null, null, new SimpleBounds(5, 100));
         SimpleAxis a3 = new SimpleAxis("y", null, null, null, new SimpleBounds(-5.5, 22.33));
@@ -181,11 +179,9 @@ public class TestViewVariableFactory extends PortalTestClass {
 
     /**
      * Tests parsing from a JSON String where only SOME fields are specified
-     * 
-     * @throws Exception
      */
     @Test
-    public void testParseJSONPartial2() throws Exception {
+    public void testParseJSONPartial2() {
         SimpleAxis a1 = new SimpleAxis("lat", null, null, new SimpleBounds(-2, 3), null);
 
         String jsonString2 = "{\"constraints\":[{\"type\":\"axis\",\"name\":\"lat\",\"dimensionBounds\":{\"from\":-2,\"to\":3}}]}";

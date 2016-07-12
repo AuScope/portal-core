@@ -1,7 +1,9 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.io.IOException;
+
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpGet;
@@ -38,7 +40,7 @@ public class TestWFSGetFeatureMethodMaker extends PortalTestClass {
      * @throws IOException
      * @throws ParserConfigurationException
      */
-    private boolean testWFSParam(HttpRequestBase wfsRequest, String paramName, String paramValue)
+    private static boolean testWFSParam(HttpRequestBase wfsRequest, String paramName, String paramValue)
             throws ParserConfigurationException, IOException, SAXException {
         //Get methods involve finding the request parameter "version=X"
         if (wfsRequest instanceof HttpGet) {

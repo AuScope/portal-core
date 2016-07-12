@@ -13,7 +13,7 @@ public class MimeUtil {
 
     static {
 
-        table = new HashMap<String, String>();
+        table = new HashMap<>();
         table.put("image/png", "png");
         table.put("image/png8", "png");
         table.put("image/jpeg", "jpeg");

@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * Factory class for instantiating Description
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -40,19 +40,19 @@ public class DescriptionFactory {
      * @return
      * @throws XPathExpressionException
      */
-    protected Description[] attemptParseRelations(Node descriptionNode, String relationXPath)
+    protected Description[] attemptParseRelations(final Node descriptionNode, final String relationXPath)
             throws XPathExpressionException {
-        XPathExpression getRelationsExpr = DOMUtil.compileXPathExpr(relationXPath, nc);
-        XPathExpression getInlineDescExpr = DOMUtil.compileXPathExpr("rdf:Description", nc);
+        final XPathExpression getRelationsExpr = DOMUtil.compileXPathExpr(relationXPath, nc);
+        final XPathExpression getInlineDescExpr = DOMUtil.compileXPathExpr("rdf:Description", nc);
 
-        NodeList relationNodes = (NodeList) getRelationsExpr.evaluate(descriptionNode, XPathConstants.NODESET);
-        List<Description> descriptions = new ArrayList<Description>();
+        final NodeList relationNodes = (NodeList) getRelationsExpr.evaluate(descriptionNode, XPathConstants.NODESET);
+        final List<Description> descriptions = new ArrayList<>();
 
         //Parsing our relations is complicated by the fact that a Concept/NamedIndividual can be defined inline
         //or 'linked' via a string in the rdf:about
-        XPathExpression getUrnExpr = DOMUtil.compileXPathExpr("@rdf:resource", nc);
+        final XPathExpression getUrnExpr = DOMUtil.compileXPathExpr("@rdf:resource", nc);
         for (int i = 0; i < relationNodes.getLength(); i++) {
-            String urn = (String) getUrnExpr.evaluate(relationNodes.item(i), XPathConstants.STRING);
+            final String urn = (String) getUrnExpr.evaluate(relationNodes.item(i), XPathConstants.STRING);
 
             //We have a reference to another description
             if (urn != null && !urn.isEmpty()) {
@@ -61,9 +61,9 @@ public class DescriptionFactory {
             }
 
             //We have an inline description
-            Node inlineDescNode = (Node) getInlineDescExpr.evaluate(relationNodes.item(i), XPathConstants.NODE);
+            final Node inlineDescNode = (Node) getInlineDescExpr.evaluate(relationNodes.item(i), XPathConstants.NODE);
             if (inlineDescNode != null) {
-                Description inlineDesc = attemptParseDescription(inlineDescNode);
+                final Description inlineDesc = attemptParseDescription(inlineDescNode);
                 if (inlineDesc != null) {
                     descriptions.add(inlineDesc);
                 }
@@ -77,16 +77,16 @@ public class DescriptionFactory {
     /**
      * Given a rdf:Description node, parse it into a Description object. Unless the node defines all related Descriptions inline the resulting Description node
      * will be populated with related Descriptions that have the 'href' flag set.
-     * 
+     *
      * @throws XPathExpressionException
      */
-    protected Description attemptParseDescription(Node node) throws XPathExpressionException {
-        String urn = (String) DOMUtil.compileXPathExpr("@rdf:about", nc).evaluate(node, XPathConstants.STRING);
+    protected Description attemptParseDescription(final Node node) throws XPathExpressionException {
+        final String urn = (String) DOMUtil.compileXPathExpr("@rdf:about", nc).evaluate(node, XPathConstants.STRING);
         if (urn == null || urn.isEmpty()) {
             return null;
         }
 
-        Description desc = new Description(urn);
+        final Description desc = new Description(urn);
         desc.setBroader(attemptParseRelations(node, "skos:broader"));
         desc.setNarrower(attemptParseRelations(node, "skos:narrower"));
         desc.setRelated(attemptParseRelations(node, "skos:related"));
@@ -99,14 +99,14 @@ public class DescriptionFactory {
      * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with an object from descriptions.
      *
      * The replacements will occur directly into descs
-     * 
+     *
      * @param descs
      * @param descriptionsMap
      */
-    protected void attemptResolveHrefs(Description[] descs, Map<String, Description> descriptionsMap) {
+    protected void attemptResolveHrefs(final Description[] descs, final Map<String, Description> descriptionsMap) {
         for (int i = 0; i < descs.length; i++) {
             if (descs[i].isHref()) {
-                Description linkedObj = descriptionsMap.get(descs[i].getUrn());
+                final Description linkedObj = descriptionsMap.get(descs[i].getUrn());
                 if (linkedObj != null) {
                     descs[i] = linkedObj;
                 }
@@ -118,25 +118,25 @@ public class DescriptionFactory {
      * Given a description and a map of descriptions keyed by URN. Attempt to replace each 'href' relation with an object from descriptions.
      *
      * This function will NOT traverse any relations
-     * 
+     *
      * @param desc
      * @param descriptionsMap
      */
-    protected void attemptResolveHrefs(Description desc, Map<String, Description> descriptionsMap) {
+    protected void attemptResolveHrefs(final Description desc, final Map<String, Description> descriptionsMap) {
 
-        Description[] broader = desc.getBroader();
+        final Description[] broader = desc.getBroader();
         attemptResolveHrefs(broader, descriptionsMap);
         desc.setBroader(broader);
 
-        Description[] narrower = desc.getNarrower();
+        final Description[] narrower = desc.getNarrower();
         attemptResolveHrefs(narrower, descriptionsMap);
         desc.setNarrower(narrower);
 
-        Description[] related = desc.getRelated();
+        final Description[] related = desc.getRelated();
         attemptResolveHrefs(related, descriptionsMap);
         desc.setRelated(related);
 
-        Description[] topConcepts = desc.getTopConcepts();
+        final Description[] topConcepts = desc.getTopConcepts();
         attemptResolveHrefs(topConcepts, descriptionsMap);
         desc.setTopConcepts(topConcepts);
     }
@@ -144,17 +144,17 @@ public class DescriptionFactory {
     /**
      * Merge the entirety of 2 sets of descriptions into a single array. Any duplicates will be removed with precedence being given to the non href duplicate.
      */
-    private Description[] mergeDescriptionArrays(Description[] array1, Description[] array2) {
-        List<Description> source = new ArrayList<Description>(Arrays.asList(array2));
-        List<Description> destination = new ArrayList<Description>(Arrays.asList(array1));
+    private static Description[] mergeDescriptionArrays(final Description[] array1, final Description[] array2) {
+        final List<Description> source = new ArrayList<>(Arrays.asList(array2));
+        final List<Description> destination = new ArrayList<>(Arrays.asList(array1));
 
         //Iterate our source list looking for duplicates
-        for (Description candidate : source) {
-            int destinationIndex = destination.indexOf(candidate);
+        for (final Description candidate : source) {
+            final int destinationIndex = destination.indexOf(candidate);
 
             //With a duplicate we aim to keep a reference to a non href description (if available)
             if (destinationIndex >= 0) {
-                Description destinationDuplicate = destination.get(destinationIndex);
+                final Description destinationDuplicate = destination.get(destinationIndex);
 
                 //In the case where our candidate is a non href AND our duplicate is a href we perform a replace
                 //otherwise there is no point in replacing
@@ -178,13 +178,13 @@ public class DescriptionFactory {
      * @param desc
      * @param parsedDescriptions
      */
-    private void addDescriptionToMap(Description desc, Map<String, Description> parsedDescriptions) {
+    private void addDescriptionToMap(final Description desc, final Map<String, Description> parsedDescriptions) {
         if (desc == null) {
             return;
         }
 
         //Either merge or insert our description
-        Description existingDesc = parsedDescriptions.get(desc.getUrn());
+        final Description existingDesc = parsedDescriptions.get(desc.getUrn());
         if (existingDesc != null) {
             existingDesc.setBroader(mergeDescriptionArrays(existingDesc.getBroader(), desc.getBroader()));
             existingDesc.setNarrower(mergeDescriptionArrays(existingDesc.getNarrower(), desc.getNarrower()));
@@ -194,22 +194,22 @@ public class DescriptionFactory {
             parsedDescriptions.put(desc.getUrn(), desc);
         }
 
-        for (Description broader : desc.getBroader()) {
+        for (final Description broader : desc.getBroader()) {
             if (!broader.isHref()) {
                 addDescriptionToMap(broader, parsedDescriptions);
             }
         }
-        for (Description narrower : desc.getNarrower()) {
+        for (final Description narrower : desc.getNarrower()) {
             if (!narrower.isHref()) {
                 addDescriptionToMap(narrower, parsedDescriptions);
             }
         }
-        for (Description topConcept : desc.getTopConcepts()) {
+        for (final Description topConcept : desc.getTopConcepts()) {
             if (!topConcept.isHref()) {
                 addDescriptionToMap(topConcept, parsedDescriptions);
             }
         }
-        for (Description related : desc.getRelated()) {
+        for (final Description related : desc.getRelated()) {
             if (!related.isHref()) {
                 addDescriptionToMap(related, parsedDescriptions);
             }
@@ -227,32 +227,32 @@ public class DescriptionFactory {
      *            The node to search for rdf:Description elements from
      * @return
      */
-    public Description[] parseFromRDF(Node rdfNode) {
+    public Description[] parseFromRDF(final Node rdfNode) {
         //Firstly parse all of our descriptions into a map keyed by their urn
-        Map<String, Description> parsedDescriptions = new HashMap<String, Description>();
+        final Map<String, Description> parsedDescriptions = new HashMap<>();
         try {
-            XPathExpression getDescriptionExpr = DOMUtil.compileXPathExpr("rdf:Description", nc);
-            NodeList descriptionNodes = (NodeList) getDescriptionExpr.evaluate(rdfNode, XPathConstants.NODESET);
+            final XPathExpression getDescriptionExpr = DOMUtil.compileXPathExpr("rdf:Description", nc);
+            final NodeList descriptionNodes = (NodeList) getDescriptionExpr.evaluate(rdfNode, XPathConstants.NODESET);
 
             for (int i = 0; i < descriptionNodes.getLength(); i++) {
-                Description desc = attemptParseDescription(descriptionNodes.item(i));
+                final Description desc = attemptParseDescription(descriptionNodes.item(i));
                 addDescriptionToMap(desc, parsedDescriptions);
             }
-        } catch (XPathExpressionException e) {
+        } catch (final XPathExpressionException e) {
             log.error("Unable to evaluate inbuilt XPath - requesting descriptions", e);
             throw new RuntimeException();
         }
 
         //Next we take our parsed descriptions and attempt to link them together by replacing
         //'href' descriptions with links to the actual objects (if they exist)
-        for (String urn : parsedDescriptions.keySet()) {
+        for (final String urn : parsedDescriptions.keySet()) {
             attemptResolveHrefs(parsedDescriptions.get(urn), parsedDescriptions);
         }
 
         //Finally we return an array of our "top concepts"
-        List<Description> topConcepts = new ArrayList<Description>();
-        for (String urn : parsedDescriptions.keySet()) {
-            for (Description topConcept : parsedDescriptions.get(urn).getTopConcepts()) {
+        final List<Description> topConcepts = new ArrayList<>();
+        for (final String urn : parsedDescriptions.keySet()) {
+            for (final Description topConcept : parsedDescriptions.get(urn).getTopConcepts()) {
                 if (!topConcept.isHref()) {
                     topConcepts.add(topConcept);
                 }

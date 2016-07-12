@@ -12,7 +12,6 @@ import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class represents WMS Layer node within GetCapabilites WMS response.
  *
@@ -62,10 +61,8 @@ public class GetCapabilitiesWMSLayer_1_3_0 implements GetCapabilitiesWMSLayerRec
      *
      * @param node
      *            the node
-     * @throws XPathExpressionException
-     *             the xpath expression exception
      */
-    public GetCapabilitiesWMSLayer_1_3_0(Node node) throws XPathExpressionException {
+    public GetCapabilitiesWMSLayer_1_3_0(Node node) {
         this.node = node;
     }
 

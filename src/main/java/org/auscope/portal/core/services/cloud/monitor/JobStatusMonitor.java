@@ -10,7 +10,7 @@ import org.auscope.portal.core.cloud.CloudJob;
 
 /**
  * A simple class containing event listeners and the ability to poll CloudJob instances for information about their current status
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -25,21 +25,21 @@ public class JobStatusMonitor {
 
     /**
      * Creates a new instance of this class
-     * 
+     *
      * @param jobStatusReader
      * @param jobStatusChangeListeners
      */
-    public JobStatusMonitor(JobStatusReader jobStatusReader, JobStatusChangeListener[] jobStatusChangeListeners) {
+    public JobStatusMonitor(final JobStatusReader jobStatusReader, final JobStatusChangeListener[] jobStatusChangeListeners) {
         super();
         this.jobStatusReader = jobStatusReader;
         this.jobStatusChangeListeners = jobStatusChangeListeners;
     }
 
-    private void statusChanged(CloudJob job, String newStatus, String oldStatus) {
-        for (JobStatusChangeListener l : jobStatusChangeListeners) {
+    private void statusChanged(final CloudJob job, final String newStatus, final String oldStatus) {
+        for (final JobStatusChangeListener l : jobStatusChangeListeners) {
             try {
                 l.handleStatusChange(job, newStatus, oldStatus);
-            } catch (Exception ex) {
+            } catch (final Exception ex) {
                 //Simply log it if the event handler fails and move on
                 log.error("An error has occurred while handling status change event: " + ex.getMessage());
                 log.debug("Exception: ", ex);
@@ -49,18 +49,18 @@ public class JobStatusMonitor {
 
     /**
      * Force a status update of a particular job. This is a blocking method that will not return until all status change listeners have finished their updates.
-     * 
+     *
      * @param job
      *            The job to update - may have its fields modified by status change listeners
      * @throws JobStatusException
      */
-    public void statusUpdate(CloudJob job) throws JobStatusException {
-        String oldStatus = job.getStatus();
+    public void statusUpdate(final CloudJob job) throws JobStatusException {
+        final String oldStatus = job.getStatus();
         String newStatus;
 
         try {
             newStatus = jobStatusReader.getJobStatus(job);
-        } catch (Exception ex) {
+        } catch (final Exception ex) {
             throw new JobStatusException(ex, job);
         }
 
@@ -74,24 +74,24 @@ public class JobStatusMonitor {
     /**
      * Force a status update of a particular collection of jobs. This is a blocking method that will not return until all status change listeners have finished
      * their updates for all jobs whose status has changed.
-     * 
+     *
      * If any job throws an exception, the exception will be stored and subsequent jobs will continue to be updated. At the end of all updates, all exceptions
      * thrown will be wrapped in a single JobStatusException and rethrown
-     * 
+     *
      * @param jobs
      *            The job collection to update - may have its member fields modified by status change listeners
      * @throws JobStatusException
      *             If and only if one or more job status updates fail
      */
-    public void statusUpdate(Collection<? extends CloudJob> jobs) throws JobStatusException {
-        List<Throwable> exceptions = new ArrayList<Throwable>();
-        List<CloudJob> failedUpdates = new ArrayList<CloudJob>();
+    public void statusUpdate(final Collection<? extends CloudJob> jobs) throws JobStatusException {
+        final List<Throwable> exceptions = new ArrayList<>();
+        final List<CloudJob> failedUpdates = new ArrayList<>();
 
-        for (CloudJob job : jobs) {
+        for (final CloudJob job : jobs) {
             //Do all updates before throwing exceptions
             try {
                 statusUpdate(job);
-            } catch (Throwable t) {
+            } catch (final Throwable t) {
                 failedUpdates.add(job);
                 exceptions.add(t);
             }

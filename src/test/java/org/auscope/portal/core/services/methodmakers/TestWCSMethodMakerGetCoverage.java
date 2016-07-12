@@ -116,7 +116,7 @@ public class TestWCSMethodMakerGetCoverage extends PortalTestClass {
 
     @Test
     public void testOptionalArguments() throws Exception {
-        Map<String, String> customParams = new HashMap<String, String>();
+        Map<String, String> customParams = new HashMap<>();
         customParams.put("param1", "param1value");
         customParams.put("param2", "param2value");
 

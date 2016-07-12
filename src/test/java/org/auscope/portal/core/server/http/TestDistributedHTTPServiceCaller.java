@@ -44,7 +44,7 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
      * @param upperBound
      * @param epsilon
      */
-    private void assertRange(long value, long lowerBound, long upperBound) {
+    private static void assertRange(long value, long lowerBound, long upperBound) {
         if (value < lowerBound ||
                 value > upperBound) {
             Assert.fail(String.format("%1$s is not in the range [%2$s, %3$s]", value, lowerBound, upperBound));

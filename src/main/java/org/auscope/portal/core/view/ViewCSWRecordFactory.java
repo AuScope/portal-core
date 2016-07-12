@@ -16,7 +16,7 @@ import org.springframework.ui.ModelMap;
 
 /**
  * A factory class for generating serializable CSWRecord objects that can be used to communicate with the view.
- * 
+ *
  * @author Josh Vote
  *
  */
@@ -24,12 +24,12 @@ public class ViewCSWRecordFactory {
 
     /**
      * Converts a CSWRecord to its simplified view equivalent
-     * 
+     *
      * @param record
      * @return
      */
-    public ModelMap toView(CSWRecord record) {
-        ModelMap obj = new ModelMap();
+    public ModelMap toView(final CSWRecord record) {
+        final ModelMap obj = new ModelMap();
 
         obj.put("name", record.getServiceName());
         obj.put("resourceProvider", record.getResourceProvider());
@@ -38,8 +38,8 @@ public class ViewCSWRecordFactory {
         obj.put("description", record.getDataIdentificationAbstract());
         obj.put("noCache", record.getNoCache());
         obj.put("service", record.isService());
-        
-        CSWResponsibleParty rp = record.getContact();
+
+        final CSWResponsibleParty rp = record.getContact();
         String adminArea = null;
         String contactOrg = "Unknown";
         if (rp != null) {
@@ -51,9 +51,9 @@ public class ViewCSWRecordFactory {
         obj.put("adminArea", adminArea);
         obj.put("contactOrg", contactOrg);
 
-        List<Map<String, Object>> onlineResources = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> onlineResources = new ArrayList<>();
         if (record.getOnlineResources() != null) {
-            for (AbstractCSWOnlineResource res : record.getOnlineResources()) {
+            for (final AbstractCSWOnlineResource res : record.getOnlineResources()) {
                 if (res.getLinkage() != null) {
                     onlineResources.add(this.toView(res));
                 }
@@ -61,41 +61,41 @@ public class ViewCSWRecordFactory {
         }
         obj.put("onlineResources", onlineResources);
 
-        List<Map<String, Object>> geographicElements = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> geographicElements = new ArrayList<>();
         if (record.getCSWGeographicElements() != null) {
-            for (CSWGeographicElement geo : record.getCSWGeographicElements()) {
+            for (final CSWGeographicElement geo : record.getCSWGeographicElements()) {
                 geographicElements.add(this.toView(geo));
             }
         }
         obj.put("geographicElements", geographicElements);
 
-        List<String> descriptiveKeywords = new ArrayList<String>();
+        final List<String> descriptiveKeywords = new ArrayList<>();
         if (record.getDescriptiveKeywords() != null) {
-            for (String s : record.getDescriptiveKeywords()) {
+            for (final String s : record.getDescriptiveKeywords()) {
                 descriptiveKeywords.add(s);
             }
         }
         obj.put("descriptiveKeywords", descriptiveKeywords);
 
-        List<String> datasetURIs = new ArrayList<String>();
+        final List<String> datasetURIs = new ArrayList<>();
         if (record.getDataSetURIs() != null) {
-            for (String s : record.getDataSetURIs()) {
+            for (final String s : record.getDataSetURIs()) {
                 datasetURIs.add(s);
             }
         }
         obj.put("datasetURIs", datasetURIs);
-        
-        List<String> constraints = new ArrayList<String>();
+
+        final List<String> constraints = new ArrayList<>();
         if (record.getConstraints() != null) {
-            for (String s : record.getConstraints()) {
+            for (final String s : record.getConstraints()) {
                 constraints.add(s);
             }
         }
         obj.put("constraints", constraints);
 
-        List<Map<String, Object>> childRecords = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> childRecords = new ArrayList<>();
         if (record.hasChildRecords()) {
-            for (CSWRecord childRecord : record.getChildRecords()) {
+            for (final CSWRecord childRecord : record.getChildRecords()) {
                 childRecords.add(this.toView(childRecord));
             }
         }
@@ -103,7 +103,7 @@ public class ViewCSWRecordFactory {
 
         String dateString = "";
         if (record.getDate() != null) {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss zzz");
+            final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss zzz");
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
             dateString = df.format(record.getDate());
         }
@@ -114,12 +114,12 @@ public class ViewCSWRecordFactory {
 
     /**
      * Converts a CSWOnlineResource to its view equivalent
-     * 
+     *
      * @param res
      * @return
      */
-    public ModelMap toView(AbstractCSWOnlineResource res) {
-        ModelMap obj = new ModelMap();
+    public ModelMap toView(final AbstractCSWOnlineResource res) {
+        final ModelMap obj = new ModelMap();
 
         obj.put("url", res.getLinkage().toString());
         obj.put("type", res.getType().name());
@@ -133,16 +133,16 @@ public class ViewCSWRecordFactory {
     /**
      * Converts a CSWGeographicElement to its view equivalent. If el is not a supported implementation of CSWGeographicBoundingBox a IllegalArgumentException
      * will be thrown.
-     * 
+     *
      * @param el
      * @return
      */
-    public ModelMap toView(CSWGeographicElement el) {
-        ModelMap obj = new ModelMap();
+    public ModelMap toView(final CSWGeographicElement el) {
+        final ModelMap obj = new ModelMap();
 
         if (el instanceof CSWGeographicBoundingBox) {
 
-            CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox) el;
+            final CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox) el;
             obj.put("type", "bbox");
             obj.put("eastBoundLongitude", bbox.getEastBoundLongitude());
             obj.put("westBoundLongitude", bbox.getWestBoundLongitude());

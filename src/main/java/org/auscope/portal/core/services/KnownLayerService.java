@@ -201,7 +201,7 @@ public class KnownLayerService {
      * @param wmsSelectors
      * @return layerNames from the selectors
      */
-    private List<String> getWMSelectorsLayerNames(final List<WMSSelector> wmsSelectors) {
+    private static List<String> getWMSelectorsLayerNames(final List<WMSSelector> wmsSelectors) {
         final List<String> layerNames = new ArrayList<>();
         for (final WMSSelector wmsSelector : wmsSelectors) {
             layerNames.add(wmsSelector.getLayerName());
