@@ -31,7 +31,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.io.Files;
+import com.google.common.io.ByteSource;
 
 public class TestCloudStorageService extends PortalTestClass {
     private final String bucket = "bucket-name";
@@ -233,12 +233,12 @@ public class TestCloudStorageService extends PortalTestClass {
                 oneOf(mockBlobStore).blobBuilder(jobStorageBaseKey + "/file2Name");
                 will(returnValue(mockBuilder2));
 
-                allowing(mockBuilder1).payload(Files.asByteSource(mockFiles[0]));
+                allowing(mockBuilder1).payload(with(any(ByteSource.class)));
                 will(returnValue(mockBuilder1));
                 oneOf(mockBuilder1).build();
                 will(returnValue(mockBlob1));
 
-                allowing(mockBuilder2).payload(Files.asByteSource(mockFiles[1]));
+                allowing(mockBuilder2).payload(with(any(ByteSource.class)));
                 will(returnValue(mockBuilder2));
                 oneOf(mockBuilder2).build();
                 will(returnValue(mockBlob2));
