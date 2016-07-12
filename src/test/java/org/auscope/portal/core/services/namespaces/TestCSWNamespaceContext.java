@@ -22,9 +22,9 @@ public class TestCSWNamespaceContext extends PortalTestClass {
     @Test
     public void testContext() {
 
-        NamespaceContext context = new CSWNamespaceContext();
+        NamespaceContext ctx = new CSWNamespaceContext();
 
-        Assert.assertEquals(TEST_NAMESPACE_URI, context.getNamespaceURI(TEST_PREFIX));
-        Assert.assertEquals(XMLConstants.NULL_NS_URI, context.getNamespaceURI(TEST_PREFIX_NOT_EXIST));
+        Assert.assertEquals(TEST_NAMESPACE_URI, ctx.getNamespaceURI(TEST_PREFIX));
+        Assert.assertEquals(XMLConstants.NULL_NS_URI, ctx.getNamespaceURI(TEST_PREFIX_NOT_EXIST));
     }
 }

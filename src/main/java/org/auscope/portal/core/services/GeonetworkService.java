@@ -59,7 +59,7 @@ public class GeonetworkService {
      * @return
      * @throws Exception
      */
-    private String cswRecordToMDMetadataXml(CSWRecord record) throws Exception {
+    private static String cswRecordToMDMetadataXml(CSWRecord record) throws Exception {
         CSWRecordTransformer transformer = new CSWRecordTransformer(); //more than meets the eye
         Node mdMetadataNode = transformer.transformToNode(record);
         return DOMUtil.buildStringFromDom(mdMetadataNode, true);

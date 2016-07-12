@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.responses.csw.AbstractCSWOnlineResource.OnlineResourceType;
@@ -52,12 +53,12 @@ public class TestCSWCacheService extends PortalTestClass {
      * @throws Exception
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         this.threadExecutor = new BasicThreadExecutor();
 
         //Create our service list
-        ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
+        ArrayList<CSWServiceItem> serviceUrlList = new ArrayList<>(CONCURRENT_THREADS_TO_RUN);
         for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
             serviceUrlList.add(new CSWServiceItem(String.format("id:%1$s", i + 1), String.format(
                     serviceUrlFormatString, i + 1)));
@@ -67,7 +68,7 @@ public class TestCSWCacheService extends PortalTestClass {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         this.threadExecutor = null;
         this.cswCacheService = null;
     }
@@ -228,7 +229,7 @@ public class TestCSWCacheService extends PortalTestClass {
      */
     @Test
     public void testMultiUpdateAllErrors() throws Exception {
-        final Map<String, Integer> expectedResult = new HashMap<String, Integer>();
+        final Map<String, Integer> expectedResult = new HashMap<>();
 
         context.checking(new Expectations() {
             {
@@ -429,8 +430,7 @@ public class TestCSWCacheService extends PortalTestClass {
                 .loadResourceAsString("org/auscope/portal/core/test/responses/csw/cswRecordResponse_NoMoreRecords.xml");
         final ByteArrayInputStream t1r1 = new ByteArrayInputStream(noMoreRecordsString.getBytes());
 
-        final Map<String, Integer> expectedResult = new HashMap<String, Integer>();
-        final int totalRequestsMade = CONCURRENT_THREADS_TO_RUN + 2;
+        final Map<String, Integer> expectedResult = new HashMap<>();
         expectedResult.put("er:Commodity", 3);
         expectedResult.put("gsml:GeologicUnit", 2);
         expectedResult.put("er:MineralOccurrence", 3);
@@ -634,8 +634,6 @@ public class TestCSWCacheService extends PortalTestClass {
         final Sequence t1Sequence = context.sequence("t1Sequence");
         final Sequence t2Sequence = context.sequence("t2Sequence");
         final Sequence t3Sequence = context.sequence("t3Sequence");
-
-        final int totalRequestsMade = CONCURRENT_THREADS_TO_RUN + 2;
 
         context.checking(new Expectations() {
             {

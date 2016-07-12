@@ -12,7 +12,6 @@ import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-// TODO: Auto-generated Javadoc
 /**
  * This class represents WMS Layer node within GetCapabilites WMS response.
  *
@@ -66,35 +65,35 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      *             the xpath expression exception
      */
     public GetCapabilitiesWMSLayer_1_1_1(final Node node) throws XPathExpressionException {
-        final XPath xPath = XPathFactory.newInstance().newXPath();
+        final XPath path = XPathFactory.newInstance().newXPath();
 
         this.node = node;
 
         final String layerNameExpression = "Name";
-        Node tempNode = (Node) xPath.evaluate(layerNameExpression, node, XPathConstants.NODE);
+        Node tempNode = (Node) path.evaluate(layerNameExpression, node, XPathConstants.NODE);
         name = tempNode != null ? tempNode.getTextContent() : "";
 
         final String layerTitleExpression = "Title";
-        tempNode = (Node) xPath.evaluate(layerTitleExpression, node, XPathConstants.NODE);
+        tempNode = (Node) path.evaluate(layerTitleExpression, node, XPathConstants.NODE);
         title = tempNode != null ? tempNode.getTextContent() : "";
 
         final String layerAbstractExpression = "Abstract";
-        tempNode = (Node) xPath.evaluate(layerAbstractExpression, node, XPathConstants.NODE);
+        tempNode = (Node) path.evaluate(layerAbstractExpression, node, XPathConstants.NODE);
         description = tempNode != null ? tempNode.getTextContent() : "";
 
         final String layerLegendURLExpression = "Style/LegendURL/OnlineResource";
-        tempNode = (Node) xPath.evaluate(layerLegendURLExpression, node, XPathConstants.NODE);
+        tempNode = (Node) path.evaluate(layerLegendURLExpression, node, XPathConstants.NODE);
         legendURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
 
         metadataURL = getMetadataURL();
 
         final String latLonBoundingBox = "LatLonBoundingBox";
-        tempNode = (Node) xPath.evaluate(latLonBoundingBox, node, XPathConstants.NODE);
+        tempNode = (Node) path.evaluate(latLonBoundingBox, node, XPathConstants.NODE);
         if (tempNode != null) {
-            final String minx = (String) xPath.evaluate("@minx", tempNode, XPathConstants.STRING);
-            final String maxx = (String) xPath.evaluate("@maxx", tempNode, XPathConstants.STRING);
-            final String miny = (String) xPath.evaluate("@miny", tempNode, XPathConstants.STRING);
-            final String maxy = (String) xPath.evaluate("@maxy", tempNode, XPathConstants.STRING);
+            final String minx = (String) path.evaluate("@minx", tempNode, XPathConstants.STRING);
+            final String maxx = (String) path.evaluate("@maxx", tempNode, XPathConstants.STRING);
+            final String miny = (String) path.evaluate("@miny", tempNode, XPathConstants.STRING);
+            final String maxy = (String) path.evaluate("@maxy", tempNode, XPathConstants.STRING);
 
             //Attempt to parse our bounding box
             try {
@@ -109,7 +108,7 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
         }
 
         final String layerSRSExpression = "SRS";
-        final NodeList nodes = (NodeList) xPath.evaluate(layerSRSExpression,
+        final NodeList nodes = (NodeList) path.evaluate(layerSRSExpression,
                 node,
                 XPathConstants.NODESET);
         childLayerSRS = new String[nodes.getLength()];

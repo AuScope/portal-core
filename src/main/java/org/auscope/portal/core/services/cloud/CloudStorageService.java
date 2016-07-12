@@ -35,6 +35,7 @@ import org.jclouds.sts.domain.UserAndSessionCredentials;
 import org.jclouds.sts.options.AssumeRoleOptions;
 
 import com.google.common.base.Supplier;
+import com.google.common.io.Files;
 
 /**
  * Service for providing storage of objects (blobs) in a cloud using the JClouds library
@@ -544,7 +545,7 @@ public class CloudStorageService {
         try {
             final BlobStore bs = getBlobStoreContext(arn, clientSecret).getBlobStore();
             final Blob blob = bs.getBlob(getBucket(job), keyForJobFile(job, myKey));
-            return blob.getPayload().getInput();
+            return blob.getPayload().openStream();
         } catch (final Exception ex) {
             log.error(String.format("Unable to get job file '%1$s' for job %2$s:", myKey, job));
             log.debug("error:", ex);
@@ -670,7 +671,7 @@ public class CloudStorageService {
             for (final File file : files) {
 
                 final Blob newBlob = bs.blobBuilder(keyForJobFile(job, file.getName()))
-                        .payload(file)
+                        .payload(Files.asByteSource(file))
                         .build();
 
                 bs.putBlob(bucketName, newBlob);

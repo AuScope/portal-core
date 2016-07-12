@@ -213,7 +213,6 @@ public class TestKnownLayerService extends PortalTestClass {
         });
 
         // Act
-        @SuppressWarnings("unchecked")
         List<KnownLayerAndRecords> groups =
                 knownLayerService.groupKnownLayerRecords(FakeKnownLayerChild.class).getKnownLayers();
 

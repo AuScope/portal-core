@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -23,6 +24,7 @@ import org.w3c.dom.Document;
  * @author Josh Vote
  */
 public class WCSService {
+    @SuppressWarnings("unused")
     private final Log logger = LogFactory.getLog(getClass());
 
     private HttpServiceCaller serviceCaller;
@@ -91,12 +93,13 @@ public class WCSService {
         HttpRequestBase method = null;
         try {
             method = methodMaker.describeCoverageMethod(serviceUrl, coverageName);
-            InputStream response = serviceCaller.getMethodResponseAsStream(method);
+            try (InputStream response = serviceCaller.getMethodResponseAsStream(method)) {
 
-            Document responseDoc = DOMUtil.buildDomFromStream(response);
-            OWSExceptionParser.checkForExceptionResponse(responseDoc);
+                Document responseDoc = DOMUtil.buildDomFromStream(response);
+                OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
-            return DescribeCoverageRecord.parseRecords(responseDoc);
+                return DescribeCoverageRecord.parseRecords(responseDoc);
+            }
         } catch (Exception ex) {
             throw new PortalServiceException(method, "Error while making GetCoverage request", ex);
         } finally {

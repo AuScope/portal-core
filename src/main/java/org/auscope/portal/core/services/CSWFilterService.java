@@ -1,7 +1,6 @@
 package org.auscope.portal.core.services;
 
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -102,13 +101,8 @@ public class CSWFilterService {
         log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'", serviceItem,
                 maxRecords, resultType, filter));
         CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-        HttpRequestBase method;
-        try {
-            method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,
+        HttpRequestBase method = methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords, startIndex,
                     null);
-        } catch (UnsupportedEncodingException e) {
-            throw new PortalServiceException(e.getMessage(), e);
-        }
 
         try (InputStream responseStream = serviceCaller.getMethodResponseAsStream(method)) {
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
@@ -140,16 +134,12 @@ public class CSWFilterService {
 
         //Create various HTTP Methods for making each and every CSW request
         for (CSWServiceItem serviceItem : cswServiceList) {
-            try {
-                log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'",
-                        serviceItem, maxRecords, resultType, filter));
-                CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-                requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords,
-                        startIndex, null));
-                additionalInfo.add(serviceItem);
-            } catch (UnsupportedEncodingException ex) {
-                log.warn(String.format("Error generating HTTP method for serviceItem '%1$s'", serviceItem), ex);
-            }
+            log.trace(String.format("serviceItem='%1$s' maxRecords=%2$s resultType='%3$s' filter='%4$s'",
+                    serviceItem, maxRecords, resultType, filter));
+            CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
+            requestMethods.add(methodMaker.makeMethod(serviceItem.getServiceUrl(), filter, resultType, maxRecords,
+                    startIndex, null));
+            additionalInfo.add(serviceItem);
         }
 
         DistributedHTTPServiceCaller dsc = new DistributedHTTPServiceCaller(requestMethods, additionalInfo,

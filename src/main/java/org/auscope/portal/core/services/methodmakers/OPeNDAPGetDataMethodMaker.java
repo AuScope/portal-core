@@ -1,12 +1,17 @@
 package org.auscope.portal.core.services.methodmakers;
 
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.auscope.portal.core.services.responses.opendap.AbstractViewVariable;
 import org.auscope.portal.core.services.responses.opendap.SimpleAxis;
 import org.auscope.portal.core.services.responses.opendap.SimpleBounds;
@@ -50,7 +55,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private void calculateIndexBounds(final NetcdfDataset ds, final SimpleAxis axis) throws Exception {
+    private static void calculateIndexBounds(final NetcdfDataset ds, final SimpleAxis axis) throws Exception {
         //Only calculate dimension bounds if required (and possible)
         if (axis.getValueBounds() != null && axis.getDimensionBounds() == null) {
             String parentGroupName = "";
@@ -97,7 +102,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private String simpleBoundsToQuery(final SimpleBounds bounds) {
+    private static String simpleBoundsToQuery(final SimpleBounds bounds) {
         return String.format("[%1$d:%2$d]", (int) bounds.getFrom(), (int) bounds.getTo());
     }
 
@@ -109,7 +114,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
      *            The list of constraints
      * @return
      */
-    private String generateQueryForConstraints(final AbstractViewVariable[] vars) {
+    private static String generateQueryForConstraints(final AbstractViewVariable[] vars) {
         final StringBuilder result = new StringBuilder();
 
         for (final AbstractViewVariable var : vars) {
@@ -169,7 +174,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
             }
 
             final URIBuilder builder = new URIBuilder(method.getURI());
-            builder.setQuery(URLEncoder.encode((generateQueryForConstraints(constraints)), "UTF-8"));
+            builder.setParameters(parseQuery(URLEncoder.encode((generateQueryForConstraints(constraints)), "UTF-8"), Consts.UTF_8));
             method.setURI(builder.build());
         }
 
@@ -177,4 +182,12 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
 
         return method;
     }
+    
+    private static List <NameValuePair> parseQuery(final String query, final Charset charset) {
+        if (query != null && query.length() > 0) {
+            return URLEncodedUtils.parse(query, charset);
+        }
+        return null;
+    }
+
 }

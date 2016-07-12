@@ -58,7 +58,7 @@ public class TestDOMUtil extends PortalTestClass {
             map = new HashMap<>();
             map.put("test", "http://test.namespace");
             map.put("test2", "http://test2.namespace");
-        };
+        }
 
         /**
          * This method returns the uri for all prefixes needed.

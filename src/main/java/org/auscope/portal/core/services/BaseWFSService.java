@@ -133,9 +133,7 @@ public abstract class BaseWFSService {
      * @throws PortalServiceException
      */
     protected WFSCountResponse getWfsFeatureCount(HttpRequestBase method) throws PortalServiceException {
-        try {
-            //Make the request and parse the response
-            InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method);
+        try (InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method)) {
             Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 

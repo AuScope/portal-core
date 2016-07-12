@@ -3,6 +3,7 @@ package org.auscope.portal.core.services;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.filter.csw.CSWGetDataRecordsFilter;
@@ -40,16 +41,14 @@ public class TestCSWFilterService extends PortalTestClass {
 
     /**
      * Initialises each of our unit tests with a new CSWFilterService
-     * 
-     * @throws Exception
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
         this.threadExecutor = new BasicThreadExecutor();
 
         //Create our service list
-        serviceUrlList = new ArrayList<CSWServiceItem>(CONCURRENT_THREADS_TO_RUN);
+        serviceUrlList = new ArrayList<>(CONCURRENT_THREADS_TO_RUN);
         for (int i = 0; i < CONCURRENT_THREADS_TO_RUN; i++) {
             serviceUrlList.add(new CSWServiceItem(String.format(IDFORMATSTRING, i), String.format(
                     SERVICEURLFORMATSTRING, i)));
@@ -227,7 +226,7 @@ public class TestCSWFilterService extends PortalTestClass {
      * @throws Exception
      */
     @Test
-    public void testGetCSWServices() throws Exception {
+    public void testGetCSWServices() {
         CSWServiceItem[] actual = this.cswFilterService.getCSWServiceItems();
         CSWServiceItem[] expected = serviceUrlList.toArray(new CSWServiceItem[serviceUrlList.size()]);
 

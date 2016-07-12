@@ -26,6 +26,7 @@ public class DescribeCoverageRecord implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /** The logger. */
+    @SuppressWarnings("unused")
     private final Log logger = LogFactory.getLog(DescribeCoverageRecord.class);
 
     /** The description. */

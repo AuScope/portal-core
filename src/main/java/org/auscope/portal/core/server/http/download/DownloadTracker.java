@@ -28,6 +28,14 @@ import org.auscope.portal.core.util.FileIOUtil;
 public class DownloadTracker {
     protected final Log logger = LogFactory.getLog(getClass());
     private String email;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     private static ConcurrentHashMap<String, DownloadTracker> downloadTracker;
     private Progression downloadProgress;
     private File file;
@@ -35,7 +43,7 @@ public class DownloadTracker {
     public static final long timeAllowForCache = 6 * 60 * 60 * 1000; //VT we give the user 6 hours to download before we clear up memory
 
     static {
-        downloadTracker = new ConcurrentHashMap<String, DownloadTracker>();
+        downloadTracker = new ConcurrentHashMap<>();
     }
 
     public DownloadTracker(String email) {
@@ -213,21 +221,23 @@ public class DownloadTracker {
 
         @Override
         public void run() {
-
-            FileOutputStream fos;
-            ZipOutputStream zout;
-
-            try {
-                // in the event that a user makes another request we want to
-                // ensure the old file reference is deleted
-                // and a file one is created in its place.
-                if (file.exists()) {
-                    file.delete();
+            // in the event that a user makes another request we want to
+            // ensure the old file reference is deleted
+            // and a file one is created in its place.
+            if (file.exists()) {
+                file.delete();
+                try {
                     file = File.createTempFile("APT_TRACKER", ".zip");
-                    file.deleteOnExit();
+                } catch (IOException e) {
+                    logger.error("Error creating temp file: "+e.getMessage(), e);
+                    DownloadTracker.this.setDownloadComplete();
+                    return;
                 }
-                fos = new FileOutputStream(file);
-                zout = new ZipOutputStream(fos);
+                file.deleteOnExit();
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(file);
+                 ZipOutputStream zout = new ZipOutputStream(fos)) {
                 ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
                 FileIOUtil.writeResponseToZip(gmlDownloads, zout, this.extensionOverride);
                 zout.finish();
@@ -238,10 +248,8 @@ public class DownloadTracker {
 
             } catch (FileNotFoundException e) {
                 logger.error("Unable to write to file", e);
-                e.printStackTrace();
             } catch (Exception e) {
                 logger.error("Error with the serviceDownloadManager", e);
-                e.printStackTrace();
             } finally {
                 // VT : No matter what happens we have to give it a completion.
                 DownloadTracker.this.setDownloadComplete();

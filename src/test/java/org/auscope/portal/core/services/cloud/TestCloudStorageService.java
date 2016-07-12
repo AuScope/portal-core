@@ -31,6 +31,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.io.Files;
+
 public class TestCloudStorageService extends PortalTestClass {
     private final String bucket = "bucket-name";
 
@@ -48,7 +50,6 @@ public class TestCloudStorageService extends PortalTestClass {
         service.setBucket(bucket);
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testGetJobFileData() throws Exception {
         final String myKey = "my/key";
@@ -67,8 +68,11 @@ public class TestCloudStorageService extends PortalTestClass {
                     oneOf(mockBlob).getPayload();
                     will(returnValue(mockPayload));
 
-                    oneOf(mockPayload).getInput();
+                    oneOf(mockPayload).openStream();
                     will(returnValue(mockReturnedInputStream));
+                    
+                    allowing(mockReturnedInputStream).close();
+                    allowing(mockPayload).close();
                 }
             });
 
@@ -196,7 +200,6 @@ public class TestCloudStorageService extends PortalTestClass {
      *
      * @throws Exception
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testUploadJobFiles() throws Exception {
         final BlobStore mockBlobStore = context.mock(BlobStore.class);
@@ -230,12 +233,12 @@ public class TestCloudStorageService extends PortalTestClass {
                 oneOf(mockBlobStore).blobBuilder(jobStorageBaseKey + "/file2Name");
                 will(returnValue(mockBuilder2));
 
-                oneOf(mockBuilder1).payload(mockFiles[0]);
+                allowing(mockBuilder1).payload(Files.asByteSource(mockFiles[0]));
                 will(returnValue(mockBuilder1));
                 oneOf(mockBuilder1).build();
                 will(returnValue(mockBlob1));
 
-                oneOf(mockBuilder2).payload(mockFiles[1]);
+                allowing(mockBuilder2).payload(Files.asByteSource(mockFiles[1]));
                 will(returnValue(mockBuilder2));
                 oneOf(mockBuilder2).build();
                 will(returnValue(mockBlob2));

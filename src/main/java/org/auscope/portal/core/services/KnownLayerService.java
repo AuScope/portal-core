@@ -30,16 +30,16 @@ public class KnownLayerService {
     /**
      * Creates a new instance of this class from an untyped list. All objects in knownTypes that can be cast into a KnownLayer will be included in the internal
      * known layer list
-     * 
+     *
      * @param knownTypes
      *            A list of objects, only KnownLayer subclasses will be used
      * @param cswCacheService
      *            An instance of CSWCacheService
      */
-    public KnownLayerService(@SuppressWarnings("rawtypes") List knownTypes,
-            CSWCacheService cswCacheService) {
-        this.knownLayers = new ArrayList<KnownLayer>();
-        for (Object obj : knownTypes) {
+    public KnownLayerService(@SuppressWarnings("rawtypes") final List knownTypes,
+            final CSWCacheService cswCacheService) {
+        this.knownLayers = new ArrayList<>();
+        for (final Object obj : knownTypes) {
             if (obj instanceof KnownLayer) {
                 this.knownLayers.add((KnownLayer) obj);
             }
@@ -52,47 +52,47 @@ public class KnownLayerService {
      * Builds a KnownLayerGrouping by iterating the current CSW Cache Service record set and applying each of those records to one or more Known Layer objects.
      *
      * The resulting bundle of grouped/ungrouped records and known layers will then be returned.
-     * 
+     *
      * This overload does not impose a filter for the type of class that is allowed and therefore won't exclude anything from the list.
-     * 
+     *
      * @return An instance of KnownLayerGrouping that encapsulates all the known layers, as well as any unmapped records and the original record list.
      */
     public KnownLayerGrouping groupKnownLayerRecords() {
-        return groupKnownLayerRecords(null);
+        return groupKnownLayerRecords((Class<?>[])null);
     }
 
     /**
      * Builds a KnownLayerGrouping by iterating the current CSW Cache Service record set and applying each of those records to one or more Known Layer objects.
      *
      * The resulting bundle of grouped/ungrouped records and known layers will then be returned.
-     * 
+     *
      * This overload allows you explicitly state which classes should be included.
-     * 
+     *
      * @param classFilters
      *            An array of classes that should be included. You can use this to restrict the output to only include items that are of a particular subclass
      *            of KnownLayer.
      * @return An instance of KnownLayerGrouping that encapsulates the known layers you've selected, as well as any unmapped records and the original record
      *         list.
      */
-    public <T extends KnownLayer> KnownLayerGrouping groupKnownLayerRecords(Class<T>... classFilters) {
-        List<CSWRecord> originalRecordList = this.cswCacheService.getRecordCache();
-        List<KnownLayerAndRecords> knownLayerAndRecords = new ArrayList<KnownLayerAndRecords>();
-        Map<String, Object> mappedRecordIDs = new HashMap<String, Object>();
+    public <T extends KnownLayer> KnownLayerGrouping groupKnownLayerRecords(final Class<?>... classFilters) {
+        final List<CSWRecord> originalRecordList = this.cswCacheService.getRecordCache();
+        final List<KnownLayerAndRecords> knownLayerAndRecords = new ArrayList<>();
+        final Map<String, Object> mappedRecordIDs = new HashMap<>();
 
         // Figure out what records belong to which known layers (could be multiple)
-        for (KnownLayer knownLayer : knownLayers) {
+        for (final KnownLayer knownLayer : knownLayers) {
             // We have to do this part regardless of the classFilters because
             // if not, the results for unmappedRecords will be incorrect.
             // (I.e.: they'll include related features from things that have
             // been put in Research Data tab).
             // GPT-103 - the problem is in the creation of the belonging and related records - the order is not the same as input
-            KnownLayerSelector selector = knownLayer.getKnownLayerSelector();
-            List<CSWRecord> relatedRecords = new ArrayList<CSWRecord>();
-            List<CSWRecord> belongingRecords = new ArrayList<CSWRecord>();
+            final KnownLayerSelector selector = knownLayer.getKnownLayerSelector();
+            final List<CSWRecord> relatedRecords = new ArrayList<>();
+            final List<CSWRecord> belongingRecords = new ArrayList<>();
 
             // For each record, mark it as being added to a known layer (if appropriate)
             // We also need to mark the record as being mapped using mappedRecordIDs
-            for (CSWRecord record : originalRecordList) {
+            for (final CSWRecord record : originalRecordList) {
                 // System.out.println(" test this record: " + record.getLayerName());
                 try {
                     switch (selector.isRelatedRecord(record)) {
@@ -110,7 +110,7 @@ public class KnownLayerService {
                     default:
                         break;
                     }
-                } catch (PortalServiceException e) {
+                } catch (final PortalServiceException e) {
                     logger.error("Expecting data to line up", e);
                 }
             }
@@ -125,7 +125,7 @@ public class KnownLayerService {
             } else {
                 // Otherwise we have to see if this particular known layer matches
                 // any of the filters:
-                for (Class<T> classFilter : classFilters) {
+                for (final Class<?> classFilter : classFilters) {
                     if (classFilter.isAssignableFrom(knownLayer.getClass())) {
                         include = true;
                         break;
@@ -140,8 +140,8 @@ public class KnownLayerService {
         }
 
         // Finally work out which records do NOT belong to a known layer
-        List<CSWRecord> unmappedRecords = new ArrayList<CSWRecord>();
-        for (CSWRecord record : originalRecordList) {
+        final List<CSWRecord> unmappedRecords = new ArrayList<>();
+        for (final CSWRecord record : originalRecordList) {
             if (!mappedRecordIDs.containsKey(record.getFileIdentifier())) {
                 unmappedRecords.add(record);
             }
@@ -154,9 +154,9 @@ public class KnownLayerService {
      * GPT-103 - Conjunction Layers (from GPT-40) - the order is all out of wack in relatedRecords and belongsRecords from the Conjunction order given in
      * auscope_known_layers due to the order being from the List<CSWRecords> originalRecordList (which came from the GeoNetwork Server). So have to restore the
      * order.
-     * 
+     *
      * This method will use the order of the layers in the WMSSelectors.wmsSelectors layer IFF WMSSelectors.layersMode == AND
-     * 
+     *
      * @param listToUpdate
      *            - add record to this list at the index specified by the order of record.getName() in WMSSelectors.wmsSelectors list items. The size of the
      *            array if (knownLayer.getKnownLayerSelector() instanceof WMSSelectors) will be the number of layers defined in the WMSSelectors. If not
@@ -169,19 +169,19 @@ public class KnownLayerService {
      *             when knownLayer.getKnownLayerSelector() instanceof WMSSelectors but the record.getLayerName() to be part of WMSSelector list in
      *             WMSSelectors
      */
-    void addToListConsiderWMSSelectors(List<CSWRecord> listToUpdate, CSWRecord record, KnownLayer knownLayer)
+    void addToListConsiderWMSSelectors(final List<CSWRecord> listToUpdate, final CSWRecord record, final KnownLayer knownLayer)
             throws PortalServiceException {
-        KnownLayerSelector selector = knownLayer.getKnownLayerSelector();
+        final KnownLayerSelector selector = knownLayer.getKnownLayerSelector();
 
         if (knownLayer.getKnownLayerSelector() instanceof WMSSelectors) {
 
             // WMSSelectors are used to construct conjuncted (AND) and disjuncted (OR) WMSSelector layers
-            List<String> layerNames = getWMSelectorsLayerNames(((WMSSelectors) selector).getWmsSelectors());
+            final List<String> layerNames = getWMSelectorsLayerNames(((WMSSelectors) selector).getWmsSelectors());
 
             // Use Array internally - Lists don't work so well when adding to indexed positions
-            CSWRecord[] arrayToUpdate = Arrays.copyOf(listToUpdate.toArray(new CSWRecord[0]), layerNames.size());
+            final CSWRecord[] arrayToUpdate = Arrays.copyOf(listToUpdate.toArray(new CSWRecord[0]), layerNames.size());
 
-            int indexInWMSSelectorsList = layerNames.indexOf(record.getLayerName());
+            final int indexInWMSSelectorsList = layerNames.indexOf(record.getLayerName());
             if (indexInWMSSelectorsList == -1) {
                 // listToUpdate.add(record);
                 throw new PortalServiceException(
@@ -201,9 +201,9 @@ public class KnownLayerService {
      * @param wmsSelectors
      * @return layerNames from the selectors
      */
-    private List<String> getWMSelectorsLayerNames(List<WMSSelector> wmsSelectors) {
-        List<String> layerNames = new ArrayList<>();
-        for (WMSSelector wmsSelector : wmsSelectors) {
+    private List<String> getWMSelectorsLayerNames(final List<WMSSelector> wmsSelectors) {
+        final List<String> layerNames = new ArrayList<>();
+        for (final WMSSelector wmsSelector : wmsSelectors) {
             layerNames.add(wmsSelector.getLayerName());
         }
         return layerNames;

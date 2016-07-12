@@ -396,7 +396,7 @@
         <dependency>
             <groupId>xmlunit</groupId>
             <artifactId>xmlunit</artifactId>
-            <version>1.6</version>
+            <version>1.6</version><!--$NO-MVN-MAN-VER$-->
         </dependency>
         <dependency>
             <groupId>log4j</groupId>

@@ -113,19 +113,11 @@ public class SISSVoc3Service {
      *            receives the response Descriptions
      */
     protected boolean requestPageOfConcepts(HttpRequestBase method, Model model) throws PortalServiceException {
-        //Make our request
-        InputStream is;
-        try {
-            is = httpServiceCaller.getMethodResponseAsStream(method);
-        } catch (Exception e) {
-            method.releaseConnection();
-            throw new PortalServiceException(method, e);
-        }
-
-        //Parse the response into an XML document
-        Document doc = null;
         boolean moreData = false;
-        try {
+        //Make our request
+        try (InputStream is = httpServiceCaller.getMethodResponseAsStream(method)) {
+            // Parse the response into an XML document
+            Document doc = null;
             doc = DOMUtil.buildDomFromStream(is);
 
             VocabNamespaceContext nc = new VocabNamespaceContext();
@@ -148,7 +140,6 @@ public class SISSVoc3Service {
             throw new PortalServiceException(method, e);
         } finally {
             method.releaseConnection();
-            FileIOUtil.closeQuietly(is);
         }
 
         return moreData;
@@ -165,11 +156,11 @@ public class SISSVoc3Service {
     public Model getAllConcepts() throws PortalServiceException, URISyntaxException {
         Model model = ModelFactory.createDefaultModel();
         int pageNumber = 0;
-        int pageSize = this.pageSize;
+        int ps = this.pageSize;
 
         //Request each page in turn - put the results into Model
         do {
-            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, pageSize,
+            HttpRequestBase method = sissVocMethodMaker.getAllConcepts(baseUrl, repository, Format.Rdf, ps,
                     pageNumber);
             if (requestPageOfConcepts(method, model)) {
                 pageNumber++;

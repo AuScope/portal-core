@@ -41,7 +41,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      * @return
      * @throws Exception
      */
-    public HttpRequestBase makeMethod(String serviceUrl) throws Exception {
+    public HttpRequestBase makeMethod(String serviceUrl) {
         return this.makeMethod(serviceUrl, null, ResultType.Results, 1000, 1, null);
     }
 
@@ -55,7 +55,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      *             If the PostMethod body cannot be encoded ISO-8859-1
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
-            int maxRecords) throws UnsupportedEncodingException {
+            int maxRecords) {
         return this.makeMethod(serviceUrl, filter, resultType, maxRecords, 1, null);
     }
 
@@ -69,7 +69,7 @@ public class CSWMethodMakerGetDataRecords extends AbstractMethodMaker {
      *             If the PostMethod body cannot be encoded ISO-8859-1
      */
     public HttpRequestBase makeMethod(String serviceUrl, CSWGetDataRecordsFilter filter, ResultType resultType,
-            int maxRecords, int startPosition, String cqlText) throws UnsupportedEncodingException {
+            int maxRecords, int startPosition, String cqlText) {
         HttpPost httpMethod = new HttpPost(serviceUrl);
 
         String filterString = null;

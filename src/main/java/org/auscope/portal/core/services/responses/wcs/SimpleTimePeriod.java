@@ -17,11 +17,17 @@ import org.w3c.dom.Node;
  *
  */
 public class SimpleTimePeriod implements TemporalDomain {
-
-    private static final long serialVersionUID = 1L;
     private Date beginPosition;
     private Date endPosition;
     private String type;
+
+    public Date getBeginPosition() {
+        return beginPosition;
+    }
+
+    public Date getEndPosition() {
+        return endPosition;
+    }
 
     public SimpleTimePeriod(Node node, XPath xPath) throws Exception {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");

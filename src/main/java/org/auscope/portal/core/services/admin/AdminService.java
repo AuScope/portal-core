@@ -98,20 +98,12 @@ public class AdminService {
 
         // Iterate our configured registries performing a simple CSW request to ensure they are 'available'
         for (CSWServiceItem item : serviceItems) {
-            InputStream responseStream = null;
-            try {
-                CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
-                HttpRequestBase method = methodMaker.makeMethod(item.getServiceUrl(), null, ResultType.Results,
-                        numRecordsToRequest);
-                responseStream = serviceCaller.getMethodResponseAsStream(method);
-            } catch (Exception ex) {
-                response.addError(String.format("Unable to request a CSW record from '%1$s': %2$s",
-                        item.getServiceUrl(), ex));
-                continue; // dont parse the response if we don't have one
-            }
 
-            // Then test the response
-            try {
+            CSWMethodMakerGetDataRecords methodMaker = new CSWMethodMakerGetDataRecords();
+            HttpRequestBase method = methodMaker.makeMethod(item.getServiceUrl(), null, ResultType.Results,
+                    numRecordsToRequest);
+
+            try (InputStream responseStream = serviceCaller.getMethodResponseAsStream(method)) {
                 Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
                 OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
@@ -128,11 +120,8 @@ public class AdminService {
             } catch (Exception ex) {
                 response.addError(String.format("Unable to parse a CSW record response from '%1$s': %2$s",
                         item.getServiceUrl(), ex));
-            } finally {
-                FileIOUtil.closeQuietly(responseStream);
-            }
+            } 
         }
-
         return response;
     }
 
@@ -175,7 +164,7 @@ public class AdminService {
     private AdminDiagnosticResponse httpMethodValidator(List<HttpRequestBase> methods,
             List<EndpointAndSelector> endpoints, ResponseValidator validator) {
         AdminDiagnosticResponse diagnosticResponse = new AdminDiagnosticResponse();
-        List<String> blacklistedUrls = new ArrayList<String>();
+        List<String> blacklistedUrls = new ArrayList<>();
 
         for (int i = 0; i < methods.size(); i++) {
             HttpRequestBase method = methods.get(i);
@@ -222,8 +211,8 @@ public class AdminService {
      */
     public AdminDiagnosticResponse wfsConnectivity(List<EndpointAndSelector> wfsEndpoints, String bboxJson)
             throws URISyntaxException {
-        List<HttpRequestBase> methodsToTest = new ArrayList<HttpRequestBase>();
-        List<EndpointAndSelector> endpointsToTest = new ArrayList<EndpointAndSelector>();
+        List<HttpRequestBase> methodsToTest = new ArrayList<>();
+        List<EndpointAndSelector> endpointsToTest = new ArrayList<>();
 
         // Iterate our service urls, making a basic WFS GetFeature and more complicated BBOX request to each
         WFSGetFeatureMethodMaker methodMaker = new WFSGetFeatureMethodMaker();
@@ -250,16 +239,16 @@ public class AdminService {
                 new ResponseValidator() {
                     @Override
                     public void validateResponse(InputStream response, HttpRequestBase callingMethod,
-                            EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
+                            EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResp) {
                         try {
                             Document doc = DOMUtil.buildDomFromStream(response);
                             OWSExceptionParser.checkForExceptionResponse(doc);
                         } catch (OWSException ex) {
-                            diagnosticResponse.addError(String.format(
+                            diagnosticResp.addError(String.format(
                                     "WFS '%1$s' returned an OWS exception for type '%2$s' - %3$s",
                                     endpoint.getEndpoint(), endpoint.getSelector(), ex));
                         } catch (Exception ex) {
-                            diagnosticResponse.addError(String.format(
+                            diagnosticResp.addError(String.format(
                                     "WFS '%1$s' is returning invalid XML for type '%2$s' - %3$s",
                                     endpoint.getEndpoint(), endpoint.getSelector(), ex));
                         }
@@ -304,8 +293,8 @@ public class AdminService {
      */
     public AdminDiagnosticResponse wmsConnectivity(List<EndpointAndSelector> wmsEndpoints, String bboxJson)
             throws URISyntaxException {
-        List<HttpRequestBase> methodsToTest = new ArrayList<HttpRequestBase>();
-        List<EndpointAndSelector> endpointsToTest = new ArrayList<EndpointAndSelector>();
+        List<HttpRequestBase> methodsToTest = new ArrayList<>();
+        List<EndpointAndSelector> endpointsToTest = new ArrayList<>();
 
         // Set our constants
         final String imageMimeType = "image/png";
@@ -341,13 +330,13 @@ public class AdminService {
                 new ResponseValidator() {
                     @Override
                     public void validateResponse(InputStream response, HttpRequestBase callingMethod,
-                            EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResponse) {
+                            EndpointAndSelector endpoint, AdminDiagnosticResponse diagnosticResp) {
                         // We need the URL
                         String uriString = "";
                         try {
                             uriString = callingMethod.getURI().toString();
                         } catch (Exception ex) {
-                            diagnosticResponse.addError(String.format(
+                            diagnosticResp.addError(String.format(
                                     "Error decoding request URI for '%1$s' - '%2$s' - %3$s", endpoint.getEndpoint(),
                                     endpoint.getSelector(), ex));
                             return;
@@ -368,17 +357,17 @@ public class AdminService {
                         try {
                             Header contentType = callingMethod.getFirstHeader("Content-Type");
                             if (contentType == null) {
-                                diagnosticResponse.addWarning(String
+                                diagnosticResp.addWarning(String
                                         .format("Backend received a '%1$s' response with no 'Content-Type' header for layer '%2$s' from '%3$s'",
                                                 requestType, endpoint.getSelector(), endpoint.getEndpoint()));
                             } else if (!contentType.getValue().contains(expectedContentType)) {
-                                diagnosticResponse.addError(String
+                                diagnosticResp.addError(String
                                         .format("Backend received a '%1$s' response with a bad 'Content-Type' header for layer '%2$s' from '%3$s'. Was expecting '%4$s' but got '%5$s' instead",
                                                 requestType, endpoint.getSelector(), endpoint.getEndpoint(),
                                                 expectedContentType, contentType.getValue()));
                             }
                         } catch (Exception ex) {
-                            diagnosticResponse.addError(String.format(
+                            diagnosticResp.addError(String.format(
                                     "Error decoding '%1$s' response ContentType from '%2$s' - '%3$s' - %4$s",
                                     requestType, endpoint.getEndpoint(), endpoint.getSelector(), ex));
                         }

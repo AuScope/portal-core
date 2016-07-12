@@ -2,9 +2,7 @@ package org.auscope.portal.core.services.responses.csw;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -257,7 +255,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
      * @param node
      * @return
      */
-    private String debugLocation(final Node node) {
+    private static String debugLocation(final Node node) {
         final Stack<String> stack = new Stack<>();
 
         Node current = node;
@@ -275,7 +273,7 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         return result;
     }
 
-    private List<Node> getNonTextChildNodes(final Node node) {
+    private static List<Node> getNonTextChildNodes(final Node node) {
         final List<Node> nonTextChildren = new ArrayList<>();
 
         final NodeList children = node.getChildNodes();
@@ -286,24 +284,6 @@ public class TestCSWRecordTransformer extends PortalTestClass {
         }
 
         return nonTextChildren;
-    }
-
-    /**
-     * Gets every attribute of node that IS NOT an xmlns:namespace="uri" attribute
-     *
-     * @param node
-     * @return
-     */
-    private static Map<String, String> getNonNamespaceAttributes(final Node node) {
-        final Map<String, String> result = new HashMap<>();
-        final NamedNodeMap expectedAttr = node.getAttributes();
-
-        for (int i = 0; i < expectedAttr.getLength(); i++) {
-            final Node attr = expectedAttr.item(i);
-            System.out.println(attr);
-        }
-
-        return result;
     }
 
     /**

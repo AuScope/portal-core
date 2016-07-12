@@ -55,13 +55,13 @@ public class CSWGetCapabilities {
     }
 
     public void setTitle(Document doc) throws XPathExpressionException {
-        String title = "";
+        String t = "";
 
         Node tempNode = (Node) DOMUtil.compileXPathExpr(TITLE_EXPRESSION, nc).evaluate(doc, XPathConstants.NODE);
 
-        title = tempNode != null ? tempNode.getTextContent() : "";
+        t = tempNode != null ? tempNode.getTextContent() : "";
 
-        this.title = title;
+        this.title = t;
     }
 
     public void setTitle(String title) {

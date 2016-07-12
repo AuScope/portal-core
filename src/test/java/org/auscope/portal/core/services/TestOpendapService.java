@@ -34,13 +34,13 @@ public class TestOpendapService extends PortalTestClass {
      * OpendapService that uses an injected mock NetcdfDataset
      */
     private class TestableOpendapService extends OpendapService {
-        NetcdfDataset dataset;
+        // NetcdfDataset dataset;
 
         public TestableOpendapService(HttpServiceCaller serviceCaller,
                 OPeNDAPGetDataMethodMaker getDataMethodMaker,
                 NetcdfDataset dataset) {
             super(serviceCaller, getDataMethodMaker);
-            this.dataset = dataset;
+            // this.dataset = dataset;
         }
 
         @Override
@@ -132,19 +132,23 @@ public class TestOpendapService extends PortalTestClass {
         final OPeNDAPFormat format = OPeNDAPFormat.ASCII;
 
         final HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
-        final InputStream mockResponse = context.mock(InputStream.class);
 
-        context.checking(new Expectations() {
-            {
-                oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);
-                will(returnValue(mockMethod));
-                oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
-                will(returnValue(mockResponse));
+        try (final InputStream mockResponse = context.mock(InputStream.class)) {
+
+            context.checking(new Expectations() {
+                {
+                    oneOf(mockMethodMaker).getMethod(serviceUrl, format, mockDataset, constraints);
+                    will(returnValue(mockMethod));
+                    oneOf(mockServiceCaller).getMethodResponseAsStream(mockMethod);
+                    will(returnValue(mockResponse));
+                    allowing(mockResponse).close();
+                }
+            });
+
+            try (InputStream response = service.getData(serviceUrl, format, constraints)) {
+                Assert.assertSame(mockResponse, response);
             }
-        });
-
-        InputStream response = service.getData(serviceUrl, format, constraints);
-        Assert.assertSame(mockResponse, response);
+        }
     }
 
     @Test(expected = PortalServiceException.class)

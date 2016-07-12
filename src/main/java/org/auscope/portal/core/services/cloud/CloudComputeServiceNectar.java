@@ -153,6 +153,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         this.secretKey = secretKey;
     }
 
+    @SuppressWarnings("unchecked")
     public void init() {
         final Properties overrides = new Properties();
 

@@ -37,7 +37,7 @@ public class CSWRecordTransformer {
 
     protected enum Scope {
         service, dataset
-    };
+    }
 
     protected static final CSWNamespaceContext nc = new CSWNamespaceContext();
     private static final String SERVICEIDENTIFICATIONPATH = "gmd:identificationInfo/srv:SV_ServiceIdentification";
@@ -74,15 +74,15 @@ public class CSWRecordTransformer {
 
         //Build an empty document and a simple mdMetadataNode template
         this.document = builder.newDocument();
-        final Element mdMetadataNode = createChildNode(document, nc.getNamespaceURI("gmd"), "MD_Metadata");
+        final Element mdMetadata = createChildNode(document, nc.getNamespaceURI("gmd"), "MD_Metadata");
 
         final Iterator<String> prefixIterator = nc.getPrefixIterator();
         while (prefixIterator.hasNext()) {
             final String prefix = prefixIterator.next();
-            mdMetadataNode.setAttributeNS("", prefix, nc.getNamespaceURI(prefix));
+            mdMetadata.setAttributeNS("", prefix, nc.getNamespaceURI(prefix));
         }
 
-        this.mdMetadataNode = mdMetadataNode;
+        this.mdMetadataNode = mdMetadata;
     }
 
     /**
@@ -302,9 +302,8 @@ public class CSWRecordTransformer {
      *
      * @param record
      * @return
-     * @throws XPathExpressionException
      */
-    public Node transformToNode(final CSWRecord record) throws XPathExpressionException {
+    public Node transformToNode(final CSWRecord record) {
         final Node root = this.mdMetadataNode.cloneNode(false);
 
         appendChildCharacterString(root, nc.getNamespaceURI("gmd"), "fileIdentifier", record.getFileIdentifier());
@@ -499,7 +498,7 @@ public class CSWRecordTransformer {
      * Iterates through the record's online resource list and removes any pairs of online resources that match on: 1) URL (sans query string) 2) name 3)
      * protocol
      */
-    private List<AbstractCSWOnlineResource> removeDuplicateOnlineResources(final List<AbstractCSWOnlineResource> resources) {
+    private static List<AbstractCSWOnlineResource> removeDuplicateOnlineResources(final List<AbstractCSWOnlineResource> resources) {
         for (int i = 0; i < resources.size(); i++) {
             final AbstractCSWOnlineResource resource = resources.get(i);
             final boolean foundMatching = false;

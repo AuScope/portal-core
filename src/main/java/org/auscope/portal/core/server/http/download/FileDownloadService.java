@@ -25,7 +25,7 @@ public class FileDownloadService {
         Header contentType = httpResponse.getEntity().getContentType();
 
         //create a new entry in the zip file with a timestamped name
-        String mime = null;
+        // String mime = null;
         if (contentType != null) {
             response.setContentType(contentType.getValue());
         }

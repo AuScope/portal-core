@@ -184,8 +184,10 @@ public class TestBasePortalController extends PortalTestClass {
                     oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
                     will(returnValue(-1));
 
+                    allowing(mockInput).close();
                     oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
                     oneOf(outputStream).write(with(any(byte[].class)), with(equal(0)), with(equal(12)));
+                    allowing(outputStream).close();
                 }
             });
 
@@ -212,7 +214,8 @@ public class TestBasePortalController extends PortalTestClass {
                     oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
                     will(throwException(new IOException()));
                     oneOf(outputStream).write(with(any(byte[].class)));
-                    oneOf(mockInput).close();
+                    allowing(mockInput).close();
+                    allowing(outputStream).close();
                 }
             });
 
@@ -239,6 +242,8 @@ public class TestBasePortalController extends PortalTestClass {
                     oneOf(mockInput).read(with(any(byte[].class)), with(equal(0)), with(equal(bufferSize)));
                     will(throwException(new IOException()));
                     oneOf(outputStream).write(with(any(byte[].class)));
+                    allowing(outputStream).close();
+                    allowing(mockInput).close();
                 }
             });
 
