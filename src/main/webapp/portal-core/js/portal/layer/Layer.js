@@ -124,32 +124,6 @@ Ext.define('portal.layer.Layer', {
         var renderer = this.get('renderer');      
         this.removeDataFromMap();                  
         renderer.displayData(this.getAllOnlineResources(), this.get('filterer'), Ext.emptyFn);
-        
-        var group = 'group';
-        if(this.get('sourceType')=='CSWRecord'){
-            group='contactOrg';
-        }
-        
-        //VT: Custom layer doesn't contain group
-        if(this.get('source').get(group)){
-            this._expandGridGroup(this.get('source').get(group));
-        }
-                       
-    },
-    
-    _expandGridGroup : function(groupname){
-        var activeTab = Ext.getCmp('auscope-tabs-panel').getActiveTab();
-        for (var i = 0; i < activeTab.features.length; i++) {
-            if (activeTab.features[i] instanceof Ext.grid.feature.Grouping) {
-                // try to expand the group but fail gracefully if not possible
-                // for example because the group may be obtained from the "contactOrg" field
-                // GA Portal thinks the group name of a Custom layer is "Geoscience Australia"
-                try {
-                    activeTab.features[i].expand(groupname,true);
-                }
-                catch(e) {}
-            }
-        }        
     },
     
    removeDataFromMap:function(){
