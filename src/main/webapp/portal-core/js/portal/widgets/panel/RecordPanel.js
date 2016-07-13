@@ -200,6 +200,7 @@ Ext.define('portal.widgets.panel.RecordPanel', {
      */
     onStoreFilterChange: function(store, filters) {
         this.getLayout().suspendAnimations();
+        Ext.suspendLayouts();
         
         this._eachRow(function(recordRowPanel) {
             var filtered = store.find('id', recordRowPanel.recordId) < 0; //we cant use store.getById as that bypasses any filters
@@ -215,6 +216,7 @@ Ext.define('portal.widgets.panel.RecordPanel', {
             }
         });
         
+        Ext.resumeLayouts();
         this.getLayout().resumeAnimations();
     },
     
