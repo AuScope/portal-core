@@ -1,9 +1,9 @@
 package org.auscope.portal.core.services;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc2MethodMaker;
 import org.auscope.portal.core.services.responses.vocab.Concept;
@@ -40,8 +40,8 @@ public class TestSISSVoc2Service extends PortalTestClass {
         final String repository = "repository";
         final String label = "label";
 
-        try (final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml")) {
+        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVocResponse.xml"), null)) {
             final Concept[] expectedResult = new Concept[] { context.mock(Concept.class) };
 
             context.checking(new Expectations() {
@@ -95,8 +95,8 @@ public class TestSISSVoc2Service extends PortalTestClass {
         final String repository = "repository";
         final String commodityParent = "parent";
 
-        try (final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml")) {
+        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/sparqlCommoditiesResponse.xml"),null)) {
 
             context.checking(new Expectations() {
                 {

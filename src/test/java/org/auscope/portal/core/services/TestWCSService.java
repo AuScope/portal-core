@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WCSMethodMaker;
 import org.auscope.portal.core.services.responses.csw.CSWGeographicBoundingBox;
@@ -45,7 +46,7 @@ public class TestWCSService extends PortalTestClass {
         final TimeConstraint timeConstraint = new TimeConstraint("constraint");
         final Map<String, String> customParameters = new HashMap<>();
 
-        try (final InputStream mockStream = context.mock(InputStream.class)) {
+        try (final HttpClientInputStream mockStream = context.mock(HttpClientInputStream.class)) {
 
             context.checking(new Expectations() {
                 {
@@ -96,8 +97,8 @@ public class TestWCSService extends PortalTestClass {
         final String serviceUrl = "http://example.org/wcs";
         final String coverageName = "coverage";
 
-        try (final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml")) {
+        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/wcs/DescribeCoverageResponse1.xml"), null)) {
 
             context.checking(new Expectations() {
                 {

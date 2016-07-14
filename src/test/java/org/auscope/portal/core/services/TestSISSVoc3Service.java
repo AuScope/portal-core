@@ -5,6 +5,7 @@ import java.net.ConnectException;
 import java.util.List;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker;
 import org.auscope.portal.core.services.methodmakers.sissvoc.SISSVoc3MethodMaker.Format;
@@ -53,11 +54,11 @@ public class TestSISSVoc3Service extends PortalTestClass {
      */
     @Test
     public void testGetAllConcepts() throws Exception {
-        try (final InputStream rs1 = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml");
-        final InputStream rs2 = ResourceUtil
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null);
+        final InputStream rs2 = new HttpClientInputStream(ResourceUtil
                         .loadResourceAsStream(
-                                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_NoMoreData.xml")) {
+                                "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_NoMoreData.xml"), null)) {
 
             context.checking(new Expectations() {
                 {
@@ -98,9 +99,9 @@ public class TestSISSVoc3Service extends PortalTestClass {
     public void testGetAllDescriptionsCommsError() throws Exception {
         // final String repository = "repository";
 
-        try (final InputStream rs1 = ResourceUtil
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
                 .loadResourceAsStream(
-                        "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml")) {
+                        "org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ConceptsRDF_MoreData.xml"), null)) {
 
             context.checking(new Expectations() {
                 {
@@ -132,8 +133,8 @@ public class TestSISSVoc3Service extends PortalTestClass {
     public void testGetResourceByUri() throws Exception {
         final String uri = "http://resource.auscope.org/classifier/GA/commodity/Au";
 
-        try (final InputStream rs1 = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ResourceRDF.xml")) {
+        try (final HttpClientInputStream rs1 = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/sissvoc/SISSVoc3_ResourceRDF.xml"), null)) {
 
             context.checking(new Expectations() {
                 {

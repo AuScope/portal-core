@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker;
 import org.auscope.portal.core.services.methodmakers.OPeNDAPGetDataMethodMaker.OPeNDAPFormat;
@@ -133,7 +134,7 @@ public class TestOpendapService extends PortalTestClass {
 
         final HttpRequestBase mockMethod = context.mock(HttpRequestBase.class);
 
-        try (final InputStream mockResponse = context.mock(InputStream.class)) {
+        try (final HttpClientInputStream mockResponse = context.mock(HttpClientInputStream.class)) {
 
             context.checking(new Expectations() {
                 {

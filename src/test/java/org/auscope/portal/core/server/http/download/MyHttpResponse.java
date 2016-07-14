@@ -6,23 +6,25 @@ import java.util.Locale;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.message.BasicStatusLine;
 import org.apache.http.params.HttpParams;
+import org.auscope.portal.core.server.http.HttpClientResponse;
 
 @SuppressWarnings("deprecation")
-public class MyHttpResponse implements HttpResponse {
+public class MyHttpResponse extends HttpClientResponse {
     InputStream content;
     int statusCode;
 
     public MyHttpResponse(InputStream is) {
+        super(null, null);
         this.content = is;
         this.statusCode = 200;
     }
 
     public MyHttpResponse(InputStream is, int statusCode) {
+        super(null, null);
         this.content = is;
         this.statusCode = statusCode;
     }

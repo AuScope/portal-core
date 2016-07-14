@@ -86,20 +86,20 @@ public class HttpServiceCaller {
      *            The method to be executed
      * @return
      */
-    public InputStream getMethodResponseAsStream(HttpRequestBase method) throws Exception {
+    @SuppressWarnings("resource")
+    public HttpClientInputStream getMethodResponseAsStream(HttpRequestBase method) throws Exception {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(this.connectionTimeOut)
                 .setSocketTimeout(this.connectionTimeOut)
                 .build();
         HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
-        
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
                     .useSystemProperties()
                     .setConnectionManager(man)
                     .setDefaultRequestConfig(requestConfig)
-                    .build()) {
-            return this.getMethodResponseAsStream(method, httpClient);
-        } 
+                    .build();
+        return new HttpClientInputStream(this.getMethodResponseAsStream(method, httpClient), httpClient);
     }
 
     /**
@@ -130,9 +130,10 @@ public class HttpServiceCaller {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(this.connectionTimeOut)
                 .setSocketTimeout(this.connectionTimeOut)
-                .build();
-        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+                .build();       
         
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+
         try (CloseableHttpClient httpClient = HttpClientBuilder.create()
                     .useSystemProperties()
                     .setConnectionManager(man)
@@ -150,8 +151,10 @@ public class HttpServiceCaller {
      * @param httpClient
      *            The client that will be used
      * @return
+     * @throws IOException 
+     * @throws IllegalStateException 
      */
-    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient client) throws Exception {
+    public byte[] getMethodResponseAsBytes(HttpRequestBase method, HttpClient client) throws IllegalStateException, IOException {
         //invoke the method
         HttpResponse httpResponse = this.invokeTheMethod(method, client);
 
@@ -165,21 +168,21 @@ public class HttpServiceCaller {
         return response;
     }
 
-    public HttpResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws Exception {
+    @SuppressWarnings("resource")
+    public HttpClientResponse getMethodResponseAsHttpResponse(HttpRequestBase method) throws IllegalStateException, IOException {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectTimeout(this.connectionTimeOut)
                 .setSocketTimeout(this.connectionTimeOut)
                 .build();
-        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
         
-        try (CloseableHttpClient httpClient = HttpClientBuilder.create()
+        HttpClientConnectionManager man= new PoolingHttpClientConnectionManager();
+
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
                     .useSystemProperties()
                     .setConnectionManager(man)
                     .setDefaultRequestConfig(requestConfig)
-                    .build()) {
-
-            return this.invokeTheMethod(method, httpClient);
-        } 
+                    .build();
+        return new HttpClientResponse(this.invokeTheMethod(method, httpClient), httpClient);
     }
 
     /**
@@ -187,8 +190,10 @@ public class HttpServiceCaller {
      *
      * @param method
      * @param httpClient
+     * @throws IOException 
+     * @throws IllegalStateException 
      */
-    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws Exception {
+    private HttpResponse invokeTheMethod(HttpRequestBase method, HttpClient client) throws IllegalStateException, IOException {
         if(client==null) throw new IllegalArgumentException("HttpClient must not be null");
         
         log.debug("method=" + method.getURI());

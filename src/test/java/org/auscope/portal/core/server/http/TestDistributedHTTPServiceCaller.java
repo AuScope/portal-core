@@ -1,6 +1,5 @@
 package org.auscope.portal.core.server.http;
 
-import java.io.InputStream;
 import java.net.ConnectException;
 import java.util.Arrays;
 import java.util.List;
@@ -27,9 +26,9 @@ public class TestDistributedHTTPServiceCaller extends PortalTestClass {
     private Object mockAdditionalInfo3 = context.mock(Object.class, "mockAddInfo3");
     private HttpServiceCaller mockServiceCaller = context.mock(HttpServiceCaller.class);
     private ExecutorService threadPool;
-    private InputStream mockInputStream1 = context.mock(InputStream.class, "stream1");
-    private InputStream mockInputStream2 = context.mock(InputStream.class, "stream2");
-    private InputStream mockInputStream3 = context.mock(InputStream.class, "stream3");
+    private HttpClientInputStream mockInputStream1 = context.mock(HttpClientInputStream.class, "stream1");
+    private HttpClientInputStream mockInputStream2 = context.mock(HttpClientInputStream.class, "stream2");
+    private HttpClientInputStream mockInputStream3 = context.mock(HttpClientInputStream.class, "stream3");
 
     @Before
     public void initialise() {

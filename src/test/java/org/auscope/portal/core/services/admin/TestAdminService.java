@@ -1,12 +1,12 @@
 package org.auscope.portal.core.services.admin;
 
-import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.csw.CSWServiceItem;
 import org.auscope.portal.core.services.methodmakers.filter.FilterBoundingBox;
@@ -102,13 +102,13 @@ public class TestAdminService extends PortalTestClass {
                 new CSWServiceItem("id-2", "http://example2.fake/thisWillReturnInvalidCount"),
                 new CSWServiceItem("id-3", "http://example3.fake/thieWillReturnOWSError"),
                 new CSWServiceItem("id-4", "http://example4.fake/thisWillFailToConnect"));
-        try (final InputStream owsError = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml");
-                final InputStream cswBadCountResponse = ResourceUtil
-                        .loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml");
-                final InputStream cswResponse = ResourceUtil
+        try (final HttpClientInputStream owsError = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml"), null);
+                final HttpClientInputStream cswBadCountResponse = new HttpClientInputStream(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/csw/cswRecordResponse.xml"), null);
+                final HttpClientInputStream cswResponse = new HttpClientInputStream(ResourceUtil
                         .loadResourceAsStream(
-                                "org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleRecord.xml");) {
+                                "org/auscope/portal/core/test/responses/csw/cswRecordResponse_SingleRecord.xml"), null)) {
 
             // We have 4 requests, 1 will fail, 1 will return error, 1 returns
             // an invalid count and 1 succeeds
@@ -164,22 +164,22 @@ public class TestAdminService extends PortalTestClass {
                 //Return OWS error
                 oneOf(mockServiceCaller).getMethodResponseAsStream(
                         with(aHttpMethodBase(null, Pattern.compile(endpoints.get(2).getEndpoint() + ".*"), null)));
-                will(returnValue(ResourceUtil
-                        .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml")));
+                will(returnValue(new HttpClientInputStream(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml"), null)));
                 oneOf(mockServiceCaller).getMethodResponseAsStream(
                         with(aHttpMethodBase(null, Pattern.compile(endpoints.get(2).getEndpoint() + ".*"), null)));
-                will(returnValue(ResourceUtil
-                        .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml")));
+                will(returnValue(new HttpClientInputStream(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/ows/OWSExceptionSample1.xml"), null)));
 
                 //Return success
                 oneOf(mockServiceCaller).getMethodResponseAsStream(
                         with(aHttpMethodBase(null, Pattern.compile(endpoints.get(3).getEndpoint() + ".*"), null)));
-                will(returnValue(ResourceUtil
-                        .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml")));
+                will(returnValue(new HttpClientInputStream(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml"), null)));
                 oneOf(mockServiceCaller).getMethodResponseAsStream(
                         with(aHttpMethodBase(null, Pattern.compile(endpoints.get(3).getEndpoint() + ".*"), null)));
-                will(returnValue(ResourceUtil
-                        .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml")));
+                will(returnValue(new HttpClientInputStream(ResourceUtil
+                        .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/commodityGetFeatureResponse.xml"), null)));
             }
         });
 

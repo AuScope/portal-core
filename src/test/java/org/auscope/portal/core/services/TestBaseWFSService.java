@@ -6,6 +6,7 @@ import java.net.ConnectException;
 import java.util.Scanner;
 
 import org.apache.http.client.methods.HttpRequestBase;
+import org.auscope.portal.core.server.http.HttpClientInputStream;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker;
 import org.auscope.portal.core.services.methodmakers.WFSGetFeatureMethodMaker.ResultType;
@@ -109,8 +110,8 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test
     public void testGetFeatureCount() throws Exception {
-        try (final InputStream responseStream = ResourceUtil
-                .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml")) {
+        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+                .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml"), null)) {
             context.checking(new Expectations() {
                 {
                     oneOf(mockHttpServiceCaller).getMethodResponseAsStream(mockMethod);

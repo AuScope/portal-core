@@ -672,8 +672,8 @@ public class CloudStorageService {
 
                 final Blob newBlob = bs.blobBuilder(keyForJobFile(job, file.getName()))
                         .payload(Files.asByteSource(file))
+                        .contentLength(file.length())
                         .build();
-
                 bs.putBlob(bucketName, newBlob);
 
                 log.debug(file.getName() + " uploaded to '" + bucketName + "' container");

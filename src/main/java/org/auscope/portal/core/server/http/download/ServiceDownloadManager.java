@@ -28,6 +28,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.auscope.portal.core.configuration.ServiceConfiguration;
 import org.auscope.portal.core.configuration.ServiceConfigurationItem;
+import org.auscope.portal.core.server.http.HttpClientResponse;
 import org.auscope.portal.core.server.http.HttpServiceCaller;
 import org.auscope.portal.core.util.DOMResponseUtil;
 import org.auscope.portal.core.util.FileIOUtil;
@@ -246,9 +247,8 @@ public class ServiceDownloadManager {
 
         public void downloadNormal(DownloadResponse resp, String theUrl) {
             HttpGet method = new HttpGet(theUrl);
-            try {
-                // Our request may fail (due to timeout or otherwise)
-                HttpResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method);
+            // Our request may fail (due to timeout or otherwise)
+            try (HttpClientResponse httpResponse = serviceCaller.getMethodResponseAsHttpResponse(method)) {
 
                 resp.setResponseStream(httpResponse.getEntity().getContent());
                 Header header = httpResponse.getEntity().getContentType();

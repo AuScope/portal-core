@@ -223,8 +223,13 @@ public class TestCloudStorageService extends PortalTestClass {
                 oneOf(mockBlobStore).createContainerInLocation(null, bucket);
                 will(returnValue(true));
 
+                allowing(mockFiles[0]).length();
+                will(returnValue(1L));
                 allowing(mockFiles[0]).getName();
                 will(returnValue("file1Name"));
+
+                allowing(mockFiles[1]).length();
+                will(returnValue(1L));
                 allowing(mockFiles[1]).getName();
                 will(returnValue("file2Name"));
 
@@ -233,11 +238,15 @@ public class TestCloudStorageService extends PortalTestClass {
                 oneOf(mockBlobStore).blobBuilder(jobStorageBaseKey + "/file2Name");
                 will(returnValue(mockBuilder2));
 
+                allowing(mockBuilder1).contentLength(1L);
+                will(returnValue(mockBuilder1));
                 allowing(mockBuilder1).payload(with(any(ByteSource.class)));
                 will(returnValue(mockBuilder1));
                 oneOf(mockBuilder1).build();
                 will(returnValue(mockBlob1));
 
+                allowing(mockBuilder2).contentLength(1L);
+                will(returnValue(mockBuilder2));
                 allowing(mockBuilder2).payload(with(any(ByteSource.class)));
                 will(returnValue(mockBuilder2));
                 oneOf(mockBuilder2).build();

@@ -1,11 +1,11 @@
 package org.auscope.portal.core.server.http.download;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -41,28 +41,28 @@ public class TestServiceDownloadManager extends PortalTestClass {
         final String dummyJSONResponse = "{\"data\":{\"kml\":\"<someKmlHere/>\", \"gml\":\""
                 + dummyGml + "\"},\"success\":true}";
         final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
-        final MyHttpResponse httpResponse = new MyHttpResponse(dummyJSONResponseIS);
+        try (final MyHttpResponse httpResponse = new MyHttpResponse(dummyJSONResponseIS)) {
 
-        context.checking(new Expectations() {
-            {
-                // calling the service
-                exactly(2).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
-                will(returnValue(httpResponse));
+            context.checking(new Expectations() {
+                {
+                    // calling the service
+                    exactly(2).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
+                    will(returnValue(httpResponse));
 
-                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
-                will(returnValue(null));
+                    allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+                    will(returnValue(null));
+                }
+            });
+
+            ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
+                    mockServiceConfiguration);
+            ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
+            for (DownloadResponse response : gmlDownloads) {
+                Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
+                Assert.assertFalse(response.hasException());
+                Assert.assertNull(response.getException());
             }
-        });
-
-        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
-                mockServiceConfiguration);
-        ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
-        for (DownloadResponse response : gmlDownloads) {
-            Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
-            Assert.assertFalse(response.hasException());
-            Assert.assertNull(response.getException());
         }
-
     }
 
     @Test
@@ -152,33 +152,34 @@ public class TestServiceDownloadManager extends PortalTestClass {
                 + dummyGml + "\"},\"success\":true}";
         final InputStream dummyJSONResponseIS = new ByteArrayInputStream(dummyJSONResponse.getBytes());
 
-        final MyHttpResponse httpResponse = new MyHttpResponse(dummyJSONResponseIS);
+        try (final MyHttpResponse httpResponse = new MyHttpResponse(dummyJSONResponseIS)) {
 
-        context.checking(new Expectations() {
-            {
-                // calling the service
-                atLeast(1).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
-                will(onConsecutiveCalls(
-                        returnValue(httpResponse),
-                        throwException(new Exception("test exception"))));
+            context.checking(new Expectations() {
+                {
+                    // calling the service
+                    atLeast(1).of(mockServiceCaller).getMethodResponseAsHttpResponse(with(any(HttpRequestBase.class)));
+                    will(onConsecutiveCalls(
+                            returnValue(httpResponse),
+                            throwException(new IOException("test exception"))));
 
-                allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
-                will(returnValue(null));
-            }
-        });
+                    allowing(mockServiceConfiguration).getServiceConfigurationItem(with(any(String.class)));
+                    will(returnValue(null));
+                }
+            });
 
-        ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
-                mockServiceConfiguration);
-        ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
-        Assert.assertEquals(serviceUrls.length, gmlDownloads.size());
-        for (DownloadResponse response : gmlDownloads) {
+            ServiceDownloadManager sdm = new ServiceDownloadManager(serviceUrls, mockServiceCaller, threadPool,
+                    mockServiceConfiguration);
+            ArrayList<DownloadResponse> gmlDownloads = sdm.downloadAll();
+            Assert.assertEquals(serviceUrls.length, gmlDownloads.size());
+            for (DownloadResponse response : gmlDownloads) {
 
-            if (response.hasException()) {
-                Assert.assertNotNull(response.getException());
-                Assert.assertTrue("test exception".equals(response.getException().getMessage()));
-            } else {
-                Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
-                Assert.assertNull(response.getException());
+                if (response.hasException()) {
+                    Assert.assertNotNull(response.getException());
+                    Assert.assertTrue("test exception".equals(response.getException().getMessage()));
+                } else {
+                    Assert.assertEquals(dummyJSONResponseIS, response.getResponseAsStream());
+                    Assert.assertNull(response.getException());
+                }
             }
         }
     }
