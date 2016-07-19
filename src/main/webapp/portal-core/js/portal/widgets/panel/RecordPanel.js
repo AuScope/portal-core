@@ -289,5 +289,19 @@ Ext.define('portal.widgets.panel.RecordPanel', {
         }, this);
         
         this.add(newItems);
+    },
+    
+    /**
+     * Expands the row with the specified recordId. If that ID DNE, this has no effect.
+     * 
+     * The group containing the row will also be expanded.
+     */
+    expandRecordById: function(recordId) {
+        this._eachRow(function(row) {
+            if (row.recordId === recordId) {
+                row.ownerCt.expand();
+                row.expand();
+            }
+        });
     }
 });
