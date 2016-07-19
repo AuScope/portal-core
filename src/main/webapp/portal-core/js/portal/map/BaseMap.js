@@ -363,7 +363,13 @@ Ext.define('portal.map.BaseMap', {
         //VT: We only deal with single removal of layer at this stage.
         var renderer = layer[0].get('renderer');
         if (renderer) {
-            renderer.abortDisplay();
+            // If '.addingLayer' is true, then we are here because a layer was removed as part of a layer insert operation
+            // In that case we should not abort the display because it will abort the layer insert operation
+            if (store.addingLayer) {
+                store.addingLayer = false;
+            } else {
+                renderer.abortDisplay();
+            }
             renderer.removeData();
             this.closeInfoWindow(layer[0].get('id'));
         }
