@@ -82,7 +82,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
     /**
      * @param adminEmail the adminEmail to set
      */
-    public void setAdminEmail(final String adminEmail) {
+    public void setAdminEmail(String adminEmail) {
         this.adminEmail = adminEmail;
     }
 
@@ -103,7 +103,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *
      * @param zone
      */
-    public void setZone(final String zone) {
+    public void setZone(String zone) {
         this.zone = zone;
     }
 
@@ -116,7 +116,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *            The Compute Secret key (password)
      *
      */
-    public CloudComputeServiceNectar(final String accessKey, final String secretKey) {
+    public CloudComputeServiceNectar(String accessKey, String secretKey) {
         this(null, accessKey, secretKey, null);
     }
 
@@ -131,7 +131,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *            The Compute Secret key (password)
      *
      */
-    public CloudComputeServiceNectar(final String endpoint, final String accessKey, final String secretKey) {
+    public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey) {
         this(endpoint, accessKey, secretKey, null);
     }
 
@@ -147,7 +147,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @param apiVersion
      *            The API version
      */
-    public CloudComputeServiceNectar(final String endpoint, final String accessKey, final String secretKey, final String apiVersion) {
+    public CloudComputeServiceNectar(String endpoint, String accessKey, String secretKey, String apiVersion) {
         super(ProviderType.NovaKeystone, endpoint, apiVersion);
         this.accessKey = accessKey;
         this.secretKey = secretKey;
@@ -155,9 +155,9 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
     @SuppressWarnings("unchecked")
     public void init() {
-        final Properties overrides = new Properties();
+        Properties overrides = new Properties();
 
-        final String typeString = "openstack-nova";
+        String typeString = "openstack-nova";
 
         builder = ContextBuilder.newBuilder(typeString)
                 .overrides(overrides);
@@ -180,8 +180,8 @@ public class CloudComputeServiceNectar extends CloudComputeService {
         this.terminateFilter = Predicates.and(not(TERMINATED), not(RUNNING), inGroup(getGroupName()));
     }
 
-    public CloudComputeServiceNectar(final ComputeService computeService, final NovaApi novaApi,
-            final Predicate<NodeMetadata> terminPredicate) {
+    public CloudComputeServiceNectar(ComputeService computeService, NovaApi novaApi,
+            Predicate<NodeMetadata> terminPredicate) {
         super(ProviderType.NovaKeystone);
         this.computeService = computeService;
         this.novaApi = novaApi;
@@ -201,18 +201,18 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @return null if execution fails or the instance ID of the running VM
      */
     @Override
-    public String executeJob(final CloudJob job, final String userDataString) throws PortalServiceException {
+    public String executeJob(CloudJob job, String userDataString) throws PortalServiceException {
 
         // We have different template options depending on provider
         NodeMetadata result;
         Set<? extends NodeMetadata> results = Collections.emptySet();
         TemplateOptions options = null;
         // Iterate all regions
-        for (final String location : novaApi.getConfiguredZones()) {
-            final Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
-            final Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
+        for (String location : novaApi.getConfiguredZones()) {
+            Optional<? extends AvailabilityZoneApi> serverApi = novaApi.getAvailabilityZoneApi(location);
+            Iterable<? extends AvailabilityZone> zones = serverApi.get().list();
 
-            for (final AvailabilityZone currentZone : zones) {
+            for (AvailabilityZone currentZone : zones) {
                 if (skippedZones.contains(currentZone.getName())) {
                     logger.info(String.format("skipping: '%1$s' - configured as a skipped zone", currentZone.getName()));
                     continue;
@@ -227,14 +227,14 @@ public class CloudComputeServiceNectar extends CloudComputeService {
                 options = ((NovaTemplateOptions) computeService.templateOptions()).keyPairName(getKeypair())
                         .availabilityZone(currentZone.getName()).userData(userDataString.getBytes(Charset.forName("UTF-8")));
 
-                final Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
+                Template template = computeService.templateBuilder().imageId(job.getComputeVmId())
                         .hardwareId(job.getComputeInstanceType()).options(options).build();
 
                 try {
                     results = computeService.createNodesInGroup(getGroupName(), 1, template);
                     this.itActuallyLaunchedHere = currentZone.getName();
                     break;
-                } catch (final RunNodesException e) {
+                } catch (RunNodesException e) {
                     logger.error(String.format("launch failed at '%1$s', '%2$s'", location, currentZone.getName()));
                     logger.debug(e.getMessage());
                     try {
@@ -244,9 +244,9 @@ public class CloudComputeServiceNectar extends CloudComputeService {
                         // JClouds is not very clever here -
                         // issue: how do you delete thing you didnt name and
                         // dont have an ID for??
-                        final Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
+                        Set<? extends NodeMetadata> destroyedNodes = computeService.destroyNodesMatching(this.terminateFilter);
                         logger.warn(String.format("cleaned up %1$s nodes: %2$s", destroyedNodes.size(), destroyedNodes));
-                    } catch (final Exception z) {
+                    } catch (Exception z) {
                         logger.warn("couldnt clean it up");
                     }
                     continue;
@@ -276,7 +276,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *            The job whose execution should be terminated
      */
     @Override
-    public void terminateJob(final CloudJob job) {
+    public void terminateJob(CloudJob job) {
         computeService.destroyNode(job.getComputeInstanceId());
     }
 
@@ -284,17 +284,17 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * An array of compute types that are available through this compute service
      */
     @Override
-    public ComputeType[] getAvailableComputeTypes(final Integer minimumVCPUs, final Integer minimumRamMB, final Integer minimumRootDiskGB) {
-        final Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
+    public ComputeType[] getAvailableComputeTypes(Integer minimumVCPUs, Integer minimumRamMB, Integer minimumRootDiskGB) {
+        Set<? extends Hardware> hardwareSet = computeService.listHardwareProfiles();
 
-        final List<ComputeType> computeTypes = new ArrayList<>();
+        List<ComputeType> computeTypes = new ArrayList<>();
 
-        for (final Hardware hw : hardwareSet) {
-            final ComputeType ct = new ComputeType(hw.getId());
+        for (Hardware hw : hardwareSet) {
+            ComputeType ct = new ComputeType(hw.getId());
 
             ct.setDescription(hw.getName());
             double vCpus = 0;
-            for (final Processor p : hw.getProcessors()) {
+            for (Processor p : hw.getProcessors()) {
                 vCpus += p.getCores();
             }
             ct.setVcpus((int) vCpus);
@@ -302,7 +302,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
 
             double rootDiskGB = 0;
             double ephemeralDiskGB = 0;
-            for (final Volume v : hw.getVolumes()) {
+            for (Volume v : hw.getVolumes()) {
                 if (v.isBootDevice()) {
                     rootDiskGB += v.getSize();
                 } else {
@@ -341,7 +341,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      *
      * @param skippedZones
      */
-    public void setSkippedZones(final Set<String> skippedZones) {
+    public void setSkippedZones(Set<String> skippedZones) {
         this.skippedZones = skippedZones;
     }
 
@@ -356,26 +356,26 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @return
      */
     @Override
-    public String getConsoleLog(final CloudJob job, final int numLines) throws PortalServiceException {
-        final String computeInstanceId = job.getComputeInstanceId();
+    public String getConsoleLog(CloudJob job, int numLines) throws PortalServiceException {
+        String computeInstanceId = job.getComputeInstanceId();
         if (computeInstanceId == null) {
             return null;
         }
 
         try {
-            final String[] accessParts = this.accessKey.split(":");
-            final String[] idParts = computeInstanceId.split("/");
+            String[] accessParts = this.accessKey.split(":");
+            String[] idParts = computeInstanceId.split("/");
 
             //JClouds has no support (currently) for tailing server console output. Our current workaround
             //is to offload this to openstack4j.
-            final OSClient os = OSFactory.builder()
+            OSClient os = OSFactory.builder()
                     .endpoint(endpoint)
                     .credentials(accessParts[1], secretKey)
                     .tenantName(accessParts[0])
                     .authenticate();
 
             return os.compute().servers().getConsoleOutput(idParts[1], numLines);
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             logger.error("Unable to retrieve console logs for " + computeInstanceId, ex);
             throw new PortalServiceException("Unable to retrieve console logs for " + computeInstanceId, ex);
         }
@@ -391,14 +391,14 @@ public class CloudComputeServiceNectar extends CloudComputeService {
      * @throws PortalServiceException
      */
     @Override
-    public InstanceStatus getJobStatus(final CloudJob job) throws PortalServiceException {
+    public InstanceStatus getJobStatus(CloudJob job) throws PortalServiceException {
         if (StringUtils.isEmpty(job.getComputeInstanceId())) {
             throw new PortalServiceException("No compute instance ID has been set");
         }
 
         try {
-            final NodeMetadata md = computeService.getNodeMetadata(job.getComputeInstanceId());
-            final Status status = md.getStatus();
+            NodeMetadata md = computeService.getNodeMetadata(job.getComputeInstanceId());
+            Status status = md.getStatus();
             switch (status) {
             case PENDING:
                 return InstanceStatus.Pending;
@@ -407,7 +407,7 @@ public class CloudComputeServiceNectar extends CloudComputeService {
             default:
                 return InstanceStatus.Missing;
             }
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             throw new PortalServiceException("Error fetching node metadata", ex);
         }
     }

@@ -33,7 +33,7 @@ OAuth2UserDetailsLoader<PortalUser> {
      *
      * @param defaultRole
      */
-    public GoogleOAuth2UserDetailsLoader(final String defaultRole) {
+    public GoogleOAuth2UserDetailsLoader(String defaultRole) {
         this(defaultRole, null);
     }
 
@@ -44,16 +44,16 @@ OAuth2UserDetailsLoader<PortalUser> {
      * @param defaultRole
      * @param rolesByUser
      */
-    public GoogleOAuth2UserDetailsLoader(final String defaultRole, final Map<String, List<String>> rolesByUser) {
+    public GoogleOAuth2UserDetailsLoader(String defaultRole, Map<String, List<String>> rolesByUser) {
         this.defaultRole = defaultRole;
         this.rolesByUser = new HashMap<>();
 
         if (rolesByUser != null) {
-            for (final Entry<String, List<String>> entry : rolesByUser.entrySet()) {
-                final List<String> authorityStrings = entry.getValue();
-                final List<SimpleGrantedAuthority> authorities = new ArrayList<>(
+            for (Entry<String, List<String>> entry : rolesByUser.entrySet()) {
+                List<String> authorityStrings = entry.getValue();
+                List<SimpleGrantedAuthority> authorities = new ArrayList<>(
                         authorityStrings.size());
-                for (final String authority : authorityStrings) {
+                for (String authority : authorityStrings) {
                     authorities.add(new SimpleGrantedAuthority(authority));
                 }
 
@@ -66,12 +66,12 @@ OAuth2UserDetailsLoader<PortalUser> {
      * Always returns null - users will always need to be created
      */
     @Override
-    public PortalUser getUserByUserId(final String id) {
+    public PortalUser getUserByUserId(String id) {
         return null;
     }
 
     @Override
-    public boolean isCreatable(final Map<String, Object> userInfo) {
+    public boolean isCreatable(Map<String, Object> userInfo) {
         return userInfo.containsKey("id");
     }
 
@@ -81,29 +81,29 @@ OAuth2UserDetailsLoader<PortalUser> {
      * @param user
      * @param userInfo
      */
-    protected void applyInfoToUser(final PortalUser user, final Map<String, Object> userInfo) {
+    protected void applyInfoToUser(PortalUser user, Map<String, Object> userInfo) {
         user.setEmail(userInfo.get("email").toString());
         user.setFullName(userInfo.get("name").toString());
     }
 
     @Override
-    public UserDetails createUser(final String id, final Map<String, Object> userInfo) {
-        final List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+    public UserDetails createUser(String id, Map<String, Object> userInfo) {
+        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(defaultRole));
         if (rolesByUser != null) {
-            final List<SimpleGrantedAuthority> additionalAuthorities = rolesByUser.get(id);
+            List<SimpleGrantedAuthority> additionalAuthorities = rolesByUser.get(id);
             if (additionalAuthorities != null) {
                 authorities.addAll(additionalAuthorities);
             }
         }
 
-        final PortalUser newUser = new PortalUser(id, "", authorities);
+        PortalUser newUser = new PortalUser(id, "", authorities);
         applyInfoToUser(newUser, userInfo);
         return newUser;
     }
 
     @Override
-    public UserDetails updateUser(final UserDetails userDetails,
+    public UserDetails updateUser(UserDetails userDetails,
             final Map<String, Object> userInfo) {
 
         if (userDetails instanceof PortalUser) {

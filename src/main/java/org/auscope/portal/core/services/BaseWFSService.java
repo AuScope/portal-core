@@ -44,8 +44,8 @@ public abstract class BaseWFSService {
      * @param wfsMethodMaker
      *            Will be used for generating WFS methods
      */
-    public BaseWFSService(final HttpServiceCaller httpServiceCaller,
-            final WFSGetFeatureMethodMaker wfsMethodMaker) {
+    public BaseWFSService(HttpServiceCaller httpServiceCaller,
+            WFSGetFeatureMethodMaker wfsMethodMaker) {
         this.httpServiceCaller = httpServiceCaller;
         this.wfsMethodMaker = wfsMethodMaker;
     }
@@ -71,14 +71,14 @@ public abstract class BaseWFSService {
      * @throws URISyntaxException
      * @throws Exception
      */
-    protected HttpRequestBase generateWFSRequest(final String wfsUrl, final String featureType, final String featureId,
-            final String filterString, final Integer maxFeatures, final String srs, final ResultType resultType) throws URISyntaxException {
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
+            String filterString, Integer maxFeatures, String srs, ResultType resultType) throws URISyntaxException {
         return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType, null,
                 null);
     }
 
-    protected HttpRequestBase generateWFSRequest(final String wfsUrl, final String featureType, final String featureId,
-            final String filterString, final Integer maxFeatures, final String srs, final ResultType resultType, final String outputFormat)
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
+            String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat)
                     throws URISyntaxException {
         return generateWFSRequest(wfsUrl, featureType, featureId, filterString, maxFeatures, srs, resultType,
                 outputFormat, null);
@@ -107,10 +107,10 @@ public abstract class BaseWFSService {
      * @throws URISyntaxException
      * @throws Exception
      */
-    protected HttpRequestBase generateWFSRequest(final String wfsUrl, final String featureType, final String featureId,
-            final String filterString, final Integer maxFeatures, String srs, final ResultType resultType, final String outputFormat,
-            final String startIndex) throws URISyntaxException {
-        final int max = maxFeatures == null ? 0 : maxFeatures.intValue();
+    protected HttpRequestBase generateWFSRequest(String wfsUrl, String featureType, String featureId,
+            String filterString, Integer maxFeatures, String srs, ResultType resultType, String outputFormat,
+            String startIndex) throws URISyntaxException {
+        int max = maxFeatures == null ? 0 : maxFeatures.intValue();
 
         //apply default value for srs
         if (srs == null || srs.isEmpty()) {
@@ -132,18 +132,18 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    protected WFSCountResponse getWfsFeatureCount(final HttpRequestBase method) throws PortalServiceException {
+    protected WFSCountResponse getWfsFeatureCount(HttpRequestBase method) throws PortalServiceException {
         try (InputStream responseStream = httpServiceCaller.getMethodResponseAsStream(method)) {
-            final Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
+            Document responseDoc = DOMUtil.buildDomFromStream(responseStream);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
-            final XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures",
+            XPathExpression xPath = DOMUtil.compileXPathExpr("wfs:FeatureCollection/@numberOfFeatures",
                     new WFSNamespaceContext());
-            final Node numNode = (Node) xPath.evaluate(responseDoc, XPathConstants.NODE);
-            final int numNodeValue = Integer.parseInt(numNode.getTextContent());
+            Node numNode = (Node) xPath.evaluate(responseDoc, XPathConstants.NODE);
+            int numNodeValue = Integer.parseInt(numNode.getTextContent());
 
             return new WFSCountResponse(numNodeValue);
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         } finally {
             if (method != null) {
@@ -161,60 +161,60 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    protected WFSResponse getWFSResponse(final HttpRequestBase method) throws PortalServiceException {
+    protected WFSResponse getWFSResponse(HttpRequestBase method) throws PortalServiceException {
         try {
             //Make the request and parse the response
-            final String responseString = httpServiceCaller.getMethodResponseAsString(method);
+            String responseString = httpServiceCaller.getMethodResponseAsString(method);
             OWSExceptionParser.checkForExceptionResponse(responseString);
 
             return new WFSResponse(responseString, method);
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             throw new PortalServiceException(method, ex);
         }
     }
 
-    public WFSGetCapabilitiesResponse getCapabilitiesResponse(final String wfsUrl) throws PortalServiceException {
+    public WFSGetCapabilitiesResponse getCapabilitiesResponse(String wfsUrl) throws PortalServiceException {
         HttpRequestBase method = null;
 
         try {
             //Make WFS request
             method = wfsMethodMaker.makeGetCapabilitiesMethod(wfsUrl);
-            final String responseString = httpServiceCaller.getMethodResponseAsString(method);
+            String responseString = httpServiceCaller.getMethodResponseAsString(method);
 
             //Parse resulting XML
-            final Document responseDoc = DOMUtil.buildDomFromString(responseString);
+            Document responseDoc = DOMUtil.buildDomFromString(responseString);
             OWSExceptionParser.checkForExceptionResponse(responseDoc);
 
-            final WFSGetCapabilitiesResponse parsedGetCap = new WFSGetCapabilitiesResponse();
+            WFSGetCapabilitiesResponse parsedGetCap = new WFSGetCapabilitiesResponse();
 
             //Get the output formats
-            final XPathExpression xPathGetOf = DOMUtil
+            XPathExpression xPathGetOf = DOMUtil
                     .compileXPathExpr(
                             "wfs:WFS_Capabilities/ows:OperationsMetadata/ows:Operation[@name=\"GetFeature\"]/ows:Parameter[@name=\"outputFormat\"]/ows:Value",
                             new WFSNamespaceContext());
-            final NodeList formatNodes = (NodeList) xPathGetOf.evaluate(responseDoc, XPathConstants.NODESET);
-            final String[] outputFormats = new String[formatNodes.getLength()];
+            NodeList formatNodes = (NodeList) xPathGetOf.evaluate(responseDoc, XPathConstants.NODESET);
+            String[] outputFormats = new String[formatNodes.getLength()];
             for (int i = 0; i < formatNodes.getLength(); i++) {
                 outputFormats[i] = formatNodes.item(i).getTextContent();
             }
             parsedGetCap.setGetFeatureOutputFormats(outputFormats);
 
             //Get feature type names and abstracts
-            final XPathExpression xPathGetTn = DOMUtil.compileXPathExpr(
+            XPathExpression xPathGetTn = DOMUtil.compileXPathExpr(
                     "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Name", new WFSNamespaceContext());
-            final NodeList nameNodes = (NodeList) xPathGetTn.evaluate(responseDoc, XPathConstants.NODESET);
-            final String[] typeNames = new String[nameNodes.getLength()];
-            final XPathExpression xPathGetAbstract = DOMUtil.compileXPathExpr(
+            NodeList nameNodes = (NodeList) xPathGetTn.evaluate(responseDoc, XPathConstants.NODESET);
+            String[] typeNames = new String[nameNodes.getLength()];
+            XPathExpression xPathGetAbstract = DOMUtil.compileXPathExpr(
                     "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:Abstract", new WFSNamespaceContext());
-            final NodeList abstractNodes = (NodeList) xPathGetAbstract.evaluate(responseDoc, XPathConstants.NODESET);
-            final Map<String, String> featureAbstracts = new HashMap<>();
-            final XPathExpression xPathGetMetadataURL = DOMUtil.compileXPathExpr(
+            NodeList abstractNodes = (NodeList) xPathGetAbstract.evaluate(responseDoc, XPathConstants.NODESET);
+            Map<String, String> featureAbstracts = new HashMap<>();
+            XPathExpression xPathGetMetadataURL = DOMUtil.compileXPathExpr(
                     "wfs:WFS_Capabilities/wfs:FeatureTypeList/wfs:FeatureType/wfs:MetadataURL", new WFSNamespaceContext());
-            final NodeList metadataURLNodes = (NodeList) xPathGetMetadataURL.evaluate(responseDoc, XPathConstants.NODESET);
-            final Map<String, String> metadataURLs = new HashMap<>();
+            NodeList metadataURLNodes = (NodeList) xPathGetMetadataURL.evaluate(responseDoc, XPathConstants.NODESET);
+            Map<String, String> metadataURLs = new HashMap<>();
 
             for (int i = 0; i < nameNodes.getLength(); i++) {
-                final String typeName = nameNodes.item(i).getTextContent();
+                String typeName = nameNodes.item(i).getTextContent();
                 typeNames[i] = typeName;
                 if (abstractNodes.getLength() > i && abstractNodes.item(i) != null) {
                     featureAbstracts.put(typeName, abstractNodes.item(i).getTextContent());
@@ -228,7 +228,7 @@ public abstract class BaseWFSService {
             parsedGetCap.setMetadataURLs(metadataURLs);
 
             return parsedGetCap;
-        } catch (final Exception e) {
+        } catch (Exception e) {
             throw new PortalServiceException(method, e);
         } finally {
             if (method != null) {
@@ -250,7 +250,7 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    public InputStream downloadWFS(final String serviceUrl, final String type, final String filterString, final Integer maxFeatures)
+    public InputStream downloadWFS(String serviceUrl, String type, String filterString, Integer maxFeatures)
             throws PortalServiceException {
 
         HttpRequestBase method = null;
@@ -259,7 +259,7 @@ public abstract class BaseWFSService {
             method = generateWFSRequest(serviceUrl, type, null, filterString, maxFeatures, null, ResultType.Results);
             return httpServiceCaller.getMethodResponseAsStream(method);
 
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
         }
     }
@@ -276,7 +276,7 @@ public abstract class BaseWFSService {
      * @return
      * @throws PortalServiceException
      */
-    public InputStream downloadCSV(final String serviceUrl, final String type, final String filterString, final Integer maxFeatures)
+    public InputStream downloadCSV(String serviceUrl, String type, String filterString, Integer maxFeatures)
             throws PortalServiceException {
 
         HttpRequestBase method = null;
@@ -286,7 +286,7 @@ public abstract class BaseWFSService {
                     "csv");
             return httpServiceCaller.getMethodResponseAsStream(method);
 
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             throw new PortalServiceException(method, "Error when attempting to download from:" + serviceUrl, ex);
         }
     }

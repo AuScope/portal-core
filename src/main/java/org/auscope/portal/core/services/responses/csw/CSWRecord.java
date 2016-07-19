@@ -83,7 +83,7 @@ public class CSWRecord {
      *
      * @param fileIdentifier
      */
-    public CSWRecord(final String fileIdentifier) {
+    public CSWRecord(String fileIdentifier) {
         this(null, fileIdentifier, null, null, null, null, "");
     }
 
@@ -103,9 +103,9 @@ public class CSWRecord {
      * @param cswGeographicsElements
      *            the csw geographics elements
      */
-    public CSWRecord(final String serviceName, final String fileIdentifier,
-            final String recordInfoUrl, final String dataIdentificationAbstract,
-            final AbstractCSWOnlineResource[] onlineResources, final CSWGeographicElement[] cswGeographicsElements) {
+    public CSWRecord(String serviceName, String fileIdentifier,
+            String recordInfoUrl, String dataIdentificationAbstract,
+            AbstractCSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements) {
         this(serviceName, fileIdentifier, recordInfoUrl, dataIdentificationAbstract, onlineResources, cswGeographicsElements, "");
     }
 
@@ -125,9 +125,9 @@ public class CSWRecord {
      * @param cswGeographicsElements
      *            the csw geographics elements
      */
-    public CSWRecord(final String serviceName, final String fileIdentifier,
-            final String recordInfoUrl, final String dataIdentificationAbstract,
-            final AbstractCSWOnlineResource[] onlineResources, final CSWGeographicElement[] cswGeographicsElements, final String layerName) {
+    public CSWRecord(String serviceName, String fileIdentifier,
+            String recordInfoUrl, String dataIdentificationAbstract,
+            AbstractCSWOnlineResource[] onlineResources, CSWGeographicElement[] cswGeographicsElements, String layerName) {
         this.serviceName = serviceName;
         this.fileIdentifier = fileIdentifier;
         this.recordInfoUrl = recordInfoUrl;
@@ -149,7 +149,7 @@ public class CSWRecord {
      * @param recordInfoUrl
      *            the new record info url
      */
-    public void setRecordInfoUrl(final String recordInfoUrl) {
+    public void setRecordInfoUrl(String recordInfoUrl) {
         this.recordInfoUrl = recordInfoUrl;
     }
 
@@ -168,7 +168,7 @@ public class CSWRecord {
      * @param recordInfoUrl
      *            the new record info url
      */
-    public void setNoCache(final boolean nocache) {
+    public void setNoCache(boolean nocache) {
         this.noCache = nocache;
     }
 
@@ -240,7 +240,7 @@ public class CSWRecord {
      * @param cswGeographicElements
      *            the new cSW geographic elements
      */
-    public void setCSWGeographicElements(final CSWGeographicElement[] cswGeographicElements) {
+    public void setCSWGeographicElements(CSWGeographicElement[] cswGeographicElements) {
         this.cswGeographicElements = cswGeographicElements;
     }
 
@@ -286,7 +286,7 @@ public class CSWRecord {
      * @param constraints
      *            the new constraints
      */
-    public void setConstraints(final String[] constraints) {
+    public void setConstraints(String[] constraints) {
         this.constraints = constraints;
     }
 
@@ -296,7 +296,7 @@ public class CSWRecord {
      * @param serviceName
      *            the new service name
      */
-    public void setServiceName(final String serviceName) {
+    public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
 
@@ -306,7 +306,7 @@ public class CSWRecord {
      * @param onlineResources
      *            the new online resources
      */
-    public void setOnlineResources(final AbstractCSWOnlineResource[] onlineResources) {
+    public void setOnlineResources(AbstractCSWOnlineResource[] onlineResources) {
         this.onlineResources = onlineResources;
     }
 
@@ -316,7 +316,7 @@ public class CSWRecord {
      * @param resourceProvider
      *            the new resource provider
      */
-    public void setResourceProvider(final String resourceProvider) {
+    public void setResourceProvider(String resourceProvider) {
         this.resourceProvider = resourceProvider;
     }
 
@@ -326,7 +326,7 @@ public class CSWRecord {
      * @param fileIdentifier
      *            the new file identifier
      */
-    public void setFileIdentifier(final String fileIdentifier) {
+    public void setFileIdentifier(String fileIdentifier) {
         this.fileIdentifier = fileIdentifier;
     }
 
@@ -336,7 +336,7 @@ public class CSWRecord {
      * @param parentFileIdentifier
      *            the new parent file identifier
      */
-    public void setParentIdentifier(final String parentIdentifier) {
+    public void setParentIdentifier(String parentIdentifier) {
         this.parentIdentifier = parentIdentifier;
     }
 
@@ -346,7 +346,7 @@ public class CSWRecord {
      * @param descriptiveKeywords
      *            the new descriptive keywords
      */
-    public void setDescriptiveKeywords(final String[] descriptiveKeywords) {
+    public void setDescriptiveKeywords(String[] descriptiveKeywords) {
         this.descriptiveKeywords = descriptiveKeywords;
     }
 
@@ -356,7 +356,7 @@ public class CSWRecord {
      * @param dataSetURIs
      *            the dataSetURIs to set
      */
-    public void setDataSetURIs(final String[] dataSetURIs) {
+    public void setDataSetURIs(String[] dataSetURIs) {
         this.dataSetURIs = dataSetURIs;
     }
 
@@ -366,7 +366,7 @@ public class CSWRecord {
      * @param dataIdentificationAbstract
      *            the new data identification abstract
      */
-    public void setDataIdentificationAbstract(final String dataIdentificationAbstract) {
+    public void setDataIdentificationAbstract(String dataIdentificationAbstract) {
         this.dataIdentificationAbstract = dataIdentificationAbstract;
     }
 
@@ -385,7 +385,7 @@ public class CSWRecord {
      * @param supplementalInformation
      *            the new supplemental information
      */
-    public void setSupplementalInformation(final String supplementalInformation) {
+    public void setSupplementalInformation(String supplementalInformation) {
         this.supplementalInformation = supplementalInformation;
     }
 
@@ -404,7 +404,7 @@ public class CSWRecord {
      * @param language
      *            the new language
      */
-    public void setLanguage(final String language) {
+    public void setLanguage(String language) {
         this.language = language;
     }
 
@@ -423,7 +423,7 @@ public class CSWRecord {
      * @param contact
      *            the new contact
      */
-    public void setContact(final CSWResponsibleParty contact) {
+    public void setContact(CSWResponsibleParty contact) {
         this.contact = contact;
     }
 
@@ -442,7 +442,7 @@ public class CSWRecord {
      * @param date
      *            the new date
      */
-    public void setDate(final Date date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -461,7 +461,7 @@ public class CSWRecord {
      * @param dataQualityStatement
      *            the new data quality statement
      */
-    public void setDataQualityStatement(final String dataQualityStatement) {
+    public void setDataQualityStatement(String dataQualityStatement) {
         this.dataQualityStatement = dataQualityStatement;
     }
 
@@ -471,7 +471,7 @@ public class CSWRecord {
      * @param childRecords
      *            an array of child records for this csw record
      */
-    public void addChildRecord(final CSWRecord childRecord) {
+    public void addChildRecord(CSWRecord childRecord) {
         this.childRecords.add(childRecord);
     }
 
@@ -503,7 +503,7 @@ public class CSWRecord {
     /**
      * @param layerName the layerName to set
      */
-    public void setLayerName(final String layerName) {
+    public void setLayerName(String layerName) {
         this.layerName = layerName;
     }
 
@@ -537,16 +537,16 @@ public class CSWRecord {
      *            The list of types you want to filter by
      * @return the online resources by type
      */
-    public AbstractCSWOnlineResource[] getOnlineResourcesByType(final AbstractCSWOnlineResource.OnlineResourceType... types) {
-        final List<AbstractCSWOnlineResource> result = new ArrayList<>();
+    public AbstractCSWOnlineResource[] getOnlineResourcesByType(AbstractCSWOnlineResource.OnlineResourceType... types) {
+        List<AbstractCSWOnlineResource> result = new ArrayList<>();
 
-        for (final AbstractCSWOnlineResource r : onlineResources) {
+        for (AbstractCSWOnlineResource r : onlineResources) {
             if (r == null) {
                 continue;
             }
             boolean matching = false;
-            final AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
-            for (final AbstractCSWOnlineResource.OnlineResourceType type : types) {
+            AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
+            for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
                 if (typeToMatch == type) {
                     matching = true;
                     break;
@@ -573,18 +573,18 @@ public class CSWRecord {
      * @return the online resources by type
      */
     public AbstractCSWOnlineResource[] getOnlineResourcesByType(
-            final CSWRecordsFilterVisitor visitor,
-            final AbstractCSWOnlineResource.OnlineResourceType... types) {
-        final List<AbstractCSWOnlineResource> result = new ArrayList<>();
+            CSWRecordsFilterVisitor visitor,
+            AbstractCSWOnlineResource.OnlineResourceType... types) {
+        List<AbstractCSWOnlineResource> result = new ArrayList<>();
 
-        for (final AbstractCSWOnlineResource r : onlineResources) {
+        for (AbstractCSWOnlineResource r : onlineResources) {
             if (r == null) {
                 continue;
             }
             boolean matching = false;
-            final AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r
+            AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r
                     .getType();
-            for (final AbstractCSWOnlineResource.OnlineResourceType type : types) {
+            for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
                 if (typeToMatch == type) {
                     matching = true;
                     break;
@@ -606,16 +606,16 @@ public class CSWRecord {
      *            the types
      * @return true, if successful
      */
-    public boolean containsAnyOnlineResource(final AbstractCSWOnlineResource.OnlineResourceType... types) {
+    public boolean containsAnyOnlineResource(AbstractCSWOnlineResource.OnlineResourceType... types) {
 
         if (onlineResources == null) {
             return false;
         }
 
-        for (final AbstractCSWOnlineResource r : onlineResources) {
+        for (AbstractCSWOnlineResource r : onlineResources) {
             if (r != null) {
-                final AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
-                for (final AbstractCSWOnlineResource.OnlineResourceType type : types) {
+                AbstractCSWOnlineResource.OnlineResourceType typeToMatch = r.getType();
+                for (AbstractCSWOnlineResource.OnlineResourceType type : types) {
                     if (typeToMatch == type) {
                         return true;
                     }
@@ -633,7 +633,7 @@ public class CSWRecord {
      *            the str
      * @return true if this record contains the given descriptive keyword, false otherwise.
      */
-    public boolean containsKeyword(final String str) {
+    public boolean containsKeyword(String str) {
         return Arrays.asList(descriptiveKeywords).contains(str);
     }
 
@@ -641,7 +641,7 @@ public class CSWRecord {
      * Tests equality of a CSWRecord based on file identifier
      */
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(Object o) {
         if (o instanceof CSWRecord) {
             return this.getFileIdentifier().equals(((CSWRecord) o).getFileIdentifier());
         } else {
@@ -653,7 +653,7 @@ public class CSWRecord {
         return service;
     }
 
-    public void setService(final boolean service) {
+    public void setService(boolean service) {
         this.service = service;
     }
 

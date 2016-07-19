@@ -18,13 +18,13 @@ public class JobStatusException extends Exception {
     List<Throwable> exceptions;
     List<CloudJob> cloudJobs;
 
-    public JobStatusException(final Throwable t, final CloudJob job) {
+    public JobStatusException(Throwable t, CloudJob job) {
         super(t);
         this.exceptions = Arrays.asList(t);
         this.cloudJobs = Arrays.asList(job);
     }
 
-    public JobStatusException(final Collection<Throwable> t, final Collection<CloudJob> jobs) {
+    public JobStatusException(Collection<Throwable> t, Collection<CloudJob> jobs) {
         super(t.iterator().next());
         this.exceptions = new ArrayList<>(t);
         this.cloudJobs = new ArrayList<>(jobs);
@@ -53,9 +53,9 @@ public class JobStatusException extends Exception {
      */
     @Override
     public String getMessage() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
-        for (final Throwable t : exceptions) {
+        for (Throwable t : exceptions) {
             sb.append(t.getClass().toString());
             sb.append(": [\"");
             sb.append(t.getMessage());

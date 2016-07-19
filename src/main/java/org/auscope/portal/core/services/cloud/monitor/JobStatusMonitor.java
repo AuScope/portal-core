@@ -29,17 +29,17 @@ public class JobStatusMonitor {
      * @param jobStatusReader
      * @param jobStatusChangeListeners
      */
-    public JobStatusMonitor(final JobStatusReader jobStatusReader, final JobStatusChangeListener[] jobStatusChangeListeners) {
+    public JobStatusMonitor(JobStatusReader jobStatusReader, JobStatusChangeListener[] jobStatusChangeListeners) {
         super();
         this.jobStatusReader = jobStatusReader;
         this.jobStatusChangeListeners = jobStatusChangeListeners;
     }
 
-    private void statusChanged(final CloudJob job, final String newStatus, final String oldStatus) {
-        for (final JobStatusChangeListener l : jobStatusChangeListeners) {
+    private void statusChanged(CloudJob job, String newStatus, String oldStatus) {
+        for (JobStatusChangeListener l : jobStatusChangeListeners) {
             try {
                 l.handleStatusChange(job, newStatus, oldStatus);
-            } catch (final Exception ex) {
+            } catch (Exception ex) {
                 //Simply log it if the event handler fails and move on
                 log.error("An error has occurred while handling status change event: " + ex.getMessage());
                 log.debug("Exception: ", ex);
@@ -54,13 +54,13 @@ public class JobStatusMonitor {
      *            The job to update - may have its fields modified by status change listeners
      * @throws JobStatusException
      */
-    public void statusUpdate(final CloudJob job) throws JobStatusException {
-        final String oldStatus = job.getStatus();
+    public void statusUpdate(CloudJob job) throws JobStatusException {
+        String oldStatus = job.getStatus();
         String newStatus;
 
         try {
             newStatus = jobStatusReader.getJobStatus(job);
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             throw new JobStatusException(ex, job);
         }
 
@@ -83,15 +83,15 @@ public class JobStatusMonitor {
      * @throws JobStatusException
      *             If and only if one or more job status updates fail
      */
-    public void statusUpdate(final Collection<? extends CloudJob> jobs) throws JobStatusException {
-        final List<Throwable> exceptions = new ArrayList<>();
-        final List<CloudJob> failedUpdates = new ArrayList<>();
+    public void statusUpdate(Collection<? extends CloudJob> jobs) throws JobStatusException {
+        List<Throwable> exceptions = new ArrayList<>();
+        List<CloudJob> failedUpdates = new ArrayList<>();
 
-        for (final CloudJob job : jobs) {
+        for (CloudJob job : jobs) {
             //Do all updates before throwing exceptions
             try {
                 statusUpdate(job);
-            } catch (final Throwable t) {
+            } catch (Throwable t) {
                 failedUpdates.add(job);
                 exceptions.add(t);
             }

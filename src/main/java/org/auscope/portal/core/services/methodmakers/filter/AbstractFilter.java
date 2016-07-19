@@ -31,7 +31,7 @@ public abstract class AbstractFilter implements IFilter {
      * @param type
      * @return
      */
-    protected String matchActionToString(final MatchActionType type) {
+    protected String matchActionToString(MatchActionType type) {
         switch (type) {
         case All:
             return "All";
@@ -44,11 +44,11 @@ public abstract class AbstractFilter implements IFilter {
         }
     }
 
-    protected String generateGmlObjectIdFragment(final String gmlId) {
+    protected String generateGmlObjectIdFragment(String gmlId) {
         return String.format("<ogc:GmlObjectId gml:id=\"%1$s\"/>", gmlId);
     }
 
-    protected String generateFeatureIdFragment(final String fid) {
+    protected String generateFeatureIdFragment(String fid) {
         return String.format("<ogc:FeatureId fid=\"%1$s\"/>", escapeLiteral(fid));
     }
 
@@ -63,10 +63,10 @@ public abstract class AbstractFilter implements IFilter {
      * @param propertyXpath
      * @return
      */
-    protected String generateBboxFragment(final FilterBoundingBox bbox, final String propertyXpath) {
+    protected String generateBboxFragment(FilterBoundingBox bbox, String propertyXpath) {
         //Curse the lack of String.Join
-        final StringBuilder lowerCorner = new StringBuilder();
-        final StringBuilder upperCorner = new StringBuilder();
+        StringBuilder lowerCorner = new StringBuilder();
+        StringBuilder upperCorner = new StringBuilder();
 
         //To deal with axis order issues http://geoserver.org/display/GEOSDOC/2.+WFS+-+Web+Feature+Service
         //Basically crs with urn:x-ogc:def:crs:EPSG:XXXX will need to lat/long, otherwise it will need to be long/lat
@@ -80,17 +80,17 @@ public abstract class AbstractFilter implements IFilter {
                 upperCorner.append(" ");
             }
         } else {
-            for (final double d : bbox.getLowerCornerPoints()) {
+            for (double d : bbox.getLowerCornerPoints()) {
                 lowerCorner.append(Double.toString(d));
                 lowerCorner.append(" ");
             }
-            for (final double d : bbox.getUpperCornerPoints()) {
+            for (double d : bbox.getUpperCornerPoints()) {
                 upperCorner.append(Double.toString(d));
                 upperCorner.append(" ");
             }
         }
 
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
 
         /*sb.append("<ogc:Not>");
         sb.append("<ogc:Disjoint>");
@@ -122,7 +122,7 @@ public abstract class AbstractFilter implements IFilter {
      *            the literal to escape
      * @return
      */
-    protected String escapeLiteral(final String literal) {
+    protected String escapeLiteral(String literal) {
         if (literal == null) {
             return null;
         }
@@ -143,7 +143,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against (can include wildcards)
      * @return
      */
-    protected String generatePropertyIsLikeFragment(final String propertyName, final String literal) {
+    protected String generatePropertyIsLikeFragment(String propertyName, String literal) {
         return generatePropertyIsLikeFragment(propertyName, literal, '*', '#', '!', false, null);
     }
 
@@ -160,7 +160,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against (can include wildcards)
      * @return
      */
-    protected String generatePropertyIsLikeFragment(final String propertyName, final String literal, final boolean matchCase) {
+    protected String generatePropertyIsLikeFragment(String propertyName, String literal, boolean matchCase) {
         return generatePropertyIsLikeFragment(propertyName, literal, '*', '#', '!', matchCase, null);
     }
 
@@ -183,9 +183,9 @@ public abstract class AbstractFilter implements IFilter {
      *            The escape character for wildcard characters
      * @return
      */
-    protected String generatePropertyIsLikeFragment(final String propertyName, final String literal, final char wildCard,
-            final char singleChar, final char escapeChar, final Boolean matchCase, final MatchActionType matchAction) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generatePropertyIsLikeFragment(String propertyName, String literal, char wildCard,
+            char singleChar, char escapeChar, Boolean matchCase, MatchActionType matchAction) {
+        HashMap<String, String> attributes = new HashMap<>();
         attributes.put("wildCard", Character.toString(wildCard));
         attributes.put("singleChar", Character.toString(singleChar));
         attributes.put("escapeChar", Character.toString(escapeChar));
@@ -214,7 +214,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsEqualToFragment(final String propertyName, final String literal) {
+    protected String generatePropertyIsEqualToFragment(String propertyName, String literal) {
         return generatePropertyIsEqualToFragment(propertyName, literal, false, null);
     }
 
@@ -231,7 +231,7 @@ public abstract class AbstractFilter implements IFilter {
      *            Whether the comparison should be case sensitive
      * @return
      */
-    protected String generatePropertyIsEqualToFragment(final String propertyName, final String literal, final Boolean matchCase) {
+    protected String generatePropertyIsEqualToFragment(String propertyName, String literal, Boolean matchCase) {
         return generatePropertyIsEqualToFragment(propertyName, literal, matchCase, null);
     }
 
@@ -250,9 +250,9 @@ public abstract class AbstractFilter implements IFilter {
      *            How to resolve propertyName matching multiple elements
      * @return
      */
-    protected String generatePropertyIsEqualToFragment(final String propertyName, final String literal, final Boolean matchCase,
-            final MatchActionType matchAction) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generatePropertyIsEqualToFragment(String propertyName, String literal, Boolean matchCase,
+            MatchActionType matchAction) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -277,7 +277,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsGreaterThanOrEqualTo(final String propertyName, final String literal) {
+    protected String generatePropertyIsGreaterThanOrEqualTo(String propertyName, String literal) {
         return generatePropertyIsGreaterThanOrEqualTo(propertyName, literal, false, null);
     }
 
@@ -292,9 +292,9 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsGreaterThanOrEqualTo(final String propertyName, final String literal, final Boolean matchCase,
-            final MatchActionType matchAction) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generatePropertyIsGreaterThanOrEqualTo(String propertyName, String literal, Boolean matchCase,
+            MatchActionType matchAction) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -319,7 +319,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsNotEqualTo(final String propertyName, final String literal) {
+    protected String generatePropertyIsNotEqualTo(String propertyName, String literal) {
         return generatePropertyIsNotEqualTo(propertyName, literal, false, null);
     }
 
@@ -334,9 +334,9 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsNotEqualTo(final String propertyName, final String literal, final Boolean matchCase,
-            final MatchActionType matchAction) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generatePropertyIsNotEqualTo(String propertyName, String literal, Boolean matchCase,
+            MatchActionType matchAction) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -360,7 +360,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsLessThan(final String propertyName, final String literal) {
+    protected String generatePropertyIsLessThan(String propertyName, String literal) {
         return generatePropertyIsLessThan(propertyName, literal, false, null);
     }
     /**
@@ -376,8 +376,8 @@ public abstract class AbstractFilter implements IFilter {
      *            The compare function.
      * @return
      */
-    protected String generateDatePropertyIsLessThan(final String propertyName, final Boolean matchCase, final String function) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generateDatePropertyIsLessThan(String propertyName, Boolean matchCase, String function) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -395,9 +395,9 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsLessThan(final String propertyName, final String literal, final Boolean matchCase,
-            final MatchActionType matchAction ) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generatePropertyIsLessThan(String propertyName, String literal, Boolean matchCase,
+            MatchActionType matchAction ) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -421,7 +421,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsGreaterThan(final String propertyName, final String literal ) {
+    protected String generatePropertyIsGreaterThan(String propertyName, String literal ) {
         return generatePropertyIsGreaterThan(propertyName, literal, false, null);
     }
     /**
@@ -437,8 +437,8 @@ public abstract class AbstractFilter implements IFilter {
      *            The function to compare against
      * @return
      */
-    protected String generateDatePropertyIsGreaterThan(final String propertyName, final Boolean matchCase, final String function) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generateDatePropertyIsGreaterThan(String propertyName, Boolean matchCase, String function) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -458,8 +458,8 @@ public abstract class AbstractFilter implements IFilter {
      *            The function to compare against
      * @return
      */
-    protected String generateDatePropertyIsGreaterThanOrEqualTo(final String propertyName, final Boolean matchCase, final String function) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generateDatePropertyIsGreaterThanOrEqualTo(String propertyName, Boolean matchCase, String function) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -477,9 +477,9 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsGreaterThan(final String propertyName, final String literal, final Boolean matchCase,
-            final MatchActionType matchAction ) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generatePropertyIsGreaterThan(String propertyName, String literal, Boolean matchCase,
+            MatchActionType matchAction ) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -503,7 +503,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsLessThanOrEqualTo(final String propertyName, final String literal) {
+    protected String generatePropertyIsLessThanOrEqualTo(String propertyName, String literal) {
         return generatePropertyIsLessThanOrEqualTo(propertyName, literal, false, null);
     }
 
@@ -518,9 +518,9 @@ public abstract class AbstractFilter implements IFilter {
      *            The literal to compare against
      * @return
      */
-    protected String generatePropertyIsLessThanOrEqualTo(final String propertyName, final String literal, final Boolean matchCase,
-            final MatchActionType matchAction) {
-        final HashMap<String, String> attributes = new HashMap<>();
+    protected String generatePropertyIsLessThanOrEqualTo(String propertyName, String literal, Boolean matchCase,
+            MatchActionType matchAction) {
+        HashMap<String, String> attributes = new HashMap<>();
         if (matchCase != null) {
             attributes.put("matchCase", Boolean.toString(matchCase));
         }
@@ -540,7 +540,7 @@ public abstract class AbstractFilter implements IFilter {
      *            The XPath to the property to compare
      * @return
      */
-    protected String generatePropertyIsNull(final String propertyName) {
+    protected String generatePropertyIsNull(String propertyName) {
         return generatePropertyUnaryComparisonFragment("ogc:PropertyIsNull", propertyName);
     }
 
@@ -555,7 +555,7 @@ public abstract class AbstractFilter implements IFilter {
      *            a filter fragment
      * @return
      */
-    protected String generateAndComparisonFragment(final String... fragments) {
+    protected String generateAndComparisonFragment(String... fragments) {
         return generateLogicalFragment("ogc:And", 2, null, fragments);
     }
 
@@ -570,7 +570,7 @@ public abstract class AbstractFilter implements IFilter {
      *            a filter fragment
      * @return
      */
-    protected String generateOrComparisonFragment(final String... fragments) {
+    protected String generateOrComparisonFragment(String... fragments) {
         return generateLogicalFragment("ogc:Or", 2, null, fragments);
     }
 
@@ -583,7 +583,7 @@ public abstract class AbstractFilter implements IFilter {
      *            a filter fragment
      * @return
      */
-    protected String generateNotComparisonFragment(final String fragment) {
+    protected String generateNotComparisonFragment(String fragment) {
         return generateLogicalFragment("ogc:Not", 1, null, fragment);
     }
 
@@ -593,7 +593,7 @@ public abstract class AbstractFilter implements IFilter {
      *            A single filter fragment or an And/Or/Not element
      * @return
      */
-    protected String generateFilter(final String filterContents, final Map<String, String> attributes) {
+    protected String generateFilter(String filterContents, Map<String, String> attributes) {
 
         return generateLogicalFragment("ogc:Filter", 1, attributes, filterContents);
     }
@@ -604,17 +604,17 @@ public abstract class AbstractFilter implements IFilter {
      *            A single filter fragment or an And/Or/Not element
      * @return
      */
-    protected String generateFilter(final String filterContents) {
+    protected String generateFilter(String filterContents) {
 
         return generateLogicalFragment("ogc:Filter", 1, null, filterContents);
     }
 
-    private String generateLogicalFragment(final String logicalComparison, final int minParams, final Map<String, String> attributes,
-            final String... fragments) {
-        final StringBuilder sb = new StringBuilder();
+    private String generateLogicalFragment(String logicalComparison, int minParams, Map<String, String> attributes,
+            String... fragments) {
+        StringBuilder sb = new StringBuilder();
 
         int nonEmptyFragmentCount = 0;
-        for (final String fragment : fragments) {
+        for (String fragment : fragments) {
             if (fragment != null && !fragment.isEmpty()) {
                 nonEmptyFragmentCount++;
             }
@@ -625,39 +625,39 @@ public abstract class AbstractFilter implements IFilter {
                 sb.append(String.format("<%1$s>", logicalComparison));
             } else {
                 sb.append(String.format("<%1$s ", logicalComparison));
-                for (final String attName : attributes.keySet()) {
+                for (String attName : attributes.keySet()) {
                     sb.append(String.format("%1$s=\"%2$s\" ", attName, attributes.get(attName)));
                 }
                 sb.append(">");
             }
         }
 
-        for (final String fragment : fragments) {
+        for (String fragment : fragments) {
             sb.append(fragment);
         }
 
         if (nonEmptyFragmentCount >= minParams)
             sb.append(String.format("</%1$s>", logicalComparison));
 
-        final String filter = sb.toString();
+        String filter = sb.toString();
         log.trace(filter);
 
         return filter;
     }
 
-    private String generatePropertyUnaryComparisonFragment(final String comparison, final String propertyName) {
+    private String generatePropertyUnaryComparisonFragment(String comparison, String propertyName) {
         return generatePropertyComparisonFragment(comparison, null, propertyName, null, null);
     }
 
-    private String generatePropertyComparisonFragment(final String comparison, final Map<String, String> attributes,
-            final String propertyName, final String literal,final String function) {
-        final StringBuilder sb = new StringBuilder();
+    private String generatePropertyComparisonFragment(String comparison, Map<String, String> attributes,
+            String propertyName, String literal,String function) {
+        StringBuilder sb = new StringBuilder();
 
         if (attributes == null) {
             sb.append(String.format("<%1$s>", comparison));
         } else {
             sb.append(String.format("<%1$s ", comparison));
-            for (final String attName : attributes.keySet()) {
+            for (String attName : attributes.keySet()) {
                 sb.append(String.format("%1$s=\"%2$s\" ", attName, attributes.get(attName)));
             }
             sb.append(">");
@@ -678,7 +678,7 @@ public abstract class AbstractFilter implements IFilter {
      * @param inputDate a string of date with format "yyyy-MM-dd HH:mm:ss"
      * @return ogc:function name = "dateParse" ...
      */
-    protected String generateFunctionDateParse(final String inputDate) {
+    protected String generateFunctionDateParse(String inputDate) {
 
         return String.format("<ogc:Function name=\"dateParse\"> "
                 + "<ogc:Literal>yyyy-MM-dd HH:mm:ss</ogc:Literal>"
@@ -693,7 +693,7 @@ public abstract class AbstractFilter implements IFilter {
      * @param inputDate a string of date with format "yyyy"
      * @return ogc:function name = "dateParse"
      */
-    protected String generateFunctionYearParse(final int inputYear) {
+    protected String generateFunctionYearParse(int inputYear) {
 
         return String.format("<ogc:Function name=\"dateParse\"> "
                 + "<ogc:Literal>yyyy</ogc:Literal>"

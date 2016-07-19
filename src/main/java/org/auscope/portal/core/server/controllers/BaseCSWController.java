@@ -24,7 +24,7 @@ public abstract class BaseCSWController extends BasePortalController {
     /** Used for converting data to something the view can understand */
     private ViewKnownLayerFactory viewKnownLayerFactory;
 
-    protected BaseCSWController(final ViewCSWRecordFactory viewCSWRecordFactory, final ViewKnownLayerFactory viewKnownLayerFactory) {
+    protected BaseCSWController(ViewCSWRecordFactory viewCSWRecordFactory, ViewKnownLayerFactory viewKnownLayerFactory) {
         this.viewCSWRecordFactory = viewCSWRecordFactory;
         this.viewKnownLayerFactory = viewKnownLayerFactory;
     }
@@ -36,7 +36,7 @@ public abstract class BaseCSWController extends BasePortalController {
      *            The records to transform
      * @return
      */
-    protected ModelAndView generateJSONResponseMAV(final CSWRecord[] records) {
+    protected ModelAndView generateJSONResponseMAV(CSWRecord[] records) {
         return generateJSONResponseMAV(records, null);
     }
 
@@ -49,7 +49,7 @@ public abstract class BaseCSWController extends BasePortalController {
      *            The total number of records available (which may differ from records.length)
      * @return
      */
-    protected ModelAndView generateJSONResponseMAV(final CSWRecord[] records, final Integer matchedResults) {
+    protected ModelAndView generateJSONResponseMAV(CSWRecord[] records, Integer matchedResults) {
         if (records == null) {
             return generateJSONResponseMAV(false, new CSWRecord[] {}, "");
         }
@@ -74,24 +74,24 @@ public abstract class BaseCSWController extends BasePortalController {
      *            The known layers to transform
      * @return
      */
-    protected ModelAndView generateKnownLayerResponse(final List<KnownLayerAndRecords> knownLayers) {
-        final List<ModelMap> viewKnownLayers = new ArrayList<>();
-        for (final KnownLayerAndRecords knownLayerAndRecords : knownLayers) {
-            final KnownLayer kl = knownLayerAndRecords.getKnownLayer();
+    protected ModelAndView generateKnownLayerResponse(List<KnownLayerAndRecords> knownLayers) {
+        List<ModelMap> viewKnownLayers = new ArrayList<>();
+        for (KnownLayerAndRecords knownLayerAndRecords : knownLayers) {
+            KnownLayer kl = knownLayerAndRecords.getKnownLayer();
             if (kl.isHidden()) {
                 continue; //any hidden layers will NOT be sent to the view
             }
-            final ModelMap viewKnownLayer = viewKnownLayerFactory.toView(knownLayerAndRecords.getKnownLayer());
+            ModelMap viewKnownLayer = viewKnownLayerFactory.toView(knownLayerAndRecords.getKnownLayer());
 
-            final List<ModelMap> viewMappedRecords = new ArrayList<>();
-            for (final CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
+            List<ModelMap> viewMappedRecords = new ArrayList<>();
+            for (CSWRecord rec : knownLayerAndRecords.getBelongingRecords()) {
                 if (rec != null) {
                     viewMappedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
             }
 
-            final List<ModelMap> viewRelatedRecords = new ArrayList<>();
-            for (final CSWRecord rec : knownLayerAndRecords.getRelatedRecords()) {
+            List<ModelMap> viewRelatedRecords = new ArrayList<>();
+            for (CSWRecord rec : knownLayerAndRecords.getRelatedRecords()) {
                 if (rec != null) {
                     viewRelatedRecords.add(viewCSWRecordFactory.toView(rec));
                 }
@@ -111,9 +111,9 @@ public abstract class BaseCSWController extends BasePortalController {
      * @param records
      * @return
      */
-    protected ModelAndView generateCSWRecordResponse(final List<CSWRecord> records) {
-        final List<ModelMap> viewRecords = new ArrayList<>();
-        for (final CSWRecord rec : records) {
+    protected ModelAndView generateCSWRecordResponse(List<CSWRecord> records) {
+        List<ModelMap> viewRecords = new ArrayList<>();
+        for (CSWRecord rec : records) {
             if (rec.getServiceName() == null || rec.getServiceName().isEmpty()) {
                 continue;//dont include any records with an empty name (it looks bad)
             }

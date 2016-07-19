@@ -44,7 +44,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
      * @param var
      * @throws Exception
      */
-    private void calculateIndexBounds(final NetcdfDataset ds, final AbstractViewVariable var) throws Exception {
+    private void calculateIndexBounds(NetcdfDataset ds, AbstractViewVariable var) throws Exception {
         if (var instanceof SimpleAxis) {
             calculateIndexBounds(ds, (SimpleAxis) var);
         } else if (var instanceof SimpleGrid) {
@@ -55,7 +55,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private static void calculateIndexBounds(final NetcdfDataset ds, final SimpleAxis axis) throws Exception {
+    private static void calculateIndexBounds(NetcdfDataset ds, SimpleAxis axis) throws Exception {
         //Only calculate dimension bounds if required (and possible)
         if (axis.getValueBounds() != null && axis.getDimensionBounds() == null) {
             String parentGroupName = "";
@@ -70,7 +70,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
                 rawVar = ds.findVariable("/" + parentGroupName + "/" + axis.getName());
 
             //Lookup the data
-            final Array entireBounds = rawVar.read();
+            Array entireBounds = rawVar.read();
             if (entireBounds.getSize() > Integer.MAX_VALUE)
                 throw new IllegalArgumentException("Bounds contains too many indexes");
 
@@ -96,13 +96,13 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         }
     }
 
-    private void calculateIndexBounds(final NetcdfDataset ds, final SimpleGrid grid) throws Exception {
-        for (final AbstractViewVariable var : grid.getAxes()) {
+    private void calculateIndexBounds(NetcdfDataset ds, SimpleGrid grid) throws Exception {
+        for (AbstractViewVariable var : grid.getAxes()) {
             calculateIndexBounds(ds, var);
         }
     }
 
-    private static String simpleBoundsToQuery(final SimpleBounds bounds) {
+    private static String simpleBoundsToQuery(SimpleBounds bounds) {
         return String.format("[%1$d:%2$d]", (int) bounds.getFrom(), (int) bounds.getTo());
     }
 
@@ -114,10 +114,10 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
      *            The list of constraints
      * @return
      */
-    private static String generateQueryForConstraints(final AbstractViewVariable[] vars) {
-        final StringBuilder result = new StringBuilder();
+    private static String generateQueryForConstraints(AbstractViewVariable[] vars) {
+        StringBuilder result = new StringBuilder();
 
-        for (final AbstractViewVariable var : vars) {
+        for (AbstractViewVariable var : vars) {
 
             if (result.length() > 0)
                 result.append(",");
@@ -126,13 +126,13 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
 
             //Append the body of the constraint
             if (var instanceof SimpleAxis) {
-                final SimpleAxis axis = (SimpleAxis) var;
+                SimpleAxis axis = (SimpleAxis) var;
                 result.append(simpleBoundsToQuery(axis.getDimensionBounds()));
             } else if (var instanceof SimpleGrid) {
-                final SimpleGrid grid = (SimpleGrid) var;
+                SimpleGrid grid = (SimpleGrid) var;
 
-                final StringBuilder sb = new StringBuilder();
-                for (final AbstractViewVariable child : grid.getAxes()) {
+                StringBuilder sb = new StringBuilder();
+                for (AbstractViewVariable child : grid.getAxes()) {
                     if (child instanceof SimpleAxis) {
                         sb.append(simpleBoundsToQuery(((SimpleAxis) child).getDimensionBounds()));
                     } else {
@@ -150,8 +150,8 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         return result.toString();
     }
 
-    public HttpRequestBase getMethod(final String opendapUrl, final OPeNDAPFormat format, final NetcdfDataset ds,
-            final AbstractViewVariable[] constraints) throws Exception {
+    public HttpRequestBase getMethod(String opendapUrl, OPeNDAPFormat format, NetcdfDataset ds,
+            AbstractViewVariable[] constraints) throws Exception {
 
         //Generate our base URL (which depends on the format)
         HttpRequestBase method = null;
@@ -169,11 +169,11 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         //We may only have a value constraint (when we need to know the actual index constraints)
         //We can convert from value to index by taking the minimum bounding box.
         if (constraints != null) {
-            for (final AbstractViewVariable constraint : constraints) {
+            for (AbstractViewVariable constraint : constraints) {
                 calculateIndexBounds(ds, constraint);
             }
 
-            final URIBuilder builder = new URIBuilder(method.getURI());
+            URIBuilder builder = new URIBuilder(method.getURI());
             builder.setParameters(parseQuery(URLEncoder.encode((generateQueryForConstraints(constraints)), "UTF-8"), Consts.UTF_8));
             method.setURI(builder.build());
         }
@@ -183,7 +183,7 @@ public class OPeNDAPGetDataMethodMaker extends AbstractMethodMaker {
         return method;
     }
     
-    private static List <NameValuePair> parseQuery(final String query, final Charset charset) {
+    private static List <NameValuePair> parseQuery(String query, Charset charset) {
         if (query != null && query.length() > 0) {
             return URLEncodedUtils.parse(query, charset);
         }

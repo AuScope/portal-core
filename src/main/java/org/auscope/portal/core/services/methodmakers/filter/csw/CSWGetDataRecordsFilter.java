@@ -71,7 +71,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
          *            the value to test
          * @return a SortType enum if the value was okay
          */
-        public static SortType getByStringValue(final String value) {
+        public static SortType getByStringValue(String value) {
             SortType sortType = serviceDefault;
 
             if (value != null) {
@@ -154,7 +154,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * @param spatialBounds
      *            [Optional] The spatial bounds to filter by
      */
-    public CSWGetDataRecordsFilter(final String anyText, final FilterBoundingBox spatialBounds) {
+    public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds) {
         this(anyText, spatialBounds, null, null, null, null, null, null, null);
     }
 
@@ -172,8 +172,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * @param sensor
      *            [Optional] A sensor filter that must be specified for a record to be included
      */
-    public CSWGetDataRecordsFilter(final String anyText, final FilterBoundingBox spatialBounds,
-            final String[] keywords, final String capturePlatform, final String sensor) {
+    public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds,
+            String[] keywords, String capturePlatform, String sensor) {
         this(anyText, spatialBounds, keywords, capturePlatform, sensor, null, null, null, null);
     }
 
@@ -193,9 +193,9 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * @param keywordMatchType
      *            [Optional] How the list of keywords will be matched (defaults to All)
      */
-    public CSWGetDataRecordsFilter(final String anyText, final FilterBoundingBox spatialBounds,
-            final String[] keywords, final String capturePlatform, final String sensor,
-            final KeywordMatchType keywordMatchType, final String dataIdentificationAbstract, final String title, final Type type) {
+    public CSWGetDataRecordsFilter(String anyText, FilterBoundingBox spatialBounds,
+            String[] keywords, String capturePlatform, String sensor,
+            KeywordMatchType keywordMatchType, String dataIdentificationAbstract, String title, Type type) {
         this.anyText = anyText;
         this.spatialBounds = spatialBounds;
         this.keywords = keywords;
@@ -213,7 +213,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * @return a filter fragment
      */
     private String generateFilterFragment() {
-        final List<String> fragments = new ArrayList<>();
+        List<String> fragments = new ArrayList<>();
 
         // if it is a basic search we'll use the basicSearchTerm field on some specific fields
         if (basicSearchTerm != null && !basicSearchTerm.isEmpty()) {
@@ -275,8 +275,8 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             }
 
             if (keywords != null && keywords.length > 0) {
-                final List<String> keywordFragments = new ArrayList<>();
-                for (final String keyword : keywords) {
+                List<String> keywordFragments = new ArrayList<>();
+                for (String keyword : keywords) {
                     if (keyword != null && !keyword.isEmpty()) {
                         // keywordFragments.add(this.generatePropertyIsEqualToFragment("gmd:identificationInfo/gmd:MD_DataIdentification/gmd:descriptiveKeywords/gmd:MD_Keywords/gmd:keyword/gco:CharacterString",
                         // keyword));
@@ -320,7 +320,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
             }
         }
 
-        final String fragment = this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
+        String fragment = this.generateAndComparisonFragment(fragments.toArray(new String[fragments.size()]));
 
         log.trace(fragment);
 
@@ -338,7 +338,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         // unsuitable here
         // as it contains no methods to iterate the contained list of
         // Namespaces
-        final HashMap<String, String> namespaces = new HashMap<>();
+        HashMap<String, String> namespaces = new HashMap<>();
         namespaces.put("xmlns:ogc", "http://www.opengis.net/ogc");
         return this.generateFilter(this.generateFilterFragment(), namespaces);
     }
@@ -351,7 +351,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
      * @return the filter string bounding box
      */
     @Override
-    public String getFilterStringBoundingBox(final FilterBoundingBox bbox) {
+    public String getFilterStringBoundingBox(FilterBoundingBox bbox) {
         throw new NotImplementedException();
     }
 
@@ -452,12 +452,12 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     }
 
     /** Sets the title. */
-    public void setTitle(final String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
     /** Sets the abstract. */
-    public void setAbstract(final String abstract_) {
+    public void setAbstract(String abstract_) {
         this.abstract_ = abstract_;
     }
 
@@ -471,7 +471,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /**
      * @param titleOrAbstract the titleOrAbstract to set
      */
-    public void setTitleOrAbstract(final String titleOrAbstract) {
+    public void setTitleOrAbstract(String titleOrAbstract) {
         this.titleOrAbstract = titleOrAbstract;
     }
 
@@ -485,7 +485,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /**
      * @param authorSurname the authorSurname to set
      */
-    public void setAuthorSurname(final String authorSurname) {
+    public void setAuthorSurname(String authorSurname) {
         this.authorSurname = authorSurname;
     }
 
@@ -499,7 +499,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /**
      * @param publicationDateFrom the publicationDateFrom to set
      */
-    public void setPublicationDateFrom(final DateTime publicationDateFrom) {
+    public void setPublicationDateFrom(DateTime publicationDateFrom) {
         this.publicationDateFrom = publicationDateFrom;
     }
 
@@ -513,83 +513,83 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
     /**
      * @param publicationDateTo the publicationDateTo to set
      */
-    public void setPublicationDateTo(final DateTime publicationDateTo) {
+    public void setPublicationDateTo(DateTime publicationDateTo) {
         this.publicationDateTo = publicationDateTo;
     }
 
     /** Sets metadataChangeDateFrom. */
-    public void setMetadataChangeDateFrom(final DateTime metadataChangeDateFrom) {
+    public void setMetadataChangeDateFrom(DateTime metadataChangeDateFrom) {
         this.metadataChangeDateFrom = metadataChangeDateFrom;
     }
 
     /** Sets metadataChangeDateTo. */
-    public void setMetadataChangeDateTo(final DateTime metadataChangeDateTo) {
+    public void setMetadataChangeDateTo(DateTime metadataChangeDateTo) {
         this.metadataChangeDateTo = metadataChangeDateTo;
     }
 
     /** Sets temporalExtentFrom. */
-    public void setTemporalExtentFrom(final DateTime temporalExtentFrom) {
+    public void setTemporalExtentFrom(DateTime temporalExtentFrom) {
         this.temporalExtentFrom = temporalExtentFrom;
     }
 
     /** Sets temporalExtentTo. */
-    public void setTemporalExtentTo(final DateTime temporalExtentTo) {
+    public void setTemporalExtentTo(DateTime temporalExtentTo) {
         this.temporalExtentTo = temporalExtentTo;
     }
 
     /**
      * @param anyText the anyText to set
      */
-    public void setAnyText(final String anyText) {
+    public void setAnyText(String anyText) {
         this.anyText = anyText;
     }
 
     /**
      * @param abstract_ the abstract_ to set
      */
-    public void setAbstract_(final String abstract_) {
+    public void setAbstract_(String abstract_) {
         this.abstract_ = abstract_;
     }
 
     /**
      * @param spatialBounds the spatialBounds to set
      */
-    public void setSpatialBounds(final FilterBoundingBox spatialBounds) {
+    public void setSpatialBounds(FilterBoundingBox spatialBounds) {
         this.spatialBounds = spatialBounds;
     }
 
     /**
      * @param keywords the keywords to set
      */
-    public void setKeywords(final String[] keywords) {
+    public void setKeywords(String[] keywords) {
         this.keywords = keywords;
     }
 
     /**
      * @param capturePlatform the capturePlatform to set
      */
-    public void setCapturePlatform(final String capturePlatform) {
+    public void setCapturePlatform(String capturePlatform) {
         this.capturePlatform = capturePlatform;
     }
 
     /**
      * @param sensor the sensor to set
      */
-    public void setSensor(final String sensor) {
+    public void setSensor(String sensor) {
         this.sensor = sensor;
     }
 
     /**
      * @param keywordMatchType the keywordMatchType to set
      */
-    public void setKeywordMatchType(final KeywordMatchType keywordMatchType) {
+    public void setKeywordMatchType(KeywordMatchType keywordMatchType) {
         this.keywordMatchType = keywordMatchType;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(final Type type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
@@ -597,7 +597,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         return sortType;
     }
 
-    public void setSortType(final SortType sortType) {
+    public void setSortType(SortType sortType) {
         this.sortType = sortType;
     }
 
@@ -605,7 +605,7 @@ public class CSWGetDataRecordsFilter extends AbstractFilter {
         return basicSearchTerm;
     }
 
-    public void setBasicSearchTerm(final String basicSearchTerm) {
+    public void setBasicSearchTerm(String basicSearchTerm) {
         this.basicSearchTerm = basicSearchTerm;
     }
 }

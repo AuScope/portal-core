@@ -5,14 +5,14 @@ public class CustomRegistry implements CustomRegistryInt {
     private String title, serviceUrl;
     private String recordInformationUrl;
 
-    public CustomRegistry(final String id, final String title, final String serviceUrl, final String recordInformationUrl) {
+    public CustomRegistry(String id, String title, String serviceUrl, String recordInformationUrl) {
         this.id = id;
         this.title = title;
         this.serviceUrl = serviceUrl;
         this.recordInformationUrl = recordInformationUrl;
     }
 
-    public CustomRegistry(final String[] registryInfo) {
+    public CustomRegistry(String[] registryInfo) {
         this(registryInfo[0], registryInfo[1], registryInfo[2], registryInfo[3]);
     }
 
@@ -40,7 +40,7 @@ public class CustomRegistry implements CustomRegistryInt {
      *            the recordInformationUrl to set
      */
     @Override
-    public void setRecordInformationUrl(final String recordInformationUrl) {
+    public void setRecordInformationUrl(String recordInformationUrl) {
         this.recordInformationUrl = recordInformationUrl;
     }
 
@@ -57,7 +57,7 @@ public class CustomRegistry implements CustomRegistryInt {
      *            the serviceUrl to set
      */
     @Override
-    public void setServiceUrl(final String serviceUrl) {
+    public void setServiceUrl(String serviceUrl) {
         this.serviceUrl = serviceUrl;
     }
 
@@ -74,7 +74,7 @@ public class CustomRegistry implements CustomRegistryInt {
      *            the title to set
      */
     @Override
-    public void setTitle(final String title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -91,7 +91,7 @@ public class CustomRegistry implements CustomRegistryInt {
      *            the id to set
      */
     @Override
-    public void setId(final String id) {
+    public void setId(String id) {
         this.id = id;
     }
 }
