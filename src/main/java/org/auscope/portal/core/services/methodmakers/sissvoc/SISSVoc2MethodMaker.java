@@ -51,7 +51,7 @@ public class SISSVoc2MethodMaker extends AbstractMethodMaker {
         return method;
     }
 
-    private static List <NameValuePair> parseQuery(final String query) {
+    private static List <NameValuePair> parseQuery(String query) {
         if (query != null && query.length() > 0) {
             return URLEncodedUtils.parse(query, Consts.UTF_8);
         }

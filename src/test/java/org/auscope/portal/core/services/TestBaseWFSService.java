@@ -45,10 +45,10 @@ public class TestBaseWFSService extends PortalTestClass {
     public void testGenerateFilterRequest() throws Exception {
         final String wfsUrl = "http://example.org/wfs";
         final String featureType = "my:type";
-        final String featureId = null;
+        String featureId = null;
         final String filterString = "filterString";
         final Integer maxFeatures = 200;
-        final String srs = null;
+        String srs = null;
         final ResultType resultType = ResultType.Results;
 
         context.checking(new Expectations() {
@@ -67,10 +67,10 @@ public class TestBaseWFSService extends PortalTestClass {
     public void testGenerateFilterRequestWithFormatAndIndex() throws Exception {
         final String wfsUrl = "http://example.org/wfs";
         final String featureType = "my:type";
-        final String featureId = null;
+        String featureId = null;
         final String filterString = "filterString";
         final Integer maxFeatures = 200;
-        final String srs = null;
+        String srs = null;
         final ResultType resultType = ResultType.Results;
         final String outputFormat = "of";
         final String startIndex = "100";
@@ -92,10 +92,10 @@ public class TestBaseWFSService extends PortalTestClass {
         final String wfsUrl = "http://example.org/wfs";
         final String featureType = "my:type";
         final String featureId = "fid";
-        final String filterString = null;
-        final Integer maxFeatures = 200;
+        String filterString = null;
+        Integer maxFeatures = 200;
         final String srs = "my:srs";
-        final ResultType resultType = ResultType.Results;
+        ResultType resultType = ResultType.Results;
 
         context.checking(new Expectations() {
             {
@@ -110,7 +110,7 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test
     public void testGetFeatureCount() throws Exception {
-        try (final HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
+        try (HttpClientInputStream responseStream = new HttpClientInputStream(ResourceUtil
                 .loadResourceAsStream("org/auscope/portal/core/test/responses/wfs/GetWFSFeatureCount.xml"), null)) {
             context.checking(new Expectations() {
                 {
@@ -141,7 +141,7 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test(expected = PortalServiceException.class)
     public void testGetFeatureCountOWSError() throws Exception {
-        try (final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
+        try (InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
 
             context.checking(new Expectations() {
                 {
@@ -157,7 +157,7 @@ public class TestBaseWFSService extends PortalTestClass {
 
     @Test(expected = PortalServiceException.class)
     public void testOwsError() throws Exception {
-        try (final InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
+        try (InputStream responseStream = getClass().getResourceAsStream("/OWSExceptionSample1.xml")) {
             context.checking(new Expectations() {
                 {
                     oneOf(mockHttpServiceCaller).getMethodResponseAsString(mockMethod);

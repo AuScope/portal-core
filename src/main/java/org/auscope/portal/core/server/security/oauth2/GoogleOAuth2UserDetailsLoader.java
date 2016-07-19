@@ -104,7 +104,7 @@ OAuth2UserDetailsLoader<PortalUser> {
 
     @Override
     public UserDetails updateUser(UserDetails userDetails,
-            final Map<String, Object> userInfo) {
+            Map<String, Object> userInfo) {
 
         if (userDetails instanceof PortalUser) {
             applyInfoToUser((PortalUser) userDetails, userInfo);

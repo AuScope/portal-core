@@ -36,17 +36,17 @@ public class OWSExceptionParser {
         return new NamespaceContext() {
 
             @Override
-            public Iterator getPrefixes(final String namespaceURI) {
+            public Iterator getPrefixes(String namespaceURI) {
                 return null; // not used
             }
 
             @Override
-            public String getPrefix(final String namespaceURI) {
+            public String getPrefix(String namespaceURI) {
                 return null; // not used
             }
 
             @Override
-            public String getNamespaceURI(final String prefix) {
+            public String getNamespaceURI(String prefix) {
                 if (prefix.equals("ows")) {
                     return "http://www.opengis.net/ows";
                 } else {
@@ -66,11 +66,11 @@ public class OWSExceptionParser {
      * @throws OWSException
      *             the oWS exception
      */
-    public static void checkForExceptionResponse(final String xmlString) throws OWSException {
+    public static void checkForExceptionResponse(String xmlString) throws OWSException {
         Document doc = null;
         try {
             doc = DOMUtil.buildDomFromString(xmlString);
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             //This should *hopefully* never occur
             log.error("Error whilst attempting to parse xmlString for errors", ex);
             throw new OWSException("Unable to parse xmlString", ex);
@@ -89,26 +89,26 @@ public class OWSExceptionParser {
      * @throws OWSException
      *             the oWS exception
      */
-    public static void checkForExceptionResponse(final Document doc) throws OWSException {
-        final NamespaceContext nc = createNamespaceContext();
+    public static void checkForExceptionResponse(Document doc) throws OWSException {
+        NamespaceContext nc = createNamespaceContext();
 
         try {
             //Check for an exception response
-            final NodeList exceptionNodes = (NodeList) DOMUtil.compileXPathExpr("/ows:ExceptionReport/ows:Exception", nc)
+            NodeList exceptionNodes = (NodeList) DOMUtil.compileXPathExpr("/ows:ExceptionReport/ows:Exception", nc)
                     .evaluate(doc, XPathConstants.NODESET);
             if (exceptionNodes.getLength() > 0) {
-                final Node exceptionNode = exceptionNodes.item(0);
+                Node exceptionNode = exceptionNodes.item(0);
 
-                final Node exceptionTextNode = (Node) DOMUtil.compileXPathExpr("ows:ExceptionText", nc).evaluate(
+                Node exceptionTextNode = (Node) DOMUtil.compileXPathExpr("ows:ExceptionText", nc).evaluate(
                         exceptionNode, XPathConstants.NODE);
-                final String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]"
+                String exceptionText = (exceptionTextNode == null) ? "[Cannot extract error message]"
                         : exceptionTextNode.getTextContent();
-                final String exceptionCode = (String) DOMUtil.compileXPathExpr("@exceptionCode", nc).evaluate(exceptionNode,
+                String exceptionCode = (String) DOMUtil.compileXPathExpr("@exceptionCode", nc).evaluate(exceptionNode,
                         XPathConstants.STRING);
 
                 throw new OWSException(String.format("Code='%1$s' Message='%2$s'", exceptionCode, exceptionText));
             }
-        } catch (final XPathExpressionException ex) {
+        } catch (XPathExpressionException ex) {
             //This should *hopefully* never occur
             log.error("Error whilst attempting to check for errors", ex);
         }

@@ -103,7 +103,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      *
      * @param id
      */
-    public void setId(final Integer id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -223,7 +223,7 @@ public class CloudJob implements Serializable, StagedFileOwner, CloudFileOwner {
      * @throws ParseException
      */
     public void setSubmitDate(String submitDate) throws ParseException {
-        final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         this.setSubmitDate(sdf.parse(submitDate));
     }
 

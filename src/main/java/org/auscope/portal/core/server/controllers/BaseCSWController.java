@@ -54,13 +54,13 @@ public abstract class BaseCSWController extends BasePortalController {
             return generateJSONResponseMAV(false, new CSWRecord[] {}, "");
         }
 
-        final List<ModelMap> recordRepresentations = new ArrayList<>();
+        List<ModelMap> recordRepresentations = new ArrayList<>();
 
         try {
-            for (final CSWRecord record : records) {
+            for (CSWRecord record : records) {
                 recordRepresentations.add(viewCSWRecordFactory.toView(record));
             }
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             log.error("Error converting data records", ex);
             return generateJSONResponseMAV(false, new CSWRecord[] {}, 0, "Error converting data records");
         }

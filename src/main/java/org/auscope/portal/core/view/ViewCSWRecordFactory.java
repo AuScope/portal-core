@@ -28,8 +28,8 @@ public class ViewCSWRecordFactory {
      * @param record
      * @return
      */
-    public ModelMap toView(final CSWRecord record) {
-        final ModelMap obj = new ModelMap();
+    public ModelMap toView(CSWRecord record) {
+        ModelMap obj = new ModelMap();
 
         obj.put("name", record.getServiceName());
         obj.put("resourceProvider", record.getResourceProvider());
@@ -39,7 +39,7 @@ public class ViewCSWRecordFactory {
         obj.put("noCache", record.getNoCache());
         obj.put("service", record.isService());
 
-        final CSWResponsibleParty rp = record.getContact();
+        CSWResponsibleParty rp = record.getContact();
         String adminArea = null;
         String contactOrg = "Unknown";
         if (rp != null) {
@@ -51,9 +51,9 @@ public class ViewCSWRecordFactory {
         obj.put("adminArea", adminArea);
         obj.put("contactOrg", contactOrg);
 
-        final List<Map<String, Object>> onlineResources = new ArrayList<>();
+        List<Map<String, Object>> onlineResources = new ArrayList<>();
         if (record.getOnlineResources() != null) {
-            for (final AbstractCSWOnlineResource res : record.getOnlineResources()) {
+            for (AbstractCSWOnlineResource res : record.getOnlineResources()) {
                 if (res.getLinkage() != null) {
                     onlineResources.add(this.toView(res));
                 }
@@ -61,41 +61,41 @@ public class ViewCSWRecordFactory {
         }
         obj.put("onlineResources", onlineResources);
 
-        final List<Map<String, Object>> geographicElements = new ArrayList<>();
+        List<Map<String, Object>> geographicElements = new ArrayList<>();
         if (record.getCSWGeographicElements() != null) {
-            for (final CSWGeographicElement geo : record.getCSWGeographicElements()) {
+            for (CSWGeographicElement geo : record.getCSWGeographicElements()) {
                 geographicElements.add(this.toView(geo));
             }
         }
         obj.put("geographicElements", geographicElements);
 
-        final List<String> descriptiveKeywords = new ArrayList<>();
+        List<String> descriptiveKeywords = new ArrayList<>();
         if (record.getDescriptiveKeywords() != null) {
-            for (final String s : record.getDescriptiveKeywords()) {
+            for (String s : record.getDescriptiveKeywords()) {
                 descriptiveKeywords.add(s);
             }
         }
         obj.put("descriptiveKeywords", descriptiveKeywords);
 
-        final List<String> datasetURIs = new ArrayList<>();
+        List<String> datasetURIs = new ArrayList<>();
         if (record.getDataSetURIs() != null) {
-            for (final String s : record.getDataSetURIs()) {
+            for (String s : record.getDataSetURIs()) {
                 datasetURIs.add(s);
             }
         }
         obj.put("datasetURIs", datasetURIs);
 
-        final List<String> constraints = new ArrayList<>();
+        List<String> constraints = new ArrayList<>();
         if (record.getConstraints() != null) {
-            for (final String s : record.getConstraints()) {
+            for (String s : record.getConstraints()) {
                 constraints.add(s);
             }
         }
         obj.put("constraints", constraints);
 
-        final List<Map<String, Object>> childRecords = new ArrayList<>();
+        List<Map<String, Object>> childRecords = new ArrayList<>();
         if (record.hasChildRecords()) {
-            for (final CSWRecord childRecord : record.getChildRecords()) {
+            for (CSWRecord childRecord : record.getChildRecords()) {
                 childRecords.add(this.toView(childRecord));
             }
         }
@@ -103,7 +103,7 @@ public class ViewCSWRecordFactory {
 
         String dateString = "";
         if (record.getDate() != null) {
-            final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss zzz");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss zzz");
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
             dateString = df.format(record.getDate());
         }
@@ -118,8 +118,8 @@ public class ViewCSWRecordFactory {
      * @param res
      * @return
      */
-    public ModelMap toView(final AbstractCSWOnlineResource res) {
-        final ModelMap obj = new ModelMap();
+    public ModelMap toView(AbstractCSWOnlineResource res) {
+        ModelMap obj = new ModelMap();
 
         obj.put("url", res.getLinkage().toString());
         obj.put("type", res.getType().name());
@@ -137,12 +137,12 @@ public class ViewCSWRecordFactory {
      * @param el
      * @return
      */
-    public ModelMap toView(final CSWGeographicElement el) {
-        final ModelMap obj = new ModelMap();
+    public ModelMap toView(CSWGeographicElement el) {
+        ModelMap obj = new ModelMap();
 
         if (el instanceof CSWGeographicBoundingBox) {
 
-            final CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox) el;
+            CSWGeographicBoundingBox bbox = (CSWGeographicBoundingBox) el;
             obj.put("type", "bbox");
             obj.put("eastBoundLongitude", bbox.getEastBoundLongitude());
             obj.put("westBoundLongitude", bbox.getWestBoundLongitude());

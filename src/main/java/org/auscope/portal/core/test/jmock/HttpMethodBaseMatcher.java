@@ -46,7 +46,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
      * @param postBody
      *            If not null (and a PostMethod) the pattern of the body of the post to match for
      */
-    public HttpMethodBaseMatcher(final HttpMethodType type, final Pattern url, final Pattern postBody) {
+    public HttpMethodBaseMatcher(HttpMethodType type, Pattern url, Pattern postBody) {
         super();
         this.type = type;
         this.urlPattern = url;
@@ -63,7 +63,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
      * @param postBody
      *            If not null (and a PostMethod) the body of the post to match for
      */
-    public HttpMethodBaseMatcher(final HttpMethodType type, final String url, final String postBody) {
+    public HttpMethodBaseMatcher(HttpMethodType type, String url, String postBody) {
         super();
         this.type = type;
         this.url = url;
@@ -71,13 +71,13 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
     }
 
     @Override
-    public void describeTo(final Description description) {
+    public void describeTo(Description description) {
         description.appendText(String.format("a HttpMethodBase with type='%1$s' url='%2$s' postBody='%3$s'", type, url,
                 postBody));
     }
 
     @Override
-    public boolean matchesSafely(final HttpRequestBase method) {
+    public boolean matchesSafely(HttpRequestBase method) {
         boolean matches = true;
         if (type != null) {
             switch (type) {
@@ -95,7 +95,7 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
         if (url != null) {
             try {
                 matches &= url.equals(method.getURI().toString());
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 Assert.fail();
             }
         }
@@ -103,19 +103,19 @@ public class HttpMethodBaseMatcher extends TypeSafeMatcher<HttpRequestBase> {
         if (urlPattern != null) {
             try {
                 matches &= urlPattern.matcher(method.getURI().toString()).matches();
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 Assert.fail();
             }
         }
 
         if (method instanceof HttpPost) {
-            final HttpPost postMethod = (HttpPost) method;
-            final HttpEntity entity = postMethod.getEntity();
+            HttpPost postMethod = (HttpPost) method;
+            HttpEntity entity = postMethod.getEntity();
             if (entity instanceof StringEntity) {
                 String content = "";
                 try {
                     content = IOUtils.toString(((StringEntity) entity).getContent());
-                } catch (final IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                     return false;
                 }

@@ -64,36 +64,36 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      * @throws XPathExpressionException
      *             the xpath expression exception
      */
-    public GetCapabilitiesWMSLayer_1_1_1(final Node node) throws XPathExpressionException {
-        final XPath path = XPathFactory.newInstance().newXPath();
+    public GetCapabilitiesWMSLayer_1_1_1(Node node) throws XPathExpressionException {
+        XPath path = XPathFactory.newInstance().newXPath();
 
         this.node = node;
 
-        final String layerNameExpression = "Name";
+        String layerNameExpression = "Name";
         Node tempNode = (Node) path.evaluate(layerNameExpression, node, XPathConstants.NODE);
         name = tempNode != null ? tempNode.getTextContent() : "";
 
-        final String layerTitleExpression = "Title";
+        String layerTitleExpression = "Title";
         tempNode = (Node) path.evaluate(layerTitleExpression, node, XPathConstants.NODE);
         title = tempNode != null ? tempNode.getTextContent() : "";
 
-        final String layerAbstractExpression = "Abstract";
+        String layerAbstractExpression = "Abstract";
         tempNode = (Node) path.evaluate(layerAbstractExpression, node, XPathConstants.NODE);
         description = tempNode != null ? tempNode.getTextContent() : "";
 
-        final String layerLegendURLExpression = "Style/LegendURL/OnlineResource";
+        String layerLegendURLExpression = "Style/LegendURL/OnlineResource";
         tempNode = (Node) path.evaluate(layerLegendURLExpression, node, XPathConstants.NODE);
         legendURL = tempNode != null ? tempNode.getAttributes().getNamedItem("xlink:href").getNodeValue() : "";
 
         metadataURL = getMetadataURL();
 
-        final String latLonBoundingBox = "LatLonBoundingBox";
+        String latLonBoundingBox = "LatLonBoundingBox";
         tempNode = (Node) path.evaluate(latLonBoundingBox, node, XPathConstants.NODE);
         if (tempNode != null) {
-            final String minx = (String) path.evaluate("@minx", tempNode, XPathConstants.STRING);
-            final String maxx = (String) path.evaluate("@maxx", tempNode, XPathConstants.STRING);
-            final String miny = (String) path.evaluate("@miny", tempNode, XPathConstants.STRING);
-            final String maxy = (String) path.evaluate("@maxy", tempNode, XPathConstants.STRING);
+            String minx = (String) path.evaluate("@minx", tempNode, XPathConstants.STRING);
+            String maxx = (String) path.evaluate("@maxx", tempNode, XPathConstants.STRING);
+            String miny = (String) path.evaluate("@miny", tempNode, XPathConstants.STRING);
+            String maxy = (String) path.evaluate("@maxy", tempNode, XPathConstants.STRING);
 
             //Attempt to parse our bounding box
             try {
@@ -101,19 +101,19 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
                         Double.parseDouble(maxx),
                         Double.parseDouble(miny),
                         Double.parseDouble(maxy));
-            } catch (final NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 log.debug("Unable to parse the bounding box.");
             }
 
         }
 
-        final String layerSRSExpression = "SRS";
-        final NodeList nodes = (NodeList) path.evaluate(layerSRSExpression,
+        String layerSRSExpression = "SRS";
+        NodeList nodes = (NodeList) path.evaluate(layerSRSExpression,
                 node,
                 XPathConstants.NODESET);
         childLayerSRS = new String[nodes.getLength()];
         for (int i = 0; i < nodes.getLength(); i++) {
-            final Node childSRSNode = nodes.item(i);
+            Node childSRSNode = nodes.item(i);
             childLayerSRS[i] = childSRSNode != null ? childSRSNode.getTextContent() : "";
         }
     }
@@ -219,9 +219,9 @@ public class GetCapabilitiesWMSLayer_1_1_1 implements GetCapabilitiesWMSLayerRec
      */
     @Override
     public String toString() {
-        final String seperator = ",";
+        String seperator = ",";
 
-        final StringBuffer buf = new StringBuffer();
+        StringBuffer buf = new StringBuffer();
         buf.append(name);
         buf.append(seperator);
         buf.append(title);

@@ -73,10 +73,10 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      * @throws ParserConfigurationException
      * @throws SAXException
      */
-    public GetCapabilitiesRecord_1_1_1(final InputStream inXml) throws IOException, ParserConfigurationException,
+    public GetCapabilitiesRecord_1_1_1(InputStream inXml) throws IOException, ParserConfigurationException,
     SAXException {
         try {
-            final Document doc = DOMUtil.buildDomFromStream(inXml);
+            Document doc = DOMUtil.buildDomFromStream(inXml);
             this.serviceType = getService(doc);
             this.organisation = getContactOrganisation(doc);
             this.getMapUrl = getGetMapUrl(doc);
@@ -89,16 +89,16 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
                 log.debug("Adding non WMS's are not yet implemented");
             }
 
-        } catch (final SAXException e) {
+        } catch (SAXException e) {
             log.error("Parsing error: " + e.getMessage());
             throw e;
-        } catch (final IOException e) {
+        } catch (IOException e) {
             log.error("IO error: " + e.getMessage());
             throw e;
-        } catch (final ParserConfigurationException e) {
+        } catch (ParserConfigurationException e) {
             log.error("Parser Config Error: " + e.getMessage());
             throw e;
-        } catch (final NullPointerException e) {
+        } catch (NullPointerException e) {
             // When parsing fails, it throws NullPointerException because 'doc' is null
             // Throw a SAXException in its place
             log.error("NullPointerException");
@@ -209,17 +209,17 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      *            the doc
      * @return serviceUrlString the service endpoint
      */
-    private String getService(final Document doc) {
+    private String getService(Document doc) {
         String serviceUrlString = "";
         try {
-            final int elemCount = Integer.parseInt((String) DOMUtil.compileXPathExpr("count(/WMT_MS_Capabilities)").evaluate(
+            int elemCount = Integer.parseInt((String) DOMUtil.compileXPathExpr("count(/WMT_MS_Capabilities)").evaluate(
                     doc, XPathConstants.STRING));
 
             if (elemCount != 0) {
                 serviceUrlString = "wms";
             }
 
-        } catch (final XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             log.error("GetCapabilities get service xml parsing error: " + e.getMessage());
         }
         return serviceUrlString;
@@ -234,15 +234,15 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      *            the doc
      * @return contactOrganisation the contact organisation
      */
-    private String getContactOrganisation(final Document doc) {
+    private String getContactOrganisation(Document doc) {
         String contactOrganisation = "";
         try {
-            final Node tempNode = (Node) DOMUtil.compileXPathExpr(EXTRACTORGANISATIONEXPRESSION).evaluate(doc,
+            Node tempNode = (Node) DOMUtil.compileXPathExpr(EXTRACTORGANISATIONEXPRESSION).evaluate(doc,
                     XPathConstants.NODE);
 
             contactOrganisation = tempNode != null ? tempNode.getTextContent() : "";
 
-        } catch (final XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             log.error("GetCapabilities get organisation xml parsing error: " + e.getMessage());
         }
         return contactOrganisation;
@@ -257,14 +257,14 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      *            the doc
      * @return mapUrl the map url String
      */
-    private String getGetMapUrl(final Document doc) {
+    private String getGetMapUrl(Document doc) {
         String mapUrl = "";
         try {
-            final Element elem = (Element) DOMUtil.compileXPathExpr(EXTRACTURLEXPRESSION).evaluate(doc, XPathConstants.NODE);
+            Element elem = (Element) DOMUtil.compileXPathExpr(EXTRACTURLEXPRESSION).evaluate(doc, XPathConstants.NODE);
 
             mapUrl = elem.getAttribute("xlink:href");
 
-        } catch (final XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             log.error("GetCapabilities GetMapUrl xml parsing error: " + e.getMessage());
         }
         return mapUrl;
@@ -279,16 +279,16 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      *            the document
      * @return the map url String
      */
-    private String getMetadataUrl(final Document doc) {
+    private String getMetadataUrl(Document doc) {
         String metadataUrlStr = "";
         try {
-            final Element elem = (Element) DOMUtil.compileXPathExpr(METADATAURLREXPRESSION).evaluate(doc, XPathConstants.NODE);
+            Element elem = (Element) DOMUtil.compileXPathExpr(METADATAURLREXPRESSION).evaluate(doc, XPathConstants.NODE);
 
             if (elem != null) {
                 metadataUrlStr = elem.getAttribute("xlink:href");
             }
 
-        } catch (final XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             log.error("GetCapabilities MetadataURL xml parsing error: " + e.getMessage());
         }
         return metadataUrlStr;
@@ -303,11 +303,11 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      *            the doc
      * @return the wMS layers
      */
-    private ArrayList<GetCapabilitiesWMSLayerRecord> getWMSLayers(final Document doc) {
-        final ArrayList<GetCapabilitiesWMSLayerRecord> mylayerList = new ArrayList<>();
+    private ArrayList<GetCapabilitiesWMSLayerRecord> getWMSLayers(Document doc) {
+        ArrayList<GetCapabilitiesWMSLayerRecord> mylayerList = new ArrayList<>();
         try {
 
-            final NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYEREXPRESSION).evaluate(doc,
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYEREXPRESSION).evaluate(doc,
                     XPathConstants.NODESET);
 
             log.debug("Number of layers retrieved from GeoCapabilities: " + nodes.getLength());
@@ -317,7 +317,7 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
                 log.debug("WMS layer " + (i + 1) + " : " + mylayerList.get(i).toString());
             }
 
-        } catch (final XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             log.error("GetCapabilities - getWMSLayers xml parsing error: " + e.getMessage());
         }
 
@@ -333,18 +333,18 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      *            the doc
      * @return the wMS layer srs
      */
-    private String[] getWMSLayerSRS(final Document doc) {
+    private String[] getWMSLayerSRS(Document doc) {
         String[] layerSRSList = null;
         try {
-            final NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYERSRS).evaluate(doc, XPathConstants.NODESET);
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTLAYERSRS).evaluate(doc, XPathConstants.NODESET);
 
             layerSRSList = new String[nodes.getLength()];
 
             for (int i = 0; i < nodes.getLength(); i++) {
-                final Node srsNode = nodes.item(i);
+                Node srsNode = nodes.item(i);
                 layerSRSList[i] = srsNode != null ? srsNode.getTextContent() : "";
             }
-        } catch (final XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             log.error("GetCapabilities - getLayerSRS xml parsing error: " + e.getMessage());
         }
         return layerSRSList;
@@ -359,19 +359,19 @@ public class GetCapabilitiesRecord_1_1_1 implements GetCapabilitiesRecord {
      *            the doc
      * @return the wMS layer srs
      */
-    private String[] getWMSGetMapFormats(final Document doc) {
+    private String[] getWMSGetMapFormats(Document doc) {
         String[] formatList = null;
         try {
-            final NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTGETMAPFORMATEXPRESSION).evaluate(doc,
+            NodeList nodes = (NodeList) DOMUtil.compileXPathExpr(EXTRACTGETMAPFORMATEXPRESSION).evaluate(doc,
                     XPathConstants.NODESET);
 
             formatList = new String[nodes.getLength()];
 
             for (int i = 0; i < nodes.getLength(); i++) {
-                final Node formatNode = nodes.item(i);
+                Node formatNode = nodes.item(i);
                 formatList[i] = formatNode != null ? formatNode.getTextContent() : "";
             }
-        } catch (final XPathExpressionException e) {
+        } catch (XPathExpressionException e) {
             log.error("GetCapabilities - getWMSGetMapFormats xml parsing error: " + e.getMessage());
         }
         return formatList;
